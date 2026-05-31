@@ -15,6 +15,20 @@ import AIChatWidget from '@/components/swift/AIChatWidget';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
 import SearchOverlay from '@/components/swift/SearchOverlay';
+import AuthScreen from '@/components/swift/AuthScreen';
+import PrayerTimesModal from '@/components/swift/PrayerTimesModal';
+import SahurWakeUpModal from '@/components/swift/SahurWakeUpModal';
+import GroupBuyModal from '@/components/swift/GroupBuyModal';
+import VoiceShoppingModal from '@/components/swift/VoiceShoppingModal';
+import GiftCardModal from '@/components/swift/GiftCardModal';
+import MosqueSadaqahModal from '@/components/swift/MosqueSadaqahModal';
+import ReferEarnModal from '@/components/swift/ReferEarnModal';
+import CharityZakatModal from '@/components/swift/CharityZakatModal';
+import PartyBulkModal from '@/components/swift/PartyBulkModal';
+import RecipesModal from '@/components/swift/RecipesModal';
+import CheckoutModal from '@/components/swift/CheckoutModal';
+import RewardsModal from '@/components/swift/RewardsModal';
+import BNPLModal from '@/components/swift/BNPLModal';
 import { Search, ShoppingBag, MapPin, User, Bell } from 'lucide-react';
 
 const tabComponents: Record<string, React.ComponentType> = {
@@ -112,6 +126,24 @@ export default function Home() {
 
       {/* Search Overlay */}
       <SearchOverlay />
+
+      {/* Auth Screen Overlay */}
+      <AuthScreen />
+
+      {/* App Modals */}
+      <PrayerTimesModal />
+      <SahurWakeUpModal />
+      <GroupBuyModal />
+      <VoiceShoppingModal />
+      <GiftCardModal />
+      <MosqueSadaqahModal />
+      <ReferEarnModal />
+      <CharityZakatModal />
+      <PartyBulkModal />
+      <RecipesModal />
+      <CheckoutModal />
+      <RewardsModal />
+      <BNPLModal />
 
       {/* Bottom gradient fade */}
       <div className="fixed bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#05070A] to-transparent pointer-events-none z-40" />

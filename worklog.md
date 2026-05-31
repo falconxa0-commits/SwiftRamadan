@@ -323,3 +323,60 @@ Generated 30 AI images for the SwiftRamadan app using z-ai CLI, fixed bugs in Pr
 - 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
 - Dev server compiling successfully on port 3000
 - All API routes verified working
+
+---
+
+## Task 8: RewardsModal, BNPLModal, and Fix Notification/Donation Links
+
+**Date**: 2026-03-04
+**Agent**: Modal & Fix Agent
+**Status**: ✅ Completed
+
+### Summary
+Created two new full-featured modals (RewardsModal and BNPLModal), fixed the broken notifications link in ProfileTab, fixed the broken donation-confirmed flow in MosqueSadaqahModal, and wired the new modals into page.tsx.
+
+### Files Created
+
+- `src/components/swift/RewardsModal.tsx` - Full loyalty/rewards modal (activeModal === 'rewards') with:
+  - Current tier card showing tier name (color-coded), points balance, progress bar to next tier
+  - Daily streak claim section with "Day X Streak" indicator, streak dots, and "Claim 50 pts" button (uses claimDailyPoints)
+  - How to Earn Points section listing all pointEarningActivities with staggered animations
+  - Tier Benefits section showing all loyaltyTiers with current tier highlighted and bordered
+  - Redeem Rewards section - 2-column grid of loyaltyRewards cards with point costs, click to redeem (deducts points + toast)
+  - AnimatePresence open/close, full-screen bottom sheet style, glass-effect header
+  - Uses hasanatPoints, loyaltyTier, dailyStreak, claimDailyPoints from Zustand store
+
+- `src/components/swift/BNPLModal.tsx` - Buy-now-pay-later modal (activeModal === 'bnpl') with:
+  - Available credit card: ₦150,000 credit, ₦45,000 balance used, ₦15,000 next payment
+  - Ramadan 0% interest banner with gold accent and Sparkles icon
+  - Plan selection cards for bnplPlans: 2 months (0% Ramadan offer), 4 months (2.5%), 6 months (5%) with checkmark selection
+  - Payment calculator: amount input with quick-amount buttons (₦10K, ₦25K, ₦50K, ₦100K), live monthly payment breakdown
+  - "Apply for BNPL" button with applied state feedback and toast
+  - Same dark theme, bottom sheet style, glass-effect header
+
+### Files Modified
+
+- `src/components/swift/ProfileTab.tsx`:
+  - **Fixed 'notifications' action**: Changed from `setActiveModal('notifications')` (which had no listener) to a toast saying "Tap the bell icon 🔔"
+  - **Fixed 'bnpl' action**: Changed from inline modal content to `setActiveModal('bnpl')` to use the new BNPLModal
+
+- `src/components/swift/MosqueSadaqahModal.tsx`:
+  - **Fixed donation-confirmed flow**: Replaced `setActiveModal('donation-confirmed')` (which had no listener) with local state (`donationConfirmed`, `donationPoints`)
+  - Added donation confirmation overlay within the modal showing: animated check icon, confirmation message, Hasanat points earned, and "Continue" button
+  - Both `handleSponsorMeals` and `handleQuickSadaqah` now use the local confirmation state
+  - `handleClose` resets the donation confirmation state
+
+- `src/app/page.tsx`:
+  - Added imports for RewardsModal and BNPLModal
+  - Added `<RewardsModal />` and `<BNPLModal />` renders alongside existing modals
+
+### Key Design Decisions
+1. RewardsModal and BNPLModal follow the same full-screen bottom sheet pattern as ReferEarnModal (z-[90] overlay, z-[100] modal)
+2. Donation confirmation in MosqueSadaqahModal uses an in-modal overlay (z-[85] within the scrollable content) rather than a separate modal route
+3. Notifications fix uses toast instead of trying to control page-level `showNotifications` state from a child component
+4. BNPL calculator uses `useMemo` for reactive calculation updates
+5. Both modals use Framer Motion staggered animations for list items and cards
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
+- Dev server compiling successfully on port 3000

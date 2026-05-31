@@ -109,19 +109,18 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
 }
 
 export default function OffersTab() {
-  const { wishlist, toggleWishlist, addToCart } = useAppStore();
-  const { toast } = useToast();
+  const { setActiveModal } = useAppStore();
 
-  const handleGiftCardClick = (card: typeof giftCardTemplates[0]) => {
-    toast({ title: `${card.name} Gift Card 🎁`, description: 'Gift card designer coming soon! Customize and send to loved ones.' });
+  const handleGiftCardClick = (_card: typeof giftCardTemplates[0]) => {
+    setActiveModal('giftcard');
   };
 
   const handleGroupBuy = () => {
-    toast({ title: 'Group Buy 👥', description: 'Join a community bulk order and save up to 40%!' });
+    setActiveModal('groupBuy');
   };
 
   const handleRedeemPoints = () => {
-    toast({ title: 'SwiftRewards ⭐', description: `You have ${loyaltyData.points.toLocaleString()} points. Redeem for discounts, free delivery, and more!` });
+    setActiveModal('rewards');
   };
 
   return (
@@ -200,7 +199,7 @@ export default function OffersTab() {
             <h3 className="text-white text-lg font-extrabold">Gift Cards</h3>
           </div>
           <button
-            onClick={() => toast({ title: 'Design Yours 🎨', description: 'Custom gift card designer coming soon!' })}
+            onClick={() => setActiveModal('giftcard')}
             className="text-[#13ec13] text-xs font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
           >
             Design Yours

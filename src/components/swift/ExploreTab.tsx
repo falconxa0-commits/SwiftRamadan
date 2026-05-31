@@ -34,16 +34,16 @@ export default function ExploreTab() {
         toast({ title: 'Reorder 🔄', description: 'Your last order items loaded' });
         break;
       case 'Group Buy':
-        toast({ title: 'Group Buy 👥', description: 'Join community bulk orders for wholesale prices' });
+        setActiveModal('groupBuy');
         break;
       case 'Gift':
-        toast({ title: 'Gift Cards 🎁', description: 'Send a Ramadan gift card to someone special' });
+        setActiveModal('giftcard');
         break;
       case 'Recipes':
-        toast({ title: 'Recipes 🍳', description: 'Discover Ramadan recipes from top Lagos chefs' });
+        setActiveModal('recipes');
         break;
       case 'Mosques':
-        toast({ title: 'Nearby Mosques 🕌', description: 'Find mosques near you for congregational prayers' });
+        setActiveModal('mosque');
         break;
       case 'Track':
         useAppStore.getState().setActiveTab('orders');

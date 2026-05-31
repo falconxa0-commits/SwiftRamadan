@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile';
 
@@ -19,24 +20,38 @@ export interface NotificationItem {
   type: string;
 }
 
+export interface OrderItem {
+  id: string;
+  item: string;
+  status: string;
+  eta: string;
+  total: number;
+  rider: string | null;
+  items: { name: string; qty: number; price: number }[];
+  progress: number;
+}
+
 interface AppState {
+  // Navigation
   activeTab: TabId;
   setActiveTab: (tab: TabId) => void;
   showWelcome: boolean;
   setShowWelcome: (show: boolean) => void;
+
+  // Cart
   cartCount: number;
   setCartCount: (count: number) => void;
+  cartItems: CartItem[];
+  addToCart: (item: Omit<CartItem, 'quantity'> & { quantity?: number }) => void;
+  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, qty: number) => void;
+  clearCart: () => void;
+
+  // Modals & Overlays
   activeModal: string | null;
   setActiveModal: (modal: string | null) => void;
   selectedProduct: number | null;
   setSelectedProduct: (id: number | null) => void;
-
-  // Cart
-  cartItems: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
-  removeFromCart: (id: number) => void;
-  updateQuantity: (id: number, qty: number) => void;
-  clearCart: () => void;
 
   // Search
   searchQuery: string;
@@ -57,95 +72,315 @@ interface AppState {
   // Category filter
   activeCategory: string | null;
   setActiveCategory: (category: string | null) => void;
+
+  // Auth
+  isLoggedIn: boolean;
+  setIsLoggedIn: (val: boolean) => void;
+  showAuth: string | null; // 'login' | 'signup' | 'otp' | 'role' | null
+  setShowAuth: (val: string | null) => void;
+  userName: string;
+  setUserName: (name: string) => void;
+  userPhone: string;
+  setUserPhone: (phone: string) => void;
+  userEmail: string;
+  setUserEmail: (email: string) => void;
+  userRole: 'customer' | 'vendor' | 'rider';
+  setUserRole: (role: 'customer' | 'vendor' | 'rider') => void;
+
+  // Loyalty
+  hasanatPoints: number;
+  setHasanatPoints: (pts: number) => void;
+  swiftPoints: number;
+  setSwiftPoints: (pts: number) => void;
+  loyaltyTier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  setLoyaltyTier: (tier: 'bronze' | 'silver' | 'gold' | 'platinum') => void;
+  dailyStreak: number;
+  setDailyStreak: (streak: number) => void;
+  claimDailyPoints: () => void;
+
+  // Orders
+  orders: OrderItem[];
+  setOrders: (orders: OrderItem[]) => void;
+  addOrder: (order: OrderItem) => void;
+
+  // Checkout
+  checkoutStep: number; // 0=cart, 1=location, 2=schedule, 3=payment, 4=success
+  setCheckoutStep: (step: number) => void;
+  deliveryAddress: string;
+  setDeliveryAddress: (addr: string) => void;
+  deliveryInstructions: string;
+  setDeliveryInstructions: (instr: string) => void;
+  iftarPrecision: boolean;
+  setIftarPrecision: (val: boolean) => void;
+  sahurAlarm: boolean;
+  setSahurAlarm: (val: boolean) => void;
+  paymentMethod: string;
+  setPaymentMethod: (method: string) => void;
+
+  // Gift Card
+  giftCardStep: number; // 0=design, 1=personalize, 2=review
+  setGiftCardStep: (step: number) => void;
+  giftCardTheme: string;
+  setGiftCardTheme: (theme: string) => void;
+  giftCardAmount: number;
+  setGiftCardAmount: (amount: number) => void;
+  giftCardRecipient: string;
+  setGiftCardRecipient: (recipient: string) => void;
+  giftCardMessage: string;
+  setGiftCardMessage: (msg: string) => void;
+  giftCardDeliveryMethod: string;
+  setGiftCardDeliveryMethod: (method: string) => void;
+  giftCardMood: string;
+  setGiftCardMood: (mood: string) => void;
+  resetGiftCard: () => void;
+
+  // Group Buy
+  groupBuySlots: Record<number, { filled: number; total: number; joined: boolean }>;
+  joinGroupBuy: (id: number, total: number) => void;
+
+  // Voice
+  isListening: boolean;
+  setIsListening: (val: boolean) => void;
+  voiceTranscript: string;
+  setVoiceTranscript: (text: string) => void;
+
+  // Sahur Alarm
+  sahurAlarmTime: string;
+  setSahurAlarmTime: (time: string) => void;
+  sahurAlarmEnabled: boolean;
+  setSahurAlarmEnabled: (val: boolean) => void;
+
+  // Referral
+  referralCode: string;
+  referralCount: number;
+  incrementReferral: () => void;
 }
 
-export const useAppStore = create<AppState>((set, get) => ({
-  activeTab: 'home',
-  setActiveTab: (tab) => set({ activeTab: tab }),
-  showWelcome: true,
-  setShowWelcome: (show) => set({ showWelcome: show }),
-  cartCount: 0,
-  setCartCount: (count) => set({ cartCount: count }),
-  activeModal: null,
-  setActiveModal: (modal) => set({ activeModal: modal }),
-  selectedProduct: null,
-  setSelectedProduct: (id) => set({ selectedProduct: id }),
+const defaultGiftCard = {
+  giftCardStep: 0,
+  giftCardTheme: 'crescent-grace',
+  giftCardAmount: 10000,
+  giftCardRecipient: '',
+  giftCardMessage: '',
+  giftCardDeliveryMethod: 'whatsapp',
+  giftCardMood: 'formal',
+};
 
-  // Cart
-  cartItems: [],
-  addToCart: (item) => {
-    const { cartItems } = get();
-    const existing = cartItems.find(ci => ci.id === item.id);
-    let newItems: CartItem[];
-    if (existing) {
-      newItems = cartItems.map(ci =>
-        ci.id === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
-      );
-    } else {
-      newItems = [...cartItems, { ...item, quantity: 1 }];
+export const useAppStore = create<AppState>()(
+  persist(
+    (set, get) => ({
+      // Navigation
+      activeTab: 'home',
+      setActiveTab: (tab) => set({ activeTab: tab }),
+      showWelcome: true,
+      setShowWelcome: (show) => set({ showWelcome: show }),
+
+      // Cart
+      cartCount: 0,
+      setCartCount: (count) => set({ cartCount: count }),
+      cartItems: [],
+      addToCart: (item) => {
+        const { cartItems } = get();
+        const qty = item.quantity || 1;
+        const existing = cartItems.find(ci => ci.id === item.id);
+        let newItems: CartItem[];
+        if (existing) {
+          newItems = cartItems.map(ci =>
+            ci.id === item.id ? { ...ci, quantity: ci.quantity + qty } : ci
+          );
+        } else {
+          newItems = [...cartItems, { ...item, quantity: qty }];
+        }
+        set({
+          cartItems: newItems,
+          cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
+        });
+      },
+      removeFromCart: (id) => {
+        const { cartItems } = get();
+        const newItems = cartItems.filter(ci => ci.id !== id);
+        set({
+          cartItems: newItems,
+          cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
+        });
+      },
+      updateQuantity: (id, qty) => {
+        const { cartItems } = get();
+        if (qty <= 0) {
+          const newItems = cartItems.filter(ci => ci.id !== id);
+          set({
+            cartItems: newItems,
+            cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
+          });
+          return;
+        }
+        const newItems = cartItems.map(ci =>
+          ci.id === id ? { ...ci, quantity: qty } : ci
+        );
+        set({
+          cartItems: newItems,
+          cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
+        });
+      },
+      clearCart: () => set({ cartItems: [], cartCount: 0 }),
+
+      // Modals & Overlays
+      activeModal: null,
+      setActiveModal: (modal) => set({ activeModal: modal }),
+      selectedProduct: null,
+      setSelectedProduct: (id) => set({ selectedProduct: id }),
+
+      // Search
+      searchQuery: '',
+      setSearchQuery: (query) => set({ searchQuery: query }),
+      showSearch: false,
+      setShowSearch: (show) => set({ showSearch: show }),
+
+      // Notifications
+      notifications: [],
+      setNotifications: (notifications) => {
+        set({
+          notifications,
+          unreadCount: notifications.filter(n => !n.read).length,
+        });
+      },
+      unreadCount: 0,
+      setUnreadCount: (count) => set({ unreadCount: count }),
+
+      // Wishlist
+      wishlist: [],
+      toggleWishlist: (id) => {
+        const { wishlist } = get();
+        if (wishlist.includes(id)) {
+          set({ wishlist: wishlist.filter(wid => wid !== id) });
+        } else {
+          set({ wishlist: [...wishlist, id] });
+        }
+      },
+
+      // Category filter
+      activeCategory: null,
+      setActiveCategory: (category) => set({ activeCategory: category }),
+
+      // Auth
+      isLoggedIn: false,
+      setIsLoggedIn: (val) => set({ isLoggedIn: val }),
+      showAuth: null,
+      setShowAuth: (val) => set({ showAuth: val }),
+      userName: 'Bolaji Ahmed',
+      setUserName: (name) => set({ userName: name }),
+      userPhone: '',
+      setUserPhone: (phone) => set({ userPhone: phone }),
+      userEmail: '',
+      setUserEmail: (email) => set({ userEmail: email }),
+      userRole: 'customer',
+      setUserRole: (role) => set({ userRole: role }),
+
+      // Loyalty
+      hasanatPoints: 5400,
+      setHasanatPoints: (pts) => set({ hasanatPoints: pts }),
+      swiftPoints: 1200,
+      setSwiftPoints: (pts) => set({ swiftPoints: pts }),
+      loyaltyTier: 'gold',
+      setLoyaltyTier: (tier) => set({ loyaltyTier: tier }),
+      dailyStreak: 3,
+      setDailyStreak: (streak) => set({ dailyStreak: streak }),
+      claimDailyPoints: () => {
+        const { hasanatPoints, dailyStreak } = get();
+        set({
+          hasanatPoints: hasanatPoints + 50,
+          dailyStreak: dailyStreak + 1,
+        });
+      },
+
+      // Orders
+      orders: [],
+      setOrders: (orders) => set({ orders }),
+      addOrder: (order) => {
+        const { orders } = get();
+        set({ orders: [order, ...orders] });
+      },
+
+      // Checkout
+      checkoutStep: 0,
+      setCheckoutStep: (step) => set({ checkoutStep: step }),
+      deliveryAddress: '12 Admiralty Way, Lekki Phase 1',
+      setDeliveryAddress: (addr) => set({ deliveryAddress: addr }),
+      deliveryInstructions: '',
+      setDeliveryInstructions: (instr) => set({ deliveryInstructions: instr }),
+      iftarPrecision: false,
+      setIftarPrecision: (val) => set({ iftarPrecision: val }),
+      sahurAlarm: false,
+      setSahurAlarm: (val) => set({ sahurAlarm: val }),
+      paymentMethod: 'card',
+      setPaymentMethod: (method) => set({ paymentMethod: method }),
+
+      // Gift Card
+      ...defaultGiftCard,
+      setGiftCardStep: (step) => set({ giftCardStep: step }),
+      setGiftCardTheme: (theme) => set({ giftCardTheme: theme }),
+      setGiftCardAmount: (amount) => set({ giftCardAmount: amount }),
+      setGiftCardRecipient: (recipient) => set({ giftCardRecipient: recipient }),
+      setGiftCardMessage: (msg) => set({ giftCardMessage: msg }),
+      setGiftCardDeliveryMethod: (method) => set({ giftCardDeliveryMethod: method }),
+      setGiftCardMood: (mood) => set({ giftCardMood: mood }),
+      resetGiftCard: () => set(defaultGiftCard),
+
+      // Group Buy
+      groupBuySlots: {},
+      joinGroupBuy: (id, total) => {
+        const { groupBuySlots } = get();
+        const current = groupBuySlots[id] || { filled: 0, total, joined: false };
+        if (current.joined) return;
+        set({
+          groupBuySlots: {
+            ...groupBuySlots,
+            [id]: { ...current, filled: current.filled + 1, joined: true },
+          },
+        });
+      },
+
+      // Voice
+      isListening: false,
+      setIsListening: (val) => set({ isListening: val }),
+      voiceTranscript: '',
+      setVoiceTranscript: (text) => set({ voiceTranscript: text }),
+
+      // Sahur Alarm
+      sahurAlarmTime: '04:30',
+      setSahurAlarmTime: (time) => set({ sahurAlarmTime: time }),
+      sahurAlarmEnabled: false,
+      setSahurAlarmEnabled: (val) => set({ sahurAlarmEnabled: val }),
+
+      // Referral
+      referralCode: 'BOLAJI24',
+      referralCount: 3,
+      incrementReferral: () => set({ referralCount: get().referralCount + 1 }),
+    }),
+    {
+      name: 'swiftramadan-store',
+      partialize: (state) => ({
+        showWelcome: state.showWelcome,
+        cartItems: state.cartItems,
+        cartCount: state.cartCount,
+        wishlist: state.wishlist,
+        isLoggedIn: state.isLoggedIn,
+        userName: state.userName,
+        userPhone: state.userPhone,
+        userEmail: state.userEmail,
+        userRole: state.userRole,
+        hasanatPoints: state.hasanatPoints,
+        swiftPoints: state.swiftPoints,
+        loyaltyTier: state.loyaltyTier,
+        dailyStreak: state.dailyStreak,
+        orders: state.orders,
+        deliveryAddress: state.deliveryAddress,
+        groupBuySlots: state.groupBuySlots,
+        referralCode: state.referralCode,
+        referralCount: state.referralCount,
+        sahurAlarmTime: state.sahurAlarmTime,
+        sahurAlarmEnabled: state.sahurAlarmEnabled,
+      }),
     }
-    set({
-      cartItems: newItems,
-      cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
-    });
-  },
-  removeFromCart: (id) => {
-    const { cartItems } = get();
-    const newItems = cartItems.filter(ci => ci.id !== id);
-    set({
-      cartItems: newItems,
-      cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
-    });
-  },
-  updateQuantity: (id, qty) => {
-    const { cartItems } = get();
-    if (qty <= 0) {
-      const newItems = cartItems.filter(ci => ci.id !== id);
-      set({
-        cartItems: newItems,
-        cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
-      });
-      return;
-    }
-    const newItems = cartItems.map(ci =>
-      ci.id === id ? { ...ci, quantity: qty } : ci
-    );
-    set({
-      cartItems: newItems,
-      cartCount: newItems.reduce((sum, ci) => sum + ci.quantity, 0),
-    });
-  },
-  clearCart: () => set({ cartItems: [], cartCount: 0 }),
-
-  // Search
-  searchQuery: '',
-  setSearchQuery: (query) => set({ searchQuery: query }),
-  showSearch: false,
-  setShowSearch: (show) => set({ showSearch: show }),
-
-  // Notifications
-  notifications: [],
-  setNotifications: (notifications) => {
-    set({
-      notifications,
-      unreadCount: notifications.filter(n => !n.read).length,
-    });
-  },
-  unreadCount: 0,
-  setUnreadCount: (count) => set({ unreadCount: count }),
-
-  // Wishlist
-  wishlist: [],
-  toggleWishlist: (id) => {
-    const { wishlist } = get();
-    if (wishlist.includes(id)) {
-      set({ wishlist: wishlist.filter(wid => wid !== id) });
-    } else {
-      set({ wishlist: [...wishlist, id] });
-    }
-  },
-
-  // Category filter
-  activeCategory: null,
-  setActiveCategory: (category) => set({ activeCategory: category }),
-}));
+  )
+);

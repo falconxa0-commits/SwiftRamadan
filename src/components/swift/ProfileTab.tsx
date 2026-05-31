@@ -32,141 +32,16 @@ export default function ProfileTab() {
   const handleMenuClick = (action: string) => {
     switch (action) {
       case 'bnpl':
-        setModalContent({
-          title: 'Pay Small-Small (BNPL)',
-          content: (
-            <div className="space-y-4">
-              <p className="text-white/60 text-sm leading-relaxed">
-                Split your Ramadan shopping into 3 easy payments. No interest, no hidden fees.
-              </p>
-              <div className="bg-[#1A1D26] p-4 rounded-xl border border-white/5">
-                <p className="text-white font-bold text-sm mb-1">Available Credit</p>
-                <p className="text-[#13ec13] text-2xl font-black">₦150,000</p>
-              </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Current Balance</span>
-                  <span className="text-white font-bold">₦45,000</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/50">Next Payment</span>
-                  <span className="text-[#13ec13] font-bold">₦15,000 due Apr 1</span>
-                </div>
-              </div>
-            </div>
-          ),
-        });
-        setShowModal(true);
-        break;
-      case 'rewards':
-        setModalContent({
-          title: 'SwiftRewards',
-          content: (
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Award className="w-5 h-5 text-[#FFD700] fill-[#FFD700]" />
-                <span className="text-[#FFD700] font-bold">{loyaltyData.tier}</span>
-              </div>
-              <div className="bg-[#1A1D26] p-4 rounded-xl border border-white/5">
-                <p className="text-white/40 text-xs">Current Points</p>
-                <p className="text-white text-3xl font-black">{loyaltyData.points.toLocaleString()}</p>
-                <div className="w-full bg-white/5 rounded-full h-2 mt-2">
-                  <div className="gold-gradient h-2 rounded-full" style={{ width: `${loyaltyData.tierProgress}%` }} />
-                </div>
-                <p className="text-white/40 text-[10px] mt-1">{loyaltyData.nextTierPoints - loyaltyData.points} points to Platinum</p>
-              </div>
-              <div className="space-y-2">
-                <p className="text-white font-bold text-sm">Redeem Options:</p>
-                {[
-                  { points: 1000, reward: 'Free Delivery' },
-                  { points: 2500, reward: '₦500 Off' },
-                  { points: 5000, reward: '₦1,000 Off' },
-                ].map(opt => (
-                  <button
-                    key={opt.points}
-                    onClick={() => toast({ title: 'Redeemed! ⭐', description: `${opt.reward} redeemed for ${opt.points} points` })}
-                    className="w-full flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5 text-left hover:border-[#13ec13]/20 transition-colors"
-                  >
-                    <span className="text-white text-sm">{opt.reward}</span>
-                    <span className="text-[#FFD700] text-xs font-bold">{opt.points} pts</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          ),
-        });
-        setShowModal(true);
+        useAppStore.getState().setActiveModal('bnpl');
         break;
       case 'refer':
-        setModalContent({
-          title: 'Refer & Earn',
-          content: (
-            <div className="space-y-4">
-              <p className="text-white/60 text-sm leading-relaxed">
-                Share SwiftRamadan with friends and earn ₦2,000 for each referral who makes their first order!
-              </p>
-              <div className="bg-[#1A1D26] p-4 rounded-xl border border-white/5 text-center">
-                <p className="text-white/40 text-xs mb-1">Your Referral Code</p>
-                <p className="text-[#13ec13] text-2xl font-black tracking-widest">BOLAJI24</p>
-              </div>
-              <div className="flex gap-3">
-                <div className="flex-1 bg-[#1A1D26] p-3 rounded-xl border border-white/5 text-center">
-                  <p className="text-white text-xl font-black">3</p>
-                  <p className="text-white/40 text-[10px]">Referrals</p>
-                </div>
-                <div className="flex-1 bg-[#1A1D26] p-3 rounded-xl border border-white/5 text-center">
-                  <p className="text-[#13ec13] text-xl font-black">₦6,000</p>
-                  <p className="text-white/40 text-[10px]">Earned</p>
-                </div>
-              </div>
-              <button
-                onClick={() => toast({ title: 'Link Copied! 📋', description: 'Share with friends to earn ₦2,000 each' })}
-                className="w-full bg-[#13ec13] text-[#05070A] font-bold py-3 rounded-xl text-sm"
-              >
-                Copy Referral Link
-              </button>
-            </div>
-          ),
-        });
-        setShowModal(true);
+        useAppStore.getState().setActiveModal('refer');
         break;
       case 'charity':
-        setModalContent({
-          title: 'Charity & Zakat',
-          content: (
-            <div className="space-y-3">
-              {charityItems.map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    if (item.amount > 0) {
-                      toast({ title: `${item.name} 💚`, description: `Donation of ${formatNaira(item.amount)} added to cart` });
-                      useAppStore.getState().addToCart({
-                        id: 500 + item.id,
-                        name: `Donation: ${item.name}`,
-                        price: item.amount,
-                        image: '',
-                      });
-                    } else {
-                      toast({ title: 'Zakat Calculator 🧮', description: 'Calculate your Zakat obligation based on your assets' });
-                    }
-                  }}
-                  className="w-full flex items-center gap-3 p-3 bg-[#1A1D26] rounded-xl border border-white/5 text-left hover:border-[#13ec13]/20 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-[#FFD700] text-xl">{item.icon}</span>
-                  <div className="flex-1">
-                    <p className="text-white font-bold text-sm">{item.name}</p>
-                    <p className="text-white/40 text-xs">{item.description}</p>
-                  </div>
-                  {item.amount > 0 && (
-                    <span className="text-[#13ec13] text-xs font-bold">{formatNaira(item.amount)}</span>
-                  )}
-                </button>
-              ))}
-            </div>
-          ),
-        });
-        setShowModal(true);
+        useAppStore.getState().setActiveModal('charity');
+        break;
+      case 'rewards':
+        useAppStore.getState().setActiveModal('rewards');
         break;
       case 'eco':
         setModalContent({
@@ -199,8 +74,7 @@ export default function ProfileTab() {
         setShowModal(true);
         break;
       case 'notifications':
-        useAppStore.getState().setShowSearch(false);
-        toast({ title: 'Notifications 🔔', description: 'Check the bell icon in the top bar for your notifications' });
+        toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
         break;
       case 'addresses':
         setModalContent({

@@ -266,6 +266,13 @@ export default function OrdersTab() {
               );
             })}
           </div>
+          <button
+            onClick={() => useAppStore.getState().setActiveModal('prayer')}
+            className="w-full mt-4 bg-[#FFD700]/10 border border-[#FFD700]/20 text-[#FFD700] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#FFD700]/20 transition-colors"
+          >
+            <span className="material-symbols-outlined text-sm">schedule</span>
+            View Full Schedule
+          </button>
         </div>
       </div>
     </main>

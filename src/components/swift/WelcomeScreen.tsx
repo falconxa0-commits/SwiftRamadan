@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { Clock, Users, ChevronRight } from 'lucide-react';
 
 export default function WelcomeScreen() {
-  const { setShowWelcome } = useAppStore();
+  const { setShowWelcome, setShowAuth } = useAppStore();
 
   return (
     <motion.div
@@ -90,12 +90,15 @@ export default function WelcomeScreen() {
 
           <div className="flex flex-col gap-4">
             <button
-              onClick={() => setShowWelcome(false)}
+              onClick={() => { setShowWelcome(false); setShowAuth('role'); }}
               className="flex w-full items-center justify-center rounded-xl h-14 px-5 bg-[#f4c025] text-[#064e3b] text-lg font-extrabold tracking-wide shadow-xl active:scale-[0.98] transition-transform"
             >
               Get Started
             </button>
-            <button className="flex w-full items-center justify-center py-2 text-white/90 text-sm font-medium">
+            <button
+              onClick={() => { setShowWelcome(false); setShowAuth('login'); }}
+              className="flex w-full items-center justify-center py-2 text-white/90 text-sm font-medium"
+            >
               Already have an account? <span className="text-[#f4c025] ml-1 font-bold underline underline-offset-4">Sign In</span>
             </button>
           </div>

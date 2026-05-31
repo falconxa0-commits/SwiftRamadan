@@ -29,7 +29,8 @@ export default function CartTab() {
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return;
-    toast({ title: 'Order Placed! 🌙', description: `Your ${cartItems.length} item(s) are being prepared for delivery` });
+    useAppStore.getState().setCheckoutStep(0);
+    useAppStore.getState().setActiveModal('checkout');
   };
 
   if (cartItems.length === 0) {
