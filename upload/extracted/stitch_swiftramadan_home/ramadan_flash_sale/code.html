@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Ramadan Flash Sale</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb613",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#0a1a11", // Deep premium green
+                        "card-dark": "#16281e",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .ramadan-glow {
+            background: radial-gradient(circle at top right, rgba(236, 182, 19, 0.15), transparent 40%),
+                        radial-gradient(circle at bottom left, rgba(236, 182, 19, 0.1), transparent 40%);
+        }
+        .glass-banner {
+            background: rgba(22, 40, 30, 0.8);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid rgba(236, 182, 19, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<div class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center p-4 justify-between">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight flex-1 text-center">Ramadan Flash Sale</h2>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<main class="pb-32 ramadan-glow min-h-screen">
+<!-- Urgency Header & Section Header -->
+<div class="px-4 pt-2">
+<div class="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">
+<h4 class="text-primary text-sm font-bold uppercase tracking-widest mb-1">Ending soon! Stock up for Iftar</h4>
+<p class="text-xs text-white/60 mb-4">Limited bulk deals for the holy month</p>
+<!-- Timer Component -->
+<div class="flex gap-3 justify-center">
+<div class="flex flex-col items-center gap-1">
+<div class="flex h-12 w-14 items-center justify-center rounded-lg bg-primary text-background-dark">
+<p class="text-xl font-bold">02</p>
+</div>
+<p class="text-[10px] uppercase font-bold text-primary/80">Hours</p>
+</div>
+<div class="text-primary text-2xl font-bold pt-2 self-start">:</div>
+<div class="flex flex-col items-center gap-1">
+<div class="flex h-12 w-14 items-center justify-center rounded-lg bg-primary text-background-dark">
+<p class="text-xl font-bold">45</p>
+</div>
+<p class="text-[10px] uppercase font-bold text-primary/80">Mins</p>
+</div>
+<div class="text-primary text-2xl font-bold pt-2 self-start">:</div>
+<div class="flex flex-col items-center gap-1">
+<div class="flex h-12 w-14 items-center justify-center rounded-lg bg-primary text-background-dark">
+<p class="text-xl font-bold">12</p>
+</div>
+<p class="text-[10px] uppercase font-bold text-primary/80">Secs</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Cards List -->
+<div class="p-4 space-y-4">
+<!-- Card 1: Rice -->
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-dark border border-white/5 shadow-2xl relative">
+<div class="absolute top-3 left-3 z-10 bg-primary px-3 py-1 rounded-full shadow-lg">
+<span class="text-[10px] font-extrabold text-background-dark uppercase">Group Buy</span>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-[16/10] bg-cover" data-alt="Premium 50kg bag of Royal Stallion rice" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD7oQa2ZQxwh2MkMwxwn_dPCY6jXhz8v_GZFV-nN7o7tf5F5q71jUUjf8Pupr9BYhOyjxHug6pXTYlOyFWLe0xKpGVPGVM3k8v8n8NFKnIspgo-1bTXPqI-i5YbOugyMrykrzdV3oafKByKclwLWHE1Ld6VlAjS5JzVX-BOabird8Zcbfqv-u8Qv8XDZB3uV0Vkvyz0BkNZv34nmTumI8uUUcq6mCAz6TkZHGp6RtDdqBJuXcM3cZ24caczW3gIeJb29qp0Q0e7SVfw");'>
+</div>
+<div class="flex flex-col p-4 gap-3">
+<div>
+<p class="text-white/50 text-[10px] font-bold tracking-widest uppercase">Premium Staples</p>
+<p class="text-white text-xl font-bold">50kg Royal Stallion Rice</p>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-[11px] font-medium">
+<span class="text-white/80">Limited stock remaining</span>
+<span class="text-primary">85% Claimed</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 85%;"></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex flex-col">
+<span class="text-red-500 text-sm line-through decoration-2">₦85,000</span>
+<span class="text-primary text-2xl font-extrabold tracking-tight">₦45,000</span>
+</div>
+<button class="flex h-12 px-6 items-center justify-center rounded-xl bg-primary text-background-dark text-sm font-bold shadow-lg active:scale-95 transition-transform">
+                            Join Group Buy
+                        </button>
+</div>
+</div>
+</div>
+<!-- Card 2: Vegetable Oil -->
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-dark border border-white/5 shadow-2xl relative">
+<div class="absolute top-3 left-3 z-10 bg-primary px-3 py-1 rounded-full shadow-lg">
+<span class="text-[10px] font-extrabold text-background-dark uppercase">Group Buy</span>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-[16/10] bg-cover" data-alt="Large 25 liter yellow container of vegetable oil" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDOkCsWnOBlSpdGNkVk4M5mC5-pWKAvrR4OHz4jPMHsH6BK7WUpAsJ8bVo_EEdpilFfcOakNdcd4ctz2gohUrSeuLnbcInqKDHvjEbN4QsYkelvoNWD3p6RMqmZS5mwXUCAfT4zQ4WfI4W1syzal-SxRJ8REHVc06H1UFuB8DbCFVYyVF73geKpaHWJuj6LMWPAk4fS_AkMyvsMnVkcrwPdaFQs8pdw93C5f9SKgJaE6W2tLeIpwINkOzLvOPCKydskeIpxNiUvHIMp");'>
+</div>
+<div class="flex flex-col p-4 gap-3">
+<div>
+<p class="text-white/50 text-[10px] font-bold tracking-widest uppercase">Cooking Essentials</p>
+<p class="text-white text-xl font-bold">25L Kings Vegetable Oil</p>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-[11px] font-medium">
+<span class="text-white/80">Fast selling</span>
+<span class="text-primary">62% Claimed</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 62%;"></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex flex-col">
+<span class="text-red-500 text-sm line-through decoration-2">₦42,000</span>
+<span class="text-primary text-2xl font-extrabold tracking-tight">₦28,500</span>
+</div>
+<button class="flex h-12 px-6 items-center justify-center rounded-xl bg-primary text-background-dark text-sm font-bold shadow-lg active:scale-95 transition-transform">
+                            Join Group Buy
+                        </button>
+</div>
+</div>
+</div>
+<!-- Card 3: Flour -->
+<div class="flex flex-col overflow-hidden rounded-xl bg-card-dark border border-white/5 shadow-2xl relative">
+<div class="absolute top-3 left-3 z-10 bg-primary px-3 py-1 rounded-full shadow-lg">
+<span class="text-[10px] font-extrabold text-background-dark uppercase">Group Buy</span>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-[16/10] bg-cover" data-alt="50kg white sack of premium flour for baking" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBhfmZl_Vg-gFxpucpAQail_bzUY-QlDu-MrsQabVobo905gb_byldiXpwpTl_43BawrQp3MnlCp34KLKiU4ZRCVkpD-OAQaorqn6TJlemiDBuR_P6yc7Atjq7FbFNkW9NlGZsSEePKwTAL_S-YVSyZHPUxvtxi8idaTJ-JvyG5pIWEhppLAhkUjgJF7ptG0d5K5tfW5z1JQzwZz1tFpBvb8WdJxa_txsryeTGh1kueSPR9LatpA0qsTkmRszWH-Npqgatg6_LWvMwt");'>
+</div>
+<div class="flex flex-col p-4 gap-3">
+<div>
+<p class="text-white/50 text-[10px] font-bold tracking-widest uppercase">Bulk Flour</p>
+<p class="text-white text-xl font-bold">50kg Golden Penny Flour</p>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-[11px] font-medium">
+<span class="text-white/80">High demand</span>
+<span class="text-primary">91% Claimed</span>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 91%;"></div>
+</div>
+</div>
+<div class="flex items-center justify-between mt-1">
+<div class="flex flex-col">
+<span class="text-red-500 text-sm line-through decoration-2">₦55,000</span>
+<span class="text-primary text-2xl font-extrabold tracking-tight">₦32,000</span>
+</div>
+<button class="flex h-12 px-6 items-center justify-center rounded-xl bg-primary text-background-dark text-sm font-bold shadow-lg active:scale-95 transition-transform">
+                            Join Group Buy
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 text-center">
+<p class="text-white/40 text-[10px] flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                Direct delivery to your doorstep in Lagos and Abuja
+            </p>
+</div>
+</main>
+<!-- Floating Social Proof Banner -->
+<div class="fixed bottom-6 left-4 right-4 z-50">
+<div class="glass-banner rounded-2xl p-4 flex items-center gap-4 shadow-2xl border border-primary/20">
+<div class="flex -space-x-3 overflow-hidden">
+<img alt="user" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark" data-alt="Small circular avatar of a customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCpkiM4ppCs-E-52wN59EnQo-g8TL950Uuk2dbSn8Xl8laNySF-JsRS8JwE7_ABsOOdma4zfObhrMUOay8Me6FileEMKBNbBO62b4KcGd4g9JsgGC7aODGbW0xIzZeEJCGxlE1XvVvg-sS0nOke4HdKgd0bF3ywkqFHEH1ke8bIDpUGw9w0pAVTwgLanuT1AhAGeTbmnIU54PmyI7-fwbNKLFuirretGwr-WqyLhABrI4bvIXCxuPObOkUMC8KUzJK5dSxbgyMCymU"/>
+<img alt="user" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark" data-alt="Small circular avatar of a customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBgmxsNDjtxbp5kpGIbPpKPNckeBqax6iwI3amAX7OhcbWjvJlNu_JZq84IA6fGXe3sS_3fXlNK4avAnULBTne6aYHLyyFJBRRCw27bFxalkVQ06ehF58jGrTKBs8U5pgrtVQV8yzlja0iPLQ3v9oX03dZIT4L48aX8LRFHO_BUD2no5yBgJ8YXCa1ZuqlBgQwQF572fqO5rFMj6fkGJfF6RrvSp7NV_riDbbw0pXfd4Q706jm2hZ8SfkyXKu1zm0hqpA4P6da2uTZZ"/>
+<img alt="user" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark" data-alt="Small circular avatar of a customer" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_wxA42J_4LFlxgexnbXYBS-WVsGtDzZUj7_Xd4eeLbj1Mh9-5IMn8XWXpO6z6AVnAbOXkNcQGRLNQc3qPP6Y493q1v65i1965pXjOr_a11Ho1uIF5AO6_qUijQyuw5Cxzm5KV3eo_LIdq49GHCKnGWjclCPIqLLAzJSt5XvY6rGwfjRGgWV9Od7KAmupqnwlHBoFr-0FDfdLUZs6aey_7r0aJ7ECVm_nudaX9aN1IpWuzFxa-xEUKoQPSmzyxSTLjMw0aJDhINRUV"/>
+<div class="flex h-8 w-8 items-center justify-center rounded-full ring-2 ring-background-dark bg-primary text-[10px] font-bold text-background-dark">+9</div>
+</div>
+<div class="flex-1">
+<p class="text-white text-xs font-medium">
+<span class="text-primary font-bold">12 people</span> in your neighborhood are viewing this deal!
+                </p>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px] animate-pulse">visibility</span>
+</div>
+</div>
+</body></html>

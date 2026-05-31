@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Corporate Manager Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                        "surface-dark": "#1c2a39",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen pb-24">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="Corporate company logo with professional blue branding" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBl45gQ3cZBiM3OsO7-TTJVATLL3HYdq0HXQVumvmVhYvyDiXXmtEfzX7V4il_Cp24y43Zsktp4WPlgpuZLbcpszw4pkiuk55PX5_GM9ZLm1Ds-m7Lc-2dxDy_lRMrGtUImNOkbj9-hNTAd8A7_OstW-XE4EQLvj6RJXqn-fJ9xWgl3VlHuJUBIVISjN8qien9Uul-8XQvBG5_pOV-Yd5Ct4Qhq6DAeJrTc4qn-_d5ysSMmi0iXIU8M4ZhrTE7ClVOpXHuHw8oQfZqT");'>
+</div>
+<div>
+<h2 class="text-sm font-bold leading-tight text-primary">Aura Logistics</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400">Main HQ Dashboard</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+</button>
+<button class="p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto space-y-2">
+<!-- Quick Stats -->
+<section class="px-4 pt-4">
+<div class="flex flex-wrap gap-3">
+<div class="flex min-w-[140px] flex-1 flex-col gap-2 rounded-xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Active Subs</p>
+<span class="material-symbols-outlined text-primary text-lg">group</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight">142</p>
+<p class="text-[#0bda5b] text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12% this month
+                    </p>
+</div>
+<div class="flex min-w-[140px] flex-1 flex-col gap-2 rounded-xl p-5 bg-white dark:bg-surface-dark shadow-sm border border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Satisfaction</p>
+<span class="material-symbols-outlined text-yellow-500 text-lg">star</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-2xl font-bold leading-tight">4.8/5</p>
+<p class="text-[#fa6238] text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_down</span> -0.2%
+                    </p>
+</div>
+</div>
+</section>
+<!-- Budget Tracker -->
+<section class="px-4">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight px-1 pb-3 pt-5">Monthly Meal Budget</h2>
+<div class="p-5 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex flex-col gap-4">
+<div class="flex gap-6 justify-between items-end">
+<div class="space-y-1">
+<p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Spent this month</p>
+<p class="text-slate-900 dark:text-white text-xl font-bold">₦1,250,000 <span class="text-slate-400 text-sm font-normal">/ ₦2,000,000</span></p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-bold text-primary">62.5% used</span>
+</div>
+</div>
+<div class="relative h-3 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-700">
+<div class="h-full bg-primary rounded-full transition-all" style="width: 62.5%;"></div>
+</div>
+<div class="flex justify-between items-center">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">account_balance_wallet</span> ₦750,000 remaining
+                        </p>
+<button class="text-primary text-xs font-bold hover:underline">Top Up Wallet</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Logistics & Delivery -->
+<section class="px-4">
+<div class="flex justify-between items-center px-1 pb-3 pt-5">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Delivery Logistics</h2>
+<button class="text-primary text-sm font-bold">Edit Schedule</button>
+</div>
+<div class="bg-primary/5 dark:bg-primary/10 border border-primary/20 rounded-xl p-5 flex items-center gap-4">
+<div class="bg-primary text-white p-3 rounded-lg">
+<span class="material-symbols-outlined">schedule</span>
+</div>
+<div class="flex-1">
+<p class="text-slate-900 dark:text-white font-bold">12:30 PM Drop-off</p>
+<p class="text-slate-500 dark:text-slate-400 text-sm">Single bulk delivery to Main Lobby</p>
+</div>
+<div class="flex flex-col items-end">
+<div class="flex items-center gap-1 text-[#0bda5b]">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-[10px] font-bold uppercase tracking-wider">Active</span>
+</div>
+<p class="text-[10px] text-slate-400">Mon - Fri</p>
+</div>
+</div>
+</section>
+<!-- Staff List -->
+<section class="px-4">
+<div class="flex justify-between items-center px-1 pb-3 pt-5">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Registered Staff</h2>
+<button class="flex items-center gap-1 text-primary text-sm font-bold">
+<span class="material-symbols-outlined text-sm">person_add</span> Add New
+                </button>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Staff Item 1 -->
+<div class="flex items-center gap-3 p-4">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Professional headshot of male employee" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCTlyL4FDOE94t__PLfN_0o9nXqopitKvVl4qne1XflbgnV5IKXoSSKkVprLO3DJXnl_65nOtcGwNc1ZZQiO7KkAtMje5OH5DSqkFjDvUhLvqz2m2oJAHikxvWMAxS5Ip3mM7uPam7fNpdvMkD7V2wpB9ApobMTC36x4pkv1QhFe7lbKYbJy6sTboDjjF3RPOkCQzCLeChOTLIMmwV3_xnfAK9hkeFOVBArj4vA5jEOzsTZA3-VY4PVy1ztkUtPXvPMYH1pyqidSQFz");'></div>
+<div class="flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white font-semibold truncate">Tunde Ajayi</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Product Design • Premium Plan</p>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 bg-[#0bda5b]/10 text-[#0bda5b] text-[10px] font-bold rounded-full">ACTIVE</span>
+<div class="flex gap-0.5">
+<span class="material-symbols-outlined text-[12px] text-yellow-500 fill-1">star</span>
+<span class="text-[10px] font-bold text-slate-400">5.0</span>
+</div>
+</div>
+</div>
+<!-- Staff Item 2 -->
+<div class="flex items-center gap-3 p-4">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Professional headshot of female employee" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA_BVN5BlrYFu7vYE2UpRd4rw2DnilvP5tlhdOg7GGhy97NfM_IkIO8T-jHMs3qU212O_j259KWsmN0n-RI5QONLlKVlAVr8nikuCjA96yWTkzUC0ZVQRoldA6GOXqIQZcg_OSUDCJFmRxozys0R0X2jtrae5_Lil-MeLWWXkBcMjijSa634Q-D0tMD6NlMRO3syaZ68rYPx521htLdL8urUF039kzhuXxcYub7N3d3craPF_WdCPAZPnUUpR649yKymvb-Iae_uBMc");'></div>
+<div class="flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white font-semibold truncate">Chioma Okoro</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Operations • Basic Plan</p>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 bg-[#0bda5b]/10 text-[#0bda5b] text-[10px] font-bold rounded-full">ACTIVE</span>
+<div class="flex gap-0.5">
+<span class="material-symbols-outlined text-[12px] text-yellow-500 fill-1">star</span>
+<span class="text-[10px] font-bold text-slate-400">4.5</span>
+</div>
+</div>
+</div>
+<!-- Staff Item 3 -->
+<div class="flex items-center gap-3 p-4 opacity-70">
+<div class="size-10 rounded-full bg-slate-200 dark:bg-slate-700 bg-cover bg-center" data-alt="Professional headshot of male employee" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB1nYdEaXCpu_qDZufu9WzZlKSY5Irqfccvx149ud512oq1Ov75Zy7SRf0dRCPF_tiK75_J-x0DwMuTP8bd02aSFCKPN7azIcdFeUpIaMgFuzcomg-Qvwp-uuXfcvRNwaNNomOrB9D9P0mXS_8in54bfGK5L7PuMujLOegr_6c8Pv2xvav4PAoa9vkNb_jInEgHWWwtzay-YEyaqU7pkOZasZdpDGp1cuXZaKGsln9c1WK83CQC-ENCgVRXpB7tUwct8hvPE1BPchB2");'></div>
+<div class="flex-1 min-w-0">
+<p class="text-slate-900 dark:text-white font-semibold truncate">Emeka Nwosu</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Engineering • Suspended</p>
+</div>
+<div class="flex flex-col items-end gap-1">
+<span class="px-2 py-0.5 bg-slate-500/10 text-slate-500 text-[10px] font-bold rounded-full">INACTIVE</span>
+<div class="flex gap-0.5">
+<span class="material-symbols-outlined text-[12px] text-slate-400">star</span>
+<span class="text-[10px] font-bold text-slate-400">--</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-4 py-3 text-slate-500 dark:text-slate-400 text-sm font-medium border border-dashed border-slate-300 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                View All 142 Employees
+            </button>
+</section>
+<!-- Satisfaction Details -->
+<section class="px-4 pb-8">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight px-1 pb-3 pt-5">Meal Feedback Trends</h2>
+<div class="p-5 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-12 text-slate-500">Excited</span>
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-[#0bda5b]" style="width: 78%;"></div>
+</div>
+<span class="text-xs font-bold w-8 text-right">78%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-12 text-slate-500">Good</span>
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 15%;"></div>
+</div>
+<span class="text-xs font-bold w-8 text-right">15%</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="text-xs font-bold w-12 text-slate-500">Fair</span>
+<div class="flex-1 h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+<div class="h-full bg-[#fa6238]" style="width: 7%;"></div>
+</div>
+<span class="text-xs font-bold w-8 text-right">7%</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Tab Bar (iOS Style) -->
+<nav class="fixed bottom-0 inset-x-0 bg-white/90 dark:bg-background-dark/90 backdrop-blur-lg border-t border-slate-200 dark:border-slate-800 pb-safe shadow-2xl z-50">
+<div class="max-w-md mx-auto flex justify-around p-3">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-[10px] font-medium">Team</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium">Billing</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium">Reports</span>
+</button>
+</div>
+</nav>
+<!-- Floating Action Button -->
+<button class="fixed bottom-24 right-6 size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/30 flex items-center justify-center z-40">
+<span class="material-symbols-outlined scale-125">add</span>
+</button>
+</body></html>

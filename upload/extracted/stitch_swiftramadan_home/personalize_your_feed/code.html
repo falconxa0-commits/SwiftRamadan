@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalize Your Feed</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2b90d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#221e10",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>.material-symbols-outlined {
+    font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24
+    }
+.pattern-bg {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBIFFsbrkbdnnfkf8kDt_B0dB4vRDO4_A1Ka5d_scQz5xWlhrXITB3L4BbZXYlGw0f9_rJgHnDOQN2Q8jq99b-_HtdT0fr2YpNN727o8rNDriDN9dwBXFtQsaWtFV_sDsbcl59I0EAuDPHVofA2-9gC4QsFw_mz9s1Y2HIqLPNTdxfSFzf4BN2RYvKma3sM-FI6YnaJCLEGkCIl3YogdmdTwJQsAHx3DLUjwQbTBDIKhxLGGNJjxF88M-0Qwbf8063Kqj36o953b0X-);
+    background-color: #221e10;
+    background-blend-mode: overlay
+    }
+.glass-card {
+    background: rgba(73, 63, 34, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(242, 185, 13, 0.1)
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<!-- Main Container -->
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden pattern-bg">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-dark/90 backdrop-blur-md p-4 pb-2 justify-between">
+<div class="text-white flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Personalize Your Feed</h2>
+</div>
+<div class="flex flex-col flex-1 px-4 pb-32">
+<!-- HeadlineText -->
+<h2 class="text-white tracking-light text-[28px] font-bold leading-tight text-center pb-2 pt-8">Curate Your Experience</h2>
+<!-- BodyText -->
+<p class="text-white/80 text-base font-normal leading-relaxed pb-8 px-6 text-center">
+                Select the services you'd like to see most on your feed for a tailored Ramadan and year-round experience.
+            </p>
+<!-- Interest Cards List -->
+<div class="space-y-4">
+<!-- Daily Groceries -->
+<div class="flex items-center gap-4 glass-card p-4 rounded-xl justify-between transition-all hover:border-primary/40">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-14">
+<span class="material-symbols-outlined !text-3xl">shopping_basket</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Daily Groceries</p>
+<p class="text-[#cbbc90] text-sm font-normal leading-tight">Fresh ingredients delivered to your doorstep daily.</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Bulk Wholesale -->
+<div class="flex items-center gap-4 glass-card p-4 rounded-xl justify-between transition-all hover:border-primary/40">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-14">
+<span class="material-symbols-outlined !text-3xl">inventory_2</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Bulk Wholesale</p>
+<p class="text-[#cbbc90] text-sm font-normal leading-tight">Stock up and save more with larger quantities.</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Hot Meals -->
+<div class="flex items-center gap-4 glass-card p-4 rounded-xl justify-between transition-all hover:border-primary/40">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-14">
+<span class="material-symbols-outlined !text-3xl">restaurant</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Hot Meals (Iftar/Lunch)</p>
+<p class="text-[#cbbc90] text-sm font-normal leading-tight">Freshly prepared local delicacies delivered hot.</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Community Group Buying -->
+<div class="flex items-center gap-4 glass-card p-4 rounded-xl justify-between transition-all hover:border-primary/40">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-14">
+<span class="material-symbols-outlined !text-3xl">groups</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Community Buying</p>
+<p class="text-[#cbbc90] text-sm font-normal leading-tight">Join forces with neighbors for lower wholesale prices.</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Charitable Giving -->
+<div class="flex items-center gap-4 glass-card p-4 rounded-xl border-primary/30 border justify-between transition-all hover:border-primary/60 shadow-lg shadow-primary/5">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/30 shrink-0 size-14">
+<span class="material-symbols-outlined !text-3xl">volunteer_activism</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal flex items-center gap-2">
+                                Charitable Giving
+                                <span class="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-full uppercase tracking-wider">Ramadan</span>
+</p>
+<p class="text-[#cbbc90] text-sm font-normal leading-tight">Easily share Sadaqah meals with those in need.</p>
+</div>
+</div>
+<div class="shrink-0">
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-md"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Action -->
+<div class="fixed bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-background-dark via-background-dark/95 to-transparent">
+<button class="w-full bg-primary text-background-dark font-bold text-lg py-4 rounded-xl active:scale-[0.98] transition-transform">
+                Save &amp; Continue
+            </button>
+<div class="h-4"></div> <!-- iOS Home Indicator Padding -->
+</div>
+</div>
+</body></html>

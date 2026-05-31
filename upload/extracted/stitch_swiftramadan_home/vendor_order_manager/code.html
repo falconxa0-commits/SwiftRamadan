@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vendor Order Manager - Ramadan 2026</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec13",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102210",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-white/10">
+<div class="flex items-center p-4 justify-between max-w-md mx-auto">
+<div class="flex size-10 shrink-0 items-center overflow-hidden rounded-full border-2 border-primary">
+<div class="bg-center bg-no-repeat aspect-square bg-cover size-full" data-alt="Nigerian vendor kitchen profile photo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAN50krVgXoqvQylcQOgx0DlUnGjj4YnDelrZKQPq3CLJRuBtydHkZDnae_IWnGBAAbbkmriL6ZPUj8dapdIokIm9o2EeWxdYeDfuM_FG1YrcfI16Xs5seIQOumkfuDeyQOBt3PqsX3fLr8wdLFSnGZOoaEFyD772gF2SZv689We5YG3IsM8ayiFaVLz9HAmD3SZDa0K84bqaDYxB9oGnVIzCR7z2brCeT7zfh23OafkrfHf3FVNP2dZITQPkCJSRDtplwPHb_4Ntki");'></div>
+</div>
+<div class="flex-1 px-3">
+<h1 class="text-lg font-extrabold leading-tight tracking-tight">Suya Central</h1>
+<p class="text-[10px] uppercase tracking-widest text-primary font-bold">Ramadan 2026 Vendor</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex size-10 items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-md mx-auto pb-24">
+<!-- Action Panel: Availability Toggle -->
+<div class="p-4">
+<div class="flex flex-1 flex-col items-start justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 p-5 sm:flex-row sm:items-center">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">restaurant_menu</span>
+<p class="text-white text-base font-bold leading-tight">Ramadan Platters</p>
+</div>
+<p class="text-primary/70 text-sm font-normal leading-normal">Active for Iftar &amp; Suhoor prep</p>
+</div>
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-slate-700 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary">
+<div class="h-full w-[27px] rounded-full bg-white shadow-lg"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- Segmented Buttons: Order Status -->
+<div class="flex px-4 py-2">
+<div class="flex h-12 flex-1 items-center justify-center rounded-full bg-slate-100 dark:bg-white/5 p-1.5">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:text-black dark:has-[:checked]:text-black text-slate-500 dark:text-white/60 text-sm font-bold transition-all">
+<span class="truncate">Incoming</span>
+<input checked="" class="invisible w-0" name="order-status" type="radio" value="Incoming"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:text-black dark:has-[:checked]:text-black text-slate-500 dark:text-white/60 text-sm font-bold transition-all">
+<span class="truncate">Processing</span>
+<input class="invisible w-0" name="order-status" type="radio" value="Processing"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-primary has-[:checked]:text-black dark:has-[:checked]:text-black text-slate-500 dark:text-white/60 text-sm font-bold transition-all">
+<span class="truncate">Dispatched</span>
+<input class="invisible w-0" name="order-status" type="radio" value="Dispatched"/>
+</label>
+</div>
+</div>
+<!-- Section Header -->
+<div class="flex items-center justify-between px-6 pt-6 pb-2">
+<h3 class="text-white text-xl font-extrabold tracking-tight">Active Requests</h3>
+<span class="bg-primary/20 text-primary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">3 New</span>
+</div>
+<!-- Order List -->
+<div class="space-y-4 px-4 pb-4">
+<!-- Card 1: Critical Countdown -->
+<div class="flex flex-col items-stretch justify-start rounded-2xl bg-white/5 border border-white/10 overflow-hidden">
+<div class="relative w-full aspect-[21/9] bg-center bg-no-repeat bg-cover" data-alt="Traditional Nigerian Ramadan food platter" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCbGgB75q5lq64qVQSCDQ1InyOTPBbqYVtwy8t9HTXQr9AJYTwddivAQvuaDW1EDK1-rJ4htpZdM7cHPxj_vR8EDjW8jrk9BeK3DMIrzUPrXEcPsC9fVm9k-U6Cax-czU-xdYsDA7rer1NlQeuGr7aYMDKl2jbOWh02ZVwpGNGCYj1UEySJj1tcGZHgvJzeAXUm9fnvGxcYCCXnxXaaxudAvDYR6au6dxMbV9h7vd9zeIBLLm3PWugEIImOdCupiJ3w_HEyVsRLaxzK");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-3 left-4 flex items-center gap-2">
+<div class="flex items-center justify-center size-6 rounded-full bg-red-500">
+<span class="material-symbols-outlined text-white text-xs">timer</span>
+</div>
+<p class="text-white text-sm font-bold">Deliver by 6:42 PM (Iftar)</p>
+</div>
+</div>
+<div class="flex w-full flex-col gap-3 p-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-primary text-xs font-bold uppercase tracking-wider">Order #8829</p>
+<p class="text-white text-lg font-bold">Ahmed K. • Lekki Phase 1</p>
+</div>
+<div class="text-right">
+<p class="text-primary text-xl font-black">22m</p>
+<p class="text-white/40 text-[10px] uppercase font-bold">Until Iftar</p>
+</div>
+</div>
+<div class="h-px bg-white/10 w-full"></div>
+<div class="flex items-center gap-2 text-white/70">
+<span class="material-symbols-outlined text-sm">shopping_bag</span>
+<p class="text-sm font-medium leading-normal">1x Jollof Rice &amp; Lamb Platter, 2x Zobo</p>
+</div>
+<div class="flex gap-2 pt-2">
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-11 bg-primary text-black text-sm font-bold">
+                            Accept Order
+                        </button>
+<button class="flex size-11 items-center justify-center rounded-full bg-white/10 text-white">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="flex flex-col items-stretch justify-start rounded-2xl bg-white/5 border border-white/10 overflow-hidden opacity-90">
+<div class="relative w-full aspect-[21/9] bg-center bg-no-repeat bg-cover" data-alt="Spicy grilled suya meat" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAPKxzNf6WP9vG6La6IxqsF2aoH672IKikCr-2xjxIpskWocnb4RG3eiXUXFoS4Ud8GdnK_iNBdgYS1qhR2ze8fxVJaQXare8GBE5gy6lW7z2Psq3TGqYffWGUYKFsZlQAUCGSrJJocmVr1w6Fdx1Aa0Orm2YoOiepNqLc3GrXgW4aqIyZtlY2s0dYn3tBu8PL5bcv8ngRbrlek9w57mqKtmIx_qrem8VTAcu4AXLxduD19GLCzTKqO36rGp3ACoERM2naK2szPX9T6");'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-3 left-4 flex items-center gap-2">
+<div class="flex items-center justify-center size-6 rounded-full bg-primary">
+<span class="material-symbols-outlined text-black text-xs">timer</span>
+</div>
+<p class="text-white text-sm font-bold">Deliver by 6:45 PM (Iftar)</p>
+</div>
+</div>
+<div class="flex w-full flex-col gap-3 p-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-primary text-xs font-bold uppercase tracking-wider">Order #8831</p>
+<p class="text-white text-lg font-bold">Fatima B. • Victoria Island</p>
+</div>
+<div class="text-right">
+<p class="text-primary text-xl font-black">25m</p>
+<p class="text-white/40 text-[10px] uppercase font-bold">Until Iftar</p>
+</div>
+</div>
+<div class="h-px bg-white/10 w-full"></div>
+<div class="flex items-center gap-2 text-white/70">
+<span class="material-symbols-outlined text-sm">shopping_bag</span>
+<p class="text-sm font-medium leading-normal">Large Suya Sampler, 4x Masa Cakes</p>
+</div>
+<div class="flex gap-2 pt-2">
+<button class="flex-1 cursor-pointer items-center justify-center rounded-full h-11 bg-primary text-black text-sm font-bold">
+                            Accept Order
+                        </button>
+<button class="flex size-11 items-center justify-center rounded-full bg-white/10 text-white">
+<span class="material-symbols-outlined">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar (iOS Style) -->
+<nav class="fixed bottom-0 left-0 right-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-slate-200 dark:border-white/5 pb-8 pt-2">
+<div class="flex justify-around items-center max-w-md mx-auto px-6">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-[1]">dashboard</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Orders</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Menu</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Earnings</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold uppercase tracking-widest">Store</span>
+</button>
+</div>
+</nav>
+</body></html>

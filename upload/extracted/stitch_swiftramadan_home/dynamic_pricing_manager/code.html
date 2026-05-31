@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dynamic Pricing Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb613",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221d10",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-glow {
+            box-shadow: 0 0 15px rgba(236, 182, 19, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden border-x border-slate-200 dark:border-slate-800">
+<!-- TopAppBar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50">
+<div class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<div class="flex flex-col items-center flex-1">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Dynamic Pricing</h2>
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-red-500 animate-pulse"></div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Live Rush: Iftar Window</span>
+</div>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-slate-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">analytics</span>
+</button>
+</div>
+</div>
+<div class="h-2 bg-background-light dark:bg-background-dark"></div>
+<!-- SectionHeader: Heat Map -->
+<div class="px-4 py-2 flex justify-between items-end">
+<h4 class="text-primary text-sm font-bold leading-normal tracking-[0.015em] uppercase">Regional Demand Heat Map</h4>
+<span class="text-xs text-slate-500 dark:text-slate-400">Lagos, Victoria Island</span>
+</div>
+<!-- Map Component -->
+<div class="flex px-4 py-1">
+<div class="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-slate-200 dark:border-slate-800">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover" data-alt="Dark stylized map of Lagos with yellow and orange heat spots indicating high order density" data-location="Victoria Island, Lagos" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC-_twZZZToWfHO24i0xyqAcLO0JtNIEy4fRsxlCnjVPg7kwfLJ_ARqlPt96nNXgf4yv2J8htpEi2wjL6G2SShJRydRXPdjs170PonZbXMIcBjFPr8kpPbah2venTnxsKeUAbAAsTr-Nzr3cWhWJe7Xqvy4yg-elzscKbGSoLhwUyj-LVZsW8U5DxZTiPAyN-rDwZSGSwi5IA4M61J5tuowgfp8QhDcId9I9Us8TBCKmq0TpFsDkHThcyMn9nbWhyNS1aX-xXITzTMX");'>
+</div>
+<!-- Mock Overlay for Heat -->
+<div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
+<div class="absolute top-1/2 left-1/3 size-24 bg-primary/40 blur-3xl rounded-full"></div>
+<div class="absolute top-1/4 right-1/4 size-16 bg-orange-500/30 blur-2xl rounded-full"></div>
+<div class="absolute bottom-3 left-3 bg-background-dark/80 backdrop-blur-md p-2 rounded-lg border border-white/10">
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-white/70">Demand Level:</span>
+<span class="text-[10px] font-bold text-primary italic underline">CRITICAL</span>
+</div>
+</div>
+</div>
+</div>
+<div class="h-4"></div>
+<!-- Stats Component -->
+<div class="flex flex-wrap gap-3 p-4">
+<div class="flex min-w-[140px] flex-1 flex-col gap-1 rounded-xl p-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-white/5">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Active Rush Orders</p>
+<div class="flex items-baseline gap-2">
+<p class="text-slate-900 dark:text-white text-2xl font-bold leading-tight">64</p>
+<p class="text-[#0bda1d] text-xs font-bold">+22% vs yesterday</p>
+</div>
+</div>
+<div class="flex min-w-[140px] flex-1 flex-col gap-1 rounded-xl p-4 border border-slate-200 dark:border-slate-800 bg-white dark:bg-white/5">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">Kitchen Queue</p>
+<div class="flex items-baseline gap-2">
+<p class="text-slate-900 dark:text-white text-2xl font-bold leading-tight">18 min</p>
+<p class="text-red-500 text-xs font-bold">+4 min delay</p>
+</div>
+</div>
+</div>
+<!-- ProgressBar Component (Kitchen Load) -->
+<div class="flex flex-col gap-3 px-4 py-2">
+<div class="flex gap-6 justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-sm">restaurant</span>
+<p class="text-slate-900 dark:text-white text-sm font-bold leading-normal">Total Kitchen Capacity</p>
+</div>
+<p class="text-primary text-sm font-bold leading-normal">92%</p>
+</div>
+<div class="h-3 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 92%;"></div>
+</div>
+<p class="text-primary/80 text-xs font-medium leading-normal flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                Staff working at peak efficiency. Recommend Priority Prep fees.
+            </p>
+</div>
+<div class="h-4"></div>
+<!-- Surge Control Panel -->
+<div class="px-4 pb-6">
+<div class="bg-white dark:bg-white/5 border border-primary/30 rounded-2xl p-5 active-glow">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Surge Pricing</h3>
+<p class="text-xs text-slate-500 dark:text-slate-400">Balance demand and prep speed</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<!-- Multiplier Selector -->
+<div class="space-y-4">
+<div class="flex justify-between items-center text-xs font-bold uppercase tracking-widest text-slate-400">
+<span>Multiplier</span>
+<span class="text-primary text-lg">1.5x</span>
+</div>
+<div class="relative h-2 bg-slate-200 dark:bg-slate-800 rounded-full">
+<div class="absolute top-0 left-0 h-full w-1/2 bg-primary rounded-full"></div>
+<div class="absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 size-6 bg-white border-4 border-primary rounded-full shadow-lg cursor-pointer"></div>
+</div>
+<div class="flex justify-between px-1 text-[10px] text-slate-500 font-bold">
+<span>1.0x</span>
+<span>1.2x</span>
+<span>1.5x</span>
+<span>1.8x</span>
+<span>2.0x</span>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-[10px] font-bold uppercase text-slate-400 mb-1">Estimated Rush Revenue</p>
+<p class="text-2xl font-bold text-white">₦245,500 <span class="text-primary text-sm font-medium">+₦48k surge</span></p>
+</div>
+<span class="material-symbols-outlined text-primary text-3xl">trending_up</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="px-4 pb-10 flex flex-col gap-3">
+<button class="w-full bg-primary text-background-dark font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">bolt</span>
+                Update Storefront Pricing
+            </button>
+<div class="flex gap-3">
+<button class="flex-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-xl text-sm">
+                    Iftar Specials Only
+                </button>
+<button class="flex-1 bg-white dark:bg-white/5 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 font-bold py-3 rounded-xl text-sm">
+                    Priority Prep Fee
+                </button>
+</div>
+</div>
+<!-- Tab Bar (iOS Style) -->
+<div class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-lg flex justify-around p-3 pb-8">
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-medium">Dashboard</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium">Pricing</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[10px] font-medium">Orders</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-medium">Kitchen</span>
+</div>
+</div>
+</div>
+</body></html>

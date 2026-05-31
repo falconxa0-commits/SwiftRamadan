@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Corporate Eco-Leaderboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec5b",
+                        "gold": "#D4AF37",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gold-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<div class="relative flex h-auto w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Sustainability Rankings</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-slate-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Corporate Profile Header -->
+<div class="relative flex flex-col bg-background-light dark:bg-background-dark">
+<div class="flex p-4 @container">
+<div class="flex w-full flex-col gap-4 items-center">
+<div class="flex gap-4 flex-col items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32 border-4 border-primary/20" data-alt="Nigerian corporate logo for Zenith Tech" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDM3Cr5Ai2u3B9mnjbifzqDqhlhHCS6YWmmKKshk4j8V7Bij9HM7azsabX7Q9MmgnIpXZE7imjQE09kXPougRo5gwEypGYhoCiL5Sua6d-vvkPM8R-KuKS9X-Jfpfbc7Vd7viA8fOjyTlcNlrsHS_85ttZxh1QyIbkfDvYRdMx88Xs5KJDyDxSbFunkIwE_l6qsL4IuDdYyYlrpNaEFeabTZ9yg06fT1Kn4Yjvf5bYjFqatjdSUQhbyLjYplncgJGdJyiyOjFM0oZZj");'>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-gold text-background-dark p-2 rounded-full gold-glow">
+<span class="material-symbols-outlined text-[20px] font-bold">workspace_premium</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center">
+<p class="text-slate-900 dark:text-white text-[22px] font-bold leading-tight tracking-[-0.015em] text-center">Zenith Tech Solutions</p>
+<div class="flex items-center gap-2 mt-1">
+<p class="text-primary font-semibold text-base">Current Rank: 4th</p>
+<span class="text-slate-400">•</span>
+<p class="text-gold font-medium text-base">Gold Tier</p>
+</div>
+<p class="text-slate-500 dark:text-[#92c9a4] text-sm font-normal leading-normal text-center mt-1">Top 5% Eco-Friendly Logistics Partners</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Key Metrics Stats Section -->
+<div class="relative flex flex-col bg-background-light dark:bg-background-dark">
+<div class="flex flex-wrap gap-4 p-4">
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#23482f] shadow-sm border border-slate-100 dark:border-none">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-white/80 text-sm font-medium leading-normal">CO2 Saved</p>
+<span class="material-symbols-outlined text-primary text-xl">eco</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">1,250 kg</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[#0bda43] text-sm">trending_up</span>
+<p class="text-[#0bda43] text-xs font-bold leading-normal">+12.4% vs last month</p>
+</div>
+</div>
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-6 bg-white dark:bg-[#23482f] shadow-sm border border-slate-100 dark:border-none">
+<div class="flex justify-between items-start">
+<p class="text-slate-600 dark:text-white/80 text-sm font-medium leading-normal">Trees Planted</p>
+<span class="material-symbols-outlined text-primary text-xl">forest</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-light text-2xl font-bold leading-tight">184</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[#0bda43] text-sm">trending_up</span>
+<p class="text-[#0bda43] text-xs font-bold leading-normal">+5 new this week</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Segmented Control for Time Period -->
+<div class="relative flex flex-col bg-background-light dark:bg-background-dark">
+<div class="flex px-4 py-3">
+<div class="flex h-12 flex-1 items-center justify-center rounded-xl bg-slate-200 dark:bg-[#23482f] p-1.5">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#102216] has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-600 dark:text-[#92c9a4] text-sm font-semibold transition-all">
+<span class="truncate">Monthly</span>
+<input class="invisible w-0" name="period" type="radio" value="Monthly"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#102216] has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-600 dark:text-[#92c9a4] text-sm font-semibold transition-all">
+<span class="truncate">Ramadan 🌙</span>
+<input checked="" class="invisible w-0" name="period" type="radio" value="Ramadan"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-lg px-2 has-[:checked]:bg-white dark:has-[:checked]:bg-[#102216] has-[:checked]:shadow-sm has-[:checked]:text-primary text-slate-600 dark:text-[#92c9a4] text-sm font-semibold transition-all">
+<span class="truncate">All-Time</span>
+<input class="invisible w-0" name="period" type="radio" value="Yearly"/>
+</label>
+</div>
+</div>
+</div>
+<!-- Leaderboard Section -->
+<div class="relative flex flex-col bg-background-light dark:bg-background-dark pb-24">
+<div class="flex items-center justify-between px-4 pt-4 pb-2">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Corporate Rankings</h3>
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Lagos Region</span>
+</div>
+<!-- Leaderboard List -->
+<div class="flex flex-col gap-1 px-4">
+<!-- Rank 1 -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl bg-gradient-to-r from-gold/20 to-transparent border-l-4 border-gold">
+<div class="w-8 text-center">
+<span class="text-gold font-black text-xl">1</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Corporate logo 1" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCORYv_S0Zn_DQazQWHecUQRet-OALHr9tkzIlFWr4OB_jLiaOn8uESWF_C94-T1Jj_pRLemmdhO1O88yRCs8RnhIjffXcCsT4LgLUYrS6VvHYf7--A_O7eUdwW2uRSxMakCf79prp55E9k4nHJaGq7ldr8vW_gWapL8DY-MCxY3jTrCkAdK8-fMK7B8ALvSPY8aK0lJUpaOVRueZOV-Skm3HcA0zfwlraMGlrRQndBikFJn4r2MIKVP6HSt0kLB9DlrTashVi6G0ao");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">United Bank Alpha</p>
+<p class="text-slate-500 dark:text-[#92c9a4] text-xs">2,480 kg CO2 Saved</p>
+</div>
+<div class="text-gold">
+<span class="material-symbols-outlined fill-1">trophy</span>
+</div>
+</div>
+<!-- Rank 2 -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors">
+<div class="w-8 text-center">
+<span class="text-slate-400 dark:text-slate-300 font-bold text-lg">2</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Corporate logo 2" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuABSXpguScCAJL4h01fMyIl3eDCFeoAyasBB-ubi1V8ezzrQHr4b0FkvwGCvcPfORRZtP4ZZr--RRHd-O49LxtM_0Jj5L5xpXkv6zZHegZYQ4LxnhFmz0trTIbDm36lvMK_XLvcfytY4IDI1pmgwuzefIgiL_GCkByD1AKfWa296YcsxWfxeZ5e3M_d5dpdRa2hcjaeYZ0HpzXtAvH9Rc_LVXXe7eh4ACnXiA8AZLSgG-xr2leYx5S-DGR3T1CQX4k6tcoXCEPnPFVs");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">Mainstream Logistics</p>
+<p class="text-slate-500 dark:text-[#92c9a4] text-xs">1,920 kg CO2 Saved</p>
+</div>
+<div class="text-primary">
+<span class="material-symbols-outlined">shield_moon</span>
+</div>
+</div>
+<!-- Rank 3 -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors">
+<div class="w-8 text-center">
+<span class="text-slate-400 dark:text-slate-300 font-bold text-lg">3</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Corporate logo 3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCVLwoUnAZduqM6W90w9ZifVEqUliCXO-ra2eKoO0Gb_l2QbhlkDRkIAZmKC773E1B6wv2i-VLTwOynnQqW29x8eRSE6iRw_4MPuDTqO8XhV2oAUNqKmpAXiBbyly4TemWuzYMhJ0Y5ofZ8-DUUewEvryVE4TTK_LPpqq-qXeVZd5RYIVqYR0UfKJ8BmuPlA9NnqDDc4mCvDjJ4mkGBJJfIVAtIxnMAUe5mN8-R484ox7IAlDzxaWP6GowIQ4wg9c0rDvM2W7ib2Kxg");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">Interswitch Group</p>
+<p class="text-slate-500 dark:text-[#92c9a4] text-xs">1,650 kg CO2 Saved</p>
+</div>
+<div class="text-primary/60">
+<span class="material-symbols-outlined">energy_savings_leaf</span>
+</div>
+</div>
+<!-- Current User Rank (Highlighter) -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl bg-primary/10 border border-primary/30">
+<div class="w-8 text-center">
+<span class="text-primary font-bold text-lg">4</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="User Company logo" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAXc7utncpytzgmbOQ6aRRXOdG8bSJlxYr-VJl7vYBYSoFNk_XCHp_4cDqak_j11TNbhgRkwXRzxTHAx4dk4y_Os6-d4bxBcTpc1S3BqOaL1YGHTMp21oyApPdL0xQP_10jAT12YKTRjBGbls0rb5uq1mPSzqzw3SfEd-Wdxn6KjGsCaraCbxJHEJYN04yucWk2mWQlkL8suRVT-VVQL4s7x39vk58daVZKgB6YMryoh7zvU9dwpy0eOLAA3ptL1rPlLzTyL2R_FRPZ");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">Zenith Tech (You)</p>
+<p class="text-slate-500 dark:text-primary text-xs font-medium">1,250 kg CO2 Saved</p>
+</div>
+<div class="bg-primary text-background-dark rounded-full size-6 flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+</div>
+<!-- Rank 5 -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors">
+<div class="w-8 text-center">
+<span class="text-slate-400 dark:text-slate-300 font-bold text-lg">5</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Corporate logo 5" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCYxJIXk317G6IFm3QS3h78yGYQdHV2Ek8Rn8sf5MV6Znj7fL8G7K5H1iI-eJ91vFQx1p3BoL88vVYW0QMiMZpONDBk5Oj-3eQ8S759NJZV4oermHVM5cQQBO1IWPUHC0rucJiKeuxho73i4QcUAjbKpSehPxuY1NsOwJFmgwwZliBevdzxivx36tJAaqbXumnttFPLLU6b4VjeE9gJ71wQFKpbHZNm9J1qQYSlJg_n-LiCyj6T8Hw1BXG1_spnI0OJnDlRZn0NpYIi");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">Paystack HQ</p>
+<p class="text-slate-500 dark:text-[#92c9a4] text-xs">980 kg CO2 Saved</p>
+</div>
+</div>
+<!-- Rank 6 -->
+<div class="flex items-center gap-4 py-4 px-3 rounded-xl hover:bg-white dark:hover:bg-white/5 transition-colors">
+<div class="w-8 text-center">
+<span class="text-slate-400 dark:text-slate-300 font-bold text-lg">6</span>
+</div>
+<div class="size-12 rounded-lg bg-cover bg-center" data-alt="Corporate logo 6" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAffqtfLAZO-gs8ehClQIgQfzlhy24El36PLlYDaXDMu_rdkMQ38v64tQY9cmjd0QBBmFsMec_L21weZHv_b68sE7Q7AcZ3Jqiqcy3AW5OftXG-WtjbTeFUbSM6UTvViuCzXZMPQkKRRBvKB07kEjI6sMjlmMRtnTZZ8xSfU9RwBDy_Gx0YxS_LxMAgeBuu11QVNcLy4gbCoI88lW8oLMWksfKJERTY4X9QPt1N5lYIr4bkpoDhB33YohTh25QR1D4ZfoHPtQpzKKle");'></div>
+<div class="flex flex-1 flex-col">
+<p class="text-slate-900 dark:text-white font-bold text-base">Flutterwave</p>
+<p class="text-slate-500 dark:text-[#92c9a4] text-xs">840 kg CO2 Saved</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Navigation/Status Bar -->
+<div class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-[#102216]/90 backdrop-blur-md border-t border-slate-200 dark:border-white/10 px-6 py-4 flex items-center justify-between z-50">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined">trending_up</span>
+</div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Monthly Goal</p>
+<p class="text-sm text-slate-900 dark:text-white font-bold">85% Complete</p>
+</div>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-background-dark font-bold py-2.5 px-6 rounded-lg transition-colors text-sm">
+            Invite Team
+        </button>
+</div>
+</body></html>

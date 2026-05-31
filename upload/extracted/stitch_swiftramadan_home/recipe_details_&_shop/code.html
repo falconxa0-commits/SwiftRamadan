@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d442",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102215",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-white antialiased">
+<div class="relative flex min-h-screen w-full flex-col max-w-[480px] mx-auto overflow-x-hidden">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+<div class="text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Recipe Details</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/20 text-primary hover:bg-primary/30 transition-colors">
+<span class="material-symbols-outlined text-[20px]">share</span>
+</button>
+</div>
+</div>
+<!-- HeaderImage (Hero Section) -->
+<div class="@container px-4 py-2">
+<div class="relative w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden rounded-xl min-h-80 shadow-2xl" data-alt="Creamy oats topped with fresh dates and honey" style='background-image: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(16,34,21,1) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCIr7jhIciVA1iIP2dzqYXmjcxFe-5P31K-mo7JQSWf-_X5A2ai4GZ6YY35NRYs2_so_STofwBBhjLdi3FYkqp4oJAF65o81D6H1nd6qepJfdZhE_fuAPjEuEOplYVgqiLZNsXgE4h4HJQInCQuxPwIBG0yO4vDFAgErWOOFA0cGGjENy8rOUCaH-sSKuD9IWWcM3BdD1-xblRVFKNrv4h2P_qHBIHHxwXhOC6Sy2T6L4TeROgOVy8oOzRLv1PprX1LQwTnrbVF9iKu");'>
+<!-- Video Tutorial Overlay Badge -->
+<div class="absolute bottom-6 left-4 right-4">
+<div class="flex items-center gap-2 bg-white/10 backdrop-blur-md p-3 rounded-xl border border-white/20">
+<div class="size-10 flex items-center justify-center bg-primary rounded-full shadow-lg">
+<span class="material-symbols-outlined text-background-dark">play_arrow</span>
+</div>
+<div>
+<p class="text-xs font-semibold text-primary uppercase tracking-wider">Tutorial Preview</p>
+<p class="text-sm font-medium">Watch 2-min prep guide</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- HeadlineText & Meta -->
+<div class="px-4 pt-4">
+<div class="flex justify-between items-start">
+<h1 class="text-white tracking-tight text-[28px] font-bold leading-tight flex-1">Creamy Sahur Oats with Dates</h1>
+<button class="flex items-center gap-1 bg-[#25D366]/20 text-[#25D366] px-3 py-1.5 rounded-full text-xs font-bold mt-2">
+<span class="material-symbols-outlined text-sm">chat</span> WhatsApp
+                </button>
+</div>
+<p class="text-primary text-sm font-medium leading-normal pt-2">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px]">schedule</span> 5 mins • 
+                    <span class="material-symbols-outlined text-[16px]">bolt</span> 450 kcal • 
+                    <span class="material-symbols-outlined text-[16px]">verified</span> Halal
+                </span>
+</p>
+</div>
+<!-- SegmentedButtons Toggle -->
+<div class="flex px-4 py-6">
+<div class="flex h-12 flex-1 items-center justify-center rounded-full bg-white/5 p-1 border border-white/10">
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-primary has-[:checked]:text-background-dark text-white/60 text-sm font-bold leading-normal transition-all">
+<span class="truncate">Ingredients</span>
+<input checked="" class="invisible w-0" name="recipe-toggle" type="radio" value="Ingredients"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-full px-2 has-[:checked]:bg-primary has-[:checked]:text-background-dark text-white/60 text-sm font-bold leading-normal transition-all">
+<span class="truncate">Steps</span>
+<input class="invisible w-0" name="recipe-toggle" type="radio" value="Steps"/>
+</label>
+</div>
+</div>
+<!-- Ingredient List -->
+<div class="px-4 space-y-3">
+<div class="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">check_circle</span>
+<div>
+<p class="text-sm font-semibold">Steel-cut Oats</p>
+<p class="text-xs text-white/50">1 cup (80g)</p>
+</div>
+</div>
+<p class="text-primary font-bold text-sm">In Pantry</p>
+</div>
+<div class="flex items-center justify-between p-4 bg-primary/10 rounded-xl border border-primary/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white/20">radio_button_unchecked</span>
+<div>
+<p class="text-sm font-semibold">Medjool Dates</p>
+<p class="text-xs text-white/50">3 large, pitted</p>
+</div>
+</div>
+<button class="bg-primary text-background-dark text-[10px] font-black px-2 py-1 rounded-full uppercase">Missing</button>
+</div>
+<div class="flex items-center justify-between p-4 bg-primary/10 rounded-xl border border-primary/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-white/20">radio_button_unchecked</span>
+<div>
+<p class="text-sm font-semibold">Greek Yogurt</p>
+<p class="text-xs text-white/50">1/2 cup, plain</p>
+</div>
+</div>
+<button class="bg-primary text-background-dark text-[10px] font-black px-2 py-1 rounded-full uppercase">Missing</button>
+</div>
+</div>
+<!-- Smart Shopping Section -->
+<div class="mt-8 px-4 pb-32">
+<div class="bg-gradient-to-br from-[#1a3a23] to-background-dark p-6 rounded-2xl border border-primary/30 shadow-xl relative overflow-hidden">
+<!-- Ramadan Pattern Background Decal (Abstract) -->
+<div class="absolute -right-4 -top-4 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[120px]">stars</span>
+</div>
+<h3 class="text-lg font-bold mb-1">Smart Shopping</h3>
+<p class="text-sm text-white/70 mb-4">Add missing items to your grocery list for immediate delivery.</p>
+<div class="space-y-3">
+<div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-white/10 bg-cover" data-alt="Small pack of dates" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQeSqhohbtBZ5KuMGuRTf8QYrzglgY4zu8VtAwQFyJ2Uslt3bMoa6BOYZFEOiTlksfhwkSxZPChFltX2leTu8eP3iZzX8_NwYW8g9dHo1dCe2_7dveYmVRl5mBve_ZGo6UHrb5RKTIgnYrg2lo8Y7KF6naBQWzCWrCeDCsV8P1VgbVkF5li-pXBCwFDRRDy5QErHvtgAcS-Pkh5OoVlndY6gEksxdKNFAr8Lih81VsoqwFmU7XweT7IhLmT47ko0BhW16S6IgQKPBb');"></div>
+<span class="text-sm font-medium">Medjool Dates (250g)</span>
+</div>
+<span class="text-sm font-bold text-primary">₦1,200</span>
+</div>
+<div class="flex items-center justify-between bg-white/5 p-3 rounded-lg">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded bg-white/10 bg-cover" data-alt="Greek Yogurt tub" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDlyfE4zefVF9HvbyVveWA0hcAxu11pM9OVZFckiKYuPksQpCok7RUGcfOgPpxHpMLl5uokeaPtO336Q-qplqePB5ldf-7wsOsUUbZtZ50iNr_X2YLjWxPrp89IcVx2ILxwyn3p_dxbYCkDjZA9_-Q3o5Ljd1Ce0QsxQfzbh2DYUPftXhy3cqUz89H2uf3PINj_la4kiL9u9o3HYvMGBluo3rwaIbEEBuajkAO1PWmo39E9o7ET_7fd05pkofsRiluPh9pRCWL60tlX');"></div>
+<span class="text-sm font-medium">Greek Yogurt (500g)</span>
+</div>
+<span class="text-sm font-bold text-primary">₦2,400</span>
+</div>
+</div>
+<div class="mt-6 flex items-center justify-between">
+<div>
+<p class="text-[10px] uppercase text-white/50 tracking-widest font-bold">Total Missing</p>
+<p class="text-xl font-bold">₦3,600</p>
+</div>
+<button class="bg-primary text-background-dark px-6 py-3 rounded-full font-bold shadow-lg shadow-primary/20 flex items-center gap-2">
+<span class="material-symbols-outlined">shopping_cart</span>
+                        Add to Order
+                    </button>
+</div>
+<p class="text-center text-[10px] text-white/40 mt-4 italic flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-[12px]">local_shipping</span> 
+                    Guaranteed delivery before Iftar today
+                </p>
+</div>
+</div>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-dark/90 backdrop-blur-xl border-t border-white/5 max-w-[480px] mx-auto z-50">
+<button class="w-full bg-white text-background-dark py-4 rounded-full font-bold text-lg flex items-center justify-center gap-2 hover:bg-primary transition-colors">
+<span class="material-symbols-outlined">restaurant</span>
+                Start Cooking Mode
+            </button>
+</div>
+</div>
+</body></html>

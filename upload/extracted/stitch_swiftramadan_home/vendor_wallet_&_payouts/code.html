@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Vendor Wallet &amp; Payouts</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2b90d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#221e10",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .premium-gold-gradient {
+            background: linear-gradient(135deg, #f2b90d 0%, #b88a06 100%);
+        }
+        .dark-card-bg {
+            background-color: #2d2716;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
+<div class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Vendor Wallet</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex items-center justify-center rounded-lg h-12 bg-transparent text-slate-900 dark:text-white">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</div>
+<main class="max-w-md mx-auto pb-24">
+<!-- Premium Balance Card -->
+<div class="p-4">
+<div class="premium-gold-gradient flex flex-col items-stretch justify-end rounded-xl pt-16 shadow-lg relative overflow-hidden" data-alt="Golden metallic background with subtle geometric patterns">
+<!-- Subtle Ramadan Decoration -->
+<div class="absolute top-4 right-4 opacity-20">
+<span class="material-symbols-outlined text-4xl">bedtime</span>
+</div>
+<div class="flex w-full items-end justify-between gap-4 p-6 bg-black/10 backdrop-blur-sm">
+<div class="flex flex-1 flex-col gap-1">
+<p class="text-white/80 text-xs font-semibold uppercase tracking-wider">Available Balance</p>
+<p class="text-white tracking-tight text-3xl font-bold leading-tight">₦450,000.00</p>
+<p class="text-white/70 text-[10px] mt-1">Updated 2 mins ago</p>
+</div>
+<button class="flex min-w-[100px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-white text-background-dark text-sm font-bold shadow-sm hover:bg-gray-100 transition-colors">
+<span class="truncate">Withdraw</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Stats Grid -->
+<div class="flex flex-wrap gap-4 px-4 py-2">
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-5 border border-gray-200 dark:border-[#685a31] bg-white dark:bg-[#2d2716]/30">
+<div class="flex items-center gap-2">
+<p class="text-slate-500 dark:text-white/70 text-sm font-medium">Pending Settlements</p>
+<span class="material-symbols-outlined text-xs text-primary">info</span>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-xl font-bold">₦25,400.00</p>
+</div>
+<div class="flex min-w-[158px] flex-1 flex-col gap-2 rounded-xl p-5 border border-gray-200 dark:border-[#685a31] bg-white dark:bg-[#2d2716]/30">
+<p class="text-slate-500 dark:text-white/70 text-sm font-medium">Earnings (Ramadan)</p>
+<p class="text-slate-900 dark:text-white tracking-tight text-xl font-bold">₦1,280,000.00</p>
+</div>
+</div>
+<!-- Section Header -->
+<div class="flex items-center justify-between px-4 pt-6 pb-2">
+<h2 class="text-slate-900 dark:text-white text-xl font-bold leading-tight tracking-tight">Transaction History</h2>
+<button class="text-primary text-sm font-semibold">View All</button>
+</div>
+<!-- Filter Chips -->
+<div class="flex gap-3 p-4 overflow-x-auto no-scrollbar">
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 shadow-sm">
+<p class="text-background-dark text-sm font-bold leading-normal">All</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-[#493f22] px-5 border border-gray-200 dark:border-transparent">
+<p class="text-slate-600 dark:text-white text-sm font-medium leading-normal">Completed</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-[#493f22] px-5 border border-gray-200 dark:border-transparent">
+<p class="text-slate-600 dark:text-white text-sm font-medium leading-normal">Processing</p>
+</div>
+<div class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-gray-100 dark:bg-[#493f22] px-5 border border-gray-200 dark:border-transparent">
+<p class="text-slate-600 dark:text-white text-sm font-medium leading-normal">Refunded</p>
+</div>
+</div>
+<!-- Transactions List -->
+<div class="px-4 space-y-3">
+<!-- Transaction Item 1 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-[#2d2716]/50 rounded-xl border border-gray-100 dark:border-gray-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400">arrow_downward</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 dark:text-white leading-tight">Order #RAM-4829</p>
+<p class="text-xs text-slate-500 dark:text-white/50">Today, 2:45 PM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-slate-900 dark:text-white">+₦12,500.00</p>
+<span class="text-[10px] font-bold uppercase text-green-600 dark:text-green-400">Completed</span>
+</div>
+</div>
+<!-- Transaction Item 2 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-[#2d2716]/50 rounded-xl border border-gray-100 dark:border-gray-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600 dark:text-blue-400">account_balance</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 dark:text-white">Payout to GT Bank</p>
+<p class="text-xs text-slate-500 dark:text-white/50">Yesterday, 10:15 AM</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-slate-900 dark:text-white">-₦50,000.00</p>
+<span class="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400">Processing</span>
+</div>
+</div>
+<!-- Transaction Item 3 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-[#2d2716]/50 rounded-xl border border-gray-100 dark:border-gray-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600 dark:text-green-400">arrow_downward</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 dark:text-white">Order #RAM-4811</p>
+<p class="text-xs text-slate-500 dark:text-white/50">Mar 22, 2024</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-slate-900 dark:text-white">+₦8,200.00</p>
+<span class="text-[10px] font-bold uppercase text-green-600 dark:text-green-400">Completed</span>
+</div>
+</div>
+<!-- Transaction Item 4 -->
+<div class="flex items-center justify-between p-4 bg-white dark:bg-[#2d2716]/50 rounded-xl border border-gray-100 dark:border-gray-800">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-red-600 dark:text-red-400">history</span>
+</div>
+<div>
+<p class="font-bold text-sm text-slate-900 dark:text-white">Refunded Order #RAM-4702</p>
+<p class="text-xs text-slate-500 dark:text-white/50">Mar 21, 2024</p>
+</div>
+</div>
+<div class="text-right">
+<p class="font-bold text-sm text-slate-400 dark:text-white/40">-₦4,500.00</p>
+<span class="text-[10px] font-bold uppercase text-red-600 dark:text-red-400">Refunded</span>
+</div>
+</div>
+</div>
+<!-- Bank Account Quick Link -->
+<div class="mx-4 mt-8 p-4 bg-primary/10 rounded-xl border border-primary/30 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">account_balance_wallet</span>
+<div>
+<p class="text-xs font-semibold text-primary uppercase">Receiving Bank</p>
+<p class="text-sm font-bold text-slate-900 dark:text-white">GT Bank **** 8291</p>
+</div>
+</div>
+<button class="text-primary text-xs font-bold px-3 py-1 border border-primary rounded-lg">Change</button>
+</div>
+</main>
+<!-- Bottom Navigation Bar (Placeholder for iOS context) -->
+<div class="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-200 dark:border-gray-800 flex justify-around p-3 pb-6">
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px]">Dashboard</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">account_balance_wallet</span>
+<span class="text-[10px]">Wallet</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">restaurant</span>
+<span class="text-[10px]">Orders</span>
+</div>
+<div class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px]">Account</span>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Traffic-Optimized Routing</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13ec13",
+              "background-light": "#f6f8f6",
+              "background-dark": "#0a0f0a",
+              "traffic-red": "#ef4444",
+              "traffic-orange": "#f97316",
+              "traffic-green": "#22c55e"
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans"]
+            },
+            borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .map-gradient-overlay {
+            background: linear-gradient(180deg, rgba(10, 15, 10, 0.9) 0%, rgba(10, 15, 10, 0) 15%, rgba(10, 15, 10, 0) 85%, rgba(10, 15, 10, 1) 100%);
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(19, 236, 19, 0.5);
+        }
+        .route-path {
+            filter: drop-shadow(0 0 8px #13ec13);
+        }
+        .traffic-line-heavy { stroke: #ef4444; stroke-width: 4; stroke-linecap: round; filter: drop-shadow(0 0 3px #ef4444); }
+        .traffic-line-moderate { stroke: #f97316; stroke-width: 4; stroke-linecap: round; }
+        .traffic-line-clear { stroke: #22c55e; stroke-width: 4; stroke-linecap: round; }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark font-display text-white overflow-hidden">
+<div class="relative flex min-h-screen w-full flex-col">
+<div class="fixed top-16 z-[60] w-full px-4 pt-4">
+<div class="bg-background-dark/95 backdrop-blur-xl border border-traffic-orange/50 rounded-2xl p-4 flex items-start gap-3 shadow-2xl animate-pulse">
+<div class="bg-traffic-orange/20 p-2 rounded-full">
+<span class="material-symbols-outlined text-traffic-orange text-xl">traffic</span>
+</div>
+<div class="flex-1">
+<p class="text-white text-sm font-bold">Smart-Reroute Active</p>
+<p class="text-white/70 text-xs leading-relaxed">Traffic detected on Third Mainland Bridge. Rerouting for 5:45 PM Iftar delivery.</p>
+</div>
+<button class="text-white/40"><span class="material-symbols-outlined text-sm">close</span></button>
+</div>
+</div>
+<div class="fixed top-0 z-50 w-full flex flex-col bg-background-dark/80 backdrop-blur-md border-b border-white/5">
+<div class="flex items-center p-4 justify-between">
+<div class="text-white flex size-10 shrink-0 items-center justify-center rounded-full bg-white/5">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-white text-base font-bold tracking-tight">AI Smart-Route</h2>
+<div class="flex items-center gap-1.5">
+<span class="size-1.5 rounded-full bg-primary animate-pulse"></span>
+<span class="text-primary text-[10px] font-bold uppercase tracking-widest">Live Traffic Analysis</span>
+</div>
+</div>
+<div class="flex w-10 items-center justify-end">
+<button class="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-xl">settings_input_component</span>
+</button>
+</div>
+</div>
+</div>
+<div class="relative flex-1 flex flex-col h-screen">
+<div class="absolute inset-0 z-0 bg-[#0d150d]">
+<div class="w-full h-full bg-cover bg-center opacity-40 mix-blend-luminosity" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBgdt_RfpTdq4LbWlTyXkr2iGF4N7zp7iATdRxtBKfFDKOuFW4--qnuMOROjvePpyHua6duAT17e_2vRQlbQhPxD9LkQse5fcF9kWS01Pn4rR1Qo4B9HzerZaoW7XFhJbbe5ZPQKQAkCZC7vwpVuMdVTSWQ02D6uz2pWxRbLUv3sPEi1hiwYJMGcb9hOk6vTUkgoAwWfQdLiu-6KfRsBfthgFzPi4bEBIw1TJKQxXM-mZBUdZnVTSyuRNos71aoDRJRFPYJCAL7XOwQ');"></div>
+<svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+<path class="traffic-line-heavy opacity-80" d="M 50 150 Q 150 180 250 150" fill="transparent"></path>
+<path class="traffic-line-heavy opacity-80" d="M 280 120 L 350 100" fill="transparent"></path>
+<path class="traffic-line-moderate opacity-60" d="M 0 400 L 150 420" fill="transparent"></path>
+<path class="traffic-line-moderate opacity-60" d="M 200 600 Q 250 550 300 600" fill="transparent"></path>
+<path class="traffic-line-clear opacity-40" d="M 100 800 L 300 750" fill="transparent"></path>
+</svg>
+<svg class="absolute inset-0 w-full h-full pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+<path class="route-path" d="M 50 700 L 80 550 L 250 450 L 220 300 L 350 200" fill="transparent" stroke="#13ec13" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"></path>
+<circle cx="50" cy="700" fill="#13ec13" r="6"></circle>
+<circle cx="80" cy="550" fill="#13ec13" r="6"></circle>
+<circle cx="250" cy="450" fill="#13ec13" r="6"></circle>
+<circle cx="220" cy="300" fill="#13ec13" r="6"></circle>
+<circle cx="350" cy="200" fill="#13ec13" r="6"></circle>
+</svg>
+<div class="map-gradient-overlay absolute inset-0 pointer-events-none"></div>
+</div>
+<div class="relative z-10 px-4 pt-44 flex flex-col h-full pointer-events-none">
+<div class="flex flex-col gap-3 pointer-events-auto max-w-[160px]">
+<div class="flex flex-col gap-1 rounded-2xl p-3 bg-background-dark/90 backdrop-blur-md border border-primary/20 neon-glow">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">schedule</span>
+<p class="text-white/60 text-[10px] font-bold uppercase tracking-wider">Time Saved</p>
+</div>
+<div class="flex items-baseline gap-1">
+<p class="text-white text-xl font-bold">24</p>
+<p class="text-white/50 text-xs font-medium">mins</p>
+</div>
+<div class="w-full bg-white/10 h-1 rounded-full overflow-hidden mt-1">
+<div class="bg-primary h-full w-[75%] shadow-[0_0_8px_#13ec13]"></div>
+</div>
+</div>
+<div class="flex flex-col gap-1 rounded-2xl p-3 bg-background-dark/90 backdrop-blur-md border border-primary/20 neon-glow">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">monitoring</span>
+<p class="text-white/60 text-[10px] font-bold uppercase tracking-wider">Efficiency</p>
+</div>
+<div class="flex items-baseline gap-1">
+<p class="text-white text-xl font-bold">98.4</p>
+<p class="text-white/50 text-xs font-medium">%</p>
+</div>
+<p class="text-primary text-[10px] font-bold">+12% vs last Iftar</p>
+</div>
+<div class="flex flex-col gap-1 rounded-2xl p-3 bg-background-dark/90 backdrop-blur-md border border-white/5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-base">payments</span>
+<p class="text-white/60 text-[10px] font-bold uppercase tracking-wider">Est. Earnings</p>
+</div>
+<p class="text-white text-lg font-bold">₦12,500</p>
+</div>
+</div>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col items-end gap-4 pointer-events-auto">
+<div class="bg-background-dark/90 backdrop-blur-md p-2 rounded-2xl border border-white/5 flex flex-col gap-3">
+<div class="flex items-center gap-2 px-1">
+<div class="size-2 rounded-full bg-traffic-red"></div>
+<span class="text-[10px] font-medium text-white/70">Heavy</span>
+</div>
+<div class="flex items-center gap-2 px-1">
+<div class="size-2 rounded-full bg-traffic-orange"></div>
+<span class="text-[10px] font-medium text-white/70">Mod</span>
+</div>
+<div class="flex items-center gap-2 px-1">
+<div class="size-2 rounded-full bg-traffic-green"></div>
+<span class="text-[10px] font-medium text-white/70">Clear</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5 shadow-2xl rounded-xl overflow-hidden">
+<button class="flex size-12 items-center justify-center bg-background-dark/90 border-b border-white/5 text-white">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="flex size-12 items-center justify-center bg-background-dark/90 text-white">
+<span class="material-symbols-outlined">remove</span>
+</button>
+</div>
+<button class="flex size-14 items-center justify-center rounded-2xl bg-primary text-background-dark shadow-xl neon-glow">
+<span class="material-symbols-outlined font-bold text-2xl">navigation</span>
+</button>
+</div>
+</div>
+</div>
+<div class="fixed bottom-0 z-50 w-full bg-background-dark/95 backdrop-blur-2xl rounded-t-[2.5rem] border-t border-primary/20 shadow-[0_-10px_40px_rgba(0,0,0,0.8)] pb-8">
+<div class="flex flex-col w-full max-h-[35vh] overflow-y-auto">
+<div class="flex justify-center py-4">
+<div class="w-10 h-1.5 bg-white/20 rounded-full"></div>
+</div>
+<div class="flex justify-between items-center px-6 mb-4">
+<div>
+<h3 class="text-white text-xl font-bold tracking-tight">Optimized Plan</h3>
+<p class="text-white/50 text-xs">Targeting 6:15 PM completion</p>
+</div>
+<div class="flex flex-col items-end">
+<span class="bg-primary/20 text-primary text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">5 Deliveries</span>
+<span class="text-white/40 text-[10px] mt-1">12.4 km total</span>
+</div>
+</div>
+<div class="flex flex-col px-6 gap-4 mb-20">
+<div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5">
+<div class="flex size-10 items-center justify-center bg-primary text-background-dark rounded-xl font-bold">1</div>
+<div class="flex-1">
+<p class="text-white text-sm font-bold">Lekki Heights Tower</p>
+<p class="text-white/50 text-xs">3x Deluxe Iftar Box • 2.1km</p>
+</div>
+<div class="text-traffic-green font-bold text-xs uppercase">On Track</div>
+</div>
+<div class="flex items-center gap-4 bg-white/5 p-3 rounded-2xl border border-white/5 opacity-60">
+<div class="flex size-10 items-center justify-center bg-white/10 text-white rounded-xl font-bold">2</div>
+<div class="flex-1">
+<p class="text-white text-sm font-bold">VI Waterfront Estate</p>
+<p class="text-white/50 text-xs">1x Jollof Feast • 4.5km</p>
+</div>
+<div class="text-traffic-orange font-bold text-xs uppercase">Delayed</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-6 left-0 right-0 px-6">
+<button class="flex w-full h-16 items-center justify-center rounded-2xl bg-primary text-background-dark gap-3 text-lg font-bold shadow-2xl neon-glow">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+                    Begin AI-Routed Trip
+                </button>
+</div>
+</div>
+</div>
+
+</body></html>

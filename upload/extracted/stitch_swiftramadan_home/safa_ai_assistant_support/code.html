@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SAFA AI Support</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec49",
+                        "accent-gold": "#D4AF37",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102215",
+                        "card-dark": "#193320",
+                        "bubble-dark": "#23482c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<!-- Main Container (iOS Phone Form Factor) -->
+<div class="relative flex h-screen w-full max-w-[430px] mx-auto flex-col bg-background-light dark:bg-background-dark overflow-hidden border-x border-gray-800">
+<!-- TopAppBar Component -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-white/5 sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="AI assistant profile avatar with green glow" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB4G4fFhcNpHp0AhouZ0QEmIttWnRlyGzbvKm_2o1gO1PCSQB6Lyw3bSAH1HXQSYaPeWQDOC8NFan9wbOUa5S5MU1Rb_jlTdglKQJ0o2-ZqREq3DAVelDhvWMP5kruns8BF6YXNgnuNJB6PRKHX730PA4ml5xBSAGp_Sk_wsoX25WH7vQP516fB0YM_BaEA-Pe5cmXIdMEcHsKPM9U8ruZcLWmS6545A_5RF5HWqGnS8NBZ90Tk_zDoXV0e13MCfbPtL9DVmKWyFpre");'>
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-background-dark"></div>
+</div>
+<div>
+<h2 class="text-white text-base font-bold leading-tight tracking-tight">SAFA AI Support</h2>
+<p class="text-primary text-xs font-medium">Online • Concierge</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center justify-center rounded-full size-10 bg-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-accent-gold">workspace_premium</span>
+</button>
+<button class="flex items-center justify-center rounded-full size-10 bg-white/5 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-white">close</span>
+</button>
+</div>
+</div>
+<!-- Chat Area -->
+<div class="flex-1 overflow-y-auto px-4 py-2 space-y-2 hide-scrollbar">
+<!-- SectionHeader -->
+<h4 class="text-[#92c9a0] text-[11px] font-bold uppercase leading-normal tracking-widest px-4 py-6 text-center">Today • Ramadan Day 12</h4>
+<!-- SingleMessage (Bot) -->
+<div class="flex items-end gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 shrink-0 border border-primary/30" data-alt="SAFA AI icon small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCtqJmvVOcDLr07BWbZk91gDR8diVcoLy1NPJ9VBw2HnKtZHeqRgfuBxooZEfym8V5Ow1wXarCiNnnmM9Bm9Idf9jWMhvtmF6nSZHNs99IAAAurWSn3N8lGYZOT-2-KKHo0cm4-kKtce62xhUSaZ0yQOXDUPg1sLQhCtrFihjLfkMeTOHLbDMH43rgUV6khoZFNIXHdAp93eyD4BY79V3GVACM-Qz8tIydHNAIjuzsDEv366F5-ylVMELG5-5TLemreZkpgvGO4YzcT");'></div>
+<div class="flex flex-1 flex-col gap-1 items-start">
+<p class="text-primary text-[11px] font-semibold leading-normal ml-1">SAFA Assistant</p>
+<div class="text-[15px] font-normal leading-relaxed flex flex-col gap-2 max-w-[85%] rounded-2xl rounded-bl-none px-4 py-3 bg-bubble-dark text-white shadow-lg shadow-black/20">
+<p>As-salamu alaykum! I am SAFA, your premium logistics and Ramadan companion. How can I assist you today?</p>
+</div>
+</div>
+</div>
+<!-- SingleMessage (User) -->
+<div class="flex items-end gap-3 p-2 justify-end">
+<div class="flex flex-1 flex-col gap-1 items-end">
+<p class="text-[#92c9a0] text-[11px] font-normal leading-normal mr-1">You</p>
+<p class="text-[15px] font-medium leading-normal flex max-w-[85%] rounded-2xl rounded-br-none px-4 py-3 bg-primary text-background-dark shadow-lg shadow-primary/10">
+                        Track my bulk order for the Iftar distribution
+                    </p>
+</div>
+</div>
+<!-- Card (Tracking Info) -->
+<div class="p-2 ml-10">
+<div class="flex flex-col gap-0 rounded-2xl bg-card-dark overflow-hidden border border-white/5 shadow-2xl">
+<div class="p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div class="flex flex-col gap-1">
+<p class="text-white text-base font-bold leading-tight">Bulk Order #SAFA-7829</p>
+<p class="text-primary text-xs font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span>
+                                    On the way to Lagos Island
+                                </p>
+</div>
+<div class="bg-accent-gold/20 px-2 py-1 rounded text-[10px] font-bold text-accent-gold uppercase">Priority</div>
+</div>
+<div class="flex items-center gap-4 py-2 border-y border-white/5">
+<div class="flex-1">
+<p class="text-[#92c9a0] text-[10px] uppercase font-bold">Estimated Delivery</p>
+<p class="text-white text-lg font-bold">4:30 PM</p>
+</div>
+<div class="flex-1">
+<p class="text-[#92c9a0] text-[10px] uppercase font-bold">Items</p>
+<p class="text-white text-sm font-medium">50 Distribution Packs</p>
+</div>
+</div>
+<button class="flex w-full cursor-pointer items-center justify-center rounded-xl h-10 px-4 bg-bubble-dark text-white gap-2 text-sm font-bold transition-all hover:bg-white/10 active:scale-95">
+<span class="material-symbols-outlined text-primary">map</span>
+<span>Live Map Tracking</span>
+</button>
+</div>
+<div class="w-full bg-center bg-no-repeat aspect-[21/9] bg-cover" data-alt="Map view showing delivery vehicle moving through city streets" data-location="Lagos, Nigeria" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDo0BMnqTi_hPHOeCnITvqJ2NrL5-2mOGOVULF9h0KdbP7YJqRWy_DmG-xxzBjptGRUZgwWUS9g8mOrsgfvfnrHfGzOMavKOvTJI8b_9iuNvM1J1sE_u-h29IGcpaOOWBbxHyVIQF7EzxgxMPSJWHNHRdwl7kYWKeN-Ht2zdgtwRQ9ZYL5annKx3Htp9TUHv6E4KOs7zSXxXsRPmF_0W4B-IJY4xh1Ewyc8F9QYmiRBtjJzyBoepIFm_c-Vj8w8fjWtPovPTU1Zbq3V");'>
+</div>
+</div>
+</div>
+<!-- Quick Actions Scroll -->
+<div class="flex items-center gap-2 overflow-x-auto py-4 hide-scrollbar">
+<button class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-white whitespace-nowrap hover:bg-white/10">
+<span class="material-symbols-outlined text-primary text-sm">alarm</span>
+                    Update Sahur Alarm
+                </button>
+<button class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-white whitespace-nowrap hover:bg-white/10">
+<span class="material-symbols-outlined text-accent-gold text-sm">restaurant_menu</span>
+                    View Iftar Menu
+                </button>
+<button class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-white whitespace-nowrap hover:bg-white/10">
+<span class="material-symbols-outlined text-white text-sm">support_agent</span>
+                    Connect to Human
+                </button>
+<button class="shrink-0 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-bold text-white whitespace-nowrap hover:bg-white/10">
+<span class="material-symbols-outlined text-white text-sm">receipt_long</span>
+                    Order History
+                </button>
+</div>
+<!-- SingleMessage (Bot - Update) -->
+<div class="flex items-end gap-3 p-2">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full w-8 shrink-0 border border-primary/30" data-alt="SAFA AI icon small" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA-XiMtGfQfX5EF9mLMLf1ygK2VgBGmM-fJSkTXgv83741QVh6J9rCMG42V6qeN_EVQtNDDiuFrlH741fJ2nVPhrRPT9OgsSlLDIRqSBE2WEvuZFa3JjF5S2NWpjZCnhBc6TGCeUIlninUXLB2n-NrYsT_qn9iNoq08UE0qZ6QgK3StmiRCHtvEojf58if6bEglUiA10I0Z54SPd4gg3pZcM8LXsWidvTc3Owc2MVchxqQ56DDbi6SHsBECiTyK0w6EbUQ8s1WwV8v0");'></div>
+<div class="flex flex-1 flex-col gap-1 items-start">
+<div class="text-[15px] font-normal leading-relaxed flex flex-col gap-2 max-w-[85%] rounded-2xl rounded-bl-none px-4 py-3 bg-bubble-dark text-white">
+<p>Would you like me to update your Sahur reminder based on the latest moon sighting update in your area?</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="bg-background-light dark:bg-background-dark p-4 pb-8 border-t border-white/5">
+<div class="flex items-center gap-3 bg-white/5 rounded-2xl p-2 pl-4 border border-white/10">
+<button class="flex items-center justify-center text-[#92c9a0] hover:text-white transition-colors">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<input class="flex-1 bg-transparent border-none text-white placeholder:text-gray-500 text-sm focus:ring-0" placeholder="Ask SAFA about your delivery..." type="text"/>
+<button class="flex items-center justify-center size-10 rounded-xl bg-primary text-background-dark transition-all active:scale-90">
+<span class="material-symbols-outlined font-bold">send</span>
+</button>
+</div>
+<!-- Human Fallback Hint -->
+<p class="text-center text-[10px] text-gray-500 mt-3 font-medium uppercase tracking-tighter">
+                Premium Support: <span class="text-accent-gold">Direct Human Access Available</span>
+</p>
+</div>
+</div>
+</body></html>

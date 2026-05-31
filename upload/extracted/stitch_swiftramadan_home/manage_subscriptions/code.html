@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Manage Subscriptions</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2b90d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#221e10",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-white min-h-screen">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[430px] mx-auto bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- TopAppBar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50">
+<div class="text-white flex size-12 shrink-0 items-center justify-start">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Manage Subscriptions</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+</div>
+</div>
+<!-- Subscription Header Card -->
+<div class="p-4">
+<div class="flex items-stretch justify-between gap-4 rounded-xl bg-[#342d18] p-4 shadow-lg border border-[#493f22]">
+<div class="flex flex-[2_2_0px] flex-col gap-4">
+<div class="flex flex-col gap-1">
+<p class="text-primary text-xs font-bold uppercase tracking-widest">Premium Plan</p>
+<p class="text-white text-xl font-bold leading-tight">Corporate Pro Plan</p>
+<div class="flex items-center gap-2 mt-1">
+<span class="size-2 rounded-full bg-green-500"></span>
+<p class="text-[#cbbc90] text-sm font-normal">Active Subscription</p>
+</div>
+</div>
+<button class="flex min-w-[120px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-9 px-4 bg-primary text-background-dark text-sm font-bold leading-normal w-fit transition-all active:scale-95">
+<span class="truncate">Update Plan</span>
+</button>
+</div>
+<div class="w-32 bg-center bg-no-repeat aspect-square bg-cover rounded-lg border border-[#493f22]" data-alt="Modern corporate office cafeteria setting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCQxepD2Gv3K-SVPXdL4DX-VfI5-nlHTKAUnh_9rrqVHfNoQ9UUpRFrS_2cke0et7nDnMlAKIXT7DlPkRbc0zLohOeHTWYFeLrlqcoqs_z6tGfG3azUm-AYR9Jr4BsUeufHKs9Db4oSL6ctW96zMwaRhi-tuVH9ZMScID3xtVgN8Bt-LIbvIV6FnfceM_9pl4sOe3KaNGwRReTd1kqGcbTqauUa8BmifdphrR_Tq3F8-7ZWSddCShf_ZM3XJ0NiAGO9aZMXe_MamoSG");'>
+</div>
+</div>
+</div>
+<!-- Weekly Schedule Header -->
+<div class="flex items-center justify-between px-4 pt-4">
+<h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Your Weekly Schedule</h3>
+<div class="flex items-center gap-1 text-primary text-xs font-bold">
+<span class="material-symbols-outlined text-sm">event_repeat</span>
+                RECURRING
+            </div>
+</div>
+<!-- Tabs / Week Days -->
+<div class="pb-3 mt-2">
+<div class="flex border-b border-[#493f22] px-4 justify-between">
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-primary text-white pb-[13px] pt-4 flex-1" href="#">
+<p class="text-white text-xs font-bold leading-normal tracking-[0.015em]">MON</p>
+<p class="text-[10px] text-primary">Oct 09</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#cbbc90] pb-[13px] pt-4 flex-1" href="#">
+<p class="text-[#cbbc90] text-xs font-bold leading-normal tracking-[0.015em]">TUE</p>
+<p class="text-[10px]">10</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#cbbc90] pb-[13px] pt-4 flex-1" href="#">
+<p class="text-[#cbbc90] text-xs font-bold leading-normal tracking-[0.015em]">WED</p>
+<p class="text-[10px]">11</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#cbbc90] pb-[13px] pt-4 flex-1" href="#">
+<p class="text-[#cbbc90] text-xs font-bold leading-normal tracking-[0.015em]">THU</p>
+<p class="text-[10px]">12</p>
+</a>
+<a class="flex flex-col items-center justify-center border-b-[3px] border-b-transparent text-[#cbbc90] pb-[13px] pt-4 flex-1" href="#">
+<p class="text-[#cbbc90] text-xs font-bold leading-normal tracking-[0.015em]">FRI</p>
+<p class="text-[10px]">13</p>
+</a>
+</div>
+</div>
+<!-- ListItems for Selected Day -->
+<div class="flex flex-col gap-2 p-2">
+<!-- Meal Item 1 -->
+<div class="flex flex-col bg-[#2a2414] rounded-xl overflow-hidden border border-[#493f22] mb-3">
+<div class="flex gap-4 p-4 justify-between items-center">
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-[80px]" data-alt="Delicious Jollof Rice with grilled chicken and plantain" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDBcw7MBWRs7dy_9NpIC274zSv8D7jaR0K0p-RVRCq8MBcFi4BXhHnKoY-6MVKfYIyQ3vtAwH739GLh7zxkDu0-SmIOniav0CzfL5PEP4UR96s8cdIYZ9YkfNQs2hUdXoUalhv0l8B5GJ1dlTQeLVy1iw8_e6JK8S49fkI7pLy2RBoQoWn5_Akuy8U8A4dYdaOYMVSJ5tfgNS7GNvX5-SJ9u6HPX0P5JyyXqveBcLuhkblHdZoLozcSFkXvJ7Z2zLhq37jtrEdjSR7A");'></div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Jollof Rice &amp; Grilled Chicken</p>
+<p class="text-[#cbbc90] text-xs font-medium leading-normal mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">schedule</span>
+                                12:30 PM - 1:15 PM
+                            </p>
+<p class="text-primary text-[10px] font-bold uppercase tracking-wider mt-1">Suhur / Iftar Mode</p>
+</div>
+</div>
+<div class="shrink-0 flex flex-col items-center gap-2">
+<p class="text-[10px] text-[#cbbc90] font-bold">SKIP</p>
+<label class="relative flex h-[28px] w-[48px] cursor-pointer items-center rounded-full border-none bg-[#493f22] p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all">
+<div class="h-full w-[24px] rounded-full bg-white shadow-md"></div>
+<input class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<div class="flex border-t border-[#493f22]">
+<button class="flex-1 py-3 text-primary text-sm font-bold flex items-center justify-center gap-2 hover:bg-white/5">
+<span class="material-symbols-outlined text-lg">swap_horiz</span>
+                        Swap Dish
+                    </button>
+<div class="w-[1px] bg-[#493f22]"></div>
+<button class="flex-1 py-3 text-white/70 text-sm font-medium flex items-center justify-center gap-2 hover:bg-white/5">
+<span class="material-symbols-outlined text-lg">info</span>
+                        Details
+                    </button>
+</div>
+</div>
+<!-- Meal Item 2 (Alternative) -->
+<div class="flex flex-col bg-[#2a2414] rounded-xl overflow-hidden border border-[#493f22] mb-3 opacity-60">
+<div class="flex gap-4 p-4 justify-between items-center">
+<div class="flex items-start gap-4">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-[80px] grayscale" data-alt="Nigerian Beef Suya with onions and spices" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAhUf7Beq31HPdz1-cyrXxWT_Suqm3Aw1hKGVsDyVTkCWxXmTJ5AHqCkQV4jXX35vfYD681PHkBbmHFAKCgJpfQJ-TKZTv24EgfAHok1oJVs67a3gBaYSKTqrmCU0KHNAGV1FKnU_zUz-PWuLJBr48w08OV0pEa8555w3LJZKCzqkhHYCe_Z7PEHiYj2KXXiRWtT7B9TRe0_fGNwcsknAJnNRXJNShDgHy82b8ULMph8AlGm2LbmItcVGiPimMqM5LnXXHrAbEZiv6o");'></div>
+<div class="flex flex-1 flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Beef Suya &amp; Sides (Skipped)</p>
+<p class="text-[#cbbc90] text-xs font-medium leading-normal mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-xs">block</span>
+                                Not scheduled for delivery
+                            </p>
+</div>
+</div>
+<div class="shrink-0 flex flex-col items-center gap-2">
+<p class="text-[10px] text-primary font-bold">SKIPPED</p>
+<label class="relative flex h-[28px] w-[48px] cursor-pointer items-center rounded-full border-none bg-primary p-0.5 justify-end transition-all">
+<div class="h-full w-[24px] rounded-full bg-white shadow-md"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Links & Billing Section -->
+<div class="mt-4 px-4 pb-10">
+<h4 class="text-white text-sm font-bold uppercase tracking-widest mb-4 opacity-70">Billing Information</h4>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-4 bg-[#342d18] rounded-xl border border-[#493f22]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">calendar_month</span>
+<div>
+<p class="text-white text-sm font-bold">Next Renewal</p>
+<p class="text-[#cbbc90] text-xs">October 24, 2023</p>
+</div>
+</div>
+<p class="text-white text-sm font-bold">₦45,000</p>
+</div>
+<div class="flex items-center justify-between p-4 bg-[#342d18] rounded-xl border border-[#493f22] cursor-pointer active:scale-[0.98] transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">credit_card</span>
+<div>
+<p class="text-white text-sm font-bold">Payment Method</p>
+<p class="text-[#cbbc90] text-xs">Visa ending in •••• 4421</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#cbbc90]">chevron_right</span>
+</div>
+<div class="flex items-center justify-between p-4 bg-[#342d18] rounded-xl border border-[#493f22] cursor-pointer active:scale-[0.98] transition-transform">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">history</span>
+<div>
+<p class="text-white text-sm font-bold">Transaction History</p>
+<p class="text-[#cbbc90] text-xs">View all past receipts</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#cbbc90]">chevron_right</span>
+</div>
+</div>
+<button class="w-full mt-8 py-4 bg-[#ff4444]/10 border border-[#ff4444]/20 text-[#ff4444] rounded-xl font-bold text-sm">
+                Cancel Meal Subscription
+            </button>
+</div>
+<!-- Sticky Bottom Save (Optional visual) -->
+<div class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] p-4 bg-background-dark/80 backdrop-blur-md border-t border-[#493f22]">
+<button class="w-full h-14 bg-primary text-background-dark font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/10">
+                Confirm Changes
+                <span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+<div class="h-24"></div> <!-- Spacer for sticky button -->
+</div>
+</body></html>

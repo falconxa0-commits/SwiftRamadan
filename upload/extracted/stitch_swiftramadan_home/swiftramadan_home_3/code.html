@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwiftLogistics Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#13ec13",
+                "accent-gold": "#FFD700",
+                "background-light": "#f6f8f6",
+                "background-dark": "#0a0a0a",
+                "surface-dark": "#1a1a1a",
+              },
+              fontFamily: {
+                "display": ["Plus Jakarta Sans", "sans-serif"]
+              },
+              borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .glass-effect {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%);
+        }
+        .seasonal-glow {
+            box-shadow: 0 0 20px rgba(19, 236, 19, 0.15);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white">
+<div class="relative flex h-screen w-full flex-col overflow-x-hidden">
+<div class="sticky top-0 z-50 glass-effect border-b border-white/5">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 shrink-0 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20">
+<span class="material-symbols-outlined text-primary text-2xl">person</span>
+</div>
+<div class="flex flex-col">
+<h2 class="text-white text-base font-bold leading-tight tracking-tight">SwiftLogistics</h2>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-[14px]">location_on</span>
+<span class="text-white/60 text-[11px] font-medium">Lekki Phase 1, Lagos</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex size-10 items-center justify-center rounded-full bg-surface-dark border border-white/10 relative">
+<span class="material-symbols-outlined text-white text-[22px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-primary rounded-full"></span>
+</button>
+</div>
+</div>
+<div class="px-4 py-3">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-full h-full">
+<div class="text-white/40 flex border-none bg-surface-dark items-center justify-center pl-4 rounded-l-full">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-0 focus:ring-1 focus:ring-primary/50 border-none bg-surface-dark h-full placeholder:text-white/30 px-4 rounded-l-none pl-2 text-sm font-normal" placeholder="Search pharmacy, lunch, or groceries..."/>
+</div>
+</label>
+</div>
+</div>
+<main class="flex-1 overflow-y-auto pb-28">
+<div class="px-4 pt-4">
+<div class="relative rounded-2xl overflow-hidden aspect-[16/7] group">
+<div class="absolute inset-0 bg-center bg-no-repeat bg-cover transition-transform duration-700 group-hover:scale-105" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCDQ8L7_3FbIWFblIHSLZIY22VgHpte3cejrkBd4QX3v5Ty7sLnqdH234NnXHKhkTyL0B4JXq-yZRiTLYJjSeTWzaNctM_LLoYhryKbTcbmhri6pLO_gYuftec_A1JT6iRAUna7q-axOlyaHA4jyj-zkyJtVyylIoKq4wLcYP6CeLe4XDNy5QuFy3T_BqSmeUDutHD5di7M0Mtin3Q3__VvOEaKeouPkFN0LrkoL1lLHnzyMI9advWiA86_JWXTIedu_Z3xbrLrFRgZ");'></div>
+<div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+<div class="relative h-full flex flex-col justify-center p-6">
+<div class="flex items-center gap-2 mb-2">
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold rounded-full uppercase tracking-widest border border-primary/30">Fresh Now</span>
+</div>
+<h3 class="text-2xl font-black text-white leading-tight">Daily Fresh<br/>Groceries</h3>
+<p class="text-white/70 text-xs mt-1 font-medium italic">Farm to your door in 45 mins</p>
+</div>
+<div class="absolute bottom-3 right-3 flex items-center gap-2">
+<div class="glass-effect border border-white/10 rounded-full py-2 px-4 flex items-center gap-3 shadow-xl">
+<div class="flex flex-col items-end">
+<span class="text-[9px] text-accent-gold font-bold uppercase tracking-tighter">Visit Hub</span>
+<span class="text-[11px] text-white font-bold">Ramadan Specials</span>
+</div>
+<div class="size-8 rounded-full gold-gradient flex items-center justify-center">
+<span class="material-symbols-outlined text-black text-lg fill-1">mosque</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 py-8">
+<div class="grid grid-cols-4 gap-4">
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-surface-dark border border-white/5 rounded-2xl flex items-center justify-center p-3">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDChx0mA0AKkpX0y4_D3ZvRedVOC8Q4R9DfC1JFiHl-QaE9c0LVkF9fciAcv4ZI0hHdM1tv7OwOM7U4lSn0beqDz3xsF-1PbAl4BSW5XiaTpQ1uiw0tty1iT_KRCmf5PxynaIBCrxogrPGrg3rjx6XfquVJp5usgebTIrX8jKco6PFU8tdaqBpUZSvWqVTCXoFb91WHhb-vZ_TJyIW3hlqyMAM8nr4_WYrcSaZDJ1GmI50H7emLukMjfHQ2tpIts2NrGT1DcUacybcC");'></div>
+</div>
+<p class="text-white text-[11px] font-bold text-center leading-tight">Office Lunch</p>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-surface-dark border border-white/5 rounded-2xl flex items-center justify-center p-3">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAbadRO9KKVMJDfKM7i--DcGxX21brakAeRIViaUHdEKsUmaGHfisguWgn0fSskLZ2kelAhPoXINcpij_oG1Sqm2FX0ydDUapFCx9oLGvoLuv5DB1WB1uRHhQ7K8_XSF5Cm6Xz9EET2uQJyn4y5Ne-NMY5BfXEJc6Feg_1N6l-6fRu61Og6WhS5Akv11pB-zAai1xGCH0SfJNTBHZWxKev4360u2jslAZXAZv-E0VHGvEx3FK653NkTqacNrJjdu9ZeuKv0GW5HeF7H");'></div>
+</div>
+<p class="text-white text-[11px] font-bold text-center leading-tight">Party Jollof</p>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-surface-dark border border-white/5 rounded-2xl flex items-center justify-center p-3">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCRJ09rA2VeG28TSq_8rQXRVNofXTCEjkGMY6WC3moUO74C72sNFzAA1ARBvhal5NaTPxYoes3r6BHrs35MYNlMVntLI5VKw2JI_My8BbHVyfYzRSlYuWH6zPntH9hPobjgBZ597i0S3tH9R_dmScyBNGoTYNLGEU6fj1fVgbSCZp8oGjqKGBKPZhGAEUoWWYgvU36XZ5Uh_VA6a5GEH6graBE3R-Dwk5R4BHY4PIvluOgCxDGnrDrv3FX_uBkwGa9uU8O6-gUVM4B4");'></div>
+</div>
+<p class="text-white text-[11px] font-bold text-center leading-tight">Pharmacy</p>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full aspect-square bg-surface-dark border-2 border-accent-gold/40 rounded-2xl flex items-center justify-center p-3 relative">
+<div class="w-full h-full bg-center bg-no-repeat bg-cover rounded-xl grayscale-[0.3]" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDG-woRAd802fJcw48RxkkxuELsoRV6Ph4CObXRt0x1-QWb-UnfoVwzHihiMZPFYGCrxWCMiZir7caTYigHpdY2vF_dSd-FSvApxK1ZWGJZEzJAWeJhHxA6pvwMhQ8ghuu7SF0R1zqjEsAtN3oTykc6Nnu_YDEaKwN0C-wA7K0dvX68F3xoZQW7csOuq4uLe6he2FVb1qzUcsuOwy9Lvy9MoxYLLLyVqu6RMBbf6przYvvdnhH-MUabZeZBs8GqU3GjlHWIQox3dMm_");'></div>
+<span class="absolute -top-1 -right-1 flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-gold opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-accent-gold"></span>
+</span>
+</div>
+<p class="text-accent-gold text-[11px] font-bold text-center leading-tight">Ramadan Box</p>
+</div>
+</div>
+</div>
+<div class="px-4 space-y-4">
+<div class="flex justify-between items-center">
+<h3 class="text-white text-lg font-extrabold">Popular Retailers</h3>
+<span class="text-primary text-sm font-bold">Explore All</span>
+</div>
+<div class="flex overflow-x-auto gap-4 pb-4 [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+<div class="min-w-[160px] bg-surface-dark rounded-2xl p-3 border border-white/5">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAmArJK-MpkfyRLnF_ibqAF8amfOitmiqz2cL4YtLj_KJDuKjoQvHjVcwVeMW8aF1w3zZc0II6Zw_W0kH02F53-DX10-i6uCFR7jli0WzbxHGGzjr_dQ1CM0pmYEVDRvd6yt2CEpLVEaf6QJcvfa9ZphbYhoTuyybLhZtXESxoSIRP5gMTil0c4RwAiwb16MV1DcvwSTVW0LEUUIBlvLij2XzHCVyQ0XJZQ6HJbl-3JZF8YQnvumXy_AxfXe0AXoZsMUWvKF4wGk2Sl");'></div>
+<h4 class="text-white text-sm font-bold">Mega Mart</h4>
+<p class="text-white/40 text-[10px]">Groceries • 20 min</p>
+</div>
+<div class="min-w-[160px] bg-surface-dark rounded-2xl p-3 border border-white/5">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuApJL7B-fREejbKAcsyarBHVP90L7SiEtcx74UcnDjHQHqDHgsh6zbrOgeigmuWbj0v8KqbGT0_uDvidu9eD8UepNgL9ml5MjRKJ_5g5eZK9oA9DG0gWukfA8-nFYmUfxOipzJTxz7QJKHjQb7AgZLLePNsLO5Fddpdc2cltWurWnt_T2g7oMHK6m0Qj2OWOweV1YVC9qznb6v4-OEeH0i5WxwLxnfKh4dRWHaHvyvwwIwM0oTct5iPbDrA1mjs-cl6scP06lXs1yOW");'></div>
+<h4 class="text-white text-sm font-bold">HealthPlus</h4>
+<p class="text-white/40 text-[10px]">Wellness • 15 min</p>
+</div>
+<div class="min-w-[160px] bg-surface-dark rounded-2xl p-3 border border-white/5">
+<div class="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAbYN2vM_3vmZvoOWcPn7As8S4Itsg0bhcbPZpu07Qec9EQSl1d7R886BfnSC-G5oXUopBLzO4qZUcjQPenbJCTqdbMJTnR2g8KKgfq6MaMsBHRTlVM5imXk0TF5c-4t18-WzdJQaMsxNccMNt_L-wnbwZ1pgMfvB8y6DSarW-cPj71v25DaXVZ6o2axr8r2xlfXYFJTKg5ZrjoVV_dvgV6CjX627CJEUrwOh6r8g2WwWPeHV44nhSxhcECCPNdgng3TLPE_zVynNtf");'></div>
+<h4 class="text-white text-sm font-bold">Food Palace</h4>
+<p class="text-white/40 text-[10px]">Hot Meals • 30 min</p>
+</div>
+</div>
+</div>
+<div class="px-4 mt-6">
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-surface-dark to-black border border-accent-gold/20 shadow-2xl p-6">
+<div class="flex justify-between items-start mb-6">
+<div>
+<div class="flex items-center gap-1 mb-1">
+<span class="material-symbols-outlined text-accent-gold text-sm fill-1">star</span>
+<span class="text-accent-gold text-[10px] font-black uppercase tracking-widest">Premium Collection</span>
+</div>
+<h3 class="text-2xl font-black text-white">The Ramadan<br/>Family Box</h3>
+</div>
+<div class="bg-primary/10 px-3 py-1 rounded-full border border-primary/20">
+<span class="text-primary font-bold text-sm">₦45,000</span>
+</div>
+</div>
+<div class="flex items-center gap-4 mb-6">
+<div class="flex -space-x-3">
+<div class="size-10 rounded-full border-2 border-surface-dark bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCoi-grkpk5wXpOsf6GlgVwz-cuWINX1QTCvUGD8Nu3dqCuKdpGvgbU9P31453tgMxeu2P_DOrN64OdCBHlCxIZAgZwCwIS8v1AuJJoU6jKMizT4szzJiIwqQVSDYX14LUZiIM7CtN4mDkWh6BnY3oy_uG7P_P7jOE8sPg2_RR2j6cZodx4r-OFCi4tr8z62vCNTS-9hevOFa_f6tkxEGn7vBmAxP3tncF7DUzJqzlbeA4Rbh4InWc9bPQqPMvM-XqdyEV7ZTfqWev9");'></div>
+<div class="size-10 rounded-full border-2 border-surface-dark bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAKW-T9ohYDEf6heT5egqv7vnJiSn6O5jpvB1_HBlYfT9DvnQFGtrfLqjB0u990OzPZWGkM3rI56L2tZ0WdEBXEg1ICMpVCVhrQ4fGirgKFUCAaMB5RcJmEol2Va9p0OW6qKpeq0kNikDQlsdIT9qSPsfTyE3hYNATk_pkUfHCsh48m-NrP0wdWeZESje-BY472CaHzQQL6-YQTE75-2_IQPu7iX6Mgix97Vvv_AKhzzSkprtzv0C1OU_snWNV6VLxeKDnJ0u1zkpRo");'></div>
+<div class="size-10 rounded-full border-2 border-surface-dark bg-center bg-no-repeat bg-cover" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCDQ8L7_3FbIWFblIHSLZIY22VgHpte3cejrkBd4QX3v5Ty7sLnqdH234NnXHKhkTyL0B4JXq-yZRiTLYJjSeTWzaNctM_LLoYhryKbTcbmhri6pLO_gYuftec_A1JT6iRAUna7q-axOlyaHA4jyj-zkyJtVyylIoKq4wLcYP6CeLe4XDNy5QuFy3T_BqSmeUDutHD5di7M0Mtin3Q3__VvOEaKeouPkFN0LrkoL1lLHnzyMI9advWiA86_JWXTIedu_Z3xbrLrFRgZ");'></div>
+</div>
+<p class="text-white/60 text-[11px] font-medium leading-tight">Everything you need for a<br/>complete month of Iftar</p>
+</div>
+<button class="w-full bg-white text-black py-4 rounded-full font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2">
+                    Pre-order Now
+                    <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<div class="fixed bottom-0 left-0 right-0 glass-effect border-t border-white/5 px-6 pb-8 pt-3 z-50">
+<div class="flex items-center justify-between max-w-md mx-auto">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-1 text-[26px]">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined text-[26px]">explore</span>
+<span class="text-[10px] font-bold">Explore</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40 relative">
+<span class="material-symbols-outlined text-[26px]">shopping_cart</span>
+<span class="text-[10px] font-bold">Cart</span>
+<span class="absolute -top-1 -right-1 size-4 bg-primary text-black text-[9px] font-black rounded-full flex items-center justify-center">2</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined text-[26px]">receipt_long</span>
+<span class="text-[10px] font-bold">Orders</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-white/40">
+<span class="material-symbols-outlined text-[26px]">account_circle</span>
+<span class="text-[10px] font-bold">Profile</span>
+</button>
+</div>
+</div>
+</div>
+
+</body></html>

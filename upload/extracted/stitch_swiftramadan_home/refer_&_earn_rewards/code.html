@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2d00d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#1a180b",
+                        "accent-green": "#1e3a1f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: "Plus Jakarta Sans", sans-serif; }
+        .gold-gradient {
+            background: linear-gradient(135deg, #f2d00d 0%, #d4b60b 100%);
+        }
+        .ramadan-pattern {
+            background-color: #1a180b;
+            background-image: radial-gradient(#f2d00d22 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-white min-h-screen ramadan-pattern">
+<!-- Top Navigation Bar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+<div class="text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined cursor-pointer">arrow_back_ios_new</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center">Refer &amp; Earn</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-12 cursor-pointer items-center justify-center rounded-full bg-transparent text-white">
+<span class="material-symbols-outlined">info</span>
+</button>
+</div>
+</div>
+<div class="max-w-md mx-auto pb-10">
+<!-- Hero Section -->
+<div class="@container px-4 py-3">
+<div class="bg-cover bg-center flex flex-col justify-end overflow-hidden rounded-xl min-h-[240px] border border-primary/20 shadow-2xl" data-alt="Luxury Ramadan feast with gold accents and delivery boxes" style='background-image: linear-gradient(0deg, rgba(26, 24, 11, 0.9) 0%, rgba(26, 24, 11, 0.2) 60%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjdkTWbVbj5T0dIgYfbDtO0vbzwv6XCG7xBaDggR8rfog7kg6dHjUoHBBO-mp4FIaJ3rqF9N8px7k7HzzFR-QCmKJZpny5Gr0UVYpZ5rhfiLdcT8pgtSgDmawjCFX905H3RdZZSKwATgt3PP_wLADsKB6af8MZV-WjM1noEm2smtQj8ZFcbUtksLc0oC5Pkk19mH3Nu_FNaH9jJhkAB_m6E-rjnzlYwrJhRL65Ca-2XitOzDGvSR23OhQSYviOZUoMYGjq1RiOEsrU");'>
+<div class="flex flex-col p-6">
+<span class="text-primary font-bold text-sm uppercase tracking-widest mb-2">Ramadan 2026 Special</span>
+<p class="text-white tracking-tight text-[32px] font-extrabold leading-tight">Feed Your Community</p>
+</div>
+</div>
+</div>
+<!-- Incentive Headline -->
+<div class="px-6 py-4">
+<h2 class="text-primary tracking-tight text-[28px] font-extrabold leading-tight text-center pb-2">Give ₦1,000, Get ₦1,000</h2>
+<p class="text-gray-300 text-base font-normal leading-relaxed text-center px-4">
+                Share the spirit of Ramadan. Invite a neighbor to enjoy premium meals and you'll both receive ₦1,000 credit when they order.
+            </p>
+</div>
+<!-- Primary Action: WhatsApp Sharing -->
+<div class="px-4 py-4">
+<button class="gold-gradient w-full flex items-center justify-center gap-3 py-4 rounded-full text-[#1a180b] font-bold text-lg shadow-lg active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-2xl">share</span>
+                Share via WhatsApp
+            </button>
+</div>
+<!-- Referral Link Field -->
+<div class="flex flex-col gap-2 px-4 py-3">
+<label class="flex flex-col w-full">
+<p class="text-primary/80 text-sm font-semibold uppercase tracking-wider pb-2 px-1">Your Unique Link</p>
+<div class="flex w-full items-stretch rounded-xl overflow-hidden shadow-inner">
+<input class="form-input flex-1 border-0 bg-white/5 text-white focus:ring-0 h-14 placeholder:text-gray-500 px-5 text-base font-normal leading-normal" readonly="" value="lux.ramadan/hero-992"/>
+<div class="bg-white/10 flex items-center justify-center px-5 cursor-pointer hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-primary">content_copy</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Leaderboard Section -->
+<div class="mt-8 px-4">
+<div class="flex items-center justify-between mb-4 px-2">
+<div>
+<h3 class="text-xl font-bold text-white">Neighborhood Heroes</h3>
+<div class="flex items-center gap-1 text-xs text-primary/70">
+<span class="material-symbols-outlined text-sm">location_on</span>
+<span>Lekki Phase 1, Lagos</span>
+</div>
+</div>
+<div class="text-xs font-medium bg-accent-green text-white px-3 py-1 rounded-full border border-primary/30">
+                    Top 5
+                </div>
+</div>
+<div class="bg-white/5 rounded-2xl border border-white/10 divide-y divide-white/10 overflow-hidden">
+<!-- User 1 -->
+<div class="flex items-center gap-4 p-4 bg-primary/5">
+<div class="relative">
+<div class="size-12 rounded-full border-2 border-primary overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGkjmJ1lh_1aerHsF-g4Z8hBWbtQ8mG6oQUQwJzb4-n3xvRM_LALHP5rke54aQecQT_gC8oYOAoXKEt1l6Grf_eBXn4G0vRSbzKToTksP_vZT0TLonpRIsBjiSC8ttkX1xmKuQDRN9DpRaKQoFzXWwEATWXcazdqqDKdbP_Yy8hmnYWKgDCVCGOdQsyDvCEC1f0M2ggcRolKUlj7RXsHUjEtStP1xQHWEueSc2SYRdfqni2rMowxryaKvzMdfJ_IK2ChfV02bgE75A"/>
+</div>
+<div class="absolute -top-2 -right-1 bg-primary text-[#1a180b] size-5 rounded-full flex items-center justify-center text-[10px] font-bold">1</div>
+</div>
+<div class="flex-1">
+<p class="font-bold text-white">Tunde Adebayo</p>
+<p class="text-xs text-gray-400">42 neighbors joined</p>
+</div>
+<div class="text-right">
+<p class="text-primary font-bold">₦42,000</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">Earned</p>
+</div>
+</div>
+<!-- User 2 -->
+<div class="flex items-center gap-4 p-4">
+<div class="relative">
+<div class="size-12 rounded-full border-2 border-white/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc2DJTSDfnp2n6jeXLQI8aPb7rmRMM0k1urFcgNx7cGsWsoFZYNhFxqGHR_VIVkputgML2s9YxsnbkyN_VkW83HXrUElo1ji3Y7Hx6wNzgrUZuzTkgZ2RIdzWJDgf6GBtxVeCI0E0IUJXdDDGexaUO0m-iHyPN9o16PYZXajcX15twPaRzGdEYz2bbqD5wdtflWOazlkQnuaJ3TMu2nPoN_trfT6SKZXxPsOVju3svazLtivazl7-4NrOev2XWW3m850qvvpaV-H1k"/>
+</div>
+<div class="absolute -top-2 -right-1 bg-gray-500 text-white size-5 rounded-full flex items-center justify-center text-[10px] font-bold">2</div>
+</div>
+<div class="flex-1">
+<p class="font-bold text-white">Amina Ibrahim</p>
+<p class="text-xs text-gray-400">38 neighbors joined</p>
+</div>
+<div class="text-right">
+<p class="text-white font-bold opacity-80">₦38,000</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">Earned</p>
+</div>
+</div>
+<!-- User 3 -->
+<div class="flex items-center gap-4 p-4">
+<div class="relative">
+<div class="size-12 rounded-full border-2 border-white/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User avatar profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrYyQkAVEcR7Grq0VXAUoJfKijlmxDGxM-h-NsoCtABIsc5tVZvoHysRdYpvhIZLs7D05DxMnDcyr-xcwyu6xJuTfTZHhmW5LMV7T6Mi2tu-EL67jfRyY38m4HunkEdvF5mPiMz-GcA4mEAiJyVWK9vSX9QMb0gH2dheSg2TzMOo9PX2vv86uSEcRkmZJSIA9UxCUNcz6s5b1cqpMKrWRO21yv0nn3ngY2sNZKlAeqedSJgGoSKiLTzvPlzaIDaQgJviJ4AKyQE7Bw"/>
+</div>
+<div class="absolute -top-2 -right-1 bg-orange-700 text-white size-5 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
+</div>
+<div class="flex-1">
+<p class="font-bold text-white">Chidi Okafor</p>
+<p class="text-xs text-gray-400">29 neighbors joined</p>
+</div>
+<div class="text-right">
+<p class="text-white font-bold opacity-80">₦29,000</p>
+<p class="text-[10px] text-gray-500 uppercase tracking-tighter">Earned</p>
+</div>
+</div>
+</div>
+<p class="text-center text-xs text-gray-500 mt-4 italic">
+                You are currently ranked #14 in your neighborhood. Refer 2 more neighbors to reach Top 10!
+            </p>
+</div>
+<!-- Progress Tracker -->
+<div class="mt-8 px-6">
+<div class="bg-accent-green/30 border border-primary/20 rounded-2xl p-5 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-6xl">military_tech</span>
+</div>
+<h4 class="text-sm font-bold text-primary mb-3">Your Journey to "Community Icon"</h4>
+<div class="w-full bg-white/10 h-2 rounded-full mb-2 overflow-hidden">
+<div class="bg-primary h-full w-[65%]" style="width: 65%;"></div>
+</div>
+<div class="flex justify-between text-[10px] font-medium text-gray-400">
+<span>Current: Hero</span>
+<span>12/20 Referrals for Icon status</span>
+</div>
+</div>
+</div>
+<!-- Social Proof Ticker -->
+<div class="mt-8 mb-6 px-4">
+<div class="flex items-center justify-center gap-2 bg-white/5 py-3 rounded-full border border-white/5">
+<span class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+</span>
+<p class="text-sm text-gray-300">
+<span class="font-bold text-white">24 people</span> in Lekki joined in the last hour
+                </p>
+</div>
+</div>
+</div>
+<!-- Sticky Footer CTA (iOS style) -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-dark/95 backdrop-blur-xl border-t border-white/5 flex gap-3">
+<button class="flex-1 bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-full transition-all">
+            More Options
+        </button>
+<button class="gold-gradient text-[#1a180b] font-bold px-8 py-4 rounded-full shadow-lg">
+            Refer Now
+        </button>
+</div>
+</body></html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwiftRamadan Eco-Impact</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "accent-gold": "#D4AF37",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "card-dark": "#1a2e1f",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glow-text {
+            text-shadow: 0 0 20px rgba(13, 242, 89, 0.4);
+        }
+        .gold-glow {
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+        .card-border-gradient {
+            border: 1px solid transparent;
+            background: linear-gradient(#1a2e1f, #1a2e1f) padding-box,
+                        linear-gradient(to bottom right, #0df25944, #D4AF3744) border-box;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+<div class="relative flex h-auto min-h-screen w-full flex-col max-w-[430px] mx-auto overflow-x-hidden shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center cursor-pointer">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Eco-Impact Report</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-slate-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<!-- Hero Metric Section -->
+<div class="flex flex-col items-center justify-center py-8 px-4">
+<h3 class="text-slate-600 dark:text-[#90cba4] tracking-wide text-sm font-bold uppercase leading-tight text-center pb-2">CO2 Saved This Month</h3>
+<div class="relative">
+<h1 class="text-slate-900 dark:text-primary tracking-tight text-[56px] font-extrabold leading-tight text-center glow-text">12.5 kg</h1>
+<div class="absolute -top-2 -right-6 flex items-center justify-center bg-primary/20 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full border border-primary/30">
+                    +14% VS LAST WEEK
+                </div>
+</div>
+<p class="text-slate-500 dark:text-[#90cba4]/70 text-sm font-normal leading-normal pt-1 text-center">Equivalent to 45 hours of oxygen</p>
+</div>
+<!-- Data Visualization: Route Optimization -->
+<div class="px-4 py-4">
+<div class="card-border-gradient rounded-xl bg-card-dark p-5">
+<div class="flex flex-col gap-1 mb-6">
+<p class="text-white text-base font-bold leading-normal">AI Route Optimization</p>
+<div class="flex items-center gap-2">
+<span class="text-primary text-[24px] font-bold leading-tight">-30% Distance</span>
+<span class="material-symbols-outlined text-primary text-sm">trending_down</span>
+</div>
+</div>
+<div class="flex min-h-[160px] flex-1 flex-col gap-4">
+<svg fill="none" height="120" preserveaspectratio="none" viewbox="0 0 400 120" width="100%" xmlns="http://www.w3.org/2000/svg">
+<!-- Standard Route (Subtle) -->
+<path d="M0 100 Q 50 80, 100 90 T 200 60 T 300 85 T 400 40" fill="none" stroke="#4a5568" stroke-dasharray="4 4" stroke-width="2"></path>
+<!-- Optimized Route (Primary) -->
+<path d="M0 100 Q 50 50, 100 70 T 200 30 T 300 45 T 400 10" fill="none" stroke="#0df259" stroke-linecap="round" stroke-width="4"></path>
+<!-- Glow Area -->
+<path d="M0 100 Q 50 50, 100 70 T 200 30 T 300 45 T 400 10 V 120 H 0 Z" fill="url(#grad1)" opacity="0.2"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#0df259;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#0df259;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+<div class="flex justify-between px-2">
+<p class="text-[#90cba4] text-[11px] font-bold uppercase">Week 1</p>
+<p class="text-[#90cba4] text-[11px] font-bold uppercase">Week 2</p>
+<p class="text-[#90cba4] text-[11px] font-bold uppercase">Week 3</p>
+<p class="text-[#90cba4] text-[11px] font-bold uppercase">Week 4</p>
+</div>
+</div>
+<div class="mt-4 pt-4 border-t border-white/10 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_rgba(13,242,89,0.5)]"></div>
+<span class="text-xs text-white font-medium">SwiftRamadan AI</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 rounded-full bg-slate-500"></div>
+<span class="text-xs text-slate-400 font-medium">Standard Delivery</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Impact Stats Grid -->
+<div class="grid grid-cols-2 gap-4 px-4 py-4">
+<!-- Liter Saved Card -->
+<div class="bg-card-dark rounded-xl p-4 flex flex-col gap-3 border border-white/5">
+<div class="bg-primary/10 w-10 h-10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">local_gas_station</span>
+</div>
+<div>
+<p class="text-slate-400 text-xs font-bold uppercase mb-1">Fuel Saved</p>
+<p class="text-white text-2xl font-bold">18.4 <span class="text-sm font-medium text-primary">L</span></p>
+</div>
+</div>
+<!-- Trees Planted Card -->
+<div class="bg-card-dark rounded-xl p-4 flex flex-col gap-3 border border-white/5">
+<div class="bg-accent-gold/10 w-10 h-10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-accent-gold">park</span>
+</div>
+<div>
+<p class="text-slate-400 text-xs font-bold uppercase mb-1">Tree Offset</p>
+<p class="text-white text-2xl font-bold">0.8 <span class="text-sm font-medium text-accent-gold">Trees</span></p>
+</div>
+</div>
+</div>
+<!-- Green Badge Section -->
+<div class="px-4 py-4 mt-2 mb-10">
+<div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a2e1f] to-[#0a150e] p-6 border border-accent-gold/20">
+<div class="absolute -right-6 -bottom-6 opacity-10">
+<span class="material-symbols-outlined text-[160px] text-accent-gold">verified_user</span>
+</div>
+<div class="relative z-10 flex items-center gap-6">
+<div class="relative flex-shrink-0">
+<div class="w-24 h-24 rounded-full bg-gradient-to-b from-accent-gold via-primary to-accent-gold p-1 flex items-center justify-center shadow-lg shadow-primary/20">
+<div class="w-full h-full rounded-full bg-background-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-4xl text-accent-gold gold-glow">workspace_premium</span>
+</div>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-primary text-background-dark rounded-full p-1.5 border-4 border-background-dark">
+<span class="material-symbols-outlined text-sm font-bold">check_circle</span>
+</div>
+</div>
+<div class="flex-1">
+<h4 class="text-white text-lg font-bold leading-tight">Green Champion</h4>
+<p class="text-[#90cba4] text-xs font-medium mt-1">Unlocked via 12 Group Buy orders during Ramadan.</p>
+<div class="mt-4 flex flex-col gap-2">
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-accent-gold w-[85%] rounded-full"></div>
+</div>
+<p class="text-slate-400 text-[10px] font-bold uppercase tracking-wider">Level 3 • 450 Eco-Points</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Navigation Bar Spacer -->
+<div class="h-20 bg-background-light dark:bg-background-dark"></div>
+<!-- Footer Call to Action (Fixed) -->
+<div class="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto p-4 bg-gradient-to-t from-background-dark via-background-dark to-transparent">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-extrabold py-4 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 shadow-xl shadow-primary/20">
+<span class="material-symbols-outlined font-bold">celebration</span>
+                Celebrate Your Impact
+            </button>
+</div>
+</div>
+</body></html>

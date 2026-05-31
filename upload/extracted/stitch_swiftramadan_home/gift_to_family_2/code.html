@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Gift Arrival Notification - Ramadan 2026</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#11d442",
+                        "gold": "#D4AF37",
+                        "background-dark": "#0a0a0a",
+                        "ios-gray": "#1c1c1e",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "ios": "1.5rem",
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #000;
+        }
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #F9E498 50%, #D4AF37 100%);
+        }
+        .ios-blur {
+            background: rgba(28, 28, 30, 0.7);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+        }
+        .lockscreen-bg {
+            background: linear-gradient(to bottom, #1a2e1e 0%, #000000 100%);
+            background-size: cover;
+            background-position: center;
+        }
+        .shine-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .shine-effect::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 45%,
+                rgba(255, 255, 255, 0.5) 50%,
+                rgba(255, 255, 255, 0.1) 55%,
+                transparent 100%
+            );
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen flex items-center justify-center p-4 lockscreen-bg">
+<div class="fixed top-12 left-0 right-0 flex flex-col items-center pointer-events-none">
+<span class="material-symbols-outlined text-white/40 mb-2">lock</span>
+<h1 class="text-7xl font-light text-white/90 tracking-tight">18:42</h1>
+<p class="text-lg font-medium text-white/80 mt-2">Monday, March 9</p>
+</div>
+<main class="w-full max-w-[360px] relative mt-20">
+<div class="flex items-center gap-2 px-4 mb-2">
+<div class="size-5 rounded-md bg-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-[14px]">restaurant</span>
+</div>
+<span class="text-white/60 text-[13px] font-semibold uppercase tracking-widest">Ramadan Logistics</span>
+<span class="text-white/40 text-[13px] ml-auto">now</span>
+</div>
+<div class="ios-blur rounded-[2rem] p-6 border border-white/10 shadow-2xl relative overflow-hidden group">
+<div class="absolute -top-10 -right-10 size-40 bg-gold/10 blur-[40px] rounded-full"></div>
+<div class="flex flex-col items-center text-center">
+<div class="relative mb-6">
+<div class="size-20 rounded-3xl gold-gradient flex items-center justify-center shadow-[0_0_30px_rgba(212,175,55,0.4)] shine-effect">
+<span class="material-symbols-outlined text-black text-5xl font-light">card_giftcard</span>
+</div>
+<div class="absolute -bottom-2 -right-2 size-8 rounded-full bg-primary border-4 border-ios-gray flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-sm">check</span>
+</div>
+</div>
+<div class="space-y-2 mb-8">
+<h2 class="text-gold text-sm font-black uppercase tracking-[0.2em]">A Ramadan Blessing from Sarah!</h2>
+<p class="text-white text-xl font-bold leading-snug">
+                        Tunde, you have a <span class="text-primary italic">Family Feast Box</span> arriving for Iftar.
+                    </p>
+<p class="text-white/50 text-xs">A special gourmet selection has been prepared for you.</p>
+</div>
+<button class="w-full bg-white text-black h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-3 active:scale-[0.98] transition-all shadow-xl">
+<span class="material-symbols-outlined text-black font-bold">mail</span>
+                    Open Gift Card
+                </button>
+<div class="mt-6 flex items-center gap-4">
+<div class="flex items-center gap-1.5 opacity-60">
+<span class="material-symbols-outlined text-gold text-sm">mic</span>
+<span class="text-[11px] text-white font-medium uppercase tracking-wider">Voice Note Attached</span>
+</div>
+<div class="h-1 w-1 rounded-full bg-white/20"></div>
+<div class="flex items-center gap-1.5 opacity-60">
+<span class="material-symbols-outlined text-primary text-sm">local_shipping</span>
+<span class="text-[11px] text-white font-medium uppercase tracking-wider">Arriving 6:15 PM</span>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute -bottom-2 left-4 right-4 h-4 ios-blur rounded-b-[2rem] border-x border-b border-white/5 -z-10 opacity-50"></div>
+<div class="absolute -bottom-4 left-8 right-8 h-4 ios-blur rounded-b-[2rem] border-x border-b border-white/5 -z-20 opacity-30"></div>
+</main>
+<div class="fixed bottom-2 left-1/2 -translate-x-1/2 w-[134px] h-[5px] bg-white/40 rounded-full"></div>
+<div class="fixed bottom-12 left-10 right-10 flex justify-between px-2">
+<div class="size-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined">flashlight_on</span>
+</div>
+<div class="size-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white">
+<span class="material-symbols-outlined">photo_camera</span>
+</div>
+</div>
+
+</body></html>

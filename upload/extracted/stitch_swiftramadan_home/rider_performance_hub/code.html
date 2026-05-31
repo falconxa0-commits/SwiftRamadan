@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rider Performance Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#eccb13",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221f10",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .gold-glow {
+            box-shadow: 0 0 20px rgba(236, 203, 19, 0.2);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<div class="max-w-[480px] mx-auto min-h-screen flex flex-col pb-10">
+<!-- TopAppBar -->
+<div class="sticky top-0 z-50 flex items-center bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-4 pb-2 justify-between">
+<div class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined">arrow_back_ios</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Performance Hub</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 bg-transparent text-slate-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">share</span>
+</button>
+</div>
+</div>
+<!-- ProfileHeader -->
+<div class="flex p-4 @container mt-4">
+<div class="flex w-full flex-col gap-4 items-center">
+<div class="flex gap-4 flex-col items-center">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full min-h-32 w-32 border-4 border-primary/30" data-alt="Professional portrait of a delivery rider in uniform" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBZMD1vgk4lOEZ2CTrnf6dFV6f0RUtZUWe8w4LxWklbSIpcJTQcX4KFcIbyTzCMy1kxxb1ZtKUq9IwueBPVsIhXticKzB_VcAVu3-VRNdZ6vxffB65gahtPtxfo04PUv7BiWO2Q9BXozkapMFhtNHtai1Y5lmuoMDA2wtw-ptjBs3QAlQbvItQpNWk1dNs0mSniMNcr43QC0u7ctAfkRnr2LyfAAGT_LKLL3bCOfAuespvI10AwX7PQcEZtqUlutVVquxo_aDaus4ec");'>
+</div>
+<div class="absolute bottom-0 right-0 bg-primary text-background-dark rounded-full p-1.5 border-4 border-background-dark">
+<span class="material-symbols-outlined text-sm font-bold">verified</span>
+</div>
+</div>
+<div class="flex flex-col items-center justify-center">
+<p class="text-slate-900 dark:text-white text-[24px] font-extrabold leading-tight tracking-[-0.015em] text-center">Babatunde Yusuf</p>
+<div class="flex items-center gap-1 mt-1">
+<span class="material-symbols-outlined text-primary text-sm">workspace_premium</span>
+<p class="text-primary text-sm font-semibold leading-normal text-center uppercase tracking-wider">Elite Rider • Hall of Fame</p>
+</div>
+<p class="text-slate-500 dark:text-[#c9c192] text-xs font-medium leading-normal text-center mt-1">Lagos, NG • Member since Oct 2023</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Hall of Fame Special Badge (Card) -->
+<div class="p-4">
+<div class="bg-cover bg-center flex flex-col items-stretch justify-end rounded-xl pt-[140px] shadow-xl overflow-hidden relative border border-primary/20 gold-glow" data-alt="Golden Ramadan crescent moon pattern with glowing stars" style='background-image: linear-gradient(0deg, rgba(34, 31, 16, 0.95) 0%, rgba(34, 31, 16, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDI6HbFqiLNwfcK4lOGv4cuf3p1i5q_-KJdhP8cYe-SqFkUJ0lFzF4Ybm-2DdFH8qU8lFbkCU30DvRVCBwL2C1uw5IF8R5PnJVQ33X4EvCuv_TcCwSMDS6sqUY0kXqmTT0LbhKxM6uK20i9oVUw1_21kUcxUUyMcdyvjsNJ9N0mDJPSWXo54QCLKU-_XO6MhffAXKwZCKmIvLkzErVU1V8P2i4JAlaPGe4Ji2VqRwEhvLoszOr07g1j9CgJxYS1ZiXTgQqCS19bq-8l");'>
+<div class="absolute top-4 left-4 bg-primary/20 backdrop-blur-md px-3 py-1 rounded-full border border-primary/40 flex items-center gap-1">
+<span class="material-symbols-outlined text-primary text-xs">bedtime</span>
+<span class="text-primary text-[10px] font-bold uppercase tracking-tighter">Ramadan Exclusive</span>
+</div>
+<div class="flex w-full items-end justify-between gap-4 p-5">
+<div class="flex max-w-[440px] flex-1 flex-col gap-1">
+<p class="text-white tracking-light text-2xl font-extrabold leading-tight">Iftar Rush Legend</p>
+<p class="text-primary/90 text-sm font-medium leading-normal italic">Top 1% during peak Iftar hours</p>
+</div>
+<button class="flex min-w-[96px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-background-dark text-sm font-bold leading-normal transition-transform active:scale-95 shadow-lg">
+<span class="truncate">Details</span>
+</button>
+</div>
+</div>
+</div>
+<!-- SectionHeader: Stats -->
+<div class="flex items-center justify-between px-4 pt-4">
+<h2 class="text-slate-900 dark:text-white text-[20px] font-bold leading-tight tracking-[-0.015em]">Performance Metrics</h2>
+<p class="text-primary text-xs font-bold uppercase">This Month</p>
+</div>
+<!-- Stats Grid -->
+<div class="flex flex-wrap gap-3 p-4">
+<div class="flex min-w-[100px] flex-1 flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#484223]/30 border border-slate-200 dark:border-[#484223] shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<p class="text-slate-600 dark:text-slate-300 text-xs font-semibold leading-normal">Completion</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-2xl font-extrabold">99.2%</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[#0bda20] text-sm">trending_up</span>
+<p class="text-[#0bda20] text-xs font-bold leading-normal">+2.1%</p>
+</div>
+</div>
+<div class="flex min-w-[100px] flex-1 flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#484223]/30 border border-slate-200 dark:border-[#484223] shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">grade</span>
+<p class="text-slate-600 dark:text-slate-300 text-xs font-semibold leading-normal">Rating</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-2xl font-extrabold">4.98</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[#0bda20] text-sm">add</span>
+<p class="text-[#0bda20] text-xs font-bold leading-normal">0.05</p>
+</div>
+</div>
+<div class="flex min-w-[100px] flex-1 flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#484223]/30 border border-slate-200 dark:border-[#484223] shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">volunteer_activism</span>
+<p class="text-slate-600 dark:text-slate-300 text-xs font-semibold leading-normal">Compliments</p>
+</div>
+<p class="text-slate-900 dark:text-white tracking-tight text-2xl font-extrabold">128</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[#0bda20] text-sm">arrow_upward</span>
+<p class="text-[#0bda20] text-xs font-bold leading-normal">+12</p>
+</div>
+</div>
+</div>
+<!-- Incentive Progress -->
+<h2 class="text-slate-900 dark:text-white text-[20px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-4">Incentive Progress</h2>
+<div class="mx-4 p-5 bg-white dark:bg-[#2c2a18] rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
+<div class="flex justify-between items-end mb-3">
+<div>
+<p class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Next Reward</p>
+<p class="text-lg font-bold text-slate-900 dark:text-white">₦15,000 Ramadan Bonus</p>
+</div>
+<p class="text-primary text-lg font-extrabold">85%</p>
+</div>
+<div class="w-full bg-slate-200 dark:bg-white/10 rounded-full h-3">
+<div class="bg-primary h-3 rounded-full gold-glow" style="width: 85%"></div>
+</div>
+<p class="text-xs text-slate-500 dark:text-[#c9c192] mt-3 font-medium">Complete 12 more deliveries tonight to unlock.</p>
+</div>
+<!-- Customer Feedback Section -->
+<h2 class="text-slate-900 dark:text-white text-[20px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-6">Top Compliments</h2>
+<div class="flex flex-col gap-3 px-4">
+<div class="flex items-center gap-4 p-4 bg-white dark:bg-white/5 rounded-xl">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">speed</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Super Fast Delivery</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">"Arrived just in time for Iftar! Truly appreciate the speed."</p>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 bg-white dark:bg-white/5 rounded-xl">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-primary">chat_bubble</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-white">Very Polite</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">"Excellent service and very respectful attitude. 5 stars!"</p>
+</div>
+</div>
+</div>
+<!-- Footer Button -->
+<div class="px-4 pt-8">
+<button class="w-full bg-primary text-background-dark font-extrabold py-4 rounded-xl shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined font-bold">military_tech</span>
+                View Achievement History
+            </button>
+</div>
+</div>
+</body></html>

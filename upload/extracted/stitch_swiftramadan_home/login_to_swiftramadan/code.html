@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f9d406",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0d1a12", // Deep premium green
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>body {
+    font-family: "Plus Jakarta Sans", sans-serif
+    }
+.islamic-pattern {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuASAZZZxnkCsLJ41jih-Tv5NkOjG9ZmAN11myp5z7SxAwZAkA4buH9C7U34Ou6Gt-XLyouvejeL7341hRS7jHSBVSQuIT3edEfeJ-pGAnyFAWbX9FOKxznv6Zxcd8EY-Ik-j7IdrNNryJEvvyctOTTQyc77bG_DpvwlnpqayxcpU7hkEidMF1gsDh6fokUNezdvVncsorKip81eu_DFaXoD0A_rlRU8eoerlXseVLbtJUocHq3YIjVTtZzAy10K6adaOvxd4p2Y-kR2);
+    opacity: 0.05
+    }</style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Subtle Pattern Overlay -->
+<div class="absolute inset-0 islamic-pattern pointer-events-none"></div>
+<div class="relative z-10 w-full max-w-[480px] px-6 py-8 flex flex-col min-h-screen justify-between">
+<!-- Top App Bar Section -->
+<div>
+<div class="flex items-center justify-between mb-8">
+<div class="text-white flex size-12 shrink-0 items-center cursor-pointer" data-icon="ArrowBack">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios</span>
+</div>
+<div class="flex-1"></div>
+</div>
+<!-- Brand Logo & Headline -->
+<div class="text-center mb-10">
+<div class="flex justify-center mb-4">
+<span class="material-symbols-outlined text-primary text-6xl" style="font-variation-settings: 'FILL' 1">star_half</span>
+</div>
+<h2 class="text-primary tracking-tight text-[32px] font-extrabold leading-tight mb-2">SwiftRamadan</h2>
+<p class="text-gray-300 text-base font-normal leading-relaxed max-w-[300px] mx-auto">Experience seamless logistics and premium Iftar meals.</p>
+</div>
+<!-- Login Form -->
+<div class="space-y-4">
+<div class="flex flex-col gap-2">
+<label class="flex flex-col flex-1">
+<p class="text-white text-sm font-semibold leading-normal pb-2 px-1">Email or Phone Number</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ccc38e] text-xl">alternate_email</span>
+<input class="form-input flex w-full rounded-xl text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#6a612f] bg-[#1a2e22] focus:border-primary h-14 placeholder:text-[#ccc38e]/50 pl-12 pr-4 text-base font-normal" placeholder="Enter your email or phone" value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-col gap-2">
+<label class="flex flex-col flex-1">
+<p class="text-white text-sm font-semibold leading-normal pb-2 px-1">Password</p>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#ccc38e] text-xl">lock</span>
+<input class="form-input flex w-full rounded-xl text-white focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#6a612f] bg-[#1a2e22] focus:border-primary h-14 placeholder:text-[#ccc38e]/50 pl-12 pr-12 text-base font-normal" placeholder="Enter your password" type="password" value=""/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#ccc38e] text-xl cursor-pointer">visibility</span>
+</div>
+</label>
+</div>
+<div class="flex justify-end pt-1">
+<a class="text-primary text-sm font-semibold hover:underline" href="#">Forgot Password?</a>
+</div>
+<div class="pt-4">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold h-14 rounded-xl text-lg transition-colors flex items-center justify-center gap-2">
+                        Login
+                    </button>
+</div>
+</div>
+<!-- Divider -->
+<div class="flex items-center gap-4 my-10">
+<div class="h-[1px] flex-1 bg-white/10"></div>
+<p class="text-gray-400 text-xs font-semibold uppercase tracking-widest">Or continue with</p>
+<div class="h-[1px] flex-1 bg-white/10"></div>
+</div>
+<!-- Social Login -->
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-3 bg-white/5 border border-white/10 hover:bg-white/10 h-14 rounded-xl transition-all">
+<img alt="Google" class="size-5" data-alt="Google colorful logo icon" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCNRtXlTfqvfDbipY3mdKcxeuBi-DIaLdk-3mSs8XauD1XcmWgAk696nwQ6-eNwXnlMBcQ_5BTkzwL6k2ltC1FpBtjhD7XiQIQfY_D2ICxkSmPXi4iu3eE4w8N-l6GmOZiF7HvLTCKkt8VXLpd5DmdcJbe7_TfiAN6QA4LF0vMZFtKWwdrT5wz3ZGu8preHbMsGKtMZ4Q-PJK5_YGwURfatuHrvXudE5clMS5ysvvsmANJAF88r6i5UXoDC0D7vJntB9sDQMuJMKMN5"/>
+<span class="text-white font-semibold">Google</span>
+</button>
+<button class="flex items-center justify-center gap-3 bg-white text-black hover:bg-gray-200 h-14 rounded-xl transition-all">
+<span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1">ios</span>
+<span class="font-semibold">Apple</span>
+</button>
+</div>
+</div>
+<!-- Footer -->
+<div class="text-center mt-8">
+<p class="text-gray-400 text-sm">
+                New to SwiftRamadan? 
+                <a class="text-primary font-bold ml-1 hover:underline" href="#">Create Account</a>
+</p>
+</div>
+</div>
+</body></html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SwiftLogistics Master Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "ramadan-green": "#065f46",
+                        "ramadan-gold": "#fbbf24",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(16, 25, 34, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ramadan-theme {
+            --primary-current: #065f46;
+            --accent-current: #fbbf24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased overflow-x-hidden">
+<div class="max-w-md mx-auto min-h-screen pb-32 relative">
+<!-- TopAppBar with Ramadan Toggle -->
+<header class="sticky top-0 z-50 glass px-4 py-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-primary" data-alt="User profile picture of a young Nigerian man" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAcY9pXWWAErp9jWH8lYo3iH2a--PtYz64fOY1Cemjnzk1gsp4proJI4c9r48y5L4UJwyvyVMwaleyeYRfiWsxM1J11ZvcErOY3Mfd9nxy3M7rl8mn8OVMJu5b9dfVjd9ZqrPYHFvo46aHyRr9RSEgT39udyZ81Ta0f1ZXYxZQTpdvJww26VpGNDuMFbN8Dg0dn74vrtHmFp6LFmyq22tyS1ctxJ-ze8MWu1QCWEpLKgxBy2FTFq0tKC8a9l6vkjIuuI7AcPF3tup-o")'></div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider">Welcome back</p>
+<h2 class="text-lg font-bold leading-tight">Ibrahim</h2>
+</div>
+</div>
+<!-- Mode Switcher Toggle -->
+<button class="flex items-center gap-2 bg-ramadan-green text-ramadan-gold px-3 py-1.5 rounded-full border border-ramadan-gold/30 shadow-sm shadow-ramadan-gold/20 transition-all active:scale-95">
+<span class="material-symbols-outlined text-sm">bedtime</span>
+<span class="text-xs font-bold uppercase tracking-tight">Ramadan Mode</span>
+</button>
+</header>
+<!-- Live Iftar Countdown Widget -->
+<section class="px-4 py-6">
+<div class="bg-gradient-to-br from-ramadan-green to-emerald-900 rounded-xl p-5 text-white shadow-xl relative overflow-hidden">
+<div class="absolute top-[-20px] right-[-20px] opacity-10">
+<span class="material-symbols-outlined text-[120px]">mosque</span>
+</div>
+<div class="relative z-10">
+<div class="flex justify-between items-center mb-4">
+<span class="text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-md">Iftar Countdown</span>
+<span class="text-xs opacity-80">Lagos, NG</span>
+</div>
+<div class="flex gap-4 items-end mb-4">
+<div class="flex flex-col items-center">
+<p class="text-4xl font-bold tracking-tighter">02</p>
+<p class="text-[10px] uppercase opacity-70">Hours</p>
+</div>
+<p class="text-3xl font-light mb-1 opacity-50">:</p>
+<div class="flex flex-col items-center">
+<p class="text-4xl font-bold tracking-tighter">14</p>
+<p class="text-[10px] uppercase opacity-70">Mins</p>
+</div>
+<p class="text-3xl font-light mb-1 opacity-50">:</p>
+<div class="flex flex-col items-center">
+<p class="text-4xl font-bold tracking-tighter">10</p>
+<p class="text-[10px] uppercase opacity-70">Secs</p>
+</div>
+</div>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-ramadan-gold w-3/4 rounded-full"></div>
+</div>
+<p class="text-[11px] mt-2 opacity-80">Maghrib starts at 18:45 • Preparation time: 15 mins</p>
+</div>
+</div>
+</section>
+<!-- Seasonal Specials Carousel -->
+<section>
+<div class="flex items-center justify-between px-4 mb-3">
+<h3 class="text-lg font-bold tracking-tight">Seasonal Specials</h3>
+<button class="text-primary text-sm font-semibold">View All</button>
+</div>
+<div class="flex overflow-x-auto snap-x snap-mandatory gap-4 px-4 pb-4 no-scrollbar scroll-smooth">
+<div class="min-w-[280px] snap-center flex flex-col gap-3">
+<div class="w-full aspect-[16/9] bg-cover bg-center rounded-xl relative group" data-alt="Gourmet Ramadan Iftar gift box with dates and nuts" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCbB06PkOzXeAA3Xtxw8ER4G-N4cFM3hjhwal97mcTnx9j7L941KwJAcKp7CGKoD6TFvcGEefsFW-sfitsxm6F7vb60c-KtgwQfu5UaOO87FpyJIMLWtJzDv8lSC36vWSvNGbTbH-hvVwjoY_h397uJV7SzmbuiwvrhmHV6iPQ6TM8JrgTdXgb6xATJWZkqghuDvCA0CPJBnxFbC7urQ04ZZAtvdXlTdiqOkqTbM3SMgdmc7lpcs7oE8WVDRjQFVb-dz53fgExnaH8u")'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl"></div>
+<span class="absolute top-3 left-3 bg-ramadan-gold text-ramadan-green text-[10px] font-black px-2 py-1 rounded-md uppercase tracking-tighter">Featured</span>
+</div>
+<div>
+<p class="font-bold text-slate-800 dark:text-white">Premium Iftar Box</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">20% off your first subscription</p>
+</div>
+</div>
+<div class="min-w-[280px] snap-center flex flex-col gap-3">
+<div class="w-full aspect-[16/9] bg-cover bg-center rounded-xl relative" data-alt="Healthy family size salad platter for Iftar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCoPhbr8_7pBPbzTjWUCSMoXNDqaVIkX5iYaqeuWpBnPSQr5xTdSuwHuG4Nct2QdnBWIE3aHh8j8WhqZzbNdeFzND8MsIXGVvJbDY0zfDY2zpJGJCroPVCbtoloP6IscfzGdwfOFlL0fOMJsOOaUNSyvTxdiBBedECRsCFHWF1e5qdmMUemDggJCPiqnlJQLQPjri8fvkhi-K_O1NrQJvLuxyeZpdid7VtISecD2gvVLP4fDNn-YRJlc2ulnQMaUk8DNSGOc6s2dxQ7")'>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl"></div>
+</div>
+<div>
+<p class="font-bold text-slate-800 dark:text-white">Family Platter</p>
+<p class="text-sm text-slate-500 dark:text-slate-400">Order by 4PM for same-day delivery</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Category Grid -->
+<section class="px-4 py-6">
+<h3 class="text-lg font-bold tracking-tight mb-4">Our Services</h3>
+<div class="grid grid-cols-2 gap-4">
+<!-- Groceries -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-start gap-3">
+<div class="size-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">shopping_basket</span>
+</div>
+<div>
+<p class="font-bold text-sm">Groceries</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">Fresh market picks</p>
+</div>
+</div>
+<!-- Hot Meals -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-start gap-3">
+<div class="size-10 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<p class="font-bold text-sm">Hot Meals</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">Ready for Iftar</p>
+</div>
+</div>
+<!-- Pharmacy -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-start gap-3">
+<div class="size-10 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-600">
+<span class="material-symbols-outlined">medical_services</span>
+</div>
+<div>
+<p class="font-bold text-sm">Pharmacy</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">Health essentials</p>
+</div>
+</div>
+<!-- Group Buy -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col items-start gap-3">
+<div class="size-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined">group</span>
+</div>
+<div>
+<p class="font-bold text-sm">Group Buy</p>
+<p class="text-[11px] text-slate-500 dark:text-slate-400 leading-tight">Save with neighbors</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Action Floating Bar -->
+<div class="fixed bottom-24 left-1/2 -translate-x-1/2 w-[90%] max-w-sm z-50">
+<div class="glass shadow-2xl rounded-full p-2 flex items-center justify-between border border-white/40">
+<button class="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-full transition-transform active:scale-95">
+<span class="material-symbols-outlined text-primary">local_shipping</span>
+<span class="text-xs font-bold text-slate-700 dark:text-slate-200">Track Order</span>
+</button>
+<div class="h-6 w-px bg-slate-200 dark:bg-slate-700"></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary to-blue-400 rounded-full text-white shadow-lg shadow-primary/20 transition-transform active:scale-95">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+<span class="text-xs font-bold">Safa AI</span>
+<div class="flex gap-0.5 ml-1">
+<div class="size-1 bg-white rounded-full animate-pulse"></div>
+<div class="size-1 bg-white rounded-full animate-pulse delay-75"></div>
+</div>
+</button>
+</div>
+</div>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 glass border-t border-slate-200 dark:border-slate-800 pb-8 pt-3 px-8 flex justify-between items-center z-40 max-w-md mx-auto">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined fill-1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-[10px] font-medium">Explore</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="text-[10px] font-medium">History</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</nav>
+</div>
+<style>
+        /* Custom scrollbar hiding */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

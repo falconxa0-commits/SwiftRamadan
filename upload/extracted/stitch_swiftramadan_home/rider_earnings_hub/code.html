@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Rider Earnings Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f2d00d",
+              "background-light": "#f8f8f5",
+              "background-dark": "#12110a",
+              "card-dark": "#1e1b0d",
+              "accent-dark": "#2d2812",
+            },
+            fontFamily: {
+              "display": ["Plus Jakarta Sans", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ramadan-pattern {
+            background-image: radial-gradient(circle at 2px 2px, rgba(242, 208, 13, 0.05) 1px, transparent 0);
+            background-size: 24px 24px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white min-h-screen">
+<div class="relative flex h-full w-full max-w-[430px] mx-auto flex-col bg-background-light dark:bg-background-dark overflow-x-hidden shadow-2xl min-h-screen ramadan-pattern">
+<!-- Top App Bar -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-50 backdrop-blur-md bg-opacity-80">
+<div class="flex size-12 shrink-0 items-center">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border-2 border-primary" data-alt="Rider profile picture with gold border" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBy_FdQRjIPNjGZuSs7-FFQIBas9wTShJhNDFm2kpvotyW14UDvxZ20ikdeHuKSB58nmXWtm2rhBVBIhI2q2A_S9lVNiBFgU-PS87Nm4ABgs171fXArWgPGe4rafD9e3w-wVyuseKscFrdTUTlkQdgkrGpFaAkVitTEFKz6hRviBdVFLKurskhu_gtLnVV_2ChJxRz97zDXCX4qAo0iWxsePqigVbsJEwR2SGH5BMO-wKcuT8ZLTUc6Lz15NxKDhSeBYJ5DJ17ecQWt");'>
+</div>
+</div>
+<div class="flex flex-col flex-1 px-3">
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Earnings Hub</h2>
+<p class="text-xs font-medium text-primary uppercase tracking-widest">Ramadan Day 14 • 1447 AH</p>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex cursor-pointer items-center justify-center rounded-full h-10 w-10 bg-accent-dark/50 text-primary">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex flex-col gap-1 pb-20">
+<!-- Hero Stats Card -->
+<div class="p-4">
+<div class="flex flex-col gap-2 rounded-xl p-6 bg-primary dark:bg-primary text-background-dark shadow-lg shadow-primary/20">
+<div class="flex justify-between items-start">
+<p class="font-bold text-sm uppercase tracking-wider opacity-80">Total Today</p>
+<span class="material-symbols-outlined opacity-80">account_balance_wallet</span>
+</div>
+<p class="tracking-tighter text-4xl font-extrabold leading-tight">₦24,500</p>
+<div class="mt-2 flex items-center gap-2 bg-black/10 rounded-full px-3 py-1 w-fit">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<p class="text-xs font-bold">+18% vs yesterday</p>
+</div>
+</div>
+</div>
+<!-- Earnings Graph Section -->
+<div class="flex flex-col gap-2 px-4 py-4">
+<div class="flex justify-between items-end mb-2">
+<p class="text-slate-900 dark:text-white text-base font-bold leading-normal">Hourly Performance</p>
+<p class="text-primary text-xs font-bold">Iftar Peak: 6PM - 8PM</p>
+</div>
+<div class="grid min-h-[200px] grid-flow-col gap-3 grid-rows-[1fr_auto] items-end justify-items-center bg-card-dark rounded-xl p-6 border border-white/5">
+<!-- Graph Bars -->
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="bg-primary/20 hover:bg-primary transition-colors rounded-t-sm w-full relative" style="height: 40%;">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">₦2k</div>
+</div>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase">10am</p>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="bg-primary/20 hover:bg-primary transition-colors rounded-t-sm w-full relative" style="height: 30%;">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">₦1.5k</div>
+</div>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase">1pm</p>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="bg-primary/20 hover:bg-primary transition-colors rounded-t-sm w-full relative" style="height: 60%;">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">₦4k</div>
+</div>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase">4pm</p>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="bg-primary dark:bg-primary rounded-t-sm w-full relative" style="height: 100%;">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-primary">₦12k</div>
+<div class="absolute inset-0 bg-white/20 animate-pulse rounded-t-sm"></div>
+</div>
+<p class="text-primary text-[10px] font-bold uppercase">Iftar</p>
+</div>
+<div class="flex flex-col items-center gap-2 w-full group">
+<div class="bg-primary/20 hover:bg-primary transition-colors rounded-t-sm w-full relative" style="height: 50%;">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity">₦3k</div>
+</div>
+<p class="text-slate-400 dark:text-slate-500 text-[10px] font-bold uppercase">10pm</p>
+</div>
+</div>
+</div>
+<!-- Breakdown Section -->
+<div class="px-4 pt-4">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight mb-3 flex items-center gap-2">
+                    Earnings Breakdown
+                    <span class="h-1 w-1 rounded-full bg-primary"></span>
+</h3>
+<div class="flex flex-col gap-2">
+<!-- Base Pay -->
+<div class="flex items-center gap-4 bg-card-dark px-4 min-h-[72px] rounded-xl border border-white/5 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Base Pay</p>
+<p class="text-slate-400 text-xs font-medium">12 Completed Deliveries</p>
+</div>
+</div>
+<div class="shrink-0"><p class="text-white text-base font-bold">₦15,000</p></div>
+</div>
+<!-- Iftar Bonuses -->
+<div class="flex items-center gap-4 bg-card-dark px-4 min-h-[72px] rounded-xl border border-primary/30 justify-between relative overflow-hidden group">
+<div class="absolute right-0 top-0 h-full w-24 bg-gradient-to-l from-primary/10 to-transparent"></div>
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-primary/20 shrink-0 size-12">
+<span class="material-symbols-outlined">star</span>
+</div>
+<div class="flex flex-col justify-center">
+<div class="flex items-center gap-2">
+<p class="text-white text-base font-bold leading-normal">Iftar Bonuses</p>
+<span class="bg-primary text-background-dark text-[8px] px-1.5 py-0.5 rounded-full font-black uppercase">Active</span>
+</div>
+<p class="text-primary text-xs font-medium">Peak Hour Multiplier Applied</p>
+</div>
+</div>
+<div class="shrink-0 z-10"><p class="text-primary text-base font-bold">₦6,500</p></div>
+</div>
+<!-- Tips -->
+<div class="flex items-center gap-4 bg-card-dark px-4 min-h-[72px] rounded-xl border border-white/5 justify-between">
+<div class="flex items-center gap-4">
+<div class="text-primary flex items-center justify-center rounded-lg bg-accent-dark shrink-0 size-12">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<div class="flex flex-col justify-center">
+<p class="text-white text-base font-bold leading-normal">Customer Tips</p>
+<p class="text-slate-400 text-xs font-medium">9 Grateful Customers</p>
+</div>
+</div>
+<div class="shrink-0"><p class="text-white text-base font-bold">₦3,000</p></div>
+</div>
+</div>
+</div>
+<!-- Performance Section -->
+<div class="px-4 py-6">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight mb-3">Performance</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-card-dark p-4 rounded-xl border border-white/5 flex flex-col items-center text-center gap-2">
+<div class="relative size-16 flex items-center justify-center">
+<svg class="size-full -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-accent-dark" cx="18" cy="18" fill="none" r="16" stroke-width="3"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="100" stroke-dashoffset="2" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-white font-bold text-sm">98%</span>
+</div>
+<p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">On-Time Rate</p>
+</div>
+<div class="bg-card-dark p-4 rounded-xl border border-white/5 flex flex-col items-center text-center gap-2">
+<div class="flex items-center gap-1 text-primary py-4">
+<span class="text-2xl font-black">4.9</span>
+<span class="material-symbols-outlined fill-1">star</span>
+</div>
+<p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Avg Rating</p>
+</div>
+</div>
+</div>
+<!-- Cash Out Button -->
+<div class="p-4 fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] z-50">
+<button class="w-full bg-primary hover:bg-yellow-400 text-background-dark font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-primary/30">
+                    CASH OUT EARNINGS
+                    <span class="material-symbols-outlined">send_money</span>
+</button>
+</div>
+</div>
+<!-- Spacer for Bottom Nav -->
+<div class="h-24"></div>
+</div>
+</body></html>

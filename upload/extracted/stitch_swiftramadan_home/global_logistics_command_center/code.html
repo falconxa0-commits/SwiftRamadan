@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global Logistics Command Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb613",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#221d10",
+                        "success": "#0bda1d",
+                        "error": "#fa4238",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for better mobile appearance */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-white/10">
+<div class="flex items-center p-4 justify-between">
+<div class="flex items-center gap-3">
+<div class="text-primary cursor-pointer">
+<span class="material-symbols-outlined text-[28px]">menu</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-tight tracking-tight">Logistics Command</h1>
+<p class="text-[10px] uppercase tracking-widest text-primary font-semibold">Ramadan 2026 Admin</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<div class="flex flex-col items-end mr-2">
+<p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Lagos Time</p>
+<p class="text-xs font-bold text-success">17:42 • Iftar in 1h 12m</p>
+</div>
+<button class="relative flex size-10 items-center justify-center rounded-full bg-white/5 border border-white/10">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-error rounded-full"></span>
+</button>
+</div>
+</div>
+</header>
+<main class="pb-24">
+<!-- KPI Quick Stats Section -->
+<section class="flex overflow-x-auto gap-4 p-4 no-scrollbar">
+<div class="flex min-w-[160px] flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#2d2615] border border-gray-100 dark:border-white/5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+<p class="text-xs font-medium">Active Riders</p>
+<span class="material-symbols-outlined text-sm">motorcycle</span>
+</div>
+<p class="text-2xl font-bold leading-tight">1,240</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-success text-xs">trending_up</span>
+<p class="text-success text-xs font-bold">+12%</p>
+</div>
+</div>
+<div class="flex min-w-[160px] flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#2d2615] border border-gray-100 dark:border-white/5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+<p class="text-xs font-medium">Pending Iftar</p>
+<span class="material-symbols-outlined text-sm">restaurant</span>
+</div>
+<p class="text-2xl font-bold leading-tight">850</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-error text-xs">priority_high</span>
+<p class="text-error text-xs font-bold">Urgent</p>
+</div>
+</div>
+<div class="flex min-w-[160px] flex-col gap-2 rounded-xl p-4 bg-white dark:bg-[#2d2615] border border-gray-100 dark:border-white/5 shadow-sm">
+<div class="flex items-center justify-between text-gray-500 dark:text-gray-400">
+<p class="text-xs font-medium">Revenue</p>
+<span class="material-symbols-outlined text-sm">payments</span>
+</div>
+<p class="text-2xl font-bold leading-tight">₦4.2M</p>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-success text-xs">trending_up</span>
+<p class="text-success text-xs font-bold">+18%</p>
+</div>
+</div>
+</section>
+<!-- Real-time Map Section -->
+<section class="px-4">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Live Delivery Clusters: Lagos</h3>
+<div class="flex gap-2">
+<span class="flex items-center gap-1 text-[10px] font-bold text-success bg-success/10 px-2 py-0.5 rounded-full border border-success/20">
+<span class="size-1.5 bg-success rounded-full animate-pulse"></span>
+                        LIVE
+                    </span>
+</div>
+</div>
+<div class="relative overflow-hidden rounded-xl border border-white/5">
+<div class="w-full bg-center bg-no-repeat aspect-[16/10] bg-cover rounded-lg object-cover filter brightness-75 contrast-125" data-alt="Dark stylized map of Lagos showing glowing delivery heatmaps and rider icons" data-location="Lagos, Nigeria" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCtjW5iN7W0F-p3u_Pgg5FoCwnffY-apMWv84Q5TOcUwqkYkyIUxrimzVUCDRoeZZw_wbA8bJY0B3eF__3gykMG6qd1Pg0PkcvQNL42SE5tQ3jGJiohv42aaHKmISkPCEWS_dfqAQXKchj0RwVz57NoKwnniSlxrXD0rLN3pbfUJtIi7tP-mTm2Iz2M2yWu1u86lU0gH6vGcRHT0joNZlfRLPbcOk3PPGiRLKqu3fmcnMTRk2fG8NqrFU9cjnnSl7ZeaYI4x5k6Mn5I");'>
+</div>
+<div class="absolute bottom-4 left-4 right-4 flex gap-2">
+<div class="flex-1 bg-background-dark/90 backdrop-blur-md p-3 rounded-lg border border-white/10">
+<p class="text-[10px] text-gray-400 font-bold uppercase">Victoria Island Cluster</p>
+<div class="flex items-end justify-between">
+<p class="text-lg font-bold">242 Riders</p>
+<p class="text-[10px] text-success font-bold">Optimal</p>
+</div>
+</div>
+<div class="flex-1 bg-background-dark/90 backdrop-blur-md p-3 rounded-lg border border-white/10">
+<p class="text-[10px] text-gray-400 font-bold uppercase">Ikeja Cluster</p>
+<div class="flex items-end justify-between">
+<p class="text-lg font-bold">188 Riders</p>
+<p class="text-[10px] text-error font-bold">High Demand</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Fleet Health Section -->
+<section class="p-4 mt-4">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-lg font-bold leading-tight">Fleet Health &amp; Demand</h3>
+<button class="text-primary text-xs font-bold flex items-center gap-1">
+                    Details <span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+<div class="bg-white dark:bg-[#2d2615] rounded-xl p-4 border border-gray-100 dark:border-white/5 space-y-5">
+<!-- Demand Gauge -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<p class="text-sm font-medium">Availability vs Demand Spike</p>
+<p class="text-sm font-bold text-primary">82% Capacity</p>
+</div>
+<div class="w-full h-3 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-gradient-to-r from-primary to-success rounded-full" style="width: 82%"></div>
+</div>
+<p class="mt-2 text-[10px] text-gray-500 dark:text-gray-400">Critical spike expected at 18:30 (Iftar Peak)</p>
+</div>
+<div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-100 dark:border-white/5">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">bolt</span>
+</div>
+<div>
+<p class="text-[10px] text-gray-500 font-bold uppercase">Efficiency</p>
+<p class="text-sm font-bold">94.8%</p>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-success/10 flex items-center justify-center text-success">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<div>
+<p class="text-[10px] text-gray-500 font-bold uppercase">Charity Ops</p>
+<p class="text-sm font-bold">12 Active Hubs</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions Grid -->
+<section class="px-4 mt-2">
+<h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">Management Shortcuts</h3>
+<div class="grid grid-cols-2 gap-3">
+<div class="bg-white dark:bg-[#2d2615] p-4 rounded-xl border border-gray-100 dark:border-white/5 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">store</span>
+<p class="text-sm font-bold">Vendor Management</p>
+<p class="text-[10px] text-gray-400">42 New applications</p>
+</div>
+<div class="bg-white dark:bg-[#2d2615] p-4 rounded-xl border border-gray-100 dark:border-white/5 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">group</span>
+<p class="text-sm font-bold">Rider Oversight</p>
+<p class="text-[10px] text-gray-400">12 Pending background checks</p>
+</div>
+<div class="bg-white dark:bg-[#2d2615] p-4 rounded-xl border border-gray-100 dark:border-white/5 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">redeem</span>
+<p class="text-sm font-bold">Charity Logistics</p>
+<p class="text-[10px] text-gray-400">85% Donation goal met</p>
+</div>
+<div class="bg-white dark:bg-[#2d2615] p-4 rounded-xl border border-gray-100 dark:border-white/5 flex flex-col gap-3">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<p class="text-sm font-bold">Operational Reports</p>
+<p class="text-[10px] text-gray-400">Daily summary ready</p>
+</div>
+</div>
+</section>
+</main>
+<!-- Navigation Drawer (Overlay Example) -->
+<!-- Note: Hidden by default in this implementation, but structure included for completeness -->
+<div class="hidden absolute inset-0 z-50 bg-black/60 backdrop-blur-sm">
+<div class="flex h-full w-10/12 flex-col bg-background-dark p-6 shadow-2xl">
+<div class="flex items-center justify-between mb-8">
+<div>
+<p class="text-primary text-[22px] font-bold tracking-tight">Logistics Command</p>
+<p class="text-xs text-gray-400">System Version 4.2.0</p>
+</div>
+<button class="size-10 flex items-center justify-center rounded-full bg-white/5">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<ul class="flex flex-col gap-2">
+<li class="flex h-14 items-center gap-4 rounded-xl px-4 bg-primary text-background-dark font-bold">
+<span class="material-symbols-outlined">dashboard</span>
+<p class="text-base truncate">Dashboard Overview</p>
+</li>
+<li class="flex h-14 items-center gap-4 rounded-xl px-4 hover:bg-white/5">
+<span class="material-symbols-outlined text-gray-400">store</span>
+<p class="text-white text-base font-medium truncate">Vendor Management</p>
+</li>
+<li class="flex h-14 items-center gap-4 rounded-xl px-4 hover:bg-white/5">
+<span class="material-symbols-outlined text-gray-400">motorcycle</span>
+<p class="text-white text-base font-medium truncate">Rider Oversight</p>
+</li>
+<li class="flex h-14 items-center gap-4 rounded-xl px-4 hover:bg-white/5">
+<span class="material-symbols-outlined text-gray-400">volunteer_activism</span>
+<p class="text-white text-base font-medium truncate">Charity Logistics</p>
+</li>
+<li class="flex h-14 items-center gap-4 rounded-xl px-4 hover:bg-white/5 mt-4 pt-4 border-t border-white/10">
+<span class="material-symbols-outlined text-gray-400">settings</span>
+<p class="text-white text-base font-medium truncate">Platform Settings</p>
+</li>
+</ul>
+</div>
+</div>
+<!-- Bottom Navigation Bar (iOS Style) -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-xl border-t border-gray-200 dark:border-white/10 pb-6 pt-2">
+<div class="flex justify-around items-center px-4">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[28px] fill-1">dashboard</span>
+<span class="text-[10px] font-bold">Home</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[28px]">map</span>
+<span class="text-[10px] font-medium">Tracking</span>
+</button>
+<div class="relative -top-6">
+<button class="size-14 rounded-full bg-primary shadow-lg shadow-primary/30 flex items-center justify-center text-background-dark">
+<span class="material-symbols-outlined text-[32px] font-bold">add</span>
+</button>
+</div>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[28px]">monitoring</span>
+<span class="text-[10px] font-medium">Reports</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-gray-400">
+<span class="material-symbols-outlined text-[28px]">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</button>
+</div>
+</nav>
+</body></html>

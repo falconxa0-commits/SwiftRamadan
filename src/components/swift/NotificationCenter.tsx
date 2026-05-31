@@ -1,0 +1,129 @@
+'use client';
+
+import { useState } from 'react';
+import { X, ShoppingBag, Clock, Gift, Users, Truck, Bell } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+
+interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  time: string;
+  read: boolean;
+  type: string;
+}
+
+const typeIcons: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string }> = {
+  order: { icon: Truck, color: 'text-[#13ec13]' },
+  promo: { icon: ShoppingBag, color: 'text-[#FFD700]' },
+  reminder: { icon: Clock, color: 'text-cyan-400' },
+  reward: { icon: Gift, color: 'text-amber-400' },
+  social: { icon: Users, color: 'text-purple-400' },
+};
+
+const mockNotifications: Notification[] = [
+  { id: 1, title: "Order Confirmed!", message: "Your Ramadan Family Box is being prepared.", time: "2 min ago", read: false, type: "order" },
+  { id: 2, title: "Flash Sale Alert", message: "30% off all Dates & Fruit Boxes - 1 hour left!", time: "15 min ago", read: false, type: "promo" },
+  { id: 3, title: "Iftar Reminder", message: "Maghrib is at 6:45 PM. Order your Iftar now!", time: "1 hr ago", read: true, type: "reminder" },
+  { id: 4, title: "SwiftRewards", message: "You've earned 500 points from your last order!", time: "3 hrs ago", read: true, type: "reward" },
+  { id: 5, title: "Group Buy Update", message: "Your group buy for Groceries is 80% filled.", time: "5 hrs ago", read: true, type: "social" },
+  { id: 6, title: "Delivery Update", message: "Your rider Ibrahim is 5 mins away!", time: "8 hrs ago", read: true, type: "order" },
+];
+
+interface NotificationCenterProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function NotificationCenter({ isOpen, onClose }: NotificationCenterProps) {
+  const [notifications, setNotifications] = useState(mockNotifications);
+  const unreadCount = notifications.filter(n => !n.read).length;
+
+  const markAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  };
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-[70]"
+            onClick={onClose}
+          />
+
+          {/* Panel */}
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 h-full w-full sm:w-96 bg-[#0F1117] z-[80] flex flex-col border-l border-white/5"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <div className="flex items-center gap-2">
+                <Bell className="w-5 h-5 text-[#13ec13]" />
+                <h2 className="text-white font-bold text-lg">Notifications</h2>
+                {unreadCount > 0 && (
+                  <span className="bg-[#13ec13] text-[#05070A] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                    {unreadCount}
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-3">
+                {unreadCount > 0 && (
+                  <button onClick={markAllRead} className="text-[#13ec13] text-xs font-bold">
+                    Mark all read
+                  </button>
+                )}
+                <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors">
+                  <X className="w-4 h-4 text-white/60" />
+                </button>
+              </div>
+            </div>
+
+            {/* Notification List */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
+              {notifications.map((notification) => {
+                const config = typeIcons[notification.type] || typeIcons.order;
+                const Icon = config.icon;
+                return (
+                  <motion.div
+                    key={notification.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: notification.id * 0.05 }}
+                    className={`flex items-start gap-3 p-3 rounded-xl border transition-colors cursor-pointer ${
+                      notification.read
+                        ? 'bg-transparent border-white/5 opacity-60'
+                        : 'bg-[#1A1D26]/60 border-[#13ec13]/10'
+                    }`}
+                  >
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[#13ec13]/10'}`}>
+                      <Icon className={`w-5 h-5 ${config.color}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className={`text-sm font-bold truncate ${notification.read ? 'text-white/60' : 'text-white'}`}>
+                          {notification.title}
+                        </p>
+                        {!notification.read && <span className="w-2 h-2 bg-[#13ec13] rounded-full shrink-0" />}
+                      </div>
+                      <p className="text-white/40 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
+                      <p className="text-white/20 text-[10px] mt-1">{notification.time}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}

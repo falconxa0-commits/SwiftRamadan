@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Notification Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13ec6d",
+                        "gold": "#D4AF37",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#102218",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .gold-gradient {
+            background: linear-gradient(135deg, #D4AF37 0%, #F9E586 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-bg {
+            background: linear-gradient(135deg, #D4AF37 0%, #F9E586 100%);
+        }
+        .premium-glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-white">
+<div class="relative flex h-screen w-full flex-col overflow-x-hidden">
+<!-- Top App Bar -->
+<div class="sticky top-0 z-10 flex items-center bg-background-light dark:bg-background-dark p-4 pb-4 justify-between border-b border-gray-200 dark:border-[#234833]">
+<div class="flex size-10 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-[#1a3325]">
+<span class="material-symbols-outlined text-xl">arrow_back_ios_new</span>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-lg font-bold leading-tight tracking-tight">Notification Center</h2>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px] gold-gradient">star</span>
+<span class="text-[10px] uppercase tracking-widest font-bold gold-gradient">Premium Member</span>
+</div>
+</div>
+<button class="flex items-center justify-end">
+<p class="text-primary text-sm font-semibold hover:opacity-80 transition-opacity">Mark all as read</p>
+</button>
+</div>
+<!-- Ramadan Special Banner -->
+<div class="px-4 pt-4">
+<div class="relative overflow-hidden rounded-xl bg-gradient-to-r from-[#1a3325] to-[#102218] p-4 border border-primary/20">
+<div class="relative z-10 flex items-center justify-between">
+<div>
+<p class="text-xs font-bold text-primary uppercase tracking-wider mb-1">Ramadan Timing</p>
+<p class="text-white text-base font-medium">Iftar in <span class="text-primary font-bold">2h 15m</span></p>
+</div>
+<div class="flex flex-col items-end">
+<span class="material-symbols-outlined text-primary text-3xl">dark_mode</span>
+</div>
+</div>
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+</div>
+</div>
+<!-- Category Tabs -->
+<div class="mt-4 overflow-x-auto no-scrollbar">
+<div class="flex px-4 gap-2 pb-2">
+<button class="flex items-center justify-center rounded-full bg-primary px-5 py-2 whitespace-nowrap">
+<p class="text-background-dark text-sm font-bold">All</p>
+</button>
+<button class="flex items-center justify-center rounded-full bg-gray-100 dark:bg-[#1a3325] px-5 py-2 whitespace-nowrap">
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm font-medium">Orders</p>
+</button>
+<button class="flex items-center justify-center rounded-full bg-gray-100 dark:bg-[#1a3325] px-5 py-2 whitespace-nowrap">
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm font-medium">Payments</p>
+</button>
+<button class="flex items-center justify-center rounded-full bg-gray-100 dark:bg-[#1a3325] px-5 py-2 whitespace-nowrap">
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm font-medium">Offers</p>
+</button>
+<button class="flex items-center justify-center rounded-full bg-gray-100 dark:bg-[#1a3325] px-5 py-2 whitespace-nowrap">
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm font-medium">System</p>
+</button>
+</div>
+</div>
+<!-- Notification List -->
+<div class="flex-1 overflow-y-auto px-4 pt-4 space-y-3 pb-8">
+<!-- Unread Notification: Order -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] border-l-4 border-primary shadow-sm">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined text-2xl">local_shipping</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-tight">Iftar Meal is on the way!</p>
+<div class="size-2.5 rounded-full bg-primary mt-1 shadow-[0_0_8px_rgba(19,236,109,0.6)]"></div>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">Your order from <span class="font-medium text-gray-900 dark:text-white">The Place, Lekki</span> has been picked up by our rider.</p>
+<div class="flex items-center gap-4 mt-2">
+<span class="text-gray-400 dark:text-gray-500 text-xs font-medium">2 mins ago</span>
+<button class="text-primary text-xs font-bold underline decoration-2 underline-offset-4">Track Rider</button>
+</div>
+</div>
+</div>
+<!-- Promotion: Ramadan -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] border-l-4 border-gold shadow-sm">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gold/10">
+<span class="material-symbols-outlined text-2xl gold-gradient">celebration</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-bold leading-tight gold-gradient">Ramadan Special Offer 🌙</p>
+<p class="text-gray-400 dark:text-gray-500 text-xs font-medium mt-1">45m</p>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">Get <span class="font-bold text-gold">25% OFF</span> all healthy bowls for Suhoor this week. Use code <span class="bg-gold/10 px-1 rounded text-gold font-mono">RAMADAN25</span>.</p>
+<div class="mt-2">
+<button class="px-4 py-1.5 rounded-full gold-bg text-background-dark text-xs font-bold">Claim Now</button>
+</div>
+</div>
+</div>
+<!-- Transaction: Payment -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] opacity-80">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#234833] text-gray-500 dark:text-[#92c9a9]">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-semibold leading-tight">Payment Successful</p>
+<p class="text-gray-400 dark:text-gray-500 text-xs font-medium mt-1">2h</p>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">NGN 15,200.00 confirmed for Order #NG-4492. Receipt sent to your email.</p>
+</div>
+</div>
+<!-- System: Update -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] opacity-80">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#234833] text-gray-500 dark:text-[#92c9a9]">
+<span class="material-symbols-outlined text-2xl">settings</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-semibold leading-tight">System Update</p>
+<p class="text-gray-400 dark:text-gray-500 text-xs font-medium mt-1">5h</p>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">We've improved our delivery tracking system for faster updates in Lagos Mainland.</p>
+</div>
+</div>
+<!-- Promotion: Gold -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] opacity-80">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gold/5 text-gold">
+<span class="material-symbols-outlined text-2xl">workspace_premium</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-semibold leading-tight">Refer a Friend</p>
+<p class="text-gray-400 dark:text-gray-500 text-xs font-medium mt-1">Yesterday</p>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">Earn NGN 2,000 credit when you invite your friends to try our Ramadan specials.</p>
+</div>
+</div>
+<!-- Order: Completed -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-[#1a3325] opacity-80">
+<div class="flex size-12 shrink-0 items-center justify-center rounded-lg bg-gray-100 dark:bg-[#234833] text-gray-500 dark:text-[#92c9a9]">
+<span class="material-symbols-outlined text-2xl">check_circle</span>
+</div>
+<div class="flex flex-1 flex-col gap-1">
+<div class="flex justify-between items-start">
+<p class="text-gray-900 dark:text-white text-base font-semibold leading-tight">Delivered</p>
+<p class="text-gray-400 dark:text-gray-500 text-xs font-medium mt-1">Yesterday</p>
+</div>
+<p class="text-gray-600 dark:text-[#92c9a9] text-sm leading-normal">Your Suhoor box from <span class="font-medium text-gray-900 dark:text-white">The Gourmet Kitchen</span> was delivered.</p>
+<div class="flex gap-1 mt-2">
+<span class="material-symbols-outlined text-gold text-lg">star</span>
+<span class="material-symbols-outlined text-gold text-lg">star</span>
+<span class="material-symbols-outlined text-gold text-lg">star</span>
+<span class="material-symbols-outlined text-gold text-lg">star</span>
+<span class="material-symbols-outlined text-gray-300 dark:text-gray-600 text-lg">star</span>
+<span class="text-xs text-gray-400 dark:text-gray-500 ml-2 self-center">Tap to rate</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Bar Navigation (Bottom) -->
+<div class="sticky bottom-0 bg-white/80 dark:bg-background-dark/80 backdrop-blur-lg border-t border-gray-200 dark:border-[#234833] px-6 py-3 flex justify-between items-center">
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-gray-400 dark:text-[#92c9a9]">home</span>
+<span class="text-[10px] font-medium text-gray-400 dark:text-[#92c9a9]">Home</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-gray-400 dark:text-[#92c9a9]">restaurant</span>
+<span class="text-[10px] font-medium text-gray-400 dark:text-[#92c9a9]">Orders</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="relative">
+<span class="material-symbols-outlined text-primary">notifications</span>
+<div class="absolute -top-1 -right-1 size-3 bg-red-500 border-2 border-white dark:border-background-dark rounded-full"></div>
+</div>
+<span class="text-[10px] font-bold text-primary">Alerts</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-gray-400 dark:text-[#92c9a9]">account_balance_wallet</span>
+<span class="text-[10px] font-medium text-gray-400 dark:text-[#92c9a9]">Wallet</span>
+</div>
+<div class="flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-gray-400 dark:text-[#92c9a9]">person</span>
+<span class="text-[10px] font-medium text-gray-400 dark:text-[#92c9a9]">Profile</span>
+</div>
+</div>
+</div>
+</body></html>

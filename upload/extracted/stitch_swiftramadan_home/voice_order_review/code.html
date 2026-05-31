@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Voice Order Review</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ecb613",
+                        "background-light": "#f8f8f6",
+                        "background-dark": "#1a160b",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .voice-wave {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .wave-bar {
+            width: 3px;
+            background-color: #ecb613;
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+<div class="relative flex min-h-screen w-full flex-col max-w-[430px] mx-auto overflow-x-hidden shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top Navigation -->
+<header class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="flex items-center p-4 pb-2 justify-between">
+<div class="flex size-12 shrink-0 items-center justify-center cursor-pointer">
+<span class="material-symbols-outlined text-2xl">arrow_back_ios</span>
+</div>
+<div class="flex flex-col items-center">
+<h2 class="text-lg font-bold leading-tight tracking-tight">Review Order</h2>
+<div class="flex items-center gap-1">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-[10px] uppercase tracking-widest text-primary font-bold">Listening...</span>
+</div>
+</div>
+<div class="flex w-12 items-center justify-end">
+<button class="flex size-10 cursor-pointer items-center justify-center rounded-full bg-primary/10 text-primary">
+<span class="material-symbols-outlined">mic</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 px-4 py-2">
+<!-- Voice Input Visualizer -->
+<div class="mb-6 mt-2 flex flex-col items-center justify-center bg-primary/5 rounded-xl p-6 border border-primary/20">
+<p class="text-sm text-primary/80 mb-4 font-medium italic">"Add two more Beef Suya and a Zobo"</p>
+<div class="voice-wave h-8">
+<div class="wave-bar h-4"></div>
+<div class="wave-bar h-8"></div>
+<div class="wave-bar h-6"></div>
+<div class="wave-bar h-10"></div>
+<div class="wave-bar h-5"></div>
+<div class="wave-bar h-7"></div>
+<div class="wave-bar h-4"></div>
+</div>
+</div>
+<!-- Order Summary Header -->
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xl font-bold tracking-tight">Iftar Basket</h3>
+<span class="text-sm font-medium bg-primary text-background-dark px-2 py-1 rounded">3 Items</span>
+</div>
+<!-- List Items -->
+<div class="space-y-4">
+<!-- Item 1 -->
+<div class="flex items-center gap-4 bg-white dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 shrink-0" data-alt="Delicious smokey jollof rice served with plantains" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBIRZQbifQc5sdRFypcDAKcssUiD-Ro2LU4cqFDIphhPo3-7xZs1NljLm740sA8YY6bSHD6SMxm1omzCqrqY6745TKkMWv4FWb7DU8rNhPR4CtUfpn0Oqs7ZOUZVEJS633SJrbl0HZKBsc_NNSarpqwu4D33poap5Y0kTzgS0BUYUW43BFq5Kahfa9Jdp5FcVmHoTuFffqA1UQ9WWhDMO5NhuJJRHg1hXHdfGI5_FMTtJB5HES-x9p6lcWNLJVkilMcNjVErcgj68WZ");'>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start">
+<p class="text-base font-bold line-clamp-1">Smokey Jollof Rice</p>
+<p class="text-primary font-bold">₦4,500</p>
+</div>
+<div class="flex items-center justify-between mt-2">
+<p class="text-zinc-500 dark:text-zinc-400 text-sm">Large Portion</p>
+<div class="flex items-center gap-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg px-2 py-1">
+<span class="material-symbols-outlined text-sm cursor-pointer">remove</span>
+<span class="text-sm font-bold">1</span>
+<span class="material-symbols-outlined text-sm cursor-pointer">add</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center gap-4 bg-white dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 shrink-0" data-alt="Spicy grilled beef suya skewers with onions" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBGyrMlywyoZ9tM2v_3ZDKrq84Lu1PO6nOokP4huksp7kXJKoIdu45rz4-Foen-9luxQYSwVsBAzB38A3UqOxsI0UzJ2hUQLkDDb9XSn7DBv27vCxBwSicmR3sAUZFjAlOql5K_08_LXpxTlvFOwz2LerDnKjaOdEOOntV8qjqzujtWTLQFuMJTJyD4AcrJecToQyNs1FCToM4O6uHV9cObPJKtXF1C0YNrgOVvKhwRF1ytfH0KT5LBLrkB43M38RYtnZ84pGg_7W_T");'>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start">
+<p class="text-base font-bold line-clamp-1">Beef Suya</p>
+<p class="text-primary font-bold">₦6,000</p>
+</div>
+<div class="flex items-center justify-between mt-2">
+<p class="text-zinc-500 dark:text-zinc-400 text-sm">Full Portion</p>
+<div class="flex items-center gap-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg px-2 py-1">
+<span class="material-symbols-outlined text-sm cursor-pointer">remove</span>
+<span class="text-sm font-bold">2</span>
+<span class="material-symbols-outlined text-sm cursor-pointer">add</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex items-center gap-4 bg-white dark:bg-zinc-900/50 p-3 rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-sm">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-lg size-16 shrink-0" data-alt="Chilled red zobo hibiscus drink in a bottle" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBMsf3cYVZBFiTp8UENbPJDASFf7KjTY2PZG4b_vB9_8nxZzsJxTZZWoWMQL5xLsHITzyNFcY750KM56Pe7cY-YvsabVcrFmVcsReYFH8ePdohqEAVQArQX3U41adGshhMg1p4WdpbDOdR7WEMdOyWkfN2by5OgOmo-d4ZZhChkHiR5OkpcActoXdFv1QQOXN2N-7mVClSkTE4dpmce1oSwKV7UiAKiP7LGRHTckFponrCQ-iTxDVnkz698paHWRej2JpMPQpW0LQv_");'>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex justify-between items-start">
+<p class="text-base font-bold line-clamp-1">Zobo Drink</p>
+<p class="text-primary font-bold">₦1,200</p>
+</div>
+<div class="flex items-center justify-between mt-2">
+<p class="text-zinc-500 dark:text-zinc-400 text-sm">500ml Bottle</p>
+<div class="flex items-center gap-3 bg-zinc-100 dark:bg-zinc-800 rounded-lg px-2 py-1">
+<span class="material-symbols-outlined text-sm cursor-pointer">remove</span>
+<span class="text-sm font-bold">1</span>
+<span class="material-symbols-outlined text-sm cursor-pointer">add</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Totals Section -->
+<div class="mt-8 space-y-3 p-4 bg-zinc-100 dark:bg-zinc-900 rounded-2xl">
+<div class="flex justify-between text-sm">
+<span class="text-zinc-500">Subtotal</span>
+<span class="font-medium">₦11,700</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-zinc-500">Delivery Fee</span>
+<span class="font-medium">₦1,500</span>
+</div>
+<div class="flex justify-between text-sm text-green-500 font-medium">
+<span>Ramadan Kareem Discount</span>
+<span>-₦1,000</span>
+</div>
+<div class="h-px bg-zinc-200 dark:bg-zinc-800 my-2"></div>
+<div class="flex justify-between items-center">
+<span class="text-lg font-bold">Total Amount</span>
+<span class="text-2xl font-bold text-primary tracking-tight">₦12,200</span>
+</div>
+</div>
+</main>
+<!-- Fixed Bottom Actions -->
+<footer class="p-6 pb-10 space-y-4 bg-gradient-to-t from-background-light dark:from-background-dark via-background-light dark:via-background-dark to-transparent">
+<div class="text-center">
+<p class="text-xs uppercase tracking-widest text-zinc-500 mb-2 font-bold">Voice Controls Active</p>
+</div>
+<button class="w-full bg-primary text-background-dark h-16 rounded-xl flex items-center justify-center gap-3 shadow-lg shadow-primary/20 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined font-bold">check_circle</span>
+<span class="text-lg font-bold">Confirm Order</span>
+<span class="text-xs opacity-70 border border-background-dark/30 px-1.5 py-0.5 rounded ml-2">Say "Confirm"</span>
+</button>
+<button class="w-full bg-transparent border-2 border-primary/40 text-primary h-14 rounded-xl flex items-center justify-center gap-3 active:scale-[0.98] transition-transform">
+<span class="material-symbols-outlined">edit_note</span>
+<span class="text-base font-bold">Edit via Voice</span>
+<span class="text-xs opacity-70 border border-primary/30 px-1.5 py-0.5 rounded ml-2">Say "Edit"</span>
+</button>
+<!-- Home Indicator (iOS style) -->
+<div class="w-32 h-1.5 bg-zinc-300 dark:bg-zinc-800 rounded-full mx-auto mt-4"></div>
+</footer>
+</div>
+</body></html>

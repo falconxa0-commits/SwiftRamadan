@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2bee4b",
+                        "accent-gold": "#D4AF37",
+                        "background-light": "#f6f8f6",
+                        "background-dark": "#102213",
+                    },
+                    fontFamily: {
+                        "display": ["Plus Jakarta Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glowing-wave {
+            background: radial-gradient(circle, rgba(43, 238, 75, 0.2) 0%, rgba(16, 34, 19, 0) 70%);
+        }
+        .gold-shimmer {
+            background: linear-gradient(90deg, #D4AF37 0%, #F5E0A3 50%, #D4AF37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden">
+<div class="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark overflow-hidden">
+<!-- TopAppBar -->
+<div class="flex items-center bg-transparent p-4 pb-2 justify-between z-10">
+<div class="text-white flex size-12 shrink-0 items-center">
+<span class="material-symbols-outlined text-3xl">close</span>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">Voice Ordering</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined text-3xl">help_outline</span>
+</button>
+</div>
+</div>
+<!-- Main Content Area -->
+<div class="flex flex-col flex-1 items-center justify-start px-6 pt-10 z-10">
+<!-- HeadlineText -->
+<h1 class="text-white tracking-tight text-[32px] font-extrabold leading-tight text-center pb-2">
+                I'm listening, <span class="gold-shimmer">tell me what to add.</span>
+</h1>
+<!-- BodyText (Live Transcription) -->
+<div class="mt-8 min-h-[120px] flex items-center justify-center">
+<p class="text-white/90 text-2xl font-medium leading-relaxed text-center px-4 italic">
+                    "Add <span class="text-primary font-bold">two Family Iftar Boxes</span> and a <span class="text-primary font-bold">50kg bag of Rice</span>"
+                </p>
+</div>
+<!-- Voice Visualization Area (Expanded HeaderImage concept) -->
+<div class="flex-1 w-full flex items-center justify-center relative">
+<!-- Large Glowing Waves -->
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-64 h-64 rounded-full glowing-wave border border-primary/20 flex items-center justify-center">
+<div class="w-48 h-48 rounded-full glowing-wave border border-primary/40 flex items-center justify-center">
+<div class="w-32 h-32 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-primary text-5xl">mic</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Secondary decorative wave lines -->
+<div class="flex gap-1 items-end h-16">
+<div class="w-1.5 h-6 bg-primary/40 rounded-full"></div>
+<div class="w-1.5 h-10 bg-primary/60 rounded-full"></div>
+<div class="w-1.5 h-16 bg-primary rounded-full"></div>
+<div class="w-1.5 h-12 bg-accent-gold rounded-full"></div>
+<div class="w-1.5 h-8 bg-primary/80 rounded-full"></div>
+<div class="w-1.5 h-14 bg-primary rounded-full"></div>
+<div class="w-1.5 h-6 bg-primary/30 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Recognized Items Section -->
+<div class="pb-8 z-10">
+<!-- SectionHeader -->
+<div class="px-6 flex justify-between items-center mb-4">
+<h3 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Recognized Items</h3>
+<span class="text-primary text-xs font-bold uppercase tracking-widest">Live Syncing</span>
+</div>
+<!-- Recognized Items Horizontal List -->
+<div class="flex gap-4 px-6 overflow-x-auto no-scrollbar">
+<!-- Item Card 1 -->
+<div class="flex-shrink-0 w-48 bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-md">
+<div class="h-24 w-full bg-cover bg-center rounded-lg mb-3" data-alt="Gourmet Family Iftar Box with assorted dates and traditional food" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB20W6LTOAISqq58h3Dk34OBLE9HOG04RTISgHWMGWD3XQbUAA5zWzQlKlx853x967d8M_iL9IhmE82tinoM9lCDowQnNTsFJFXP3BEumVBlpFTLtqpD-SR98t8sd1h4L8v8eh0QPlWULCWRdDrMb9ay_KBCbTxAN87GSUtzK2uY2KAmuzmT61rYlSIu3QnD90w0xpw_imYGcZAv8p98k5OBlkf1_PJYHfzv98mByS6X-WJl6p2ggYVvBz7C_4wxgMeKGOR6PGdsMLE");'>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold text-accent-gold uppercase">2 Units</p>
+<p class="text-sm font-semibold text-white leading-tight">Family Iftar Box</p>
+</div>
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+</div>
+</div>
+<!-- Item Card 2 -->
+<div class="flex-shrink-0 w-48 bg-white/5 border border-white/10 rounded-xl p-3 backdrop-blur-md">
+<div class="h-24 w-full bg-cover bg-center rounded-lg mb-3" data-alt="Large bag of premium long grain rice" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDy6DkCeRDXyh3O10r_ggslxzhYCEl5JPolkedw9omKPqpVKFbZDvu6OmYBYySOBeB_pFuYK1k2oP_RsX6dun6TAS_Pn8z1b0KPyXDwkXVAniXoYiCkPb_pXFZ-pd70WGt3NGqpsNzEQsKxblQlbeCdIAgRvE8l2WehDCmXIpjDBj0Qfto6DMkEbKts0N99RfZSYMcio1hyPnhEeeQ-DEH0FyaSGt89qnh3qZx5efyIr93AuZh74nB__BcbuajJ7MDHdl5TgQXrgGVw");'>
+</div>
+<div class="flex justify-between items-start">
+<div>
+<p class="text-xs font-bold text-accent-gold uppercase">1 Unit</p>
+<p class="text-sm font-semibold text-white leading-tight">50kg Rice Bag</p>
+</div>
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Controls -->
+<div class="p-6 bg-gradient-to-t from-background-dark to-transparent pt-10">
+<div class="flex gap-4">
+<button class="flex-1 bg-white/10 text-white rounded-xl py-4 font-bold flex items-center justify-center gap-2 border border-white/20">
+<span class="material-symbols-outlined">close</span>
+                    Cancel
+                </button>
+<button class="flex-[2] bg-primary text-background-dark rounded-xl py-4 font-extrabold flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">shopping_cart_checkout</span>
+                    Review Order
+                </button>
+</div>
+<!-- Bottom Indicator for iPhone -->
+<div class="mt-6 w-32 h-1.5 bg-white/20 rounded-full mx-auto"></div>
+</div>
+<!-- Visual Background Decoration -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 rounded-full blur-[100px]"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-accent-gold/10 rounded-full blur-[100px]"></div>
+</div>
+</body></html>
