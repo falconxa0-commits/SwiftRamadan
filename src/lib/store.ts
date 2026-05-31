@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile';
+export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile'
+  | 'rider-dashboard' | 'rider-earnings' | 'rider-deliveries' | 'rider-profile'
+  | 'vendor-dashboard' | 'vendor-orders' | 'vendor-earnings' | 'vendor-store';
 
 export interface CartItem {
   id: number;
@@ -154,6 +156,30 @@ interface AppState {
   referralCode: string;
   referralCount: number;
   incrementReferral: () => void;
+
+  // Rider State
+  riderOnline: boolean;
+  setRiderOnline: (val: boolean) => void;
+  riderCurrentDelivery: string | null;
+  setRiderCurrentDelivery: (id: string | null) => void;
+  riderEarnings: number;
+  setRiderEarnings: (val: number) => void;
+  riderCompletedToday: number;
+  setRiderCompletedToday: (val: number) => void;
+  riderRating: number;
+  setRiderRating: (val: number) => void;
+
+  // Vendor State
+  vendorOnline: boolean;
+  setVendorOnline: (val: boolean) => void;
+  vendorStoreName: string;
+  setVendorStoreName: (name: string) => void;
+  vendorBalance: number;
+  setVendorBalance: (val: number) => void;
+  vendorPendingSettlement: number;
+  setVendorPendingSettlement: (val: number) => void;
+  vendorTotalEarnings: number;
+  setVendorTotalEarnings: (val: number) => void;
 }
 
 const defaultGiftCard = {
@@ -356,6 +382,30 @@ export const useAppStore = create<AppState>()(
       referralCode: 'BOLAJI24',
       referralCount: 3,
       incrementReferral: () => set({ referralCount: get().referralCount + 1 }),
+
+      // Rider State
+      riderOnline: false,
+      setRiderOnline: (val) => set({ riderOnline: val }),
+      riderCurrentDelivery: null,
+      setRiderCurrentDelivery: (id) => set({ riderCurrentDelivery: id }),
+      riderEarnings: 24500,
+      setRiderEarnings: (val) => set({ riderEarnings: val }),
+      riderCompletedToday: 12,
+      setRiderCompletedToday: (val) => set({ riderCompletedToday: val }),
+      riderRating: 4.9,
+      setRiderRating: (val) => set({ riderRating: val }),
+
+      // Vendor State
+      vendorOnline: false,
+      setVendorOnline: (val) => set({ vendorOnline: val }),
+      vendorStoreName: 'Suya Central',
+      setVendorStoreName: (name) => set({ vendorStoreName: name }),
+      vendorBalance: 450000,
+      setVendorBalance: (val) => set({ vendorBalance: val }),
+      vendorPendingSettlement: 25400,
+      setVendorPendingSettlement: (val) => set({ vendorPendingSettlement: val }),
+      vendorTotalEarnings: 1280000,
+      setVendorTotalEarnings: (val) => set({ vendorTotalEarnings: val }),
     }),
     {
       name: 'swiftramadan-store',
@@ -380,6 +430,15 @@ export const useAppStore = create<AppState>()(
         referralCount: state.referralCount,
         sahurAlarmTime: state.sahurAlarmTime,
         sahurAlarmEnabled: state.sahurAlarmEnabled,
+        riderOnline: state.riderOnline,
+        riderEarnings: state.riderEarnings,
+        riderCompletedToday: state.riderCompletedToday,
+        riderRating: state.riderRating,
+        vendorOnline: state.vendorOnline,
+        vendorStoreName: state.vendorStoreName,
+        vendorBalance: state.vendorBalance,
+        vendorPendingSettlement: state.vendorPendingSettlement,
+        vendorTotalEarnings: state.vendorTotalEarnings,
       }),
     }
   )

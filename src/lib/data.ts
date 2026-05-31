@@ -706,3 +706,181 @@ export const dailyDuas = [
   'O Allah, make the Quran a companion in our lives this Ramadan.',
   'O Allah, bless us with good health and sustenance this Ramadan.',
 ];
+
+// ──────────── RIDER DATA ────────────
+
+export const riderDeliveryRequests = [
+  {
+    id: 'DEL-8829',
+    customer: 'Ahmed K.',
+    address: '12 Admiralty Way, Lekki Phase 1',
+    items: '1x Jollof Rice & Lamb Platter, 2x Zobo',
+    amount: 8500,
+    deliveryFee: 1200,
+    iftarDeadline: '6:42 PM',
+    minutesUntilIftar: 22,
+    distance: '3.2 km',
+    pickupAddress: 'Suya Central, Victoria Island',
+    priority: 'iftar' as const,
+  },
+  {
+    id: 'DEL-8831',
+    customer: 'Fatima B.',
+    address: '8 Akin Adesola St, Victoria Island',
+    items: 'Large Suya Sampler, 4x Masa Cakes',
+    amount: 6700,
+    deliveryFee: 1000,
+    iftarDeadline: '6:45 PM',
+    minutesUntilIftar: 25,
+    distance: '2.1 km',
+    pickupAddress: 'The Food Hub, Ikoyi',
+    priority: 'iftar' as const,
+  },
+  {
+    id: 'DEL-8835',
+    customer: 'Yusuf M.',
+    address: '5 Awolowo Rd, Ikoyi',
+    items: '2x Date Smoothie, 1x Moi Moi',
+    amount: 5200,
+    deliveryFee: 900,
+    iftarDeadline: '7:00 PM',
+    minutesUntilIftar: 40,
+    distance: '4.5 km',
+    pickupAddress: 'Lagos Fresh Mart, Surulere',
+    priority: 'standard' as const,
+  },
+];
+
+export const riderActiveDeliveries = [
+  {
+    id: 'DEL-8825',
+    customer: 'Amina O.',
+    address: '15 Bourdillon Rd, Ikoyi',
+    items: 'Ramadan Box Premium',
+    amount: 17500,
+    status: 'picked_up' as const,
+    progress: 65,
+    eta: '8 min',
+    customerPhone: '+234 801 234 5678',
+  },
+];
+
+export const riderEarningsBreakdown = {
+  today: 24500,
+  basePay: 15000,
+  iftarBonuses: 6500,
+  tips: 3000,
+  completedDeliveries: 12,
+  gratefulCustomers: 9,
+  onTimeRate: 98,
+  avgRating: 4.9,
+  hourlyData: [
+    { hour: '10am', amount: 2000, pct: 17 },
+    { hour: '1pm', amount: 1500, pct: 12 },
+    { hour: '4pm', amount: 4000, pct: 33 },
+    { hour: 'Iftar', amount: 12000, pct: 100 },
+    { hour: '10pm', amount: 3000, pct: 25 },
+  ],
+};
+
+export const riderPerformanceMetrics = {
+  completionRate: 99.2,
+  completionTrend: '+2.1%',
+  rating: 4.98,
+  ratingTrend: '+0.05',
+  compliments: 128,
+  complimentsTrend: '+12',
+  incentiveProgress: 85,
+  incentiveGoal: '₦15,000 Ramadan Bonus',
+  incentiveRemaining: '12 more deliveries',
+  topCompliments: [
+    { icon: 'speed', title: 'Super Fast Delivery', quote: 'Arrived just in time for Iftar! Truly appreciate the speed.' },
+    { icon: 'chat_bubble', title: 'Very Polite', quote: 'Excellent service and very respectful attitude. 5 stars!' },
+    { icon: 'restaurant_menu', title: 'Careful Handling', quote: 'Food arrived hot and perfectly packaged. Great care!' },
+  ],
+};
+
+// ──────────── VENDOR DATA ────────────
+
+export const vendorIncomingOrders = [
+  {
+    id: 'RAM-4829',
+    customer: 'Ahmed K.',
+    area: 'Lekki Phase 1',
+    items: [{ name: 'Jollof Rice & Lamb Platter', qty: 1, price: 6500 }, { name: 'Zobo Drink', qty: 2, price: 2000 }],
+    total: 8500,
+    minutesUntilIftar: 22,
+    status: 'incoming' as const,
+    image: '/images/meals/meal-jollof.png',
+  },
+  {
+    id: 'RAM-4831',
+    customer: 'Fatima B.',
+    area: 'Victoria Island',
+    items: [{ name: 'Large Suya Sampler', qty: 1, price: 4200 }, { name: 'Masa Cakes', qty: 4, price: 2500 }],
+    total: 6700,
+    minutesUntilIftar: 25,
+    status: 'incoming' as const,
+    image: '/images/meals/meal-suya.png',
+  },
+  {
+    id: 'RAM-4833',
+    customer: 'Bolaji A.',
+    area: 'Ikoyi',
+    items: [{ name: 'Ramadan Box Premium', qty: 1, price: 17500 }],
+    total: 17500,
+    minutesUntilIftar: 35,
+    status: 'incoming' as const,
+    image: '/images/products/ramadan-box-1.png',
+  },
+];
+
+export const vendorProcessingOrders = [
+  {
+    id: 'RAM-4825',
+    customer: 'Amina O.',
+    area: 'Ikoyi',
+    items: [{ name: 'Suya Platter (Family)', qty: 1, price: 8000 }],
+    total: 8000,
+    startedAt: '6:10 PM',
+    estimatedReady: '6:30 PM',
+    status: 'processing' as const,
+  },
+];
+
+export const vendorTransactions = [
+  { id: 'TXN-001', reference: 'Order #RAM-4829', type: 'credit' as const, amount: 12500, status: 'completed' as const, date: 'Today, 2:45 PM' },
+  { id: 'TXN-002', reference: 'Payout to GT Bank', type: 'debit' as const, amount: 50000, status: 'processing' as const, date: 'Yesterday, 10:15 AM' },
+  { id: 'TXN-003', reference: 'Order #RAM-4811', type: 'credit' as const, amount: 8200, status: 'completed' as const, date: 'Mar 22, 2024' },
+  { id: 'TXN-004', reference: 'Refunded Order #RAM-4702', type: 'refund' as const, amount: 4500, status: 'refunded' as const, date: 'Mar 21, 2024' },
+  { id: 'TXN-005', reference: 'Order #RAM-4798', type: 'credit' as const, amount: 15800, status: 'completed' as const, date: 'Mar 21, 2024' },
+];
+
+export const vendorMenuItems = [
+  { id: 1, name: 'Jollof Rice & Chicken', price: 4500, category: 'Iftar Meals', available: true, orders: 234, image: '/images/meals/meal-jollof.png' },
+  { id: 2, name: 'Suya Platter', price: 3200, category: 'Grills', available: true, orders: 203, image: '/images/meals/meal-suya.png' },
+  { id: 3, name: 'Moi Moi & Pap', price: 2800, category: 'Sahur', available: true, orders: 156, image: '/images/meals/meal-moimoi.png' },
+  { id: 4, name: 'Date Smoothie', price: 1800, category: 'Drinks', available: false, orders: 178, image: '/images/meals/meal-smoothie.png' },
+  { id: 5, name: 'Ramadan Box Premium', price: 17500, category: 'Bundles', available: true, orders: 312, image: '/images/products/ramadan-box-1.png' },
+  { id: 6, name: 'Zobo Drink (1L)', price: 1000, category: 'Drinks', available: true, orders: 89, image: '/images/meals/meal-smoothie.png' },
+];
+
+export const vendorSalesInsights = {
+  todayRevenue: 87500,
+  todayOrders: 24,
+  avgOrderValue: 3646,
+  ramadanRevenue: 1280000,
+  ramadanOrders: 847,
+  topSellingItem: 'Ramadan Box Premium',
+  peakHour: '5:30 PM - 7:00 PM',
+  customerRetention: 78,
+  dailyTrend: [
+    { day: 'Mon', revenue: 65000 },
+    { day: 'Tue', revenue: 72000 },
+    { day: 'Wed', revenue: 87500 },
+    { day: 'Thu', revenue: 91000 },
+    { day: 'Fri', revenue: 105000 },
+    { day: 'Sat', revenue: 98000 },
+    { day: 'Sun', revenue: 82000 },
+  ],
+};

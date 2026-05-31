@@ -189,10 +189,10 @@ export default function CheckoutModal() {
                     ))}
                   </div>
 
-                  {/* Edit Address */}
-                  <div className="mt-3">
+                  {/* Edit Address / Set on Map */}
+                  <div className="mt-3 flex items-center gap-4">
                     {isEditingAddress ? (
-                      <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 space-y-3">
+                      <div className="flex-1 bg-[#1A1D26] rounded-2xl p-4 border border-white/5 space-y-3">
                         <input
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
@@ -215,13 +215,22 @@ export default function CheckoutModal() {
                         </div>
                       </div>
                     ) : (
-                      <button
-                        onClick={() => { setEditAddressValue(deliveryAddress); setIsEditingAddress(true); }}
-                        className="flex items-center gap-2 text-[#13ec13] text-xs font-bold hover:text-[#13ec13]/80 transition-colors"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" />
-                        Edit delivery address
-                      </button>
+                      <>
+                        <button
+                          onClick={() => { setEditAddressValue(deliveryAddress); setIsEditingAddress(true); }}
+                          className="flex items-center gap-2 text-[#13ec13] text-xs font-bold hover:text-[#13ec13]/80 transition-colors"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Edit address
+                        </button>
+                        <button
+                          onClick={() => setActiveModal('delivery-location')}
+                          className="flex items-center gap-2 text-[#FFD700] text-xs font-bold hover:text-[#FFD700]/80 transition-colors"
+                        >
+                          <MapPin className="w-3.5 h-3.5" />
+                          Set on map
+                        </button>
+                      </>
                     )}
                   </div>
                 </div>

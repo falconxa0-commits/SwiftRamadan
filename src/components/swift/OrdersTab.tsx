@@ -1,6 +1,6 @@
 'use client';
 
-import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -132,6 +132,13 @@ export default function OrdersTab() {
                     className="w-10 h-10 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
                   >
                     <Phone className="w-4 h-4 text-[#13ec13]" />
+                  </button>
+                  <button
+                    onClick={() => useAppStore.getState().setActiveModal('live-tracking')}
+                    className="flex items-center gap-2 px-4 h-10 bg-[#FFD700]/10 rounded-full border border-[#FFD700]/20 hover:bg-[#FFD700]/20 transition-colors"
+                  >
+                    <MapPin className="w-4 h-4 text-[#FFD700]" />
+                    <span className="text-[#FFD700] text-xs font-bold">Track</span>
                   </button>
                 </div>
               )}

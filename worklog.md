@@ -380,3 +380,253 @@ Created two new full-featured modals (RewardsModal and BNPLModal), fixed the bro
 ### Lint Status
 - 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
 - Dev server compiling successfully on port 3000
+
+---
+
+## Task 9: Build Rider, Vendor, Map & Other Missing Components + Role-Based Navigation
+
+**Date**: 2026-03-04
+**Agent**: Main Orchestrator
+**Status**: ✅ Completed
+
+### Summary
+Built all missing Rider pages, Vendor pages, Map components, and other missing features. Implemented full role-based navigation so Customer, Rider, and Vendor each get their own dedicated dashboards, tabs, and experiences.
+
+### Files Created (13 new components + 2 API routes)
+- **Rider**: RiderDashboard, RiderEarningsHub, RiderDeliveryMap, NewDeliveryRequestModal
+- **Vendor**: VendorDashboard, VendorWallet, VendorStoreTab, VendorSalesInsights
+- **Map**: DeliveryLocationMap, LiveTrackingMap
+- **Other**: CommunityForum, ArtisanMarketHub, EcoImpactReport
+- **API**: /api/rider/route.ts, /api/vendor/route.ts
+
+### Files Modified
+- store.ts (rider/vendor state + TabId types)
+- data.ts (200+ lines rider/vendor mock data)
+- page.tsx (role-based navigation)
+- BottomNav.tsx (role-based tabs + dynamic accent colors)
+- ProfileTab.tsx (new menu items + Switch Role)
+- OrdersTab.tsx (Track on Map button)
+- CheckoutModal.tsx (Set on Map button)
+
+### Key Design Decisions
+1. Maps use CSS grid patterns + SVG route paths (no external map library)
+2. Role-based nav: Customer=6 tabs(green), Rider=4 tabs(blue), Vendor=4 tabs(gold)
+3. Profile includes "Switch Role" to change between customer/vendor/rider
+4. All modals follow consistent bottom-sheet pattern
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing)
+
+---
+
+## Task 2: Build Rider Components (RiderDashboard, RiderEarningsHub, RiderDeliveryMap, NewDeliveryRequestModal)
+
+**Date**: 2026-03-04
+**Agent**: Rider Components Builder Agent
+**Status**: ✅ Completed
+
+### Summary
+Created 4 rider-facing components for the SwiftRamadan super-app. All components follow the dark theme design system (bg-[#05070A], bg-[#1A1D26], green #13ec13, gold #FFD700), use framer-motion animations, and are fully interactive with toast feedback.
+
+### Files Created
+
+#### 1. `src/components/swift/RiderDashboard.tsx` (13,447 bytes)
+Main rider home tab with:
+- Online/Offline toggle switch using `riderOnline`/`setRiderOnline` from Zustand store with toast feedback
+- Profile header: "Babatunde Yusuf", "Elite Rider" badge with workspace_premium icon, verified icon
+- Stats grid: Completed Today (12), Rating (4.9), Earnings (₦24,500) from store
+- Iftar Rush Legend badge card with gold glow effect and "Ramadan Exclusive" badge
+- Active delivery card showing `riderActiveDeliveries[0]` with animated progress bar, Call/Navigate buttons
+- Delivery requests section listing `riderDeliveryRequests` with Accept/Decline buttons and Iftar priority badges
+- Staggered framer-motion animations throughout
+- Material Symbols: moped, timer, workspace_premium, verified, bedtime
+
+#### 2. `src/components/swift/RiderEarningsHub.tsx` (13,125 bytes)
+Earnings & performance tab with:
+- Hero stats card with today's total earnings (₦24,500) on gold gradient background with gold-glow effect
+- Hourly performance bar chart showing `riderEarningsBreakdown.hourlyData` with Iftar peak bar highlighted in gold
+- Earnings breakdown: Base Pay (₦15,000), Iftar Bonuses (₦6,500 with gold border + "Active" badge), Customer Tips (₦3,000)
+- Performance section: On-Time Rate with SVG circular progress (98%), Average Rating (4.9) with star icon
+- Incentive progress bar at 85% to ₦15,000 Ramadan Bonus with animated fill
+- Top Compliments section with quotes from grateful customers
+- Cash Out button with green-glow effect at bottom
+
+#### 3. `src/components/swift/RiderDeliveryMap.tsx` (11,636 bytes)
+Full-screen map view for active delivery tracking with:
+- Simulated map background using dark styled div with CSS grid pattern (roads, blocks, water)
+- SVG route path drawn as dotted golden line from rider position to destination
+- Rider marker: green pulsing dot with concentric pulse rings and moped Material Symbol
+- Destination marker: gold pin with MapPin icon and spring animation
+- Bottom sheet card with: "Arriving in 8 min" heading, "Ready for Iftar" status with green dot, rider info (Musa, Electric Bike, Golden Route Delivery), scrolling status ticker, Call Rider and Chat buttons
+- Floating map controls: zoom in/out, my location button with glass-effect styling
+- Ramadan badge: "Deliver before Iftar" with gold glow
+- Search bar for delivery location at top with glass-effect
+
+#### 4. `src/components/swift/NewDeliveryRequestModal.tsx` (9,296 bytes)
+Modal for new delivery requests with:
+- Full-screen overlay (z-[90]) with click-to-dismiss backdrop blur
+- Animated slide-up bottom sheet (z-[100]) with spring animation
+- Iftar countdown timer: red for urgent (≤25 min), green for standard, extracted into `CountdownTimer` sub-component to avoid lint errors
+- Customer name and delivery address card
+- Items ordered display
+- Pickup address with distance from current location
+- Payment summary: Order Total, Delivery Fee, "You Earn" with gold highlight
+- "Accept Delivery" button (green with green-glow) and "Decline" button
+- Uses `activeModal === 'new-delivery'` from store, `riderDeliveryRequests[0]` for data
+- Calls `setRiderCurrentDelivery` on accept
+
+### Key Design Decisions
+1. All components use `'use client'` directive as required
+2. Staggered framer-motion animations for list items and cards
+3. CountdownTimer extracted as sub-component to avoid `react-hooks/set-state-in-effect` lint error
+4. SVG circular progress uses `relative` wrapper with `absolute` center text for proper positioning
+5. Simulated map uses pure CSS (grid pattern, roads, blocks) + SVG route overlay instead of external map library
+6. All interactive buttons provide toast feedback
+7. Consistent use of glass-effect, green-glow, gold-glow CSS classes from globals.css
+8. Mobile-first responsive design with consistent spacing and card patterns
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
+- Dev server compiling successfully on port 3000
+
+---
+
+## Task 3 (Vendor Components): Build VendorDashboard, VendorWallet, VendorStoreTab, VendorSalesInsights
+
+**Date**: 2026-03-04
+**Agent**: Vendor Components Agent
+**Status**: ✅ Completed
+
+### Summary
+Created 4 vendor-specific components for the SwiftRamadan super-app: VendorDashboard (order management), VendorWallet (earnings & wallet), VendorStoreTab (menu/stock management), and VendorSalesInsights (sales analytics modal). All components follow the dark theme with gold (#FFD700) accent for vendor features, use Framer Motion animations, and integrate with the existing Zustand store and data layer.
+
+### Files Created
+
+- `src/components/swift/VendorDashboard.tsx` - Main vendor home tab with:
+  - Top bar with store name (vendorStoreName from store), "Ramadan 2026 Vendor" subtitle, notification bell + insights chart buttons
+  - Availability toggle: "Ramadan Platters - Active for Iftar & Suhoor prep" with on/off switch (vendorOnline/setVendorOnline)
+  - Segmented order status filter: Incoming | Processing | Dispatched with pill-style gold selector (layoutId animation)
+  - Active Requests section with red badge count "3 New"
+  - Order cards from vendorIncomingOrders with food image + gradient overlay, iftar countdown badge, customer info, items list, Accept Order button
+  - Processing orders section with gold border, time tracking, "Mark as Ready" button
+  - Dispatched empty state
+
+- `src/components/swift/VendorWallet.tsx` - Vendor earnings & wallet tab with:
+  - Premium balance card with gold-gradient background showing ₦450,000 available balance, Withdraw button
+  - Ramadan crescent/mosque decorations
+  - Quick stats grid: Pending Settlements (₦25,400) and Ramadan Earnings (₦1,280,000)
+  - Transaction history with filter chips: All, Completed, Processing, Refunded
+  - Transaction list from vendorTransactions with color-coded icons (green for credits, blue for processing, red for refunds)
+  - Bank account link: GT Bank **** 8291 with Change button
+
+- `src/components/swift/VendorStoreTab.tsx` - Menu/stock management tab with:
+  - Stock alerts for unavailable items (red border, AlertTriangle)
+  - Category filter chips: All, Iftar Meals, Grills, Sahur, Drinks, Bundles
+  - Menu item cards with image, name, price, category, order count, availability toggle, edit button
+  - "Add New Item" gold FAB with gold-glow effect
+  - Local state management for availability toggling with toast feedback
+
+- `src/components/swift/VendorSalesInsights.tsx` - Sales analytics modal (activeModal === 'vendor-insights') with:
+  - Full-screen bottom sheet modal style
+  - Today's revenue card: ₦87,500 with 24 orders
+  - Average Order Value: ₦3,646
+  - Weekly revenue bar chart (pure CSS, animated, Friday=peak highlighted in gold, Wednesday=today in green)
+  - Key metrics grid: Top Selling Item, Peak Hour, Customer Retention rate
+  - Ramadan totals: ₦1,280,000 revenue, 847 orders, +24% vs last Ramadan
+
+### Files Modified
+
+- `src/app/page.tsx` - Added imports and tab mappings for VendorDashboard, VendorWallet, VendorStoreTab; added VendorSalesInsights modal render
+
+### Key Design Decisions
+1. Gold (#FFD700) as vendor primary accent to distinguish from rider (blue) and customer (green)
+2. VendorDashboard order filter uses gold pill selector with layoutId animation
+3. VendorWallet balance card uses full gold-gradient background for premium feel
+4. VendorStoreTab manages menu item availability with local useState for instant UI updates + toast
+5. VendorSalesInsights bar chart is pure CSS (no chart library) with Framer Motion animated bar heights
+6. All vendor components follow dark theme: bg-[#05070A] backgrounds, bg-[#1A1D26] cards, border-white/10 borders
+7. Vendor FAB (Add New Item) uses gold background with gold-glow effect
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
+- Dev server compiling successfully on port 3000
+
+---
+
+## Task 4+5: Map, Community, Artisan Market & Eco Impact Components
+
+**Date**: 2026-03-04
+**Agent**: Map & Modal Builder Agent
+**Status**: ✅ Completed
+
+### Summary
+Created 5 new full-screen modal components for the SwiftRamadan super-app: DeliveryLocationMap (simulated dark map with pin and address search), LiveTrackingMap (live order tracking with animated route), CommunityForum (community discussion feed), ArtisanMarketHub (local crafts marketplace), and EcoImpactReport (detailed eco impact dashboard). All modals use CSS-simulated map backgrounds (no external map libraries), dark theme with green/gold accents, Framer Motion animations, and Zustand store integration.
+
+### Files Created
+
+- `src/components/swift/DeliveryLocationMap.tsx` - Full-screen delivery location picker modal (activeModal === 'delivery-location') with:
+  - Simulated dark map background using CSS grid pattern, SVG diagonal streets, gradient overlays, and block shapes
+  - Draggable-looking center pin with "Delivery Point" tooltip and pulse animation on drop shadow
+  - Top search bar with glass effect, search icon, and pre-filled address input
+  - Suggested addresses dropdown from deliveryLocations data (Home, Office, Partner's Place)
+  - My Location floating button (right side) with Navigation icon
+  - "Deliver before Iftar" Ramadan badge (left side) with crescent moon emoji
+  - Bottom sheet with: current address display, apartment/suite input, delivery instructions textarea, quick shortcut pills (Home, Office, Partner's House), "CONFIRM LOCATION" green button
+  - Integrates with store: deliveryAddress, setDeliveryAddress, deliveryInstructions, setDeliveryInstructions
+
+- `src/components/swift/LiveTrackingMap.tsx` - Full-screen live order tracking modal (activeModal === 'live-tracking') with:
+  - Simulated dark map background with CSS grid, SVG major roads, and building blocks
+  - SVG overlay showing: golden animated dotted route path from restaurant to destination, rider marker (gold circle with pulse animation), destination marker (green circle with pulse animation), restaurant and destination labels
+  - Route animation using SVG animate elements for dash offset
+  - Floating map controls on right: zoom +/- and center/locate buttons
+  - Map legend on left showing Rider, Home, and Route indicators
+  - Top bar with back button, "Live Iftar Tracking" title, real-time Maghrib countdown timer (decrements every second)
+  - Bottom tracking card: "Arriving in 8 min" large text, green status dot + "Ready for Iftar", order number badge (#SWR-2847)
+  - Rider details card: bike icon avatar, name "Musa", "Electric Bike • Golden Route Delivery", Call (gold) and Chat buttons
+  - Rotating status ticker: 4 messages cycling every 4 seconds with AnimatePresence transitions
+  - "Back to Orders" button returns to orders tab
+
+- `src/components/swift/CommunityForum.tsx` - Community discussion modal (activeModal === 'community') with:
+  - Header: "SwiftCommunity" with crescent moon icon and close button
+  - Category filter chips: All, Reviews, Group Buy, Charity, Recipes (horizontal scrollable)
+  - Post cards from communityPosts data with: colored avatar circle with initial, author name, time, content text, like/reply counts with icons, category badge (color-coded per category)
+  - Filter functionality shows/hides posts by category with AnimatePresence popLayout
+  - "New Post" floating action button (green, bottom-right) with Plus icon
+  - Each post clickable with toast feedback; like and reply buttons with individual toasts
+  - Empty state when no posts match filter
+
+- `src/components/swift/ArtisanMarketHub.tsx` - Artisan market browsing modal (activeModal === 'artisan-market') with:
+  - Header: "Artisan Market" with store emoji and subtitle "Local crafts & traditional goods"
+  - Category grid (3 columns): Handmade Crafts, Local Spices, Traditional Fabrics, Pottery, Jewelry, Woodwork - each with emoji icon, gradient background, and staggered entry animation
+  - Featured artisan cards (3 items): Aisha's Craft Studio (leather), Lagos Spice Market (spices), Kano Weaving House (fabrics) - each with gradient image placeholder, emoji, name, specialty, star rating with review count, "Visit Shop" green button
+  - Ramadan Artisan Fair banner at bottom with gold accent and Explore button
+  - All categories and cards interactive with toast feedback
+
+- `src/components/swift/EcoImpactReport.tsx` - Detailed eco-impact modal (activeModal === 'eco-impact') with:
+  - Header: "Your Eco Impact" with Leaf icon
+  - Main stat card: "8.2kg CO₂ Saved" with TreePine icon, green glow effect, and fun fact
+  - Stats grid (2 columns): Eco Orders (15), Amount Donated (₦3,000), Trees Equivalent (2), Plastic Avoided (3.5kg), Water Saved (120L) - each with colored icon and staggered animation
+  - "Your Impact vs Average" comparison section: 3 animated bars (CO₂ Saved, Eco Orders, Trees Equivalent) showing user vs average with green/white bar pairs and legend
+  - Tips section: "3 Ways to Reduce Your Footprint" - eco-packaging, group orders, local vendors with Lightbulb icons
+  - "Share Your Impact" green button with Share2 icon and green glow
+
+### Files Modified
+
+- `src/app/page.tsx` - Added imports and renders for all 5 new components:
+  - Added DeliveryLocationMap, LiveTrackingMap, CommunityForum, ArtisanMarketHub, EcoImpactReport imports
+  - Added all 5 components in the modals section alongside existing modals
+
+### Key Design Decisions
+1. Maps use CSS-only simulated backgrounds (repeating linear gradients for grid, SVG for streets/routes) - no external map libraries needed
+2. All modals follow the same z-[90] overlay + z-[100] content pattern with spring animations
+3. LiveTrackingMap includes a real countdown timer that decrements every second
+4. DeliveryLocationMap integrates with existing Zustand store fields (deliveryAddress, deliveryInstructions)
+5. CommunityForum filters posts client-side with AnimatePresence popLayout for smooth transitions
+6. ArtisanMarketHub uses emoji icons instead of images for category cards (lighter weight, instant rendering)
+7. EcoImpactReport comparison bars animate from 0 width with staggered delays for visual impact
+8. All SVG route animations use `<animate>` elements for smooth dash-offset cycling
+
+### Lint Status
+- 0 new errors (1 pre-existing error in NewDeliveryRequestModal.tsx, 1 pre-existing warning @next/next/no-page-custom-font)
+- All 5 new components pass lint cleanly
+- Dev server compiling successfully on port 3000

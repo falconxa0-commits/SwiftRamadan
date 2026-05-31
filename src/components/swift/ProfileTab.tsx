@@ -1,6 +1,6 @@
 'use client';
 
-import { User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight, Award, Gift, Users, MapPin, X } from 'lucide-react';
+import { User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight, Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette, MessageSquare } from 'lucide-react';
 import { loyaltyData, charityItems, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
@@ -12,10 +12,13 @@ const menuItems = [
   { icon: Gift, label: 'SwiftRewards', subtitle: `${loyaltyData.points.toLocaleString()} points`, color: 'text-[#FFD700]', action: 'rewards' },
   { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
   { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community' },
+  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location' },
   { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
-  { icon: MapPin, label: 'Delivery Addresses', subtitle: '2 saved locations', color: 'text-purple-400', action: 'addresses' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
 ];
 
@@ -43,65 +46,26 @@ export default function ProfileTab() {
       case 'rewards':
         useAppStore.getState().setActiveModal('rewards');
         break;
-      case 'eco':
-        setModalContent({
-          title: 'Eco-Impact Report',
-          content: (
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#1A1D26] p-3 rounded-xl border border-white/5 text-center">
-                  <p className="text-emerald-400 text-xl font-black">8.2kg</p>
-                  <p className="text-white/40 text-[10px]">CO₂ Saved</p>
-                </div>
-                <div className="bg-[#1A1D26] p-3 rounded-xl border border-white/5 text-center">
-                  <p className="text-white text-xl font-black">15</p>
-                  <p className="text-white/40 text-[10px]">Eco Orders</p>
-                </div>
-                <div className="bg-[#1A1D26] p-3 rounded-xl border border-white/5 text-center">
-                  <p className="text-white text-xl font-black">₦3K</p>
-                  <p className="text-white/40 text-[10px]">Donated</p>
-                </div>
-              </div>
-              <div className="bg-emerald-900/20 p-4 rounded-xl border border-emerald-500/20">
-                <p className="text-emerald-400 font-bold text-sm mb-2">🌱 Your Impact</p>
-                <p className="text-white/60 text-xs leading-relaxed">
-                  By choosing eco-friendly packaging and delivery options, you&apos;ve saved the equivalent of planting 3 trees this Ramadan!
-                </p>
-              </div>
-            </div>
-          ),
-        });
-        setShowModal(true);
+      case 'eco-impact':
+        useAppStore.getState().setActiveModal('eco-impact');
+        break;
+      case 'artisan-market':
+        useAppStore.getState().setActiveModal('artisan-market');
+        break;
+      case 'community':
+        useAppStore.getState().setActiveModal('community');
+        break;
+      case 'delivery-location':
+        useAppStore.getState().setActiveModal('delivery-location');
+        break;
+      case 'switch-role':
+        useAppStore.getState().setShowAuth('role');
         break;
       case 'notifications':
         toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
         break;
       case 'addresses':
-        setModalContent({
-          title: 'Delivery Addresses',
-          content: (
-            <div className="space-y-3">
-              <div className="flex items-center gap-3 p-3 bg-[#1A1D26] rounded-xl border border-[#13ec13]/20">
-                <MapPin className="w-5 h-5 text-[#13ec13] shrink-0" />
-                <div>
-                  <p className="text-white font-bold text-sm">Home</p>
-                  <p className="text-white/40 text-xs">12 Admiralty Way, Lekki Phase 1</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <MapPin className="w-5 h-5 text-white/30 shrink-0" />
-                <div>
-                  <p className="text-white font-bold text-sm">Office</p>
-                  <p className="text-white/40 text-xs">15 Marina Street, Lagos Island</p>
-                </div>
-              </div>
-              <button className="w-full p-3 border border-dashed border-white/10 rounded-xl text-white/40 text-sm hover:border-[#13ec13]/20 hover:text-[#13ec13] transition-colors">
-                + Add New Address
-              </button>
-            </div>
-          ),
-        });
-        setShowModal(true);
+        useAppStore.getState().setActiveModal('delivery-location');
         break;
       case 'security':
         setModalContent({
