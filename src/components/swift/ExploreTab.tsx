@@ -1,9 +1,61 @@
 'use client';
 
 import { categoryHubItems, popularRetailers, quickActions, formatNaira } from '@/lib/data';
+import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ExploreTab() {
+  const { setActiveCategory, setSelectedProduct, setActiveModal, addToCart } = useAppStore();
+  const { toast } = useToast();
+
+  const handleCategoryClick = (item: typeof categoryHubItems[0]) => {
+    setActiveCategory(item.name);
+  };
+
+  const handleShopNow = () => {
+    addToCart({
+      id: 100,
+      name: 'The Ultimate Ramadan Box',
+      price: 17500,
+      image: '/images/products/ramadan-box-1.png',
+    });
+    toast({ title: 'Added to Cart! 🛒', description: 'Ramadan Box added - check your cart' });
+  };
+
+  const handleRetailerClick = (retailer: typeof popularRetailers[0]) => {
+    setActiveCategory(retailer.category);
+    toast({ title: retailer.name, description: `Browsing ${retailer.category} from ${retailer.name}` });
+  };
+
+  const handleQuickAction = (action: typeof quickActions[0]) => {
+    switch (action.name) {
+      case 'Reorder':
+        toast({ title: 'Reorder 🔄', description: 'Your last order items loaded' });
+        break;
+      case 'Group Buy':
+        toast({ title: 'Group Buy 👥', description: 'Join community bulk orders for wholesale prices' });
+        break;
+      case 'Gift':
+        toast({ title: 'Gift Cards 🎁', description: 'Send a Ramadan gift card to someone special' });
+        break;
+      case 'Recipes':
+        toast({ title: 'Recipes 🍳', description: 'Discover Ramadan recipes from top Lagos chefs' });
+        break;
+      case 'Mosques':
+        toast({ title: 'Nearby Mosques 🕌', description: 'Find mosques near you for congregational prayers' });
+        break;
+      case 'Track':
+        useAppStore.getState().setActiveTab('orders');
+        break;
+    }
+  };
+
+  const handleProductClick = (id: number) => {
+    setSelectedProduct(id);
+    setActiveModal('product');
+  };
+
   return (
     <main className="flex-1 overflow-y-auto pb-32">
       {/* Welcome */}
@@ -16,12 +68,13 @@ export default function ExploreTab() {
       <div className="px-4 py-4">
         <div className="grid grid-cols-2 gap-4">
           {categoryHubItems.map((item, i) => (
-            <motion.div
+            <motion.button
               key={item.id}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: i * 0.1 }}
-              className="relative group cursor-pointer overflow-hidden rounded-xl aspect-square flex flex-col justify-end p-4 border border-white/5"
+              onClick={() => handleCategoryClick(item)}
+              className="relative group cursor-pointer overflow-hidden rounded-xl aspect-square flex flex-col justify-end p-4 border border-white/5 hover:border-[#13ec13]/20 transition-colors text-left"
               style={{
                 backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%), url('${item.image}')`,
                 backgroundSize: 'cover',
@@ -33,7 +86,7 @@ export default function ExploreTab() {
               </span>
               <p className="text-white text-lg font-bold">{item.name}</p>
               <p className="text-white/70 text-xs">{item.subtitle}</p>
-            </motion.div>
+            </motion.button>
           ))}
         </div>
       </div>
@@ -42,14 +95,19 @@ export default function ExploreTab() {
       <div className="pt-6">
         <div className="flex items-center justify-between px-4 mb-4">
           <h2 className="text-xl font-bold">Seasonal Specials</h2>
-          <a className="text-[#13ec13] text-sm font-semibold cursor-pointer">View all</a>
+          <button
+            onClick={() => setActiveCategory('Iftar Meals')}
+            className="text-[#13ec13] text-sm font-semibold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+          >
+            View all
+          </button>
         </div>
         <div className="px-4">
           <div className="relative overflow-hidden rounded-xl bg-[#064e3b]/30 border border-[#064e3b]/50 p-1">
             <div
               className="relative w-full aspect-video rounded-lg overflow-hidden bg-center bg-cover"
               style={{
-                backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDF4-GoodOTLUDyQnwOEvYYvl2l51vWw1eYC-Je1fXSKuiYobyjy9Zoi3IIe11uiZvo5_ehJm8r2Q1XnPxIJ3OI1n9mk3BJtSvZjqDFrWMm_x9KONVZ43IOkiHMRWJ9Q-N_u5PdLdRZp31i3-ioWbJLOiO2peOFhDrRmi5G7-WNgYvhGxKFilETsLQuDHTS0XZ7yPSqI92EMm27uldl8SczSgPb78xUST3CjkFC41kRKNKIqWfYWGLyT0wnIzFQfeeh0vg0GMg6LL8")',
+                backgroundImage: 'url("/images/seasonal-specials.png")',
               }}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#064e3b] to-transparent" />
@@ -67,7 +125,10 @@ export default function ExploreTab() {
                   <span className="text-[10px] text-white/50 uppercase">Starting from</span>
                   <span className="text-[#f2b90d] font-bold">{formatNaira(15000)}</span>
                 </div>
-                <button className="bg-[#13ec13] hover:bg-[#13ec13]/90 text-[#05070A] font-bold py-2 px-6 rounded-lg transition-colors text-sm">
+                <button
+                  onClick={handleShopNow}
+                  className="bg-[#13ec13] hover:bg-[#13ec13]/90 text-[#05070A] font-bold py-2 px-6 rounded-lg transition-colors text-sm active:scale-[0.98] transform"
+                >
                   Shop Now
                 </button>
               </div>
@@ -80,18 +141,28 @@ export default function ExploreTab() {
       <div className="px-4 mt-8">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-white text-lg font-extrabold">Popular Retailers</h3>
-          <span className="text-[#13ec13] text-sm font-bold cursor-pointer">Explore All</span>
+          <button
+            onClick={() => setActiveCategory('All')}
+            className="text-[#13ec13] text-sm font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+          >
+            Explore All
+          </button>
         </div>
         <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
           {popularRetailers.map((retailer) => (
-            <div key={retailer.id} className="min-w-[160px] bg-[#1A1D26] rounded-2xl p-3 border border-white/5 cursor-pointer hover:border-white/10 transition-colors">
+            <motion.button
+              key={retailer.id}
+              onClick={() => handleRetailerClick(retailer)}
+              whileTap={{ scale: 0.97 }}
+              className="min-w-[160px] bg-[#1A1D26] rounded-2xl p-3 border border-white/5 cursor-pointer hover:border-white/10 transition-colors text-left"
+            >
               <div
                 className="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl mb-3"
                 style={{ backgroundImage: `url("${retailer.image}")` }}
               />
               <h4 className="text-white text-sm font-bold">{retailer.name}</h4>
-              <p className="text-white/40 text-[10px]">{retailer.category} • {retailer.deliveryTime}</p>
-            </div>
+              <p className="text-white/40 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
+            </motion.button>
           ))}
         </div>
       </div>
@@ -101,12 +172,53 @@ export default function ExploreTab() {
         <h2 className="text-xl font-bold mb-4">Your Favorites</h2>
         <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
           {quickActions.map((action) => (
-            <div key={action.id} className="flex-shrink-0 w-20 flex flex-col items-center gap-2 cursor-pointer">
-              <div className="size-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors">
+            <button
+              key={action.id}
+              onClick={() => handleQuickAction(action)}
+              className="flex-shrink-0 w-20 flex flex-col items-center gap-2 cursor-pointer group"
+            >
+              <div className="size-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#13ec13]/20 transition-colors group-active:scale-95">
                 <span className="material-symbols-outlined text-[#f2b90d] text-2xl">{action.icon}</span>
               </div>
               <span className="text-[10px] font-medium text-center text-white/70">{action.name}</span>
-            </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Featured Products Row */}
+      <div className="px-4 mb-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-white text-lg font-extrabold">Top Picks</h3>
+          <button
+            onClick={() => setActiveTab('home')}
+            className="text-[#13ec13] text-xs font-bold cursor-pointer"
+          >
+            See All
+          </button>
+        </div>
+        <div className="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
+          {[
+            { id: 1, name: 'Jollof Rice & Chicken', price: 4500, image: '/images/meals/meal-jollof.png' },
+            { id: 2, name: 'Suya Platter', price: 3200, image: '/images/meals/meal-suya.png' },
+            { id: 3, name: 'Moi Moi & Pap', price: 2800, image: '/images/meals/meal-moimoi.png' },
+            { id: 4, name: 'Date & Nut Smoothie', price: 1800, image: '/images/meals/meal-smoothie.png' },
+          ].map(product => (
+            <motion.button
+              key={product.id}
+              onClick={() => handleProductClick(product.id)}
+              whileTap={{ scale: 0.97 }}
+              className="min-w-[140px] bg-[#1A1D26] rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors text-left"
+            >
+              <div
+                className="w-full aspect-square bg-center bg-cover"
+                style={{ backgroundImage: `url("${product.image}")` }}
+              />
+              <div className="p-3">
+                <p className="text-white text-xs font-bold truncate">{product.name}</p>
+                <p className="text-[#13ec13] text-sm font-black">{formatNaira(product.price)}</p>
+              </div>
+            </motion.button>
           ))}
         </div>
       </div>

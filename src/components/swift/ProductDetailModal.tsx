@@ -1,35 +1,56 @@
 'use client';
 
-import { X, Star, Clock, Shield, Truck, Minus, Plus, ChevronRight, BadgeCheck } from 'lucide-react';
+import { X, Star, Clock, Shield, Truck, Minus, Plus, ChevronRight, BadgeCheck, Heart, Share2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
-import { ramadanBox, formatNaira } from '@/lib/data';
+import { allProducts, formatNaira } from '@/lib/data';
 import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function ProductDetailModal() {
-  const { activeModal, setActiveModal, setCartCount, cartCount } = useAppStore();
+  const { activeModal, setActiveModal, selectedProduct, addToCart, wishlist, toggleWishlist } = useAppStore();
+  const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
+  const [prevProductId, setPrevProductId] = useState(selectedProduct);
   const isOpen = activeModal === 'product';
 
-  if (!isOpen) return null;
+  // Find product by selectedProduct ID
+  const product = allProducts.find(p => p.id === selectedProduct) || allProducts[0];
 
-  const product = {
-    name: ramadanBox.title,
-    originalPrice: ramadanBox.originalPrice,
-    salePrice: ramadanBox.salePrice,
-    contents: ramadanBox.contents,
-    images: ramadanBox.images,
-    rating: 4.9,
-    reviews: 234,
-    deliveryTime: '25-35 min',
-    description: 'Curated Iftar & Sahur essentials box filled with premium rice, cooking oil, dates, fruits, and spices to keep you and your family energized throughout the blessed month.',
-  };
+  // Reset quantity when product changes (without useEffect)
+  if (selectedProduct !== prevProductId) {
+    setPrevProductId(selectedProduct);
+    setQuantity(1);
+  }
 
-  const total = product.salePrice * quantity;
+  const isWishlisted = wishlist.includes(product.id);
+
+  const salePrice = product.salePrice || product.price || 0;
+  const originalPrice = product.originalPrice || product.price || 0;
+  const totalPrice = salePrice * quantity;
 
   const handleAddToCart = () => {
-    setCartCount(cartCount + quantity);
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: salePrice,
+      image: product.image || '',
+    });
+    toast({ title: 'Added to Cart! 🛒', description: `${quantity}x ${product.name}` });
     setActiveModal(null);
+    setQuantity(1);
+  };
+
+  const handleWishlist = () => {
+    toggleWishlist(product.id);
+    toast({
+      title: isWishlisted ? 'Removed from Wishlist' : 'Added to Wishlist ❤️',
+      description: product.name,
+    });
+  };
+
+  const handleShare = () => {
+    toast({ title: 'Share Link Copied! 📋', description: `Share ${product.name} with friends` });
   };
 
   return (
@@ -41,7 +62,7 @@ export default function ProductDetailModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/70 z-[70]"
-            onClick={() => setActiveModal(null)}
+            onClick={() => { setActiveModal(null); setQuantity(1); }}
           />
           <motion.div
             initial={{ y: '100%' }}
@@ -53,19 +74,33 @@ export default function ProductDetailModal() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5">
               <h2 className="text-white font-bold">Product Details</h2>
-              <button
-                onClick={() => setActiveModal(null)}
-                className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
-              >
-                <X className="w-4 h-4 text-white/60" />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleShare}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <Share2 className="w-4 h-4 text-white/60" />
+                </button>
+                <button
+                  onClick={handleWishlist}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <Heart className={`w-4 h-4 ${isWishlisted ? 'text-red-500 fill-red-500' : 'text-white/60'}`} />
+                </button>
+                <button
+                  onClick={() => { setActiveModal(null); setQuantity(1); }}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-4 h-4 text-white/60" />
+                </button>
+              </div>
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* Product Image */}
               <div className="grid grid-cols-2 gap-2 p-4">
-                {product.images.map((img, i) => (
+                {(product.images && product.images.length > 1 ? product.images : [product.image]).map((img, i) => (
                   <div
                     key={i}
                     className="aspect-square bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10"
@@ -77,8 +112,10 @@ export default function ProductDetailModal() {
               {/* Product Info */}
               <div className="px-4">
                 {/* Badges */}
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="px-2 py-0.5 bg-[#13ec13]/10 text-[#13ec13] text-[10px] font-bold rounded-full border border-[#13ec13]/20 uppercase">Editor&apos;s Choice</span>
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  {product.salePrice && (
+                    <span className="px-2 py-0.5 bg-[#13ec13]/10 text-[#13ec13] text-[10px] font-bold rounded-full border border-[#13ec13]/20 uppercase">Sale</span>
+                  )}
                   <span className="px-2 py-0.5 bg-[#FFD700]/10 text-[#FFD700] text-[10px] font-bold rounded-full border border-[#FFD700]/20 uppercase">Ramadan Special</span>
                 </div>
 
@@ -99,18 +136,24 @@ export default function ProductDetailModal() {
 
                 {/* Price */}
                 <div className="flex items-end gap-3 mt-4">
-                  <span className="text-[#13ec13] text-3xl font-black tracking-tighter">{formatNaira(product.salePrice)}</span>
-                  <span className="text-white/30 text-lg line-through mb-1">{formatNaira(product.originalPrice)}</span>
-                  <span className="bg-[#13ec13]/10 text-[#13ec13] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
-                    -{Math.round((1 - product.salePrice / product.originalPrice) * 100)}%
-                  </span>
+                  <span className="text-[#13ec13] text-3xl font-black tracking-tighter">{formatNaira(salePrice)}</span>
+                  {(product.salePrice || product.originalPrice) && (
+                    <>
+                      <span className="text-white/30 text-lg line-through mb-1">{formatNaira(originalPrice)}</span>
+                      <span className="bg-[#13ec13]/10 text-[#13ec13] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
+                        -{Math.round((1 - salePrice / originalPrice) * 100)}%
+                      </span>
+                    </>
+                  )}
                 </div>
 
                 {/* Contents */}
-                <div className="flex items-center gap-2 mt-4 bg-black/30 p-3 rounded-xl border border-white/5">
-                  <BadgeCheck className="w-5 h-5 text-[#FFD700] shrink-0" />
-                  <p className="text-white/80 text-sm font-medium">{product.contents} Included</p>
-                </div>
+                {product.contents && (
+                  <div className="flex items-center gap-2 mt-4 bg-black/30 p-3 rounded-xl border border-white/5">
+                    <BadgeCheck className="w-5 h-5 text-[#FFD700] shrink-0" />
+                    <p className="text-white/80 text-sm font-medium">{product.contents} Included</p>
+                  </div>
+                )}
 
                 {/* Description */}
                 <p className="text-white/50 text-sm leading-relaxed mt-4">{product.description}</p>
@@ -131,6 +174,35 @@ export default function ProductDetailModal() {
                     <Clock className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Iftar Ready</p>
                     <p className="text-white/30 text-[9px]">Timed Delivery</p>
+                  </div>
+                </div>
+
+                {/* Related Products */}
+                <div className="mb-6">
+                  <h4 className="text-white font-bold text-sm mb-3">You might also like</h4>
+                  <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                    {allProducts
+                      .filter(p => p.id !== product.id && p.category === product.category)
+                      .slice(0, 3)
+                      .map(p => (
+                        <button
+                          key={p.id}
+                          onClick={() => {
+                            useAppStore.getState().setSelectedProduct(p.id);
+                            setQuantity(1);
+                          }}
+                          className="min-w-[120px] bg-[#1A1D26] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors text-left shrink-0"
+                        >
+                          <div
+                            className="w-full aspect-square bg-center bg-cover"
+                            style={{ backgroundImage: `url("${p.image}")` }}
+                          />
+                          <div className="p-2">
+                            <p className="text-white text-[10px] font-bold truncate">{p.name}</p>
+                            <p className="text-[#13ec13] text-xs font-black">{formatNaira(p.salePrice || p.price || 0)}</p>
+                          </div>
+                        </button>
+                      ))}
                   </div>
                 </div>
               </div>
@@ -161,7 +233,7 @@ export default function ProductDetailModal() {
                   onClick={handleAddToCart}
                   className="flex-1 bg-[#13ec13] py-4 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                 >
-                  ADD TO CART &bull; {formatNaira(total)}
+                  ADD TO CART &bull; {formatNaira(totalPrice)}
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>

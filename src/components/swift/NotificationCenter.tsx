@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, ShoppingBag, Clock, Gift, Users, Truck, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAppStore } from '@/lib/store';
 
 interface Notification {
   id: number;
@@ -21,27 +22,65 @@ const typeIcons: Record<string, { icon: React.ComponentType<{ className?: string
   social: { icon: Users, color: 'text-purple-400' },
 };
 
-const mockNotifications: Notification[] = [
-  { id: 1, title: "Order Confirmed!", message: "Your Ramadan Family Box is being prepared.", time: "2 min ago", read: false, type: "order" },
-  { id: 2, title: "Flash Sale Alert", message: "30% off all Dates & Fruit Boxes - 1 hour left!", time: "15 min ago", read: false, type: "promo" },
-  { id: 3, title: "Iftar Reminder", message: "Maghrib is at 6:45 PM. Order your Iftar now!", time: "1 hr ago", read: true, type: "reminder" },
-  { id: 4, title: "SwiftRewards", message: "You've earned 500 points from your last order!", time: "3 hrs ago", read: true, type: "reward" },
-  { id: 5, title: "Group Buy Update", message: "Your group buy for Groceries is 80% filled.", time: "5 hrs ago", read: true, type: "social" },
-  { id: 6, title: "Delivery Update", message: "Your rider Ibrahim is 5 mins away!", time: "8 hrs ago", read: true, type: "order" },
-];
-
 interface NotificationCenterProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+type FilterType = 'all' | 'order' | 'promo' | 'reminder' | 'reward' | 'social';
+
 export default function NotificationCenter({ isOpen, onClose }: NotificationCenterProps) {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filter, setFilter] = useState<FilterType>('all');
+  const { setUnreadCount } = useAppStore();
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchNotifications();
+    }
+  }, [isOpen]);
+
+  const fetchNotifications = async () => {
+    setIsLoading(true);
+    try {
+      const res = await fetch('/api/notifications');
+      const data = await res.json();
+      setNotifications(data.notifications || []);
+      setUnreadCount(data.unreadCount || 0);
+    } catch {
+      // Use fallback
+      setNotifications([
+        { id: 1, title: "Order Confirmed!", message: "Your Ramadan Family Box is being prepared.", time: "2 min ago", read: false, type: "order" },
+        { id: 2, title: "Flash Sale Alert", message: "30% off all Dates & Fruit Boxes - 1 hour left!", time: "15 min ago", read: false, type: "promo" },
+        { id: 3, title: "Iftar Reminder", message: "Maghrib is at 6:45 PM. Order your Iftar now!", time: "1 hr ago", read: true, type: "reminder" },
+        { id: 4, title: "SwiftRewards", message: "You've earned 500 points from your last order!", time: "3 hrs ago", read: true, type: "reward" },
+        { id: 5, title: "Group Buy Update", message: "Your group buy for Groceries is 80% filled.", time: "5 hrs ago", read: true, type: "social" },
+        { id: 6, title: "Delivery Update", message: "Your rider Ibrahim is 5 mins away!", time: "8 hrs ago", read: true, type: "order" },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const markAllRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setUnreadCount(0);
   };
+
+  const filteredNotifications = filter === 'all'
+    ? notifications
+    : notifications.filter(n => n.type === filter);
+
+  const filters: { label: string; value: FilterType }[] = [
+    { label: 'All', value: 'all' },
+    { label: 'Orders', value: 'order' },
+    { label: 'Promos', value: 'promo' },
+    { label: 'Reminders', value: 'reminder' },
+    { label: 'Rewards', value: 'reward' },
+  ];
 
   return (
     <AnimatePresence>
@@ -87,39 +126,76 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
               </div>
             </div>
 
+            {/* Filter Tabs */}
+            <div className="flex gap-2 px-4 py-3 overflow-x-auto no-scrollbar">
+              {filters.map(f => (
+                <button
+                  key={f.value}
+                  onClick={() => setFilter(f.value)}
+                  className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
+                    filter === f.value
+                      ? 'bg-[#13ec13] text-[#05070A]'
+                      : 'bg-white/5 text-white/50 hover:text-white/70'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+
             {/* Notification List */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-2">
-              {notifications.map((notification) => {
-                const config = typeIcons[notification.type] || typeIcons.order;
-                const Icon = config.icon;
-                return (
-                  <motion.div
-                    key={notification.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: notification.id * 0.05 }}
-                    className={`flex items-start gap-3 p-3 rounded-xl border transition-colors cursor-pointer ${
-                      notification.read
-                        ? 'bg-transparent border-white/5 opacity-60'
-                        : 'bg-[#1A1D26]/60 border-[#13ec13]/10'
-                    }`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[#13ec13]/10'}`}>
-                      <Icon className={`w-5 h-5 ${config.color}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className={`text-sm font-bold truncate ${notification.read ? 'text-white/60' : 'text-white'}`}>
-                          {notification.title}
-                        </p>
-                        {!notification.read && <span className="w-2 h-2 bg-[#13ec13] rounded-full shrink-0" />}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+              {isLoading ? (
+                <div className="space-y-3">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="animate-pulse h-20 bg-[#1A1D26]/40 rounded-xl" />
+                  ))}
+                </div>
+              ) : filteredNotifications.length === 0 ? (
+                <div className="text-center py-12">
+                  <Bell className="w-8 h-8 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-sm">No notifications</p>
+                </div>
+              ) : (
+                filteredNotifications.map((notification) => {
+                  const config = typeIcons[notification.type] || typeIcons.order;
+                  const Icon = config.icon;
+                  return (
+                    <motion.button
+                      key={notification.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: notification.id * 0.05 }}
+                      onClick={() => {
+                        if (!notification.read) {
+                          setNotifications(prev =>
+                            prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
+                          );
+                        }
+                      }}
+                      className={`flex items-start gap-3 p-3 rounded-xl border transition-colors w-full text-left ${
+                        notification.read
+                          ? 'bg-transparent border-white/5 opacity-60'
+                          : 'bg-[#1A1D26]/60 border-[#13ec13]/10'
+                      }`}
+                    >
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[#13ec13]/10'}`}>
+                        <Icon className={`w-5 h-5 ${config.color}`} />
                       </div>
-                      <p className="text-white/40 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
-                      <p className="text-white/20 text-[10px] mt-1">{notification.time}</p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`text-sm font-bold truncate ${notification.read ? 'text-white/60' : 'text-white'}`}>
+                            {notification.title}
+                          </p>
+                          {!notification.read && <span className="w-2 h-2 bg-[#13ec13] rounded-full shrink-0" />}
+                        </div>
+                        <p className="text-white/40 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
+                        <p className="text-white/20 text-[10px] mt-1">{notification.time}</p>
+                      </div>
+                    </motion.button>
+                  );
+                })
+              )}
             </div>
           </motion.div>
         </>

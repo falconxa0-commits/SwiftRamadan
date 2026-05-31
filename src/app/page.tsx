@@ -7,24 +7,27 @@ import BottomNav from '@/components/swift/BottomNav';
 import WelcomeScreen from '@/components/swift/WelcomeScreen';
 import HomeTab from '@/components/swift/HomeTab';
 import ExploreTab from '@/components/swift/ExploreTab';
+import CartTab from '@/components/swift/CartTab';
 import OrdersTab from '@/components/swift/OrdersTab';
 import OffersTab from '@/components/swift/OffersTab';
 import ProfileTab from '@/components/swift/ProfileTab';
 import AIChatWidget from '@/components/swift/AIChatWidget';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
+import SearchOverlay from '@/components/swift/SearchOverlay';
 import { Search, ShoppingBag, MapPin, User, Bell } from 'lucide-react';
 
 const tabComponents: Record<string, React.ComponentType> = {
   home: HomeTab,
   explore: ExploreTab,
-  cart: OrdersTab,
-  orders: OffersTab,
+  cart: CartTab,
+  orders: OrdersTab,
+  offers: OffersTab,
   profile: ProfileTab,
 };
 
 export default function Home() {
-  const { activeTab, showWelcome } = useAppStore();
+  const { activeTab, showWelcome, cartCount } = useAppStore();
   const [showNotifications, setShowNotifications] = useState(false);
   const ActiveTabComponent = tabComponents[activeTab] || HomeTab;
 
@@ -57,20 +60,27 @@ export default function Home() {
               <Bell className="w-5 h-5 text-white" />
               <span className="absolute top-2 right-2 size-2 bg-[#FFD700] rounded-full border border-[#05070A]" />
             </button>
-            <button className="flex size-11 items-center justify-center rounded-full bg-[#1A1D26] border border-white/10 relative">
+            <button
+              onClick={() => useAppStore.getState().setActiveTab('cart')}
+              className="flex size-11 items-center justify-center rounded-full bg-[#1A1D26] border border-white/10 relative"
+            >
               <ShoppingBag className="w-5 h-5 text-white" />
-              <span className="absolute top-2 right-2 size-2 bg-[#13ec13] rounded-full border border-[#05070A]" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 size-4 bg-[#13ec13] text-[#05070A] text-[8px] font-black rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </button>
           </div>
         </div>
         <div className="px-4 py-3">
-          <div className="flex w-full items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#13ec13]/30 transition-all duration-300">
+          <button
+            onClick={() => useAppStore.getState().setShowSearch(true)}
+            className="flex w-full items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#13ec13]/30 transition-all duration-300"
+          >
             <Search className="w-5 h-5 text-[#13ec13]/70 ml-4 shrink-0" />
-            <input
-              className="flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full text-white focus:outline-none border-none bg-transparent h-full placeholder:text-white/30 px-4 pl-2 text-sm font-normal"
-              placeholder="Search Jollof, Groceries, or Boxes..."
-            />
-          </div>
+            <span className="flex-1 text-left text-white/30 text-sm px-4 pl-2">Search Jollof, Groceries, or Boxes...</span>
+          </button>
         </div>
       </div>
 
@@ -99,6 +109,9 @@ export default function Home() {
 
       {/* Product Detail Modal */}
       <ProductDetailModal />
+
+      {/* Search Overlay */}
+      <SearchOverlay />
 
       {/* Bottom gradient fade */}
       <div className="fixed bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#05070A] to-transparent pointer-events-none z-40" />

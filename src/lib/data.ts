@@ -8,21 +8,21 @@ export function formatNaira(amount: number): string {
 export const heroSlides = [
   {
     id: 1,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuA6dMqH1f-0aFHGQvO2x0_7vvCNzBXaBqJmMl1pJ7Pf3XjKqg3cU8rE5vW2nL9oK4fH7gQ1sT3uV6x0Y8bN2kP5mR4cJ7fA',
+    image: '/images/hero/hero-iftar-jollof.png',
     title: 'Iftar Special: Jollof Rice & Grilled Chicken',
     subtitle: 'Delivered before Maghrib',
     badge: 'Best Seller',
   },
   {
     id: 2,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBhJ_xT8nP1mG0rK4vW2qL5nY8pS1aD3fE6gH9iJ0kM2nO5qR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8r',
+    image: '/images/hero/hero-sahur-oats.png',
     title: 'Sahur Box: Overnight Oats & Dates',
     subtitle: 'Pre-dawn energy boost',
     badge: 'New',
   },
   {
     id: 3,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCjL2oP5nQ8rT1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z',
+    image: '/images/hero/hero-family-iftar.png',
     title: 'Family Iftar Bundle for 6',
     subtitle: 'Save 30% with group pricing',
     badge: 'Group Buy',
@@ -31,25 +31,26 @@ export const heroSlides = [
 
 // Categories
 export const categories = [
-  { id: 1, name: 'Iftar Meals', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDd5Q-Iz-Fq7uEuNkHGlcinxW7wZELtwy_IRSWnLlb1qwwcGPTg2_G7awF13kr5I52KHXlPPsI3pY_xy6j1SybFEVqTiOZeNTAJbX2B34Fe', active: true },
-  { id: 2, name: 'Sahur', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuE1fXSKuiYobyjy9Zoi3IIe11uiZvo5_ehJm8r2Q1XnPxIJ3OI1n9mk3BJtSvZjqDFrWMm_x9KONVZ43IOkiHMRWJ9Q-N_u5PdLdRZp31i3-ioWbJLOiO2peOFhDrRmi5G7', active: false },
-  { id: 3, name: 'Dates', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuF2gYvhGxKFilETsLQuDHTS0XZ7yPSqI92EMm27uldl8SczSgPb78xUST3CjkFC41kRKNKIqWfYWGLyT0wnIzFQfeeh0vg0GMg6LL8', active: false },
-  { id: 4, name: 'Drinks', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuG3hJ0kM2nO5qR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB0cE3f', active: false },
-  { id: 5, name: 'Snacks', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuH4iK2mN5oR8sU1vX4yZ7wA0bD3eF6gH9iJ0kM2nO5qR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1vW4xY7z', active: false },
-  { id: 6, name: 'Fruits', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuI5jL0kM2nO5qR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z', active: false },
-  { id: 7, name: 'Groceries', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuJ6kM2nO5qR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z', active: false },
+  { id: 1, name: 'Iftar Meals', image: '/images/categories/cat-iftar.png', active: true },
+  { id: 2, name: 'Sahur', image: '/images/categories/cat-sahur.png', active: false },
+  { id: 3, name: 'Dates', image: '/images/categories/cat-dates.png', active: false },
+  { id: 4, name: 'Drinks', image: '/images/categories/cat-drinks.png', active: false },
+  { id: 5, name: 'Snacks', image: '/images/categories/cat-snacks.png', active: false },
+  { id: 6, name: 'Fruits', image: '/images/categories/cat-fruits.png', active: false },
+  { id: 7, name: 'Groceries', image: '/images/categories/cat-groceries.png', active: false },
 ];
 
 // Ramadan Box
 export const ramadanBox = {
+  id: 100,
   title: 'The Ultimate Ramadan Box',
   originalPrice: 25000,
   salePrice: 17500,
   images: [
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuK7nO5qR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuL8oR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zA0bD3e',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuM9pR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4f',
-    'https://lh3.googleusercontent.com/aida-public/AB6AXuN0qR8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zC2dF5g',
+    '/images/products/ramadan-box-1.png',
+    '/images/products/ramadan-box-2.png',
+    '/images/products/ramadan-box-3.png',
+    '/images/products/ramadan-box-4.png',
   ],
   contents: '12 Premium Items',
 };
@@ -61,53 +62,61 @@ export const trendingMeals = [
     name: 'Jollof Rice & Chicken',
     description: 'Smoky party jollof with succulent grilled chicken',
     price: 4500,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuO1rS8sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z',
+    image: '/images/meals/meal-jollof.png',
     deliveryTime: '25 min',
     rating: 4.9,
+    reviews: 289,
+    category: 'Iftar Meals',
   },
   {
     id: 2,
     name: 'Suya Platter',
     description: 'Spicy beef suya with fresh onions and tomatoes',
     price: 3200,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuP2sU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zA0bD3e',
+    image: '/images/meals/meal-suya.png',
     deliveryTime: '30 min',
     rating: 4.8,
+    reviews: 203,
+    category: 'Iftar Meals',
   },
   {
     id: 3,
     name: 'Moi Moi & Pap',
     description: 'Steamed bean pudding with creamy corn pap',
     price: 2800,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuQ3tU1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4f',
+    image: '/images/meals/meal-moimoi.png',
     deliveryTime: '20 min',
     rating: 4.7,
+    reviews: 156,
+    category: 'Sahur',
   },
   {
     id: 4,
     name: 'Date & Nut Smoothie',
     description: 'Energy-packed date smoothie with groundnuts',
     price: 1800,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuR4uV1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zC2dF5g',
+    image: '/images/meals/meal-smoothie.png',
     deliveryTime: '15 min',
     rating: 4.9,
+    reviews: 178,
+    category: 'Drinks',
   },
 ];
 
 // Category Hub Items
 export const categoryHubItems = [
-  { id: 1, name: 'Iftar Meals', subtitle: '200+ dishes', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuS5vW1vX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z', badge: 'Popular' },
-  { id: 2, name: 'Groceries', subtitle: 'Bulk savings', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuT6wX4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zA0bD3e', badge: 'Group Buy' },
-  { id: 3, name: 'Pharmacy', subtitle: 'Health essentials', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuU7xY4yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4f', badge: 'Fast' },
-  { id: 4, name: 'Office Meals', subtitle: 'Corporate plans', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuV8yZ7wA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zC2dF5g', badge: 'New' },
+  { id: 1, name: 'Iftar Meals', subtitle: '200+ dishes', image: '/images/categories/hub-iftar.png', badge: 'Popular' },
+  { id: 2, name: 'Groceries', subtitle: 'Bulk savings', image: '/images/categories/hub-groceries.png', badge: 'Group Buy' },
+  { id: 3, name: 'Pharmacy', subtitle: 'Health essentials', image: '/images/categories/hub-pharmacy.png', badge: 'Fast' },
+  { id: 4, name: 'Office Meals', subtitle: 'Corporate plans', image: '/images/categories/hub-office.png', badge: 'New' },
 ];
 
 // Popular Retailers
 export const popularRetailers = [
-  { id: 1, name: 'The Food Hub', category: 'Iftar Meals', deliveryTime: '25 min', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuW9zA0bD3eF6gH9iK2mN5oR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z' },
-  { id: 2, name: 'Lagos Fresh Mart', category: 'Groceries', deliveryTime: '40 min', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuX0aB1cE4fG7hI0jK3mN6oP8qR1sT4uV5wX6yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7z' },
-  { id: 3, name: 'Suya Palace', category: 'Grills', deliveryTime: '30 min', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuY1bC2dF5gH8iJ0kL3mN6oQ9rS2tU5vW6xY8zA1bD4eG7hI9jK2nO5qR8sU1vX4yZ7w' },
-  { id: 4, name: 'Green Pharmacy', category: 'Pharmacy', deliveryTime: '35 min', image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuZ2cD3eF6gI9jL2oN5qR8sU1vX4yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4f' },
+  { id: 1, name: 'The Food Hub', category: 'Iftar Meals', deliveryTime: '25 min', image: '/images/retailers/retailer-foodhub.png' },
+  { id: 2, name: 'Lagos Fresh Mart', category: 'Groceries', deliveryTime: '40 min', image: '/images/retailers/retailer-freshmart.png' },
+  { id: 3, name: 'Suya Palace', category: 'Grills', deliveryTime: '30 min', image: '/images/retailers/retailer-suyapalace.png' },
+  { id: 4, name: 'Green Pharmacy', category: 'Pharmacy', deliveryTime: '35 min', image: '/images/retailers/retailer-pharmacy.png' },
 ];
 
 // Quick Actions
@@ -129,6 +138,8 @@ export const myOrders = [
     eta: 'Arriving in 15 min',
     total: 9000,
     rider: 'Ibrahim M.',
+    items: [{ name: 'Jollof Rice & Chicken', qty: 2, price: 4500 }],
+    progress: 75,
   },
   {
     id: 'SWR-2846',
@@ -137,6 +148,8 @@ export const myOrders = [
     eta: 'Estimated 6:30 PM',
     total: 17500,
     rider: null,
+    items: [{ name: 'Ramadan Box - Premium', qty: 1, price: 17500 }],
+    progress: 35,
   },
   {
     id: 'SWR-2839',
@@ -145,6 +158,8 @@ export const myOrders = [
     eta: 'Delivered Mar 12',
     total: 8500,
     rider: null,
+    items: [{ name: 'Date Bundle (5kg)', qty: 1, price: 8500 }],
+    progress: 100,
   },
   {
     id: 'SWR-2832',
@@ -153,6 +168,8 @@ export const myOrders = [
     eta: 'Delivered Mar 11',
     total: 5400,
     rider: null,
+    items: [{ name: 'Sahur Pack', qty: 3, price: 1800 }],
+    progress: 100,
   },
 ];
 
@@ -161,7 +178,7 @@ export const flashSales = [
   {
     id: 1,
     name: 'Premium Dates Box',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXua3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4fG7hI0jK3mN6oP8qR1sT4uV5wX6yZ7wA0bC3d',
+    image: '/images/flash-sales/flash-dates.png',
     originalPrice: 12000,
     salePrice: 7500,
     discount: 38,
@@ -170,7 +187,7 @@ export const flashSales = [
   {
     id: 2,
     name: 'Iftar Family Bundle',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXub4eG7hI0jK3mN6oP8qR1sT4uV5wX6yZ7wA0bC3dF6gI9jL2oK5nQ8rT1uW4xY7zB1cE4f',
+    image: '/images/flash-sales/flash-iftar-bundle.png',
     originalPrice: 18000,
     salePrice: 11000,
     discount: 39,
@@ -179,7 +196,7 @@ export const flashSales = [
   {
     id: 3,
     name: 'Zobo & Kunu Pack',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuc5fH8iJ0kL3mN6oQ9rS2tU5vW6xY8zA1bD4eG7hI9jK2nO5qR8sU1vX4yZ7wA0bC3dF6',
+    image: '/images/flash-sales/flash-zobo-kunu.png',
     originalPrice: 5000,
     salePrice: 2800,
     discount: 44,
@@ -217,4 +234,67 @@ export const charityItems = [
   { id: 4, name: 'Orphan Care', icon: 'child_care', description: 'Help orphaned children', amount: 3000 },
   { id: 5, name: 'Water Project', icon: 'water_drop', description: 'Clean water for all', amount: 10000 },
   { id: 6, name: 'Education Fund', icon: 'school', description: 'Support Islamic education', amount: 7500 },
+];
+
+// All Products (combined for search and product detail)
+export const allProducts = [
+  {
+    id: 100,
+    name: 'The Ultimate Ramadan Box',
+    description: 'Curated Iftar & Sahur essentials box filled with premium rice, cooking oil, dates, fruits, and spices to keep you and your family energized throughout the blessed month.',
+    originalPrice: 25000,
+    salePrice: 17500,
+    category: 'bundles',
+    rating: 4.9,
+    reviews: 234,
+    deliveryTime: '25-35 min',
+    inStock: true,
+    image: '/images/products/ramadan-box-1.png',
+    images: [
+      '/images/products/ramadan-box-1.png',
+      '/images/products/ramadan-box-2.png',
+      '/images/products/ramadan-box-3.png',
+      '/images/products/ramadan-box-4.png',
+    ],
+    contents: '12 Premium Items',
+  },
+  ...trendingMeals.map(meal => ({
+    id: meal.id,
+    name: meal.name,
+    description: meal.description,
+    price: meal.price,
+    category: meal.category?.toLowerCase() || 'meals',
+    rating: meal.rating,
+    reviews: meal.reviews,
+    deliveryTime: meal.deliveryTime,
+    inStock: true,
+    image: meal.image,
+    images: [meal.image],
+  })),
+  ...flashSales.map(sale => ({
+    id: sale.id + 200,
+    name: sale.name,
+    description: `Limited time offer - ${sale.discount}% off! Don't miss this flash sale.`,
+    originalPrice: sale.originalPrice,
+    salePrice: sale.salePrice,
+    category: 'flash-sale',
+    rating: 4.7,
+    reviews: 98,
+    deliveryTime: '20-30 min',
+    inStock: true,
+    image: sale.image,
+    images: [sale.image],
+  })),
+];
+
+// Popular search terms
+export const popularSearches = ['Jollof Rice', 'Dates', 'Iftar Box', 'Sahur', 'Zobo', 'Suya', 'Ramadan Bundle', 'Fruits'];
+
+// Prayer times data
+export const prayerTimes = [
+  { name: 'Fajr', time: '5:23 AM', icon: 'dark_mode' },
+  { name: 'Dhuhr', time: '12:45 PM', icon: 'light_mode' },
+  { name: 'Asr', time: '4:10 PM', icon: 'wb_twilight' },
+  { name: 'Maghrib', time: '6:45 PM', icon: 'nights_stay' },
+  { name: 'Isha', time: '8:05 PM', icon: 'dark_mode' },
 ];

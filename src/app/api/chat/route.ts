@@ -42,9 +42,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const reply = findBestResponse(message);
-
-    return NextResponse.json({ reply });
+    // Try LLM SDK first
+    try {
+      const ZAI = (await import('z-ai-web-dev-sdk')).default;
+      const zai = await ZAI.create();
+      const response = await zai.chat.completions.create({
+        messages: [
+          {
+            role: 'system',
+            content: 'You are Safa, a helpful AI assistant for SwiftRamadan, a Ramadan food delivery super-app in Lagos, Nigeria. Help with orders, food recommendations, delivery tracking, promotions, and Islamic practices during Ramadan. Be friendly, concise, and use occasional emojis. Reference Naira (₦) for prices. Keep responses under 100 words.',
+          },
+          { role: 'user', content: message },
+        ],
+      });
+      const reply = response.choices[0].message.content;
+      return NextResponse.json({ reply });
+    } catch {
+      // Fallback to keyword matcher
+      const reply = findBestResponse(message);
+      return NextResponse.json({ reply });
+    }
   } catch {
     return NextResponse.json(
       { error: 'Failed to process message' },

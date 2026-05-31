@@ -10,6 +10,13 @@ interface Message {
   text: string;
 }
 
+const quickReplies = [
+  'Iftar meals',
+  'Flash sales',
+  'Track my order',
+  'Delivery times',
+];
+
 export default function AIChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState('');
@@ -21,12 +28,12 @@ export default function AIChatWidget() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isLoading]);
 
-  const handleSend = async () => {
-    if (!message.trim() || isLoading) return;
+  const handleSend = async (text?: string) => {
+    const userMessage = text || message.trim();
+    if (!userMessage || isLoading) return;
 
-    const userMessage = message.trim();
     setMessages(prev => [...prev, { id: Date.now(), from: 'user', text: userMessage }]);
     setMessage('');
     setIsLoading(true);
@@ -77,7 +84,7 @@ export default function AIChatWidget() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] flex gap-2 ${msg.from === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -96,17 +103,37 @@ export default function AIChatWidget() {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-[#1A1D26] px-4 py-2.5 rounded-2xl border border-white/5">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                      <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                      <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  <div className="flex gap-2">
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1 bg-[#FFD700]/20">
+                      <Bot className="w-3 h-3 text-[#FFD700]" />
+                    </div>
+                    <div className="bg-[#1A1D26] px-4 py-2.5 rounded-2xl border border-white/5">
+                      <div className="flex gap-1.5">
+                        <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-white/30 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                      </div>
                     </div>
                   </div>
                 </div>
               )}
               <div ref={messagesEndRef} />
             </div>
+
+            {/* Quick Replies */}
+            {messages.length <= 2 && !isLoading && (
+              <div className="flex gap-2 px-4 pb-2 overflow-x-auto no-scrollbar">
+                {quickReplies.map(reply => (
+                  <button
+                    key={reply}
+                    onClick={() => handleSend(reply)}
+                    className="px-3 py-1.5 rounded-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] text-xs font-medium whitespace-nowrap hover:bg-[#13ec13]/20 transition-colors"
+                  >
+                    {reply}
+                  </button>
+                ))}
+              </div>
+            )}
 
             {/* Input */}
             <div className="p-3 border-t border-white/5 bg-[#0a0a0a]">
@@ -119,7 +146,7 @@ export default function AIChatWidget() {
                   className="flex-1 bg-[#1A1D26] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#13ec13]/30"
                 />
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={isLoading || !message.trim()}
                   className="w-10 h-10 bg-[#13ec13] rounded-full flex items-center justify-center shrink-0 disabled:opacity-50 transition-opacity"
                 >

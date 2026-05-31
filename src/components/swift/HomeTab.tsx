@@ -4,37 +4,129 @@ import { Star, Clock, ChevronRight, Zap, BadgeCheck } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function HomeTab() {
-  const { setActiveModal } = useAppStore();
+  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart } = useAppStore();
+  const { toast } = useToast();
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll hero carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Scroll carousel when slide changes
+  useEffect(() => {
+    if (carouselRef.current) {
+      const slideWidth = carouselRef.current.scrollWidth / heroSlides.length;
+      carouselRef.current.scrollTo({ left: slideWidth * currentSlide, behavior: 'smooth' });
+    }
+  }, [currentSlide]);
+
+  // Simulate loading
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleCategoryClick = (category: typeof categories[0]) => {
+    setActiveCategory(category.name);
+    setActiveTab('explore');
+  };
+
+  const handleMealClick = (meal: typeof trendingMeals[0]) => {
+    setSelectedProduct(meal.id);
+    setActiveModal('product');
+  };
+
+  const handleQuickAdd = (meal: typeof trendingMeals[0]) => {
+    addToCart({
+      id: meal.id,
+      name: meal.name,
+      price: meal.price,
+      image: meal.image,
+    });
+    toast({ title: 'Added to Cart! 🛒', description: `${meal.name} added to your cart` });
+  };
+
+  if (isLoading) {
+    return (
+      <main className="flex-1 overflow-y-auto pb-32">
+        <div className="px-4 pt-4">
+          <div className="animate-pulse w-full aspect-[16/9] bg-[#1A1D26] rounded-2xl mb-4" />
+          <div className="flex gap-6 overflow-hidden">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="flex flex-col items-center gap-2 min-w-[70px]">
+                <div className="w-16 h-16 bg-[#1A1D26] rounded-full animate-pulse" />
+                <div className="w-12 h-2 bg-[#1A1D26] rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+          <div className="animate-pulse w-full h-64 bg-[#1A1D26] rounded-2xl mt-6" />
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 overflow-y-auto pb-32">
       {/* Hero Carousel */}
-      <div className="flex overflow-x-auto pb-4 pt-4 no-scrollbar">
-        <div className="flex items-stretch px-4 gap-4">
-          {heroSlides.map((slide) => (
-            <div key={slide.id} className="flex h-full flex-1 flex-col gap-3 rounded-2xl min-w-[300px]">
-              <div
-                className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/5"
-                style={{ backgroundImage: `url("${slide.image}")` }}
+      <div className="relative pt-4">
+        <div
+          ref={carouselRef}
+          className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
+        >
+          <div className="flex items-stretch px-4 gap-4">
+            {heroSlides.map((slide, index) => (
+              <motion.div
+                key={slide.id}
+                className="flex h-full flex-1 flex-col gap-3 rounded-2xl min-w-[300px] cursor-pointer"
+                onClick={() => {
+                  setSelectedProduct(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100);
+                  setActiveModal('product');
+                }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
-                {slide.badge && (
-                  <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
-                    <Star className="w-3 h-3 text-black fill-black" />
-                    <span className="text-black text-[10px] font-bold uppercase tracking-wider">{slide.badge}</span>
-                  </div>
-                )}
-              </div>
-              <div className="px-1">
-                <p className="text-white text-lg font-bold leading-tight">{slide.title}</p>
-                <p className="text-[#13ec13]/80 text-sm font-medium flex items-center gap-1">
-                  <Zap className="w-3 h-3" />
-                  {slide.subtitle}
-                </p>
-              </div>
-            </div>
+                <div
+                  className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/5"
+                  style={{ backgroundImage: `url("${slide.image}")` }}
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
+                  {slide.badge && (
+                    <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
+                      <Star className="w-3 h-3 text-black fill-black" />
+                      <span className="text-black text-[10px] font-bold uppercase tracking-wider">{slide.badge}</span>
+                    </div>
+                  )}
+                </div>
+                <div className="px-1">
+                  <p className="text-white text-lg font-bold leading-tight">{slide.title}</p>
+                  <p className="text-[#13ec13]/80 text-sm font-medium flex items-center gap-1">
+                    <Zap className="w-3 h-3" />
+                    {slide.subtitle}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+        {/* Slide indicators */}
+        <div className="flex justify-center gap-1.5 mt-1">
+          {heroSlides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentSlide(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === currentSlide ? 'w-6 bg-[#13ec13]' : 'w-1.5 bg-white/20'
+              }`}
+            />
           ))}
         </div>
       </div>
@@ -43,15 +135,19 @@ export default function HomeTab() {
       <div className="px-4 py-4">
         <div className="flex w-full overflow-x-auto gap-6 pb-2 no-scrollbar">
           {categories.map((cat) => (
-            <div key={cat.id} className="flex flex-col items-center gap-2 min-w-[70px]">
-              <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${cat.active ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${cat.active ? 'green-glow' : ''}`}>
+            <button
+              key={cat.id}
+              onClick={() => handleCategoryClick(cat)}
+              className="flex flex-col items-center gap-2 min-w-[70px]"
+            >
+              <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${cat.active ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${cat.active ? 'green-glow' : ''} hover:border-[#13ec13]/50 transition-colors`}>
                 <div
                   className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
                   style={{ backgroundImage: `url("${cat.image}")` }}
                 />
               </div>
               <p className={`text-[11px] font-bold whitespace-nowrap ${cat.active ? 'text-white/90' : 'text-white/60'}`}>{cat.name}</p>
-            </div>
+            </button>
           ))}
         </div>
       </div>
@@ -95,7 +191,10 @@ export default function HomeTab() {
             </div>
 
             <button
-              onClick={() => setActiveModal('product')}
+              onClick={() => {
+                setSelectedProduct(100);
+                setActiveModal('product');
+              }}
               className="w-full bg-[#13ec13] py-4 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
             >
               PRE-ORDER FOR IFTAR
@@ -108,7 +207,12 @@ export default function HomeTab() {
       {/* Trending Iftar */}
       <div className="px-4 py-4 flex justify-between items-end">
         <h3 className="text-white text-xl font-black tracking-tight">Trending Iftar</h3>
-        <span className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer">See All</span>
+        <button
+          onClick={() => setActiveTab('explore')}
+          className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+        >
+          See All
+        </button>
       </div>
       <div className="px-4 space-y-4">
         {trendingMeals.map((meal) => (
@@ -118,7 +222,7 @@ export default function HomeTab() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: meal.id * 0.1 }}
             className="flex gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
-            onClick={() => setActiveModal('product')}
+            onClick={() => handleMealClick(meal)}
           >
             <div
               className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10"
@@ -141,6 +245,15 @@ export default function HomeTab() {
                   <Star className="w-3 h-3 fill-[#FFD700]" />
                   {meal.rating}
                 </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleQuickAdd(meal);
+                  }}
+                  className="ml-auto text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 px-3 py-1 rounded-full border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                >
+                  + Add
+                </button>
               </div>
             </div>
           </motion.div>

@@ -208,3 +208,118 @@ The SwiftRamadan super-app now includes:
 ### Final Lint Status
 - 0 errors, 1 warning (false positive @next/next/no-page-custom-font)
 - Dev server compiling successfully on port 3000
+
+---
+
+## Task 6: Comprehensive SwiftRamadan App - Full Stack Rebuild
+
+**Date**: 2026-03-04
+**Agent**: Full Stack Rebuild Agent
+**Status**: ✅ Completed
+
+### Summary
+Performed a comprehensive full-stack rebuild of the SwiftRamadan super-app. Updated all data with local image paths, expanded the Zustand store, updated Prisma schema, built new API routes, rewrote all frontend components with full interactivity, and added new CartTab and SearchOverlay components.
+
+### Files Modified/Created
+
+#### Core Infrastructure
+- `src/lib/data.ts` - Replaced ALL fake Google URLs with local image paths. Added `allProducts`, `popularSearches`, `prayerTimes`.
+- `src/lib/store.ts` - Expanded with cart (cartItems, addToCart, removeFromCart, updateQuantity, clearCart), search (searchQuery, showSearch), notifications, wishlist, activeCategory.
+- `prisma/schema.prisma` - Replaced User/Post with Product, Order, CartItem, Notification models. Pushed to DB.
+- `src/hooks/use-toast.ts` - Created shadcn/ui toast hook (was imported but missing).
+
+#### API Routes
+- `src/app/api/chat/route.ts` - Updated to use `z-ai-web-dev-sdk` LLM with keyword matcher fallback.
+- `src/app/api/cart/route.ts` - **NEW** GET/POST/DELETE for cart with delivery fee calc.
+- `src/app/api/search/route.ts` - **NEW** GET with ?q= param, searches products/categories/retailers.
+- `src/app/api/products/route.ts` - Updated with local images, 8 products.
+
+#### New Components
+- `src/components/swift/CartTab.tsx` - Full cart view with items, quantity controls, coupon codes, order summary, checkout.
+- `src/components/swift/SearchOverlay.tsx` - Full-screen search with real-time results, recent/popular searches, debounced API calls.
+
+#### Rewritten Components (all with full interactivity)
+- `HomeTab.tsx` - Auto-scroll hero, clickable categories, quick-add buttons, loading skeleton.
+- `ExploreTab.tsx` - Clickable categories/retailers, Shop Now adds to cart, wired quick actions.
+- `OrdersTab.tsx` - API fetch with loading, expandable orders, Call Rider toast, dynamic prayer times.
+- `OffersTab.tsx` - **Real countdown timers** (h:m:s), clickable loyalty/gift cards, add to cart on flash sales.
+- `ProfileTab.tsx` - All menu items interactive with bottom sheet modals (BNPL, rewards, referral, charity, eco, addresses, security).
+- `ProductDetailModal.tsx` - Multi-product support, wishlist toggle, share button, related products.
+- `NotificationCenter.tsx` - API fetch, filter tabs, click-to-read.
+- `AIChatWidget.tsx` - Quick reply buttons, improved typing indicator.
+- `BottomNav.tsx` - Fixed tab mapping (cart=CartTab, orders=OrdersTab, etc.).
+- `page.tsx` - Added SearchOverlay, CartTab, wired search bar and shopping bag button.
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
+
+### Dev Server Status
+- Compiling successfully on port 3000
+- All API routes verified working
+
+---
+
+## Task 7: Image Generation & Final Fixes
+
+**Date**: 2026-03-04
+**Agent**: Main Orchestrator
+**Status**: ✅ Completed
+
+### Summary
+Generated 30 AI images for the SwiftRamadan app using z-ai CLI, fixed bugs in ProductDetailModal (double-counting quantity, missing useEffect import), and added the Offers tab to the bottom navigation.
+
+### Images Generated (30 total)
+**Hero Slides (3):**
+- `/public/images/hero/hero-iftar-jollof.png` - Nigerian jollof rice hero
+- `/public/images/hero/hero-sahur-oats.png` - Overnight oats & dates
+- `/public/images/hero/hero-family-iftar.png` - Family iftar dinner
+
+**Categories (7):**
+- `/public/images/categories/cat-iftar.png` - Iftar meals
+- `/public/images/categories/cat-sahur.png` - Sahur
+- `/public/images/categories/cat-dates.png` - Dates
+- `/public/images/categories/cat-drinks.png` - Drinks
+- `/public/images/categories/cat-snacks.png` - Snacks
+- `/public/images/categories/cat-fruits.png` - Fruits
+- `/public/images/categories/cat-groceries.png` - Groceries
+
+**Category Hub (4):**
+- `/public/images/categories/hub-iftar.png` - Iftar meals
+- `/public/images/categories/hub-groceries.png` - Groceries
+- `/public/images/categories/hub-pharmacy.png` - Pharmacy
+- `/public/images/categories/hub-office.png` - Office meals
+
+**Ramadan Box (4):**
+- `/public/images/products/ramadan-box-1.png` through `ramadan-box-4.png`
+
+**Trending Meals (4):**
+- `/public/images/meals/meal-jollof.png` - Jollof rice
+- `/public/images/meals/meal-suya.png` - Suya platter
+- `/public/images/meals/meal-moimoi.png` - Moi moi & pap
+- `/public/images/meals/meal-smoothie.png` - Date smoothie
+
+**Flash Sales (3):**
+- `/public/images/flash-sales/flash-dates.png` - Premium dates box
+- `/public/images/flash-sales/flash-iftar-bundle.png` - Iftar family bundle
+- `/public/images/flash-sales/flash-zobo-kunu.png` - Zobo & kunu
+
+**Retailers (4):**
+- `/public/images/retailers/retailer-foodhub.png` - The Food Hub
+- `/public/images/retailers/retailer-freshmart.png` - Lagos Fresh Mart
+- `/public/images/retailers/retailer-suyapalace.png` - Suya Palace
+- `/public/images/retailers/retailer-pharmacy.png` - Green Pharmacy
+
+**Seasonal (1):**
+- `/public/images/seasonal-specials.png` - Ramadan boxes banner
+
+### Bug Fixes
+- **ProductDetailModal**: Fixed `total * quantity` double-counting (was `salePrice * quantity * quantity`, now `salePrice * quantity`)
+- **ProductDetailModal**: Replaced problematic `useEffect` setState with `prevProductId` pattern to avoid lint error
+- **ProductDetailModal**: Removed `if (isOpen && quantity > 10) setQuantity(1)` that caused state update during render
+- **BottomNav**: Added 6th "Offers" tab with Percent icon
+- **store.ts**: Added 'offers' to TabId type union
+
+### Lint Status
+- 0 errors, 1 warning (pre-existing @next/next/no-page-custom-font)
+- Dev server compiling successfully on port 3000
+- All API routes verified working
