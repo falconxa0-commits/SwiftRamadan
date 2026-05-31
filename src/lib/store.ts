@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile'
   | 'rider-dashboard' | 'rider-earnings' | 'rider-deliveries' | 'rider-profile'
-  | 'vendor-dashboard' | 'vendor-orders' | 'vendor-earnings' | 'vendor-store';
+  | 'vendor-dashboard' | 'vendor-orders' | 'vendor-earnings' | 'vendor-store' | 'vendor-profile';
 
 export interface CartItem {
   id: number;
@@ -88,6 +88,52 @@ interface AppState {
   setUserEmail: (email: string) => void;
   userRole: 'customer' | 'vendor' | 'rider';
   setUserRole: (role: 'customer' | 'vendor' | 'rider') => void;
+  userAvatar: string;
+  setUserAvatar: (avatar: string) => void;
+  userArea: string;
+  setUserArea: (area: string) => void;
+
+  // Onboarding
+  onboardingComplete: boolean;
+  setOnboardingComplete: (val: boolean) => void;
+  showOnboarding: boolean;
+  setShowOnboarding: (val: boolean) => void;
+  onboardingStep: number;
+  setOnboardingStep: (step: number) => void;
+
+  // Vendor Onboarding Fields
+  vendorBusinessCategory: string;
+  setVendorBusinessCategory: (cat: string) => void;
+  vendorBusinessAddress: string;
+  setVendorBusinessAddress: (addr: string) => void;
+  vendorBankName: string;
+  setVendorBankName: (name: string) => void;
+  vendorAccountNumber: string;
+  setVendorAccountNumber: (num: string) => void;
+  vendorOpenTime: string;
+  setVendorOpenTime: (time: string) => void;
+  vendorCloseTime: string;
+  setVendorCloseTime: (time: string) => void;
+
+  // Rider Onboarding Fields
+  riderVehicleType: string;
+  setRiderVehicleType: (type: string) => void;
+  riderPlateNumber: string;
+  setRiderPlateNumber: (plate: string) => void;
+  riderLicenseNumber: string;
+  setRiderLicenseNumber: (license: string) => void;
+  riderBankName: string;
+  setRiderBankName: (name: string) => void;
+  riderAccountNumber: string;
+  setRiderAccountNumber: (num: string) => void;
+  riderVehicleColor: string;
+  setRiderVehicleColor: (color: string) => void;
+
+  // Customer Onboarding Fields
+  customerDietaryPrefs: string[];
+  setCustomerDietaryPrefs: (prefs: string[]) => void;
+  customerFavoriteCategories: string[];
+  setCustomerFavoriteCategories: (cats: string[]) => void;
 
   // Loyalty
   hasanatPoints: number;
@@ -180,6 +226,9 @@ interface AppState {
   setVendorPendingSettlement: (val: number) => void;
   vendorTotalEarnings: number;
   setVendorTotalEarnings: (val: number) => void;
+
+  // Logout
+  logout: () => void;
 }
 
 const defaultGiftCard = {
@@ -301,6 +350,52 @@ export const useAppStore = create<AppState>()(
       setUserEmail: (email) => set({ userEmail: email }),
       userRole: 'customer',
       setUserRole: (role) => set({ userRole: role }),
+      userAvatar: '',
+      setUserAvatar: (avatar) => set({ userAvatar: avatar }),
+      userArea: 'Lekki Phase 1',
+      setUserArea: (area) => set({ userArea: area }),
+
+      // Onboarding
+      onboardingComplete: false,
+      setOnboardingComplete: (val) => set({ onboardingComplete: val }),
+      showOnboarding: false,
+      setShowOnboarding: (val) => set({ showOnboarding: val }),
+      onboardingStep: 0,
+      setOnboardingStep: (step) => set({ onboardingStep: step }),
+
+      // Vendor Onboarding
+      vendorBusinessCategory: 'Iftar Meals',
+      setVendorBusinessCategory: (cat) => set({ vendorBusinessCategory: cat }),
+      vendorBusinessAddress: '',
+      setVendorBusinessAddress: (addr) => set({ vendorBusinessAddress: addr }),
+      vendorBankName: '',
+      setVendorBankName: (name) => set({ vendorBankName: name }),
+      vendorAccountNumber: '',
+      setVendorAccountNumber: (num) => set({ vendorAccountNumber: num }),
+      vendorOpenTime: '08:00',
+      setVendorOpenTime: (time) => set({ vendorOpenTime: time }),
+      vendorCloseTime: '22:00',
+      setVendorCloseTime: (time) => set({ vendorCloseTime: time }),
+
+      // Rider Onboarding
+      riderVehicleType: 'Motorcycle',
+      setRiderVehicleType: (type) => set({ riderVehicleType: type }),
+      riderPlateNumber: '',
+      setRiderPlateNumber: (plate) => set({ riderPlateNumber: plate }),
+      riderLicenseNumber: '',
+      setRiderLicenseNumber: (license) => set({ riderLicenseNumber: license }),
+      riderBankName: '',
+      setRiderBankName: (name) => set({ riderBankName: name }),
+      riderAccountNumber: '',
+      setRiderAccountNumber: (num) => set({ riderAccountNumber: num }),
+      riderVehicleColor: '',
+      setRiderVehicleColor: (color) => set({ riderVehicleColor: color }),
+
+      // Customer Onboarding
+      customerDietaryPrefs: [],
+      setCustomerDietaryPrefs: (prefs) => set({ customerDietaryPrefs: prefs }),
+      customerFavoriteCategories: [],
+      setCustomerFavoriteCategories: (cats) => set({ customerFavoriteCategories: cats }),
 
       // Loyalty
       hasanatPoints: 5400,
@@ -406,6 +501,22 @@ export const useAppStore = create<AppState>()(
       setVendorPendingSettlement: (val) => set({ vendorPendingSettlement: val }),
       vendorTotalEarnings: 1280000,
       setVendorTotalEarnings: (val) => set({ vendorTotalEarnings: val }),
+
+      // Logout
+      logout: () => {
+        set({
+          isLoggedIn: false,
+          showAuth: null,
+          showOnboarding: false,
+          onboardingComplete: false,
+          activeTab: 'home',
+          activeModal: null,
+          cartItems: [],
+          cartCount: 0,
+          riderOnline: false,
+          vendorOnline: false,
+        });
+      },
     }),
     {
       name: 'swiftramadan-store',
@@ -419,6 +530,8 @@ export const useAppStore = create<AppState>()(
         userPhone: state.userPhone,
         userEmail: state.userEmail,
         userRole: state.userRole,
+        userArea: state.userArea,
+        onboardingComplete: state.onboardingComplete,
         hasanatPoints: state.hasanatPoints,
         swiftPoints: state.swiftPoints,
         loyaltyTier: state.loyaltyTier,
@@ -439,6 +552,12 @@ export const useAppStore = create<AppState>()(
         vendorBalance: state.vendorBalance,
         vendorPendingSettlement: state.vendorPendingSettlement,
         vendorTotalEarnings: state.vendorTotalEarnings,
+        vendorBusinessCategory: state.vendorBusinessCategory,
+        vendorBusinessAddress: state.vendorBusinessAddress,
+        riderVehicleType: state.riderVehicleType,
+        riderPlateNumber: state.riderPlateNumber,
+        customerDietaryPrefs: state.customerDietaryPrefs,
+        customerFavoriteCategories: state.customerFavoriteCategories,
       }),
     }
   )

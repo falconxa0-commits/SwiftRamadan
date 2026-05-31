@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppStore, type TabId } from '@/lib/store';
-import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, BarChart3, Navigation } from 'lucide-react';
+import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, BarChart3, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NavTab {
@@ -30,7 +30,7 @@ const vendorTabs: NavTab[] = [
   { id: 'vendor-dashboard', label: 'Orders', icon: ClipboardList },
   { id: 'vendor-store', label: 'Menu', icon: Store },
   { id: 'vendor-earnings', label: 'Wallet', icon: Wallet },
-  { id: 'vendor-orders', label: 'Insights', icon: BarChart3 },
+  { id: 'vendor-profile', label: 'Profile', icon: Settings },
 ];
 
 export default function BottomNav() {

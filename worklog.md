@@ -630,3 +630,91 @@ Created 5 new full-screen modal components for the SwiftRamadan super-app: Deliv
 - 0 new errors (1 pre-existing error in NewDeliveryRequestModal.tsx, 1 pre-existing warning @next/next/no-page-custom-font)
 - All 5 new components pass lint cleanly
 - Dev server compiling successfully on port 3000
+
+---
+Task ID: 3
+Agent: Onboarding Flow Builder
+Task: Create OnboardingFlow component
+
+Work Log:
+- Read worklog.md and store.ts to understand existing project architecture and state fields
+- Created /home/z/my-project/src/components/swift/OnboardingFlow.tsx with full role-specific onboarding
+- Updated AuthScreen.tsx RoleScreen to add setOnboardingStep(0) call alongside existing setShowOnboarding(true)
+- Added OnboardingFlow import and render to page.tsx
+- Ran lint: 0 errors, 1 pre-existing warning
+
+Stage Summary:
+- Created OnboardingFlow.tsx (~650 lines) with complete role-specific onboarding for all 3 user roles:
+  - Customer: 3 steps (Welcome/Features → Dietary Prefs & Fav Categories → Delivery Location)
+  - Vendor: 3 steps (Store Setup → Business Hours & Toggles → Payment Setup)
+  - Rider: 3 steps (Vehicle Info Cards → Documents & Verification → Payment Setup)
+- Common elements: progress bar with role accent color, skip button, back button, step counter, Framer Motion page transitions
+- Celebration screen with confetti particles on completion, role-specific CTA buttons
+- Completion sets onboardingComplete=true, showOnboarding=false, navigates to role-appropriate tab
+- All inputs wired to Zustand store fields (deliveryAddress, vendorStoreName, riderVehicleType, customerDietaryPrefs, etc.)
+- Dark theme consistent with app: bg-[#05070A], bg-[#1A1D26], role-specific accents (#13ec13, #FFD700, #3b82f6)
+- Lint: 0 errors, 1 warning (pre-existing)
+
+---
+Task ID: 2
+Agent: Auth Screen Builder
+Task: Rebuild AuthScreen with role-specific signup flows
+
+Work Log:
+- Read worklog.md to understand project context (Tasks 2-9 already completed, full app with role-based navigation built)
+- Read existing AuthScreen.tsx (779 lines) with Login, Signup, OTP, Role Selection screens
+- Read store.ts to understand available state fields: showAuth, showOnboarding, userRole, vendorBusinessCategory/Address/StoreName, riderVehicleType/PlateNumber/LicenseNumber, etc.
+- Read use-toast.ts hook to verify toast API compatibility
+- Designed enhanced auth flow: Login with role tabs → Multi-step Signup (basic info + role-specific fields) → OTP → Onboarding or Role Selection
+- Wrote complete enhanced AuthScreen.tsx (690 lines) with:
+  - ROLE_CONFIG constant with accent colors, gradients, icons for customer/vendor/rider
+  - Reusable components: Spinner, RoleTabButton, InputField, ActionButton
+  - LoginScreen: Role selector tabs at top (Customer=green, Vendor=gold, Rider=blue), dynamic branding, role stored on login
+  - SignupScreen: Multi-step with Step 1 (basic info + role selection) and Step 2 (role-specific fields)
+    - Vendor step 2: Business name, business category dropdown (7 categories with icons), business address
+    - Rider step 2: Vehicle type dropdown (4 types), plate number (auto-uppercase), license number
+    - Customer: skips step 2, goes directly to OTP
+    - Dynamic progress bar reflecting multi-step flow
+  - OTPScreen: After verify, checks userRole → if set, goes to onboarding (setShowOnboarding(true), setShowAuth(null)); if not, goes to role selection
+  - RoleScreen: Same card layout but now routes to onboarding after selection instead of just closing auth
+  - AuthScreen main wrapper: Dynamic accent line under top bar based on userRole
+- Fixed pre-existing lint error in OnboardingFlow.tsx (missing Store import from lucide-react)
+- Verified lint: 0 errors, 1 pre-existing warning (@next/next/no-page-custom-font)
+
+---
+Task ID: 5
+Agent: Rider Profile Tab Builder
+Task: Create RiderProfileTab component
+
+Work Log:
+- Read worklog.md and store.ts to understand existing project architecture and state fields
+- Read existing RiderDashboard.tsx and ProfileTab.tsx for design reference
+- Created /home/z/my-project/src/components/swift/RiderProfileTab.tsx with all 6 sections
+- Updated page.tsx to import RiderProfileTab and map it to 'rider-profile' tab (replacing ProfileTab)
+- Fixed lint error: VehicleIcon created during render → replaced with inline conditional rendering
+- Ran lint: 0 errors, 1 pre-existing warning
+
+Stage Summary:
+- Created RiderProfileTab.tsx (~310 lines) with complete rider profile screen including:
+  1. **Profile Header**: Blue (#3b82f6) avatar circle with Bike icon, rider name from store (or "Rider"), Online/Offline status indicator with green/gray dot, "Elite Rider" badge with workspace_premium Material Symbol, Rating display (4.9 ★)
+  2. **Stats Grid** (3 columns): Today's Earnings (from store riderEarnings), Completed Today (from store), Rating (from store riderRating)
+  3. **Vehicle Info Card**: Dynamic vehicle type icon (Bike/Car/Zap based on riderVehicleType), Vehicle type, Plate number, Color from store, "Edit" button → setShowOnboarding(true), setOnboardingStep(0)
+  4. **Performance Section**: Ramadan Bonus Progress bar at 85% to ₦15,000 with animated fill, "12 more deliveries to unlock" subtitle, On-time rate 98% with SVG circular mini progress, Grateful customers count (9) with Heart icon
+  5. **Menu Items** (11 + Logout): Earnings History, Delivery History, Prayer Times & Qibla, Sahur Wake-up Call, Documents & Verification, Payment Setup, Refer a Driver, Community Forum, Switch Role, Settings, Help & Support, Logout (red text, LogOut icon) → logout() + setShowAuth('login')
+  6. **Quick Actions**: "Go Online"/"Go Offline" toggle button with blue accent, "Cash Out" button with Wallet icon
+- Dark theme: bg-[#05070A], bg-[#1A1D26] cards, border-white/5 borders, #3b82f6 blue accent
+- Framer Motion staggered animations throughout (staggerContainer + staggerItem variants)
+- All lucide-react icons (Bike, Star, DollarSign, CheckCircle, Car, Zap, Clock, Heart, etc.)
+- pb-32 at bottom for nav clearance
+- Lint: 0 errors, 1 warning (pre-existing)
+- Dev server compiling successfully on port 3000
+
+Stage Summary:
+- Complete AuthScreen rewrite with 4 screens enhanced for role-specific flows
+- Login screen now has role selector tabs with dynamic accent colors (Customer=#13ec13, Vendor=#FFD700, Rider=#3b82f6)
+- Signup screen is now multi-step: Step 1 = basic info + role selection, Step 2 = role-specific vendor/rider fields
+- OTP screen now intelligently routes: role set → onboarding, no role → role selection
+- Role selection screen now routes to onboarding after selection
+- All screens use dynamic accent colors based on selected/stored role
+- Pre-existing OnboardingFlow.tsx lint error fixed (Store import added)
+- Zero lint errors in AuthScreen.tsx

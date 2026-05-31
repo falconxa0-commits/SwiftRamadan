@@ -1,6 +1,6 @@
 'use client';
 
-import { User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight, Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette, MessageSquare } from 'lucide-react';
+import { User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight, Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette, MessageSquare, LogOut, Moon, ShoppingBag } from 'lucide-react';
 import { loyaltyData, charityItems, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
@@ -16,6 +16,7 @@ const menuItems = [
   { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market' },
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community' },
   { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
   { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role' },
@@ -31,6 +32,10 @@ export default function ProfileTab() {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<ModalContent>({ title: '', content: null });
   const { toast } = useToast();
+  const { userName, userArea, logout, setShowAuth, hasanatPoints, loyaltyTier } = useAppStore();
+
+  const displayName = userName || 'Guest';
+  const displayArea = userArea || 'Lagos, Nigeria';
 
   const handleMenuClick = (action: string) => {
     switch (action) {
@@ -58,14 +63,14 @@ export default function ProfileTab() {
       case 'delivery-location':
         useAppStore.getState().setActiveModal('delivery-location');
         break;
+      case 'prayer-times':
+        useAppStore.getState().setActiveModal('prayer-times');
+        break;
       case 'switch-role':
         useAppStore.getState().setShowAuth('role');
         break;
       case 'notifications':
         toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
-        break;
-      case 'addresses':
-        useAppStore.getState().setActiveModal('delivery-location');
         break;
       case 'security':
         setModalContent({
@@ -99,7 +104,42 @@ export default function ProfileTab() {
         setShowModal(true);
         break;
       case 'settings':
-        toast({ title: 'Settings ⚙️', description: 'App preferences panel coming soon!' });
+        setModalContent({
+          title: 'Settings',
+          content: (
+            <div className="space-y-3">
+              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+                <div>
+                  <p className="text-white font-bold text-sm">Language</p>
+                  <p className="text-white/40 text-xs">English (US)</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-white/20" />
+              </div>
+              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+                <div>
+                  <p className="text-white font-bold text-sm">Notifications</p>
+                  <p className="text-white/40 text-xs">Push & Email</p>
+                </div>
+                <span className="text-[#13ec13] text-xs font-bold">On</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+                <div>
+                  <p className="text-white font-bold text-sm">Dark Mode</p>
+                  <p className="text-white/40 text-xs">Always on</p>
+                </div>
+                <span className="text-[#13ec13] text-xs font-bold">Active</span>
+              </div>
+              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+                <div>
+                  <p className="text-white font-bold text-sm">Location Services</p>
+                  <p className="text-white/40 text-xs">While using the app</p>
+                </div>
+                <span className="text-[#13ec13] text-xs font-bold">Enabled</span>
+              </div>
+            </div>
+          ),
+        });
+        setShowModal(true);
         break;
     }
   };
@@ -118,6 +158,12 @@ export default function ProfileTab() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    setShowAuth('login');
+    toast({ title: 'Logged out', description: 'You have been signed out. See you soon! 👋' });
+  };
+
   return (
     <main className="flex-1 overflow-y-auto pb-32">
       {/* Profile Header */}
@@ -126,14 +172,20 @@ export default function ProfileTab() {
           <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
             <User className="w-8 h-8 text-[#13ec13]" />
           </div>
-          <div>
-            <h2 className="text-white text-xl font-bold">Bolaji Ahmed</h2>
-            <p className="text-white/50 text-sm">Lekki Phase 1, Lagos</p>
+          <div className="flex-1">
+            <h2 className="text-white text-xl font-bold">{displayName}</h2>
+            <p className="text-white/50 text-sm">{displayArea}</p>
             <div className="flex items-center gap-1 mt-1">
               <Award className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
-              <span className="text-[#FFD700] text-xs font-bold">{loyaltyData.tier}</span>
+              <span className="text-[#FFD700] text-xs font-bold">{loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member</span>
             </div>
           </div>
+          <button
+            onClick={() => useAppStore.getState().setShowOnboarding(true)}
+            className="w-10 h-10 bg-[#1A1D26] rounded-xl flex items-center justify-center border border-white/10"
+          >
+            <Settings className="w-5 h-5 text-white/50" />
+          </button>
         </div>
       </div>
 
@@ -141,7 +193,7 @@ export default function ProfileTab() {
       <div className="px-4 mt-4">
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-            <p className="text-[#13ec13] text-xl font-black">{loyaltyData.points.toLocaleString()}</p>
+            <p className="text-[#13ec13] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
             <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
@@ -158,7 +210,7 @@ export default function ProfileTab() {
       {/* Eco Impact */}
       <div className="px-4 mt-6">
         <button
-          onClick={() => handleMenuClick('eco')}
+          onClick={() => handleMenuClick('eco-impact')}
           className="w-full text-left"
         >
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#05070A] border border-emerald-500/20 p-5 hover:border-emerald-500/30 transition-colors">
@@ -191,8 +243,11 @@ export default function ProfileTab() {
           {menuItems.map((item, i) => {
             const Icon = item.icon;
             return (
-              <button
+              <motion.button
                 key={i}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.03 }}
                 onClick={() => handleMenuClick(item.action)}
                 className="flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
               >
@@ -204,10 +259,26 @@ export default function ProfileTab() {
                   <p className="text-white/40 text-xs">{item.subtitle}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20" />
-              </button>
+              </motion.button>
             );
           })}
         </div>
+      </div>
+
+      {/* Logout Button */}
+      <div className="px-4 mt-4">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-4 p-4 bg-red-500/5 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
+        >
+          <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center shrink-0">
+            <LogOut className="w-5 h-5 text-red-400" />
+          </div>
+          <div className="flex-1">
+            <p className="text-red-400 font-bold text-sm">Log Out</p>
+            <p className="text-red-400/40 text-xs">Sign out of your account</p>
+          </div>
+        </button>
       </div>
 
       {/* Charity Quick Actions */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import BottomNav from '@/components/swift/BottomNav';
@@ -16,6 +16,7 @@ import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
 import SearchOverlay from '@/components/swift/SearchOverlay';
 import AuthScreen from '@/components/swift/AuthScreen';
+import OnboardingFlow from '@/components/swift/OnboardingFlow';
 import PrayerTimesModal from '@/components/swift/PrayerTimesModal';
 import SahurWakeUpModal from '@/components/swift/SahurWakeUpModal';
 import GroupBuyModal from '@/components/swift/GroupBuyModal';
@@ -38,9 +39,11 @@ import VendorDashboard from '@/components/swift/VendorDashboard';
 import VendorWallet from '@/components/swift/VendorWallet';
 import VendorStoreTab from '@/components/swift/VendorStoreTab';
 import VendorSalesInsights from '@/components/swift/VendorSalesInsights';
+import VendorProfileTab from '@/components/swift/VendorProfileTab';
 import RiderDashboard from '@/components/swift/RiderDashboard';
 import RiderEarningsHub from '@/components/swift/RiderEarningsHub';
 import RiderDeliveryMap from '@/components/swift/RiderDeliveryMap';
+import RiderProfileTab from '@/components/swift/RiderProfileTab';
 import NewDeliveryRequestModal from '@/components/swift/NewDeliveryRequestModal';
 import { Search, ShoppingBag, MapPin, User, Bell, Bike, Store } from 'lucide-react';
 
@@ -57,7 +60,7 @@ const riderTabs: Record<string, React.ComponentType> = {
   'rider-dashboard': RiderDashboard,
   'rider-earnings': RiderEarningsHub,
   'rider-deliveries': RiderDeliveryMap,
-  'rider-profile': ProfileTab,
+  'rider-profile': RiderProfileTab,
 };
 
 const vendorTabs: Record<string, React.ComponentType> = {
@@ -65,11 +68,23 @@ const vendorTabs: Record<string, React.ComponentType> = {
   'vendor-orders': VendorDashboard,
   'vendor-earnings': VendorWallet,
   'vendor-store': VendorStoreTab,
+  'vendor-profile': VendorProfileTab,
 };
 
 export default function Home() {
-  const { activeTab, showWelcome, cartCount, userRole, userName, vendorStoreName, riderOnline, vendorOnline } = useAppStore();
+  const { activeTab, showWelcome, cartCount, userRole, userName, vendorStoreName, riderOnline, vendorOnline, isLoggedIn, showAuth, showOnboarding, setActiveTab, setUserRole } = useAppStore();
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // When role changes, switch to the appropriate default tab
+  useEffect(() => {
+    if (userRole === 'rider') {
+      setActiveTab('rider-dashboard');
+    } else if (userRole === 'vendor') {
+      setActiveTab('vendor-dashboard');
+    } else {
+      setActiveTab('home');
+    }
+  }, [userRole, setActiveTab]);
 
   const allTabs = { ...customerTabs, ...riderTabs, ...vendorTabs };
   const ActiveTabComponent = allTabs[activeTab] || HomeTab;
@@ -81,6 +96,7 @@ export default function Home() {
   const greeting = isRider ? 'Salam, Rider' : isVendor ? displayName : `Salam, ${displayName.split(' ')[0]}`;
   const subtitle = isRider ? (riderOnline ? 'Online • Lagos' : 'Offline') : isVendor ? (vendorOnline ? 'Online • Ramadan 2026' : 'Offline') : 'Lekki Phase 1, Lagos';
 
+  // Welcome screen
   if (showWelcome) {
     return <WelcomeScreen />;
   }
@@ -146,6 +162,14 @@ export default function Home() {
                 <Bike className="w-5 h-5 text-[#3b82f6]" />
               </button>
             )}
+            {isVendor && (
+              <button
+                onClick={() => useAppStore.getState().setActiveModal('vendor-insights')}
+                className="flex size-11 items-center justify-center rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30"
+              >
+                <Store className="w-5 h-5 text-[#FFD700]" />
+              </button>
+            )}
           </div>
         </div>
         {/* Search bar - only for customers */}
@@ -180,7 +204,7 @@ export default function Home() {
       <BottomNav />
 
       {/* AI Chat Widget */}
-      <AIChatWidget />
+      {!isRider && <AIChatWidget />}
 
       {/* Notification Center */}
       <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
@@ -193,6 +217,9 @@ export default function Home() {
 
       {/* Auth Screen Overlay */}
       <AuthScreen />
+
+      {/* Onboarding Flow */}
+      <OnboardingFlow />
 
       {/* App Modals */}
       <PrayerTimesModal />

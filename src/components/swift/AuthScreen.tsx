@@ -20,16 +20,224 @@ import {
   User,
   MapPin,
   Sparkles,
+  Building2,
+  Truck,
+  CreditCard,
+  Clock,
+  Palette,
+  Utensils,
+  Flame,
+  Moon,
+  CupSoda,
+  ShoppingCart,
+  Pill,
+  Package,
 } from 'lucide-react';
 
-/* ────────────────────────── Login Screen ────────────────────────── */
+/* ─────────────── Constants ─────────────── */
+
+const ROLE_CONFIG = {
+  customer: {
+    label: 'Customer',
+    accent: '#13ec13',
+    accentLight: '#13ec1320',
+    accentMid: '#13ec1340',
+    gradient: 'from-[#064e3b] to-[#0a3d2e]',
+    icon: ShoppingBag,
+    tagline: 'Shop Iftar meals, groceries & more',
+  },
+  vendor: {
+    label: 'Vendor',
+    accent: '#FFD700',
+    accentLight: '#FFD70020',
+    accentMid: '#FFD70040',
+    gradient: 'from-[#4a3d00] to-[#2d2100]',
+    icon: Store,
+    tagline: 'Sell your products on SwiftRamadan',
+  },
+  rider: {
+    label: 'Rider',
+    accent: '#3b82f6',
+    accentLight: '#3b82f620',
+    accentMid: '#3b82f640',
+    gradient: 'from-[#1e3a5f] to-[#0c1929]',
+    icon: Bike,
+    tagline: 'Deliver & earn with SwiftLogistics',
+  },
+} as const;
+
+type RoleKey = keyof typeof ROLE_CONFIG;
+
+const RESIDENTIAL_AREAS = ['Lekki', 'Ikoyi', 'Victoria Island', 'Surulere', 'Ikeja', 'Yaba', 'Ajah', 'Maryland', 'Gbagada', 'Festac'];
+
+const BUSINESS_CATEGORIES = [
+  { value: 'Iftar Meals', label: 'Iftar Meals', icon: Utensils },
+  { value: 'Grills', label: 'Grills', icon: Flame },
+  { value: 'Sahur', label: 'Sahur', icon: Moon },
+  { value: 'Drinks', label: 'Drinks', icon: CupSoda },
+  { value: 'Groceries', label: 'Groceries', icon: ShoppingCart },
+  { value: 'Pharmacy', label: 'Pharmacy', icon: Pill },
+  { value: 'Bundles', label: 'Bundles', icon: Package },
+];
+
+const VEHICLE_TYPES = [
+  { value: 'Motorcycle', label: 'Motorcycle' },
+  { value: 'Bicycle', label: 'Bicycle' },
+  { value: 'Car', label: 'Car' },
+  { value: 'Electric Bike', label: 'Electric Bike' },
+];
+
+/* ─────────────── Reusable Components ─────────────── */
+
+function Spinner({ color = '#05070A' }: { color?: string }) {
+  return (
+    <motion.div
+      animate={{ rotate: 360 }}
+      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+      className="w-5 h-5 border-2 rounded-full"
+      style={{ borderColor: `${color}30`, borderTopColor: color }}
+    />
+  );
+}
+
+function RoleTabButton({
+  role,
+  selected,
+  onClick,
+}: {
+  role: RoleKey;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  const config = ROLE_CONFIG[role];
+  const Icon = config.icon;
+
+  return (
+    <button
+      onClick={onClick}
+      className="relative flex-1 flex flex-col items-center gap-1 py-3 px-2 rounded-xl transition-all"
+      style={{
+        backgroundColor: selected ? config.accentLight : 'transparent',
+        border: selected ? `1px solid ${config.accentMid}` : '1px solid transparent',
+      }}
+    >
+      <Icon
+        className="w-5 h-5 transition-colors"
+        style={{ color: selected ? config.accent : 'rgba(255,255,255,0.35)' }}
+      />
+      <span
+        className="text-xs font-bold transition-colors"
+        style={{ color: selected ? config.accent : 'rgba(255,255,255,0.35)' }}
+      >
+        {config.label}
+      </span>
+      {selected && (
+        <motion.div
+          layoutId="role-tab-indicator"
+          className="absolute -bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 rounded-full"
+          style={{ backgroundColor: config.accent }}
+          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+        />
+      )}
+    </button>
+  );
+}
+
+function InputField({
+  icon: Icon,
+  placeholder,
+  value,
+  onChange,
+  type = 'text',
+  accentColor = '#13ec13',
+  rightElement,
+  inputMode,
+  maxLength,
+  onKeyDown,
+}: {
+  icon: React.ElementType;
+  placeholder: string;
+  value: string;
+  onChange: (val: string) => void;
+  type?: string;
+  accentColor?: string;
+  rightElement?: React.ReactNode;
+  inputMode?: 'text' | 'numeric' | 'tel' | 'email';
+  maxLength?: number;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <div className="relative">
+      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+      <input
+        type={type}
+        inputMode={inputMode}
+        maxLength={maxLength}
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={onKeyDown}
+        className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+        style={{ borderColor: value ? `${accentColor}50` : undefined }}
+      />
+      {rightElement && (
+        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+          {rightElement}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ActionButton({
+  label,
+  onClick,
+  loading,
+  accentColor = '#13ec13',
+  icon: Icon,
+  fullWidth = true,
+}: {
+  label: string;
+  onClick: () => void;
+  loading?: boolean;
+  accentColor?: string;
+  icon?: React.ElementType;
+  fullWidth?: boolean;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={loading}
+      className={`${fullWidth ? 'w-full' : ''} h-14 rounded-xl font-bold text-base active:scale-[0.98] transition-transform disabled:opacity-60 disabled:active:scale-100 flex items-center justify-center gap-2`}
+      style={{
+        backgroundColor: accentColor,
+        color: '#05070A',
+        boxShadow: `0 4px 24px ${accentColor}30`,
+      }}
+    >
+      {loading ? (
+        <Spinner color="#05070A" />
+      ) : (
+        <>
+          {Icon && <Icon className="w-5 h-5" />}
+          {label}
+        </>
+      )}
+    </button>
+  );
+}
+
+/* ─────────────── Login Screen ─────────────── */
 
 function LoginScreen() {
-  const { setShowAuth, setIsLoggedIn, setUserName, setUserEmail } = useAppStore();
+  const { setShowAuth, setIsLoggedIn, setUserName, setUserEmail, setUserRole } = useAppStore();
+  const [loginRole, setLoginRole] = useState<RoleKey>('customer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const config = ROLE_CONFIG[loginRole];
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -41,25 +249,27 @@ function LoginScreen() {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'login', email, password }),
+        body: JSON.stringify({ action: 'login', email, password, role: loginRole }),
       });
       const data = await res.json();
       if (data.success) {
         setUserName(data.user?.name || email.split('@')[0]);
         setUserEmail(email);
+        setUserRole(loginRole);
         setIsLoggedIn(true);
         setShowAuth(null);
-        toast({ title: 'Welcome back! 🎉', description: 'You have been logged in successfully.' });
+        toast({ title: `Welcome back! 🎉`, description: `Signed in as ${config.label}` });
       } else {
         toast({ title: 'Login failed', description: data.message || 'Invalid credentials', variant: 'destructive' });
       }
     } catch {
-      // Fallback: just log in anyway for demo
+      // Fallback: demo login
       setUserName(email.split('@')[0]);
       setUserEmail(email);
+      setUserRole(loginRole);
       setIsLoggedIn(true);
       setShowAuth(null);
-      toast({ title: 'Welcome back! 🎉', description: 'You have been logged in successfully.' });
+      toast({ title: `Welcome back! 🎉`, description: `Signed in as ${config.label}` });
     } finally {
       setLoading(false);
     }
@@ -73,25 +283,52 @@ function LoginScreen() {
       transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       className="flex flex-col min-h-full px-6 pt-4 pb-8"
     >
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-white text-2xl font-extrabold tracking-tight">Welcome Back</h1>
-        <p className="text-white/50 text-sm mt-1">Sign in to your SwiftRamadan account</p>
+      {/* Role Selector Tabs */}
+      <div className="flex gap-2 p-1.5 bg-[#1A1D26] rounded-2xl border border-white/5 mb-6">
+        {(['customer', 'vendor', 'rider'] as RoleKey[]).map((role) => (
+          <RoleTabButton
+            key={role}
+            role={role}
+            selected={loginRole === role}
+            onClick={() => setLoginRole(role)}
+          />
+        ))}
+      </div>
+
+      {/* Dynamic Header */}
+      <div className="mb-6">
+        <motion.div
+          key={loginRole}
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex items-center gap-3 mb-2">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ backgroundColor: config.accentLight, border: `1px solid ${config.accentMid}` }}
+            >
+              <config.icon className="w-5 h-5" style={{ color: config.accent }} />
+            </div>
+            <div>
+              <h1 className="text-white text-2xl font-extrabold tracking-tight">Welcome Back</h1>
+              <p className="text-sm" style={{ color: config.accent }}>{config.tagline}</p>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Form */}
       <div className="flex flex-col gap-4 flex-1">
         {/* Email */}
-        <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
-          />
-        </div>
+        <InputField
+          icon={Mail}
+          placeholder="Email address"
+          value={email}
+          onChange={setEmail}
+          accentColor={config.accent}
+          inputMode="email"
+        />
 
         {/* Password */}
         <div className="relative">
@@ -102,7 +339,8 @@ function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+            style={{ borderColor: password ? `${config.accent}50` : undefined }}
           />
           <button
             type="button"
@@ -117,28 +355,20 @@ function LoginScreen() {
         <div className="flex justify-end">
           <button
             onClick={() => toast({ title: 'Coming soon', description: 'Password reset will be available soon.' })}
-            className="text-[#13ec13] text-xs font-semibold hover:underline"
+            className="text-xs font-semibold hover:underline"
+            style={{ color: config.accent }}
           >
             Forgot Password?
           </button>
         </div>
 
         {/* Login Button */}
-        <button
+        <ActionButton
+          label="Login"
           onClick={handleLogin}
-          disabled={loading}
-          className="w-full h-14 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-base shadow-lg shadow-[#13ec13]/20 active:scale-[0.98] transition-transform disabled:opacity-60 disabled:active:scale-100 flex items-center justify-center gap-2"
-        >
-          {loading ? (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              className="w-5 h-5 border-2 border-[#05070A]/30 border-t-[#05070A] rounded-full"
-            />
-          ) : (
-            'Login'
-          )}
-        </button>
+          loading={loading}
+          accentColor={config.accent}
+        />
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-2">
@@ -180,60 +410,134 @@ function LoginScreen() {
           className="text-white/50 text-sm"
         >
           Don&apos;t have an account?{' '}
-          <span className="text-[#13ec13] font-bold">Sign Up</span>
+          <span className="font-bold" style={{ color: config.accent }}>Sign Up</span>
         </button>
       </div>
     </motion.div>
   );
 }
 
-/* ────────────────────────── Signup Screen ────────────────────────── */
-
-const RESIDENTIAL_AREAS = ['Lekki', 'Ikoyi', 'Victoria Island', 'Surulere', 'Ikeja', 'Yaba'];
+/* ─────────────── Signup Screen (Multi-Step) ─────────────── */
 
 function SignupScreen() {
-  const { setShowAuth, setUserName, setUserPhone, setUserEmail } = useAppStore();
+  const store = useAppStore();
+  const [step, setStep] = useState<1 | 2>(1);
+  const [signupRole, setSignupRole] = useState<RoleKey>('customer');
+
+  // Step 1 fields
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [area, setArea] = useState('');
   const [areaOpen, setAreaOpen] = useState(false);
   const [joinCommunity, setJoinCommunity] = useState(true);
+
+  // Step 2 fields - Vendor
+  const [businessName, setBusinessName] = useState('');
+  const [businessCategory, setBusinessCategory] = useState('Iftar Meals');
+  const [businessCategoryOpen, setBusinessCategoryOpen] = useState(false);
+  const [businessAddress, setBusinessAddress] = useState('');
+
+  // Step 2 fields - Rider
+  const [vehicleType, setVehicleType] = useState('Motorcycle');
+  const [vehicleTypeOpen, setVehicleTypeOpen] = useState(false);
+  const [plateNumber, setPlateNumber] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState('');
+
   const [loading, setLoading] = useState(false);
 
-  const handleSignup = async () => {
+  const config = ROLE_CONFIG[signupRole];
+
+  // Total steps depend on role
+  const totalSteps = signupRole === 'customer' ? 2 : 3;
+  const currentStep = step === 1 ? 1 : (signupRole === 'customer' ? 2 : 2);
+
+  const handleStep1Next = () => {
     if (!fullName.trim() || !phone.trim() || !email.trim() || !area) {
       toast({ title: 'Missing fields', description: 'Please fill in all required fields.', variant: 'destructive' });
       return;
     }
+    // If customer, go directly to OTP (skip step 2)
+    if (signupRole === 'customer') {
+      handleSubmit();
+    } else {
+      setStep(2);
+    }
+  };
+
+  const handleSubmit = async () => {
     setLoading(true);
+
+    // Set role-specific fields in store
+    store.setUserRole(signupRole);
+
+    if (signupRole === 'vendor') {
+      store.setVendorStoreName(businessName);
+      store.setVendorBusinessCategory(businessCategory);
+      store.setVendorBusinessAddress(businessAddress);
+    } else if (signupRole === 'rider') {
+      store.setRiderVehicleType(vehicleType);
+      store.setRiderPlateNumber(plateNumber);
+      store.setRiderLicenseNumber(licenseNumber);
+    }
+
     try {
       const res = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'signup', name: fullName, phone: `+234${phone}`, email, area }),
+        body: JSON.stringify({
+          action: 'signup',
+          name: fullName,
+          phone: `+234${phone}`,
+          email,
+          area,
+          role: signupRole,
+          ...(signupRole === 'vendor' ? { businessName, businessCategory, businessAddress } : {}),
+          ...(signupRole === 'rider' ? { vehicleType, plateNumber, licenseNumber } : {}),
+        }),
       });
       const data = await res.json();
       if (data.success) {
-        setUserName(fullName);
-        setUserPhone(`+234${phone}`);
-        setUserEmail(email);
-        setShowAuth('otp');
+        store.setUserName(fullName);
+        store.setUserPhone(`+234${phone}`);
+        store.setUserEmail(email);
+        store.setUserArea(area);
+        store.setShowAuth('otp');
         toast({ title: 'Account created!', description: 'Please verify your phone number.' });
       } else {
         toast({ title: 'Signup failed', description: data.message || 'Could not create account', variant: 'destructive' });
       }
     } catch {
       // Fallback for demo
-      setUserName(fullName);
-      setUserPhone(`+234${phone}`);
-      setUserEmail(email);
-      setShowAuth('otp');
+      store.setUserName(fullName);
+      store.setUserPhone(`+234${phone}`);
+      store.setUserEmail(email);
+      store.setUserArea(area);
+      store.setShowAuth('otp');
       toast({ title: 'Account created!', description: 'Please verify your phone number.' });
     } finally {
       setLoading(false);
     }
   };
+
+  const handleStep2Submit = () => {
+    if (signupRole === 'vendor') {
+      if (!businessName.trim() || !businessCategory || !businessAddress.trim()) {
+        toast({ title: 'Missing fields', description: 'Please fill in all business details.', variant: 'destructive' });
+        return;
+      }
+    } else if (signupRole === 'rider') {
+      if (!vehicleType || !plateNumber.trim() || !licenseNumber.trim()) {
+        toast({ title: 'Missing fields', description: 'Please fill in all vehicle details.', variant: 'destructive' });
+        return;
+      }
+    }
+    handleSubmit();
+  };
+
+  // Progress bar segments
+  const progressSegments = signupRole === 'customer' ? 2 : 3;
+  const filledSegments = step === 1 ? 1 : (signupRole === 'customer' ? 2 : 2);
 
   return (
     <motion.div
@@ -251,147 +555,392 @@ function SignupScreen() {
 
       {/* Progress Bar */}
       <div className="flex items-center gap-2 mb-6">
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <div className="flex-1 h-1.5 rounded-full bg-white/10" />
-        <div className="flex-1 h-1.5 rounded-full bg-white/10" />
-        <span className="text-white/30 text-xs ml-2">Step 1/3</span>
+        {Array.from({ length: progressSegments }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="flex-1 h-1.5 rounded-full"
+            initial={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+            animate={{
+              backgroundColor: i < filledSegments ? config.accent : 'rgba(255,255,255,0.1)',
+            }}
+            transition={{ duration: 0.3, delay: i * 0.1 }}
+          />
+        ))}
+        <span className="text-white/30 text-xs ml-2">
+          Step {filledSegments}/{progressSegments}
+        </span>
       </div>
 
-      {/* Form */}
-      <div className="flex flex-col gap-4 flex-1">
-        {/* Full Name */}
-        <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-          <input
-            type="text"
-            placeholder="Full name"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
-          />
-        </div>
-
-        {/* Phone */}
-        <div className="relative">
-          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-          <div className="absolute left-12 top-1/2 -translate-y-1/2 flex items-center pr-2 border-r border-white/10">
-            <span className="text-white/50 text-sm font-medium">+234</span>
-          </div>
-          <input
-            type="tel"
-            placeholder="Phone number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
-          />
-        </div>
-
-        {/* Email */}
-        <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-          <input
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
-          />
-        </div>
-
-        {/* Residential Area */}
-        <div className="relative">
-          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
-          <button
-            onClick={() => setAreaOpen(!areaOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${area ? 'text-white' : 'text-white/30'}`}
+      <AnimatePresence mode="wait">
+        {step === 1 ? (
+          /* ─── Step 1: Basic Info + Role Selection ─── */
+          <motion.div
+            key="step1"
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -40, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="flex flex-col gap-4 flex-1"
           >
-            {area || 'Residential area'}
-          </button>
-          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+            {/* Role Selection */}
+            <div>
+              <label className="text-white/60 text-xs font-semibold uppercase tracking-wider mb-2 block">I am a</label>
+              <div className="flex gap-2 p-1.5 bg-[#1A1D26] rounded-2xl border border-white/5">
+                {(['customer', 'vendor', 'rider'] as RoleKey[]).map((role) => {
+                  const rc = ROLE_CONFIG[role];
+                  const RIcon = rc.icon;
+                  const isSelected = signupRole === role;
+                  return (
+                    <button
+                      key={role}
+                      onClick={() => setSignupRole(role)}
+                      className="relative flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-xl transition-all"
+                      style={{
+                        backgroundColor: isSelected ? rc.accentLight : 'transparent',
+                        border: isSelected ? `1px solid ${rc.accentMid}` : '1px solid transparent',
+                      }}
+                    >
+                      <RIcon
+                        className="w-4 h-4"
+                        style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.35)' }}
+                      />
+                      <span
+                        className="text-xs font-bold"
+                        style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.35)' }}
+                      >
+                        {rc.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
 
-          {/* Dropdown */}
-          <AnimatePresence>
-            {areaOpen && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.15 }}
-                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
-              >
-                {RESIDENTIAL_AREAS.map((a) => (
-                  <button
-                    key={a}
-                    onClick={() => { setArea(a); setAreaOpen(false); }}
-                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${area === a ? 'text-[#13ec13]' : 'text-white/70'}`}
-                  >
-                    {a}
-                    {area === a && <Check className="w-4 h-4" />}
-                  </button>
-                ))}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* Join Community */}
-        <button
-          onClick={() => setJoinCommunity(!joinCommunity)}
-          className="flex items-center gap-3 py-1"
-        >
-          <div className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${joinCommunity ? 'bg-[#13ec13] border-[#13ec13]' : 'bg-transparent border-white/20'}`}>
-            {joinCommunity && <Check className="w-4 h-4 text-[#05070A]" />}
-          </div>
-          <div className="flex flex-col items-start">
-            <span className="text-white text-sm font-medium">Join Community</span>
-            <span className="text-white/40 text-xs">Get group buy deals & community offers</span>
-          </div>
-        </button>
-
-        {/* Create Account Button */}
-        <button
-          onClick={handleSignup}
-          disabled={loading}
-          className="w-full h-14 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-base shadow-lg shadow-[#13ec13]/20 active:scale-[0.98] transition-transform disabled:opacity-60 disabled:active:scale-100 flex items-center justify-center gap-2 mt-2"
-        >
-          {loading ? (
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-              className="w-5 h-5 border-2 border-[#05070A]/30 border-t-[#05070A] rounded-full"
+            {/* Full Name */}
+            <InputField
+              icon={User}
+              placeholder="Full name"
+              value={fullName}
+              onChange={setFullName}
+              accentColor={config.accent}
             />
-          ) : (
-            <>
-              <Sparkles className="w-5 h-5" />
-              Create Account
-            </>
-          )}
-        </button>
-      </div>
+
+            {/* Phone */}
+            <div className="relative">
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <div className="absolute left-12 top-1/2 -translate-y-1/2 flex items-center pr-2 border-r border-white/10">
+                <span className="text-white/50 text-sm font-medium">+234</span>
+              </div>
+              <input
+                type="tel"
+                inputMode="numeric"
+                placeholder="Phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20 transition-colors"
+                style={{ borderColor: phone ? `${config.accent}50` : undefined }}
+              />
+            </div>
+
+            {/* Email */}
+            <InputField
+              icon={Mail}
+              placeholder="Email address"
+              value={email}
+              onChange={setEmail}
+              accentColor={config.accent}
+              inputMode="email"
+            />
+
+            {/* Residential Area */}
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <button
+                onClick={() => setAreaOpen(!areaOpen)}
+                className={`w-full h-14 bg-[#1A1D26] border rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${area ? 'text-white' : 'text-white/30'}`}
+                style={{ borderColor: area ? `${config.accent}50` : 'rgba(255,255,255,0.1)' }}
+              >
+                {area || 'Residential area'}
+              </button>
+              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+
+              <AnimatePresence>
+                {areaOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                  >
+                    <div className="max-h-48 overflow-y-auto custom-scrollbar">
+                      {RESIDENTIAL_AREAS.map((a) => (
+                        <button
+                          key={a}
+                          onClick={() => { setArea(a); setAreaOpen(false); }}
+                          className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${area === a ? 'font-semibold' : 'text-white/70'}`}
+                          style={{ color: area === a ? config.accent : undefined }}
+                        >
+                          {a}
+                          {area === a && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Join Community */}
+            <button
+              onClick={() => setJoinCommunity(!joinCommunity)}
+              className="flex items-center gap-3 py-1"
+            >
+              <div
+                className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all`}
+                style={{
+                  backgroundColor: joinCommunity ? config.accent : 'transparent',
+                  borderColor: joinCommunity ? config.accent : 'rgba(255,255,255,0.2)',
+                }}
+              >
+                {joinCommunity && <Check className="w-4 h-4 text-[#05070A]" />}
+              </div>
+              <div className="flex flex-col items-start">
+                <span className="text-white text-sm font-medium">Join Community</span>
+                <span className="text-white/40 text-xs">Get group buy deals & community offers</span>
+              </div>
+            </button>
+
+            {/* Continue Button */}
+            <ActionButton
+              label={signupRole === 'customer' ? 'Create Account' : 'Continue'}
+              onClick={handleStep1Next}
+              loading={loading}
+              accentColor={config.accent}
+              icon={signupRole === 'customer' ? Sparkles : undefined}
+            />
+          </motion.div>
+        ) : (
+          /* ─── Step 2: Role-Specific Fields ─── */
+          <motion.div
+            key="step2"
+            initial={{ x: 40, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -40, opacity: 0 }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            className="flex flex-col gap-4 flex-1"
+          >
+            {/* Role-specific header */}
+            <motion.div
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="flex items-center gap-3 p-4 rounded-2xl border"
+              style={{
+                backgroundColor: config.accentLight,
+                borderColor: config.accentMid,
+              }}
+            >
+              <div
+                className="w-12 h-12 rounded-xl flex items-center justify-center"
+                style={{ backgroundColor: `${config.accent}30` }}
+              >
+                <config.icon className="w-6 h-6" style={{ color: config.accent }} />
+              </div>
+              <div>
+                <h3 className="text-white font-bold text-base">
+                  {signupRole === 'vendor' ? 'Business Details' : 'Rider Details'}
+                </h3>
+                <p className="text-white/50 text-xs">
+                  {signupRole === 'vendor'
+                    ? 'Tell us about your business on SwiftRamadan'
+                    : 'Provide your vehicle and license information'}
+                </p>
+              </div>
+            </motion.div>
+
+            {signupRole === 'vendor' && (
+              <>
+                {/* Business Name */}
+                <InputField
+                  icon={Building2}
+                  placeholder="Business name"
+                  value={businessName}
+                  onChange={setBusinessName}
+                  accentColor={config.accent}
+                />
+
+                {/* Business Category */}
+                <div className="relative">
+                  <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                  <button
+                    onClick={() => setBusinessCategoryOpen(!businessCategoryOpen)}
+                    className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
+                    style={{ borderColor: businessCategory ? `${config.accent}50` : undefined }}
+                  >
+                    <span className="flex items-center gap-2">
+                      {(() => {
+                        const cat = BUSINESS_CATEGORIES.find(c => c.value === businessCategory);
+                        const CatIcon = cat?.icon;
+                        return CatIcon ? <CatIcon className="w-4 h-4" style={{ color: config.accent }} /> : null;
+                      })()}
+                      {businessCategory || 'Business category'}
+                    </span>
+                  </button>
+                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${businessCategoryOpen ? 'rotate-180' : ''}`} />
+
+                  <AnimatePresence>
+                    {businessCategoryOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                      >
+                        <div className="max-h-56 overflow-y-auto custom-scrollbar">
+                          {BUSINESS_CATEGORIES.map((cat) => {
+                            const CatIcon = cat.icon;
+                            const isSelected = businessCategory === cat.value;
+                            return (
+                              <button
+                                key={cat.value}
+                                onClick={() => { setBusinessCategory(cat.value); setBusinessCategoryOpen(false); }}
+                                className="w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between"
+                                style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.7)' }}
+                              >
+                                <span className="flex items-center gap-3">
+                                  <CatIcon className="w-4 h-4" style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.4)' }} />
+                                  {cat.label}
+                                </span>
+                                {isSelected && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Business Address */}
+                <InputField
+                  icon={MapPin}
+                  placeholder="Business address"
+                  value={businessAddress}
+                  onChange={setBusinessAddress}
+                  accentColor={config.accent}
+                />
+              </>
+            )}
+
+            {signupRole === 'rider' && (
+              <>
+                {/* Vehicle Type */}
+                <div className="relative">
+                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                  <button
+                    onClick={() => setVehicleTypeOpen(!vehicleTypeOpen)}
+                    className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
+                    style={{ borderColor: vehicleType ? `${config.accent}50` : undefined }}
+                  >
+                    {vehicleType || 'Vehicle type'}
+                  </button>
+                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${vehicleTypeOpen ? 'rotate-180' : ''}`} />
+
+                  <AnimatePresence>
+                    {vehicleTypeOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                      >
+                        {VEHICLE_TYPES.map((vt) => {
+                          const isSelected = vehicleType === vt.value;
+                          return (
+                            <button
+                              key={vt.value}
+                              onClick={() => { setVehicleType(vt.value); setVehicleTypeOpen(false); }}
+                              className="w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between"
+                              style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.7)' }}
+                            >
+                              {vt.label}
+                              {isSelected && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+                            </button>
+                          );
+                        })}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* Plate Number */}
+                <InputField
+                  icon={CreditCard}
+                  placeholder="Plate number (e.g. LSR 123 AB)"
+                  value={plateNumber}
+                  onChange={(v) => setPlateNumber(v.toUpperCase())}
+                  accentColor={config.accent}
+                />
+
+                {/* License Number */}
+                <InputField
+                  icon={Clock}
+                  placeholder="Driver's license number"
+                  value={licenseNumber}
+                  onChange={setLicenseNumber}
+                  accentColor={config.accent}
+                />
+              </>
+            )}
+
+            {/* Submit Button */}
+            <ActionButton
+              label="Create Account"
+              onClick={handleStep2Submit}
+              loading={loading}
+              accentColor={config.accent}
+              icon={Sparkles}
+            />
+
+            {/* Back link */}
+            <button
+              onClick={() => setStep(1)}
+              className="text-white/40 text-sm text-center hover:text-white/60 transition-colors"
+            >
+              ← Back to basic info
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Login Link */}
       <div className="mt-6 text-center">
         <button
-          onClick={() => setShowAuth('login')}
+          onClick={() => store.setShowAuth('login')}
           className="text-white/50 text-sm"
         >
           Already have an account?{' '}
-          <span className="text-[#13ec13] font-bold">Sign In</span>
+          <span className="font-bold" style={{ color: config.accent }}>Sign In</span>
         </button>
       </div>
     </motion.div>
   );
 }
 
-/* ────────────────────────── OTP Screen ────────────────────────── */
+/* ─────────────── OTP Screen ─────────────── */
 
 function OTPScreen() {
-  const { userPhone, setShowAuth, setIsLoggedIn } = useAppStore();
+  const { userPhone, userRole, setUserRole, setShowAuth, setIsLoggedIn, setShowOnboarding } = useAppStore();
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+  const config = ROLE_CONFIG[userRole || 'customer'];
+  const accentColor = userRole ? config.accent : '#13ec13';
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -409,8 +958,6 @@ function OTPScreen() {
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
-
-    // Auto-focus next input
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
     }
@@ -452,16 +999,38 @@ function OTPScreen() {
       const data = await res.json();
       if (data.success) {
         setIsLoggedIn(true);
-        setShowAuth('role');
-        toast({ title: 'Verified! 🎉', description: 'Your phone number has been verified.' });
+        // If userRole is set (from signup step), go to onboarding
+        // If not, go to role selection
+        if (userRole && userRole !== 'customer') {
+          setShowOnboarding(true);
+          setShowAuth(null);
+          toast({ title: 'Verified! 🎉', description: `Setting up your ${ROLE_CONFIG[userRole].label} account...` });
+        } else if (userRole === 'customer') {
+          setShowOnboarding(true);
+          setShowAuth(null);
+          toast({ title: 'Verified! 🎉', description: 'Welcome to SwiftRamadan!' });
+        } else {
+          setShowAuth('role');
+          toast({ title: 'Verified! 🎉', description: 'Please choose how you\'d like to use SwiftRamadan.' });
+        }
       } else {
         toast({ title: 'Invalid code', description: data.message || 'The code you entered is incorrect.', variant: 'destructive' });
       }
     } catch {
       // Fallback for demo
       setIsLoggedIn(true);
-      setShowAuth('role');
-      toast({ title: 'Verified! 🎉', description: 'Your phone number has been verified.' });
+      if (userRole && userRole !== 'customer') {
+        setShowOnboarding(true);
+        setShowAuth(null);
+        toast({ title: 'Verified! 🎉', description: `Setting up your ${ROLE_CONFIG[userRole].label} account...` });
+      } else if (userRole === 'customer') {
+        setShowOnboarding(true);
+        setShowAuth(null);
+        toast({ title: 'Verified! 🎉', description: 'Welcome to SwiftRamadan!' });
+      } else {
+        setShowAuth('role');
+        toast({ title: 'Verified! 🎉', description: 'Please choose how you\'d like to use SwiftRamadan.' });
+      }
     } finally {
       setLoading(false);
     }
@@ -475,6 +1044,10 @@ function OTPScreen() {
   };
 
   const formatCountdown = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+
+  // Determine progress bar fill based on role
+  const totalSteps = userRole && userRole !== 'customer' ? 3 : 2;
+  const filledSteps = userRole && userRole !== 'customer' ? 2 : 2;
 
   return (
     <motion.div
@@ -495,10 +1068,20 @@ function OTPScreen() {
 
       {/* Progress Bar */}
       <div className="flex items-center gap-2 mb-6">
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <div className="flex-1 h-1.5 rounded-full bg-white/10" />
-        <span className="text-white/30 text-xs ml-2">Step 2/3</span>
+        {Array.from({ length: totalSteps }).map((_, i) => (
+          <motion.div
+            key={i}
+            className="flex-1 h-1.5 rounded-full"
+            initial={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+            animate={{
+              backgroundColor: i < filledSteps ? accentColor : 'rgba(255,255,255,0.1)',
+            }}
+            transition={{ duration: 0.3 }}
+          />
+        ))}
+        <span className="text-white/30 text-xs ml-2">
+          Step {filledSteps}/{totalSteps}
+        </span>
       </div>
 
       {/* OTP Inputs */}
@@ -518,7 +1101,13 @@ function OTPScreen() {
               value={digit}
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
-              className={`w-12 h-14 sm:w-14 rounded-xl text-center text-white text-xl font-bold bg-[#1A1D26] border focus:outline-none transition-colors ${digit ? 'border-[#13ec13]/50 bg-[#13ec13]/5' : 'border-white/10'} focus:border-[#13ec13]`}
+              className={`w-12 h-14 sm:w-14 rounded-xl text-center text-white text-xl font-bold bg-[#1A1D26] border focus:outline-none transition-colors ${
+                digit ? '' : 'border-white/10'
+              }`}
+              style={{
+                borderColor: digit ? `${accentColor}50` : undefined,
+                backgroundColor: digit ? `${accentColor}08` : undefined,
+              }}
             />
           </motion.div>
         ))}
@@ -527,7 +1116,7 @@ function OTPScreen() {
       {/* Resend */}
       <div className="flex items-center justify-center gap-2 mb-8">
         {canResend ? (
-          <button onClick={handleResend} className="text-[#13ec13] text-sm font-bold hover:underline">
+          <button onClick={handleResend} className="text-sm font-bold hover:underline" style={{ color: accentColor }}>
             Resend Code
           </button>
         ) : (
@@ -538,26 +1127,17 @@ function OTPScreen() {
       </div>
 
       {/* Verify Button */}
-      <button
+      <ActionButton
+        label="Verify"
         onClick={handleVerify}
-        disabled={loading}
-        className="w-full h-14 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-base shadow-lg shadow-[#13ec13]/20 active:scale-[0.98] transition-transform disabled:opacity-60 disabled:active:scale-100 flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            className="w-5 h-5 border-2 border-[#05070A]/30 border-t-[#05070A] rounded-full"
-          />
-        ) : (
-          'Verify'
-        )}
-      </button>
+        loading={loading}
+        accentColor={accentColor}
+      />
     </motion.div>
   );
 }
 
-/* ────────────────────────── Role Selection Screen ────────────────────────── */
+/* ─────────────── Role Selection Screen ─────────────── */
 
 const ROLES = [
   {
@@ -574,8 +1154,8 @@ const ROLES = [
     title: 'Vendor',
     description: 'Sell your products on SwiftRamadan',
     icon: Store,
-    gradient: 'from-[#4a1d6e] to-[#2d0a4e]',
-    accent: '#f4c025',
+    gradient: 'from-[#4a3d00] to-[#2d2100]',
+    accent: '#FFD700',
     image: '/images/categories/hub-groceries.png',
   },
   {
@@ -590,7 +1170,7 @@ const ROLES = [
 ];
 
 function RoleScreen() {
-  const { setUserRole, setShowAuth } = useAppStore();
+  const { setUserRole, setShowAuth, setShowOnboarding, setOnboardingStep } = useAppStore();
   const [selected, setSelected] = useState<'customer' | 'vendor' | 'rider'>('customer');
   const [loading, setLoading] = useState(false);
 
@@ -598,8 +1178,14 @@ function RoleScreen() {
     setLoading(true);
     setTimeout(() => {
       setUserRole(selected);
+      // After role selection, go to onboarding
+      setOnboardingStep(0);
+      setShowOnboarding(true);
       setShowAuth(null);
-      toast({ title: 'Welcome to SwiftRamadan! 🌙', description: `You're all set as a ${selected.charAt(0).toUpperCase() + selected.slice(1)}.` });
+      toast({
+        title: 'Welcome to SwiftRamadan! 🌙',
+        description: `Let's set up your ${selected} account.`,
+      });
       setLoading(false);
     }, 600);
   };
@@ -618,14 +1204,6 @@ function RoleScreen() {
         <p className="text-white/50 text-sm mt-1">How would you like to use SwiftRamadan?</p>
       </div>
 
-      {/* Progress Bar */}
-      <div className="flex items-center gap-2 mb-6">
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <div className="flex-1 h-1.5 rounded-full bg-[#13ec13]" />
-        <span className="text-white/30 text-xs ml-2">Step 3/3</span>
-      </div>
-
       {/* Role Cards */}
       <div className="flex flex-col gap-4 flex-1">
         {ROLES.map((role, i) => {
@@ -640,9 +1218,13 @@ function RoleScreen() {
               onClick={() => setSelected(role.id)}
               className={`relative overflow-hidden rounded-2xl border-2 transition-all active:scale-[0.98] ${
                 isSelected
-                  ? 'border-[#13ec13] shadow-lg shadow-[#13ec13]/10'
+                  ? 'shadow-lg'
                   : 'border-white/10 hover:border-white/20'
               }`}
+              style={{
+                borderColor: isSelected ? role.accent : undefined,
+                boxShadow: isSelected ? `0 4px 24px ${role.accent}20` : undefined,
+              }}
             >
               {/* Background Image */}
               <div className="absolute inset-0 opacity-20">
@@ -672,9 +1254,13 @@ function RoleScreen() {
                 </div>
 
                 {/* Selected Indicator */}
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all ${
-                  isSelected ? 'bg-[#13ec13]' : 'bg-white/10 border border-white/20'
-                }`}>
+                <div
+                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all`}
+                  style={{
+                    backgroundColor: isSelected ? role.accent : 'transparent',
+                    border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.2)',
+                  }}
+                >
                   {isSelected && <Check className="w-4 h-4 text-[#05070A]" />}
                 </div>
               </div>
@@ -684,29 +1270,20 @@ function RoleScreen() {
       </div>
 
       {/* Continue Button */}
-      <button
+      <ActionButton
+        label="Continue"
         onClick={handleContinue}
-        disabled={loading}
-        className="w-full h-14 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-base shadow-lg shadow-[#13ec13]/20 active:scale-[0.98] transition-transform disabled:opacity-60 disabled:active:scale-100 flex items-center justify-center gap-2 mt-6"
-      >
-        {loading ? (
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            className="w-5 h-5 border-2 border-[#05070A]/30 border-t-[#05070A] rounded-full"
-          />
-        ) : (
-          'Continue'
-        )}
-      </button>
+        loading={loading}
+        accentColor={ROLE_CONFIG[selected].accent}
+      />
     </motion.div>
   );
 }
 
-/* ────────────────────────── Main Auth Screen ────────────────────────── */
+/* ─────────────── Main Auth Screen ─────────────── */
 
 export default function AuthScreen() {
-  const { showAuth, setShowAuth } = useAppStore();
+  const { showAuth, setShowAuth, userRole } = useAppStore();
 
   const handleBack = () => {
     if (showAuth === 'otp') {
@@ -727,6 +1304,9 @@ export default function AuthScreen() {
       default: return '';
     }
   };
+
+  // Dynamic accent based on role
+  const activeAccent = userRole ? ROLE_CONFIG[userRole].accent : '#13ec13';
 
   return (
     <AnimatePresence>
@@ -758,6 +1338,14 @@ export default function AuthScreen() {
               <X className="w-5 h-5 text-white" />
             </button>
           </div>
+
+          {/* Subtle accent line */}
+          <motion.div
+            className="h-0.5"
+            style={{ backgroundColor: activeAccent }}
+            layoutId="auth-accent-line"
+            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+          />
 
           {/* Content */}
           <div className="flex-1 overflow-y-auto custom-scrollbar">
