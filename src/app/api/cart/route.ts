@@ -1,31 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-// In-memory cart storage (per session would use DB in production)
-let cartItems: Array<{
-  id: number;
-  productId: number;
-  name: string;
-  price: number;
-  image: string;
-  quantity: number;
-}> = [];
+// GET /api/cart?sessionId=...&userId=... — Get cart items
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get('sessionId') || 'default';
+    const userId = searchParams.get('userId') || undefined;
 
-export async function GET() {
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const deliveryFee = total >= 5000 ? 0 : 500;
-  return NextResponse.json({
-    items: cartItems,
-    subtotal: total,
-    deliveryFee,
-    total: total + deliveryFee,
-    count: cartItems.reduce((sum, item) => sum + item.quantity, 0),
-  });
+    const cartItems = await db.cartItem.findMany({
+      where: userId ? { userId } : { sessionId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const deliveryFee = total >= 5000 ? 0 : 500;
+
+    return NextResponse.json({
+      items: cartItems,
+      subtotal: total,
+      deliveryFee,
+      total: total + deliveryFee,
+      count: cartItems.reduce((sum, item) => sum + item.quantity, 0),
+    });
+  } catch (error) {
+    console.error('Cart API GET error:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch cart' },
+      { status: 500 }
+    );
+  }
 }
 
+// POST /api/cart — Add item to cart
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, price, image, quantity = 1 } = body;
+    const { id, name, price, image, quantity = 1, sessionId = 'default', userId } = body;
 
     if (!id || !name || !price) {
       return NextResponse.json(
@@ -34,22 +45,41 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const existing = cartItems.find(item => item.id === id);
-    if (existing) {
-      existing.quantity += quantity || 1;
-    } else {
-      cartItems.push({
-        id,
+    // Check for existing item by productId + session/user
+    const existing = await db.cartItem.findFirst({
+      where: {
         productId: id,
-        name,
-        price,
-        image: image || '',
-        quantity: quantity || 1,
+        ...(userId ? { userId } : { sessionId }),
+      },
+    });
+
+    if (existing) {
+      await db.cartItem.update({
+        where: { id: existing.id },
+        data: { quantity: existing.quantity + (quantity || 1) },
+      });
+    } else {
+      await db.cartItem.create({
+        data: {
+          productId: id,
+          name,
+          price,
+          image: image || '',
+          quantity: quantity || 1,
+          sessionId,
+          userId: userId || null,
+        },
       });
     }
 
+    const cartItems = await db.cartItem.findMany({
+      where: userId ? { userId } : { sessionId },
+      orderBy: { createdAt: 'desc' },
+    });
+
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = total >= 5000 ? 0 : 500;
+
     return NextResponse.json({
       items: cartItems,
       subtotal: total,
@@ -57,7 +87,8 @@ export async function POST(request: NextRequest) {
       total: total + deliveryFee,
       count: cartItems.reduce((sum, item) => sum + item.quantity, 0),
     });
-  } catch {
+  } catch (error) {
+    console.error('Cart API POST error:', error);
     return NextResponse.json(
       { error: 'Failed to add item to cart' },
       { status: 500 }
@@ -65,19 +96,32 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// DELETE /api/cart?id=...&sessionId=...&userId=... — Remove item or clear cart
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const sessionId = searchParams.get('sessionId') || 'default';
+    const userId = searchParams.get('userId') || undefined;
 
     if (id) {
-      cartItems = cartItems.filter(item => item.id !== parseInt(id));
+      // Delete specific item by its database id
+      await db.cartItem.delete({ where: { id } });
     } else {
-      cartItems = [];
+      // Clear all items for this session/user
+      await db.cartItem.deleteMany({
+        where: userId ? { userId } : { sessionId },
+      });
     }
+
+    const cartItems = await db.cartItem.findMany({
+      where: userId ? { userId } : { sessionId },
+      orderBy: { createdAt: 'desc' },
+    });
 
     const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const deliveryFee = total >= 5000 ? 0 : 500;
+
     return NextResponse.json({
       items: cartItems,
       subtotal: total,
@@ -85,7 +129,8 @@ export async function DELETE(request: NextRequest) {
       total: total + deliveryFee,
       count: cartItems.reduce((sum, item) => sum + item.quantity, 0),
     });
-  } catch {
+  } catch (error) {
+    console.error('Cart API DELETE error:', error);
     return NextResponse.json(
       { error: 'Failed to remove item from cart' },
       { status: 500 }

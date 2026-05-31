@@ -1,12 +1,108 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-const orders = [
-  { id: "SR-2024-001", status: "In Transit", item: "Ramadan Family Box", eta: "Arriving in 15 min", rider: "Ibrahim K.", total: 38500, items: [{ name: "Ramadan Family Box", qty: 1, price: 38500 }], progress: 75 },
-  { id: "SR-2024-002", status: "Preparing", item: "Spicy Gizdodo x2", eta: "Est. 20 min", rider: null, total: 8400, items: [{ name: "Spicy Gizdodo", qty: 2, price: 4200 }], progress: 35 },
-  { id: "SR-2024-003", status: "Delivered", item: "Groceries Bundle", eta: "Delivered yesterday", rider: "Adebayo S.", total: 22500, items: [{ name: "Groceries Bundle", qty: 1, price: 22500 }], progress: 100 },
-  { id: "SR-2024-004", status: "Delivered", item: "Dates & Fruit Box", eta: "Delivered 2 days ago", rider: "Chidi O.", total: 5900, items: [{ name: "Dates & Fruit Box", qty: 1, price: 5900 }], progress: 100 },
-];
+// GET /api/orders — Get all orders, optionally filter by userId
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
 
-export async function GET() {
-  return NextResponse.json({ orders });
+    const orders = await db.order.findMany({
+      where: userId ? { userId } : undefined,
+      orderBy: { createdAt: 'desc' },
+    });
+
+    // Parse items JSON string for each order
+    const parsedOrders = orders.map(order => ({
+      ...order,
+      items: JSON.parse(order.items),
+    }));
+
+    return NextResponse.json({ orders: parsedOrders });
+  } catch (error) {
+    console.error('Orders API GET error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch orders' },
+      { status: 500 }
+    );
+  }
+}
+
+// POST /api/orders — Create a new order
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { status, total, riderName, items, progress, userId } = body;
+
+    if (!total) {
+      return NextResponse.json(
+        { success: false, message: 'Order total is required' },
+        { status: 400 }
+      );
+    }
+
+    const order = await db.order.create({
+      data: {
+        status: status || 'Preparing',
+        total,
+        riderName: riderName || null,
+        items: JSON.stringify(items || []),
+        progress: progress || 0,
+        userId: userId || null,
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      order: {
+        ...order,
+        items: JSON.parse(order.items),
+      },
+    }, { status: 201 });
+  } catch (error) {
+    console.error('Orders API POST error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to create order' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/orders — Update an order (e.g., status, progress)
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, status, progress, riderName } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, message: 'Order id is required' },
+        { status: 400 }
+      );
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (status !== undefined) updateData.status = status;
+    if (progress !== undefined) updateData.progress = progress;
+    if (riderName !== undefined) updateData.riderName = riderName;
+
+    const order = await db.order.update({
+      where: { id },
+      data: updateData,
+    });
+
+    return NextResponse.json({
+      success: true,
+      order: {
+        ...order,
+        items: JSON.parse(order.items),
+      },
+    });
+  } catch (error) {
+    console.error('Orders API PUT error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to update order' },
+      { status: 500 }
+    );
+  }
 }

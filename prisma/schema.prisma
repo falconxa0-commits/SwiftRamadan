@@ -7,6 +7,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String   @default("")
+  password     String   @default("")
+  role         String   @default("customer")  // customer, vendor, rider
+  area         String   @default("")
+  avatar       String   @default("")
+  onboardingComplete Boolean @default(false)
+
+  // Vendor fields
+  storeName         String?
+  businessCategory  String?
+  businessAddress   String?
+  bankName          String?
+  accountNumber     String?
+  openTime          String   @default("08:00")
+  closeTime         String   @default("22:00")
+
+  // Rider fields
+  vehicleType       String?
+  plateNumber       String?
+  licenseNumber     String?
+  vehicleColor      String?
+  riderBankName     String?
+  riderAccountNumber String?
+
+  // Loyalty
+  hasanatPoints     Int      @default(5400)
+  swiftPoints       Int      @default(1200)
+  loyaltyTier       String   @default("gold")
+  dailyStreak       Int      @default(3)
+
+  // State
+  riderOnline       Boolean  @default(false)
+  vendorOnline      Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  orders     Order[]
+  cartItems  CartItem[]
+  notifications Notification[]
+}
+
 model Product {
   id           String   @id @default(cuid())
   name         String
@@ -31,6 +77,8 @@ model Order {
   riderName String?
   items     String   @default("[]")
   progress  Int      @default(0)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
@@ -42,6 +90,8 @@ model CartItem {
   image     String   @default("")
   quantity  Int      @default(1)
   sessionId String   @default("default")
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
@@ -51,5 +101,7 @@ model Notification {
   message   String
   type      String   @default("info")
   read      Boolean  @default(false)
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }

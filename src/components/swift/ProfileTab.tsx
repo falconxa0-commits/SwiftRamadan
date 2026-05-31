@@ -1,13 +1,34 @@
 'use client';
 
-import { User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight, Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette, MessageSquare, LogOut, Moon, ShoppingBag } from 'lucide-react';
-import { loyaltyData, charityItems, formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import {
+  User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight,
+  Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette,
+  MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
+  Navigation, DollarSign, Star,
+} from 'lucide-react';
+import { loyaltyData, charityItems, formatNaira, vendorSalesInsights } from '@/lib/data';
+import { useAppStore, type TabId } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 
-const menuItems = [
+/* ──────────────── Role Config ──────────────── */
+
+const ROLE_ACCENT = {
+  customer: '#13ec13',
+  vendor: '#FFD700',
+  rider: '#3b82f6',
+} as const;
+
+const ROLE_DEFAULT_TAB: Record<string, TabId> = {
+  customer: 'home',
+  vendor: 'vendor-dashboard',
+  rider: 'rider-dashboard',
+};
+
+/* ──────────────── Menu Items per Role ──────────────── */
+
+const customerMenu = [
   { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl' },
   { icon: Gift, label: 'SwiftRewards', subtitle: `${loyaltyData.points.toLocaleString()} points`, color: 'text-[#FFD700]', action: 'rewards' },
   { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
@@ -23,19 +44,103 @@ const menuItems = [
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
 ];
 
+const vendorMenu = [
+  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights' },
+  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock' },
+  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: `${loyaltyData.points.toLocaleString()} points`, color: 'text-[#FFD700]', action: 'rewards' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
+  { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role' },
+  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+];
+
+const riderMenu = [
+  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#3b82f6]', action: 'rider-performance' },
+  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-cyan-400', action: 'rider-smart-route' },
+  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#FFD700]', action: 'rider-power-finder' },
+  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
+  { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role' },
+  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+];
+
+/* ──────────────── Modal Content Interface ──────────────── */
+
 interface ModalContent {
   title: string;
   content: React.ReactNode;
 }
 
+/* ──────────────── Switch Role Modal Card ──────────────── */
+
+const roleCards = [
+  {
+    role: 'customer' as const,
+    icon: User,
+    title: 'Customer',
+    description: 'Order iftar meals, groceries & more',
+    accent: '#13ec13',
+    bgClass: 'bg-[#13ec13]/10 border-[#13ec13]/30',
+    iconColor: 'text-[#13ec13]',
+  },
+  {
+    role: 'vendor' as const,
+    icon: Store,
+    title: 'Vendor',
+    description: 'Manage your store & accept orders',
+    accent: '#FFD700',
+    bgClass: 'bg-[#FFD700]/10 border-[#FFD700]/30',
+    iconColor: 'text-[#FFD700]',
+  },
+  {
+    role: 'rider' as const,
+    icon: Bike,
+    title: 'Rider',
+    description: 'Deliver orders & earn money',
+    accent: '#3b82f6',
+    bgClass: 'bg-[#3b82f6]/10 border-[#3b82f6]/30',
+    iconColor: 'text-[#3b82f6]',
+  },
+];
+
+/* ════════════════════════════════════════════════════════════════
+   ProfileTab Component
+   ════════════════════════════════════════════════════════════════ */
+
 export default function ProfileTab() {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<ModalContent>({ title: '', content: null });
-  const { toast } = useToast();
-  const { userName, userArea, logout, setShowAuth, hasanatPoints, loyaltyTier } = useAppStore();
+  const [showSwitchRole, setShowSwitchRole] = useState(false);
 
-  const displayName = userName || 'Guest';
-  const displayArea = userArea || 'Lagos, Nigeria';
+  const { toast } = useToast();
+  const {
+    userName, userArea, logout, setShowAuth,
+    hasanatPoints, loyaltyTier, userRole, setUserRole, setActiveTab,
+    vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
+    vendorTotalEarnings, vendorPendingSettlement,
+    riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
+  } = useAppStore();
+
+  const accent = ROLE_ACCENT[userRole];
+  const currentMenu = userRole === 'vendor' ? vendorMenu : userRole === 'rider' ? riderMenu : customerMenu;
+
+  /* ── Display values per role ── */
+  const displayName = userRole === 'vendor'
+    ? (vendorStoreName || 'My Store')
+    : (userName || 'Guest');
+
+  const displayArea = userRole === 'vendor'
+    ? (vendorBusinessCategory || 'General')
+    : (userArea || 'Lagos, Nigeria');
+
+  /* ── Handlers ── */
 
   const handleMenuClick = (action: string) => {
     switch (action) {
@@ -66,8 +171,26 @@ export default function ProfileTab() {
       case 'prayer-times':
         useAppStore.getState().setActiveModal('prayer-times');
         break;
+      case 'vendor-insights':
+        useAppStore.getState().setActiveModal('vendor-insights');
+        break;
+      case 'vendor-stock':
+        toast({ title: 'Quick Stock Control 📦', description: 'Coming in next update — manage your inventory on the fly!' });
+        break;
+      case 'vendor-pricing':
+        toast({ title: 'Dynamic Pricing 💰', description: 'Coming in next update — auto-optimize your prices for peak hours!' });
+        break;
+      case 'rider-performance':
+        toast({ title: 'Performance Hub 📊', description: 'Coming in next update — deep analytics on your delivery performance!' });
+        break;
+      case 'rider-smart-route':
+        toast({ title: 'AI Smart Route 🗺️', description: 'Coming in next update — AI-powered route optimization for faster deliveries!' });
+        break;
+      case 'rider-power-finder':
+        toast({ title: 'Power Finder ⚡', description: 'Coming in next update — locate charging stations & fuel stops near you!' });
+        break;
       case 'switch-role':
-        useAppStore.getState().setShowAuth('role');
+        setShowSwitchRole(true);
         break;
       case 'notifications':
         toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
@@ -144,6 +267,17 @@ export default function ProfileTab() {
     }
   };
 
+  const handleSwitchRole = (newRole: 'customer' | 'vendor' | 'rider') => {
+    setUserRole(newRole);
+    setActiveTab(ROLE_DEFAULT_TAB[newRole]);
+    setShowSwitchRole(false);
+    const roleName = newRole.charAt(0).toUpperCase() + newRole.slice(1);
+    toast({
+      title: `Switched to ${roleName} mode ✨`,
+      description: `You're now using SwiftRamadan as a ${roleName.toLowerCase()}`,
+    });
+  };
+
   const handleCharityClick = (item: typeof charityItems[0]) => {
     if (item.amount > 0) {
       useAppStore.getState().addToCart({
@@ -164,22 +298,81 @@ export default function ProfileTab() {
     toast({ title: 'Logged out', description: 'You have been signed out. See you soon! 👋' });
   };
 
+  /* ══════════════════════ RENDER ══════════════════════ */
+
   return (
     <main className="flex-1 overflow-y-auto pb-32">
-      {/* Profile Header */}
+
+      {/* ─── Profile Header ─── */}
       <div className="px-4 pt-6 pb-2">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
-            <User className="w-8 h-8 text-[#13ec13]" />
-          </div>
-          <div className="flex-1">
-            <h2 className="text-white text-xl font-bold">{displayName}</h2>
-            <p className="text-white/50 text-sm">{displayArea}</p>
-            <div className="flex items-center gap-1 mt-1">
-              <Award className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
-              <span className="text-[#FFD700] text-xs font-bold">{loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member</span>
+          {userRole === 'vendor' ? (
+            /* Vendor Header */
+            <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#FFD700]/40 bg-[#FFD700]/15"
+              style={{ boxShadow: '0 0 20px #FFD70015' }}>
+              <Store className="w-8 h-8 text-[#FFD700]" />
             </div>
+          ) : userRole === 'rider' ? (
+            /* Rider Header */
+            <div className="relative">
+              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#3b82f6]/40 bg-[#3b82f6]/15"
+                style={{ boxShadow: '0 0 20px #3b82f615' }}>
+                <Bike className="w-8 h-8 text-[#3b82f6]" />
+              </div>
+              <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#05070A] ${
+                riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
+              }`} />
+            </div>
+          ) : (
+            /* Customer Header */
+            <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
+              <User className="w-8 h-8 text-[#13ec13]" />
+            </div>
+          )}
+
+          <div className="flex-1">
+            <div className="flex items-center gap-2">
+              <h2 className="text-white text-xl font-bold">{displayName}</h2>
+              {userRole === 'vendor' && (
+                <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'}`} />
+              )}
+            </div>
+
+            {userRole === 'vendor' ? (
+              <>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[#FFD700] text-[10px] font-bold bg-[#FFD700]/10 px-2 py-0.5 rounded-full border border-[#FFD700]/20">
+                    {vendorBusinessCategory || 'General'}
+                  </span>
+                </div>
+                <p className="text-white/40 text-xs mt-1">
+                  {vendorOnline ? '🟢 Online' : '⚫ Offline'} • Ramadan 2026
+                </p>
+              </>
+            ) : userRole === 'rider' ? (
+              <>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
+                  <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+                    {riderOnline ? 'Online' : 'Offline'}
+                  </span>
+                  <span className="text-white/20 text-xs">•</span>
+                  <span className="material-symbols-outlined text-[#FFD700] text-sm">workspace_premium</span>
+                  <span className="text-[#FFD700] text-xs font-bold">Elite Rider</span>
+                </div>
+                <p className="text-white/50 text-xs mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
+              </>
+            ) : (
+              <>
+                <p className="text-white/50 text-sm">{displayArea}</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <Award className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
+                  <span className="text-[#FFD700] text-xs font-bold">{loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member</span>
+                </div>
+              </>
+            )}
           </div>
+
           <button
             onClick={() => useAppStore.getState().setShowOnboarding(true)}
             className="w-10 h-10 bg-[#1A1D26] rounded-xl flex items-center justify-center border border-white/10"
@@ -189,25 +382,68 @@ export default function ProfileTab() {
         </div>
       </div>
 
-      {/* Stats Row */}
+      {/* ─── Stats Row ─── */}
       <div className="px-4 mt-4">
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-            <p className="text-[#13ec13] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
-          </div>
-          <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-            <p className="text-[#FFD700] text-xl font-black">12</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase">Orders</p>
-          </div>
-          <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-            <p className="text-white text-xl font-black">3</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase">Referrals</p>
-          </div>
+          {userRole === 'vendor' ? (
+            <>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-[#13ec13] text-lg font-black">{formatNaira(vendorBalance)}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Revenue</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-[#FFD700] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Orders Today</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-cyan-400 text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Avg Order</p>
+              </div>
+            </>
+          ) : userRole === 'rider' ? (
+            <>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <div className="w-8 h-8 bg-[#13ec13]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <DollarSign className="w-4 h-4 text-[#13ec13]" />
+                </div>
+                <p className="text-[#13ec13] text-lg font-black">{formatNaira(riderEarnings)}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <div className="w-8 h-8 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <Zap className="w-4 h-4 text-[#3b82f6]" />
+                </div>
+                <p className="text-[#3b82f6] text-lg font-black">{riderCompletedToday}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Completed</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <div className="w-8 h-8 bg-[#FFD700]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <Star className="w-4 h-4 text-[#FFD700]" />
+                </div>
+                <p className="text-[#FFD700] text-lg font-black">{riderRating}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Rating</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-[#13ec13] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-[#FFD700] text-xl font-black">12</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Orders</p>
+              </div>
+              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+                <p className="text-white text-xl font-black">3</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Referrals</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {/* Eco Impact */}
+      {/* ─── Eco Impact ─── */}
       <div className="px-4 mt-6">
         <button
           onClick={() => handleMenuClick('eco-impact')}
@@ -237,11 +473,12 @@ export default function ProfileTab() {
         </button>
       </div>
 
-      {/* Menu Items */}
+      {/* ─── Menu Items ─── */}
       <div className="px-4 mt-6">
         <div className="space-y-2">
-          {menuItems.map((item, i) => {
+          {currentMenu.map((item, i) => {
             const Icon = item.icon;
+            const isSwitchRole = item.action === 'switch-role';
             return (
               <motion.button
                 key={i}
@@ -249,7 +486,11 @@ export default function ProfileTab() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
                 onClick={() => handleMenuClick(item.action)}
-                className="flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                className={`flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border transition-colors w-full text-left ${
+                  isSwitchRole
+                    ? 'border-white/10 hover:border-white/20'
+                    : 'border-white/5 hover:border-white/10'
+                }`}
               >
                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
                   <Icon className={`w-5 h-5 ${item.color}`} />
@@ -265,7 +506,7 @@ export default function ProfileTab() {
         </div>
       </div>
 
-      {/* Logout Button */}
+      {/* ─── Logout Button ─── */}
       <div className="px-4 mt-4">
         <button
           onClick={handleLogout}
@@ -281,31 +522,33 @@ export default function ProfileTab() {
         </button>
       </div>
 
-      {/* Charity Quick Actions */}
-      <div className="px-4 mt-6 mb-6">
-        <h3 className="text-white text-lg font-extrabold mb-4 flex items-center gap-2">
-          <Heart className="w-5 h-5 text-rose-400" />
-          Give Back This Ramadan
-        </h3>
-        <div className="grid grid-cols-2 gap-3">
-          {charityItems.slice(0, 4).map((item) => (
-            <button
-              key={item.id}
-              onClick={() => handleCharityClick(item)}
-              className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-colors text-left"
-            >
-              <span className="material-symbols-outlined text-[#FFD700] text-2xl mb-2">{item.icon}</span>
-              <p className="text-white font-bold text-sm">{item.name}</p>
-              <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
-              {item.amount > 0 && (
-                <p className="text-[#13ec13] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
-              )}
-            </button>
-          ))}
+      {/* ─── Charity Quick Actions (Customer only) ─── */}
+      {userRole === 'customer' && (
+        <div className="px-4 mt-6 mb-6">
+          <h3 className="text-white text-lg font-extrabold mb-4 flex items-center gap-2">
+            <Heart className="w-5 h-5 text-rose-400" />
+            Give Back This Ramadan
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {charityItems.slice(0, 4).map((item) => (
+              <button
+                key={item.id}
+                onClick={() => handleCharityClick(item)}
+                className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-colors text-left"
+              >
+                <span className="material-symbols-outlined text-[#FFD700] text-2xl mb-2">{item.icon}</span>
+                <p className="text-white font-bold text-sm">{item.name}</p>
+                <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
+                {item.amount > 0 && (
+                  <p className="text-[#13ec13] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Detail Modal */}
+      {/* ─── Detail Modal (Settings / Security) ─── */}
       <AnimatePresence>
         {showModal && (
           <>
@@ -339,6 +582,87 @@ export default function ProfileTab() {
           </>
         )}
       </AnimatePresence>
+
+      {/* ─── Switch Role Modal ─── */}
+      <AnimatePresence>
+        {showSwitchRole && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 z-[90] backdrop-blur-sm"
+              onClick={() => setShowSwitchRole(false)}
+            />
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-white/5">
+                <div>
+                  <h2 className="text-white text-lg font-bold">Switch Role</h2>
+                  <p className="text-white/40 text-xs mt-0.5">Choose how you want to use SwiftRamadan</p>
+                </div>
+                <button
+                  onClick={() => setShowSwitchRole(false)}
+                  className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-4 h-4 text-white/60" />
+                </button>
+              </div>
+
+              {/* Role Cards */}
+              <div className="p-5 space-y-3">
+                {roleCards.map((card, i) => {
+                  const Icon = card.icon;
+                  const isActive = userRole === card.role;
+                  return (
+                    <motion.button
+                      key={card.role}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.08 }}
+                      onClick={() => handleSwitchRole(card.role)}
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${
+                        isActive
+                          ? 'bg-white/5 border-white/20'
+                          : 'bg-[#1A1D26]/40 border-white/5 hover:border-white/15 hover:bg-[#1A1D26]/80'
+                      }`}
+                    >
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${card.bgClass}`}
+                        style={{ boxShadow: isActive ? `0 0 20px ${card.accent}20` : 'none' }}>
+                        <Icon className={`w-7 h-7 ${card.iconColor}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-white font-bold text-base">{card.title}</p>
+                          {isActive && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+                              Current
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-white/40 text-xs mt-0.5">{card.description}</p>
+                      </div>
+                      {!isActive && (
+                        <ChevronRight className="w-5 h-5 text-white/20 shrink-0" />
+                      )}
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Bottom safe area */}
+              <div className="h-6" />
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
     </main>
   );
 }
