@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Mosque, MapPin, Replay } from 'lucide-react';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
@@ -8,11 +8,11 @@ import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
-  replay: { icon: Replay, action: (s) => s.setActiveTab('orders') },
+  replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
   groups: { icon: Users, action: (s) => s.setActiveModal('groupBuy') },
   card_giftcard: { icon: Gift, action: (s) => s.setActiveModal('giftcard') },
   restaurant: { icon: BookOpen, action: (s) => s.setActiveModal('recipes') },
-  mosque: { icon: Mosque, action: (s) => s.setActiveModal('mosque') },
+  mosque: { icon: Landmark, action: (s) => s.setActiveModal('mosque') },
   local_shipping: { icon: MapPin, action: (s) => s.setActiveTab('orders') },
 };
 

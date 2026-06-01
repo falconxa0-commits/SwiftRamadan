@@ -1240,7 +1240,7 @@ export default function OnboardingFlow() {
 
         {/* Bottom Action Button */}
         <div className="shrink-0 px-6 py-5 border-t border-white/5 bg-[#05070A]">
-          <button
+          <motion.button
             onClick={handleNext}
             whileTap={{ scale: 0.97 }}
             className={`w-full h-14 rounded-xl font-bold text-base shadow-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2 ${btnClass}`}
@@ -1256,7 +1256,7 @@ export default function OnboardingFlow() {
                 <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
               </>
             )}
-          </button>
+          </motion.button>
         </div>
 
         {/* Bottom Safe Area */}

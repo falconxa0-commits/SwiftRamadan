@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 
 export default function ExploreTab() {
-  const { setActiveCategory, setSelectedProduct, setActiveModal, addToCart } = useAppStore();
+  const { setActiveCategory, setSelectedProduct, setActiveModal, addToCart, setActiveTab } = useAppStore();
   const { toast } = useToast();
 
   const handleCategoryClick = (item: typeof categoryHubItems[0]) => {

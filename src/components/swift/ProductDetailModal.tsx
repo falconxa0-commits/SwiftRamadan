@@ -25,8 +25,8 @@ export default function ProductDetailModal() {
 
   const isWishlisted = wishlist.includes(product.id);
 
-  const salePrice = product.salePrice || product.price || 0;
-  const originalPrice = product.originalPrice || product.price || 0;
+  const salePrice = ('salePrice' in product ? product.salePrice : product.price) || product.price || 0;
+  const originalPrice = ('originalPrice' in product ? product.originalPrice : product.price) || product.price || 0;
   const totalPrice = salePrice * quantity;
 
   const handleAddToCart = () => {
@@ -113,7 +113,7 @@ export default function ProductDetailModal() {
               <div className="px-4">
                 {/* Badges */}
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
-                  {product.salePrice && (
+                  {'salePrice' in product && product.salePrice && (
                     <span className="px-2 py-0.5 bg-[#13ec13]/10 text-[#13ec13] text-[10px] font-bold rounded-full border border-[#13ec13]/20 uppercase">Sale</span>
                   )}
                   <span className="px-2 py-0.5 bg-[#FFD700]/10 text-[#FFD700] text-[10px] font-bold rounded-full border border-[#FFD700]/20 uppercase">Ramadan Special</span>
@@ -137,7 +137,7 @@ export default function ProductDetailModal() {
                 {/* Price */}
                 <div className="flex items-end gap-3 mt-4">
                   <span className="text-[#13ec13] text-3xl font-black tracking-tighter">{formatNaira(salePrice)}</span>
-                  {(product.salePrice || product.originalPrice) && (
+                  {(('salePrice' in product && product.salePrice) || ('originalPrice' in product && product.originalPrice)) && (
                     <>
                       <span className="text-white/30 text-lg line-through mb-1">{formatNaira(originalPrice)}</span>
                       <span className="bg-[#13ec13]/10 text-[#13ec13] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
@@ -148,7 +148,7 @@ export default function ProductDetailModal() {
                 </div>
 
                 {/* Contents */}
-                {product.contents && (
+                {'contents' in product && product.contents && (
                   <div className="flex items-center gap-2 mt-4 bg-black/30 p-3 rounded-xl border border-white/5">
                     <BadgeCheck className="w-5 h-5 text-[#FFD700] shrink-0" />
                     <p className="text-white/80 text-sm font-medium">{product.contents} Included</p>
@@ -199,7 +199,7 @@ export default function ProductDetailModal() {
                           />
                           <div className="p-2">
                             <p className="text-white text-[10px] font-bold truncate">{p.name}</p>
-                            <p className="text-[#13ec13] text-xs font-black">{formatNaira(p.salePrice || p.price || 0)}</p>
+                            <p className="text-[#13ec13] text-xs font-black">{formatNaira(('salePrice' in p ? p.salePrice : p.price) || p.price || 0)}</p>
                           </div>
                         </button>
                       ))}
