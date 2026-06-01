@@ -49,7 +49,7 @@ export default function CartTab() {
             Discover Iftar meals, Sahur boxes, and more to add to your cart
           </p>
           <button
-            onClick={() => useAppStore.getState().setActiveTab('home')}
+            onClick={() => useAppStore.getState().setActiveTab('explore')}
             className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm"
           >
             Browse Menu

@@ -37,7 +37,8 @@ export default function VendorStoreTab() {
   };
 
   return (
-    <div className="flex flex-col gap-5 px-4 pb-32 pt-2">
+    <main className="flex-1 overflow-y-auto pb-32">
+    <div className="flex flex-col gap-5 px-4 pt-2">
       {/* Stock Alert */}
       <AnimatePresence>
         {unavailableCount > 0 && (
@@ -197,5 +198,6 @@ export default function VendorStoreTab() {
         </div>
       )}
     </div>
+    </main>
   );
 }

@@ -1,14 +1,23 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck } from 'lucide-react';
-import { heroSlides, categories, ramadanBox, trendingMeals, formatNaira } from '@/lib/data';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Mosque, MapPin, Replay } from 'lucide-react';
+import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
+const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
+  replay: { icon: Replay, action: (s) => s.setActiveTab('orders') },
+  groups: { icon: Users, action: (s) => s.setActiveModal('groupBuy') },
+  card_giftcard: { icon: Gift, action: (s) => s.setActiveModal('giftcard') },
+  restaurant: { icon: BookOpen, action: (s) => s.setActiveModal('recipes') },
+  mosque: { icon: Mosque, action: (s) => s.setActiveModal('mosque') },
+  local_shipping: { icon: MapPin, action: (s) => s.setActiveTab('orders') },
+};
+
 export default function HomeTab() {
-  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart } = useAppStore();
+  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch } = useAppStore();
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -39,27 +48,38 @@ export default function HomeTab() {
   const handleCategoryClick = (category: typeof categories[0]) => {
     setActiveCategory(category.name);
     setActiveTab('explore');
+    toast({ title: category.name, description: `Browsing ${category.name} items` });
   };
 
-  const handleMealClick = (meal: typeof trendingMeals[0]) => {
-    setSelectedProduct(meal.id);
+  const handleMealClick = (id: number) => {
+    setSelectedProduct(id);
     setActiveModal('product');
   };
 
-  const handleQuickAdd = (meal: typeof trendingMeals[0]) => {
+  const handleQuickAdd = (item: { id: number; name: string; price: number; image: string }) => {
     addToCart({
-      id: meal.id,
-      name: meal.name,
-      price: meal.price,
-      image: meal.image,
+      id: item.id,
+      name: item.name,
+      price: item.price,
+      image: item.image,
     });
-    toast({ title: 'Added to Cart! 🛒', description: `${meal.name} added to your cart` });
+    toast({ title: 'Added to Cart! 🛒', description: `${item.name} added to your cart` });
+  };
+
+  const handleQuickAction = (action: typeof quickActions[0]) => {
+    const config = quickActionConfig[action.icon];
+    if (config) {
+      config.action(useAppStore.getState());
+    } else {
+      toast({ title: action.name, description: `${action.name} feature coming soon!` });
+    }
   };
 
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
         <div className="px-4 pt-4">
+          <div className="animate-pulse w-full h-12 bg-[#1A1D26] rounded-xl mb-4" />
           <div className="animate-pulse w-full aspect-[16/9] bg-[#1A1D26] rounded-2xl mb-4" />
           <div className="flex gap-6 overflow-hidden">
             {[1, 2, 3, 4].map(i => (
@@ -77,8 +97,20 @@ export default function HomeTab() {
 
   return (
     <main className="flex-1 overflow-y-auto pb-32">
+      {/* Search Bar */}
+      <div className="px-4 pt-4 pb-2">
+        <button
+          onClick={() => setShowSearch(true)}
+          className="w-full flex items-center gap-3 bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3.5 hover:border-white/10 transition-colors"
+        >
+          <Search className="w-4 h-4 text-white/30" />
+          <span className="text-white/30 text-sm">Search meals, groceries, restaurants...</span>
+          <span className="ml-auto text-[10px] text-white/20 font-mono bg-white/5 px-2 py-0.5 rounded">⌘K</span>
+        </button>
+      </div>
+
       {/* Hero Carousel */}
-      <div className="relative pt-4">
+      <div className="relative pt-2">
         <div
           ref={carouselRef}
           className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
@@ -88,10 +120,7 @@ export default function HomeTab() {
               <motion.div
                 key={slide.id}
                 className="flex h-full flex-1 flex-col gap-3 rounded-2xl min-w-[300px] cursor-pointer"
-                onClick={() => {
-                  setSelectedProduct(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100);
-                  setActiveModal('product');
-                }}
+                onClick={() => handleMealClick(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100)}
                 whileTap={{ scale: 0.98 }}
               >
                 <div
@@ -152,6 +181,29 @@ export default function HomeTab() {
         </div>
       </div>
 
+      {/* Quick Actions */}
+      <div className="px-4 py-2">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {quickActions.map((action) => {
+            const config = quickActionConfig[action.icon];
+            const Icon = config?.icon || Zap;
+            return (
+              <motion.button
+                key={action.id}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => handleQuickAction(action)}
+                className="flex flex-col items-center gap-2 min-w-[72px] p-3 bg-[#1A1D26]/60 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center">
+                  <Icon className="w-5 h-5 text-[#13ec13]" />
+                </div>
+                <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">{action.name}</span>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Featured Ramadan Box */}
       <div className="px-4 my-6">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#1A1D26] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
@@ -190,17 +242,100 @@ export default function HomeTab() {
               <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
             </div>
 
-            <button
-              onClick={() => {
-                setSelectedProduct(100);
-                setActiveModal('product');
-              }}
-              className="w-full bg-[#13ec13] py-4 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-            >
-              PRE-ORDER FOR IFTAR
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleQuickAdd({
+                  id: ramadanBox.id,
+                  name: 'The Ultimate Ramadan Box',
+                  price: ramadanBox.salePrice,
+                  image: ramadanBox.images[0],
+                })}
+                className="flex-1 bg-white/5 border border-white/10 py-4 rounded-2xl text-white font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-white/10"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
+              </button>
+              <button
+                onClick={() => handleMealClick(100)}
+                className="flex-1 bg-[#13ec13] py-4 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+              >
+                DETAILS
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Flash Sales */}
+      <div className="px-4 py-4">
+        <div className="flex justify-between items-end mb-4">
+          <div className="flex items-center gap-2">
+            <Flame className="w-5 h-5 text-[#FFD700]" />
+            <h3 className="text-white text-xl font-black tracking-tight">Flash Sales</h3>
+          </div>
+          <button
+            onClick={() => setActiveTab('offers')}
+            className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+          >
+            See All
+          </button>
+        </div>
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+          {flashSales.map((sale) => (
+            <motion.div
+              key={sale.id}
+              whileTap={{ scale: 0.97 }}
+              className="min-w-[200px] bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden cursor-pointer hover:border-white/10 transition-colors"
+              onClick={() => handleMealClick(sale.id + 200)}
+            >
+              <div className="relative">
+                <div
+                  className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
+                  style={{ backgroundImage: `url("${sale.image}")` }}
+                />
+                <div className="absolute top-2 left-2 bg-red-500 px-2 py-0.5 rounded-md">
+                  <span className="text-white text-[10px] font-black">-{sale.discount}%</span>
+                </div>
+                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md">
+                  <span className="text-[#FFD700] text-[9px] font-bold flex items-center gap-1">
+                    <Clock className="w-2.5 h-2.5" />
+                    {sale.endsIn}
+                  </span>
+                </div>
+              </div>
+              <div className="p-3">
+                <h4 className="text-white font-bold text-sm truncate">{sale.name}</h4>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[#13ec13] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+                  <span className="text-white/30 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
+                </div>
+                <div className="mt-2">
+                  <div className="w-full bg-white/5 rounded-full h-1.5 mb-1">
+                    <div
+                      className="bg-[#FFD700] h-1.5 rounded-full transition-all"
+                      style={{ width: `${sale.claimed}%` }}
+                    />
+                  </div>
+                  <p className="text-white/30 text-[9px]">{sale.claimed}% claimed</p>
+                </div>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleQuickAdd({
+                      id: sale.id + 200,
+                      name: sale.name,
+                      price: sale.salePrice,
+                      image: sale.image,
+                    });
+                  }}
+                  className="w-full mt-2 text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 py-1.5 rounded-lg border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                >
+                  + Add to Cart
+                </button>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
 
@@ -222,7 +357,7 @@ export default function HomeTab() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: meal.id * 0.1 }}
             className="flex gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
-            onClick={() => handleMealClick(meal)}
+            onClick={() => handleMealClick(meal.id)}
           >
             <div
               className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10"

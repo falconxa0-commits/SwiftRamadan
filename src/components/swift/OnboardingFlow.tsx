@@ -1110,9 +1110,10 @@ export default function OnboardingFlow() {
 
   const [showCelebration, setShowCelebration] = useState(false);
 
-  const accent = ROLE_ACCENT[userRole];
-  const btnClass = ROLE_BTN_CLASS[userRole];
-  const ctaText = ROLE_CTA[userRole];
+  const role = userRole as 'customer' | 'vendor' | 'rider';
+  const accent = ROLE_ACCENT[role] || ROLE_ACCENT.customer;
+  const btnClass = ROLE_BTN_CLASS[role] || ROLE_BTN_CLASS.customer;
+  const ctaText = ROLE_CTA[role] || ROLE_CTA.customer;
   const totalSteps = 3;
 
   const getStepContent = () => {
@@ -1164,12 +1165,12 @@ export default function OnboardingFlow() {
   const handleCelebrationDone = () => {
     setOnboardingComplete(true);
     setShowOnboarding(false);
-    setActiveTab(ROLE_DEFAULT_TAB[userRole]);
+    setActiveTab(ROLE_DEFAULT_TAB[role]);
     setOnboardingStep(0);
     setShowCelebration(false);
     toast({
       title: `Welcome to SwiftRamadan! 🌙`,
-      description: `Your ${userRole} experience is ready.`,
+      description: `Your ${role} experience is ready.`,
     });
   };
 
@@ -1186,7 +1187,7 @@ export default function OnboardingFlow() {
   if (showCelebration) {
     return (
       <AnimatePresence>
-        <CelebrationScreen role={userRole} onDone={handleCelebrationDone} />
+        <CelebrationScreen role={role} onDone={handleCelebrationDone} />
       </AnimatePresence>
     );
   }

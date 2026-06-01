@@ -175,19 +175,19 @@ export default function ProfileTab() {
         useAppStore.getState().setActiveModal('vendor-insights');
         break;
       case 'vendor-stock':
-        toast({ title: 'Quick Stock Control 📦', description: 'Coming in next update — manage your inventory on the fly!' });
+        useAppStore.getState().setActiveModal('vendor-stock');
         break;
       case 'vendor-pricing':
-        toast({ title: 'Dynamic Pricing 💰', description: 'Coming in next update — auto-optimize your prices for peak hours!' });
+        useAppStore.getState().setActiveModal('vendor-pricing');
         break;
       case 'rider-performance':
-        toast({ title: 'Performance Hub 📊', description: 'Coming in next update — deep analytics on your delivery performance!' });
+        useAppStore.getState().setActiveModal('rider-performance');
         break;
       case 'rider-smart-route':
-        toast({ title: 'AI Smart Route 🗺️', description: 'Coming in next update — AI-powered route optimization for faster deliveries!' });
+        useAppStore.getState().setActiveModal('rider-smart-route');
         break;
       case 'rider-power-finder':
-        toast({ title: 'Power Finder ⚡', description: 'Coming in next update — locate charging stations & fuel stops near you!' });
+        useAppStore.getState().setActiveModal('rider-power-finder');
         break;
       case 'switch-role':
         setShowSwitchRole(true);

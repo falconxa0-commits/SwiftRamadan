@@ -39,6 +39,11 @@ import VendorDashboard from '@/components/swift/VendorDashboard';
 import VendorWallet from '@/components/swift/VendorWallet';
 import VendorStoreTab from '@/components/swift/VendorStoreTab';
 import VendorSalesInsights from '@/components/swift/VendorSalesInsights';
+import VendorStockControl from '@/components/swift/VendorStockControl';
+import VendorPricingModal from '@/components/swift/VendorPricingModal';
+import RiderPerformanceHub from '@/components/swift/RiderPerformanceHub';
+import RiderSmartRouteModal from '@/components/swift/RiderSmartRouteModal';
+import RiderPowerFinderModal from '@/components/swift/RiderPowerFinderModal';
 import VendorProfileTab from '@/components/swift/VendorProfileTab';
 import RiderDashboard from '@/components/swift/RiderDashboard';
 import RiderEarningsHub from '@/components/swift/RiderEarningsHub';
@@ -544,6 +549,11 @@ function AllModals() {
       <EcoImpactReport />
       <VendorSalesInsights />
       <NewDeliveryRequestModal />
+      <VendorStockControl />
+      <VendorPricingModal />
+      <RiderPerformanceHub />
+      <RiderSmartRouteModal />
+      <RiderPowerFinderModal />
     </>
   );
 }

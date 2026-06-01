@@ -1,6 +1,6 @@
 'use client';
 
-import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag } from 'lucide-react';
 import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -57,6 +57,10 @@ export default function OrdersTab() {
     setExpandedOrder(expandedOrder === orderId ? null : orderId);
   };
 
+  const handleActiveOrderClick = (order: Order) => {
+    useAppStore.getState().setActiveModal('live-tracking');
+  };
+
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
@@ -68,6 +72,33 @@ export default function OrdersTab() {
           {[1, 2, 3].map(i => (
             <div key={i} className="animate-pulse h-24 bg-[#1A1D26] rounded-2xl" />
           ))}
+        </div>
+      </main>
+    );
+  }
+
+  // Empty state
+  if (orders.length === 0) {
+    return (
+      <main className="flex-1 overflow-y-auto pb-32">
+        <div className="px-4 pt-6 pb-2">
+          <h1 className="text-2xl font-bold">Your Orders</h1>
+          <p className="text-white/50 text-sm">Track and manage your Ramadan deliveries</p>
+        </div>
+        <div className="flex flex-col items-center justify-center py-20 px-6">
+          <div className="w-24 h-24 bg-[#1A1D26] rounded-full flex items-center justify-center mb-6 border border-white/5">
+            <ShoppingBag className="w-10 h-10 text-white/20" />
+          </div>
+          <h3 className="text-white text-lg font-bold mb-2">No orders yet</h3>
+          <p className="text-white/40 text-sm text-center mb-6">
+            Start ordering Iftar meals, Sahur boxes, and more to see your orders here
+          </p>
+          <button
+            onClick={() => useAppStore.getState().setActiveTab('home')}
+            className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm"
+          >
+            Start Ordering
+          </button>
         </div>
       </main>
     );
@@ -87,7 +118,10 @@ export default function OrdersTab() {
           animate={{ opacity: 1, y: 0 }}
           className="px-4 mt-4"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-[#13ec13]/20 p-5">
+          <div
+            className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-[#13ec13]/20 p-5 cursor-pointer hover:border-[#13ec13]/40 transition-colors"
+            onClick={() => handleActiveOrderClick(activeOrder)}
+          >
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#13ec13]/5 blur-[60px]" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-4">
@@ -127,19 +161,27 @@ export default function OrdersTab() {
                       <p className="text-white/40 text-xs">Your rider</p>
                     </div>
                   </div>
-                  <button
-                    onClick={() => handleCallRider(activeOrder.rider)}
-                    className="w-10 h-10 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
-                  >
-                    <Phone className="w-4 h-4 text-[#13ec13]" />
-                  </button>
-                  <button
-                    onClick={() => useAppStore.getState().setActiveModal('live-tracking')}
-                    className="flex items-center gap-2 px-4 h-10 bg-[#FFD700]/10 rounded-full border border-[#FFD700]/20 hover:bg-[#FFD700]/20 transition-colors"
-                  >
-                    <MapPin className="w-4 h-4 text-[#FFD700]" />
-                    <span className="text-[#FFD700] text-xs font-bold">Track</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCallRider(activeOrder.rider);
+                      }}
+                      className="w-10 h-10 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                    >
+                      <Phone className="w-4 h-4 text-[#13ec13]" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        useAppStore.getState().setActiveModal('live-tracking');
+                      }}
+                      className="flex items-center gap-2 px-4 h-10 bg-[#FFD700]/10 rounded-full border border-[#FFD700]/20 hover:bg-[#FFD700]/20 transition-colors"
+                    >
+                      <MapPin className="w-4 h-4 text-[#FFD700]" />
+                      <span className="text-[#FFD700] text-xs font-bold">Track</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -159,8 +201,8 @@ export default function OrdersTab() {
               return (
                 <div key={order.id}>
                   <button
-                    onClick={() => toggleExpand(order.id)}
-                    className="flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 w-full text-left hover:border-white/10 transition-colors"
+                    onClick={() => handleActiveOrderClick(order)}
+                    className="flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 w-full text-left hover:border-[#13ec13]/20 transition-colors"
                   >
                     <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
                       <Icon className={`w-6 h-6 ${config?.color}`} />
@@ -177,7 +219,13 @@ export default function OrdersTab() {
                         </div>
                       </div>
                     </div>
-                    <div className="shrink-0 ml-2">
+                    <div
+                      className="shrink-0 ml-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleExpand(order.id);
+                      }}
+                    >
                       {isExpanded ? (
                         <ChevronUp className="w-4 h-4 text-white/30" />
                       ) : (
