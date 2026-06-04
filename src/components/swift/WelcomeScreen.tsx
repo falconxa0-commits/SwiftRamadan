@@ -1,115 +1,259 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useAppStore } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Clock, Users, ChevronRight, Star, Zap, Shield, ArrowRight } from 'lucide-react';
+import {
+  Clock,
+  Users,
+  Sparkles,
+  ArrowRight,
+  Star,
+  Shield,
+  Zap,
+  Heart,
+  ChevronRight,
+  Flame,
+  Moon,
+  Utensils,
+  Truck,
+} from 'lucide-react';
 
-/* ─────────────────── Floating Particle ─────────────────── */
+/* ══════════════════════════════════════════════════════════════════
+   WELCOME SCREEN — ULTRA LUXURY, WARM & GENIUS
+   ══════════════════════════════════════════════════════════════════ */
 
-function FloatingParticle({ delay, x, y, size, duration }: {
-  delay: number; x: number; y: number; size: number; duration: number;
+/* ─────────────── Aurora Gradient Mesh ─────────────── */
+function AuroraMesh() {
+  return (
+    <div className="fixed inset-0 pointer-events-none overflow-hidden">
+      {/* Base gradient */}
+      <div className="absolute inset-0" style={{
+        background: 'linear-gradient(165deg, #080B12 0%, #0A0F1C 25%, #0D1117 50%, #0F0E0A 80%, #0A0806 100%)',
+      }} />
+
+      {/* Warm top-right aurora */}
+      <motion.div
+        className="absolute -top-[40%] -right-[20%] w-[80vw] h-[80vh] rounded-full"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(212,175,55,0.07) 0%, rgba(212,175,55,0.02) 40%, transparent 70%)',
+          filter: 'blur(60px)',
+        }}
+        animate={{
+          x: [0, 20, -10, 0],
+          y: [0, -15, 10, 0],
+          scale: [1, 1.05, 0.98, 1],
+        }}
+        transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Warm bottom-left aurora */}
+      <motion.div
+        className="absolute -bottom-[30%] -left-[20%] w-[70vw] h-[70vh] rounded-full"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(180,120,40,0.06) 0%, rgba(19,236,19,0.02) 40%, transparent 70%)',
+          filter: 'blur(80px)',
+        }}
+        animate={{
+          x: [0, -15, 10, 0],
+          y: [0, 20, -10, 0],
+          scale: [1, 0.95, 1.03, 1],
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Center warm glow */}
+      <motion.div
+        className="absolute top-[30%] left-1/2 -translate-x-1/2 w-[60vw] h-[50vh] rounded-full"
+        style={{
+          background: 'radial-gradient(ellipse at center, rgba(212,175,55,0.04) 0%, transparent 60%)',
+          filter: 'blur(40px)',
+        }}
+        animate={{
+          opacity: [0.6, 1, 0.6],
+          scale: [1, 1.08, 1],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+      />
+
+      {/* Subtle noise texture overlay */}
+      <div className="absolute inset-0 opacity-[0.02]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E")`,
+        backgroundSize: '128px 128px',
+      }} />
+    </div>
+  );
+}
+
+/* ─────────────── Floating Sparkle ─────────────── */
+function Sparkle({ delay, x, y, size }: {
+  delay: number; x: number; y: number; size: number;
 }) {
   return (
     <motion.div
-      className="absolute rounded-full"
+      className="absolute"
       style={{
         left: `${x}%`,
         top: `${y}%`,
         width: size,
         height: size,
-        background: 'radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%)',
       }}
       animate={{
-        y: [0, -20, 0],
-        opacity: [0, 0.8, 0],
-        scale: [0.5, 1, 0.5],
+        opacity: [0, 1, 0],
+        scale: [0, 1, 0],
+        rotate: [0, 180, 360],
       }}
       transition={{
-        duration,
+        duration: 3 + Math.random() * 2,
         delay,
         repeat: Infinity,
         ease: 'easeInOut',
       }}
-    />
-  );
-}
-
-/* ─────────────────── Animated Ring ─────────────────── */
-
-function GlowRing() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <motion.div
-        className="w-[300px] h-[300px] rounded-full border border-[#D4AF37]/10"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.1, 0.3],
-        }}
-        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <motion.div
-        className="absolute w-[400px] h-[400px] rounded-full border border-[#D4AF37]/5"
-        animate={{
-          scale: [1.1, 1, 1.1],
-          opacity: [0.1, 0.2, 0.1],
-        }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-    </div>
-  );
-}
-
-/* ─────────────────── Luxury Divider ─────────────────── */
-
-function LuxuryDivider() {
-  return (
-    <div className="flex items-center justify-center gap-3 py-2">
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
-      <div className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]/40" />
-      <div className="w-1 h-1 rounded-full bg-[#D4AF37]/25" />
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[#D4AF37]/20 to-transparent" />
-    </div>
-  );
-}
-
-/* ─────────────────── Stat Counter ─────────────────── */
-
-function StatCounter({ value, label, delay }: { value: string; label: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="flex flex-col items-center gap-1"
     >
-      <span className="text-white text-xl font-bold tracking-tight" style={{
-        fontVariantNumeric: 'tabular-nums',
-      }}>{value}</span>
-      <span className="text-[#D4AF37]/60 text-[10px] font-semibold uppercase tracking-[0.2em]">{label}</span>
+      <svg viewBox="0 0 10 10" className="w-full h-full">
+        <path
+          d="M5 0L5.5 4.5L10 5L5.5 5.5L5 10L4.5 5.5L0 5L4.5 4.5Z"
+          fill="rgba(212,175,55,0.7)"
+        />
+      </svg>
     </motion.div>
   );
 }
 
-/* ─────────────────── Feature Card ─────────────────── */
+/* ─────────────── Breathing Ring ─────────────── */
+function BreathingRing() {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <motion.div
+        className="w-[280px] h-[280px] rounded-full"
+        style={{
+          border: '1px solid rgba(212,175,55,0.08)',
+          boxShadow: '0 0 60px rgba(212,175,55,0.04) inset, 0 0 60px rgba(212,175,55,0.02)',
+        }}
+        animate={{
+          scale: [1, 1.12, 1],
+          opacity: [0.4, 0.15, 0.4],
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute w-[380px] h-[380px] rounded-full"
+        style={{
+          border: '1px solid rgba(212,175,55,0.04)',
+        }}
+        animate={{
+          scale: [1.1, 1, 1.1],
+          opacity: [0.1, 0.25, 0.1],
+        }}
+        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+      />
+      <motion.div
+        className="absolute w-[480px] h-[480px] rounded-full"
+        style={{
+          border: '1px solid rgba(19,236,19,0.03)',
+        }}
+        animate={{
+          scale: [1, 1.06, 1],
+          opacity: [0.15, 0.05, 0.15],
+        }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      />
+    </div>
+  );
+}
 
-function FeatureCard({ icon: Icon, title, desc, delay, accent }: {
-  icon: React.ElementType; title: string; desc: string; delay: number; accent: string;
+/* ─────────────── Elegant Divider ─────────────── */
+function ElegantDivider() {
+  return (
+    <div className="flex items-center justify-center gap-4 py-3">
+      <motion.div
+        className="h-px flex-1"
+        style={{
+          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)',
+        }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ delay: 2.2, duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      />
+      <motion.div
+        initial={{ scale: 0, rotate: 0 }}
+        animate={{ scale: 1, rotate: 45 }}
+        transition={{ delay: 2.4, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+        className="w-1.5 h-1.5 rotate-45"
+        style={{
+          background: 'linear-gradient(135deg, #D4AF37, #B8860B)',
+          boxShadow: '0 0 8px rgba(212,175,55,0.3)',
+        }}
+      />
+      <motion.div
+        className="h-px flex-1"
+        style={{
+          background: 'linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)',
+        }}
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ delay: 2.2, duration: 1.2, ease: [0.25, 0.46, 0.45, 0.94] }}
+      />
+    </div>
+  );
+}
+
+/* ─────────────── Category Card ─────────────── */
+function CategoryPill({ icon: Icon, label, delay, color }: {
+  icon: React.ElementType; label: string; delay: number; color: string;
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="relative group"
+      transition={{ delay, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="flex flex-col items-center gap-2"
     >
-      <div className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-b from-white/[0.04] to-white/[0.01] p-5 backdrop-blur-sm transition-all duration-500 hover:border-[#D4AF37]/20">
-        {/* Top accent line */}
-        <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
-        
+      <div
+        className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 hover:scale-110"
+        style={{
+          background: `linear-gradient(135deg, ${color}18, ${color}08)`,
+          border: `1px solid ${color}25`,
+          boxShadow: `0 0 20px ${color}08`,
+        }}
+      >
+        <Icon className="w-6 h-6" style={{ color }} />
+      </div>
+      <span className="text-white/50 text-[10px] font-semibold uppercase tracking-wider">{label}</span>
+    </motion.div>
+  );
+}
+
+/* ─────────────── Feature Showcase Card ─────────────── */
+function FeatureShowcase({ icon: Icon, title, desc, delay, accent, tag }: {
+  icon: React.ElementType; title: string; desc: string; delay: number; accent: string; tag: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="group relative"
+    >
+      <div
+        className="relative overflow-hidden rounded-2xl p-4 transition-all duration-500 hover:scale-[1.02]"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01))',
+          border: '1px solid rgba(255,255,255,0.06)',
+          backdropFilter: 'blur(10px)',
+        }}
+      >
+        {/* Top accent glow */}
+        <div
+          className="absolute top-0 left-6 right-6 h-px"
+          style={{
+            background: `linear-gradient(90deg, transparent, ${accent}40, transparent)`,
+          }}
+        />
+
         <div className="flex items-start gap-4">
           <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110"
+            className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-all duration-500 group-hover:scale-110"
             style={{
               background: `linear-gradient(135deg, ${accent}15, ${accent}08)`,
               border: `1px solid ${accent}20`,
@@ -118,8 +262,20 @@ function FeatureCard({ icon: Icon, title, desc, delay, accent }: {
             <Icon className="w-5 h-5" style={{ color: accent }} />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-white text-sm font-bold tracking-tight mb-1">{title}</h3>
-            <p className="text-white/40 text-xs leading-relaxed">{desc}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <h3 className="text-white text-sm font-bold tracking-tight">{title}</h3>
+              <span
+                className="text-[8px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                style={{
+                  color: accent,
+                  background: `${accent}15`,
+                  border: `1px solid ${accent}20`,
+                }}
+              >
+                {tag}
+              </span>
+            </div>
+            <p className="text-white/35 text-xs leading-relaxed">{desc}</p>
           </div>
         </div>
       </div>
@@ -127,8 +283,72 @@ function FeatureCard({ icon: Icon, title, desc, delay, accent }: {
   );
 }
 
+/* ─────────────── Social Proof Stat ─────────────── */
+function ProofStat({ value, label, sub, delay }: {
+  value: string; label: string; sub: string; delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="flex flex-col items-center gap-1"
+    >
+      <span
+        className="text-2xl font-black tracking-tight"
+        style={{
+          background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}
+      >
+        {value}
+      </span>
+      <span className="text-white/60 text-xs font-bold">{label}</span>
+      <span className="text-white/25 text-[9px] font-medium">{sub}</span>
+    </motion.div>
+  );
+}
+
+/* ─────────────── Testimonial Card ─────────────── */
+function TestimonialCard({ name, area, text, delay }: {
+  name: string; area: string; text: string; delay: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay, duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="relative rounded-2xl p-4"
+      style={{
+        background: 'linear-gradient(135deg, rgba(212,175,55,0.04), rgba(255,255,255,0.02))',
+        border: '1px solid rgba(212,175,55,0.08)',
+      }}
+    >
+      <div className="flex items-center gap-2 mb-2">
+        <div className="flex -space-x-1">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Star key={i} className="w-3 h-3 text-[#D4AF37]" fill="#D4AF37" />
+          ))}
+        </div>
+      </div>
+      <p className="text-white/50 text-xs leading-relaxed mb-3 italic">&ldquo;{text}&rdquo;</p>
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center">
+          <span className="text-[8px] font-black text-[#D4AF37]">{name[0]}</span>
+        </div>
+        <div>
+          <span className="text-white/60 text-[10px] font-bold">{name}</span>
+          <span className="text-white/25 text-[10px] ml-1">{area}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
 /* ══════════════════════════════════════════════════════════════════
-   MAIN WELCOME SCREEN - ULTRA LUXURY
+   MAIN WELCOME SCREEN
    ══════════════════════════════════════════════════════════════════ */
 
 export default function WelcomeScreen() {
@@ -149,72 +369,72 @@ export default function WelcomeScreen() {
     setShowAuth('login');
   }, [setShowWelcome, setShowAuth]);
 
-  // Generate particles once
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    delay: Math.random() * 6,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: 2 + Math.random() * 4,
-    duration: 4 + Math.random() * 4,
-  }));
+  // Sparkle positions - useMemo to avoid re-renders
+  const sparkles = useMemo(() =>
+    Array.from({ length: 24 }, (_, i) => ({
+      id: i,
+      delay: Math.random() * 8,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: 6 + Math.random() * 8,
+    })),
+  []);
+
+  // Spring config for smooth animations
+  const springConfig = { type: 'spring' as const, damping: 20, stiffness: 120 };
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.8 }}
       className="fixed inset-0 z-[100] overflow-y-auto overflow-x-hidden"
-      style={{ background: '#030406' }}
+      style={{ background: '#080B12' }}
     >
-      {/* ── Layered Background ── */}
-      
-      {/* Deep radial glow - top center */}
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 60% 40% at 50% -5%, rgba(212,175,55,0.08) 0%, transparent 70%)',
-      }} />
+      {/* ── Aurora Background ── */}
+      <AuroraMesh />
 
-      {/* Subtle emerald underglow */}
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 50% 50% at 50% 100%, rgba(19,236,19,0.03) 0%, transparent 60%)',
-      }} />
-
-      {/* Fine mesh texture */}
-      <div className="fixed inset-0 pointer-events-none opacity-[0.015]" style={{
-        backgroundImage: 'radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px)',
-        backgroundSize: '32px 32px',
-      }} />
-
-      {/* Floating gold particles */}
+      {/* ── Floating Sparkles ── */}
       <div className="fixed inset-0 pointer-events-none">
-        {mounted && particles.map((p) => (
-          <FloatingParticle key={p.id} {...p} />
+        {mounted && sparkles.map((s) => (
+          <Sparkle key={s.id} {...s} />
         ))}
       </div>
 
       {/* ── Content ── */}
-      <div className="relative flex flex-col min-h-screen px-6 py-8 safe-area-inset">
-        
-        {/* ── Section: Logo + Branding ── */}
+      <div className="relative flex flex-col min-h-screen px-6 py-6 safe-area-inset">
+
+        {/* ═══ Section 1: Logo + Branding ═══ */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="flex flex-col items-center gap-3 pt-6"
+          transition={{ delay: 0.3, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex flex-col items-center gap-2 pt-4"
         >
-          {/* Logo Container with animated border */}
-          <div className="relative">
+          {/* Logo */}
+          <motion.div
+            {...springConfig}
+            initial={{ scale: 0.8 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.8, type: 'spring', damping: 15, stiffness: 100 }}
+            className="relative"
+          >
             <motion.div
               animate={{
                 boxShadow: [
                   '0 0 0px rgba(212,175,55,0)',
-                  '0 0 30px rgba(212,175,55,0.15)',
+                  '0 0 40px rgba(212,175,55,0.12)',
                   '0 0 0px rgba(212,175,55,0)',
                 ],
               }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              className="w-16 h-16 rounded-2xl overflow-hidden border border-[#D4AF37]/30 bg-gradient-to-br from-[#D4AF37]/10 to-transparent flex items-center justify-center"
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              className="w-20 h-20 rounded-3xl overflow-hidden flex items-center justify-center"
+              style={{
+                border: '1.5px solid rgba(212,175,55,0.25)',
+                background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))',
+                boxShadow: '0 8px 32px rgba(212,175,55,0.08)',
+              }}
             >
               <img
                 src="/swiftramadan-logo.png"
@@ -222,184 +442,240 @@ export default function WelcomeScreen() {
                 className="w-full h-full object-cover"
               />
             </motion.div>
-          </div>
-          
-          <div className="flex flex-col items-center gap-1">
-            <motion.span
-              initial={{ opacity: 0, letterSpacing: '0.3em' }}
-              animate={{ opacity: 1, letterSpacing: '0.15em' }}
-              transition={{ delay: 0.5, duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="text-[#D4AF37] text-[11px] font-semibold uppercase tracking-[0.15em]"
+          </motion.div>
+
+          {/* Brand Name */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="flex flex-col items-center gap-0.5"
+          >
+            <span
+              className="text-[#D4AF37] text-[11px] font-bold uppercase tracking-[0.25em]"
+              style={{
+                textShadow: '0 0 20px rgba(212,175,55,0.15)',
+              }}
             >
               SwiftRamadan
-            </motion.span>
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7, duration: 0.8 }}
-              className="text-white/25 text-[9px] font-medium uppercase tracking-[0.3em]"
-            >
-              Lagos 2026
-            </motion.span>
-          </div>
+            </span>
+            <span className="text-white/20 text-[9px] font-medium uppercase tracking-[0.35em]">
+              Lagos &bull; 2026
+            </span>
+          </motion.div>
         </motion.div>
 
-        {/* ── Section: Hero Text ── */}
+        {/* ═══ Section 2: Hero Text with Islamic Greeting ═══ */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 1 }}
-          className="flex flex-col items-center text-center mt-10 mb-6"
+          className="flex flex-col items-center text-center mt-8 mb-5 relative"
         >
-          <GlowRing />
-          
+          <BreathingRing />
+
+          {/* Arabic Greeting */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
+            transition={{ delay: 0.9, duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="relative z-10 mb-4"
+          >
+            <span
+              className="text-[#D4AF37]/50 text-lg font-light tracking-wide"
+              style={{
+                textShadow: '0 0 30px rgba(212,175,55,0.1)',
+              }}
+            >
+              ٱلسَّلَامُ عَلَيْكُمْ
+            </span>
+          </motion.div>
+
+          {/* Main Hero */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1, duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="relative z-10"
           >
-            <h1 className="text-white text-[42px] font-extrabold leading-[0.95] tracking-[-0.02em]">
-              Elevate
-            </h1>
-            <h1 className="text-white text-[42px] font-extrabold leading-[0.95] tracking-[-0.02em]">
-              Your
+            <h1 className="text-white text-[36px] font-extrabold leading-[0.95] tracking-[-0.025em]">
+              Your Ramadan,
             </h1>
             <h1
-              className="text-[42px] font-extrabold leading-[0.95] tracking-[-0.02em]"
+              className="text-[38px] font-extrabold leading-[0.95] tracking-[-0.025em]"
               style={{
-                background: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 40%, #D4AF37 70%, #B8860B 100%)',
+                background: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 30%, #D4AF37 60%, #C5962C 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
+                filter: 'drop-shadow(0 2px 8px rgba(212,175,55,0.15))',
               }}
             >
-              Ramadan
+              Elevated.
             </h1>
           </motion.div>
 
+          {/* Subtitle */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-white/35 text-sm leading-relaxed max-w-[280px] mt-5 relative z-10"
+            transition={{ delay: 1.4, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="text-white/40 text-sm leading-relaxed max-w-[300px] mt-4 relative z-10"
           >
-            Premium Iftar deliveries. Curated meals.{'\n'}
-            Timed perfectly for Maghrib.
+            From Iftar to Sahur, every meal delivered{'\n'}
+            with care, warmth & perfect timing.
           </motion.p>
         </motion.div>
 
-        {/* ── Section: Feature Cards ── */}
-        <div className="flex flex-col gap-3 mb-6">
-          <FeatureCard
+        {/* ═══ Section 3: Category Showcase ═══ */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.6, duration: 0.6 }}
+          className="mb-5"
+        >
+          <div className="flex items-center justify-around px-2">
+            <CategoryPill icon={Utensils} label="Iftar" delay={1.7} color="#D4AF37" />
+            <CategoryPill icon={Moon} label="Sahur" delay={1.8} color="#8B9DC3" />
+            <CategoryPill icon={Flame} label="Grills" delay={1.9} color="#E8652D" />
+            <CategoryPill icon={Truck} label="Delivery" delay={2.0} color="#13ec13" />
+            <CategoryPill icon={Sparkles} label="Premium" delay={2.1} color="#9B59B6" />
+          </div>
+        </motion.div>
+
+        {/* ═══ Section 4: Feature Cards ═══ */}
+        <div className="flex flex-col gap-3 mb-5">
+          <FeatureShowcase
             icon={Clock}
             title="Iftar Precision Delivery"
-            desc="Hot gourmet meals from top Lagos kitchens, synchronized with Maghrib adhan."
-            delay={1.3}
+            desc="Hot gourmet meals from top Lagos kitchens, timed to the Maghrib adhan."
+            delay={2.0}
             accent="#D4AF37"
+            tag="Signature"
           />
-          <FeatureCard
+          <FeatureShowcase
             icon={Users}
             title="Community Group Buy"
-            desc="Premium Ramadan staples at wholesale prices through community pooling."
-            delay={1.5}
+            desc="Premium Ramadan staples at wholesale prices through neighborhood pooling."
+            delay={2.15}
             accent="#13ec13"
+            tag="Popular"
           />
-          <FeatureCard
+          <FeatureShowcase
             icon={Zap}
-            title="Instant Dispatch"
+            title="Lightning Dispatch"
             desc="Riders deployed within minutes. Real-time tracking from kitchen to doorstep."
-            delay={1.7}
+            delay={2.3}
             accent="#3b82f6"
+            tag="Fast"
           />
         </div>
 
-        {/* ── Section: Social Proof Stats ── */}
+        {/* ═══ Section 5: Social Proof ═══ */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2, duration: 0.8 }}
-          className="mb-6"
+          transition={{ delay: 2.3, duration: 0.8 }}
+          className="mb-4"
         >
-          <LuxuryDivider />
-          <div className="flex items-center justify-around py-5">
-            <StatCounter value="12K+" label="Users" delay={2.1} />
-            <div className="w-px h-8 bg-white/[0.06]" />
-            <StatCounter value="98%" label="On-time" delay={2.2} />
-            <div className="w-px h-8 bg-white/[0.06]" />
-            <StatCounter value="4.9" label="Rating" delay={2.3} />
+          <ElegantDivider />
+          <div className="flex items-center justify-around py-4 px-2">
+            <ProofStat value="12K+" label="Families" sub="served daily" delay={2.4} />
+            <div className="w-px h-12 bg-white/[0.06]" />
+            <ProofStat value="98%" label="On-time" sub="Iftar delivery" delay={2.5} />
+            <div className="w-px h-12 bg-white/[0.06]" />
+            <ProofStat value="4.9" label="Rating" sub="from Lagos" delay={2.6} />
           </div>
-          <LuxuryDivider />
+          <ElegantDivider />
         </motion.div>
 
-        {/* ── Section: Trust Badges ── */}
+        {/* ═══ Section 6: Testimonial ═══ */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 2.3, duration: 0.6 }}
-          className="flex items-center justify-center gap-5 mb-8"
+          transition={{ delay: 2.6, duration: 0.6 }}
+          className="mb-5"
         >
-          <div className="flex items-center gap-1.5">
-            <Shield className="w-3.5 h-3.5 text-[#D4AF37]/40" />
-            <span className="text-white/25 text-[10px] font-medium tracking-wide">Secure</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Star className="w-3.5 h-3.5 text-[#D4AF37]/40" />
-            <span className="text-white/25 text-[10px] font-medium tracking-wide">Trusted</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Zap className="w-3.5 h-3.5 text-[#D4AF37]/40" />
-            <span className="text-white/25 text-[10px] font-medium tracking-wide">Fast</span>
-          </div>
+          <TestimonialCard
+            name="Amina B."
+            area="Lekki"
+            text="My iftar was still steaming when it arrived. SwiftRamadan made Ramadan so much easier for my family."
+            delay={2.7}
+          />
         </motion.div>
 
-        {/* ── Section: CTA Buttons ── */}
+        {/* ═══ Section 7: Trust Badges ═══ */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.8, duration: 0.6 }}
+          className="flex items-center justify-center gap-6 mb-6"
+        >
+          {[
+            { Icon: Shield, label: 'Secure' },
+            { Icon: Heart, label: 'Trusted' },
+            { Icon: Star, label: 'Rated #1' },
+          ].map(({ Icon, label }) => (
+            <div key={label} className="flex items-center gap-1.5">
+              <Icon className="w-3.5 h-3.5 text-[#D4AF37]/30" />
+              <span className="text-white/20 text-[10px] font-medium tracking-wide">{label}</span>
+            </div>
+          ))}
+        </motion.div>
+
+        {/* ═══ Section 8: CTA Buttons ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="flex flex-col gap-4 mt-auto pb-4"
+          transition={{ delay: 3.0, duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex flex-col gap-3 mt-auto pb-4"
         >
-          {/* Primary CTA - Gold Gradient */}
+          {/* Primary CTA - Gold Gradient with Shimmer */}
           <button
             onClick={handleGetStarted}
-            className="relative group w-full h-[56px] rounded-2xl overflow-hidden active:scale-[0.98] transition-transform duration-200"
+            className="relative group w-full h-[58px] rounded-2xl overflow-hidden active:scale-[0.98] transition-transform duration-200"
           >
-            {/* Button background */}
+            {/* Button gradient */}
             <div className="absolute inset-0" style={{
-              background: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 30%, #D4AF37 60%, #B8860B 100%)',
+              background: 'linear-gradient(135deg, #D4AF37 0%, #F5E6A3 25%, #D4AF37 50%, #C5962C 75%, #D4AF37 100%)',
             }} />
-            
-            {/* Shimmer effect */}
+
+            {/* Animated shimmer */}
             <motion.div
               className="absolute inset-0"
               style={{
-                background: 'linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%)',
-                backgroundSize: '200% 100%',
+                background: 'linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.35) 50%, transparent 75%)',
+                backgroundSize: '250% 100%',
               }}
-              animate={{ backgroundPosition: ['200% 0', '-200% 0'] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+              animate={{ backgroundPosition: ['250% 0', '-250% 0'] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: 'linear' }}
             />
-            
+
             {/* Button content */}
             <div className="relative z-10 flex items-center justify-center gap-2 h-full">
-              <span className="text-[#030406] text-base font-extrabold tracking-wide">Get Started</span>
-              <ArrowRight className="w-5 h-5 text-[#030406] group-hover:translate-x-0.5 transition-transform" />
+              <span className="text-[#080B12] text-base font-extrabold tracking-wide">Begin Your Journey</span>
+              <motion.div
+                animate={{ x: [0, 4, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                <ArrowRight className="w-5 h-5 text-[#080B12]" />
+              </motion.div>
             </div>
-            
+
             {/* Bottom glow */}
-            <div className="absolute -bottom-2 left-4 right-4 h-6 blur-xl rounded-full" style={{
-              background: 'rgba(212,175,55,0.3)',
+            <div className="absolute -bottom-3 left-6 right-6 h-8 blur-xl rounded-full" style={{
+              background: 'rgba(212,175,55,0.25)',
             }} />
           </button>
 
-          {/* Secondary CTA - Glass */}
+          {/* Secondary CTA - Glass with Warm Accent */}
           <button
             onClick={handleSignIn}
-            className="group w-full h-[52px] rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-300 hover:border-[#D4AF37]/20 hover:bg-white/[0.05]"
+            className="group w-full h-[52px] rounded-2xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-all duration-300 hover:border-[#D4AF37]/15 hover:bg-white/[0.04]"
           >
-            <span className="text-white/60 text-sm font-medium">Already have an account?</span>
+            <span className="text-white/45 text-sm font-medium">Already part of the family?</span>
             <span className="text-[#D4AF37] text-sm font-bold group-hover:underline underline-offset-4">Sign In</span>
+            <ChevronRight className="w-4 h-4 text-[#D4AF37]/50 group-hover:text-[#D4AF37] transition-colors" />
           </button>
         </motion.div>
       </div>
