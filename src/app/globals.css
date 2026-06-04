@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -151,4 +150,39 @@
     'wght' 400,
     'GRAD' 0,
     'opsz' 24;
+}
+
+/* Luxury Shimmer Animation */
+@keyframes luxury-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.luxury-shimmer {
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.15) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: luxury-shimmer 3s linear infinite;
+}
+
+/* Premium Glow Pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(212,175,55,0); }
+  50% { box-shadow: 0 0 30px rgba(212,175,55,0.15); }
+}
+
+.glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
+/* Safe area insets for mobile */
+.safe-area-inset {
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Ultra-smooth selection */
+::selection {
+  background: rgba(212,175,55,0.3);
+  color: white;
 }

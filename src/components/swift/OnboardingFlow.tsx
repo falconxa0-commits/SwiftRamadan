@@ -1106,6 +1106,7 @@ export default function OnboardingFlow() {
     setOnboardingComplete,
     userRole,
     setActiveTab,
+    setIsLoggedIn,
   } = useAppStore();
 
   const [showCelebration, setShowCelebration] = useState(false);
@@ -1164,6 +1165,7 @@ export default function OnboardingFlow() {
 
   const handleCelebrationDone = () => {
     setOnboardingComplete(true);
+    setIsLoggedIn(true);
     setShowOnboarding(false);
     setActiveTab(ROLE_DEFAULT_TAB[role]);
     setOnboardingStep(0);
