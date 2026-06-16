@@ -64,6 +64,13 @@ export default function CheckoutModal() {
   const [selectedLocation, setSelectedLocation] = useState(deliveryLocations[0]);
   const [orderId] = useState(() => `SWR-${Math.floor(1000 + Math.random() * 9000)}`);
 
+  // Snapshot cart items for success step (before clearCart wipes them)
+  const [placedCartItems, setPlacedCartItems] = useState<typeof cartItems>([]);
+  const [placedTotal, setPlacedTotal] = useState(0);
+
+  // Use deliveryAddress with fallback to first saved location
+  const effectiveAddress = deliveryAddress || selectedLocation.address || deliveryLocations[0].address;
+
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = subtotal >= 5000 ? 0 : 500;
   const serviceFee = Math.round(subtotal * 0.02);
@@ -89,19 +96,27 @@ export default function CheckoutModal() {
   };
 
   const handlePlaceOrder = () => {
+    // Snapshot cart before clearing
+    const snapshotItems = [...cartItems];
+    const snapshotTotal = total;
+
     // Create the order and add to store
     const order: OrderItem = {
       id: orderId,
-      item: cartItems.length === 1 ? cartItems[0].name : `${cartItems[0].name} + ${cartItems.length - 1} more`,
+      item: snapshotItems.length === 1 ? snapshotItems[0].name : `${snapshotItems[0].name} + ${snapshotItems.length - 1} more`,
       status: 'Preparing',
       eta: selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
            selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
            selectedTimeSlot === 'evening' ? '4:00 - 7:00 PM' : '8:00 - 10:00 PM',
-      total,
+      total: snapshotTotal,
       rider: null,
-      items: cartItems.map(ci => ({ name: ci.name, qty: ci.quantity, price: ci.price })),
+      items: snapshotItems.map(ci => ({ name: ci.name, qty: ci.quantity, price: ci.price })),
       progress: 15,
     };
+
+    // Save snapshot for the success step display
+    setPlacedCartItems(snapshotItems);
+    setPlacedTotal(snapshotTotal);
 
     addOrder(order);
     clearCart();
@@ -213,6 +228,12 @@ export default function CheckoutModal() {
                   <div className="flex flex-col items-center py-12 text-center">
                     <ShoppingBag className="w-16 h-16 text-white/10 mb-4" />
                     <p className="text-white/40 text-sm">Your cart is empty</p>
+                    <button
+                      onClick={handleClose}
+                      className="mt-4 px-6 py-2.5 bg-[#13ec13] text-[#05070A] font-bold text-sm rounded-xl"
+                    >
+                      Browse Menu
+                    </button>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -380,7 +401,7 @@ export default function CheckoutModal() {
                     ) : (
                       <>
                         <button
-                          onClick={() => { setEditAddressValue(deliveryAddress); setIsEditingAddress(true); }}
+                          onClick={() => { setEditAddressValue(effectiveAddress); setIsEditingAddress(true); }}
                           className="flex items-center gap-2 text-[#13ec13] text-xs font-bold hover:text-[#13ec13]/80 transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
@@ -531,7 +552,7 @@ export default function CheckoutModal() {
                 {/* Address Summary */}
                 <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
                   <p className="text-white/40 text-xs mb-1">Delivering to</p>
-                  <p className="text-white font-bold text-sm">{deliveryAddress}</p>
+                  <p className="text-white font-bold text-sm">{effectiveAddress}</p>
                 </div>
               </motion.div>
             )}
@@ -734,11 +755,11 @@ export default function CheckoutModal() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/40 text-xs">Items</span>
-                    <span className="text-white font-bold text-xs">{cartItems.length} item{cartItems.length !== 1 ? 's' : ''}</span>
+                    <span className="text-white font-bold text-xs">{placedCartItems.length} item{placedCartItems.length !== 1 ? 's' : ''}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/40 text-xs">Total</span>
-                    <span className="text-[#13ec13] font-black text-sm">{formatNaira(total)}</span>
+                    <span className="text-[#13ec13] font-black text-sm">{formatNaira(placedTotal)}</span>
                   </div>
                   {iftarPrecision && (
                     <div className="flex items-center gap-2 bg-[#FFD700]/5 rounded-lg px-3 py-2 border border-[#FFD700]/10">
@@ -799,7 +820,8 @@ export default function CheckoutModal() {
                 {currentStep < 3 ? (
                   <button
                     onClick={handleNext}
-                    className="px-8 py-3 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-sm hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all"
+                    disabled={currentStep === 0 && cartItems.length === 0}
+                    className="px-8 py-3 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-sm hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
                   >
                     Continue
                   </button>

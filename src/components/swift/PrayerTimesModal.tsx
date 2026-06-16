@@ -16,7 +16,7 @@ interface CountdownTime {
 export default function PrayerTimesModal() {
   const { activeModal, setActiveModal } = useAppStore();
   const { toast } = useToast();
-  const isOpen = activeModal === 'prayer';
+  const isOpen = activeModal === 'prayer' || activeModal === 'prayer-times';
 
   const [athanEnabled, setAthanEnabled] = useState(false);
   const [countdown, setCountdown] = useState<CountdownTime>({ hours: 0, minutes: 0, label: '' });

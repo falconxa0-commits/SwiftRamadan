@@ -342,7 +342,7 @@ export const useAppStore = create<AppState>()(
       setIsLoggedIn: (val) => set({ isLoggedIn: val }),
       showAuth: null,
       setShowAuth: (val) => set({ showAuth: val }),
-      userName: 'Bolaji Ahmed',
+      userName: '',
       setUserName: (name) => set({ userName: name }),
       userPhone: '',
       setUserPhone: (phone) => set({ userPhone: phone }),
@@ -352,7 +352,7 @@ export const useAppStore = create<AppState>()(
       setUserRole: (role) => set({ userRole: role }),
       userAvatar: '',
       setUserAvatar: (avatar) => set({ userAvatar: avatar }),
-      userArea: 'Lekki Phase 1',
+      userArea: '',
       setUserArea: (area) => set({ userArea: area }),
 
       // Onboarding
@@ -364,7 +364,7 @@ export const useAppStore = create<AppState>()(
       setOnboardingStep: (step) => set({ onboardingStep: step }),
 
       // Vendor Onboarding
-      vendorBusinessCategory: 'Iftar Meals',
+      vendorBusinessCategory: '',
       setVendorBusinessCategory: (cat) => set({ vendorBusinessCategory: cat }),
       vendorBusinessAddress: '',
       setVendorBusinessAddress: (addr) => set({ vendorBusinessAddress: addr }),
@@ -372,13 +372,13 @@ export const useAppStore = create<AppState>()(
       setVendorBankName: (name) => set({ vendorBankName: name }),
       vendorAccountNumber: '',
       setVendorAccountNumber: (num) => set({ vendorAccountNumber: num }),
-      vendorOpenTime: '08:00',
+      vendorOpenTime: '',
       setVendorOpenTime: (time) => set({ vendorOpenTime: time }),
-      vendorCloseTime: '22:00',
+      vendorCloseTime: '',
       setVendorCloseTime: (time) => set({ vendorCloseTime: time }),
 
       // Rider Onboarding
-      riderVehicleType: 'Motorcycle',
+      riderVehicleType: '',
       setRiderVehicleType: (type) => set({ riderVehicleType: type }),
       riderPlateNumber: '',
       setRiderPlateNumber: (plate) => set({ riderPlateNumber: plate }),
@@ -398,13 +398,13 @@ export const useAppStore = create<AppState>()(
       setCustomerFavoriteCategories: (cats) => set({ customerFavoriteCategories: cats }),
 
       // Loyalty
-      hasanatPoints: 5400,
+      hasanatPoints: 0,
       setHasanatPoints: (pts) => set({ hasanatPoints: pts }),
-      swiftPoints: 1200,
+      swiftPoints: 0,
       setSwiftPoints: (pts) => set({ swiftPoints: pts }),
-      loyaltyTier: 'gold',
+      loyaltyTier: 'bronze',
       setLoyaltyTier: (tier) => set({ loyaltyTier: tier }),
-      dailyStreak: 3,
+      dailyStreak: 0,
       setDailyStreak: (streak) => set({ dailyStreak: streak }),
       claimDailyPoints: () => {
         const { hasanatPoints, dailyStreak } = get();
@@ -425,7 +425,7 @@ export const useAppStore = create<AppState>()(
       // Checkout
       checkoutStep: 0,
       setCheckoutStep: (step) => set({ checkoutStep: step }),
-      deliveryAddress: '12 Admiralty Way, Lekki Phase 1',
+      deliveryAddress: '',
       setDeliveryAddress: (addr) => set({ deliveryAddress: addr }),
       deliveryInstructions: '',
       setDeliveryInstructions: (instr) => set({ deliveryInstructions: instr }),
@@ -474,8 +474,8 @@ export const useAppStore = create<AppState>()(
       setSahurAlarmEnabled: (val) => set({ sahurAlarmEnabled: val }),
 
       // Referral
-      referralCode: 'BOLAJI24',
-      referralCount: 3,
+      referralCode: '',
+      referralCount: 0,
       incrementReferral: () => set({ referralCount: get().referralCount + 1 }),
 
       // Rider State
@@ -483,43 +483,98 @@ export const useAppStore = create<AppState>()(
       setRiderOnline: (val) => set({ riderOnline: val }),
       riderCurrentDelivery: null,
       setRiderCurrentDelivery: (id) => set({ riderCurrentDelivery: id }),
-      riderEarnings: 24500,
+      riderEarnings: 0,
       setRiderEarnings: (val) => set({ riderEarnings: val }),
-      riderCompletedToday: 12,
+      riderCompletedToday: 0,
       setRiderCompletedToday: (val) => set({ riderCompletedToday: val }),
-      riderRating: 4.9,
+      riderRating: 0,
       setRiderRating: (val) => set({ riderRating: val }),
 
       // Vendor State
       vendorOnline: false,
       setVendorOnline: (val) => set({ vendorOnline: val }),
-      vendorStoreName: 'Suya Central',
+      vendorStoreName: '',
       setVendorStoreName: (name) => set({ vendorStoreName: name }),
-      vendorBalance: 450000,
+      vendorBalance: 0,
       setVendorBalance: (val) => set({ vendorBalance: val }),
-      vendorPendingSettlement: 25400,
+      vendorPendingSettlement: 0,
       setVendorPendingSettlement: (val) => set({ vendorPendingSettlement: val }),
-      vendorTotalEarnings: 1280000,
+      vendorTotalEarnings: 0,
       setVendorTotalEarnings: (val) => set({ vendorTotalEarnings: val }),
 
       // Logout
       logout: () => {
         set({
           isLoggedIn: false,
+          showWelcome: true,
           showAuth: null,
           showOnboarding: false,
           onboardingComplete: false,
+          onboardingStep: 0,
           activeTab: 'home',
           activeModal: null,
           cartItems: [],
           cartCount: 0,
           riderOnline: false,
           vendorOnline: false,
+          // Reset user data so next user starts fresh
+          userName: '',
+          userPhone: '',
+          userEmail: '',
+          userRole: 'customer',
+          userAvatar: '',
+          userArea: '',
+          vendorStoreName: '',
+          vendorBusinessCategory: '',
+          vendorBusinessAddress: '',
+          vendorBankName: '',
+          vendorAccountNumber: '',
+          vendorOpenTime: '',
+          vendorCloseTime: '',
+          vendorBalance: 0,
+          vendorPendingSettlement: 0,
+          vendorTotalEarnings: 0,
+          riderVehicleType: '',
+          riderPlateNumber: '',
+          riderLicenseNumber: '',
+          riderBankName: '',
+          riderAccountNumber: '',
+          riderVehicleColor: '',
+          riderEarnings: 0,
+          riderCompletedToday: 0,
+          riderRating: 0,
+          customerDietaryPrefs: [],
+          customerFavoriteCategories: [],
+          deliveryAddress: '',
+          orders: [],
+          hasanatPoints: 0,
+          swiftPoints: 0,
+          loyaltyTier: 'bronze',
+          dailyStreak: 0,
         });
       },
     }),
     {
       name: 'swiftramadan-store',
+      version: 1,
+      migrate: (persistedState: unknown, version: number) => {
+        // If coming from version 0 (no version field), clear stale demo data
+        if (version === 0) {
+          const state = persistedState as Record<string, unknown>;
+          // Reset user-specific fields that may contain stale demo data
+          state.userName = '';
+          state.userPhone = '';
+          state.userEmail = '';
+          state.userArea = '';
+          state.vendorStoreName = '';
+          state.vendorBusinessCategory = '';
+          state.vendorBusinessAddress = '';
+          state.isLoggedIn = false;
+          state.showWelcome = true;
+          state.onboardingComplete = false;
+        }
+        return persistedState as Partial<AppState>;
+      },
       partialize: (state) => ({
         showWelcome: state.showWelcome,
         cartItems: state.cartItems,

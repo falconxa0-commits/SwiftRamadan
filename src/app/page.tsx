@@ -146,6 +146,7 @@ export default function Home() {
     isLoggedIn,
     showAuth,
     showOnboarding,
+    onboardingComplete,
     setActiveTab,
     setShowAuth,
     userArea,
@@ -179,6 +180,13 @@ export default function Home() {
     }
   }, [isLoggedIn, showWelcome, showAuth, showOnboarding, setShowAuth]);
 
+  // If user is logged in but hasn't completed onboarding, show onboarding
+  useEffect(() => {
+    if (isLoggedIn && !onboardingComplete && !showOnboarding && !showAuth) {
+      useAppStore.getState().setShowOnboarding(true);
+    }
+  }, [isLoggedIn, onboardingComplete, showOnboarding, showAuth]);
+
   // Resolve active tab component based on role
   const tabMap = useMemo(
     () => ({
@@ -192,7 +200,7 @@ export default function Home() {
   const ActiveTabComponent = tabMap[activeTab] || HomeTab;
 
   // ──── Greeting Logic ────
-  const firstName = userName?.split(' ')[0] || 'Bolaji';
+  const firstName = userName?.split(' ')[0] || 'there';
   const greeting = isRider
     ? 'Salam, Rider'
     : isVendor
@@ -209,7 +217,7 @@ export default function Home() {
         : 'Offline'
       : userArea
         ? `${userArea}, Lagos`
-        : 'Lekki Phase 1, Lagos';
+        : 'Lagos, Nigeria';
 
   const RoleIcon = roleConfig.icon;
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Bike, Star, DollarSign, CheckCircle, Clock,
   MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
+  Package,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import {
@@ -30,11 +31,16 @@ export default function RiderDashboard() {
     riderCompletedToday,
     riderRating,
     riderEarnings,
+    riderCurrentDelivery,
+    setActiveModal,
   } = useAppStore();
 
-  const activeDelivery = riderActiveDeliveries[0];
+  const activeDelivery = riderCurrentDelivery
+    ? riderActiveDeliveries.find(d => d.id === riderCurrentDelivery) || riderActiveDeliveries[0]
+    : riderActiveDeliveries[0];
 
   const handleAccept = (id: string, customer: string) => {
+    useAppStore.getState().setRiderCurrentDelivery(id);
     toast({
       title: 'Delivery Accepted! 🎉',
       description: `You accepted ${customer}'s order. Head to pickup!`,
@@ -222,6 +228,26 @@ export default function RiderDashboard() {
               </div>
             </div>
           </div>
+        </motion.div>
+      )}
+
+      {/* New Delivery Request CTA */}
+      {riderOnline && !riderCurrentDelivery && (
+        <motion.div variants={staggerItem} className="mb-6">
+          <button
+            onClick={() => setActiveModal('new-delivery')}
+            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#13ec13]/20 to-[#13ec13]/5 border border-[#13ec13]/30 p-4 flex items-center gap-4 hover:border-[#13ec13]/50 transition-all active:scale-[0.98]"
+          >
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#13ec13]/10 blur-[50px]" />
+            <div className="w-12 h-12 bg-[#13ec13]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+              <Package className="w-6 h-6 text-[#13ec13]" />
+            </div>
+            <div className="flex-1 text-left relative z-10">
+              <h3 className="text-white font-extrabold text-sm">New Delivery Request</h3>
+              <p className="text-white/40 text-xs mt-0.5">{riderDeliveryRequests.length} deliveries waiting for you</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[#13ec13] shrink-0 relative z-10" />
+          </button>
         </motion.div>
       )}
 

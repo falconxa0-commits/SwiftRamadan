@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Clock, ChevronRight, MoreVertical, Check, X, Timer, MapPin, ShoppingBag } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
@@ -8,6 +8,102 @@ import { vendorIncomingOrders, vendorProcessingOrders, formatNaira } from '@/lib
 import { useToast } from '@/hooks/use-toast';
 
 type OrderStatus = 'incoming' | 'processing' | 'dispatched';
+
+/* ──── Live Countdown Component ──── */
+function IftarCountdown({ minutesUntilIftar }: { minutesUntilIftar: number }) {
+  const [secondsLeft, setSecondsLeft] = useState(minutesUntilIftar * 60);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecondsLeft(prev => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [minutesUntilIftar]);
+
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const isUrgent = mins <= 15;
+
+  return (
+    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-sm border ${
+      isUrgent
+        ? 'bg-red-500/90 border-red-400/30 animate-pulse'
+        : 'bg-red-500/90 border-red-400/30'
+    }`}>
+      <Timer className="w-3 h-3 text-white" />
+      <span className="text-white text-[10px] font-black font-mono">
+        {mins}:{secs.toString().padStart(2, '0')} to Iftar
+      </span>
+    </div>
+  );
+}
+
+/* ──── Iftar Global Countdown Banner ──── */
+function IftarCountdownBanner() {
+  const [secondsLeft, setSecondsLeft] = useState(22 * 60 + 30); // 22:30 remaining
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecondsLeft(prev => {
+        if (prev <= 1) return 0;
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const mins = Math.floor(secondsLeft / 60);
+  const secs = secondsLeft % 60;
+  const isUrgent = mins <= 15;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.12 }}
+      className={`relative overflow-hidden rounded-2xl border p-4 ${
+        isUrgent
+          ? 'bg-red-500/10 border-red-500/20'
+          : 'bg-[#FFD700]/10 border-[#FFD700]/20'
+      }`}
+    >
+      <div className={`absolute top-0 right-0 w-24 h-24 blur-[50px] ${
+        isUrgent ? 'bg-red-500/10' : 'bg-[#FFD700]/10'
+      }`} />
+      <div className="relative z-10 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+            isUrgent
+              ? 'bg-red-500/20 border-red-500/30'
+              : 'bg-[#FFD700]/20 border-[#FFD700]/30'
+          }`}>
+            <span className="material-symbols-outlined text-lg" style={{ color: isUrgent ? '#ef4444' : '#FFD700' }}>
+              bedtime
+            </span>
+          </div>
+          <div>
+            <p className={`text-sm font-bold ${isUrgent ? 'text-red-400' : 'text-[#FFD700]'}`}>
+              Iftar Countdown
+            </p>
+            <p className="text-white/40 text-[10px]">Maghrib at 6:45 PM</p>
+          </div>
+        </div>
+        <div className={`text-right`}>
+          <p className={`text-2xl font-black font-mono ${isUrgent ? 'text-red-400' : 'text-[#FFD700]'}`}>
+            {mins}:{secs.toString().padStart(2, '0')}
+          </p>
+          <p className="text-white/30 text-[9px] font-bold">remaining</p>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function VendorDashboard() {
   const { vendorStoreName, vendorOnline, setVendorOnline, setActiveModal } = useAppStore();
@@ -20,10 +116,18 @@ export default function VendorDashboard() {
     { id: 'dispatched', label: 'Dispatched', count: 0 },
   ];
 
-  const handleAcceptOrder = (orderId: string) => {
+  const handleAcceptOrder = (orderId: string, customer: string) => {
     toast({
       title: 'Order Accepted! ✅',
-      description: `Order ${orderId} is now being prepared`,
+      description: `${customer}'s order (${orderId}) is now being prepared`,
+    });
+  };
+
+  const handleRejectOrder = (orderId: string, customer: string) => {
+    toast({
+      title: 'Order Rejected ❌',
+      description: `${customer}'s order (${orderId}) has been rejected`,
+      variant: 'destructive',
     });
   };
 
@@ -110,6 +214,9 @@ export default function VendorDashboard() {
         </div>
       </motion.div>
 
+      {/* Iftar Countdown Timer */}
+      <IftarCountdownBanner />
+
       {/* Order Status Filter */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -188,10 +295,9 @@ export default function VendorDashboard() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-[#1A1D26]/60 to-transparent" />
 
-                  {/* Iftar Countdown Badge */}
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/90 backdrop-blur-sm border border-red-400/30">
-                    <Timer className="w-3 h-3 text-white" />
-                    <span className="text-white text-[10px] font-black">{order.minutesUntilIftar} min to Iftar</span>
+                  {/* Iftar Countdown Badge - Live */}
+                  <div className="absolute top-3 left-3">
+                    <IftarCountdown minutesUntilIftar={order.minutesUntilIftar} />
                   </div>
 
                   {/* Order ID */}
@@ -230,11 +336,18 @@ export default function VendorDashboard() {
                   {/* Action Buttons */}
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleAcceptOrder(order.id)}
+                      onClick={() => handleAcceptOrder(order.id, order.customer)}
                       className="flex-1 py-2.5 rounded-xl bg-[#13ec13] text-[#05070A] text-xs font-bold hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"
                     >
                       <Check className="w-3.5 h-3.5" strokeWidth={3} />
-                      Accept Order
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleRejectOrder(order.id, order.customer)}
+                      className="flex-1 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold hover:bg-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                      Reject
                     </button>
                     <button
                       onClick={() => handleMoreOptions(order.id)}

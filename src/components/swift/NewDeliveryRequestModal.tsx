@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Clock, Package, Navigation, X } from 'lucide-react';
+import { MapPin, Clock, Package, Navigation, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira, riderDeliveryRequests } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
@@ -39,7 +39,15 @@ export default function NewDeliveryRequestModal() {
   const { activeModal, setActiveModal, setRiderCurrentDelivery } = useAppStore();
   const isOpen = activeModal === 'new-delivery';
 
-  const request = riderDeliveryRequests[0];
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [declinedIds, setDeclinedIds] = useState<Set<string>>(new Set());
+
+  // Filter out declined requests
+  const availableRequests = riderDeliveryRequests.filter(r => !declinedIds.has(r.id));
+
+  // Clamp activeIndex to valid range (derived, no effect needed)
+  const safeIndex = Math.min(activeIndex, Math.max(0, availableRequests.length - 1));
+  const request = availableRequests[safeIndex];
 
   const handleAccept = () => {
     if (request) {
@@ -50,23 +58,40 @@ export default function NewDeliveryRequestModal() {
       });
     }
     setActiveModal(null);
+    // Reset state on close
+    setDeclinedIds(new Set());
+    setActiveIndex(0);
   };
 
   const handleDecline = () => {
-    toast({
-      title: 'Delivery Declined',
-      description: 'You declined this delivery request.',
-    });
-    setActiveModal(null);
+    if (request) {
+      setDeclinedIds(prev => new Set([...prev, request.id]));
+      toast({
+        title: 'Delivery Declined',
+        description: `You declined delivery ${request.id}.`,
+      });
+      // If no more requests, close modal
+      if (availableRequests.length <= 1) {
+        setActiveModal(null);
+        setDeclinedIds(new Set());
+        setActiveIndex(0);
+      }
+    }
   };
 
-  if (!request) return null;
+  const handleClose = () => {
+    setActiveModal(null);
+    setDeclinedIds(new Set());
+    setActiveIndex(0);
+  };
 
-  const isUrgent = request.minutesUntilIftar <= 25;
+  if (availableRequests.length === 0) return null;
+
+  const isUrgent = request ? request.minutesUntilIftar <= 25 : false;
 
   return (
     <AnimatePresence>
-      {isOpen && (
+      {isOpen && request && (
         <>
           {/* Full-screen Overlay */}
           <motion.div
@@ -74,7 +99,7 @@ export default function NewDeliveryRequestModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
-            onClick={() => setActiveModal(null)}
+            onClick={handleClose}
           />
 
           {/* Modal - Slide-up Bottom Sheet */}
@@ -99,112 +124,163 @@ export default function NewDeliveryRequestModal() {
                   </div>
                   <div>
                     <h2 className="text-white text-base font-extrabold">New Delivery Request</h2>
-                    <p className="text-white/30 text-[10px]">{request.id}</p>
+                    <p className="text-white/30 text-[10px]">
+                      {safeIndex + 1} of {availableRequests.length} available
+                    </p>
                   </div>
                 </div>
                 <button
-                  onClick={() => setActiveModal(null)}
+                  onClick={handleClose}
                   className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
                 >
                   <X className="w-4 h-4 text-white/40" />
                 </button>
               </div>
 
-              {/* Content */}
-              <div className="px-5 pb-6 overflow-y-auto max-h-[65vh] custom-scrollbar">
-                {/* Iftar Countdown */}
-                <div className={`rounded-2xl p-4 mb-4 border ${
-                  isUrgent
-                    ? 'bg-red-500/10 border-red-500/20'
-                    : 'bg-[#13ec13]/5 border-[#13ec13]/10'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-lg" style={{ color: isUrgent ? '#ef4444' : '#13ec13' }}>
-                        timer
-                      </span>
-                      <span className={`text-xs font-bold uppercase tracking-wider ${
-                        isUrgent ? 'text-red-400' : 'text-[#13ec13]'
-                      }`}>
-                        {isUrgent ? 'Urgent - Iftar Delivery' : 'Iftar Delivery'}
-                      </span>
-                    </div>
-                    <CountdownTimer minutes={request.minutesUntilIftar} isUrgent={isUrgent} />
-                  </div>
-                  <p className="text-white/30 text-[10px] mt-2">
-                    Iftar at {request.iftarDeadline} &bull; Deliver before Maghrib
-                  </p>
+              {/* Request Pagination Indicators */}
+              {availableRequests.length > 1 && (
+                <div className="flex items-center justify-center gap-2 px-5 pb-3">
+                  {availableRequests.map((_, i) => (
+                    <button
+                      key={availableRequests[i].id}
+                      onClick={() => setActiveIndex(i)}
+                      className={`h-1.5 rounded-full transition-all ${
+                        i === safeIndex ? 'w-6 bg-[#13ec13]' : 'w-1.5 bg-white/10 hover:bg-white/20'
+                      }`}
+                    />
+                  ))}
                 </div>
+              )}
 
-                {/* Customer Info */}
-                <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-11 h-11 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20">
-                      <span className="material-symbols-outlined text-[#13ec13] text-lg">person</span>
+              {/* Content */}
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={request.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="px-5 pb-6 overflow-y-auto max-h-[55vh] custom-scrollbar"
+                >
+                  {/* Iftar Countdown */}
+                  <div className={`rounded-2xl p-4 mb-4 border ${
+                    isUrgent
+                      ? 'bg-red-500/10 border-red-500/20'
+                      : 'bg-[#13ec13]/5 border-[#13ec13]/10'
+                  }`}>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg" style={{ color: isUrgent ? '#ef4444' : '#13ec13' }}>
+                          timer
+                        </span>
+                        <span className={`text-xs font-bold uppercase tracking-wider ${
+                          isUrgent ? 'text-red-400' : 'text-[#13ec13]'
+                        }`}>
+                          {request.priority === 'iftar' ? (isUrgent ? 'Urgent - Iftar Delivery' : 'Iftar Delivery') : 'Standard Delivery'}
+                        </span>
+                      </div>
+                      <CountdownTimer minutes={request.minutesUntilIftar} isUrgent={isUrgent} />
                     </div>
-                    <div className="flex-1">
-                      <p className="text-white text-sm font-bold">{request.customer}</p>
-                      <div className="flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3 h-3 text-white/30" />
-                        <p className="text-white/40 text-xs">{request.address}</p>
+                    <p className="text-white/30 text-[10px] mt-2">
+                      Iftar at {request.iftarDeadline} &bull; Deliver before Maghrib
+                    </p>
+                  </div>
+
+                  {/* Customer Info */}
+                  <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="w-11 h-11 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20">
+                        <span className="material-symbols-outlined text-[#13ec13] text-lg">person</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-white text-sm font-bold">{request.customer}</p>
+                        <div className="flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-3 h-3 text-white/30" />
+                          <p className="text-white/40 text-xs">{request.address}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Items Ordered */}
-                <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Package className="w-4 h-4 text-white/30" />
-                    <span className="text-white/50 text-xs font-bold uppercase tracking-wider">Items Ordered</span>
+                  {/* Items Ordered */}
+                  <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Package className="w-4 h-4 text-white/30" />
+                      <span className="text-white/50 text-xs font-bold uppercase tracking-wider">Items Ordered</span>
+                    </div>
+                    <p className="text-white text-sm">{request.items}</p>
                   </div>
-                  <p className="text-white text-sm">{request.items}</p>
-                </div>
 
-                {/* Pickup Address */}
-                <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Navigation className="w-4 h-4 text-[#13ec13]" />
-                    <span className="text-white/50 text-xs font-bold uppercase tracking-wider">Pickup</span>
+                  {/* Pickup Address */}
+                  <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-3 border border-white/5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Navigation className="w-4 h-4 text-[#13ec13]" />
+                      <span className="text-white/50 text-xs font-bold uppercase tracking-wider">Pickup</span>
+                    </div>
+                    <p className="text-white text-sm">{request.pickupAddress}</p>
+                    <p className="text-white/30 text-[10px] mt-1">{request.distance} from your location</p>
                   </div>
-                  <p className="text-white text-sm">{request.pickupAddress}</p>
-                  <p className="text-white/30 text-[10px] mt-1">{request.distance} from your location</p>
-                </div>
 
-                {/* Payment Summary */}
-                <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-5 border border-white/5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/40 text-xs">Order Total</span>
-                    <span className="text-white text-sm font-bold">{formatNaira(request.amount)}</span>
+                  {/* Payment Summary */}
+                  <div className="bg-[#05070A]/50 rounded-2xl p-4 mb-5 border border-white/5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white/40 text-xs">Order Total</span>
+                      <span className="text-white text-sm font-bold">{formatNaira(request.amount)}</span>
+                    </div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-white/40 text-xs">Delivery Fee</span>
+                      <span className="text-[#13ec13] text-sm font-bold">+{formatNaira(request.deliveryFee)}</span>
+                    </div>
+                    <div className="h-px bg-white/5 my-2" />
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/60 text-xs font-bold">You Earn</span>
+                      <span className="text-[#FFD700] text-lg font-black">{formatNaira(request.deliveryFee)}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/40 text-xs">Delivery Fee</span>
-                    <span className="text-[#13ec13] text-sm font-bold">+{formatNaira(request.deliveryFee)}</span>
-                  </div>
-                  <div className="h-px bg-white/5 my-2" />
-                  <div className="flex items-center justify-between">
-                    <span className="text-white/60 text-xs font-bold">You Earn</span>
-                    <span className="text-[#FFD700] text-lg font-black">{formatNaira(request.deliveryFee)}</span>
-                  </div>
-                </div>
 
-                {/* Action Buttons */}
-                <div className="flex items-center gap-3">
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleDecline}
+                      className="flex-1 bg-white/5 border border-white/10 text-white/60 py-4 rounded-2xl font-bold text-sm hover:bg-white/10 transition-colors"
+                    >
+                      Decline
+                    </button>
+                    <button
+                      onClick={handleAccept}
+                      className="flex-1 bg-[#13ec13] text-[#05070A] py-4 rounded-2xl font-black text-sm hover:bg-[#13ec13]/90 transition-colors green-glow flex items-center justify-center gap-2"
+                    >
+                      <span className="material-symbols-outlined text-lg">moped</span>
+                      Accept Delivery
+                    </button>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Navigation between requests */}
+              {availableRequests.length > 1 && (
+                <div className="flex items-center justify-between px-5 pb-5">
                   <button
-                    onClick={handleDecline}
-                    className="flex-1 bg-white/5 border border-white/10 text-white/60 py-4 rounded-2xl font-bold text-sm hover:bg-white/10 transition-colors"
+                    onClick={() => setActiveIndex(Math.max(0, safeIndex - 1))}
+                    disabled={safeIndex === 0}
+                    className="flex items-center gap-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-bold hover:bg-white/10 transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   >
-                    Decline
+                    <ChevronLeft className="w-4 h-4" />
+                    Previous
                   </button>
+                  <span className="text-white/30 text-xs font-bold">
+                    {safeIndex + 1} / {availableRequests.length}
+                  </span>
                   <button
-                    onClick={handleAccept}
-                    className="flex-1 bg-[#13ec13] text-[#05070A] py-4 rounded-2xl font-black text-sm hover:bg-[#13ec13]/90 transition-colors green-glow flex items-center justify-center gap-2"
+                    onClick={() => setActiveIndex(Math.min(availableRequests.length - 1, safeIndex + 1))}
+                    disabled={safeIndex >= availableRequests.length - 1}
+                    className="flex items-center gap-1 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-white/60 text-xs font-bold hover:bg-white/10 transition-colors disabled:opacity-30 disabled:pointer-events-none"
                   >
-                    <span className="material-symbols-outlined text-lg">moped</span>
-                    Accept Delivery
+                    Next
+                    <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </>

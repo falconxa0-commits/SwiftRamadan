@@ -20,7 +20,7 @@ import {
   Star,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
-import { formatNaira } from '@/lib/data';
+import { formatNaira, vendorSalesInsights } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 
@@ -108,7 +108,7 @@ export default function VendorProfileTab() {
 
   const handleLogout = () => {
     logout();
-    setShowAuth('login');
+    toast({ title: 'Logged out', description: 'You have been signed out. See you soon! 👋' });
   };
 
   return (
@@ -225,29 +225,37 @@ export default function VendorProfileTab() {
         transition={{ delay: 0.3 }}
         className="px-4 mt-5"
       >
-        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-[#FFD700]" />
-          Performance Highlights
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-white text-sm font-extrabold flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-[#FFD700]" />
+            Performance Highlights
+          </h3>
+          <button
+            onClick={() => setActiveModal('vendor-insights')}
+            className="text-[#FFD700] text-xs font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
+          >
+            View Full Insights <ChevronRight className="w-3 h-3" />
+          </button>
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Star className="w-5 h-5 text-[#FFD700] mb-2" />
-            <p className="text-white text-sm font-bold">Ramadan Box Premium</p>
+            <p className="text-white text-sm font-bold">{vendorSalesInsights.topSellingItem}</p>
             <p className="text-white/40 text-[10px] mt-0.5">Top Selling Item</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Clock className="w-5 h-5 text-cyan-400 mb-2" />
-            <p className="text-white text-sm font-bold">5:30 - 7:00 PM</p>
+            <p className="text-white text-sm font-bold">{vendorSalesInsights.peakHour}</p>
             <p className="text-white/40 text-[10px] mt-0.5">Peak Hour</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Users className="w-5 h-5 text-emerald-400 mb-2" />
-            <p className="text-white text-sm font-bold">78%</p>
+            <p className="text-white text-sm font-bold">{vendorSalesInsights.customerRetention}%</p>
             <p className="text-white/40 text-[10px] mt-0.5">Customer Retention</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Wallet className="w-5 h-5 text-orange-400 mb-2" />
-            <p className="text-white text-sm font-bold">{formatNaira(3646)}</p>
+            <p className="text-white text-sm font-bold">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
             <p className="text-white/40 text-[10px] mt-0.5">Avg Order Value</p>
           </div>
         </div>

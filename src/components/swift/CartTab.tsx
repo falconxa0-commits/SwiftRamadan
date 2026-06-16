@@ -7,24 +7,45 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
+const VALID_COUPONS: Record<string, { discount: number; label: string }> = {
+  ramadan: { discount: 0.10, label: '10% off - Ramadan Special' },
+  iftar: { discount: 0.10, label: '10% off - Iftar Deal' },
+  swift25: { discount: 0.25, label: '25% off - Swift25 Bonus' },
+  sahur: { discount: 0.15, label: '15% off - Sahur Special' },
+};
+
 export default function CartTab() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useAppStore();
   const { toast } = useToast();
   const [coupon, setCoupon] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
+  const [appliedCouponCode, setAppliedCouponCode] = useState('');
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const serviceFee = Math.round(subtotal * 0.02);
   const deliveryFee = subtotal >= 5000 ? 0 : 500;
-  const discount = couponApplied ? Math.round(subtotal * 0.1) : 0;
-  const total = subtotal + deliveryFee - discount;
+  // Effective coupon state - coupon is void if cart is empty
+  const effectiveCouponApplied = couponApplied && cartItems.length > 0;
+  const discountPercent = effectiveCouponApplied ? (VALID_COUPONS[appliedCouponCode]?.discount || 0.10) : 0;
+  const discount = effectiveCouponApplied ? Math.round(subtotal * discountPercent) : 0;
+  const total = subtotal + deliveryFee + serviceFee - discount;
 
   const handleApplyCoupon = () => {
-    if (coupon.toLowerCase() === 'ramadan' || coupon.toLowerCase() === 'iftar') {
+    const code = coupon.toLowerCase().trim();
+    if (VALID_COUPONS[code]) {
       setCouponApplied(true);
-      toast({ title: 'Coupon Applied! 🎉', description: '10% discount added to your order' });
+      setAppliedCouponCode(code);
+      toast({ title: 'Coupon Applied! 🎉', description: VALID_COUPONS[code].label });
     } else if (coupon.trim()) {
-      toast({ title: 'Invalid Coupon', description: 'Try "RAMADAN" or "IFTAR" for 10% off' });
+      toast({ title: 'Invalid Coupon', description: 'Try "RAMADAN", "IFTAR", "SWIFT25", or "SAHUR" for discounts' });
     }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponApplied(false);
+    setAppliedCouponCode('');
+    setCoupon('');
+    toast({ title: 'Coupon Removed', description: 'Discount has been removed' });
   };
 
   const handleCheckout = () => {
@@ -50,7 +71,7 @@ export default function CartTab() {
           </p>
           <button
             onClick={() => useAppStore.getState().setActiveTab('explore')}
-            className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm"
+            className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform"
           >
             Browse Menu
           </button>
@@ -70,6 +91,7 @@ export default function CartTab() {
           onClick={() => {
             clearCart();
             setCouponApplied(false);
+            setAppliedCouponCode('');
             toast({ title: 'Cart Cleared', description: 'All items removed from cart' });
           }}
           className="text-red-400 text-xs font-bold uppercase tracking-wider hover:text-red-300 transition-colors"
@@ -91,12 +113,24 @@ export default function CartTab() {
               className="flex gap-4 p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
             >
               <div
-                className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10"
+                className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10 cursor-pointer"
                 style={{ backgroundImage: `url("${item.image}")` }}
+                onClick={() => {
+                  useAppStore.getState().setSelectedProduct(item.id);
+                  useAppStore.getState().setActiveModal('product');
+                }}
               />
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
-                  <h4 className="text-white font-bold text-sm truncate pr-2">{item.name}</h4>
+                  <h4
+                    className="text-white font-bold text-sm truncate pr-2 cursor-pointer hover:text-[#13ec13] transition-colors"
+                    onClick={() => {
+                      useAppStore.getState().setSelectedProduct(item.id);
+                      useAppStore.getState().setActiveModal('product');
+                    }}
+                  >
+                    {item.name}
+                  </h4>
                   <button
                     onClick={() => {
                       removeFromCart(item.id);
@@ -132,29 +166,43 @@ export default function CartTab() {
 
       {/* Coupon Code */}
       <div className="px-4 mt-6">
-        <div className="flex gap-2">
-          <div className="flex-1 flex items-center bg-[#1A1D26] rounded-xl border border-white/5 px-3">
-            <Tag className="w-4 h-4 text-white/30 shrink-0" />
-            <input
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="Enter coupon code"
-              className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
-              disabled={couponApplied}
-            />
+        {couponApplied ? (
+          <div className="flex items-center gap-3 bg-[#13ec13]/10 border border-[#13ec13]/20 rounded-xl px-4 py-3">
+            <Tag className="w-4 h-4 text-[#13ec13] shrink-0" />
+            <div className="flex-1">
+              <p className="text-[#13ec13] text-sm font-bold uppercase">{appliedCouponCode}</p>
+              <p className="text-[#13ec13]/60 text-[10px]">{VALID_COUPONS[appliedCouponCode]?.label || 'Discount applied'}</p>
+            </div>
+            <button
+              onClick={handleRemoveCoupon}
+              className="text-white/40 text-xs font-bold hover:text-red-400 transition-colors"
+            >
+              Remove
+            </button>
           </div>
-          <button
-            onClick={handleApplyCoupon}
-            disabled={couponApplied}
-            className="bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] px-4 rounded-xl font-bold text-sm disabled:opacity-50 hover:bg-[#13ec13]/20 transition-colors"
-          >
-            {couponApplied ? 'Applied' : 'Apply'}
-          </button>
-        </div>
-        {couponApplied && (
-          <p className="text-[#13ec13] text-xs mt-2">✓ 10% discount applied with code: {coupon}</p>
+        ) : (
+          <div className="flex gap-2">
+            <div className="flex-1 flex items-center bg-[#1A1D26] rounded-xl border border-white/5 px-3">
+              <Tag className="w-4 h-4 text-white/30 shrink-0" />
+              <input
+                value={coupon}
+                onChange={(e) => setCoupon(e.target.value)}
+                onKeyDown={(e) => { if (e.key === 'Enter') handleApplyCoupon(); }}
+                placeholder="Enter coupon code"
+                className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+              />
+            </div>
+            <button
+              onClick={handleApplyCoupon}
+              className="bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] px-4 rounded-xl font-bold text-sm hover:bg-[#13ec13]/20 transition-colors"
+            >
+              Apply
+            </button>
+          </div>
         )}
-        <p className="text-white/30 text-[10px] mt-2">Try &quot;RAMADAN&quot; or &quot;IFTAR&quot; for 10% off</p>
+        {!couponApplied && (
+          <p className="text-white/30 text-[10px] mt-2">Try &quot;RAMADAN&quot;, &quot;IFTAR&quot;, &quot;SWIFT25&quot;, or &quot;SAHUR&quot;</p>
+        )}
       </div>
 
       {/* Order Summary */}
@@ -171,9 +219,13 @@ export default function CartTab() {
               {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
             </span>
           </div>
-          {couponApplied && (
+          <div className="flex justify-between text-sm">
+            <span className="text-white/50">Service Fee</span>
+            <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
+          </div>
+          {effectiveCouponApplied && (
             <div className="flex justify-between text-sm">
-              <span className="text-[#13ec13]">Discount (10%)</span>
+              <span className="text-[#13ec13]">Discount ({Math.round(discountPercent * 100)}%)</span>
               <span className="text-[#13ec13] font-bold">-{formatNaira(discount)}</span>
             </div>
           )}

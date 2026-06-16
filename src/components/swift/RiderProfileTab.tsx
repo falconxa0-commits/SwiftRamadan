@@ -5,7 +5,7 @@ import {
   Bike, Star, DollarSign, CheckCircle, ChevronRight,
   Car, Zap, Clock, Heart, FileText, CreditCard, Users,
   MessageSquare, ArrowLeftRight, Settings, HelpCircle,
-  LogOut, Wallet, Award, ShieldCheck, Moon,
+  LogOut, Wallet, Award, ShieldCheck, Moon, BarChart3,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira } from '@/lib/data';
@@ -53,6 +53,7 @@ export default function RiderProfileTab() {
 
   const menuItems = [
     { icon: DollarSign, label: 'Earnings History', subtitle: 'View all past earnings', color: 'text-[#13ec13]', action: 'earnings-history' },
+    { icon: BarChart3, label: 'Performance Hub', subtitle: 'Detailed metrics & insights', color: 'text-[#3b82f6]', action: 'rider-performance' },
     { icon: CheckCircle, label: 'Delivery History', subtitle: 'Past deliveries & routes', color: 'text-[#3b82f6]', action: 'delivery-history' },
     { icon: Moon, label: 'Prayer Times & Qibla', subtitle: 'Never miss a prayer', color: 'text-[#FFD700]', action: 'prayer-times' },
     { icon: Clock, label: 'Sahur Wake-up Call', subtitle: 'Early morning reminders', color: 'text-cyan-400', action: 'sahur' },
@@ -69,6 +70,9 @@ export default function RiderProfileTab() {
     switch (action) {
       case 'earnings-history':
         toast({ title: 'Earnings History 💰', description: 'Viewing your earnings history' });
+        break;
+      case 'rider-performance':
+        setActiveModal('rider-performance');
         break;
       case 'delivery-history':
         toast({ title: 'Delivery History 📦', description: 'Viewing delivery history' });
@@ -113,7 +117,7 @@ export default function RiderProfileTab() {
 
   const handleLogout = () => {
     logout();
-    setShowAuth('login');
+    toast({ title: 'Logged out', description: 'You have been signed out. See you soon! 👋' });
   };
 
   const handleToggleOnline = () => {
@@ -238,10 +242,19 @@ export default function RiderProfileTab() {
 
       {/* ─── 4. Performance Section ─── */}
       <motion.div variants={staggerItem} className="mb-6">
-        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <Award className="w-4 h-4 text-[#FFD700]" />
-          Performance
-        </h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-white text-sm font-extrabold flex items-center gap-2">
+            <Award className="w-4 h-4 text-[#FFD700]" />
+            Performance
+          </h3>
+          <button
+            onClick={() => setActiveModal('rider-performance')}
+            className="flex items-center gap-1 text-[#3b82f6] text-xs font-bold hover:text-[#3b82f6]/80 transition-colors"
+          >
+            <BarChart3 className="w-3.5 h-3.5" />
+            View All
+          </button>
+        </div>
 
         {/* Ramadan Bonus Progress */}
         <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 mb-3">

@@ -9,6 +9,15 @@ import {
   riderPerformanceMetrics,
 } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+} from 'recharts';
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -20,12 +29,35 @@ const staggerItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
+interface HourlyTooltipProps {
+  active?: boolean;
+  payload?: Array<{ value: number; payload: { hour: string; amount: number; isIftar: boolean } }>;
+}
+
+function HourlyTooltip({ active, payload }: HourlyTooltipProps) {
+  if (!active || !payload || !payload.length) return null;
+  const d = payload[0].payload;
+  return (
+    <div className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 shadow-xl">
+      <p className="text-white text-xs font-bold">{d.hour}</p>
+      <p className={d.isIftar ? 'text-[#FFD700] text-sm font-black' : 'text-[#13ec13] text-sm font-black'}>
+        {formatNaira(d.amount)}
+      </p>
+      {d.isIftar && <p className="text-[#FFD700]/60 text-[9px] font-bold">2x Iftar Bonus</p>}
+    </div>
+  );
+}
+
 export default function RiderEarningsHub() {
   const { riderEarnings } = useAppStore();
   const data = riderEarningsBreakdown;
   const perf = riderPerformanceMetrics;
 
-  const maxAmount = Math.max(...data.hourlyData.map(d => d.amount));
+  const chartData = data.hourlyData.map(h => ({
+    hour: h.hour,
+    amount: h.amount,
+    isIftar: h.hour === 'Iftar',
+  }));
 
   const handleCashOut = () => {
     toast({
@@ -67,41 +99,39 @@ export default function RiderEarningsHub() {
         </div>
       </motion.div>
 
-      {/* Hourly Performance Bar Chart */}
+      {/* Hourly Performance Chart (Recharts) */}
       <motion.div variants={staggerItem} className="mb-6">
         <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
           <Clock className="w-4 h-4 text-white/40" />
           Hourly Performance
         </h3>
         <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
-          <div className="flex items-end justify-between gap-2 h-40">
-            {data.hourlyData.map((hour, i) => {
-              const height = maxAmount > 0 ? (hour.amount / maxAmount) * 100 : 0;
-              const isIftar = hour.hour === 'Iftar';
-              return (
-                <div key={i} className="flex flex-col items-center gap-2 flex-1">
-                  <span className="text-white/40 text-[9px] font-bold">
-                    {formatNaira(hour.amount)}
-                  </span>
-                  <div className="w-full flex justify-center" style={{ height: '100px' }}>
-                    <motion.div
-                      className={`w-full max-w-[40px] rounded-t-lg ${
-                        isIftar
-                          ? 'bg-gradient-to-t from-[#FFD700] to-[#FFD700]/60'
-                          : 'bg-gradient-to-t from-[#13ec13]/60 to-[#13ec13]/20'
-                      }`}
-                      initial={{ height: 0 }}
-                      animate={{ height: `${height}%` }}
-                      transition={{ duration: 0.6, delay: i * 0.1, ease: 'easeOut' }}
-                      style={{ alignSelf: 'flex-end' }}
+          <div style={{ width: '100%', height: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                <XAxis
+                  dataKey="hour"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }}
+                  tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}K`}
+                />
+                <Tooltip content={<HourlyTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                <Bar dataKey="amount" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                  {chartData.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={entry.isIftar ? '#FFD700' : 'rgba(19,236,19,0.5)'}
                     />
-                  </div>
-                  <span className={`text-[9px] font-bold ${isIftar ? 'text-[#FFD700]' : 'text-white/30'}`}>
-                    {hour.hour}
-                  </span>
-                </div>
-              );
-            })}
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">

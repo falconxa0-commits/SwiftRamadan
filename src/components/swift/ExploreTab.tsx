@@ -1,16 +1,39 @@
 'use client';
 
-import { categoryHubItems, popularRetailers, quickActions, formatNaira } from '@/lib/data';
+import { categoryHubItems, popularRetailers, quickActions, allProducts, trendingMeals, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { X, SlidersHorizontal, Star, Clock, ShoppingCart, CheckCircle, MapPin } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ExploreTab() {
-  const { setActiveCategory, setSelectedProduct, setActiveModal, addToCart, setActiveTab } = useAppStore();
+  const { activeCategory, setActiveCategory, setSelectedProduct, setActiveModal, addToCart, setActiveTab } = useAppStore();
   const { toast } = useToast();
+  const [selectedRetailer, setSelectedRetailer] = useState<typeof popularRetailers[0] | null>(null);
+
+  // Filter products by active category
+  const categoryProductMap: Record<string, string[]> = {
+    'Iftar Meals': ['iftar meals', 'meals'],
+    'Groceries': ['groceries'],
+    'Pharmacy': [],
+    'Office Meals': ['meals', 'iftar meals'],
+  };
+
+  const filteredProducts = activeCategory
+    ? allProducts.filter(p => {
+        const cats = categoryProductMap[activeCategory];
+        if (!cats || cats.length === 0) return true; // Show all if no specific mapping
+        return cats.some(cat => (p.category || '').toLowerCase().includes(cat));
+      })
+    : allProducts.filter(p => p.id <= 4 || p.id === 100 || p.id === 101 || p.id === 102); // Show curated set by default
 
   const handleCategoryClick = (item: typeof categoryHubItems[0]) => {
-    setActiveCategory(item.name);
+    if (activeCategory === item.name) {
+      setActiveCategory(null);
+    } else {
+      setActiveCategory(item.name);
+    }
   };
 
   const handleShopNow = () => {
@@ -24,8 +47,7 @@ export default function ExploreTab() {
   };
 
   const handleRetailerClick = (retailer: typeof popularRetailers[0]) => {
-    setActiveCategory(retailer.category);
-    toast({ title: retailer.name, description: `Browsing ${retailer.category} from ${retailer.name}` });
+    setSelectedRetailer(retailer);
   };
 
   const handleQuickAction = (action: typeof quickActions[0]) => {
@@ -56,6 +78,17 @@ export default function ExploreTab() {
     setActiveModal('product');
   };
 
+  const handleAddToCart = (product: { id: number; name: string; price: number; salePrice?: number; image: string }, e: React.MouseEvent) => {
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.salePrice || product.price,
+      image: product.image,
+    });
+    toast({ title: 'Added to Cart! 🛒', description: `${product.name} added to your cart` });
+  };
+
   return (
     <main className="flex-1 overflow-y-auto pb-32">
       {/* Welcome */}
@@ -64,30 +97,51 @@ export default function ExploreTab() {
         <h1 className="text-2xl font-bold">What do you need today?</h1>
       </div>
 
+      {/* Active category filter indicator */}
+      {activeCategory && (
+        <div className="px-4 pb-2">
+          <div className="flex items-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 rounded-xl px-3 py-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#13ec13]" />
+            <span className="text-[#13ec13] text-xs font-bold">Showing: {activeCategory}</span>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="ml-auto p-0.5 hover:bg-[#13ec13]/10 rounded-full transition-colors"
+            >
+              <X className="w-3.5 h-3.5 text-[#13ec13]/60" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Category Grid */}
       <div className="px-4 py-4">
         <div className="grid grid-cols-2 gap-4">
-          {categoryHubItems.map((item, i) => (
-            <motion.button
-              key={item.id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.1 }}
-              onClick={() => handleCategoryClick(item)}
-              className="relative group cursor-pointer overflow-hidden rounded-xl aspect-square flex flex-col justify-end p-4 border border-white/5 hover:border-[#13ec13]/20 transition-colors text-left"
-              style={{
-                backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%), url('${item.image}')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
-            >
-              <span className="absolute top-2 right-2 bg-[#13ec13] text-[#05070A] text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">
-                {item.badge}
-              </span>
-              <p className="text-white text-lg font-bold">{item.name}</p>
-              <p className="text-white/70 text-xs">{item.subtitle}</p>
-            </motion.button>
-          ))}
+          {categoryHubItems.map((item, i) => {
+            const isActive = activeCategory === item.name;
+            return (
+              <motion.button
+                key={item.id}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+                onClick={() => handleCategoryClick(item)}
+                className={`relative group cursor-pointer overflow-hidden rounded-xl aspect-square flex flex-col justify-end p-4 border transition-colors text-left ${
+                  isActive ? 'border-[#13ec13]/40 ring-1 ring-[#13ec13]/20' : 'border-white/5 hover:border-[#13ec13]/20'
+                }`}
+                style={{
+                  backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 100%), url('${item.image}')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              >
+                <span className="absolute top-2 right-2 bg-[#13ec13] text-[#05070A] text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter">
+                  {isActive ? '✓ Active' : item.badge}
+                </span>
+                <p className="text-white text-lg font-bold">{item.name}</p>
+                <p className="text-white/70 text-xs">{item.subtitle}</p>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
@@ -142,7 +196,7 @@ export default function ExploreTab() {
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-white text-lg font-extrabold">Popular Retailers</h3>
           <button
-            onClick={() => setActiveCategory('All')}
+            onClick={() => setActiveCategory(null)}
             className="text-[#13ec13] text-sm font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
           >
             Explore All
@@ -154,7 +208,9 @@ export default function ExploreTab() {
               key={retailer.id}
               onClick={() => handleRetailerClick(retailer)}
               whileTap={{ scale: 0.97 }}
-              className="min-w-[160px] bg-[#1A1D26] rounded-2xl p-3 border border-white/5 cursor-pointer hover:border-white/10 transition-colors text-left"
+              className={`min-w-[160px] bg-[#1A1D26] rounded-2xl p-3 border cursor-pointer hover:border-white/10 transition-colors text-left ${
+                selectedRetailer?.id === retailer.id ? 'border-[#13ec13]/30' : 'border-white/5'
+              }`}
             >
               <div
                 className="w-full aspect-square bg-center bg-no-repeat bg-cover rounded-xl mb-3"
@@ -162,10 +218,58 @@ export default function ExploreTab() {
               />
               <h4 className="text-white text-sm font-bold">{retailer.name}</h4>
               <p className="text-white/40 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <Star className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
+                <span className="text-[#FFD700] text-[10px] font-bold">{retailer.rating}</span>
+                {retailer.verified && (
+                  <CheckCircle className="w-3 h-3 text-[#13ec13] ml-1" />
+                )}
+              </div>
             </motion.button>
           ))}
         </div>
       </div>
+
+      {/* Retailer Detail Card */}
+      {selectedRetailer && (
+        <div className="px-4 mt-2">
+          <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
+            <div className="flex justify-between items-start mb-3">
+              <div>
+                <h4 className="text-white font-bold">{selectedRetailer.name}</h4>
+                <p className="text-white/40 text-xs">{selectedRetailer.category} &bull; {selectedRetailer.deliveryTime} delivery</p>
+              </div>
+              <button
+                onClick={() => setSelectedRetailer(null)}
+                className="p-1 hover:bg-white/5 rounded-lg transition-colors"
+              >
+                <X className="w-4 h-4 text-white/30" />
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setActiveCategory(selectedRetailer.category);
+                  setSelectedRetailer(null);
+                }}
+                className="flex-1 bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-2 rounded-xl font-bold text-xs hover:bg-[#13ec13]/20 transition-colors"
+              >
+                Browse Menu
+              </button>
+              <button
+                onClick={() => {
+                  setActiveCategory(selectedRetailer.category);
+                  setSelectedRetailer(null);
+                  toast({ title: `Viewing ${selectedRetailer.name}`, description: `Showing ${selectedRetailer.category} items` });
+                }}
+                className="flex-1 bg-white/5 border border-white/10 text-white py-2 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
+              >
+                View Store
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="px-4 py-8">
@@ -186,41 +290,75 @@ export default function ExploreTab() {
         </div>
       </div>
 
-      {/* Featured Products Row */}
+      {/* Featured Products / Filtered Products */}
       <div className="px-4 mb-6">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-white text-lg font-extrabold">Top Picks</h3>
+          <h3 className="text-white text-lg font-extrabold">
+            {activeCategory ? `${activeCategory} Picks` : 'Top Picks'}
+          </h3>
           <button
             onClick={() => setActiveTab('home')}
-            className="text-[#13ec13] text-xs font-bold cursor-pointer"
+            className="text-[#13ec13] text-xs font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
           >
             See All
           </button>
         </div>
-        <div className="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
-          {[
-            { id: 1, name: 'Jollof Rice & Chicken', price: 4500, image: '/images/meals/meal-jollof.png' },
-            { id: 2, name: 'Suya Platter', price: 3200, image: '/images/meals/meal-suya.png' },
-            { id: 3, name: 'Moi Moi & Pap', price: 2800, image: '/images/meals/meal-moimoi.png' },
-            { id: 4, name: 'Date & Nut Smoothie', price: 1800, image: '/images/meals/meal-smoothie.png' },
-          ].map(product => (
-            <motion.button
+        <div className="grid grid-cols-2 gap-3">
+          {filteredProducts.slice(0, 6).map(product => (
+            <motion.div
               key={product.id}
               onClick={() => handleProductClick(product.id)}
               whileTap={{ scale: 0.97 }}
-              className="min-w-[140px] bg-[#1A1D26] rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors text-left"
+              className="bg-[#1A1D26] rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
             >
               <div
-                className="w-full aspect-square bg-center bg-cover"
+                className="w-full aspect-square bg-center bg-cover relative"
                 style={{ backgroundImage: `url("${product.image}")` }}
-              />
+              >
+                {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
+                  <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    -{Math.round(((product.originalPrice - product.salePrice) / product.originalPrice) * 100)}%
+                  </span>
+                )}
+              </div>
               <div className="p-3">
                 <p className="text-white text-xs font-bold truncate">{product.name}</p>
-                <p className="text-[#13ec13] text-sm font-black">{formatNaira(product.price)}</p>
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
+                  <span className="text-[#FFD700] text-[10px] font-bold">{product.rating}</span>
+                  <span className="text-white/20 text-[10px]">({product.reviews})</span>
+                </div>
+                <div className="flex items-center justify-between mt-1.5">
+                  <div>
+                    <span className="text-[#13ec13] text-sm font-black">
+                      {formatNaira(product.salePrice || product.price)}
+                    </span>
+                    {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
+                      <span className="text-white/30 text-[10px] line-through ml-1">{formatNaira(product.originalPrice)}</span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={(e) => handleAddToCart(product, e)}
+                  className="w-full mt-2 text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 py-1.5 rounded-lg border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                >
+                  + Add to Cart
+                </button>
               </div>
-            </motion.button>
+            </motion.div>
           ))}
         </div>
+        {filteredProducts.length === 0 && activeCategory && (
+          <div className="flex flex-col items-center py-8 text-center">
+            <p className="text-white/40 text-sm">No products found for &quot;{activeCategory}&quot;</p>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="text-[#13ec13] text-sm font-bold mt-2 hover:text-[#13ec13]/80 transition-colors"
+            >
+              Clear filter
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

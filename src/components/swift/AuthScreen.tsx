@@ -428,7 +428,8 @@ function LoginScreen() {
 function SignupScreen() {
   const store = useAppStore();
   const [step, setStep] = useState<1 | 2>(1);
-  const [signupRole, setSignupRole] = useState<RoleKey>('customer');
+  // Use the role already set in the store (from RoleScreen), fallback to 'customer'
+  const [signupRole, setSignupRole] = useState<RoleKey>(store.userRole || 'customer');
 
   // Step 1 fields
   const [fullName, setFullName] = useState('');
@@ -1166,7 +1167,7 @@ const ROLES = [
 ];
 
 function RoleScreen() {
-  const { setUserRole, setShowAuth, setShowOnboarding, setOnboardingStep } = useAppStore();
+  const { setUserRole, setShowAuth, isLoggedIn, setShowOnboarding, setOnboardingComplete } = useAppStore();
   const [selected, setSelected] = useState<'customer' | 'vendor' | 'rider'>('customer');
   const [loading, setLoading] = useState(false);
 
@@ -1174,14 +1175,21 @@ function RoleScreen() {
     setLoading(true);
     setTimeout(() => {
       setUserRole(selected);
-      // After role selection, go to onboarding
-      setOnboardingStep(0);
-      setShowOnboarding(true);
-      setShowAuth(null);
-      toast({
-        title: 'Welcome to SwiftRamadan! 🌙',
-        description: `Let's set up your ${selected} account.`,
-      });
+      if (isLoggedIn) {
+        // Already logged in - just switch role and go back to main app
+        setShowAuth(null);
+        toast({
+          title: 'Role Switched! 🔄',
+          description: `You're now using SwiftRamadan as a ${selected}.`,
+        });
+      } else {
+        // New user - go to signup with role pre-selected
+        setShowAuth('signup');
+        toast({
+          title: 'Great choice! 🌙',
+          description: `Let's create your ${selected} account.`,
+        });
+      }
       setLoading(false);
     }, 600);
   };
@@ -1284,13 +1292,8 @@ export default function AuthScreen() {
   const handleBack = () => {
     if (showAuth === 'otp') {
       setShowAuth('signup');
-    } else if (showAuth === 'role') {
-      setShowAuth('login');
-    } else if (showAuth === 'signup') {
-      // Go back to login from signup
-      setShowAuth('login');
     } else {
-      // From login, go back to welcome page
+      // From login, signup, or role — go back to welcome page
       setShowWelcome(true);
       setShowAuth(null);
     }

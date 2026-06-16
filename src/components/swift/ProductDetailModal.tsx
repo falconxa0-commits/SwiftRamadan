@@ -12,7 +12,8 @@ export default function ProductDetailModal() {
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [prevProductId, setPrevProductId] = useState(selectedProduct);
-  const isOpen = activeModal === 'product';
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const isOpen = activeModal === 'product' || activeModal === 'product-detail';
 
   // Find product by selectedProduct ID
   const product = allProducts.find(p => p.id === selectedProduct) || allProducts[0];
@@ -21,7 +22,11 @@ export default function ProductDetailModal() {
   if (selectedProduct !== prevProductId) {
     setPrevProductId(selectedProduct);
     setQuantity(1);
+    setActiveImageIdx(0);
   }
+
+  const images = (product.images && product.images.length > 0) ? product.images : [product.image || ''];
+  const mainImage = images[activeImageIdx] || images[0];
 
   const isWishlisted = wishlist.includes(product.id);
 
@@ -35,6 +40,7 @@ export default function ProductDetailModal() {
       name: product.name,
       price: salePrice,
       image: product.image || '',
+      quantity,
     });
     toast({ title: 'Added to Cart! 🛒', description: `${quantity}x ${product.name}` });
     setActiveModal(null);
@@ -98,15 +104,59 @@ export default function ProductDetailModal() {
 
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto custom-scrollbar">
-              {/* Product Image */}
-              <div className="grid grid-cols-2 gap-2 p-4">
-                {(product.images && product.images.length > 1 ? product.images : [product.image]).map((img, i) => (
-                  <div
-                    key={i}
-                    className="aspect-square bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10"
-                    style={{ backgroundImage: `url("${img}")` }}
-                  />
-                ))}
+              {/* Product Image Gallery */}
+              <div className="p-4">
+                {/* Main Image */}
+                <div
+                  className="aspect-[4/3] bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10 relative overflow-hidden"
+                  style={{ backgroundImage: `url("${mainImage}")` }}
+                >
+                  {/* Image counter */}
+                  {images.length > 1 && (
+                    <div className="absolute bottom-3 right-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                      <span className="text-white text-[10px] font-bold">{activeImageIdx + 1}/{images.length}</span>
+                    </div>
+                  )}
+                  {/* Nav arrows */}
+                  {images.length > 1 && (
+                    <>
+                      {activeImageIdx > 0 && (
+                        <button
+                          onClick={() => setActiveImageIdx(activeImageIdx - 1)}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4 text-white rotate-180" />
+                        </button>
+                      )}
+                      {activeImageIdx < images.length - 1 && (
+                        <button
+                          onClick={() => setActiveImageIdx(activeImageIdx + 1)}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center hover:bg-black/60 transition-colors"
+                        >
+                          <ChevronRight className="w-4 h-4 text-white" />
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+
+                {/* Thumbnails */}
+                {images.length > 1 && (
+                  <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
+                    {images.map((img, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setActiveImageIdx(i)}
+                        className={`shrink-0 w-16 h-16 rounded-xl bg-center bg-cover border-2 transition-all ${
+                          i === activeImageIdx
+                            ? 'border-[#13ec13] ring-1 ring-[#13ec13]/30'
+                            : 'border-white/10 opacity-50 hover:opacity-80'
+                        }`}
+                        style={{ backgroundImage: `url("${img}")` }}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}

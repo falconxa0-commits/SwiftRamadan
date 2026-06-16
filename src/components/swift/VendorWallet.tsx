@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowDownLeft, Building2, History, ChevronRight, Wallet } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowDownLeft, Building2, History, ChevronRight, Wallet, TrendingUp, BarChart3 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { vendorTransactions, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
@@ -10,9 +10,11 @@ import { useToast } from '@/hooks/use-toast';
 type TxFilter = 'all' | 'completed' | 'processing' | 'refunded';
 
 export default function VendorWallet() {
-  const { vendorBalance, vendorPendingSettlement, vendorTotalEarnings } = useAppStore();
+  const { vendorBalance, vendorPendingSettlement, vendorTotalEarnings, setActiveModal } = useAppStore();
   const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState<TxFilter>('all');
+  const [showWithdrawConfirm, setShowWithdrawConfirm] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
 
   const filterChips: { id: TxFilter; label: string }[] = [
     { id: 'all', label: 'All' },
@@ -55,6 +57,24 @@ export default function VendorWallet() {
     );
   };
 
+  const handleWithdraw = () => {
+    const amount = withdrawAmount ? parseInt(withdrawAmount.replace(/[^0-9]/g, ''), 10) : vendorBalance;
+    if (isNaN(amount) || amount <= 0) {
+      toast({ title: 'Invalid Amount', description: 'Please enter a valid withdrawal amount' });
+      return;
+    }
+    if (amount > vendorBalance) {
+      toast({ title: 'Insufficient Balance', description: 'Amount exceeds available balance' });
+      return;
+    }
+    toast({
+      title: 'Withdrawal Initiated 💰',
+      description: `${formatNaira(amount)} will be sent to your GTBank ****8291 within 24 hours`,
+    });
+    setShowWithdrawConfirm(false);
+    setWithdrawAmount('');
+  };
+
   return (
     <div className="flex flex-col gap-5 px-4 pb-32 pt-2">
       {/* Premium Balance Card */}
@@ -73,18 +93,102 @@ export default function VendorWallet() {
 
         <div className="relative z-10">
           <p className="text-[#05070A]/60 text-xs font-bold uppercase tracking-widest">Available Balance</p>
-          <p className="text-[#05070A] text-3xl font-black mt-1">{formatNaira(vendorBalance).replace('₦', '₦')}</p>
+          <p className="text-[#05070A] text-3xl font-black mt-1">{formatNaira(vendorBalance)}</p>
           <div className="flex items-center gap-2 mt-4">
-            <p className="text-[#05070A]/50 text-xs font-semibold">{formatNaira(vendorBalance).replace('₦', '₦')} available</p>
+            <p className="text-[#05070A]/50 text-xs font-semibold">{formatNaira(vendorBalance)} available</p>
           </div>
-          <button
-            onClick={() => toast({ title: 'Withdrawal Initiated 💰', description: `${formatNaira(vendorBalance)} will be sent to your bank account` })}
-            className="mt-4 px-6 py-2.5 rounded-xl bg-[#05070A] text-[#FFD700] text-xs font-bold hover:bg-[#05070A]/90 active:scale-[0.98] transition-all"
-          >
-            Withdraw
-          </button>
+          <div className="flex gap-2 mt-4">
+            <button
+              onClick={() => setShowWithdrawConfirm(true)}
+              className="px-6 py-2.5 rounded-xl bg-[#05070A] text-[#FFD700] text-xs font-bold hover:bg-[#05070A]/90 active:scale-[0.98] transition-all"
+            >
+              Withdraw
+            </button>
+            <button
+              onClick={() => setActiveModal('vendor-insights')}
+              className="px-6 py-2.5 rounded-xl bg-[#05070A]/20 text-[#05070A]/70 text-xs font-bold hover:bg-[#05070A]/30 active:scale-[0.98] transition-all flex items-center gap-1.5"
+            >
+              <BarChart3 className="w-3.5 h-3.5" />
+              Sales Insights
+            </button>
+          </div>
         </div>
       </motion.div>
+
+      {/* Withdraw Confirmation Modal */}
+      <AnimatePresence>
+        {showWithdrawConfirm && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90]"
+            onClick={() => setShowWithdrawConfirm(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="absolute bottom-0 left-0 right-0 bg-[#1A1D26] rounded-t-3xl border-t border-white/10 p-6"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-center mb-4">
+                <div className="w-10 h-1 bg-white/10 rounded-full" />
+              </div>
+              <h3 className="text-white text-lg font-bold mb-1">Withdraw Funds</h3>
+              <p className="text-white/40 text-xs mb-4">Available: {formatNaira(vendorBalance)}</p>
+
+              <input
+                type="text"
+                placeholder={`Amount (up to ${formatNaira(vendorBalance)})`}
+                value={withdrawAmount}
+                onChange={(e) => setWithdrawAmount(e.target.value)}
+                className="w-full bg-[#05070A]/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#FFD700]/30 focus:outline-none transition-colors mb-3"
+              />
+
+              {/* Quick amount buttons */}
+              <div className="flex gap-2 mb-4">
+                {[25, 50, 75, 100].map(pct => {
+                  const amt = Math.floor(vendorBalance * pct / 100);
+                  return (
+                    <button
+                      key={pct}
+                      onClick={() => setWithdrawAmount(amt.toString())}
+                      className="flex-1 py-2 rounded-lg bg-white/5 border border-white/10 text-white/50 text-[10px] font-bold hover:bg-white/10 hover:text-white/70 transition-all"
+                    >
+                      {pct}%
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center gap-3 mb-3">
+                <Building2 className="w-4 h-4 text-blue-400 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-white text-sm font-semibold">GT Bank **** 8291</p>
+                  <p className="text-white/30 text-[10px]">Primary account</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowWithdrawConfirm(false)}
+                  className="flex-1 py-3 rounded-xl bg-white/5 border border-white/10 text-white/60 text-sm font-bold hover:bg-white/10 transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleWithdraw}
+                  className="flex-1 py-3 rounded-xl bg-[#FFD700] text-[#05070A] text-sm font-bold hover:bg-[#FFE033] active:scale-[0.98] transition-all"
+                >
+                  Confirm Withdrawal
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Quick Stats Grid */}
       <motion.div
@@ -102,7 +206,7 @@ export default function VendorWallet() {
         </div>
         <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4">
           <div className="w-8 h-8 rounded-lg bg-[#13ec13]/20 flex items-center justify-center mb-2">
-            <span className="material-symbols-outlined text-[#13ec13] text-sm">trending_up</span>
+            <TrendingUp className="w-4 h-4 text-[#13ec13]" />
           </div>
           <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">Ramadan Earnings</p>
           <p className="text-[#13ec13] font-black text-lg mt-0.5">{formatNaira(vendorTotalEarnings)}</p>

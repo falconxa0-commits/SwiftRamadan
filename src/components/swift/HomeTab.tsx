@@ -1,7 +1,7 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw } from 'lucide-react';
-import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, formatNaira } from '@/lib/data';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal } from 'lucide-react';
+import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
@@ -17,11 +17,16 @@ const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?
 };
 
 export default function HomeTab() {
-  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch } = useAppStore();
+  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory } = useAppStore();
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Filtered meals based on active category
+  const filteredMeals = activeCategory
+    ? trendingMeals.filter(m => m.category === activeCategory)
+    : trendingMeals;
 
   // Auto-scroll hero carousel
   useEffect(() => {
@@ -46,9 +51,12 @@ export default function HomeTab() {
   }, []);
 
   const handleCategoryClick = (category: typeof categories[0]) => {
-    setActiveCategory(category.name);
-    setActiveTab('explore');
-    toast({ title: category.name, description: `Browsing ${category.name} items` });
+    if (activeCategory === category.name) {
+      // Toggle off if already selected
+      setActiveCategory(null);
+    } else {
+      setActiveCategory(category.name);
+    }
   };
 
   const handleMealClick = (id: number) => {
@@ -163,23 +171,42 @@ export default function HomeTab() {
       {/* Category Circles */}
       <div className="px-4 py-4">
         <div className="flex w-full overflow-x-auto gap-6 pb-2 no-scrollbar">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryClick(cat)}
-              className="flex flex-col items-center gap-2 min-w-[70px]"
-            >
-              <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${cat.active ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${cat.active ? 'green-glow' : ''} hover:border-[#13ec13]/50 transition-colors`}>
-                <div
-                  className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
-                  style={{ backgroundImage: `url("${cat.image}")` }}
-                />
-              </div>
-              <p className={`text-[11px] font-bold whitespace-nowrap ${cat.active ? 'text-white/90' : 'text-white/60'}`}>{cat.name}</p>
-            </button>
-          ))}
+          {categories.map((cat) => {
+            const isActive = activeCategory === cat.name || (!activeCategory && cat.id === 1);
+            return (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryClick(cat)}
+                className="flex flex-col items-center gap-2 min-w-[70px]"
+              >
+                <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${isActive ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${isActive ? 'green-glow' : ''} hover:border-[#13ec13]/50 transition-colors`}>
+                  <div
+                    className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
+                    style={{ backgroundImage: `url("${cat.image}")` }}
+                  />
+                </div>
+                <p className={`text-[11px] font-bold whitespace-nowrap ${isActive ? 'text-white/90' : 'text-white/60'}`}>{cat.name}</p>
+              </button>
+            );
+          })}
         </div>
       </div>
+
+      {/* Active category filter indicator */}
+      {activeCategory && (
+        <div className="px-4 pb-2">
+          <div className="flex items-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 rounded-xl px-3 py-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#13ec13]" />
+            <span className="text-[#13ec13] text-xs font-bold">Filtered by: {activeCategory}</span>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="ml-auto p-0.5 hover:bg-[#13ec13]/10 rounded-full transition-colors"
+            >
+              <X className="w-3.5 h-3.5 text-[#13ec13]/60" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="px-4 py-2">
@@ -206,7 +233,10 @@ export default function HomeTab() {
 
       {/* Featured Ramadan Box */}
       <div className="px-4 my-6">
-        <div className="relative overflow-hidden rounded-[2rem] bg-[#1A1D26] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+        <div
+          className="relative overflow-hidden rounded-[2rem] bg-[#1A1D26] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer"
+          onClick={() => handleMealClick(100)}
+        >
           <div className="absolute top-0 right-0 w-48 h-48 bg-[#13ec13]/5 blur-[80px]" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FFD700]/5 blur-[80px]" />
           <div className="p-6 relative z-10">
@@ -242,7 +272,7 @@ export default function HomeTab() {
               <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => handleQuickAdd({
                   id: ramadanBox.id,
@@ -341,7 +371,9 @@ export default function HomeTab() {
 
       {/* Trending Iftar */}
       <div className="px-4 py-4 flex justify-between items-end">
-        <h3 className="text-white text-xl font-black tracking-tight">Trending Iftar</h3>
+        <h3 className="text-white text-xl font-black tracking-tight">
+          {activeCategory ? activeCategory : 'Trending Iftar'}
+        </h3>
         <button
           onClick={() => setActiveTab('explore')}
           className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
@@ -350,7 +382,7 @@ export default function HomeTab() {
         </button>
       </div>
       <div className="px-4 space-y-4">
-        {trendingMeals.map((meal) => (
+        {filteredMeals.length > 0 ? filteredMeals.map((meal) => (
           <motion.div
             key={meal.id}
             initial={{ opacity: 0, y: 10 }}
@@ -392,7 +424,17 @@ export default function HomeTab() {
               </div>
             </div>
           </motion.div>
-        ))}
+        )) : (
+          <div className="flex flex-col items-center py-8 text-center">
+            <p className="text-white/40 text-sm">No meals found for &quot;{activeCategory}&quot;</p>
+            <button
+              onClick={() => setActiveCategory(null)}
+              className="text-[#13ec13] text-sm font-bold mt-2 hover:text-[#13ec13]/80 transition-colors"
+            >
+              Clear filter
+            </button>
+          </div>
+        )}
       </div>
     </main>
   );

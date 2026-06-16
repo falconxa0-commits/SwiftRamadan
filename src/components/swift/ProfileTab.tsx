@@ -4,9 +4,10 @@ import {
   User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight,
   Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette,
   MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
-  Navigation, DollarSign, Star,
+  Navigation, DollarSign, Star, ToggleLeft, ToggleRight, Fingerprint,
+  Lock, Globe, Eye, Map,
 } from 'lucide-react';
-import { loyaltyData, charityItems, formatNaira, vendorSalesInsights } from '@/lib/data';
+import { loyaltyData, charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
 import { useAppStore, type TabId } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,7 +31,7 @@ const ROLE_DEFAULT_TAB: Record<string, TabId> = {
 
 const customerMenu = [
   { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: `${loyaltyData.points.toLocaleString()} points`, color: 'text-[#FFD700]', action: 'rewards' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
   { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
   { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
@@ -38,7 +39,7 @@ const customerMenu = [
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community' },
   { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
@@ -48,11 +49,11 @@ const vendorMenu = [
   { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights' },
   { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock' },
   { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: `${loyaltyData.points.toLocaleString()} points`, color: 'text-[#FFD700]', action: 'rewards' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
@@ -65,7 +66,7 @@ const riderMenu = [
   { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '3 unread', color: 'text-amber-400', action: 'notifications' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
@@ -110,6 +111,22 @@ const roleCards = [
   },
 ];
 
+/* ──────────────── Toggle Switch Component ──────────────── */
+
+function ToggleSwitch({ enabled, onToggle, label }: { enabled: boolean; onToggle: () => void; label: string }) {
+  return (
+    <button
+      onClick={onToggle}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+      role="switch"
+      aria-checked={enabled}
+      aria-label={label}
+    >
+      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+    </button>
+  );
+}
+
 /* ════════════════════════════════════════════════════════════════
    ProfileTab Component
    ════════════════════════════════════════════════════════════════ */
@@ -119,6 +136,15 @@ export default function ProfileTab() {
   const [modalContent, setModalContent] = useState<ModalContent>({ title: '', content: null });
   const [showSwitchRole, setShowSwitchRole] = useState(false);
 
+  // Settings toggles
+  const [settingsState, setSettingsState] = useState({
+    notifications: true,
+    darkMode: true,
+    locationServices: true,
+    biometric: true,
+    twoFactor: true,
+  });
+
   const { toast } = useToast();
   const {
     userName, userArea, logout, setShowAuth,
@@ -126,10 +152,18 @@ export default function ProfileTab() {
     vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
     vendorTotalEarnings, vendorPendingSettlement,
     riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
+    orders, cartItems, referralCount,
   } = useAppStore();
 
   const accent = ROLE_ACCENT[userRole];
   const currentMenu = userRole === 'vendor' ? vendorMenu : userRole === 'rider' ? riderMenu : customerMenu;
+
+  // Update rewards subtitle dynamically
+  const menuWithDynamicSubtitles = currentMenu.map(item => {
+    if (item.action === 'rewards') return { ...item, subtitle: `${hasanatPoints.toLocaleString()} points` };
+    if (item.action === 'notifications') return { ...item, subtitle: `${useAppStore.getState().unreadCount} unread` };
+    return item;
+  });
 
   /* ── Display values per role ── */
   const displayName = userRole === 'vendor'
@@ -169,7 +203,7 @@ export default function ProfileTab() {
         useAppStore.getState().setActiveModal('delivery-location');
         break;
       case 'prayer-times':
-        useAppStore.getState().setActiveModal('prayer-times');
+        useAppStore.getState().setActiveModal('prayer');
         break;
       case 'vendor-insights':
         useAppStore.getState().setActiveModal('vendor-insights');
@@ -201,23 +235,46 @@ export default function ProfileTab() {
           content: (
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Biometric Login</p>
-                  <p className="text-white/40 text-xs">Use fingerprint or Face ID</p>
+                <div className="flex items-center gap-3">
+                  <Fingerprint className="w-5 h-5 text-[#13ec13]" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Biometric Login</p>
+                    <p className="text-white/40 text-xs">Use fingerprint or Face ID</p>
+                  </div>
                 </div>
-                <span className="text-[#13ec13] text-xs font-bold">Enabled</span>
+                <ToggleSwitch
+                  enabled={settingsState.biometric}
+                  onToggle={() => {
+                    setSettingsState(s => ({ ...s, biometric: !s.biometric }));
+                    toast({ title: settingsState.biometric ? 'Biometric Disabled' : 'Biometric Enabled', description: settingsState.biometric ? 'Password login required' : 'You can now use fingerprint/Face ID' });
+                  }}
+                  label="Biometric Login"
+                />
               </div>
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Two-Factor Auth</p>
-                  <p className="text-white/40 text-xs">Extra security for your account</p>
+                <div className="flex items-center gap-3">
+                  <Lock className="w-5 h-5 text-[#13ec13]" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Two-Factor Auth</p>
+                    <p className="text-white/40 text-xs">Extra security for your account</p>
+                  </div>
                 </div>
-                <span className="text-[#13ec13] text-xs font-bold">Enabled</span>
+                <ToggleSwitch
+                  enabled={settingsState.twoFactor}
+                  onToggle={() => {
+                    setSettingsState(s => ({ ...s, twoFactor: !s.twoFactor }));
+                    toast({ title: settingsState.twoFactor ? '2FA Disabled' : '2FA Enabled', description: settingsState.twoFactor ? 'Less secure - consider re-enabling' : 'Your account is more secure now' });
+                  }}
+                  label="Two-Factor Auth"
+                />
               </div>
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Data Encryption</p>
-                  <p className="text-white/40 text-xs">End-to-end encryption</p>
+                <div className="flex items-center gap-3">
+                  <Eye className="w-5 h-5 text-[#13ec13]" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Data Encryption</p>
+                    <p className="text-white/40 text-xs">End-to-end encryption</p>
+                  </div>
                 </div>
                 <span className="text-[#13ec13] text-xs font-bold">Active</span>
               </div>
@@ -232,32 +289,65 @@ export default function ProfileTab() {
           content: (
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Language</p>
-                  <p className="text-white/40 text-xs">English (US)</p>
+                <div className="flex items-center gap-3">
+                  <Globe className="w-5 h-5 text-white/40" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Language</p>
+                    <p className="text-white/40 text-xs">English (US)</p>
+                  </div>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20" />
               </div>
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Notifications</p>
-                  <p className="text-white/40 text-xs">Push & Email</p>
+                <div className="flex items-center gap-3">
+                  <Bell className="w-5 h-5 text-white/40" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Notifications</p>
+                    <p className="text-white/40 text-xs">Push & Email</p>
+                  </div>
                 </div>
-                <span className="text-[#13ec13] text-xs font-bold">On</span>
+                <ToggleSwitch
+                  enabled={settingsState.notifications}
+                  onToggle={() => {
+                    setSettingsState(s => ({ ...s, notifications: !s.notifications }));
+                    toast({ title: settingsState.notifications ? 'Notifications Off' : 'Notifications On', description: settingsState.notifications ? 'You won\'t receive push alerts' : 'You\'ll receive push & email alerts' });
+                  }}
+                  label="Notifications"
+                />
               </div>
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Dark Mode</p>
-                  <p className="text-white/40 text-xs">Always on</p>
+                <div className="flex items-center gap-3">
+                  <Moon className="w-5 h-5 text-white/40" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Dark Mode</p>
+                    <p className="text-white/40 text-xs">Always on</p>
+                  </div>
                 </div>
-                <span className="text-[#13ec13] text-xs font-bold">Active</span>
+                <ToggleSwitch
+                  enabled={settingsState.darkMode}
+                  onToggle={() => {
+                    setSettingsState(s => ({ ...s, darkMode: !s.darkMode }));
+                    toast({ title: 'Dark Mode', description: 'Dark mode is always on in SwiftRamadan' });
+                  }}
+                  label="Dark Mode"
+                />
               </div>
               <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
-                <div>
-                  <p className="text-white font-bold text-sm">Location Services</p>
-                  <p className="text-white/40 text-xs">While using the app</p>
+                <div className="flex items-center gap-3">
+                  <Map className="w-5 h-5 text-white/40" />
+                  <div>
+                    <p className="text-white font-bold text-sm">Location Services</p>
+                    <p className="text-white/40 text-xs">While using the app</p>
+                  </div>
                 </div>
-                <span className="text-[#13ec13] text-xs font-bold">Enabled</span>
+                <ToggleSwitch
+                  enabled={settingsState.locationServices}
+                  onToggle={() => {
+                    setSettingsState(s => ({ ...s, locationServices: !s.locationServices }));
+                    toast({ title: settingsState.locationServices ? 'Location Off' : 'Location On', description: settingsState.locationServices ? 'Some features may be limited' : 'Location access enabled' });
+                  }}
+                  label="Location Services"
+                />
               </div>
             </div>
           ),
@@ -294,8 +384,6 @@ export default function ProfileTab() {
 
   const handleLogout = () => {
     logout();
-    setShowAuth('login');
-    toast({ title: 'Logged out', description: 'You have been signed out. See you soon! 👋' });
   };
 
   /* ══════════════════════ RENDER ══════════════════════ */
@@ -431,11 +519,11 @@ export default function ProfileTab() {
                 <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
               </div>
               <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-                <p className="text-[#FFD700] text-xl font-black">12</p>
+                <p className="text-[#FFD700] text-xl font-black">{orders.length}</p>
                 <p className="text-white/40 text-[10px] font-bold uppercase">Orders</p>
               </div>
               <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-                <p className="text-white text-xl font-black">3</p>
+                <p className="text-white text-xl font-black">{referralCount}</p>
                 <p className="text-white/40 text-[10px] font-bold uppercase">Referrals</p>
               </div>
             </>
@@ -457,11 +545,11 @@ export default function ProfileTab() {
             </div>
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
-                <p className="text-white text-lg font-black">8.2kg</p>
+                <p className="text-white text-lg font-black">{ecoImpactData.co2Saved}</p>
                 <p className="text-white/40 text-[10px]">CO₂ Saved</p>
               </div>
               <div className="text-center">
-                <p className="text-white text-lg font-black">15</p>
+                <p className="text-white text-lg font-black">{ecoImpactData.ecoOrders}</p>
                 <p className="text-white/40 text-[10px]">Eco Orders</p>
               </div>
               <div className="text-center">
@@ -476,7 +564,7 @@ export default function ProfileTab() {
       {/* ─── Menu Items ─── */}
       <div className="px-4 mt-6">
         <div className="space-y-2">
-          {currentMenu.map((item, i) => {
+          {menuWithDynamicSubtitles.map((item, i) => {
             const Icon = item.icon;
             const isSwitchRole = item.action === 'switch-role';
             return (
