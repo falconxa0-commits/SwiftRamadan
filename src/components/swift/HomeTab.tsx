@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal } from 'lucide-react';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
@@ -106,15 +106,130 @@ export default function HomeTab() {
   return (
     <main className="flex-1 overflow-y-auto pb-32">
       {/* Search Bar */}
-      <div className="px-4 pt-4 pb-2">
+      <div className="px-4 pt-4 pb-2 flex items-center gap-2">
         <button
           onClick={() => setShowSearch(true)}
-          className="w-full flex items-center gap-3 bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3.5 hover:border-white/10 transition-colors"
+          className="flex-1 flex items-center gap-3 bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3.5 hover:border-white/10 transition-colors"
         >
           <Search className="w-4 h-4 text-white/30" />
           <span className="text-white/30 text-sm">Search meals, groceries, restaurants...</span>
           <span className="ml-auto text-[10px] text-white/20 font-mono bg-white/5 px-2 py-0.5 rounded">⌘K</span>
         </button>
+        <button
+          onClick={() => setActiveModal('visual-search')}
+          aria-label="Snap to Shop - visual search"
+          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-[#13ec13]/10 border border-[#13ec13]/30 hover:bg-[#13ec13]/20 active:scale-95 transition-all relative"
+        >
+          <ScanLine className="w-5 h-5 text-[#13ec13]" />
+          <motion.span
+            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FFD700]"
+            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+            transition={{ duration: 1.6, repeat: Infinity }}
+          />
+        </button>
+      </div>
+
+      {/* AI Shock Features Showcase */}
+      <div className="px-4 pt-3 pb-2">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="rounded-3xl overflow-hidden relative border border-white/10"
+          style={{
+            background: 'linear-gradient(135deg, rgba(19,236,19,0.08) 0%, rgba(255,215,0,0.06) 50%, rgba(59,130,246,0.08) 100%)',
+          }}
+        >
+          {/* Animated glow orbs */}
+          <motion.div
+            className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[#13ec13]/20 blur-3xl"
+            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
+            transition={{ duration: 4, repeat: Infinity }}
+          />
+          <motion.div
+            className="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-[#FFD700]/20 blur-3xl"
+            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
+            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+          />
+
+          <div className="relative z-10 p-4">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <motion.div
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity }}
+                  className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#13ec13] to-[#FFD700] flex items-center justify-center"
+                >
+                  <Sparkles className="w-4 h-4 text-black" />
+                </motion.div>
+                <div>
+                  <h3 className="text-white text-sm font-black tracking-tight leading-none">AI Shock Features</h3>
+                  <p className="text-white/40 text-[10px] font-medium mt-0.5">Powered by Safa AI</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30 text-[#FFD700] text-[9px] font-black uppercase tracking-wider">
+                New
+              </span>
+            </div>
+
+            {/* Feature Grid - 4 shocking AI features */}
+            <div className="grid grid-cols-4 gap-2">
+              {/* AI Recipe Generator */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveModal('ai-recipe')}
+                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-[#13ec13]/40 transition-all group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#13ec13]/15 flex items-center justify-center group-hover:bg-[#13ec13]/25 transition-colors">
+                  <ChefHat className="w-4 h-4 text-[#13ec13]" />
+                </div>
+                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">AI Chef</span>
+              </motion.button>
+
+              {/* Visual Snap-to-Shop */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveModal('visual-search')}
+                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-[#FFD700]/40 transition-all group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#FFD700]/15 flex items-center justify-center group-hover:bg-[#FFD700]/25 transition-colors">
+                  <ScanLine className="w-4 h-4 text-[#FFD700]" />
+                </div>
+                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Snap Shop</span>
+              </motion.button>
+
+              {/* Trending in Lagos */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveModal('trending')}
+                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-blue-400/40 transition-all group relative"
+              >
+                <div className="w-9 h-9 rounded-xl bg-blue-400/15 flex items-center justify-center group-hover:bg-blue-400/25 transition-colors">
+                  <TrendingUp className="w-4 h-4 text-blue-400" />
+                </div>
+                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Trending</span>
+                <motion.span
+                  className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500"
+                  animate={{ opacity: [1, 0.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                />
+              </motion.button>
+
+              {/* Live Tracking */}
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setActiveModal('live-tracking')}
+                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-emerald-400/40 transition-all group"
+              >
+                <div className="w-9 h-9 rounded-xl bg-emerald-400/15 flex items-center justify-center group-hover:bg-emerald-400/25 transition-colors">
+                  <Navigation className="w-4 h-4 text-emerald-400" />
+                </div>
+                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Live Track</span>
+              </motion.button>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       {/* Hero Carousel */}

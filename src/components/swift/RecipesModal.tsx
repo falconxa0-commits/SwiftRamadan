@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Clock, Users, ChefHat, ShoppingCart, ChevronRight, Check } from 'lucide-react';
+import { X, Clock, Users, ChefHat, ShoppingCart, ChevronRight, Check, Sparkles } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { recipes, recipeCategories, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
@@ -120,6 +120,27 @@ export default function RecipesModal() {
                   {cat.name}
                 </button>
               ))}
+            </div>
+
+            {/* AI Chef Safa CTA */}
+            <div className="px-4 pt-4 shrink-0">
+              <button
+                onClick={() => setActiveModal('ai-recipe')}
+                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#13ec13]/10 to-[#FFD700]/10 border border-[#13ec13]/25 hover:border-[#13ec13]/50 transition-all text-left"
+              >
+                <div className="relative w-10 h-10 bg-gradient-to-br from-[#13ec13]/20 to-[#FFD700]/20 rounded-xl flex items-center justify-center border border-[#13ec13]/30 shrink-0">
+                  <ChefHat className="w-5 h-5 text-[#FFD700]" />
+                  <Sparkles className="w-2.5 h-2.5 text-[#13ec13] absolute -top-0.5 -right-0.5" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white font-bold text-sm flex items-center gap-1.5">
+                    Try AI Chef Safa
+                    <span className="text-[10px] font-black bg-[#FFD700]/15 text-[#FFD700] px-1.5 py-0.5 rounded-full border border-[#FFD700]/20">NEW</span>
+                  </p>
+                  <p className="text-white/50 text-xs">Describe your craving & get a custom AI recipe ✨</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+              </button>
             </div>
 
             {/* Recipes List */}

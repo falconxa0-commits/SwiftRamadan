@@ -27,11 +27,14 @@ import ReferEarnModal from '@/components/swift/ReferEarnModal';
 import CharityZakatModal from '@/components/swift/CharityZakatModal';
 import PartyBulkModal from '@/components/swift/PartyBulkModal';
 import RecipesModal from '@/components/swift/RecipesModal';
+import VisualSearchModal from '@/components/swift/VisualSearchModal';
+import AIRecipeGeneratorModal from '@/components/swift/AIRecipeGeneratorModal';
+import TrendingModal from '@/components/swift/TrendingModal';
 import CheckoutModal from '@/components/swift/CheckoutModal';
 import RewardsModal from '@/components/swift/RewardsModal';
 import BNPLModal from '@/components/swift/BNPLModal';
 import DeliveryLocationMap from '@/components/swift/DeliveryLocationMap';
-import LiveTrackingMap from '@/components/swift/LiveTrackingMap';
+import RealTimeTrackingModal from '@/components/swift/RealTimeTrackingModal';
 import CommunityForum from '@/components/swift/CommunityForum';
 import ArtisanMarketHub from '@/components/swift/ArtisanMarketHub';
 import EcoImpactReport from '@/components/swift/EcoImpactReport';
@@ -549,11 +552,14 @@ function AllModals() {
       <CharityZakatModal />
       <PartyBulkModal />
       <RecipesModal />
+      <VisualSearchModal />
+      <AIRecipeGeneratorModal />
+      <TrendingModal />
       <CheckoutModal />
       <RewardsModal />
       <BNPLModal />
       <DeliveryLocationMap />
-      <LiveTrackingMap />
+      <RealTimeTrackingModal />
       <CommunityForum />
       <ArtisanMarketHub />
       <EcoImpactReport />
