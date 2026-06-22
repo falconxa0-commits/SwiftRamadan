@@ -5,13 +5,31 @@ import {
   Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette,
   MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
   Navigation, DollarSign, Star, ToggleLeft, ToggleRight, Fingerprint,
-  Lock, Globe, Eye, Map,
+  Lock, Globe, Eye, Map, ChefHat, CalendarDays, Flame, Trophy,
 } from 'lucide-react';
 import { loyaltyData, charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
 import { useAppStore, type TabId } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+
+/* ──────────────── Cooking Journey types ──────────────── */
+
+interface CookingAchievement {
+  id: string;
+  title: string;
+  desc: string;
+  unlocked: boolean;
+  icon: string;
+}
+
+interface CookingStats {
+  totalSessions?: number;
+  completedSessions?: number;
+  totalCookTimeMins?: number;
+  liveAIUses?: number;
+  achievements?: CookingAchievement[];
+}
 
 /* ──────────────── Role Config ──────────────── */
 
@@ -30,47 +48,64 @@ const ROLE_DEFAULT_TAB: Record<string, TabId> = {
 /* ──────────────── Menu Items per Role ──────────────── */
 
 const customerMenu = [
-  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
-  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
-  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
-  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market' },
-  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community' },
-  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role' },
-  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl', section: 'REWARDS & GIVING' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards', section: 'REWARDS & GIVING' },
+  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer', section: 'REWARDS & GIVING' },
+  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market', section: 'REWARDS & GIVING' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community', section: 'REWARDS & GIVING' },
+  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location', section: 'ACCOUNT' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const vendorMenu = [
-  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights' },
-  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock' },
-  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
-  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role' },
-  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
+  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock', section: 'REWARDS & GIVING' },
+  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community', section: 'REWARDS & GIVING' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const riderMenu = [
-  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#3b82f6]', action: 'rider-performance' },
-  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-cyan-400', action: 'rider-smart-route' },
-  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#FFD700]', action: 'rider-power-finder' },
-  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role' },
-  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#3b82f6]', action: 'rider-performance', section: 'REWARDS & GIVING' },
+  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-cyan-400', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
+  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#FFD700]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
+  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
+
+/* Order in which menu sections render */
+const MENU_SECTION_ORDER = ['SMART KITCHEN', 'REWARDS & GIVING', 'ACCOUNT', 'SUPPORT'] as const;
+
+/* Loyalty tier → pill styling */
+const TIER_STYLES: Record<string, { bg: string; border: string; text: string; glow: string }> = {
+  bronze: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', glow: '0 0 12px rgba(245,158,11,0.25)' },
+  silver: { bg: 'bg-slate-300/10', border: 'border-slate-300/30', text: 'text-slate-200', glow: '0 0 12px rgba(226,232,240,0.18)' },
+  gold: { bg: 'bg-[#FFD700]/10', border: 'border-[#FFD700]/40', text: 'text-[#FFD700]', glow: '0 0 14px rgba(255,215,0,0.35)' },
+  platinum: { bg: 'bg-[#8b5cf6]/10', border: 'border-[#8b5cf6]/40', text: 'text-[#8b5cf6]', glow: '0 0 14px rgba(139,92,246,0.35)' },
+};
 
 /* ──────────────── Modal Content Interface ──────────────── */
 
@@ -147,13 +182,40 @@ export default function ProfileTab() {
 
   const { toast } = useToast();
   const {
-    userName, userArea, logout, setShowAuth,
-    hasanatPoints, loyaltyTier, userRole, setUserRole, setActiveTab,
+    userName, userArea, userEmail, logout, setShowAuth,
+    hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints,
+    userRole, setUserRole, setActiveTab,
     vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
     vendorTotalEarnings, vendorPendingSettlement,
     riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
     orders, cartItems, referralCount,
   } = useAppStore();
+
+  /* ── Cooking Journey state (ref-guarded fetch, no setState in effect body) ── */
+  const [cookingStats, setCookingStats] = useState<CookingStats | null>(null);
+  const [cookingLoading, setCookingLoading] = useState(true);
+  const fetchedRef = useRef(false);
+  useEffect(() => {
+    if (fetchedRef.current) return;
+    fetchedRef.current = true;
+    fetch('/api/cooking-sessions?email=' + encodeURIComponent(userEmail || 'guest'))
+      .then(r => r.json())
+      .then((data: CookingStats) => {
+        setCookingStats(data);
+        setCookingLoading(false);
+      })
+      .catch(() => {
+        setCookingStats(null);
+        setCookingLoading(false);
+      });
+  }, [userEmail]);
+
+  const tierStyle = TIER_STYLES[loyaltyTier] || TIER_STYLES.bronze;
+
+  const handleClaimDaily = () => {
+    claimDailyPoints();
+    toast({ title: '🎁 +50 Hasanat points claimed!', description: `You're on a ${dailyStreak + 1}-day streak. Come back tomorrow!` });
+  };
 
   const accent = ROLE_ACCENT[userRole];
   const currentMenu = userRole === 'vendor' ? vendorMenu : userRole === 'rider' ? riderMenu : customerMenu;
@@ -178,6 +240,12 @@ export default function ProfileTab() {
 
   const handleMenuClick = (action: string) => {
     switch (action) {
+      case 'smart-kitchen':
+        useAppStore.getState().setActiveModal('smart-kitchen');
+        break;
+      case 'meal-planner':
+        useAppStore.getState().setActiveModal('meal-planner');
+        break;
       case 'bnpl':
         useAppStore.getState().setActiveModal('bnpl');
         break;
@@ -391,82 +459,105 @@ export default function ProfileTab() {
   return (
     <main className="flex-1 overflow-y-auto pb-32">
 
-      {/* ─── Profile Header ─── */}
+      {/* ─── Profile Header (sleeker, gradient banner) ─── */}
       <div className="px-4 pt-6 pb-2">
-        <div className="flex items-center gap-4">
-          {userRole === 'vendor' ? (
-            /* Vendor Header */
-            <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#FFD700]/40 bg-[#FFD700]/15"
-              style={{ boxShadow: '0 0 20px #FFD70015' }}>
-              <Store className="w-8 h-8 text-[#FFD700]" />
-            </div>
-          ) : userRole === 'rider' ? (
-            /* Rider Header */
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#3b82f6]/40 bg-[#3b82f6]/15"
-                style={{ boxShadow: '0 0 20px #3b82f615' }}>
-                <Bike className="w-8 h-8 text-[#3b82f6]" />
-              </div>
-              <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#05070A] ${
-                riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
-              }`} />
-            </div>
-          ) : (
-            /* Customer Header */
-            <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
-              <User className="w-8 h-8 text-[#13ec13]" />
-            </div>
-          )}
-
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h2 className="text-white text-xl font-bold">{displayName}</h2>
-              {userRole === 'vendor' && (
-                <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'}`} />
+        <div
+          className="relative overflow-hidden rounded-3xl border border-white/10"
+          style={{
+            background:
+              'radial-gradient(ellipse at top left, rgba(19,236,19,0.18), transparent 55%),' +
+              'radial-gradient(ellipse at top right, rgba(255,215,0,0.15), transparent 55%),' +
+              'radial-gradient(ellipse at bottom center, rgba(139,92,246,0.14), transparent 60%),' +
+              '#0F1117',
+          }}
+        >
+          <div className="relative p-5 flex items-center gap-4">
+            {/* Avatar wrapped in a green→gold→purple gradient ring */}
+            <div
+              className="p-[2px] rounded-full shrink-0"
+              style={{ background: 'linear-gradient(135deg, #13ec13, #FFD700, #8b5cf6)' }}
+            >
+              {userRole === 'vendor' ? (
+                /* Vendor Header */
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#FFD700]/30"
+                  style={{ boxShadow: '0 0 20px #FFD70015' }}>
+                  <Store className="w-8 h-8 text-[#FFD700]" />
+                </div>
+              ) : userRole === 'rider' ? (
+                /* Rider Header */
+                <div className="relative">
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#3b82f6]/30"
+                    style={{ boxShadow: '0 0 20px #3b82f615' }}>
+                    <Bike className="w-8 h-8 text-[#3b82f6]" />
+                  </div>
+                  <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#0F1117] ${
+                    riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
+                  }`} />
+                </div>
+              ) : (
+                /* Customer Header */
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#13ec13]/30 green-glow">
+                  <User className="w-8 h-8 text-[#13ec13]" />
+                </div>
               )}
             </div>
 
-            {userRole === 'vendor' ? (
-              <>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[#FFD700] text-[10px] font-bold bg-[#FFD700]/10 px-2 py-0.5 rounded-full border border-[#FFD700]/20">
-                    {vendorBusinessCategory || 'General'}
-                  </span>
-                </div>
-                <p className="text-white/40 text-xs mt-1">
-                  {vendorOnline ? '🟢 Online' : '⚫ Offline'} • Ramadan 2026
-                </p>
-              </>
-            ) : userRole === 'rider' ? (
-              <>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
-                  <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
-                    {riderOnline ? 'Online' : 'Offline'}
-                  </span>
-                  <span className="text-white/20 text-xs">•</span>
-                  <span className="material-symbols-outlined text-[#FFD700] text-sm">workspace_premium</span>
-                  <span className="text-[#FFD700] text-xs font-bold">Elite Rider</span>
-                </div>
-                <p className="text-white/50 text-xs mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
-              </>
-            ) : (
-              <>
-                <p className="text-white/50 text-sm">{displayArea}</p>
-                <div className="flex items-center gap-1 mt-1">
-                  <Award className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
-                  <span className="text-[#FFD700] text-xs font-bold">{loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member</span>
-                </div>
-              </>
-            )}
-          </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h2 className="text-white text-xl font-bold truncate">{displayName}</h2>
+                <span className="beta-badge">Beta</span>
+                {userRole === 'vendor' && (
+                  <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'}`} />
+                )}
+              </div>
 
-          <button
-            onClick={() => useAppStore.getState().setShowOnboarding(true)}
-            className="w-10 h-10 bg-[#1A1D26] rounded-xl flex items-center justify-center border border-white/10"
-          >
-            <Settings className="w-5 h-5 text-white/50" />
-          </button>
+              {userRole === 'vendor' ? (
+                <>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className="text-[#FFD700] text-[10px] font-bold bg-[#FFD700]/10 px-2 py-0.5 rounded-full border border-[#FFD700]/20">
+                      {vendorBusinessCategory || 'General'}
+                    </span>
+                    <span className="text-white/30 text-xs">•</span>
+                    <span className="text-white/50 text-xs">{vendorOnline ? '🟢 Online' : '⚫ Offline'}</span>
+                  </div>
+                  <p className="text-white/40 text-[11px] mt-0.5">Ramadan 2026</p>
+                </>
+              ) : userRole === 'rider' ? (
+                <>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
+                    <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+                      {riderOnline ? 'Online' : 'Offline'}
+                    </span>
+                    <span className="text-white/20 text-xs">•</span>
+                    <span className="text-[#FFD700] text-xs font-bold">⭐ Elite Rider</span>
+                  </div>
+                  <p className="text-white/50 text-[11px] mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
+                </>
+              ) : (
+                <>
+                  <p className="text-white/50 text-sm">{displayArea}</p>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${tierStyle.bg} ${tierStyle.border} ${tierStyle.text}`}
+                      style={{ boxShadow: tierStyle.glow }}
+                    >
+                      <Award className="w-3 h-3" />
+                      {loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <button
+              onClick={() => useAppStore.getState().setShowOnboarding(true)}
+              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors shrink-0"
+              aria-label="Open settings"
+            >
+              <Settings className="w-5 h-5 text-white/50" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -515,18 +606,164 @@ export default function ProfileTab() {
           ) : (
             <>
               <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-                <p className="text-[#13ec13] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
+                <p className="text-[#FFD700] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Hasanat Pts</p>
               </div>
               <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-                <p className="text-[#FFD700] text-xl font-black">{orders.length}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Orders</p>
+                <p className="text-[#13ec13] text-xl font-black">{swiftPoints.toLocaleString()}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Swift Pts</p>
               </div>
               <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
-                <p className="text-white text-xl font-black">{referralCount}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Referrals</p>
+                <div className="flex items-center justify-center gap-1">
+                  <Flame className={`w-4 h-4 ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`} />
+                  <p className={`text-xl font-black ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`}>{dailyStreak}</p>
+                </div>
+                <p className="text-white/40 text-[10px] font-bold uppercase">Day Streak</p>
               </div>
             </>
+          )}
+        </div>
+      </div>
+
+      {/* ─── Daily Streak flame widget (banner) ─── */}
+      <div className="px-4 mt-3">
+        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-950/40 via-[#1A1D26] to-[#1A1D26] p-4 flex items-center gap-3">
+          <div className="absolute -top-6 -right-6 w-24 h-24 bg-orange-500/15 blur-[40px] pointer-events-none" />
+          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${dailyStreak >= 3 ? 'bg-orange-500/20' : 'bg-orange-500/10'}`}>
+            <Flame className={`w-6 h-6 ${dailyStreak >= 3 ? 'text-orange-500 animate-pulse' : 'text-orange-400'}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-white font-bold text-sm">
+                {dailyStreak}-day streak
+              </p>
+              {dailyStreak >= 3 && (
+                <span className="text-[10px] font-bold text-orange-500 bg-orange-500/10 px-2 py-0.5 rounded-full border border-orange-500/30">
+                  🔥 On fire!
+                </span>
+              )}
+            </div>
+            <p className="text-white/50 text-xs mt-0.5">Claim your daily Hasanat bonus</p>
+          </div>
+          <button
+            onClick={handleClaimDaily}
+            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#FFD700] to-[#13ec13] text-[#05070A] text-xs font-extrabold hover:opacity-90 transition-opacity shrink-0"
+          >
+            +50
+          </button>
+        </div>
+      </div>
+
+      {/* ─── My Cooking Journey (achievement showcase) ─── */}
+      <div className="px-4 mt-6">
+        <div className="relative overflow-hidden rounded-2xl border border-[#13ec13]/20 bg-[#0F1117] p-5">
+          <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#13ec13]/10 blur-[44px] pointer-events-none" />
+          {/* Header row */}
+          <div className="relative flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#13ec13]/15 flex items-center justify-center border border-[#13ec13]/30">
+                <ChefHat className="w-5 h-5 text-[#13ec13]" />
+              </div>
+              <div>
+                <h3 className="text-white font-extrabold text-sm leading-tight">My Cooking Journey</h3>
+                <p className="text-white/40 text-[11px] leading-tight">Smart Kitchen achievements</p>
+              </div>
+            </div>
+            <button
+              onClick={() => useAppStore.getState().setActiveModal('smart-kitchen')}
+              className="text-[#13ec13] text-xs font-bold hover:underline shrink-0"
+            >
+              View Smart Kitchen →
+            </button>
+          </div>
+
+          {cookingLoading ? (
+            /* Loading skeleton */
+            <div className="relative space-y-3 animate-pulse">
+              <div className="grid grid-cols-3 gap-2">
+                <div className="h-16 bg-white/5 rounded-xl" />
+                <div className="h-16 bg-white/5 rounded-xl" />
+                <div className="h-16 bg-white/5 rounded-xl" />
+              </div>
+              <div className="flex gap-2 overflow-hidden">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <div key={i} className="w-14 h-14 rounded-full bg-white/5 shrink-0" />
+                ))}
+              </div>
+              <div className="h-2 bg-white/5 rounded-full" />
+            </div>
+          ) : cookingStats && (cookingStats.totalSessions ?? 0) > 0 ? (
+            <div className="relative space-y-4">
+              {/* 3-stat row */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <p className="text-[#13ec13] text-lg font-black">{cookingStats.totalSessions ?? 0}</p>
+                  <p className="text-white/40 text-[10px] font-bold uppercase">Sessions Cooked</p>
+                </div>
+                <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <p className="text-[#8b5cf6] text-lg font-black">{cookingStats.liveAIUses ?? 0}</p>
+                  <p className="text-white/40 text-[10px] font-bold uppercase">Live AI Sessions</p>
+                </div>
+                <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <p className="text-[#FFD700] text-lg font-black">{cookingStats.totalCookTimeMins ?? 0}<span className="text-xs">m</span></p>
+                  <p className="text-white/40 text-[10px] font-bold uppercase">Total Cook Time</p>
+                </div>
+              </div>
+
+              {/* Achievement badges (horizontal scroll) */}
+              {(() => {
+                const unlocked = (cookingStats.achievements ?? []).filter(a => a.unlocked);
+                const total = (cookingStats.achievements ?? []).length || 8;
+                return (
+                  <>
+                    {unlocked.length > 0 && (
+                      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
+                        {unlocked.map(a => (
+                          <div key={a.id} className="flex flex-col items-center gap-1 shrink-0 w-16">
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/15 border border-[#FFD700]/40 flex items-center justify-center text-2xl"
+                              style={{ boxShadow: '0 0 12px rgba(255,215,0,0.18)' }}>
+                              <span>{a.icon}</span>
+                            </div>
+                            <p className="text-white/70 text-[9px] font-bold text-center leading-tight">{a.title}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {/* Progress bar */}
+                    <div>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-white/60 text-[11px] font-bold flex items-center gap-1">
+                          <Trophy className="w-3 h-3 text-[#FFD700]" />
+                          Achievements unlocked
+                        </span>
+                        <span className="text-white font-extrabold text-xs">{unlocked.length} / {total}</span>
+                      </div>
+                      <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all"
+                          style={{ width: `${(unlocked.length / total) * 100}%` }}
+                        />
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          ) : (
+            /* Empty / error state */
+            <div className="relative text-center py-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#13ec13]/10 border border-[#13ec13]/30 flex items-center justify-center mx-auto mb-3">
+                <ChefHat className="w-7 h-7 text-[#13ec13]" />
+              </div>
+              <p className="text-white/70 text-sm font-bold">No cooking sessions yet</p>
+              <p className="text-white/40 text-xs mt-1 mb-3">Cook with Chef Safa to unlock achievements</p>
+              <button
+                onClick={() => useAppStore.getState().setActiveModal('smart-kitchen')}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#13ec13] to-[#FFD700] text-[#05070A] text-xs font-extrabold hover:opacity-90 transition-opacity"
+              >
+                Start your cooking journey →
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -561,34 +798,43 @@ export default function ProfileTab() {
         </button>
       </div>
 
-      {/* ─── Menu Items ─── */}
+      {/* ─── Menu Items (grouped by section) ─── */}
       <div className="px-4 mt-6">
-        <div className="space-y-2">
-          {menuWithDynamicSubtitles.map((item, i) => {
-            const Icon = item.icon;
-            const isSwitchRole = item.action === 'switch-role';
+        <div className="space-y-5">
+          {MENU_SECTION_ORDER.map((section) => {
+            const sectionItems = menuWithDynamicSubtitles.filter(i => i.section === section);
+            if (sectionItems.length === 0) return null;
             return (
-              <motion.button
-                key={i}
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.03 }}
-                onClick={() => handleMenuClick(item.action)}
-                className={`flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border transition-colors w-full text-left ${
-                  isSwitchRole
-                    ? 'border-white/10 hover:border-white/20'
-                    : 'border-white/5 hover:border-white/10'
-                }`}
-              >
-                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
-                  <Icon className={`w-5 h-5 ${item.color}`} />
-                </div>
-                <div className="flex-1">
-                  <p className="text-white font-bold text-sm">{item.label}</p>
-                  <p className="text-white/40 text-xs">{item.subtitle}</p>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20" />
-              </motion.button>
+              <div key={section} className="space-y-2">
+                <p className="text-white/30 text-[10px] font-extrabold tracking-widest px-1">{section}</p>
+                {sectionItems.map((item, i) => {
+                  const Icon = item.icon;
+                  const isSwitchRole = item.action === 'switch-role';
+                  return (
+                    <motion.button
+                      key={`${section}-${i}`}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03 }}
+                      onClick={() => handleMenuClick(item.action)}
+                      className={`flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border transition-colors w-full text-left hover:bg-white/5 ${
+                        isSwitchRole
+                          ? 'border-white/10 hover:border-white/20'
+                          : 'border-white/5 hover:border-white/10'
+                      }`}
+                    >
+                      <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
+                        <Icon className={`w-5 h-5 ${item.color}`} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-bold text-sm">{item.label}</p>
+                        {item.subtitle && <p className="text-white/40 text-xs truncate">{item.subtitle}</p>}
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-white/20 shrink-0" />
+                    </motion.button>
+                  );
+                })}
+              </div>
             );
           })}
         </div>

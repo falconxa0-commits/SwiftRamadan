@@ -37,6 +37,7 @@ import DeliveryLocationMap from '@/components/swift/DeliveryLocationMap';
 import RealTimeTrackingModal from '@/components/swift/RealTimeTrackingModal';
 import SmartKitchenHub from '@/components/swift/SmartKitchenHub';
 import CommunityForum from '@/components/swift/CommunityForum';
+import MealPlannerModal from '@/components/swift/MealPlannerModal';
 import ArtisanMarketHub from '@/components/swift/ArtisanMarketHub';
 import EcoImpactReport from '@/components/swift/EcoImpactReport';
 import VendorDashboard from '@/components/swift/VendorDashboard';
@@ -566,6 +567,7 @@ function AllModals() {
       <RealTimeTrackingModal />
       <SmartKitchenHub />
       <CommunityForum />
+      <MealPlannerModal />
       <ArtisanMarketHub />
       <EcoImpactReport />
       <VendorSalesInsights />

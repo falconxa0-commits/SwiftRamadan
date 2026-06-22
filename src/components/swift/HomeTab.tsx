@@ -1,11 +1,12 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio } from 'lucide-react';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import RamadanCountdown from './RamadanCountdown';
 
 const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
   replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
@@ -247,9 +248,25 @@ export default function HomeTab() {
         </motion.div>
       </div>
 
-      {/* ── Quick Actions Row ── */}
+      {/* ── Live Iftar/Sahur Countdown ── */}
+      <div className="px-4">
+        <RamadanCountdown />
+      </div>
+
+      {/* ── Quick Actions Row (with Meal Planner) ── */}
       <div className="px-4">
         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {/* Meal Planner featured action */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setActiveModal('meal-planner')}
+            className="flex flex-col items-center gap-2 min-w-[72px] p-3 bg-[#8b5cf6]/10 rounded-2xl border border-[#8b5cf6]/20 hover:border-[#8b5cf6]/40 transition-colors"
+          >
+            <div className="w-10 h-10 rounded-xl bg-[#8b5cf6]/15 flex items-center justify-center">
+              <CalendarDays className="w-5 h-5 text-[#8b5cf6]" />
+            </div>
+            <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">Plan Meals</span>
+          </motion.button>
           {quickActions.map((action) => {
             const config = quickActionConfig[action.icon];
             const Icon = config?.icon || Zap;

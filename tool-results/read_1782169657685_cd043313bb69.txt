@@ -1,0 +1,736 @@
+     1→'use client';
+     2→
+     3→import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+     4→import { useAppStore } from '@/lib/store';
+     5→import { motion, AnimatePresence } from 'framer-motion';
+     6→import {
+     7→  Clock,
+     8→  Star,
+     9→  Zap,
+    10→  ArrowRight,
+    11→  Search,
+    12→  ChevronRight,
+    13→  Flame,
+    14→  Users,
+    15→  Sparkles,
+    16→  ShoppingBag,
+    17→  Heart,
+    18→  X,
+    19→  Utensils,
+    20→  Moon,
+    21→  CupSoda,
+    22→  ShoppingCart,
+    23→  Pill,
+    24→  Package,
+    25→  BadgeCheck,
+    26→  Leaf,
+    27→  Truck,
+    28→  Timer,
+    29→} from 'lucide-react';
+    30→import {
+    31→  categories,
+    32→  trendingMeals,
+    33→  flashSales,
+    34→  popularRetailers,
+    35→  categoryHubItems,
+    36→  formatNaira,
+    37→  heroSlides,
+    38→} from '@/lib/data';
+    39→
+    40→/* ══════════════════════════════════════════════════════════════════
+    41→   WELCOME SCREEN — MODERN MARKETPLACE LANDING
+    42→   Guests can browse foods, drinks, deals before signing up
+    43→   ══════════════════════════════════════════════════════════════════ */
+    44→
+    45→/* ─────────────── Category Icon Map ─────────────── */
+    46→const categoryIcons: Record<string, { icon: React.ElementType; color: string }> = {
+    47→  'Iftar Meals': { icon: Utensils, color: '#D4AF37' },
+    48→  'Sahur': { icon: Moon, color: '#8B9DC3' },
+    49→  'Dates': { icon: Sparkles, color: '#C5962C' },
+    50→  'Drinks': { icon: CupSoda, color: '#E8652D' },
+    51→  'Snacks': { icon: Flame, color: '#F59E0B' },
+    52→  'Fruits': { icon: Leaf, color: '#13ec13' },
+    53→  'Groceries': { icon: ShoppingCart, color: '#3b82f6' },
+    54→  'Pharmacy': { icon: Pill, color: '#9B59B6' },
+    55→  'Bundles': { icon: Package, color: '#D4AF37' },
+    56→};
+    57→
+    58→/* ─────────────── Sign Up Prompt Modal ─────────────── */
+    59→function SignUpPrompt({ onClose, onGetStarted }: { onClose: () => void; onGetStarted: () => void }) {
+    60→  return (
+    61→    <motion.div
+    62→      initial={{ opacity: 0 }}
+    63→      animate={{ opacity: 1 }}
+    64→      exit={{ opacity: 0 }}
+    65→      className="fixed inset-0 z-[200] flex items-end justify-center"
+    66→      onClick={onClose}
+    67→    >
+    68→      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+    69→      <motion.div
+    70→        initial={{ y: '100%' }}
+    71→        animate={{ y: 0 }}
+    72→        exit={{ y: '100%' }}
+    73→        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+    74→        className="relative w-full max-w-lg rounded-t-3xl overflow-hidden"
+    75→        style={{ background: 'linear-gradient(180deg, #12151E 0%, #0A0D14 100%)' }}
+    76→        onClick={(e) => e.stopPropagation()}
+    77→      >
+    78→        <div className="p-6">
+    79→          <div className="flex items-center justify-between mb-6">
+    80→            <div className="flex items-center gap-3">
+    81→              <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+    82→                style={{
+    83→                  background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))',
+    84→                  border: '1px solid rgba(212,175,55,0.2)',
+    85→                }}
+    86→              >
+    87→                <ShoppingBag className="w-6 h-6 text-[#D4AF37]" />
+    88→              </div>
+    89→              <div>
+    90→                <h3 className="text-white text-lg font-bold">Join SwiftRamadan</h3>
+    91→                <p className="text-white/40 text-xs">Sign up to order, track & save</p>
+    92→              </div>
+    93→            </div>
+    94→            <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+    95→              <X className="w-4 h-4 text-white/50" />
+    96→            </button>
+    97→          </div>
+    98→
+    99→          <div className="flex flex-col gap-3 mb-6">
+   100→            {[
+   101→              { icon: Zap, text: 'Iftar-precision delivery before Maghrib', color: '#D4AF37' },
+   102→              { icon: Users, text: 'Community group buys & bulk savings', color: '#13ec13' },
+   103→              { icon: Heart, text: 'Charity & Sadaqah built right in', color: '#E8652D' },
+   104→            ].map(({ icon: Ic, text, color }) => (
+   105→              <div key={text} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: `${color}08`, border: `1px solid ${color}12` }}>
+   106→                <Ic className="w-5 h-5 shrink-0" style={{ color }} />
+   107→                <span className="text-white/60 text-sm">{text}</span>
+   108→              </div>
+   109→            ))}
+   110→          </div>
+   111→
+   112→          <button
+   113→            onClick={onGetStarted}
+   114→            className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+   115→            style={{
+   116→              background: 'linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37)',
+   117→              color: '#080B12',
+   118→              boxShadow: '0 8px 32px rgba(212,175,55,0.2)',
+   119→            }}
+   120→          >
+   121→            Get Started Free
+   122→            <ArrowRight className="w-5 h-5" />
+   123→          </button>
+   124→
+   125→          <button
+   126→            onClick={() => {
+   127→              onClose();
+   128→              // Will be handled by parent
+   129→            }}
+   130→            className="w-full h-12 mt-3 rounded-xl text-white/40 text-sm font-medium hover:text-white/60 transition-colors"
+   131→          >
+   132→            Already have an account? <span className="text-[#D4AF37] font-bold">Sign In</span>
+   133→          </button>
+   134→        </div>
+   135→      </motion.div>
+   136→    </motion.div>
+   137→  );
+   138→}
+   139→
+   140→/* ─────────────── Hero Banner ─────────────── */
+   141→function HeroBanner() {
+   142→  const [currentSlide, setCurrentSlide] = useState(0);
+   143→
+   144→  useEffect(() => {
+   145→    const timer = setInterval(() => {
+   146→      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+   147→    }, 4000);
+   148→    return () => clearInterval(timer);
+   149→  }, []);
+   150→
+   151→  return (
+   152→    <div className="relative mx-4 mt-3">
+   153→      <AnimatePresence mode="wait">
+   154→        <motion.div
+   155→          key={currentSlide}
+   156→          initial={{ opacity: 0, scale: 1.02 }}
+   157→          animate={{ opacity: 1, scale: 1 }}
+   158→          exit={{ opacity: 0, scale: 0.98 }}
+   159→          transition={{ duration: 0.5 }}
+   160→          className="relative w-full aspect-[2/1] rounded-2xl overflow-hidden"
+   161→        >
+   162→          <div
+   163→            className="absolute inset-0 bg-center bg-no-repeat bg-cover"
+   164→            style={{ backgroundImage: `url("${heroSlides[currentSlide].image}")` }}
+   165→          />
+   166→          <div className="absolute inset-0" style={{
+   167→            background: 'linear-gradient(135deg, rgba(8,11,18,0.85) 0%, rgba(8,11,18,0.4) 50%, rgba(8,11,18,0.7) 100%)',
+   168→          }} />
+   169→
+   170→          {heroSlides[currentSlide].badge && (
+   171→            <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full"
+   172→              style={{ background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)', boxShadow: '0 2px 12px rgba(212,175,55,0.3)' }}>
+   173→              <Star className="w-3 h-3 text-[#080B12] fill-[#080B12]" />
+   174→              <span className="text-[#080B12] text-[9px] font-black uppercase tracking-wider">{heroSlides[currentSlide].badge}</span>
+   175→            </div>
+   176→          )}
+   177→
+   178→          <div className="absolute bottom-0 left-0 right-0 p-4">
+   179→            <h2 className="text-white text-lg font-extrabold leading-tight tracking-tight">
+   180→              {heroSlides[currentSlide].title}
+   181→            </h2>
+   182→            <div className="flex items-center gap-1.5 mt-1">
+   183→              <Zap className="w-3 h-3 text-[#13ec13]" />
+   184→              <span className="text-[#13ec13]/80 text-xs font-semibold">{heroSlides[currentSlide].subtitle}</span>
+   185→            </div>
+   186→          </div>
+   187→        </motion.div>
+   188→      </AnimatePresence>
+   189→
+   190→      <div className="flex justify-center gap-1.5 mt-2.5">
+   191→        {heroSlides.map((_, i) => (
+   192→          <button
+   193→            key={i}
+   194→            onClick={() => setCurrentSlide(i)}
+   195→            className={`h-1.5 rounded-full transition-all duration-300 ${
+   196→              i === currentSlide ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/15'
+   197→            }`}
+   198→          />
+   199→        ))}
+   200→      </div>
+   201→    </div>
+   202→  );
+   203→}
+   204→
+   205→/* ─────────────── Flash Deal Card ─────────────── */
+   206→function FlashDealCard({ sale, onTap }: { sale: typeof flashSales[0]; onTap: () => void }) {
+   207→  return (
+   208→    <motion.div
+   209→      whileTap={{ scale: 0.97 }}
+   210→      onClick={onTap}
+   211→      className="min-w-[180px] max-w-[180px] rounded-2xl overflow-hidden cursor-pointer"
+   212→      style={{
+   213→        background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+   214→        border: '1px solid rgba(255,255,255,0.06)',
+   215→      }}
+   216→    >
+   217→      <div className="relative">
+   218→        <div
+   219→          className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
+   220→          style={{ backgroundImage: `url("${sale.image}")` }}
+   221→        />
+   222→        <div className="absolute top-2 left-2 bg-red-500/90 px-1.5 py-0.5 rounded-md">
+   223→          <span className="text-white text-[9px] font-black">-{sale.discount}%</span>
+   224→        </div>
+   225→        <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded-md flex items-center gap-1">
+   226→          <Timer className="w-2.5 h-2.5 text-[#FFD700]" />
+   227→          <span className="text-[#FFD700] text-[8px] font-bold">{sale.endsIn}</span>
+   228→        </div>
+   229→      </div>
+   230→      <div className="p-2.5">
+   231→        <h4 className="text-white font-bold text-xs truncate">{sale.name}</h4>
+   232→        <div className="flex items-center gap-2 mt-1">
+   233→          <span className="text-[#13ec13] font-black text-xs">{formatNaira(sale.salePrice)}</span>
+   234→          <span className="text-white/25 text-[9px] line-through">{formatNaira(sale.originalPrice)}</span>
+   235→        </div>
+   236→        <div className="mt-1.5">
+   237→          <div className="w-full bg-white/5 rounded-full h-1">
+   238→            <div className="bg-[#FFD700] h-1 rounded-full" style={{ width: `${sale.claimed}%` }} />
+   239→          </div>
+   240→          <p className="text-white/25 text-[8px] mt-0.5">{sale.claimed}% claimed</p>
+   241→        </div>
+   242→      </div>
+   243→    </motion.div>
+   244→  );
+   245→}
+   246→
+   247→/* ─────────────── Meal Card ─────────────── */
+   248→function MealCard({ meal, onTap }: { meal: typeof trendingMeals[0]; onTap: () => void }) {
+   249→  return (
+   250→    <motion.div
+   251→      initial={{ opacity: 0, y: 10 }}
+   252→      animate={{ opacity: 1, y: 0 }}
+   253→      whileTap={{ scale: 0.98 }}
+   254→      onClick={onTap}
+   255→      className="flex gap-3 p-3 rounded-2xl cursor-pointer transition-all hover:bg-white/[0.03]"
+   256→      style={{
+   257→        background: 'rgba(255,255,255,0.02)',
+   258→        border: '1px solid rgba(255,255,255,0.04)',
+   259→      }}
+   260→    >
+   261→      <div
+   262→        className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0"
+   263→        style={{
+   264→          backgroundImage: `url("${meal.image}")`,
+   265→          border: '1px solid rgba(255,255,255,0.08)',
+   266→        }}
+   267→      />
+   268→      <div className="flex flex-col justify-between flex-1 min-w-0 py-0.5">
+   269→        <div>
+   270→          <div className="flex justify-between items-start gap-2">
+   271→            <h4 className="text-white font-bold text-sm truncate">{meal.name}</h4>
+   272→            <span className="text-[#13ec13] font-black text-xs whitespace-nowrap">{formatNaira(meal.price)}</span>
+   273→          </div>
+   274→          <p className="text-white/35 text-[10px] leading-relaxed mt-0.5 line-clamp-2">{meal.description}</p>
+   275→        </div>
+   276→        <div className="flex items-center gap-2 mt-1.5">
+   277→          <span className="flex items-center gap-1 text-[9px] text-white/40 font-bold bg-white/5 px-1.5 py-0.5 rounded-full">
+   278→            <Clock className="w-2.5 h-2.5" />
+   279→            {meal.deliveryTime}
+   280→          </span>
+   281→          <span className="flex items-center gap-1 text-[9px] text-[#FFD700] font-bold">
+   282→            <Star className="w-2.5 h-2.5 fill-[#FFD700]" />
+   283→            {meal.rating}
+   284→          </span>
+   285→          <span className="text-[9px] text-white/25">({meal.reviews})</span>
+   286→        </div>
+   287→      </div>
+   288→    </motion.div>
+   289→  );
+   290→}
+   291→
+   292→/* ─────────────── Retailer Card ─────────────── */
+   293→function RetailerCard({ retailer, onTap }: { retailer: typeof popularRetailers[0]; onTap: () => void }) {
+   294→  return (
+   295→    <motion.div
+   296→      whileTap={{ scale: 0.97 }}
+   297→      onClick={onTap}
+   298→      className="min-w-[150px] max-w-[150px] rounded-2xl overflow-hidden cursor-pointer"
+   299→      style={{
+   300→        background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+   301→        border: '1px solid rgba(255,255,255,0.06)',
+   302→      }}
+   303→    >
+   304→      <div
+   305→        className="w-full aspect-square bg-center bg-no-repeat bg-cover"
+   306→        style={{ backgroundImage: `url("${retailer.image}")` }}
+   307→      />
+   308→      <div className="p-2.5">
+   309→        <div className="flex items-center gap-1">
+   310→          <h4 className="text-white font-bold text-[11px] truncate">{retailer.name}</h4>
+   311→          {retailer.verified && <BadgeCheck className="w-3 h-3 text-[#13ec13] shrink-0" />}
+   312→        </div>
+   313→        <div className="flex items-center gap-2 mt-1">
+   314→          <span className="text-white/35 text-[9px]">{retailer.category}</span>
+   315→          <span className="text-white/20 text-[9px]">•</span>
+   316→          <span className="text-white/35 text-[9px] flex items-center gap-0.5">
+   317→            <Clock className="w-2 h-2" />{retailer.deliveryTime}
+   318→          </span>
+   319→        </div>
+   320→        <div className="flex items-center gap-0.5 mt-1">
+   321→          <Star className="w-2.5 h-2.5 text-[#FFD700] fill-[#FFD700]" />
+   322→          <span className="text-white/50 text-[9px] font-bold">{retailer.rating}</span>
+   323→        </div>
+   324→      </div>
+   325→    </motion.div>
+   326→  );
+   327→}
+   328→
+   329→/* ══════════════════════════════════════════════════════════════════
+   330→   MAIN WELCOME SCREEN COMPONENT
+   331→   ══════════════════════════════════════════════════════════════════ */
+   332→
+   333→export default function WelcomeScreen() {
+   334→  const { setShowWelcome, setShowAuth } = useAppStore();
+   335→  const [showPrompt, setShowPrompt] = useState(false);
+   336→  const [activeCategory, setActiveCategory] = useState<string | null>(null);
+   337→  const scrollRef = useRef<HTMLDivElement>(null);
+   338→
+   339→  const handleGetStarted = useCallback(() => {
+   340→    setShowWelcome(false);
+   341→    setShowAuth('role');
+   342→  }, [setShowWelcome, setShowAuth]);
+   343→
+   344→  const handleSignIn = useCallback(() => {
+   345→    setShowWelcome(false);
+   346→    setShowAuth('login');
+   347→  }, [setShowWelcome, setShowAuth]);
+   348→
+   349→  const handleItemTap = useCallback(() => {
+   350→    setShowPrompt(true);
+   351→  }, []);
+   352→
+   353→  const filteredMeals = useMemo(() => {
+   354→    if (!activeCategory) return trendingMeals;
+   355→    return trendingMeals.filter(m => m.category === activeCategory);
+   356→  }, [activeCategory]);
+   357→
+   358→  return (
+   359→    <motion.div
+   360→      initial={{ opacity: 0 }}
+   361→      animate={{ opacity: 1 }}
+   362→      exit={{ opacity: 0 }}
+   363→      transition={{ duration: 0.5 }}
+   364→      className="fixed inset-0 z-[100] overflow-hidden"
+   365→      style={{ background: '#080B12' }}
+   366→    >
+   367→      {/* ── Ambient Background ── */}
+   368→      <div className="fixed inset-0 pointer-events-none" style={{
+   369→        background: 'radial-gradient(ellipse 60% 30% at 50% -5%, rgba(212,175,55,0.05) 0%, transparent 70%)',
+   370→      }} />
+   371→      <div className="fixed inset-0 pointer-events-none" style={{
+   372→        background: 'radial-gradient(ellipse 40% 40% at 80% 80%, rgba(19,236,19,0.03) 0%, transparent 60%)',
+   373→      }} />
+   374→
+   375→      {/* ═══ Top Navigation Bar ═══ */}
+   376→      <motion.div
+   377→        initial={{ y: -20, opacity: 0 }}
+   378→        animate={{ y: 0, opacity: 1 }}
+   379→        transition={{ delay: 0.2, duration: 0.5 }}
+   380→        className="sticky top-0 z-50"
+   381→        style={{
+   382→          background: 'rgba(8,11,18,0.85)',
+   383→          backdropFilter: 'blur(20px)',
+   384→          borderBottom: '1px solid rgba(255,255,255,0.04)',
+   385→        }}
+   386→      >
+   387→        <div className="flex items-center justify-between px-4 py-3">
+   388→          {/* Logo + Brand */}
+   389→          <div className="flex items-center gap-2.5">
+   390→            <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#D4AF37]/20 flex items-center justify-center"
+   391→              style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))' }}
+   392→            >
+   393→              <img src="/swiftramadan-logo.png" alt="SwiftRamadan" className="w-full h-full object-cover" />
+   394→            </div>
+   395→            <div className="flex flex-col">
+   396→              <span className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em]">SwiftRamadan</span>
+   397→              <span className="text-white/20 text-[8px] font-medium">Lagos &bull; 2026</span>
+   398→            </div>
+   399→          </div>
+   400→
+   401→          {/* Sign In / Get Started */}
+   402→          <div className="flex items-center gap-2">
+   403→            <button
+   404→              onClick={handleSignIn}
+   405→              className="px-4 h-9 rounded-xl text-white/50 text-xs font-semibold hover:text-white/70 hover:bg-white/5 transition-all"
+   406→            >
+   407→              Sign In
+   408→            </button>
+   409→            <button
+   410→              onClick={handleGetStarted}
+   411→              className="px-4 h-9 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-[0.97] transition-transform"
+   412→              style={{
+   413→                background: 'linear-gradient(135deg, #D4AF37, #E8D48B)',
+   414→                color: '#080B12',
+   415→                boxShadow: '0 2px 12px rgba(212,175,55,0.2)',
+   416→              }}
+   417→            >
+   418→              Get Started
+   419→              <ArrowRight className="w-3.5 h-3.5" />
+   420→            </button>
+   421→          </div>
+   422→        </div>
+   423→      </motion.div>
+   424→
+   425→      {/* ═══ Scrollable Content ═══ */}
+   426→      <div ref={scrollRef} className="h-full overflow-y-auto pb-32 no-scrollbar">
+   427→        {/* ── Search Bar ── */}
+   428→        <div className="px-4 pt-3 pb-1">
+   429→          <button
+   430→            onClick={handleItemTap}
+   431→            className="w-full flex items-center gap-3 rounded-xl px-4 py-3.5 transition-colors"
+   432→            style={{
+   433→              background: 'rgba(255,255,255,0.03)',
+   434→              border: '1px solid rgba(255,255,255,0.06)',
+   435→            }}
+   436→          >
+   437→            <Search className="w-4 h-4 text-white/25" />
+   438→            <span className="text-white/25 text-sm">Search Jollof, Dates, Iftar meals...</span>
+   439→            <span className="ml-auto text-[9px] text-white/15 font-mono bg-white/5 px-1.5 py-0.5 rounded">⌘K</span>
+   440→          </button>
+   441→        </div>
+   442→
+   443→        {/* ── Hero Banner Carousel ── */}
+   444→        <HeroBanner />
+   445→
+   446→        {/* ── Categories Row ── */}
+   447→        <div className="px-4 pt-5 pb-2">
+   448→          <div className="flex items-center justify-between mb-3">
+   449→            <h3 className="text-white text-base font-bold tracking-tight">Browse Categories</h3>
+   450→          </div>
+   451→          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+   452→            {categories.map((cat) => {
+   453→              const cfg = categoryIcons[cat.name] || { icon: ShoppingBag, color: '#13ec13' };
+   454→              const Icon = cfg.icon;
+   455→              const isSelected = activeCategory === cat.name;
+   456→              return (
+   457→                <motion.button
+   458→                  key={cat.id}
+   459→                  whileTap={{ scale: 0.95 }}
+   460→                  onClick={() => setActiveCategory(isSelected ? null : cat.name)}
+   461→                  className="flex flex-col items-center gap-2 min-w-[68px]"
+   462→                >
+   463→                  <div
+   464→                    className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300"
+   465→                    style={{
+   466→                      background: isSelected ? `${cfg.color}20` : `${cfg.color}08`,
+   467→                      border: isSelected ? `1.5px solid ${cfg.color}50` : `1px solid ${cfg.color}15`,
+   468→                      boxShadow: isSelected ? `0 0 16px ${cfg.color}15` : 'none',
+   469→                    }}
+   470→                  >
+   471→                    <Icon className="w-6 h-6 transition-colors" style={{ color: isSelected ? cfg.color : `${cfg.color}80` }} />
+   472→                  </div>
+   473→                  <span className={`text-[9px] font-bold whitespace-nowrap transition-colors ${isSelected ? 'text-white' : 'text-white/40'}`}>
+   474→                    {cat.name}
+   475→                  </span>
+   476→                </motion.button>
+   477→              );
+   478→            })}
+   479→          </div>
+   480→        </div>
+   481→
+   482→        {/* ── Flash Sales ── */}
+   483→        <div className="pt-4 pb-2">
+   484→          <div className="flex items-center justify-between px-4 mb-3">
+   485→            <div className="flex items-center gap-2">
+   486→              <Flame className="w-4 h-4 text-[#FFD700]" />
+   487→              <h3 className="text-white text-base font-bold tracking-tight">Flash Sales</h3>
+   488→              <span className="text-[8px] font-bold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Live</span>
+   489→            </div>
+   490→            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
+   491→              See All <ChevronRight className="w-3 h-3" />
+   492→            </button>
+   493→          </div>
+   494→          <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-1">
+   495→            {flashSales.map((sale) => (
+   496→              <FlashDealCard key={sale.id} sale={sale} onTap={handleItemTap} />
+   497→            ))}
+   498→          </div>
+   499→        </div>
+   500→
+   501→        {/* ── Category Hub ── */}
+   502→        <div className="px-4 pt-4 pb-2">
+   503→          <div className="grid grid-cols-2 gap-3">
+   504→            {categoryHubItems.map((item) => {
+   505→              const badgeColors: Record<string, string> = {
+   506→                'Popular': '#D4AF37',
+   507→                'Group Buy': '#13ec13',
+   508→                'Fast': '#3b82f6',
+   509→                'New': '#9B59B6',
+   510→              };
+   511→              const color = badgeColors[item.badge] || '#D4AF37';
+   512→              return (
+   513→                <motion.div
+   514→                  key={item.id}
+   515→                  whileTap={{ scale: 0.97 }}
+   516→                  onClick={handleItemTap}
+   517→                  className="relative rounded-2xl overflow-hidden cursor-pointer"
+   518→                  style={{
+   519→                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
+   520→                    border: '1px solid rgba(255,255,255,0.06)',
+   521→                  }}
+   522→                >
+   523→                  <div
+   524→                    className="w-full aspect-[16/9] bg-center bg-no-repeat bg-cover"
+   525→                    style={{ backgroundImage: `url("${item.image}")` }}
+   526→                  />
+   527→                  <div className="absolute inset-0" style={{
+   528→                    background: 'linear-gradient(180deg, transparent 30%, rgba(8,11,18,0.9) 100%)',
+   529→                  }} />
+   530→                  <div className="absolute bottom-0 left-0 right-0 p-3">
+   531→                    <div className="flex items-center gap-1.5 mb-0.5">
+   532→                      <span
+   533→                        className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full"
+   534→                        style={{ color, background: `${color}15`, border: `1px solid ${color}20` }}
+   535→                      >
+   536→                        {item.badge}
+   537→                      </span>
+   538→                    </div>
+   539→                    <h4 className="text-white font-bold text-xs">{item.name}</h4>
+   540→                    <span className="text-white/35 text-[9px]">{item.subtitle}</span>
+   541→                  </div>
+   542→                </motion.div>
+   543→              );
+   544→            })}
+   545→          </div>
+   546→        </div>
+   547→
+   548→        {/* ── Trending Meals ── */}
+   549→        <div className="px-4 pt-5 pb-2">
+   550→          <div className="flex items-center justify-between mb-3">
+   551→            <div className="flex items-center gap-2">
+   552→              <Zap className="w-4 h-4 text-[#D4AF37]" />
+   553→              <h3 className="text-white text-base font-bold tracking-tight">
+   554→                {activeCategory || 'Trending'} Meals
+   555→              </h3>
+   556→            </div>
+   557→            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
+   558→              See All <ChevronRight className="w-3 h-3" />
+   559→            </button>
+   560→          </div>
+   561→          <div className="flex flex-col gap-2.5">
+   562→            {filteredMeals.map((meal) => (
+   563→              <MealCard key={meal.id} meal={meal} onTap={handleItemTap} />
+   564→            ))}
+   565→            {filteredMeals.length === 0 && (
+   566→              <div className="py-8 text-center">
+   567→                <p className="text-white/25 text-sm">No meals found in this category</p>
+   568→              </div>
+   569→            )}
+   570→          </div>
+   571→        </div>
+   572→
+   573→        {/* ── Popular Retailers ── */}
+   574→        <div className="pt-4 pb-2">
+   575→          <div className="flex items-center justify-between px-4 mb-3">
+   576→            <div className="flex items-center gap-2">
+   577→              <ShoppingBag className="w-4 h-4 text-[#13ec13]" />
+   578→              <h3 className="text-white text-base font-bold tracking-tight">Popular Stores</h3>
+   579→            </div>
+   580→            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
+   581→              See All <ChevronRight className="w-3 h-3" />
+   582→            </button>
+   583→          </div>
+   584→          <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-1">
+   585→            {popularRetailers.map((retailer) => (
+   586→              <RetailerCard key={retailer.id} retailer={retailer} onTap={handleItemTap} />
+   587→            ))}
+   588→          </div>
+   589→        </div>
+   590→
+   591→        {/* ── Why SwiftRamadan ── */}
+   592→        <div className="px-4 pt-5 pb-2">
+   593→          <div className="flex items-center gap-2 mb-3">
+   594→            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
+   595→            <h3 className="text-white text-base font-bold tracking-tight">Why SwiftRamadan</h3>
+   596→          </div>
+   597→          <div className="grid grid-cols-2 gap-3">
+   598→            {[
+   599→              { icon: Clock, title: 'Iftar Precision', desc: 'Meals before Maghrib', color: '#D4AF37' },
+   600→              { icon: Truck, title: 'Live Tracking', desc: 'Kitchen to doorstep', color: '#3b82f6' },
+   601→              { icon: Users, title: 'Group Buys', desc: 'Bulk savings together', color: '#13ec13' },
+   602→              { icon: Heart, title: 'Sadaqah Built In', desc: 'Charity with every order', color: '#E8652D' },
+   603→            ].map(({ icon: Ic, title, desc, color }) => (
+   604→              <div
+   605→                key={title}
+   606→                className="p-3.5 rounded-2xl"
+   607→                style={{
+   608→                  background: `linear-gradient(135deg, ${color}06, ${color}02)`,
+   609→                  border: `1px solid ${color}12`,
+   610→                }}
+   611→              >
+   612→                <Ic className="w-5 h-5 mb-2" style={{ color }} />
+   613→                <h4 className="text-white text-xs font-bold">{title}</h4>
+   614→                <p className="text-white/30 text-[10px] mt-0.5">{desc}</p>
+   615→              </div>
+   616→            ))}
+   617→          </div>
+   618→        </div>
+   619→
+   620→        {/* ── Social Proof ── */}
+   621→        <div className="px-4 pt-5 pb-4">
+   622→          <div className="flex items-center justify-around py-5 rounded-2xl"
+   623→            style={{
+   624→              background: 'linear-gradient(135deg, rgba(212,175,55,0.04), rgba(255,255,255,0.02))',
+   625→              border: '1px solid rgba(212,175,55,0.08)',
+   626→            }}
+   627→          >
+   628→            {[
+   629→              { value: '12K+', label: 'Families' },
+   630→              { value: '98%', label: 'On-time' },
+   631→              { value: '4.9', label: 'Rating' },
+   632→            ].map((stat, i) => (
+   633→              <div key={stat.label} className="flex flex-col items-center gap-1">
+   634→                <span className="text-xl font-black" style={{
+   635→                  background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)',
+   636→                  WebkitBackgroundClip: 'text',
+   637→                  WebkitTextFillColor: 'transparent',
+   638→                  backgroundClip: 'text',
+   639→                }}>{stat.value}</span>
+   640→                <span className="text-white/40 text-[9px] font-bold">{stat.label}</span>
+   641→                {i < 2 && <div className="absolute right-0 w-px h-8 bg-white/[0.06]" />}
+   642→              </div>
+   643→            ))}
+   644→          </div>
+   645→        </div>
+   646→
+   647→        {/* ── Bottom CTA Section ── */}
+   648→        <div className="px-4 pt-2 pb-8">
+   649→          <div className="relative overflow-hidden rounded-3xl p-6 text-center"
+   650→            style={{
+   651→              background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))',
+   652→              border: '1px solid rgba(212,175,55,0.1)',
+   653→            }}
+   654→          >
+   655→            {/* Decorative glow */}
+   656→            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-20 blur-[60px]" style={{ background: 'rgba(212,175,55,0.1)' }} />
+   657→
+   658→            <span className="relative text-[#D4AF37]/50 text-sm font-light">ٱلسَّلَامُ عَلَيْكُمْ</span>
+   659→            <h2 className="relative text-white text-2xl font-extrabold mt-2 tracking-tight">
+   660→              Ready to elevate your Ramadan?
+   661→            </h2>
+   662→            <p className="relative text-white/35 text-sm mt-2 max-w-[260px] mx-auto">
+   663→              Join thousands of Lagos families enjoying Iftar & Sahur delivered with care.
+   664→            </p>
+   665→
+   666→            <div className="relative flex flex-col gap-2.5 mt-5">
+   667→              <button
+   668→                onClick={handleGetStarted}
+   669→                className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+   670→                style={{
+   671→                  background: 'linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37)',
+   672→                  color: '#080B12',
+   673→                  boxShadow: '0 8px 32px rgba(212,175,55,0.2)',
+   674→                }}
+   675→              >
+   676→                Begin Your Journey
+   677→                <ArrowRight className="w-5 h-5" />
+   678→              </button>
+   679→              <button
+   680→                onClick={handleSignIn}
+   681→                className="w-full h-11 rounded-xl text-white/40 text-sm font-medium hover:text-white/60 transition-colors"
+   682→              >
+   683→                Already part of the family? <span className="text-[#D4AF37] font-bold">Sign In</span>
+   684→              </button>
+   685→            </div>
+   686→          </div>
+   687→        </div>
+   688→      </div>
+   689→
+   690→      {/* ═══ Floating Bottom Bar ═══ */}
+   691→      <motion.div
+   692→        initial={{ y: 80, opacity: 0 }}
+   693→        animate={{ y: 0, opacity: 1 }}
+   694→        transition={{ delay: 1, duration: 0.6, type: 'spring', damping: 20 }}
+   695→        className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none"
+   696→      >
+   697→        <div
+   698→          className="max-w-lg mx-auto rounded-2xl px-4 py-3 flex items-center justify-between pointer-events-auto"
+   699→          style={{
+   700→            background: 'rgba(12,15,22,0.92)',
+   701→            backdropFilter: 'blur(20px)',
+   702→            border: '1px solid rgba(212,175,55,0.12)',
+   703→            boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.05)',
+   704→          }}
+   705→        >
+   706→          <div>
+   707→            <p className="text-white text-xs font-bold">Start ordering now</p>
+   708→            <p className="text-white/30 text-[10px]">Free delivery on your first order</p>
+   709→          </div>
+   710→          <button
+   711→            onClick={handleGetStarted}
+   712→            className="h-10 px-5 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-[0.97] transition-transform shrink-0"
+   713→            style={{
+   714→              background: 'linear-gradient(135deg, #D4AF37, #E8D48B)',
+   715→              color: '#080B12',
+   716→            }}
+   717→          >
+   718→            Join Free
+   719→            <ArrowRight className="w-3.5 h-3.5" />
+   720→          </button>
+   721→        </div>
+   722→      </motion.div>
+   723→
+   724→      {/* ═══ Sign Up Prompt Modal ═══ */}
+   725→      <AnimatePresence>
+   726→        {showPrompt && (
+   727→          <SignUpPrompt
+   728→            onClose={() => setShowPrompt(false)}
+   729→            onGetStarted={handleGetStarted}
+   730→          />
+   731→        )}
+   732→      </AnimatePresence>
+   733→    </motion.div>
+   734→  );
+   735→}
+   736→

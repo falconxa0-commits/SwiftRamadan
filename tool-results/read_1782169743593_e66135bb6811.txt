@@ -1,0 +1,757 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import {
+     4→     4→  User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight,
+     5→     5→  Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette,
+     6→     6→  MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
+     7→     7→  Navigation, DollarSign, Star, ToggleLeft, ToggleRight, Fingerprint,
+     8→     8→  Lock, Globe, Eye, Map,
+     9→     9→} from 'lucide-react';
+    10→    10→import { loyaltyData, charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
+    11→    11→import { useAppStore, type TabId } from '@/lib/store';
+    12→    12→import { useToast } from '@/hooks/use-toast';
+    13→    13→import { motion, AnimatePresence } from 'framer-motion';
+    14→    14→import { useState } from 'react';
+    15→    15→
+    16→    16→/* ──────────────── Role Config ──────────────── */
+    17→    17→
+    18→    18→const ROLE_ACCENT = {
+    19→    19→  customer: '#13ec13',
+    20→    20→  vendor: '#FFD700',
+    21→    21→  rider: '#3b82f6',
+    22→    22→} as const;
+    23→    23→
+    24→    24→const ROLE_DEFAULT_TAB: Record<string, TabId> = {
+    25→    25→  customer: 'home',
+    26→    26→  vendor: 'vendor-dashboard',
+    27→    27→  rider: 'rider-dashboard',
+    28→    28→};
+    29→    29→
+    30→    30→/* ──────────────── Menu Items per Role ──────────────── */
+    31→    31→
+    32→    32→const customerMenu = [
+    33→    33→  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl' },
+    34→    34→  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
+    35→    35→  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
+    36→    36→  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity' },
+    37→    37→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+    38→    38→  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market' },
+    39→    39→  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community' },
+    40→    40→  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location' },
+    41→    41→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
+    42→    42→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
+    43→    43→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+    44→    44→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role' },
+    45→    45→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+    46→    46→];
+    47→    47→
+    48→    48→const vendorMenu = [
+    49→    49→  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights' },
+    50→    50→  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock' },
+    51→    51→  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing' },
+    52→    52→  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards' },
+    53→    53→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+    54→    54→  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community' },
+    55→    55→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
+    56→    56→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
+    57→    57→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+    58→    58→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role' },
+    59→    59→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+    60→    60→];
+    61→    61→
+    62→    62→const riderMenu = [
+    63→    63→  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#3b82f6]', action: 'rider-performance' },
+    64→    64→  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-cyan-400', action: 'rider-smart-route' },
+    65→    65→  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#FFD700]', action: 'rider-power-finder' },
+    66→    66→  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer' },
+    67→    67→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact' },
+    68→    68→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times' },
+    69→    69→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications' },
+    70→    70→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security' },
+    71→    71→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role' },
+    72→    72→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings' },
+    73→    73→];
+    74→    74→
+    75→    75→/* ──────────────── Modal Content Interface ──────────────── */
+    76→    76→
+    77→    77→interface ModalContent {
+    78→    78→  title: string;
+    79→    79→  content: React.ReactNode;
+    80→    80→}
+    81→    81→
+    82→    82→/* ──────────────── Switch Role Modal Card ──────────────── */
+    83→    83→
+    84→    84→const roleCards = [
+    85→    85→  {
+    86→    86→    role: 'customer' as const,
+    87→    87→    icon: User,
+    88→    88→    title: 'Customer',
+    89→    89→    description: 'Order iftar meals, groceries & more',
+    90→    90→    accent: '#13ec13',
+    91→    91→    bgClass: 'bg-[#13ec13]/10 border-[#13ec13]/30',
+    92→    92→    iconColor: 'text-[#13ec13]',
+    93→    93→  },
+    94→    94→  {
+    95→    95→    role: 'vendor' as const,
+    96→    96→    icon: Store,
+    97→    97→    title: 'Vendor',
+    98→    98→    description: 'Manage your store & accept orders',
+    99→    99→    accent: '#FFD700',
+   100→   100→    bgClass: 'bg-[#FFD700]/10 border-[#FFD700]/30',
+   101→   101→    iconColor: 'text-[#FFD700]',
+   102→   102→  },
+   103→   103→  {
+   104→   104→    role: 'rider' as const,
+   105→   105→    icon: Bike,
+   106→   106→    title: 'Rider',
+   107→   107→    description: 'Deliver orders & earn money',
+   108→   108→    accent: '#3b82f6',
+   109→   109→    bgClass: 'bg-[#3b82f6]/10 border-[#3b82f6]/30',
+   110→   110→    iconColor: 'text-[#3b82f6]',
+   111→   111→  },
+   112→   112→];
+   113→   113→
+   114→   114→/* ──────────────── Toggle Switch Component ──────────────── */
+   115→   115→
+   116→   116→function ToggleSwitch({ enabled, onToggle, label }: { enabled: boolean; onToggle: () => void; label: string }) {
+   117→   117→  return (
+   118→   118→    <button
+   119→   119→      onClick={onToggle}
+   120→   120→      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+   121→   121→      role="switch"
+   122→   122→      aria-checked={enabled}
+   123→   123→      aria-label={label}
+   124→   124→    >
+   125→   125→      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+   126→   126→    </button>
+   127→   127→  );
+   128→   128→}
+   129→   129→
+   130→   130→/* ════════════════════════════════════════════════════════════════
+   131→   131→   ProfileTab Component
+   132→   132→   ════════════════════════════════════════════════════════════════ */
+   133→   133→
+   134→   134→export default function ProfileTab() {
+   135→   135→  const [showModal, setShowModal] = useState(false);
+   136→   136→  const [modalContent, setModalContent] = useState<ModalContent>({ title: '', content: null });
+   137→   137→  const [showSwitchRole, setShowSwitchRole] = useState(false);
+   138→   138→
+   139→   139→  // Settings toggles
+   140→   140→  const [settingsState, setSettingsState] = useState({
+   141→   141→    notifications: true,
+   142→   142→    darkMode: true,
+   143→   143→    locationServices: true,
+   144→   144→    biometric: true,
+   145→   145→    twoFactor: true,
+   146→   146→  });
+   147→   147→
+   148→   148→  const { toast } = useToast();
+   149→   149→  const {
+   150→   150→    userName, userArea, logout, setShowAuth,
+   151→   151→    hasanatPoints, loyaltyTier, userRole, setUserRole, setActiveTab,
+   152→   152→    vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
+   153→   153→    vendorTotalEarnings, vendorPendingSettlement,
+   154→   154→    riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
+   155→   155→    orders, cartItems, referralCount,
+   156→   156→  } = useAppStore();
+   157→   157→
+   158→   158→  const accent = ROLE_ACCENT[userRole];
+   159→   159→  const currentMenu = userRole === 'vendor' ? vendorMenu : userRole === 'rider' ? riderMenu : customerMenu;
+   160→   160→
+   161→   161→  // Update rewards subtitle dynamically
+   162→   162→  const menuWithDynamicSubtitles = currentMenu.map(item => {
+   163→   163→    if (item.action === 'rewards') return { ...item, subtitle: `${hasanatPoints.toLocaleString()} points` };
+   164→   164→    if (item.action === 'notifications') return { ...item, subtitle: `${useAppStore.getState().unreadCount} unread` };
+   165→   165→    return item;
+   166→   166→  });
+   167→   167→
+   168→   168→  /* ── Display values per role ── */
+   169→   169→  const displayName = userRole === 'vendor'
+   170→   170→    ? (vendorStoreName || 'My Store')
+   171→   171→    : (userName || 'Guest');
+   172→   172→
+   173→   173→  const displayArea = userRole === 'vendor'
+   174→   174→    ? (vendorBusinessCategory || 'General')
+   175→   175→    : (userArea || 'Lagos, Nigeria');
+   176→   176→
+   177→   177→  /* ── Handlers ── */
+   178→   178→
+   179→   179→  const handleMenuClick = (action: string) => {
+   180→   180→    switch (action) {
+   181→   181→      case 'bnpl':
+   182→   182→        useAppStore.getState().setActiveModal('bnpl');
+   183→   183→        break;
+   184→   184→      case 'refer':
+   185→   185→        useAppStore.getState().setActiveModal('refer');
+   186→   186→        break;
+   187→   187→      case 'charity':
+   188→   188→        useAppStore.getState().setActiveModal('charity');
+   189→   189→        break;
+   190→   190→      case 'rewards':
+   191→   191→        useAppStore.getState().setActiveModal('rewards');
+   192→   192→        break;
+   193→   193→      case 'eco-impact':
+   194→   194→        useAppStore.getState().setActiveModal('eco-impact');
+   195→   195→        break;
+   196→   196→      case 'artisan-market':
+   197→   197→        useAppStore.getState().setActiveModal('artisan-market');
+   198→   198→        break;
+   199→   199→      case 'community':
+   200→   200→        useAppStore.getState().setActiveModal('community');
+   201→   201→        break;
+   202→   202→      case 'delivery-location':
+   203→   203→        useAppStore.getState().setActiveModal('delivery-location');
+   204→   204→        break;
+   205→   205→      case 'prayer-times':
+   206→   206→        useAppStore.getState().setActiveModal('prayer');
+   207→   207→        break;
+   208→   208→      case 'vendor-insights':
+   209→   209→        useAppStore.getState().setActiveModal('vendor-insights');
+   210→   210→        break;
+   211→   211→      case 'vendor-stock':
+   212→   212→        useAppStore.getState().setActiveModal('vendor-stock');
+   213→   213→        break;
+   214→   214→      case 'vendor-pricing':
+   215→   215→        useAppStore.getState().setActiveModal('vendor-pricing');
+   216→   216→        break;
+   217→   217→      case 'rider-performance':
+   218→   218→        useAppStore.getState().setActiveModal('rider-performance');
+   219→   219→        break;
+   220→   220→      case 'rider-smart-route':
+   221→   221→        useAppStore.getState().setActiveModal('rider-smart-route');
+   222→   222→        break;
+   223→   223→      case 'rider-power-finder':
+   224→   224→        useAppStore.getState().setActiveModal('rider-power-finder');
+   225→   225→        break;
+   226→   226→      case 'switch-role':
+   227→   227→        setShowSwitchRole(true);
+   228→   228→        break;
+   229→   229→      case 'notifications':
+   230→   230→        toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
+   231→   231→        break;
+   232→   232→      case 'security':
+   233→   233→        setModalContent({
+   234→   234→          title: 'Security & Privacy',
+   235→   235→          content: (
+   236→   236→            <div className="space-y-3">
+   237→   237→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   238→   238→                <div className="flex items-center gap-3">
+   239→   239→                  <Fingerprint className="w-5 h-5 text-[#13ec13]" />
+   240→   240→                  <div>
+   241→   241→                    <p className="text-white font-bold text-sm">Biometric Login</p>
+   242→   242→                    <p className="text-white/40 text-xs">Use fingerprint or Face ID</p>
+   243→   243→                  </div>
+   244→   244→                </div>
+   245→   245→                <ToggleSwitch
+   246→   246→                  enabled={settingsState.biometric}
+   247→   247→                  onToggle={() => {
+   248→   248→                    setSettingsState(s => ({ ...s, biometric: !s.biometric }));
+   249→   249→                    toast({ title: settingsState.biometric ? 'Biometric Disabled' : 'Biometric Enabled', description: settingsState.biometric ? 'Password login required' : 'You can now use fingerprint/Face ID' });
+   250→   250→                  }}
+   251→   251→                  label="Biometric Login"
+   252→   252→                />
+   253→   253→              </div>
+   254→   254→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   255→   255→                <div className="flex items-center gap-3">
+   256→   256→                  <Lock className="w-5 h-5 text-[#13ec13]" />
+   257→   257→                  <div>
+   258→   258→                    <p className="text-white font-bold text-sm">Two-Factor Auth</p>
+   259→   259→                    <p className="text-white/40 text-xs">Extra security for your account</p>
+   260→   260→                  </div>
+   261→   261→                </div>
+   262→   262→                <ToggleSwitch
+   263→   263→                  enabled={settingsState.twoFactor}
+   264→   264→                  onToggle={() => {
+   265→   265→                    setSettingsState(s => ({ ...s, twoFactor: !s.twoFactor }));
+   266→   266→                    toast({ title: settingsState.twoFactor ? '2FA Disabled' : '2FA Enabled', description: settingsState.twoFactor ? 'Less secure - consider re-enabling' : 'Your account is more secure now' });
+   267→   267→                  }}
+   268→   268→                  label="Two-Factor Auth"
+   269→   269→                />
+   270→   270→              </div>
+   271→   271→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   272→   272→                <div className="flex items-center gap-3">
+   273→   273→                  <Eye className="w-5 h-5 text-[#13ec13]" />
+   274→   274→                  <div>
+   275→   275→                    <p className="text-white font-bold text-sm">Data Encryption</p>
+   276→   276→                    <p className="text-white/40 text-xs">End-to-end encryption</p>
+   277→   277→                  </div>
+   278→   278→                </div>
+   279→   279→                <span className="text-[#13ec13] text-xs font-bold">Active</span>
+   280→   280→              </div>
+   281→   281→            </div>
+   282→   282→          ),
+   283→   283→        });
+   284→   284→        setShowModal(true);
+   285→   285→        break;
+   286→   286→      case 'settings':
+   287→   287→        setModalContent({
+   288→   288→          title: 'Settings',
+   289→   289→          content: (
+   290→   290→            <div className="space-y-3">
+   291→   291→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   292→   292→                <div className="flex items-center gap-3">
+   293→   293→                  <Globe className="w-5 h-5 text-white/40" />
+   294→   294→                  <div>
+   295→   295→                    <p className="text-white font-bold text-sm">Language</p>
+   296→   296→                    <p className="text-white/40 text-xs">English (US)</p>
+   297→   297→                  </div>
+   298→   298→                </div>
+   299→   299→                <ChevronRight className="w-4 h-4 text-white/20" />
+   300→   300→              </div>
+   301→   301→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   302→   302→                <div className="flex items-center gap-3">
+   303→   303→                  <Bell className="w-5 h-5 text-white/40" />
+   304→   304→                  <div>
+   305→   305→                    <p className="text-white font-bold text-sm">Notifications</p>
+   306→   306→                    <p className="text-white/40 text-xs">Push & Email</p>
+   307→   307→                  </div>
+   308→   308→                </div>
+   309→   309→                <ToggleSwitch
+   310→   310→                  enabled={settingsState.notifications}
+   311→   311→                  onToggle={() => {
+   312→   312→                    setSettingsState(s => ({ ...s, notifications: !s.notifications }));
+   313→   313→                    toast({ title: settingsState.notifications ? 'Notifications Off' : 'Notifications On', description: settingsState.notifications ? 'You won\'t receive push alerts' : 'You\'ll receive push & email alerts' });
+   314→   314→                  }}
+   315→   315→                  label="Notifications"
+   316→   316→                />
+   317→   317→              </div>
+   318→   318→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   319→   319→                <div className="flex items-center gap-3">
+   320→   320→                  <Moon className="w-5 h-5 text-white/40" />
+   321→   321→                  <div>
+   322→   322→                    <p className="text-white font-bold text-sm">Dark Mode</p>
+   323→   323→                    <p className="text-white/40 text-xs">Always on</p>
+   324→   324→                  </div>
+   325→   325→                </div>
+   326→   326→                <ToggleSwitch
+   327→   327→                  enabled={settingsState.darkMode}
+   328→   328→                  onToggle={() => {
+   329→   329→                    setSettingsState(s => ({ ...s, darkMode: !s.darkMode }));
+   330→   330→                    toast({ title: 'Dark Mode', description: 'Dark mode is always on in SwiftRamadan' });
+   331→   331→                  }}
+   332→   332→                  label="Dark Mode"
+   333→   333→                />
+   334→   334→              </div>
+   335→   335→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   336→   336→                <div className="flex items-center gap-3">
+   337→   337→                  <Map className="w-5 h-5 text-white/40" />
+   338→   338→                  <div>
+   339→   339→                    <p className="text-white font-bold text-sm">Location Services</p>
+   340→   340→                    <p className="text-white/40 text-xs">While using the app</p>
+   341→   341→                  </div>
+   342→   342→                </div>
+   343→   343→                <ToggleSwitch
+   344→   344→                  enabled={settingsState.locationServices}
+   345→   345→                  onToggle={() => {
+   346→   346→                    setSettingsState(s => ({ ...s, locationServices: !s.locationServices }));
+   347→   347→                    toast({ title: settingsState.locationServices ? 'Location Off' : 'Location On', description: settingsState.locationServices ? 'Some features may be limited' : 'Location access enabled' });
+   348→   348→                  }}
+   349→   349→                  label="Location Services"
+   350→   350→                />
+   351→   351→              </div>
+   352→   352→            </div>
+   353→   353→          ),
+   354→   354→        });
+   355→   355→        setShowModal(true);
+   356→   356→        break;
+   357→   357→    }
+   358→   358→  };
+   359→   359→
+   360→   360→  const handleSwitchRole = (newRole: 'customer' | 'vendor' | 'rider') => {
+   361→   361→    setUserRole(newRole);
+   362→   362→    setActiveTab(ROLE_DEFAULT_TAB[newRole]);
+   363→   363→    setShowSwitchRole(false);
+   364→   364→    const roleName = newRole.charAt(0).toUpperCase() + newRole.slice(1);
+   365→   365→    toast({
+   366→   366→      title: `Switched to ${roleName} mode ✨`,
+   367→   367→      description: `You're now using SwiftRamadan as a ${roleName.toLowerCase()}`,
+   368→   368→    });
+   369→   369→  };
+   370→   370→
+   371→   371→  const handleCharityClick = (item: typeof charityItems[0]) => {
+   372→   372→    if (item.amount > 0) {
+   373→   373→      useAppStore.getState().addToCart({
+   374→   374→        id: 500 + item.id,
+   375→   375→        name: `Donation: ${item.name}`,
+   376→   376→        price: item.amount,
+   377→   377→        image: '',
+   378→   378→      });
+   379→   379→      toast({ title: `${item.name} 💚`, description: `Donation of ${formatNaira(item.amount)} added to cart` });
+   380→   380→    } else {
+   381→   381→      toast({ title: 'Zakat Calculator 🧮', description: 'Calculate your Zakat based on your assets' });
+   382→   382→    }
+   383→   383→  };
+   384→   384→
+   385→   385→  const handleLogout = () => {
+   386→   386→    logout();
+   387→   387→  };
+   388→   388→
+   389→   389→  /* ══════════════════════ RENDER ══════════════════════ */
+   390→   390→
+   391→   391→  return (
+   392→   392→    <main className="flex-1 overflow-y-auto pb-32">
+   393→   393→
+   394→   394→      {/* ─── Profile Header ─── */}
+   395→   395→      <div className="px-4 pt-6 pb-2">
+   396→   396→        <div className="flex items-center gap-4">
+   397→   397→          {userRole === 'vendor' ? (
+   398→   398→            /* Vendor Header */
+   399→   399→            <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#FFD700]/40 bg-[#FFD700]/15"
+   400→   400→              style={{ boxShadow: '0 0 20px #FFD70015' }}>
+   401→   401→              <Store className="w-8 h-8 text-[#FFD700]" />
+   402→   402→            </div>
+   403→   403→          ) : userRole === 'rider' ? (
+   404→   404→            /* Rider Header */
+   405→   405→            <div className="relative">
+   406→   406→              <div className="w-16 h-16 rounded-full flex items-center justify-center border-2 border-[#3b82f6]/40 bg-[#3b82f6]/15"
+   407→   407→                style={{ boxShadow: '0 0 20px #3b82f615' }}>
+   408→   408→                <Bike className="w-8 h-8 text-[#3b82f6]" />
+   409→   409→              </div>
+   410→   410→              <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#05070A] ${
+   411→   411→                riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
+   412→   412→              }`} />
+   413→   413→            </div>
+   414→   414→          ) : (
+   415→   415→            /* Customer Header */
+   416→   416→            <div className="w-16 h-16 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
+   417→   417→              <User className="w-8 h-8 text-[#13ec13]" />
+   418→   418→            </div>
+   419→   419→          )}
+   420→   420→
+   421→   421→          <div className="flex-1">
+   422→   422→            <div className="flex items-center gap-2">
+   423→   423→              <h2 className="text-white text-xl font-bold">{displayName}</h2>
+   424→   424→              {userRole === 'vendor' && (
+   425→   425→                <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'}`} />
+   426→   426→              )}
+   427→   427→            </div>
+   428→   428→
+   429→   429→            {userRole === 'vendor' ? (
+   430→   430→              <>
+   431→   431→                <div className="flex items-center gap-2 mt-1">
+   432→   432→                  <span className="text-[#FFD700] text-[10px] font-bold bg-[#FFD700]/10 px-2 py-0.5 rounded-full border border-[#FFD700]/20">
+   433→   433→                    {vendorBusinessCategory || 'General'}
+   434→   434→                  </span>
+   435→   435→                </div>
+   436→   436→                <p className="text-white/40 text-xs mt-1">
+   437→   437→                  {vendorOnline ? '🟢 Online' : '⚫ Offline'} • Ramadan 2026
+   438→   438→                </p>
+   439→   439→              </>
+   440→   440→            ) : userRole === 'rider' ? (
+   441→   441→              <>
+   442→   442→                <div className="flex items-center gap-2 mt-1">
+   443→   443→                  <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
+   444→   444→                  <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+   445→   445→                    {riderOnline ? 'Online' : 'Offline'}
+   446→   446→                  </span>
+   447→   447→                  <span className="text-white/20 text-xs">•</span>
+   448→   448→                  <span className="material-symbols-outlined text-[#FFD700] text-sm">workspace_premium</span>
+   449→   449→                  <span className="text-[#FFD700] text-xs font-bold">Elite Rider</span>
+   450→   450→                </div>
+   451→   451→                <p className="text-white/50 text-xs mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
+   452→   452→              </>
+   453→   453→            ) : (
+   454→   454→              <>
+   455→   455→                <p className="text-white/50 text-sm">{displayArea}</p>
+   456→   456→                <div className="flex items-center gap-1 mt-1">
+   457→   457→                  <Award className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
+   458→   458→                  <span className="text-[#FFD700] text-xs font-bold">{loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member</span>
+   459→   459→                </div>
+   460→   460→              </>
+   461→   461→            )}
+   462→   462→          </div>
+   463→   463→
+   464→   464→          <button
+   465→   465→            onClick={() => useAppStore.getState().setShowOnboarding(true)}
+   466→   466→            className="w-10 h-10 bg-[#1A1D26] rounded-xl flex items-center justify-center border border-white/10"
+   467→   467→          >
+   468→   468→            <Settings className="w-5 h-5 text-white/50" />
+   469→   469→          </button>
+   470→   470→        </div>
+   471→   471→      </div>
+   472→   472→
+   473→   473→      {/* ─── Stats Row ─── */}
+   474→   474→      <div className="px-4 mt-4">
+   475→   475→        <div className="grid grid-cols-3 gap-3">
+   476→   476→          {userRole === 'vendor' ? (
+   477→   477→            <>
+   478→   478→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   479→   479→                <p className="text-[#13ec13] text-lg font-black">{formatNaira(vendorBalance)}</p>
+   480→   480→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Revenue</p>
+   481→   481→              </div>
+   482→   482→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   483→   483→                <p className="text-[#FFD700] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
+   484→   484→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Orders Today</p>
+   485→   485→              </div>
+   486→   486→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   487→   487→                <p className="text-cyan-400 text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
+   488→   488→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Avg Order</p>
+   489→   489→              </div>
+   490→   490→            </>
+   491→   491→          ) : userRole === 'rider' ? (
+   492→   492→            <>
+   493→   493→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   494→   494→                <div className="w-8 h-8 bg-[#13ec13]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   495→   495→                  <DollarSign className="w-4 h-4 text-[#13ec13]" />
+   496→   496→                </div>
+   497→   497→                <p className="text-[#13ec13] text-lg font-black">{formatNaira(riderEarnings)}</p>
+   498→   498→                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
+   499→   499→              </div>
+   500→   500→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   501→   501→                <div className="w-8 h-8 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   502→   502→                  <Zap className="w-4 h-4 text-[#3b82f6]" />
+   503→   503→                </div>
+   504→   504→                <p className="text-[#3b82f6] text-lg font-black">{riderCompletedToday}</p>
+   505→   505→                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Completed</p>
+   506→   506→              </div>
+   507→   507→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   508→   508→                <div className="w-8 h-8 bg-[#FFD700]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   509→   509→                  <Star className="w-4 h-4 text-[#FFD700]" />
+   510→   510→                </div>
+   511→   511→                <p className="text-[#FFD700] text-lg font-black">{riderRating}</p>
+   512→   512→                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Rating</p>
+   513→   513→              </div>
+   514→   514→            </>
+   515→   515→          ) : (
+   516→   516→            <>
+   517→   517→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   518→   518→                <p className="text-[#13ec13] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
+   519→   519→                <p className="text-white/40 text-[10px] font-bold uppercase">Points</p>
+   520→   520→              </div>
+   521→   521→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   522→   522→                <p className="text-[#FFD700] text-xl font-black">{orders.length}</p>
+   523→   523→                <p className="text-white/40 text-[10px] font-bold uppercase">Orders</p>
+   524→   524→              </div>
+   525→   525→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   526→   526→                <p className="text-white text-xl font-black">{referralCount}</p>
+   527→   527→                <p className="text-white/40 text-[10px] font-bold uppercase">Referrals</p>
+   528→   528→              </div>
+   529→   529→            </>
+   530→   530→          )}
+   531→   531→        </div>
+   532→   532→      </div>
+   533→   533→
+   534→   534→      {/* ─── Eco Impact ─── */}
+   535→   535→      <div className="px-4 mt-6">
+   536→   536→        <button
+   537→   537→          onClick={() => handleMenuClick('eco-impact')}
+   538→   538→          className="w-full text-left"
+   539→   539→        >
+   540→   540→          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#05070A] border border-emerald-500/20 p-5 hover:border-emerald-500/30 transition-colors">
+   541→   541→            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-[40px]" />
+   542→   542→            <div className="flex items-center gap-3 mb-3">
+   543→   543→              <Leaf className="w-5 h-5 text-emerald-400" />
+   544→   544→              <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Eco Impact</span>
+   545→   545→            </div>
+   546→   546→            <div className="grid grid-cols-3 gap-3">
+   547→   547→              <div className="text-center">
+   548→   548→                <p className="text-white text-lg font-black">{ecoImpactData.co2Saved}</p>
+   549→   549→                <p className="text-white/40 text-[10px]">CO₂ Saved</p>
+   550→   550→              </div>
+   551→   551→              <div className="text-center">
+   552→   552→                <p className="text-white text-lg font-black">{ecoImpactData.ecoOrders}</p>
+   553→   553→                <p className="text-white/40 text-[10px]">Eco Orders</p>
+   554→   554→              </div>
+   555→   555→              <div className="text-center">
+   556→   556→                <p className="text-white text-lg font-black">₦3K</p>
+   557→   557→                <p className="text-white/40 text-[10px]">Donated</p>
+   558→   558→              </div>
+   559→   559→            </div>
+   560→   560→          </div>
+   561→   561→        </button>
+   562→   562→      </div>
+   563→   563→
+   564→   564→      {/* ─── Menu Items ─── */}
+   565→   565→      <div className="px-4 mt-6">
+   566→   566→        <div className="space-y-2">
+   567→   567→          {menuWithDynamicSubtitles.map((item, i) => {
+   568→   568→            const Icon = item.icon;
+   569→   569→            const isSwitchRole = item.action === 'switch-role';
+   570→   570→            return (
+   571→   571→              <motion.button
+   572→   572→                key={i}
+   573→   573→                initial={{ opacity: 0, x: -10 }}
+   574→   574→                animate={{ opacity: 1, x: 0 }}
+   575→   575→                transition={{ delay: i * 0.03 }}
+   576→   576→                onClick={() => handleMenuClick(item.action)}
+   577→   577→                className={`flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border transition-colors w-full text-left ${
+   578→   578→                  isSwitchRole
+   579→   579→                    ? 'border-white/10 hover:border-white/20'
+   580→   580→                    : 'border-white/5 hover:border-white/10'
+   581→   581→                }`}
+   582→   582→              >
+   583→   583→                <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
+   584→   584→                  <Icon className={`w-5 h-5 ${item.color}`} />
+   585→   585→                </div>
+   586→   586→                <div className="flex-1">
+   587→   587→                  <p className="text-white font-bold text-sm">{item.label}</p>
+   588→   588→                  <p className="text-white/40 text-xs">{item.subtitle}</p>
+   589→   589→                </div>
+   590→   590→                <ChevronRight className="w-4 h-4 text-white/20" />
+   591→   591→              </motion.button>
+   592→   592→            );
+   593→   593→          })}
+   594→   594→        </div>
+   595→   595→      </div>
+   596→   596→
+   597→   597→      {/* ─── Logout Button ─── */}
+   598→   598→      <div className="px-4 mt-4">
+   599→   599→        <button
+   600→   600→          onClick={handleLogout}
+   601→   601→          className="flex items-center gap-4 p-4 bg-red-500/5 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
+   602→   602→        >
+   603→   603→          <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center shrink-0">
+   604→   604→            <LogOut className="w-5 h-5 text-red-400" />
+   605→   605→          </div>
+   606→   606→          <div className="flex-1">
+   607→   607→            <p className="text-red-400 font-bold text-sm">Log Out</p>
+   608→   608→            <p className="text-red-400/40 text-xs">Sign out of your account</p>
+   609→   609→          </div>
+   610→   610→        </button>
+   611→   611→      </div>
+   612→   612→
+   613→   613→      {/* ─── Charity Quick Actions (Customer only) ─── */}
+   614→   614→      {userRole === 'customer' && (
+   615→   615→        <div className="px-4 mt-6 mb-6">
+   616→   616→          <h3 className="text-white text-lg font-extrabold mb-4 flex items-center gap-2">
+   617→   617→            <Heart className="w-5 h-5 text-rose-400" />
+   618→   618→            Give Back This Ramadan
+   619→   619→          </h3>
+   620→   620→          <div className="grid grid-cols-2 gap-3">
+   621→   621→            {charityItems.slice(0, 4).map((item) => (
+   622→   622→              <button
+   623→   623→                key={item.id}
+   624→   624→                onClick={() => handleCharityClick(item)}
+   625→   625→                className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 cursor-pointer hover:border-white/10 transition-colors text-left"
+   626→   626→              >
+   627→   627→                <span className="material-symbols-outlined text-[#FFD700] text-2xl mb-2">{item.icon}</span>
+   628→   628→                <p className="text-white font-bold text-sm">{item.name}</p>
+   629→   629→                <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
+   630→   630→                {item.amount > 0 && (
+   631→   631→                  <p className="text-[#13ec13] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
+   632→   632→                )}
+   633→   633→              </button>
+   634→   634→            ))}
+   635→   635→          </div>
+   636→   636→        </div>
+   637→   637→      )}
+   638→   638→
+   639→   639→      {/* ─── Detail Modal (Settings / Security) ─── */}
+   640→   640→      <AnimatePresence>
+   641→   641→        {showModal && (
+   642→   642→          <>
+   643→   643→            <motion.div
+   644→   644→              initial={{ opacity: 0 }}
+   645→   645→              animate={{ opacity: 1 }}
+   646→   646→              exit={{ opacity: 0 }}
+   647→   647→              className="fixed inset-0 bg-black/70 z-[70]"
+   648→   648→              onClick={() => setShowModal(false)}
+   649→   649→            />
+   650→   650→            <motion.div
+   651→   651→              initial={{ y: '100%' }}
+   652→   652→              animate={{ y: 0 }}
+   653→   653→              exit={{ y: '100%' }}
+   654→   654→              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   655→   655→              className="fixed bottom-0 left-0 right-0 max-h-[70vh] bg-[#0F1117] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
+   656→   656→            >
+   657→   657→              <div className="flex items-center justify-between p-4 border-b border-white/5">
+   658→   658→                <h2 className="text-white font-bold">{modalContent.title}</h2>
+   659→   659→                <button
+   660→   660→                  onClick={() => setShowModal(false)}
+   661→   661→                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   662→   662→                >
+   663→   663→                  <X className="w-4 h-4 text-white/60" />
+   664→   664→                </button>
+   665→   665→              </div>
+   666→   666→              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+   667→   667→                {modalContent.content}
+   668→   668→              </div>
+   669→   669→            </motion.div>
+   670→   670→          </>
+   671→   671→        )}
+   672→   672→      </AnimatePresence>
+   673→   673→
+   674→   674→      {/* ─── Switch Role Modal ─── */}
+   675→   675→      <AnimatePresence>
+   676→   676→        {showSwitchRole && (
+   677→   677→          <>
+   678→   678→            <motion.div
+   679→   679→              initial={{ opacity: 0 }}
+   680→   680→              animate={{ opacity: 1 }}
+   681→   681→              exit={{ opacity: 0 }}
+   682→   682→              className="fixed inset-0 bg-black/80 z-[90] backdrop-blur-sm"
+   683→   683→              onClick={() => setShowSwitchRole(false)}
+   684→   684→            />
+   685→   685→            <motion.div
+   686→   686→              initial={{ y: '100%' }}
+   687→   687→              animate={{ y: 0 }}
+   688→   688→              exit={{ y: '100%' }}
+   689→   689→              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   690→   690→              className="fixed bottom-0 left-0 right-0 bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+   691→   691→            >
+   692→   692→              {/* Header */}
+   693→   693→              <div className="flex items-center justify-between p-5 border-b border-white/5">
+   694→   694→                <div>
+   695→   695→                  <h2 className="text-white text-lg font-bold">Switch Role</h2>
+   696→   696→                  <p className="text-white/40 text-xs mt-0.5">Choose how you want to use SwiftRamadan</p>
+   697→   697→                </div>
+   698→   698→                <button
+   699→   699→                  onClick={() => setShowSwitchRole(false)}
+   700→   700→                  className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   701→   701→                >
+   702→   702→                  <X className="w-4 h-4 text-white/60" />
+   703→   703→                </button>
+   704→   704→              </div>
+   705→   705→
+   706→   706→              {/* Role Cards */}
+   707→   707→              <div className="p-5 space-y-3">
+   708→   708→                {roleCards.map((card, i) => {
+   709→   709→                  const Icon = card.icon;
+   710→   710→                  const isActive = userRole === card.role;
+   711→   711→                  return (
+   712→   712→                    <motion.button
+   713→   713→                      key={card.role}
+   714→   714→                      initial={{ opacity: 0, y: 20 }}
+   715→   715→                      animate={{ opacity: 1, y: 0 }}
+   716→   716→                      transition={{ delay: i * 0.08 }}
+   717→   717→                      onClick={() => handleSwitchRole(card.role)}
+   718→   718→                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${
+   719→   719→                        isActive
+   720→   720→                          ? 'bg-white/5 border-white/20'
+   721→   721→                          : 'bg-[#1A1D26]/40 border-white/5 hover:border-white/15 hover:bg-[#1A1D26]/80'
+   722→   722→                      }`}
+   723→   723→                    >
+   724→   724→                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${card.bgClass}`}
+   725→   725→                        style={{ boxShadow: isActive ? `0 0 20px ${card.accent}20` : 'none' }}>
+   726→   726→                        <Icon className={`w-7 h-7 ${card.iconColor}`} />
+   727→   727→                      </div>
+   728→   728→                      <div className="flex-1 min-w-0">
+   729→   729→                        <div className="flex items-center gap-2">
+   730→   730→                          <p className="text-white font-bold text-base">{card.title}</p>
+   731→   731→                          {isActive && (
+   732→   732→                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/10 text-white/60">
+   733→   733→                              Current
+   734→   734→                            </span>
+   735→   735→                          )}
+   736→   736→                        </div>
+   737→   737→                        <p className="text-white/40 text-xs mt-0.5">{card.description}</p>
+   738→   738→                      </div>
+   739→   739→                      {!isActive && (
+   740→   740→                        <ChevronRight className="w-5 h-5 text-white/20 shrink-0" />
+   741→   741→                      )}
+   742→   742→                    </motion.button>
+   743→   743→                  );
+   744→   744→                })}
+   745→   745→              </div>
+   746→   746→
+   747→   747→              {/* Bottom safe area */}
+   748→   748→              <div className="h-6" />
+   749→   749→            </motion.div>
+   750→   750→          </>
+   751→   751→        )}
+   752→   752→      </AnimatePresence>
+   753→   753→
+   754→   754→    </main>
+   755→   755→  );
+   756→   756→}
+   757→   757→
