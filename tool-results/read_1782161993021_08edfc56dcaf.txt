@@ -1,0 +1,557 @@
+     1→     1→     1→'use client';
+     2→     2→     2→
+     3→     3→     3→import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation } from 'lucide-react';
+     4→     4→     4→import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
+     5→     5→     5→import { useAppStore } from '@/lib/store';
+     6→     6→     6→import { motion } from 'framer-motion';
+     7→     7→     7→import { useState, useEffect, useRef } from 'react';
+     8→     8→     8→import { useToast } from '@/hooks/use-toast';
+     9→     9→     9→
+    10→    10→    10→const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
+    11→    11→    11→  replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
+    12→    12→    12→  groups: { icon: Users, action: (s) => s.setActiveModal('groupBuy') },
+    13→    13→    13→  card_giftcard: { icon: Gift, action: (s) => s.setActiveModal('giftcard') },
+    14→    14→    14→  restaurant: { icon: BookOpen, action: (s) => s.setActiveModal('recipes') },
+    15→    15→    15→  mosque: { icon: Landmark, action: (s) => s.setActiveModal('mosque') },
+    16→    16→    16→  local_shipping: { icon: MapPin, action: (s) => s.setActiveTab('orders') },
+    17→    17→    17→};
+    18→    18→    18→
+    19→    19→    19→export default function HomeTab() {
+    20→    20→    20→  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory } = useAppStore();
+    21→    21→    21→  const { toast } = useToast();
+    22→    22→    22→  const [currentSlide, setCurrentSlide] = useState(0);
+    23→    23→    23→  const [isLoading, setIsLoading] = useState(true);
+    24→    24→    24→  const carouselRef = useRef<HTMLDivElement>(null);
+    25→    25→    25→
+    26→    26→    26→  // Filtered meals based on active category
+    27→    27→    27→  const filteredMeals = activeCategory
+    28→    28→    28→    ? trendingMeals.filter(m => m.category === activeCategory)
+    29→    29→    29→    : trendingMeals;
+    30→    30→    30→
+    31→    31→    31→  // Auto-scroll hero carousel
+    32→    32→    32→  useEffect(() => {
+    33→    33→    33→    const timer = setInterval(() => {
+    34→    34→    34→      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+    35→    35→    35→    }, 4000);
+    36→    36→    36→    return () => clearInterval(timer);
+    37→    37→    37→  }, []);
+    38→    38→    38→
+    39→    39→    39→  // Scroll carousel when slide changes
+    40→    40→    40→  useEffect(() => {
+    41→    41→    41→    if (carouselRef.current) {
+    42→    42→    42→      const slideWidth = carouselRef.current.scrollWidth / heroSlides.length;
+    43→    43→    43→      carouselRef.current.scrollTo({ left: slideWidth * currentSlide, behavior: 'smooth' });
+    44→    44→    44→    }
+    45→    45→    45→  }, [currentSlide]);
+    46→    46→    46→
+    47→    47→    47→  // Simulate loading
+    48→    48→    48→  useEffect(() => {
+    49→    49→    49→    const timer = setTimeout(() => setIsLoading(false), 800);
+    50→    50→    50→    return () => clearTimeout(timer);
+    51→    51→    51→  }, []);
+    52→    52→    52→
+    53→    53→    53→  const handleCategoryClick = (category: typeof categories[0]) => {
+    54→    54→    54→    if (activeCategory === category.name) {
+    55→    55→    55→      // Toggle off if already selected
+    56→    56→    56→      setActiveCategory(null);
+    57→    57→    57→    } else {
+    58→    58→    58→      setActiveCategory(category.name);
+    59→    59→    59→    }
+    60→    60→    60→  };
+    61→    61→    61→
+    62→    62→    62→  const handleMealClick = (id: number) => {
+    63→    63→    63→    setSelectedProduct(id);
+    64→    64→    64→    setActiveModal('product');
+    65→    65→    65→  };
+    66→    66→    66→
+    67→    67→    67→  const handleQuickAdd = (item: { id: number; name: string; price: number; image: string }) => {
+    68→    68→    68→    addToCart({
+    69→    69→    69→      id: item.id,
+    70→    70→    70→      name: item.name,
+    71→    71→    71→      price: item.price,
+    72→    72→    72→      image: item.image,
+    73→    73→    73→    });
+    74→    74→    74→    toast({ title: 'Added to Cart! 🛒', description: `${item.name} added to your cart` });
+    75→    75→    75→  };
+    76→    76→    76→
+    77→    77→    77→  const handleQuickAction = (action: typeof quickActions[0]) => {
+    78→    78→    78→    const config = quickActionConfig[action.icon];
+    79→    79→    79→    if (config) {
+    80→    80→    80→      config.action(useAppStore.getState());
+    81→    81→    81→    } else {
+    82→    82→    82→      toast({ title: action.name, description: `${action.name} feature coming soon!` });
+    83→    83→    83→    }
+    84→    84→    84→  };
+    85→    85→    85→
+    86→    86→    86→  if (isLoading) {
+    87→    87→    87→    return (
+    88→    88→    88→      <main className="flex-1 overflow-y-auto pb-32">
+    89→    89→    89→        <div className="px-4 pt-4">
+    90→    90→    90→          <div className="animate-pulse w-full h-12 bg-[#1A1D26] rounded-xl mb-4" />
+    91→    91→    91→          <div className="animate-pulse w-full aspect-[16/9] bg-[#1A1D26] rounded-2xl mb-4" />
+    92→    92→    92→          <div className="flex gap-6 overflow-hidden">
+    93→    93→    93→            {[1, 2, 3, 4].map(i => (
+    94→    94→    94→              <div key={i} className="flex flex-col items-center gap-2 min-w-[70px]">
+    95→    95→    95→                <div className="w-16 h-16 bg-[#1A1D26] rounded-full animate-pulse" />
+    96→    96→    96→                <div className="w-12 h-2 bg-[#1A1D26] rounded animate-pulse" />
+    97→    97→    97→              </div>
+    98→    98→    98→            ))}
+    99→    99→    99→          </div>
+   100→   100→   100→          <div className="animate-pulse w-full h-64 bg-[#1A1D26] rounded-2xl mt-6" />
+   101→   101→   101→        </div>
+   102→   102→   102→      </main>
+   103→   103→   103→    );
+   104→   104→   104→  }
+   105→   105→   105→
+   106→   106→   106→  return (
+   107→   107→   107→    <main className="flex-1 overflow-y-auto pb-32">
+   108→   108→   108→      {/* Search Bar */}
+   109→   109→   109→      <div className="px-4 pt-4 pb-2 flex items-center gap-2">
+   110→   110→   110→        <button
+   111→   111→   111→          onClick={() => setShowSearch(true)}
+   112→   112→   112→          className="flex-1 flex items-center gap-3 bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3.5 hover:border-white/10 transition-colors"
+   113→   113→   113→        >
+   114→   114→   114→          <Search className="w-4 h-4 text-white/30" />
+   115→   115→   115→          <span className="text-white/30 text-sm">Search meals, groceries, restaurants...</span>
+   116→   116→   116→          <span className="ml-auto text-[10px] text-white/20 font-mono bg-white/5 px-2 py-0.5 rounded">⌘K</span>
+   117→   117→   117→        </button>
+   118→   118→   118→        <button
+   119→   119→   119→          onClick={() => setActiveModal('visual-search')}
+   120→   120→   120→          aria-label="Snap to Shop - visual search"
+   121→   121→   121→          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-xl bg-[#13ec13]/10 border border-[#13ec13]/30 hover:bg-[#13ec13]/20 active:scale-95 transition-all relative"
+   122→   122→   122→        >
+   123→   123→   123→          <ScanLine className="w-5 h-5 text-[#13ec13]" />
+   124→   124→   124→          <motion.span
+   125→   125→   125→            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FFD700]"
+   126→   126→   126→            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+   127→   127→   127→            transition={{ duration: 1.6, repeat: Infinity }}
+   128→   128→   128→          />
+   129→   129→   129→        </button>
+   130→   130→   130→      </div>
+   131→   131→   131→
+   132→   132→   132→      {/* AI Shock Features Showcase */}
+   133→   133→   133→      <div className="px-4 pt-3 pb-2">
+   134→   134→   134→        <motion.div
+   135→   135→   135→          initial={{ opacity: 0, y: 12 }}
+   136→   136→   136→          animate={{ opacity: 1, y: 0 }}
+   137→   137→   137→          transition={{ duration: 0.4 }}
+   138→   138→   138→          className="rounded-3xl overflow-hidden relative border border-white/10"
+   139→   139→   139→          style={{
+   140→   140→   140→            background: 'linear-gradient(135deg, rgba(19,236,19,0.08) 0%, rgba(255,215,0,0.06) 50%, rgba(59,130,246,0.08) 100%)',
+   141→   141→   141→          }}
+   142→   142→   142→        >
+   143→   143→   143→          {/* Animated glow orbs */}
+   144→   144→   144→          <motion.div
+   145→   145→   145→            className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[#13ec13]/20 blur-3xl"
+   146→   146→   146→            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
+   147→   147→   147→            transition={{ duration: 4, repeat: Infinity }}
+   148→   148→   148→          />
+   149→   149→   149→          <motion.div
+   150→   150→   150→            className="absolute -bottom-12 -left-12 w-32 h-32 rounded-full bg-[#FFD700]/20 blur-3xl"
+   151→   151→   151→            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
+   152→   152→   152→            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+   153→   153→   153→          />
+   154→   154→   154→
+   155→   155→   155→          <div className="relative z-10 p-4">
+   156→   156→   156→            {/* Header */}
+   157→   157→   157→            <div className="flex items-center justify-between mb-3">
+   158→   158→   158→              <div className="flex items-center gap-2">
+   159→   159→   159→                <motion.div
+   160→   160→   160→                  animate={{ rotate: [0, 10, -10, 0] }}
+   161→   161→   161→                  transition={{ duration: 3, repeat: Infinity }}
+   162→   162→   162→                  className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#13ec13] to-[#FFD700] flex items-center justify-center"
+   163→   163→   163→                >
+   164→   164→   164→                  <Sparkles className="w-4 h-4 text-black" />
+   165→   165→   165→                </motion.div>
+   166→   166→   166→                <div>
+   167→   167→   167→                  <h3 className="text-white text-sm font-black tracking-tight leading-none">AI Shock Features</h3>
+   168→   168→   168→                  <p className="text-white/40 text-[10px] font-medium mt-0.5">Powered by Safa AI</p>
+   169→   169→   169→                </div>
+   170→   170→   170→              </div>
+   171→   171→   171→              <span className="px-2 py-0.5 rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30 text-[#FFD700] text-[9px] font-black uppercase tracking-wider">
+   172→   172→   172→                New
+   173→   173→   173→              </span>
+   174→   174→   174→            </div>
+   175→   175→   175→
+   176→   176→   176→            {/* Feature Grid - 4 shocking AI features */}
+   177→   177→   177→            <div className="grid grid-cols-4 gap-2">
+   178→   178→   178→              {/* AI Recipe Generator */}
+   179→   179→   179→              <motion.button
+   180→   180→   180→                whileTap={{ scale: 0.95 }}
+   181→   181→   181→                onClick={() => setActiveModal('ai-recipe')}
+   182→   182→   182→                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-[#13ec13]/40 transition-all group"
+   183→   183→   183→              >
+   184→   184→   184→                <div className="w-9 h-9 rounded-xl bg-[#13ec13]/15 flex items-center justify-center group-hover:bg-[#13ec13]/25 transition-colors">
+   185→   185→   185→                  <ChefHat className="w-4 h-4 text-[#13ec13]" />
+   186→   186→   186→                </div>
+   187→   187→   187→                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">AI Chef</span>
+   188→   188→   188→              </motion.button>
+   189→   189→   189→
+   190→   190→   190→              {/* Visual Snap-to-Shop */}
+   191→   191→   191→              <motion.button
+   192→   192→   192→                whileTap={{ scale: 0.95 }}
+   193→   193→   193→                onClick={() => setActiveModal('visual-search')}
+   194→   194→   194→                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-[#FFD700]/40 transition-all group"
+   195→   195→   195→              >
+   196→   196→   196→                <div className="w-9 h-9 rounded-xl bg-[#FFD700]/15 flex items-center justify-center group-hover:bg-[#FFD700]/25 transition-colors">
+   197→   197→   197→                  <ScanLine className="w-4 h-4 text-[#FFD700]" />
+   198→   198→   198→                </div>
+   199→   199→   199→                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Snap Shop</span>
+   200→   200→   200→              </motion.button>
+   201→   201→   201→
+   202→   202→   202→              {/* Trending in Lagos */}
+   203→   203→   203→              <motion.button
+   204→   204→   204→                whileTap={{ scale: 0.95 }}
+   205→   205→   205→                onClick={() => setActiveModal('trending')}
+   206→   206→   206→                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-blue-400/40 transition-all group relative"
+   207→   207→   207→              >
+   208→   208→   208→                <div className="w-9 h-9 rounded-xl bg-blue-400/15 flex items-center justify-center group-hover:bg-blue-400/25 transition-colors">
+   209→   209→   209→                  <TrendingUp className="w-4 h-4 text-blue-400" />
+   210→   210→   210→                </div>
+   211→   211→   211→                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Trending</span>
+   212→   212→   212→                <motion.span
+   213→   213→   213→                  className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500"
+   214→   214→   214→                  animate={{ opacity: [1, 0.3, 1] }}
+   215→   215→   215→                  transition={{ duration: 1.5, repeat: Infinity }}
+   216→   216→   216→                />
+   217→   217→   217→              </motion.button>
+   218→   218→   218→
+   219→   219→   219→              {/* Live Tracking */}
+   220→   220→   220→              <motion.button
+   221→   221→   221→                whileTap={{ scale: 0.95 }}
+   222→   222→   222→                onClick={() => setActiveModal('live-tracking')}
+   223→   223→   223→                className="flex flex-col items-center gap-1.5 p-2.5 rounded-2xl bg-[#05070A]/60 border border-white/5 hover:border-emerald-400/40 transition-all group"
+   224→   224→   224→              >
+   225→   225→   225→                <div className="w-9 h-9 rounded-xl bg-emerald-400/15 flex items-center justify-center group-hover:bg-emerald-400/25 transition-colors">
+   226→   226→   226→                  <Navigation className="w-4 h-4 text-emerald-400" />
+   227→   227→   227→                </div>
+   228→   228→   228→                <span className="text-white/70 text-[9px] font-bold text-center leading-tight">Live Track</span>
+   229→   229→   229→              </motion.button>
+   230→   230→   230→            </div>
+   231→   231→   231→          </div>
+   232→   232→   232→        </motion.div>
+   233→   233→   233→      </div>
+   234→   234→   234→
+   235→   235→   235→      {/* Hero Carousel */}
+   236→   236→   236→      <div className="relative pt-2">
+   237→   237→   237→        <div
+   238→   238→   238→          ref={carouselRef}
+   239→   239→   239→          className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
+   240→   240→   240→        >
+   241→   241→   241→          <div className="flex items-stretch px-4 gap-4">
+   242→   242→   242→            {heroSlides.map((slide, index) => (
+   243→   243→   243→              <motion.div
+   244→   244→   244→                key={slide.id}
+   245→   245→   245→                className="flex h-full flex-1 flex-col gap-3 rounded-2xl min-w-[300px] cursor-pointer"
+   246→   246→   246→                onClick={() => handleMealClick(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100)}
+   247→   247→   247→                whileTap={{ scale: 0.98 }}
+   248→   248→   248→              >
+   249→   249→   249→                <div
+   250→   250→   250→                  className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/5"
+   251→   251→   251→                  style={{ backgroundImage: `url("${slide.image}")` }}
+   252→   252→   252→                >
+   253→   253→   253→                  <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
+   254→   254→   254→                  {slide.badge && (
+   255→   255→   255→                    <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
+   256→   256→   256→                      <Star className="w-3 h-3 text-black fill-black" />
+   257→   257→   257→                      <span className="text-black text-[10px] font-bold uppercase tracking-wider">{slide.badge}</span>
+   258→   258→   258→                    </div>
+   259→   259→   259→                  )}
+   260→   260→   260→                </div>
+   261→   261→   261→                <div className="px-1">
+   262→   262→   262→                  <p className="text-white text-lg font-bold leading-tight">{slide.title}</p>
+   263→   263→   263→                  <p className="text-[#13ec13]/80 text-sm font-medium flex items-center gap-1">
+   264→   264→   264→                    <Zap className="w-3 h-3" />
+   265→   265→   265→                    {slide.subtitle}
+   266→   266→   266→                  </p>
+   267→   267→   267→                </div>
+   268→   268→   268→              </motion.div>
+   269→   269→   269→            ))}
+   270→   270→   270→          </div>
+   271→   271→   271→        </div>
+   272→   272→   272→        {/* Slide indicators */}
+   273→   273→   273→        <div className="flex justify-center gap-1.5 mt-1">
+   274→   274→   274→          {heroSlides.map((_, i) => (
+   275→   275→   275→            <button
+   276→   276→   276→              key={i}
+   277→   277→   277→              onClick={() => setCurrentSlide(i)}
+   278→   278→   278→              className={`h-1.5 rounded-full transition-all duration-300 ${
+   279→   279→   279→                i === currentSlide ? 'w-6 bg-[#13ec13]' : 'w-1.5 bg-white/20'
+   280→   280→   280→              }`}
+   281→   281→   281→            />
+   282→   282→   282→          ))}
+   283→   283→   283→        </div>
+   284→   284→   284→      </div>
+   285→   285→   285→
+   286→   286→   286→      {/* Category Circles */}
+   287→   287→   287→      <div className="px-4 py-4">
+   288→   288→   288→        <div className="flex w-full overflow-x-auto gap-6 pb-2 no-scrollbar">
+   289→   289→   289→          {categories.map((cat) => {
+   290→   290→   290→            const isActive = activeCategory === cat.name || (!activeCategory && cat.id === 1);
+   291→   291→   291→            return (
+   292→   292→   292→              <button
+   293→   293→   293→                key={cat.id}
+   294→   294→   294→                onClick={() => handleCategoryClick(cat)}
+   295→   295→   295→                className="flex flex-col items-center gap-2 min-w-[70px]"
+   296→   296→   296→              >
+   297→   297→   297→                <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${isActive ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${isActive ? 'green-glow' : ''} hover:border-[#13ec13]/50 transition-colors`}>
+   298→   298→   298→                  <div
+   299→   299→   299→                    className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
+   300→   300→   300→                    style={{ backgroundImage: `url("${cat.image}")` }}
+   301→   301→   301→                  />
+   302→   302→   302→                </div>
+   303→   303→   303→                <p className={`text-[11px] font-bold whitespace-nowrap ${isActive ? 'text-white/90' : 'text-white/60'}`}>{cat.name}</p>
+   304→   304→   304→              </button>
+   305→   305→   305→            );
+   306→   306→   306→          })}
+   307→   307→   307→        </div>
+   308→   308→   308→      </div>
+   309→   309→   309→
+   310→   310→   310→      {/* Active category filter indicator */}
+   311→   311→   311→      {activeCategory && (
+   312→   312→   312→        <div className="px-4 pb-2">
+   313→   313→   313→          <div className="flex items-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 rounded-xl px-3 py-2">
+   314→   314→   314→            <SlidersHorizontal className="w-3.5 h-3.5 text-[#13ec13]" />
+   315→   315→   315→            <span className="text-[#13ec13] text-xs font-bold">Filtered by: {activeCategory}</span>
+   316→   316→   316→            <button
+   317→   317→   317→              onClick={() => setActiveCategory(null)}
+   318→   318→   318→              className="ml-auto p-0.5 hover:bg-[#13ec13]/10 rounded-full transition-colors"
+   319→   319→   319→            >
+   320→   320→   320→              <X className="w-3.5 h-3.5 text-[#13ec13]/60" />
+   321→   321→   321→            </button>
+   322→   322→   322→          </div>
+   323→   323→   323→        </div>
+   324→   324→   324→      )}
+   325→   325→   325→
+   326→   326→   326→      {/* Quick Actions */}
+   327→   327→   327→      <div className="px-4 py-2">
+   328→   328→   328→        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+   329→   329→   329→          {quickActions.map((action) => {
+   330→   330→   330→            const config = quickActionConfig[action.icon];
+   331→   331→   331→            const Icon = config?.icon || Zap;
+   332→   332→   332→            return (
+   333→   333→   333→              <motion.button
+   334→   334→   334→                key={action.id}
+   335→   335→   335→                whileTap={{ scale: 0.95 }}
+   336→   336→   336→                onClick={() => handleQuickAction(action)}
+   337→   337→   337→                className="flex flex-col items-center gap-2 min-w-[72px] p-3 bg-[#1A1D26]/60 rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
+   338→   338→   338→              >
+   339→   339→   339→                <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center">
+   340→   340→   340→                  <Icon className="w-5 h-5 text-[#13ec13]" />
+   341→   341→   341→                </div>
+   342→   342→   342→                <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">{action.name}</span>
+   343→   343→   343→              </motion.button>
+   344→   344→   344→            );
+   345→   345→   345→          })}
+   346→   346→   346→        </div>
+   347→   347→   347→      </div>
+   348→   348→   348→
+   349→   349→   349→      {/* Featured Ramadan Box */}
+   350→   350→   350→      <div className="px-4 my-6">
+   351→   351→   351→        <div
+   352→   352→   352→          className="relative overflow-hidden rounded-[2rem] bg-[#1A1D26] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer"
+   353→   353→   353→          onClick={() => handleMealClick(100)}
+   354→   354→   354→        >
+   355→   355→   355→          <div className="absolute top-0 right-0 w-48 h-48 bg-[#13ec13]/5 blur-[80px]" />
+   356→   356→   356→          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FFD700]/5 blur-[80px]" />
+   357→   357→   357→          <div className="p-6 relative z-10">
+   358→   358→   358→            <div className="flex justify-between items-start mb-6">
+   359→   359→   359→              <div>
+   360→   360→   360→                <span className="inline-block px-3 py-1 bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3">
+   361→   361→   361→                  Editor&apos;s Choice
+   362→   362→   362→                </span>
+   363→   363→   363→                <h3 className="text-3xl font-black text-white leading-[1.1] tracking-tight">
+   364→   364→   364→                  The Ultimate<br />Ramadan Box
+   365→   365→   365→                </h3>
+   366→   366→   366→              </div>
+   367→   367→   367→              <div className="text-right">
+   368→   368→   368→                <p className="text-white/30 text-[10px] font-medium line-through">{formatNaira(ramadanBox.originalPrice)}</p>
+   369→   369→   369→                <p className="text-[#13ec13] text-2xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(19,236,19,0.3)]">
+   370→   370→   370→                  {formatNaira(ramadanBox.salePrice)}
+   371→   371→   371→                </p>
+   372→   372→   372→              </div>
+   373→   373→   373→            </div>
+   374→   374→   374→
+   375→   375→   375→            <div className="grid grid-cols-2 gap-3 mb-6">
+   376→   376→   376→              {ramadanBox.images.map((img, i) => (
+   377→   377→   377→                <div
+   378→   378→   378→                  key={i}
+   379→   379→   379→                  className="aspect-square bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10"
+   380→   380→   380→                  style={{ backgroundImage: `url("${img}")` }}
+   381→   381→   381→                />
+   382→   382→   382→              ))}
+   383→   383→   383→            </div>
+   384→   384→   384→
+   385→   385→   385→            <div className="flex items-center gap-2 mb-8 bg-black/30 p-3 rounded-xl border border-white/5">
+   386→   386→   386→              <BadgeCheck className="w-5 h-5 text-[#FFD700] shrink-0" />
+   387→   387→   387→              <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
+   388→   388→   388→            </div>
+   389→   389→   389→
+   390→   390→   390→            <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
+   391→   391→   391→              <button
+   392→   392→   392→                onClick={() => handleQuickAdd({
+   393→   393→   393→                  id: ramadanBox.id,
+   394→   394→   394→                  name: 'The Ultimate Ramadan Box',
+   395→   395→   395→                  price: ramadanBox.salePrice,
+   396→   396→   396→                  image: ramadanBox.images[0],
+   397→   397→   397→                })}
+   398→   398→   398→                className="flex-1 bg-white/5 border border-white/10 py-4 rounded-2xl text-white font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-white/10"
+   399→   399→   399→              >
+   400→   400→   400→                <ShoppingCart className="w-4 h-4" />
+   401→   401→   401→                Add to Cart
+   402→   402→   402→              </button>
+   403→   403→   403→              <button
+   404→   404→   404→                onClick={() => handleMealClick(100)}
+   405→   405→   405→                className="flex-1 bg-[#13ec13] py-4 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+   406→   406→   406→              >
+   407→   407→   407→                DETAILS
+   408→   408→   408→                <ChevronRight className="w-4 h-4" />
+   409→   409→   409→              </button>
+   410→   410→   410→            </div>
+   411→   411→   411→          </div>
+   412→   412→   412→        </div>
+   413→   413→   413→      </div>
+   414→   414→   414→
+   415→   415→   415→      {/* Flash Sales */}
+   416→   416→   416→      <div className="px-4 py-4">
+   417→   417→   417→        <div className="flex justify-between items-end mb-4">
+   418→   418→   418→          <div className="flex items-center gap-2">
+   419→   419→   419→            <Flame className="w-5 h-5 text-[#FFD700]" />
+   420→   420→   420→            <h3 className="text-white text-xl font-black tracking-tight">Flash Sales</h3>
+   421→   421→   421→          </div>
+   422→   422→   422→          <button
+   423→   423→   423→            onClick={() => setActiveTab('offers')}
+   424→   424→   424→            className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+   425→   425→   425→          >
+   426→   426→   426→            See All
+   427→   427→   427→          </button>
+   428→   428→   428→        </div>
+   429→   429→   429→        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+   430→   430→   430→          {flashSales.map((sale) => (
+   431→   431→   431→            <motion.div
+   432→   432→   432→              key={sale.id}
+   433→   433→   433→              whileTap={{ scale: 0.97 }}
+   434→   434→   434→              className="min-w-[200px] bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden cursor-pointer hover:border-white/10 transition-colors"
+   435→   435→   435→              onClick={() => handleMealClick(sale.id + 200)}
+   436→   436→   436→            >
+   437→   437→   437→              <div className="relative">
+   438→   438→   438→                <div
+   439→   439→   439→                  className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
+   440→   440→   440→                  style={{ backgroundImage: `url("${sale.image}")` }}
+   441→   441→   441→                />
+   442→   442→   442→                <div className="absolute top-2 left-2 bg-red-500 px-2 py-0.5 rounded-md">
+   443→   443→   443→                  <span className="text-white text-[10px] font-black">-{sale.discount}%</span>
+   444→   444→   444→                </div>
+   445→   445→   445→                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md">
+   446→   446→   446→                  <span className="text-[#FFD700] text-[9px] font-bold flex items-center gap-1">
+   447→   447→   447→                    <Clock className="w-2.5 h-2.5" />
+   448→   448→   448→                    {sale.endsIn}
+   449→   449→   449→                  </span>
+   450→   450→   450→                </div>
+   451→   451→   451→              </div>
+   452→   452→   452→              <div className="p-3">
+   453→   453→   453→                <h4 className="text-white font-bold text-sm truncate">{sale.name}</h4>
+   454→   454→   454→                <div className="flex items-center gap-2 mt-1">
+   455→   455→   455→                  <span className="text-[#13ec13] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+   456→   456→   456→                  <span className="text-white/30 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
+   457→   457→   457→                </div>
+   458→   458→   458→                <div className="mt-2">
+   459→   459→   459→                  <div className="w-full bg-white/5 rounded-full h-1.5 mb-1">
+   460→   460→   460→                    <div
+   461→   461→   461→                      className="bg-[#FFD700] h-1.5 rounded-full transition-all"
+   462→   462→   462→                      style={{ width: `${sale.claimed}%` }}
+   463→   463→   463→                    />
+   464→   464→   464→                  </div>
+   465→   465→   465→                  <p className="text-white/30 text-[9px]">{sale.claimed}% claimed</p>
+   466→   466→   466→                </div>
+   467→   467→   467→                <button
+   468→   468→   468→                  onClick={(e) => {
+   469→   469→   469→                    e.stopPropagation();
+   470→   470→   470→                    handleQuickAdd({
+   471→   471→   471→                      id: sale.id + 200,
+   472→   472→   472→                      name: sale.name,
+   473→   473→   473→                      price: sale.salePrice,
+   474→   474→   474→                      image: sale.image,
+   475→   475→   475→                    });
+   476→   476→   476→                  }}
+   477→   477→   477→                  className="w-full mt-2 text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 py-1.5 rounded-lg border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+   478→   478→   478→                >
+   479→   479→   479→                  + Add to Cart
+   480→   480→   480→                </button>
+   481→   481→   481→              </div>
+   482→   482→   482→            </motion.div>
+   483→   483→   483→          ))}
+   484→   484→   484→        </div>
+   485→   485→   485→      </div>
+   486→   486→   486→
+   487→   487→   487→      {/* Trending Iftar */}
+   488→   488→   488→      <div className="px-4 py-4 flex justify-between items-end">
+   489→   489→   489→        <h3 className="text-white text-xl font-black tracking-tight">
+   490→   490→   490→          {activeCategory ? activeCategory : 'Trending Iftar'}
+   491→   491→   491→        </h3>
+   492→   492→   492→        <button
+   493→   493→   493→          onClick={() => setActiveTab('explore')}
+   494→   494→   494→          className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+   495→   495→   495→        >
+   496→   496→   496→          See All
+   497→   497→   497→        </button>
+   498→   498→   498→      </div>
+   499→   499→   499→      <div className="px-4 space-y-4">
+   500→   500→   500→        {filteredMeals.length > 0 ? filteredMeals.map((meal) => (
+   501→   501→   501→          <motion.div
+   502→   502→   502→            key={meal.id}
+   503→   503→   503→            initial={{ opacity: 0, y: 10 }}
+   504→   504→   504→            animate={{ opacity: 1, y: 0 }}
+   505→   505→   505→            transition={{ delay: meal.id * 0.1 }}
+   506→   506→   506→            className="flex gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
+   507→   507→   507→            onClick={() => handleMealClick(meal.id)}
+   508→   508→   508→          >
+   509→   509→   509→            <div
+   510→   510→   510→              className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10"
+   511→   511→   511→              style={{ backgroundImage: `url("${meal.image}")` }}
+   512→   512→   512→            />
+   513→   513→   513→            <div className="flex flex-col justify-between flex-1">
+   514→   514→   514→              <div>
+   515→   515→   515→                <div className="flex justify-between items-start">
+   516→   516→   516→                  <h4 className="text-white font-bold text-base">{meal.name}</h4>
+   517→   517→   517→                  <span className="text-[#13ec13] font-black">{formatNaira(meal.price)}</span>
+   518→   518→   518→                </div>
+   519→   519→   519→                <p className="text-white/40 text-[11px] leading-relaxed mt-1">{meal.description}</p>
+   520→   520→   520→              </div>
+   521→   521→   521→              <div className="flex items-center gap-3 mt-2">
+   522→   522→   522→                <div className="flex items-center gap-1 text-[10px] text-white/50 font-bold bg-white/5 px-2 py-0.5 rounded-full">
+   523→   523→   523→                  <Clock className="w-3 h-3" />
+   524→   524→   524→                  {meal.deliveryTime}
+   525→   525→   525→                </div>
+   526→   526→   526→                <div className="flex items-center gap-1 text-[10px] text-[#FFD700] font-bold">
+   527→   527→   527→                  <Star className="w-3 h-3 fill-[#FFD700]" />
+   528→   528→   528→                  {meal.rating}
+   529→   529→   529→                </div>
+   530→   530→   530→                <button
+   531→   531→   531→                  onClick={(e) => {
+   532→   532→   532→                    e.stopPropagation();
+   533→   533→   533→                    handleQuickAdd(meal);
+   534→   534→   534→                  }}
+   535→   535→   535→                  className="ml-auto text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 px-3 py-1 rounded-full border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+   536→   536→   536→                >
+   537→   537→   537→                  + Add
+   538→   538→   538→                </button>
+   539→   539→   539→              </div>
+   540→   540→   540→            </div>
+   541→   541→   541→          </motion.div>
+   542→   542→   542→        )) : (
+   543→   543→   543→          <div className="flex flex-col items-center py-8 text-center">
+   544→   544→   544→            <p className="text-white/40 text-sm">No meals found for &quot;{activeCategory}&quot;</p>
+   545→   545→   545→            <button
+   546→   546→   546→              onClick={() => setActiveCategory(null)}
+   547→   547→   547→              className="text-[#13ec13] text-sm font-bold mt-2 hover:text-[#13ec13]/80 transition-colors"
+   548→   548→   548→            >
+   549→   549→   549→              Clear filter
+   550→   550→   550→            </button>
+   551→   551→   551→          </div>
+   552→   552→   552→        )}
+   553→   553→   553→      </div>
+   554→   554→   554→    </main>
+   555→   555→   555→  );
+   556→   556→   556→}
+   557→   557→   557→

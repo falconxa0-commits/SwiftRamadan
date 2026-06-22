@@ -10,9 +10,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "SwiftRamadan - Elevate Your Ramadan",
-  description: "Comprehensive Ramadan food delivery, group buying, logistics, and community platform for Lagos, Nigeria.",
-  keywords: ["SwiftRamadan", "Ramadan", "Food Delivery", "Lagos", "Iftar", "Sahur", "Group Buy"],
+  title: "SwiftRamadan Beta — Smart Kitchen & AI Chef Safa",
+  description: "Beta: Ramadan food delivery, live AI cooking coach, smart pantry, community, and logistics for Lagos, Nigeria.",
+  keywords: ["SwiftRamadan", "Ramadan", "Beta", "AI Chef", "Smart Kitchen", "Food Delivery", "Lagos", "Iftar", "Sahur"],
   authors: [{ name: "SwiftRamadan Team" }],
   icons: {
     icon: "/swiftramadan-logo.png",

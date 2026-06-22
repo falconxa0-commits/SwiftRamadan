@@ -124,23 +124,56 @@
   display: none;
 }
 
-/* Custom Scrollbar */
+/* ── Global Polished Scrollbar ── */
+/* Applied to every scrollable element site-wide for a consistent, premium feel */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(19, 236, 19, 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(19, 236, 19, 0.45) 0%, rgba(255, 215, 0, 0.35) 100%);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(19, 236, 19, 0.7) 0%, rgba(255, 215, 0, 0.55) 100%);
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Custom Scrollbar (kept for backwards compat — now identical to global) */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  scrollbar-color: rgba(19, 236, 19, 0.35) transparent;
 }
 .custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: linear-gradient(180deg, rgba(19, 236, 19, 0.45) 0%, rgba(255, 215, 0, 0.35) 100%);
+  border-radius: 999px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(19, 236, 19, 0.7) 0%, rgba(255, 215, 0, 0.55) 100%);
 }
 
 /* Material Symbols Configuration */
@@ -185,4 +218,78 @@
 ::selection {
   background: rgba(212,175,55,0.3);
   color: white;
+}
+
+/* ── Beta Badge ── */
+.beta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255,215,0,0.18) 0%, rgba(19,236,19,0.18) 100%);
+  border: 1px solid rgba(255,215,0,0.35);
+  color: #FFD700;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* ── Smart Kitchen gradient aura ── */
+.sk-aura {
+  background:
+    radial-gradient(ellipse at top left, rgba(19,236,19,0.12), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(255,215,0,0.10), transparent 50%),
+    radial-gradient(ellipse at center, rgba(139,92,246,0.06), transparent 60%);
+}
+
+/* ── Live pulse ring (for webcam LIVE indicator) ── */
+@keyframes live-ring {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+.live-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #ef4444;
+  animation: live-ring 1.6s ease-out infinite;
+  z-index: -1;
+}
+
+/* ── Animated gradient border ── */
+@keyframes border-spin {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.gradient-border {
+  position: relative;
+  background: #0F1117;
+  border-radius: 1rem;
+}
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(90deg, #13ec13, #FFD700, #8b5cf6, #13ec13);
+  background-size: 200% 100%;
+  animation: border-spin 4s linear infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ── Soft floating animation ── */
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.float-soft {
+  animation: float-soft 4s ease-in-out infinite;
 }

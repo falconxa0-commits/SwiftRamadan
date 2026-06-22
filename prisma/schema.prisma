@@ -105,3 +105,54 @@ model Notification {
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
+
+// ── Smart Kitchen: Pantry Items (owner-scoped) ──
+model PantryItem {
+  id          String   @id @default(cuid())
+  ownerEmail  String   @default("guest")
+  name        String
+  category    String   @default("other")  // produce, dairy, grain, protein, spice, other
+  quantity    String   @default("1")
+  unit        String   @default("pcs")
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ── Smart Kitchen: Cooking Sessions (analytics + gamification) ──
+model CookingSession {
+  id           String   @id @default(cuid())
+  ownerEmail   String   @default("guest")
+  recipeName   String
+  difficulty   String   @default("medium")  // easy, medium, hard
+  durationSec  Int      @default(0)
+  completed    Boolean  @default(false)
+  usedLiveAI   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+// ── Community: Posts & Comments (owner-scoped) ──
+model CommunityPost {
+  id         String   @id @default(cuid())
+  authorName String
+  authorInitial String @default("U")
+  authorEmail String  @default("guest")
+  category   String   @default("General")  // Reviews, Recipes, Tips, Questions, General
+  content    String
+  imageUrl   String?
+  likes      Int      @default(0)
+  likedBy    String   @default("[]")  // JSON array of emails
+  createdAt  DateTime @default(now())
+  comments   CommunityComment[]
+}
+
+model CommunityComment {
+  id        String   @id @default(cuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorName String
+  authorInitial String @default("U")
+  authorEmail String  @default("guest")
+  content   String
+  createdAt DateTime @default(now())
+}

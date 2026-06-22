@@ -35,6 +35,7 @@ import RewardsModal from '@/components/swift/RewardsModal';
 import BNPLModal from '@/components/swift/BNPLModal';
 import DeliveryLocationMap from '@/components/swift/DeliveryLocationMap';
 import RealTimeTrackingModal from '@/components/swift/RealTimeTrackingModal';
+import SmartKitchenHub from '@/components/swift/SmartKitchenHub';
 import CommunityForum from '@/components/swift/CommunityForum';
 import ArtisanMarketHub from '@/components/swift/ArtisanMarketHub';
 import EcoImpactReport from '@/components/swift/EcoImpactReport';
@@ -312,9 +313,12 @@ export default function Home() {
               <RoleIcon className="w-5 h-5" style={{ color: accentColor }} />
             </div>
             <div className="flex flex-col min-w-0">
-              <h2 className="text-white text-base font-bold leading-tight tracking-tight truncate">
-                {greeting}
-              </h2>
+              <div className="flex items-center gap-1.5">
+                <h2 className="text-white text-base font-bold leading-tight tracking-tight truncate">
+                  {greeting}
+                </h2>
+                <span className="beta-badge shrink-0">Beta</span>
+              </div>
               <div className="flex items-center gap-1.5">
                 {/* Online/Offline indicator for rider/vendor */}
                 {(isRider || isVendor) && (
@@ -560,6 +564,7 @@ function AllModals() {
       <BNPLModal />
       <DeliveryLocationMap />
       <RealTimeTrackingModal />
+      <SmartKitchenHub />
       <CommunityForum />
       <ArtisanMarketHub />
       <EcoImpactReport />
