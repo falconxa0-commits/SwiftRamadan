@@ -1,7 +1,7 @@
 'use client';
 
-import { Timer, Star, Gift, Crown, ChevronRight, TrendingUp, ShoppingCart, Zap } from 'lucide-react';
-import { flashSales, loyaltyData, loyaltyTiers, giftCardTemplates, groupBuyDeals, formatNaira } from '@/lib/data';
+import { Timer, Star, Gift, Crown, ChevronRight, TrendingUp, Zap, Copy, Check, Users, Heart, CreditCard, Sparkles } from 'lucide-react';
+import { flashSales, loyaltyTiers, giftCardTemplates, groupBuyDeals, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -77,41 +77,41 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="min-w-[220px] bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
+      className="min-w-[220px] glass-card rounded-2xl overflow-hidden hover:border-white/15 transition-colors"
     >
       <div
         className="w-full aspect-square bg-center bg-no-repeat bg-cover relative cursor-pointer"
         style={{ backgroundImage: `url("${sale.image}")` }}
         onClick={handleViewDetails}
       >
-        <div className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">
+        <div className="absolute top-2 left-2 bg-[#FB7185] text-white text-[10px] font-bold px-2 py-1 rounded-full">
           -{sale.discount}%
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0F1118] via-transparent to-transparent opacity-60" />
       </div>
       <div className="p-3">
-        <p className="text-white font-bold text-sm">{sale.name}</p>
+        <p className="text-white font-bold text-sm tracking-tight">{sale.name}</p>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-[#13ec13] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+          <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
           <span className="text-white/30 text-xs line-through">{formatNaira(sale.originalPrice)}</span>
         </div>
         {/* Real Countdown */}
         <div className="flex items-center gap-1 mt-2">
-          <Timer className="w-3 h-3 text-red-400" />
+          <Timer className="w-3 h-3 text-[#FB7185]" />
           <div className="flex gap-1">
-            <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.hours)}</span>
-            <span className="text-red-400 text-[10px]">:</span>
-            <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.minutes)}</span>
-            <span className="text-red-400 text-[10px]">:</span>
-            <span className="bg-red-500/20 text-red-400 text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.seconds)}</span>
+            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.hours)}</span>
+            <span className="text-[#FB7185] text-[10px]">:</span>
+            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.minutes)}</span>
+            <span className="text-[#FB7185] text-[10px]">:</span>
+            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.seconds)}</span>
           </div>
-          {isExpired && <span className="text-red-400 text-[10px] font-bold ml-1">ENDED</span>}
+          {isExpired && <span className="text-[#FB7185] text-[10px] font-bold ml-1">ENDED</span>}
         </div>
         {/* Claimed progress */}
         <div className="mt-2">
           <div className="w-full bg-white/5 rounded-full h-1.5 mb-1">
             <div
-              className="bg-[#FFD700] h-1.5 rounded-full transition-all"
+              className="bg-gradient-to-r from-[#F5C451] to-[#10E07A] h-1.5 rounded-full transition-all"
               style={{ width: `${sale.claimed}%` }}
             />
           </div>
@@ -121,13 +121,13 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
           <button
             onClick={() => handleAddToCart()}
             disabled={isExpired}
-            className="flex-1 bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-2 rounded-lg text-xs font-bold hover:bg-[#13ec13]/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="flex-1 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
           >
             + Cart
           </button>
           <button
             onClick={handleViewDetails}
-            className="px-3 bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 transition-colors"
+            className="px-3 bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 transition-colors active:scale-95"
           >
             View
           </button>
@@ -137,10 +137,27 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
   );
 }
 
+/* Active coupons data */
+const ACTIVE_COUPONS = [
+  { code: 'RAMADAN', discount: '10% off', desc: 'Ramadan Special — min ₦5,000', color: '#10E07A' },
+  { code: 'IFTAR', discount: '10% off', desc: 'Iftar Deal — meals only', color: '#F5C451' },
+  { code: 'SWIFT25', discount: '25% off', desc: 'Swift25 Bonus — min ₦10,000', color: '#A78BFA' },
+  { code: 'SAHUR', discount: '15% off', desc: 'Sahur Special — dawn meals', color: '#38BDF8' },
+];
+
+/* Limited-time offers (static curated) */
+const LIMITED_OFFERS = [
+  { id: 1, title: 'Family Iftar Bundle', desc: 'Feeds 4-6 people', price: 12500, originalPrice: 18000, image: '/images/flash-sales/flash-iftar-bundle.png', tag: 'Family' },
+  { id: 2, title: 'Sahur Power Pack', desc: 'High-protein dawn meal', price: 4500, originalPrice: 6500, image: '/images/meals/meal-suya.png', tag: 'Sahur' },
+  { id: 3, title: 'Date Lovers Box', desc: 'Premium Medjool dates', price: 8000, originalPrice: 11000, image: '/images/flash-sales/flash-dates.png', tag: 'Premium' },
+  { id: 4, title: 'Refreshing Drinks Set', desc: 'Hibiscus + Zobo combo', price: 3500, originalPrice: 5000, image: '/images/flash-sales/flash-zobo-kunu.png', tag: 'Drinks' },
+];
+
 export default function OffersTab() {
   const { setActiveModal, hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints } = useAppStore();
   const { toast } = useToast();
   const [dailyClaimed, setDailyClaimed] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   // Get current tier info
   const currentTierInfo = loyaltyTiers.find(t => t.id === loyaltyTier) || loyaltyTiers[2]; // default gold
@@ -169,33 +186,57 @@ export default function OffersTab() {
     toast({ title: 'Daily Points Claimed! ✨', description: `+50 Hasanat Points! Streak: ${dailyStreak + 1} days` });
   };
 
+  const handleCopyCoupon = async (code: string) => {
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      // clipboard may be unavailable in sandboxed environments — still flip UI state
+    }
+    setCopiedCode(code);
+    toast({ title: 'Coupon Copied! 📋', description: `${code} — paste at checkout to apply` });
+    setTimeout(() => setCopiedCode(null), 1800);
+  };
+
+  const handleReferEarn = () => {
+    setActiveModal('refer');
+  };
+
+  const handleCharity = () => {
+    setActiveModal('charity');
+  };
+
+  const handleBNPL = () => {
+    setActiveModal('bnpl');
+  };
+
   return (
     <main className="flex-1 overflow-y-auto pb-32">
-      <div className="px-4 pt-6 pb-2">
-        <h1 className="text-2xl font-bold">Offers & Rewards</h1>
-        <p className="text-white/50 text-sm">Flash sales, loyalty perks & more</p>
+      {/* Header */}
+      <div className="px-5 pt-6 pb-2">
+        <h1 className="text-2xl font-bold tracking-tight heading-accent">Offers &amp; Rewards</h1>
+        <p className="text-white/50 text-sm mt-1">Flash sales, loyalty perks &amp; more</p>
       </div>
 
-      {/* Daily Check-in */}
-      <div className="px-4 mt-4">
+      {/* Daily Check-in — aurora-card */}
+      <div className="px-5 mt-4">
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={handleClaimDaily}
           disabled={dailyClaimed}
-          className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-colors text-left ${
+          className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-colors text-left active:scale-[0.99] ${
             dailyClaimed
-              ? 'bg-[#13ec13]/5 border-[#13ec13]/10'
-              : 'bg-[#1A1D26] border-[#FFD700]/20 hover:border-[#FFD700]/40 cursor-pointer'
+              ? 'bg-[#10E07A]/5 border-[#10E07A]/10'
+              : 'aurora-card border-[#F5C451]/20 hover:border-[#F5C451]/40 cursor-pointer'
           }`}
         >
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-            dailyClaimed ? 'bg-[#13ec13]/10' : 'bg-[#FFD700]/10'
+          <div className={`w-12 h-12 rounded-xl flex items-center justify-center icon-tile ${
+            dailyClaimed ? 'bg-[#10E07A]/10' : 'bg-[#F5C451]/10'
           }`}>
-            <Zap className={`w-6 h-6 ${dailyClaimed ? 'text-[#13ec13]' : 'text-[#FFD700]'}`} />
+            <Zap className={`w-6 h-6 relative z-10 ${dailyClaimed ? 'text-[#10E07A]' : 'text-[#F5C451]'}`} />
           </div>
           <div className="flex-1">
-            <p className={`font-bold text-sm ${dailyClaimed ? 'text-[#13ec13]' : 'text-white'}`}>
+            <p className={`font-bold text-sm tracking-tight ${dailyClaimed ? 'text-[#10E07A]' : 'text-white'}`}>
               {dailyClaimed ? '✓ Claimed Today!' : 'Claim Daily Points'}
             </p>
             <p className="text-white/40 text-xs">
@@ -206,32 +247,34 @@ export default function OffersTab() {
             </p>
           </div>
           {!dailyClaimed && (
-            <span className="bg-[#FFD700] text-black text-[10px] font-black px-3 py-1.5 rounded-full uppercase">
+            <span className="bg-[#F5C451] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full uppercase gold-glow">
               Claim
             </span>
           )}
         </motion.button>
       </div>
 
-      {/* Loyalty Card */}
+      {/* Loyalty Card — premium-card */}
       <motion.button
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
         onClick={handleRedeemPoints}
-        className="px-4 mt-4 w-full text-left"
+        className="px-5 mt-4 w-full text-left"
       >
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-black border border-[#FFD700]/20 p-6">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700]/10 blur-[60px]" />
+        <div className="relative overflow-hidden rounded-2xl premium-card p-6">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/10 blur-[60px]" />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <Crown className="w-5 h-5 text-[#FFD700] fill-[#FFD700]" />
-              <span className="text-[#FFD700] text-xs font-black uppercase tracking-widest">{currentTierInfo.name} Member</span>
+              <div className="w-7 h-7 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
+                <Crown className="w-4 h-4 text-[#F5C451] fill-[#F5C451] relative z-10" />
+              </div>
+              <span className="text-[#F5C451] text-xs font-black uppercase tracking-widest">{currentTierInfo.name} Member</span>
             </div>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-white/40 text-xs">Hasanat Points</p>
-                <p className="text-white text-3xl font-black">{hasanatPoints.toLocaleString()}</p>
+                <p className="text-white text-3xl font-black tracking-tight">{hasanatPoints.toLocaleString()}</p>
               </div>
               <div className="text-right">
                 <p className="text-white/40 text-xs">Swift Points</p>
@@ -242,10 +285,10 @@ export default function OffersTab() {
             {nextTierInfo && (
               <>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-[#FFD700]/60">{currentTierInfo.name}</span>
-                  <span className="text-[#FFD700]/60">{nextTierInfo.name} - {nextTierInfo.minPoints.toLocaleString()} pts</span>
+                  <span className="text-[#F5C451]/60">{currentTierInfo.name}</span>
+                  <span className="text-[#F5C451]/60">{nextTierInfo.name} - {nextTierInfo.minPoints.toLocaleString()} pts</span>
                 </div>
-                <div className="w-full bg-white/5 rounded-full h-3 mb-4">
+                <div className="w-full bg-white/5 rounded-full h-3 mb-4 overflow-hidden">
                   <motion.div
                     className="gold-gradient h-3 rounded-full"
                     initial={{ width: 0 }}
@@ -258,7 +301,7 @@ export default function OffersTab() {
             <div className="space-y-2">
               {currentTierInfo.benefits.slice(0, 3).map((benefit, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Star className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />
+                  <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
                   <p className="text-white/60 text-xs">{benefit}</p>
                 </div>
               ))}
@@ -267,14 +310,19 @@ export default function OffersTab() {
         </div>
       </motion.button>
 
-      {/* Flash Sales */}
-      <div className="px-4 mt-8">
+      {/* Flash Sales — aurora-card hero */}
+      <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Timer className="w-5 h-5 text-red-400" />
-            <h3 className="text-white text-lg font-extrabold">Flash Sales</h3>
+            <div className="w-7 h-7 rounded-lg bg-[#FB7185]/15 flex items-center justify-center border border-[#FB7185]/30 icon-tile">
+              <Timer className="w-4 h-4 text-[#FB7185] relative z-10" />
+            </div>
+            <h3 className="text-white text-lg font-extrabold heading-accent">Flash Sales</h3>
           </div>
-          <span className="text-red-400 text-xs font-bold animate-pulse">LIVE</span>
+          <span className="soft-chip text-[#FB7185] border-[#FB7185]/30 bg-[#FB7185]/10">
+            <span className="size-1.5 rounded-full bg-[#FB7185] pulse-soft" />
+            LIVE
+          </span>
         </div>
         <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
           {flashSales.map((sale) => (
@@ -283,19 +331,111 @@ export default function OffersTab() {
         </div>
       </div>
 
+      {/* Active Coupons */}
+      <div className="px-5 mt-8">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile">
+            <Gift className="w-4 h-4 text-[#10E07A] relative z-10" />
+          </div>
+          <h3 className="text-white text-lg font-extrabold heading-accent">Active Coupons</h3>
+        </div>
+        <div className="space-y-3">
+          {ACTIVE_COUPONS.map((coupon) => {
+            const isCopied = copiedCode === coupon.code;
+            return (
+              <div key={coupon.code} className="glass-card rounded-2xl p-4 flex items-center gap-3">
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 icon-tile border"
+                  style={{ backgroundColor: `${coupon.color}15`, borderColor: `${coupon.color}30` }}
+                >
+                  <span className="relative z-10 text-xs font-black" style={{ color: coupon.color }}>
+                    {coupon.discount}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-white font-bold text-sm font-mono tracking-wider">{coupon.code}</p>
+                    <span className="soft-chip">{coupon.discount}</span>
+                  </div>
+                  <p className="text-white/40 text-xs mt-0.5">{coupon.desc}</p>
+                </div>
+                <button
+                  onClick={() => handleCopyCoupon(coupon.code)}
+                  className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 ${
+                    isCopied
+                      ? 'bg-[#10E07A]/15 border border-[#10E07A]/30 text-[#10E07A]'
+                      : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'
+                  }`}
+                  aria-label={`Copy coupon ${coupon.code}`}
+                >
+                  {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                  {isCopied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Limited-time offers grid */}
+      <div className="px-5 mt-8">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-[#A78BFA]/15 flex items-center justify-center border border-[#A78BFA]/30 icon-tile">
+            <Sparkles className="w-4 h-4 text-[#A78BFA] relative z-10" />
+          </div>
+          <h3 className="text-white text-lg font-extrabold heading-accent">Limited-Time Offers</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          {LIMITED_OFFERS.map((offer) => {
+            const discount = Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100);
+            return (
+              <motion.div
+                key={offer.id}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => {
+                  useAppStore.getState().addToCart({ id: 700 + offer.id, name: offer.title, price: offer.price, image: offer.image });
+                  toast({ title: 'Added to Cart! 🛒', description: `${offer.title} added` });
+                }}
+                className="glass-card rounded-2xl overflow-hidden cursor-pointer hover:border-white/15 transition-colors"
+              >
+                <div
+                  className="w-full aspect-video bg-center bg-cover relative"
+                  style={{ backgroundImage: `url("${offer.image}")` }}
+                >
+                  <span className="absolute top-2 left-2 bg-[#A78BFA] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                    -{discount}%
+                  </span>
+                  <span className="absolute top-2 right-2 soft-chip bg-black/40">{offer.tag}</span>
+                </div>
+                <div className="p-3">
+                  <p className="text-white text-xs font-bold truncate tracking-tight">{offer.title}</p>
+                  <p className="text-white/40 text-[10px]">{offer.desc}</p>
+                  <div className="flex items-center gap-1.5 mt-1.5">
+                    <span className="text-[#10E07A] text-sm font-black">{formatNaira(offer.price)}</span>
+                    <span className="text-white/30 text-[10px] line-through">{formatNaira(offer.originalPrice)}</span>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Gift Cards */}
-      <div className="px-4 mt-8">
+      <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-[#FFD700]" />
-            <h3 className="text-white text-lg font-extrabold">Gift Cards</h3>
+            <div className="w-7 h-7 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
+              <Gift className="w-4 h-4 text-[#F5C451] relative z-10" />
+            </div>
+            <h3 className="text-white text-lg font-extrabold heading-accent">Gift Cards</h3>
           </div>
           <button
             onClick={() => {
               useAppStore.getState().setGiftCardStep(0);
               setActiveModal('giftcard');
             }}
-            className="text-[#13ec13] text-xs font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+            className="text-[#10E07A] text-xs font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             Design Yours
           </button>
@@ -309,8 +449,8 @@ export default function OffersTab() {
             >
               <span className="material-symbols-outlined text-white/80 text-2xl">{card.icon}</span>
               <div>
-                <p className="text-white font-bold text-sm">{card.name}</p>
-                <p className="text-white/50 text-[10px]">Customize & Send</p>
+                <p className="text-white font-bold text-sm tracking-tight">{card.name}</p>
+                <p className="text-white/50 text-[10px]">Customize &amp; Send</p>
               </div>
             </button>
           ))}
@@ -318,15 +458,17 @@ export default function OffersTab() {
       </div>
 
       {/* Group Buy Deals Preview */}
-      <div className="px-4 mt-8">
+      <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-[#13ec13]" />
-            <h3 className="text-white text-lg font-extrabold">Group Buy Deals</h3>
+            <div className="w-7 h-7 rounded-lg bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile">
+              <TrendingUp className="w-4 h-4 text-[#10E07A] relative z-10" />
+            </div>
+            <h3 className="text-white text-lg font-extrabold heading-accent">Group Buy Deals</h3>
           </div>
           <button
             onClick={handleGroupBuy}
-            className="text-[#13ec13] text-xs font-bold cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+            className="text-[#10E07A] text-xs font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             See All
           </button>
@@ -344,7 +486,7 @@ export default function OffersTab() {
             return (
               <motion.div
                 key={deal.id}
-                className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                className="glass-card rounded-2xl p-4"
               >
                 <div className="flex gap-3">
                   <div
@@ -352,15 +494,15 @@ export default function OffersTab() {
                     style={{ backgroundImage: `url("${deal.image}")` }}
                   />
                   <div className="flex-1 min-w-0">
-                    <h4 className="text-white font-bold text-sm truncate">{deal.name}</h4>
+                    <h4 className="text-white font-bold text-sm truncate tracking-tight">{deal.name}</h4>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[#13ec13] font-black text-sm">{formatNaira(deal.perPersonPrice)}</span>
+                      <span className="text-[#10E07A] font-black text-sm">{formatNaira(deal.perPersonPrice)}</span>
                       <span className="text-white/30 text-xs">per person</span>
                     </div>
                     <div className="mt-2">
                       <div className="w-full bg-white/5 rounded-full h-1.5">
                         <div
-                          className="bg-[#13ec13] h-1.5 rounded-full transition-all"
+                          className="bg-gradient-to-r from-[#10E07A] to-[#F5C451] h-1.5 rounded-full transition-all"
                           style={{ width: `${fillPercent}%` }}
                         />
                       </div>
@@ -377,10 +519,10 @@ export default function OffersTab() {
                       handleGroupBuy();
                     }
                   }}
-                  className={`w-full mt-3 py-2 rounded-xl text-xs font-bold transition-colors ${
+                  className={`w-full mt-3 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 ${
                     hasJoined
-                      ? 'bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13]'
-                      : 'bg-[#13ec13] text-black hover:bg-[#13ec13]/90'
+                      ? 'bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A]'
+                      : 'bg-[#10E07A] text-[#06070B] hover:bg-[#10E07A]/90 green-glow'
                   }`}
                 >
                   {hasJoined ? '✓ Joined - View Details' : 'Join Group Buy'}
@@ -391,27 +533,76 @@ export default function OffersTab() {
         </div>
       </div>
 
-      {/* Group Buy CTA */}
-      <div className="px-4 mt-6 mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-[#13ec13]/10 p-5">
-          <div className="absolute bottom-0 right-0 w-24 h-24 bg-[#13ec13]/5 blur-[40px]" />
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-5 h-5 text-[#13ec13]" />
-            </div>
-            <div>
-              <p className="text-white font-bold">Group Buy: Split & Save</p>
-              <p className="text-white/40 text-xs">Join community bulk orders for wholesale prices</p>
+      {/* Refer & Earn CTA — aurora-card */}
+      <div className="px-5 mt-6">
+        <button
+          onClick={handleReferEarn}
+          className="w-full text-left active:scale-[0.99] transition-transform"
+        >
+          <div className="relative overflow-hidden rounded-2xl aurora-card p-5 hover:border-white/15 transition-colors">
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#38BDF8]/10 blur-[44px] pointer-events-none" />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#38BDF8]/15 flex items-center justify-center border border-[#38BDF8]/30 icon-tile shrink-0">
+                <Users className="w-6 h-6 text-[#38BDF8] relative z-10" />
+              </div>
+              <div className="flex-1">
+                <p className="text-white font-bold text-sm tracking-tight">Refer &amp; Earn</p>
+                <p className="text-white/50 text-xs mt-0.5">Get ₦2,000 per friend who joins SwiftRamadan</p>
+              </div>
+              <span className="bg-[#38BDF8] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full">
+                ₦2,000
+              </span>
+              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
             </div>
           </div>
-          <button
-            onClick={handleGroupBuy}
-            className="w-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#13ec13]/20 transition-colors"
-          >
-            Join a Group Buy
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+        </button>
+      </div>
+
+      {/* Charity / Zakat CTA — aurora-card */}
+      <div className="px-5 mt-3">
+        <button
+          onClick={handleCharity}
+          className="w-full text-left active:scale-[0.99] transition-transform"
+        >
+          <div className="relative overflow-hidden rounded-2xl aurora-card p-5 hover:border-white/15 transition-colors">
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#FB7185]/10 blur-[44px] pointer-events-none" />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#FB7185]/15 flex items-center justify-center border border-[#FB7185]/30 icon-tile shrink-0">
+                <Heart className="w-6 h-6 text-[#FB7185] relative z-10" />
+              </div>
+              <div className="flex-1">
+                <p className="text-white font-bold text-sm tracking-tight">Charity &amp; Zakat</p>
+                <p className="text-white/50 text-xs mt-0.5">Give back this Ramadan — donations &amp; Zakat calculator</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* BNPL Promo Banner — premium-card */}
+      <div className="px-5 mt-3 mb-6">
+        <button
+          onClick={handleBNPL}
+          className="w-full text-left active:scale-[0.99] transition-transform"
+        >
+          <div className="relative overflow-hidden rounded-2xl premium-card p-5">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/10 blur-[60px]" />
+            <div className="relative flex items-center gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile shrink-0">
+                <CreditCard className="w-6 h-6 text-[#10E07A] relative z-10" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <p className="text-white font-bold text-sm tracking-tight">Pay Small-Small</p>
+                  <span className="beta-badge">BNPL</span>
+                </div>
+                <p className="text-white/50 text-xs mt-0.5">Split your order into 3 interest-free payments</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+            </div>
+          </div>
+        </button>
       </div>
     </main>
   );

@@ -38,25 +38,47 @@ import {
 } from '@/lib/data';
 
 /* ══════════════════════════════════════════════════════════════════
-   WELCOME SCREEN — MODERN MARKETPLACE LANDING
-   Guests can browse foods, drinks, deals before signing up
+   WELCOME SCREEN — AURORA LUXE MARKETPLACE LANDING
+   Guests can browse foods, drinks, deals before signing up.
+   Aurora Luxe design language: deep midnight + emerald/gold/violet
+   mesh auroras, glass cards, soft chips, gradient text.
    ══════════════════════════════════════════════════════════════════ */
+
+/* ─────────────── Aurora Palette Tokens ─────────────── */
+const AURORA = {
+  bg: '#06070B',
+  surface1: '#0F1118',
+  surface2: '#161924',
+  surface3: '#1F2330',
+  emerald: '#10E07A',
+  gold: '#F5C451',
+  violet: '#A78BFA',
+  coral: '#FB7185',
+  sky: '#38BDF8',
+  textPrimary: '#FFFFFF',
+  textSecondary: 'rgba(255,255,255,0.65)',
+  textMuted: 'rgba(255,255,255,0.40)',
+} as const;
 
 /* ─────────────── Category Icon Map ─────────────── */
 const categoryIcons: Record<string, { icon: React.ElementType; color: string }> = {
-  'Iftar Meals': { icon: Utensils, color: '#D4AF37' },
-  'Sahur': { icon: Moon, color: '#8B9DC3' },
-  'Dates': { icon: Sparkles, color: '#C5962C' },
-  'Drinks': { icon: CupSoda, color: '#E8652D' },
-  'Snacks': { icon: Flame, color: '#F59E0B' },
-  'Fruits': { icon: Leaf, color: '#13ec13' },
-  'Groceries': { icon: ShoppingCart, color: '#3b82f6' },
-  'Pharmacy': { icon: Pill, color: '#9B59B6' },
-  'Bundles': { icon: Package, color: '#D4AF37' },
+  'Iftar Meals': { icon: Utensils, color: AURORA.gold },
+  'Sahur': { icon: Moon, color: AURORA.violet },
+  'Dates': { icon: Sparkles, color: AURORA.gold },
+  'Drinks': { icon: CupSoda, color: AURORA.coral },
+  'Snacks': { icon: Flame, color: AURORA.gold },
+  'Fruits': { icon: Leaf, color: AURORA.emerald },
+  'Groceries': { icon: ShoppingCart, color: AURORA.sky },
+  'Pharmacy': { icon: Pill, color: AURORA.violet },
+  'Bundles': { icon: Package, color: AURORA.gold },
 };
 
 /* ─────────────── Sign Up Prompt Modal ─────────────── */
-function SignUpPrompt({ onClose, onGetStarted }: { onClose: () => void; onGetStarted: () => void }) {
+function SignUpPrompt({ onClose, onGetStarted, onSignIn }: {
+  onClose: () => void;
+  onGetStarted: () => void;
+  onSignIn: () => void;
+}) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -65,71 +87,77 @@ function SignUpPrompt({ onClose, onGetStarted }: { onClose: () => void; onGetSta
       className="fixed inset-0 z-[200] flex items-end justify-center"
       onClick={onClose}
     >
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
       <motion.div
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="relative w-full max-w-lg rounded-t-3xl overflow-hidden"
-        style={{ background: 'linear-gradient(180deg, #12151E 0%, #0A0D14 100%)' }}
+        transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+        className="relative w-full max-w-lg rounded-t-[2rem] overflow-hidden aurora-card"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6">
+        {/* Top aurora glow + grabber */}
+        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-72 h-40 blur-[80px] pointer-events-none"
+          style={{ background: `radial-gradient(circle, ${AURORA.gold}40, transparent 70%)` }}
+        />
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-white/15" />
+        </div>
+
+        <div className="relative p-6 pt-3">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl flex items-center justify-center"
+              <div className="icon-tile w-12 h-12"
                 style={{
-                  background: 'linear-gradient(135deg, rgba(212,175,55,0.15), rgba(212,175,55,0.05))',
-                  border: '1px solid rgba(212,175,55,0.2)',
+                  background: `linear-gradient(135deg, ${AURORA.gold}25, ${AURORA.emerald}12)`,
+                  border: `1px solid ${AURORA.gold}40`,
                 }}
               >
-                <ShoppingBag className="w-6 h-6 text-[#D4AF37]" />
+                <ShoppingBag className="w-6 h-6" style={{ color: AURORA.gold }} />
               </div>
               <div>
-                <h3 className="text-white text-lg font-bold">Join SwiftRamadan</h3>
-                <p className="text-white/40 text-xs">Sign up to order, track & save</p>
+                <h3 className="text-white text-lg font-bold tracking-tight">Join SwiftRamadan</h3>
+                <p className="text-[10px] font-medium" style={{ color: AURORA.textMuted }}>Sign up to order, track & save</p>
               </div>
             </div>
-            <button onClick={onClose} className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
-              <X className="w-4 h-4 text-white/50" />
+            <button onClick={onClose} aria-label="Close"
+              className="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center transition-colors">
+              <X className="w-4 h-4 text-white/60" />
             </button>
           </div>
 
           <div className="flex flex-col gap-3 mb-6">
             {[
-              { icon: Zap, text: 'Iftar-precision delivery before Maghrib', color: '#D4AF37' },
-              { icon: Users, text: 'Community group buys & bulk savings', color: '#13ec13' },
-              { icon: Heart, text: 'Charity & Sadaqah built right in', color: '#E8652D' },
+              { icon: Zap, text: 'Iftar-precision delivery before Maghrib', color: AURORA.gold },
+              { icon: Users, text: 'Community group buys & bulk savings', color: AURORA.emerald },
+              { icon: Heart, text: 'Charity & Sadaqah built right in', color: AURORA.coral },
             ].map(({ icon: Ic, text, color }) => (
-              <div key={text} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: `${color}08`, border: `1px solid ${color}12` }}>
-                <Ic className="w-5 h-5 shrink-0" style={{ color }} />
-                <span className="text-white/60 text-sm">{text}</span>
+              <div key={text}
+                className="flex items-center gap-3 p-3 rounded-2xl"
+                style={{ background: `${color}10`, border: `1px solid ${color}1A` }}>
+                <div className="icon-tile w-8 h-8" style={{ background: `${color}18` }}>
+                  <Ic className="w-4 h-4" style={{ color }} />
+                </div>
+                <span className="text-sm" style={{ color: AURORA.textSecondary }}>{text}</span>
               </div>
             ))}
           </div>
 
           <button
             onClick={onGetStarted}
-            className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-            style={{
-              background: 'linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37)',
-              color: '#080B12',
-              boxShadow: '0 8px 32px rgba(212,175,55,0.2)',
-            }}
+            className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform gold-gradient"
+            style={{ color: '#1A1206', boxShadow: '0 8px 32px rgba(245,196,81,0.25)' }}
           >
             Get Started Free
             <ArrowRight className="w-5 h-5" />
           </button>
 
           <button
-            onClick={() => {
-              onClose();
-              // Will be handled by parent
-            }}
-            className="w-full h-12 mt-3 rounded-xl text-white/40 text-sm font-medium hover:text-white/60 transition-colors"
+            onClick={onSignIn}
+            className="w-full h-12 mt-3 rounded-xl text-sm font-medium hover:text-white/80 transition-colors"
+            style={{ color: AURORA.textMuted }}
           >
-            Already have an account? <span className="text-[#D4AF37] font-bold">Sign In</span>
+            Already have an account? <span className="font-bold" style={{ color: AURORA.gold }}>Sign In</span>
           </button>
         </div>
       </motion.div>
@@ -137,41 +165,51 @@ function SignUpPrompt({ onClose, onGetStarted }: { onClose: () => void; onGetSta
   );
 }
 
-/* ─────────────── Hero Banner ─────────────── */
-function HeroBanner() {
+/* ─────────────── Hero Banner Carousel ─────────────── */
+function HeroBanner({ onTap }: { onTap: () => void }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide(prev => (prev + 1) % heroSlides.length);
-    }, 4000);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <div className="relative mx-4 mt-3">
+    <div className="px-5 mt-4">
       <AnimatePresence mode="wait">
-        <motion.div
+        <motion.button
           key={currentSlide}
           initial={{ opacity: 0, scale: 1.02 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.98 }}
           transition={{ duration: 0.5 }}
-          className="relative w-full aspect-[2/1] rounded-2xl overflow-hidden"
+          onClick={onTap}
+          className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden glass-card block text-left"
         >
           <div
             className="absolute inset-0 bg-center bg-no-repeat bg-cover"
             style={{ backgroundImage: `url("${heroSlides[currentSlide].image}")` }}
           />
           <div className="absolute inset-0" style={{
-            background: 'linear-gradient(135deg, rgba(8,11,18,0.85) 0%, rgba(8,11,18,0.4) 50%, rgba(8,11,18,0.7) 100%)',
+            background: 'linear-gradient(135deg, rgba(6,7,11,0.88) 0%, rgba(6,7,11,0.35) 50%, rgba(6,7,11,0.78) 100%)',
+          }} />
+          {/* Aurora tint overlay */}
+          <div className="absolute inset-0 opacity-60 pointer-events-none" style={{
+            background: `radial-gradient(circle at 100% 0%, ${AURORA.emerald}22, transparent 50%), radial-gradient(circle at 0% 100%, ${AURORA.violet}18, transparent 55%)`,
           }} />
 
           {heroSlides[currentSlide].badge && (
-            <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 rounded-full"
-              style={{ background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)', boxShadow: '0 2px 12px rgba(212,175,55,0.3)' }}>
-              <Star className="w-3 h-3 text-[#080B12] fill-[#080B12]" />
-              <span className="text-[#080B12] text-[9px] font-black uppercase tracking-wider">{heroSlides[currentSlide].badge}</span>
+            <div className="absolute top-3 left-3">
+              <span className="soft-chip" style={{
+                background: `linear-gradient(135deg, ${AURORA.gold}30, ${AURORA.emerald}20)`,
+                borderColor: `${AURORA.gold}55`,
+                color: AURORA.gold,
+              }}>
+                <Star className="w-3 h-3 fill-current" />
+                {heroSlides[currentSlide].badge}
+              </span>
             </div>
           )}
 
@@ -179,22 +217,29 @@ function HeroBanner() {
             <h2 className="text-white text-lg font-extrabold leading-tight tracking-tight">
               {heroSlides[currentSlide].title}
             </h2>
-            <div className="flex items-center gap-1.5 mt-1">
-              <Zap className="w-3 h-3 text-[#13ec13]" />
-              <span className="text-[#13ec13]/80 text-xs font-semibold">{heroSlides[currentSlide].subtitle}</span>
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <Zap className="w-3 h-3" style={{ color: AURORA.emerald }} />
+              <span className="text-xs font-semibold" style={{ color: AURORA.emerald }}>
+                {heroSlides[currentSlide].subtitle}
+              </span>
             </div>
           </div>
-        </motion.div>
+        </motion.button>
       </AnimatePresence>
 
-      <div className="flex justify-center gap-1.5 mt-2.5">
+      <div className="flex justify-center gap-1.5 mt-3">
         {heroSlides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentSlide(i)}
-            className={`h-1.5 rounded-full transition-all duration-300 ${
-              i === currentSlide ? 'w-6 bg-[#D4AF37]' : 'w-1.5 bg-white/15'
-            }`}
+            aria-label={`Slide ${i + 1}`}
+            className="h-1.5 rounded-full transition-all duration-300"
+            style={{
+              width: i === currentSlide ? 24 : 6,
+              background: i === currentSlide
+                ? `linear-gradient(90deg, ${AURORA.emerald}, ${AURORA.gold})`
+                : 'rgba(255,255,255,0.15)',
+            }}
           />
         ))}
       </div>
@@ -208,36 +253,48 @@ function FlashDealCard({ sale, onTap }: { sale: typeof flashSales[0]; onTap: () 
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onTap}
-      className="min-w-[180px] max-w-[180px] rounded-2xl overflow-hidden cursor-pointer"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }}
+      className="min-w-[180px] max-w-[180px] rounded-2xl overflow-hidden cursor-pointer glass-card"
     >
       <div className="relative">
         <div
           className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
           style={{ backgroundImage: `url("${sale.image}")` }}
         />
-        <div className="absolute top-2 left-2 bg-red-500/90 px-1.5 py-0.5 rounded-md">
-          <span className="text-white text-[9px] font-black">-{sale.discount}%</span>
+        <div className="absolute top-2 left-2">
+          <span className="soft-chip" style={{
+            background: `${AURORA.coral}20`,
+            borderColor: `${AURORA.coral}55`,
+            color: AURORA.coral,
+          }}>
+            <Flame className="w-3 h-3" />
+            -{sale.discount}%
+          </span>
         </div>
-        <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-1.5 py-0.5 rounded-md flex items-center gap-1">
-          <Timer className="w-2.5 h-2.5 text-[#FFD700]" />
-          <span className="text-[#FFD700] text-[8px] font-bold">{sale.endsIn}</span>
+        <div className="absolute bottom-2 right-2">
+          <span className="soft-chip backdrop-blur-md" style={{
+            background: 'rgba(0,0,0,0.55)',
+            borderColor: `${AURORA.gold}40`,
+            color: AURORA.gold,
+          }}>
+            <Timer className="w-2.5 h-2.5" />
+            {sale.endsIn}
+          </span>
         </div>
       </div>
       <div className="p-2.5">
         <h4 className="text-white font-bold text-xs truncate">{sale.name}</h4>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-[#13ec13] font-black text-xs">{formatNaira(sale.salePrice)}</span>
-          <span className="text-white/25 text-[9px] line-through">{formatNaira(sale.originalPrice)}</span>
+          <span className="font-black text-xs" style={{ color: AURORA.emerald }}>{formatNaira(sale.salePrice)}</span>
+          <span className="text-[9px] line-through" style={{ color: AURORA.textMuted }}>{formatNaira(sale.originalPrice)}</span>
         </div>
         <div className="mt-1.5">
           <div className="w-full bg-white/5 rounded-full h-1">
-            <div className="bg-[#FFD700] h-1 rounded-full" style={{ width: `${sale.claimed}%` }} />
+            <div className="h-1 rounded-full" style={{
+              width: `${sale.claimed}%`,
+              background: `linear-gradient(90deg, ${AURORA.gold}, ${AURORA.emerald})`,
+            }} />
           </div>
-          <p className="text-white/25 text-[8px] mt-0.5">{sale.claimed}% claimed</p>
+          <p className="text-[8px] mt-0.5" style={{ color: AURORA.textMuted }}>{sale.claimed}% claimed</p>
         </div>
       </div>
     </motion.div>
@@ -250,13 +307,10 @@ function MealCard({ meal, onTap }: { meal: typeof trendingMeals[0]; onTap: () =>
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -2 }}
       whileTap={{ scale: 0.98 }}
       onClick={onTap}
-      className="flex gap-3 p-3 rounded-2xl cursor-pointer transition-all hover:bg-white/[0.03]"
-      style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.04)',
-      }}
+      className="flex gap-3 p-3 rounded-2xl cursor-pointer glass-card"
     >
       <div
         className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0"
@@ -269,20 +323,24 @@ function MealCard({ meal, onTap }: { meal: typeof trendingMeals[0]; onTap: () =>
         <div>
           <div className="flex justify-between items-start gap-2">
             <h4 className="text-white font-bold text-sm truncate">{meal.name}</h4>
-            <span className="text-[#13ec13] font-black text-xs whitespace-nowrap">{formatNaira(meal.price)}</span>
+            <span className="font-black text-xs whitespace-nowrap" style={{ color: AURORA.emerald }}>
+              {formatNaira(meal.price)}
+            </span>
           </div>
-          <p className="text-white/35 text-[10px] leading-relaxed mt-0.5 line-clamp-2">{meal.description}</p>
+          <p className="text-[10px] leading-relaxed mt-0.5 line-clamp-2" style={{ color: AURORA.textMuted }}>
+            {meal.description}
+          </p>
         </div>
         <div className="flex items-center gap-2 mt-1.5">
-          <span className="flex items-center gap-1 text-[9px] text-white/40 font-bold bg-white/5 px-1.5 py-0.5 rounded-full">
+          <span className="soft-chip">
             <Clock className="w-2.5 h-2.5" />
             {meal.deliveryTime}
           </span>
-          <span className="flex items-center gap-1 text-[9px] text-[#FFD700] font-bold">
-            <Star className="w-2.5 h-2.5 fill-[#FFD700]" />
+          <span className="soft-chip" style={{ color: AURORA.gold, borderColor: `${AURORA.gold}30` }}>
+            <Star className="w-2.5 h-2.5 fill-current" />
             {meal.rating}
           </span>
-          <span className="text-[9px] text-white/25">({meal.reviews})</span>
+          <span className="text-[9px]" style={{ color: AURORA.textMuted }}>({meal.reviews})</span>
         </div>
       </div>
     </motion.div>
@@ -295,34 +353,63 @@ function RetailerCard({ retailer, onTap }: { retailer: typeof popularRetailers[0
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onTap}
-      className="min-w-[150px] max-w-[150px] rounded-2xl overflow-hidden cursor-pointer"
-      style={{
-        background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-        border: '1px solid rgba(255,255,255,0.06)',
-      }}
+      className="min-w-[150px] max-w-[150px] rounded-2xl overflow-hidden cursor-pointer glass-card"
     >
-      <div
-        className="w-full aspect-square bg-center bg-no-repeat bg-cover"
-        style={{ backgroundImage: `url("${retailer.image}")` }}
-      />
+      <div className="relative">
+        <div
+          className="w-full aspect-square bg-center bg-no-repeat bg-cover"
+          style={{ backgroundImage: `url("${retailer.image}")` }}
+        />
+        {retailer.verified && (
+          <div className="absolute top-2 right-2">
+            <div className="icon-tile w-5 h-5" style={{ background: `${AURORA.emerald}25`, border: `1px solid ${AURORA.emerald}50` }}>
+              <BadgeCheck className="w-3 h-3" style={{ color: AURORA.emerald }} />
+            </div>
+          </div>
+        )}
+      </div>
       <div className="p-2.5">
-        <div className="flex items-center gap-1">
-          <h4 className="text-white font-bold text-[11px] truncate">{retailer.name}</h4>
-          {retailer.verified && <BadgeCheck className="w-3 h-3 text-[#13ec13] shrink-0" />}
-        </div>
+        <h4 className="text-white font-bold text-[11px] truncate">{retailer.name}</h4>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-white/35 text-[9px]">{retailer.category}</span>
-          <span className="text-white/20 text-[9px]">•</span>
-          <span className="text-white/35 text-[9px] flex items-center gap-0.5">
+          <span className="text-[9px]" style={{ color: AURORA.textMuted }}>{retailer.category}</span>
+          <span className="text-[9px]" style={{ color: AURORA.textMuted }}>•</span>
+          <span className="flex items-center gap-0.5 text-[9px]" style={{ color: AURORA.textMuted }}>
             <Clock className="w-2 h-2" />{retailer.deliveryTime}
           </span>
         </div>
-        <div className="flex items-center gap-0.5 mt-1">
-          <Star className="w-2.5 h-2.5 text-[#FFD700] fill-[#FFD700]" />
-          <span className="text-white/50 text-[9px] font-bold">{retailer.rating}</span>
+        <div className="flex items-center gap-1 mt-1.5">
+          <Star className="w-2.5 h-2.5 fill-current" style={{ color: AURORA.gold }} />
+          <span className="text-[9px] font-bold text-white/70">{retailer.rating}</span>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+/* ─────────────── Section Heading ─────────────── */
+function SectionHeading({ icon: Icon, title, accent = AURORA.emerald, action }: {
+  icon: React.ElementType;
+  title: string;
+  accent?: string;
+  action?: { label: string; onTap: () => void };
+}) {
+  return (
+    <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center gap-2.5">
+        <div className="icon-tile w-7 h-7" style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}>
+          <Icon className="w-3.5 h-3.5" style={{ color: accent }} />
+        </div>
+        <h3 className="text-white text-base font-bold tracking-tight heading-accent">{title}</h3>
+      </div>
+      {action && (
+        <button onClick={action.onTap}
+          className="text-[10px] font-bold flex items-center gap-0.5 transition-colors hover:opacity-80"
+          style={{ color: AURORA.gold }}>
+          {action.label}
+          <ChevronRight className="w-3 h-3" />
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -338,7 +425,7 @@ export default function WelcomeScreen() {
 
   const handleGetStarted = useCallback(() => {
     setShowWelcome(false);
-    setShowAuth('role');
+    setShowAuth('signup');
   }, [setShowWelcome, setShowAuth]);
 
   const handleSignIn = useCallback(() => {
@@ -355,46 +442,49 @@ export default function WelcomeScreen() {
     return trendingMeals.filter(m => m.category === activeCategory);
   }, [activeCategory]);
 
+  const whySwiftRamadan = [
+    { icon: Clock, title: 'Iftar Precision', desc: 'Meals before Maghrib', color: AURORA.gold },
+    { icon: Truck, title: 'Live Tracking', desc: 'Kitchen to doorstep', color: AURORA.sky },
+    { icon: Users, title: 'Group Buys', desc: 'Bulk savings together', color: AURORA.emerald },
+    { icon: Heart, title: 'Sadaqah Built In', desc: 'Charity with every order', color: AURORA.coral },
+  ];
+
+  const stats = [
+    { value: '12K+', label: 'Families' },
+    { value: '98%', label: 'On-time' },
+    { value: '4.9', label: 'Rating' },
+  ];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
-      className="fixed inset-0 z-[100] overflow-hidden"
-      style={{ background: '#080B12' }}
+      className="absolute inset-0 z-[100] overflow-hidden"
     >
-      {/* ── Ambient Background ── */}
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 60% 30% at 50% -5%, rgba(212,175,55,0.05) 0%, transparent 70%)',
-      }} />
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: 'radial-gradient(ellipse 40% 40% at 80% 80%, rgba(19,236,19,0.03) 0%, transparent 60%)',
-      }} />
-
       {/* ═══ Top Navigation Bar ═══ */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.5 }}
-        className="sticky top-0 z-50"
-        style={{
-          background: 'rgba(8,11,18,0.85)',
-          backdropFilter: 'blur(20px)',
-          borderBottom: '1px solid rgba(255,255,255,0.04)',
-        }}
+        transition={{ delay: 0.15, duration: 0.5 }}
+        className="sticky top-0 z-50 glass-effect"
+        style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
       >
-        <div className="flex items-center justify-between px-4 py-3">
+        <div className="flex items-center justify-between px-5 py-3">
           {/* Logo + Brand */}
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl overflow-hidden border border-[#D4AF37]/20 flex items-center justify-center"
-              style={{ background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))' }}
+            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center"
+              style={{
+                background: `linear-gradient(135deg, ${AURORA.gold}20, ${AURORA.emerald}10)`,
+                border: `1px solid ${AURORA.gold}33`,
+              }}
             >
               <img src="/swiftramadan-logo.png" alt="SwiftRamadan" className="w-full h-full object-cover" />
             </div>
-            <div className="flex flex-col">
-              <span className="text-[#D4AF37] text-[10px] font-bold uppercase tracking-[0.2em]">SwiftRamadan</span>
-              <span className="text-white/20 text-[8px] font-medium">Lagos &bull; 2026</span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-[11px] font-extrabold tracking-[0.18em] uppercase text-gradient-aurora">SwiftRamadan</span>
+              <span className="text-[8px] font-medium" style={{ color: AURORA.textMuted }}>Lagos • 2026</span>
             </div>
           </div>
 
@@ -402,322 +492,385 @@ export default function WelcomeScreen() {
           <div className="flex items-center gap-2">
             <button
               onClick={handleSignIn}
-              className="px-4 h-9 rounded-xl text-white/50 text-xs font-semibold hover:text-white/70 hover:bg-white/5 transition-all"
+              className="px-4 h-9 rounded-xl text-xs font-semibold transition-all hover:bg-white/5"
+              style={{ color: AURORA.textSecondary }}
             >
               Sign In
             </button>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.96 }}
               onClick={handleGetStarted}
-              className="px-4 h-9 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-[0.97] transition-transform"
-              style={{
-                background: 'linear-gradient(135deg, #D4AF37, #E8D48B)',
-                color: '#080B12',
-                boxShadow: '0 2px 12px rgba(212,175,55,0.2)',
-              }}
+              className="px-4 h-9 rounded-xl text-xs font-bold flex items-center gap-1.5 gold-gradient"
+              style={{ color: '#1A1206', boxShadow: '0 4px 16px rgba(245,196,81,0.25)' }}
             >
               Get Started
               <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            </motion.button>
           </div>
         </div>
       </motion.div>
 
       {/* ═══ Scrollable Content ═══ */}
-      <div ref={scrollRef} className="h-full overflow-y-auto pb-32 no-scrollbar">
-        {/* ── Search Bar ── */}
-        <div className="px-4 pt-3 pb-1">
+      <div ref={scrollRef} className="h-full overflow-y-auto pb-40 no-scrollbar">
+        {/* ─────────────── HERO SECTION ─────────────── */}
+        <section className="relative aurora-hero overflow-hidden">
+          {/* Aurora drift orbs */}
+          <div className="absolute -top-10 -left-10 w-56 h-56 rounded-full blur-[60px] aurora-drift pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${AURORA.emerald}30, transparent 70%)` }} />
+          <div className="absolute top-10 -right-10 w-64 h-64 rounded-full blur-[70px] aurora-drift pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${AURORA.violet}28, transparent 70%)`, animationDelay: '-4s' }} />
+          <div className="absolute -bottom-20 left-1/4 w-72 h-72 rounded-full blur-[80px] aurora-drift pointer-events-none"
+            style={{ background: `radial-gradient(circle, ${AURORA.gold}22, transparent 70%)`, animationDelay: '-8s' }} />
+
+          <div className="relative px-5 pt-8 pb-6">
+            {/* Beta badge */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.4 }}
+              className="flex justify-center mb-4"
+            >
+              <span className="beta-badge">
+                <Sparkles className="w-2.5 h-2.5" />
+                Aurora Edition • Lagos
+              </span>
+            </motion.div>
+
+            {/* Brand title */}
+            <motion.h1
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="text-center text-4xl sm:text-5xl font-extrabold tracking-tight text-gradient-aurora"
+            >
+              SwiftRamadan
+            </motion.h1>
+
+            {/* Value prop */}
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              className="text-center text-sm mt-3 max-w-md mx-auto"
+              style={{ color: AURORA.textSecondary }}
+            >
+              Iftar & Sahur delivered with care — fresh meals, premium dates, and group-buy savings, all before Maghrib.
+            </motion.p>
+
+            {/* Hero CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+              className="flex flex-col sm:flex-row items-center gap-2.5 mt-6 max-w-sm mx-auto"
+            >
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={handleGetStarted}
+                className="w-full h-12 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 gold-gradient green-glow"
+                style={{ color: '#1A1206' }}
+              >
+                Get Started Free
+                <ArrowRight className="w-4 h-4" />
+              </motion.button>
+              <button
+                onClick={handleSignIn}
+                className="w-full h-12 rounded-2xl text-sm font-semibold glass-card hover:bg-white/[0.06] transition-colors"
+                style={{ color: AURORA.textSecondary }}
+              >
+                Sign In
+              </button>
+            </motion.div>
+
+            {/* Hero mini stats */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+              className="flex items-center justify-center gap-6 mt-6"
+            >
+              {stats.map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center">
+                  <span className="text-base font-extrabold text-gradient-aurora">{stat.value}</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: AURORA.textMuted }}>
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ─────────────── SEARCH BAR ─────────────── */}
+        <div className="px-5 pt-5">
           <button
             onClick={handleItemTap}
-            className="w-full flex items-center gap-3 rounded-xl px-4 py-3.5 transition-colors"
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.06)',
-            }}
+            className="w-full flex items-center gap-3 rounded-2xl px-4 py-3.5 glass-card hover:bg-white/[0.05] transition-colors"
           >
-            <Search className="w-4 h-4 text-white/25" />
-            <span className="text-white/25 text-sm">Search Jollof, Dates, Iftar meals...</span>
-            <span className="ml-auto text-[9px] text-white/15 font-mono bg-white/5 px-1.5 py-0.5 rounded">⌘K</span>
+            <Search className="w-4 h-4" style={{ color: AURORA.textMuted }} />
+            <span className="text-sm" style={{ color: AURORA.textMuted }}>Search Jollof, Dates, Iftar meals...</span>
+            <span className="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded soft-chip">⌘K</span>
           </button>
         </div>
 
-        {/* ── Hero Banner Carousel ── */}
-        <HeroBanner />
+        {/* ─────────────── HERO BANNER CAROUSEL ─────────────── */}
+        <HeroBanner onTap={handleItemTap} />
 
-        {/* ── Categories Row ── */}
-        <div className="px-4 pt-5 pb-2">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-white text-base font-bold tracking-tight">Browse Categories</h3>
-          </div>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
+        {/* ─────────────── CATEGORIES ROW ─────────────── */}
+        <section className="px-5 pt-8">
+          <SectionHeading icon={ShoppingBag} title="Browse Categories" accent={AURORA.emerald} />
+          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-1 px-1">
             {categories.map((cat) => {
-              const cfg = categoryIcons[cat.name] || { icon: ShoppingBag, color: '#13ec13' };
+              const cfg = categoryIcons[cat.name] || { icon: ShoppingBag, color: AURORA.emerald };
               const Icon = cfg.icon;
               const isSelected = activeCategory === cat.name;
               return (
                 <motion.button
                   key={cat.id}
-                  whileTap={{ scale: 0.95 }}
+                  whileTap={{ scale: 0.94 }}
                   onClick={() => setActiveCategory(isSelected ? null : cat.name)}
-                  className="flex flex-col items-center gap-2 min-w-[68px]"
+                  className="flex flex-col items-center gap-2 min-w-[70px]"
                 >
                   <div
-                    className="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-300"
+                    className="icon-tile w-14 h-14 transition-all duration-300"
                     style={{
-                      background: isSelected ? `${cfg.color}20` : `${cfg.color}08`,
-                      border: isSelected ? `1.5px solid ${cfg.color}50` : `1px solid ${cfg.color}15`,
-                      boxShadow: isSelected ? `0 0 16px ${cfg.color}15` : 'none',
+                      background: isSelected ? `${cfg.color}22` : `${cfg.color}0E`,
+                      border: isSelected ? `1.5px solid ${cfg.color}66` : `1px solid ${cfg.color}22`,
+                      boxShadow: isSelected ? `0 0 18px ${cfg.color}30` : 'none',
                     }}
                   >
-                    <Icon className="w-6 h-6 transition-colors" style={{ color: isSelected ? cfg.color : `${cfg.color}80` }} />
+                    <Icon className="w-6 h-6 transition-colors" style={{ color: isSelected ? cfg.color : `${cfg.color}B0` }} />
                   </div>
-                  <span className={`text-[9px] font-bold whitespace-nowrap transition-colors ${isSelected ? 'text-white' : 'text-white/40'}`}>
+                  <span
+                    className="text-[9px] font-bold whitespace-nowrap transition-colors"
+                    style={{ color: isSelected ? '#fff' : AURORA.textMuted }}
+                  >
                     {cat.name}
                   </span>
                 </motion.button>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* ── Flash Sales ── */}
-        <div className="pt-4 pb-2">
-          <div className="flex items-center justify-between px-4 mb-3">
-            <div className="flex items-center gap-2">
-              <Flame className="w-4 h-4 text-[#FFD700]" />
-              <h3 className="text-white text-base font-bold tracking-tight">Flash Sales</h3>
-              <span className="text-[8px] font-bold text-red-400 bg-red-400/10 px-1.5 py-0.5 rounded-full uppercase tracking-wider">Live</span>
+        {/* ─────────────── FLASH SALES ─────────────── */}
+        <section className="pt-8">
+          <div className="px-5">
+            <SectionHeading
+              icon={Flame}
+              title="Flash Sales"
+              accent={AURORA.gold}
+              action={{ label: 'See All', onTap: handleItemTap }}
+            />
+            <div className="flex items-center gap-2 mb-3">
+              <span className="soft-chip" style={{
+                background: `${AURORA.coral}18`,
+                borderColor: `${AURORA.coral}40`,
+                color: AURORA.coral,
+              }}>
+                <span className="relative inline-flex w-1.5 h-1.5">
+                  <span className="absolute inset-0 rounded-full pulse-soft" style={{ background: AURORA.coral }} />
+                </span>
+                LIVE
+              </span>
+              <span className="text-[10px]" style={{ color: AURORA.textMuted }}>Limited-time deals, refreshed hourly</span>
             </div>
-            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
-              See All <ChevronRight className="w-3 h-3" />
-            </button>
           </div>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-1">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-2">
             {flashSales.map((sale) => (
               <FlashDealCard key={sale.id} sale={sale} onTap={handleItemTap} />
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ── Category Hub ── */}
-        <div className="px-4 pt-4 pb-2">
+        {/* ─────────────── CATEGORY HUB ─────────────── */}
+        <section className="px-5 pt-8">
+          <SectionHeading icon={Package} title="Shop by Hub" accent={AURORA.violet} />
           <div className="grid grid-cols-2 gap-3">
             {categoryHubItems.map((item) => {
               const badgeColors: Record<string, string> = {
-                'Popular': '#D4AF37',
-                'Group Buy': '#13ec13',
-                'Fast': '#3b82f6',
-                'New': '#9B59B6',
+                'Popular': AURORA.gold,
+                'Group Buy': AURORA.emerald,
+                'Fast': AURORA.sky,
+                'New': AURORA.violet,
               };
-              const color = badgeColors[item.badge] || '#D4AF37';
+              const color = badgeColors[item.badge] || AURORA.gold;
               return (
                 <motion.div
                   key={item.id}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleItemTap}
-                  className="relative rounded-2xl overflow-hidden cursor-pointer"
-                  style={{
-                    background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-                    border: '1px solid rgba(255,255,255,0.06)',
-                  }}
+                  className="relative rounded-2xl overflow-hidden cursor-pointer glass-card"
                 >
                   <div
                     className="w-full aspect-[16/9] bg-center bg-no-repeat bg-cover"
                     style={{ backgroundImage: `url("${item.image}")` }}
                   />
                   <div className="absolute inset-0" style={{
-                    background: 'linear-gradient(180deg, transparent 30%, rgba(8,11,18,0.9) 100%)',
+                    background: 'linear-gradient(180deg, transparent 25%, rgba(6,7,11,0.92) 100%)',
                   }} />
                   <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <div className="flex items-center gap-1.5 mb-0.5">
-                      <span
-                        className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full"
-                        style={{ color, background: `${color}15`, border: `1px solid ${color}20` }}
-                      >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="soft-chip" style={{
+                        color,
+                        background: `${color}1A`,
+                        borderColor: `${color}40`,
+                      }}>
                         {item.badge}
                       </span>
                     </div>
                     <h4 className="text-white font-bold text-xs">{item.name}</h4>
-                    <span className="text-white/35 text-[9px]">{item.subtitle}</span>
+                    <span className="text-[9px]" style={{ color: AURORA.textMuted }}>{item.subtitle}</span>
                   </div>
                 </motion.div>
               );
             })}
           </div>
-        </div>
+        </section>
 
-        {/* ── Trending Meals ── */}
-        <div className="px-4 pt-5 pb-2">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#D4AF37]" />
-              <h3 className="text-white text-base font-bold tracking-tight">
-                {activeCategory || 'Trending'} Meals
-              </h3>
-            </div>
-            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
-              See All <ChevronRight className="w-3 h-3" />
-            </button>
-          </div>
+        {/* ─────────────── TRENDING MEALS ─────────────── */}
+        <section className="px-5 pt-8">
+          <SectionHeading
+            icon={Zap}
+            title={`${activeCategory || 'Trending'} Meals`}
+            accent={AURORA.gold}
+            action={{ label: 'See All', onTap: handleItemTap }}
+          />
           <div className="flex flex-col gap-2.5">
             {filteredMeals.map((meal) => (
               <MealCard key={meal.id} meal={meal} onTap={handleItemTap} />
             ))}
             {filteredMeals.length === 0 && (
-              <div className="py-8 text-center">
-                <p className="text-white/25 text-sm">No meals found in this category</p>
+              <div className="py-10 text-center glass-card rounded-2xl">
+                <p className="text-sm" style={{ color: AURORA.textMuted }}>No meals found in this category</p>
               </div>
             )}
           </div>
-        </div>
+        </section>
 
-        {/* ── Popular Retailers ── */}
-        <div className="pt-4 pb-2">
-          <div className="flex items-center justify-between px-4 mb-3">
-            <div className="flex items-center gap-2">
-              <ShoppingBag className="w-4 h-4 text-[#13ec13]" />
-              <h3 className="text-white text-base font-bold tracking-tight">Popular Stores</h3>
-            </div>
-            <button onClick={handleItemTap} className="text-[#D4AF37] text-[10px] font-bold flex items-center gap-0.5">
-              See All <ChevronRight className="w-3 h-3" />
-            </button>
+        {/* ─────────────── POPULAR RETAILERS ─────────────── */}
+        <section className="pt-8">
+          <div className="px-5">
+            <SectionHeading
+              icon={ShoppingBag}
+              title="Popular Stores"
+              accent={AURORA.emerald}
+              action={{ label: 'See All', onTap: handleItemTap }}
+            />
           </div>
-          <div className="flex gap-3 overflow-x-auto no-scrollbar px-4 pb-1">
+          <div className="flex gap-3 overflow-x-auto no-scrollbar px-5 pb-2">
             {popularRetailers.map((retailer) => (
               <RetailerCard key={retailer.id} retailer={retailer} onTap={handleItemTap} />
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ── Why SwiftRamadan ── */}
-        <div className="px-4 pt-5 pb-2">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-            <h3 className="text-white text-base font-bold tracking-tight">Why SwiftRamadan</h3>
-          </div>
+        {/* ─────────────── WHY SWIFTRAMADAN ─────────────── */}
+        <section className="px-5 pt-8">
+          <SectionHeading icon={Sparkles} title="Why SwiftRamadan" accent={AURORA.violet} />
           <div className="grid grid-cols-2 gap-3">
-            {[
-              { icon: Clock, title: 'Iftar Precision', desc: 'Meals before Maghrib', color: '#D4AF37' },
-              { icon: Truck, title: 'Live Tracking', desc: 'Kitchen to doorstep', color: '#3b82f6' },
-              { icon: Users, title: 'Group Buys', desc: 'Bulk savings together', color: '#13ec13' },
-              { icon: Heart, title: 'Sadaqah Built In', desc: 'Charity with every order', color: '#E8652D' },
-            ].map(({ icon: Ic, title, desc, color }) => (
-              <div
+            {whySwiftRamadan.map(({ icon: Ic, title, desc, color }) => (
+              <motion.div
                 key={title}
-                className="p-3.5 rounded-2xl"
-                style={{
-                  background: `linear-gradient(135deg, ${color}06, ${color}02)`,
-                  border: `1px solid ${color}12`,
-                }}
+                whileTap={{ scale: 0.97 }}
+                className="aurora-card p-3.5 rounded-2xl"
               >
-                <Ic className="w-5 h-5 mb-2" style={{ color }} />
+                <div className="icon-tile w-9 h-9 mb-2.5" style={{
+                  background: `linear-gradient(135deg, ${color}25, ${color}08)`,
+                  border: `1px solid ${color}30`,
+                }}>
+                  <Ic className="w-4 h-4" style={{ color }} />
+                </div>
                 <h4 className="text-white text-xs font-bold">{title}</h4>
-                <p className="text-white/30 text-[10px] mt-0.5">{desc}</p>
+                <p className="text-[10px] mt-0.5" style={{ color: AURORA.textMuted }}>{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* ─────────────── SOCIAL PROOF ─────────────── */}
+        <section className="px-5 pt-6">
+          <div className="flex items-center justify-around py-5 rounded-2xl aurora-card relative overflow-hidden">
+            {/* Decorative shimmer line */}
+            <div className="absolute top-0 left-0 right-0 h-px shimmer-line" />
+            {stats.map((stat, i) => (
+              <div key={stat.label} className="flex flex-col items-center gap-1 relative">
+                <span className="text-xl font-black text-gradient-aurora">{stat.value}</span>
+                <span className="text-[9px] font-bold uppercase tracking-wider" style={{ color: AURORA.textMuted }}>
+                  {stat.label}
+                </span>
+                {i < stats.length - 1 && (
+                  <div className="absolute -right-3 top-1/2 -translate-y-1/2 w-px h-8 bg-white/[0.08]" />
+                )}
               </div>
             ))}
           </div>
-        </div>
+        </section>
 
-        {/* ── Social Proof ── */}
-        <div className="px-4 pt-5 pb-4">
-          <div className="flex items-center justify-around py-5 rounded-2xl"
-            style={{
-              background: 'linear-gradient(135deg, rgba(212,175,55,0.04), rgba(255,255,255,0.02))',
-              border: '1px solid rgba(212,175,55,0.08)',
-            }}
-          >
-            {[
-              { value: '12K+', label: 'Families' },
-              { value: '98%', label: 'On-time' },
-              { value: '4.9', label: 'Rating' },
-            ].map((stat, i) => (
-              <div key={stat.label} className="flex flex-col items-center gap-1">
-                <span className="text-xl font-black" style={{
-                  background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}>{stat.value}</span>
-                <span className="text-white/40 text-[9px] font-bold">{stat.label}</span>
-                {i < 2 && <div className="absolute right-0 w-px h-8 bg-white/[0.06]" />}
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* ─────────────── BOTTOM CTA SECTION ─────────────── */}
+        <section className="px-5 pt-6 pb-8">
+          <div className="relative overflow-hidden rounded-3xl p-6 text-center aurora-card">
+            {/* Decorative top glow */}
+            <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-44 h-24 blur-[60px] pointer-events-none"
+              style={{ background: `radial-gradient(circle, ${AURORA.gold}40, transparent 70%)` }}
+            />
+            <div className="absolute -bottom-10 right-0 w-40 h-24 blur-[60px] pointer-events-none"
+              style={{ background: `radial-gradient(circle, ${AURORA.emerald}35, transparent 70%)` }}
+            />
 
-        {/* ── Bottom CTA Section ── */}
-        <div className="px-4 pt-2 pb-8">
-          <div className="relative overflow-hidden rounded-3xl p-6 text-center"
-            style={{
-              background: 'linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02))',
-              border: '1px solid rgba(212,175,55,0.1)',
-            }}
-          >
-            {/* Decorative glow */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-20 blur-[60px]" style={{ background: 'rgba(212,175,55,0.1)' }} />
-
-            <span className="relative text-[#D4AF37]/50 text-sm font-light">ٱلسَّلَامُ عَلَيْكُمْ</span>
+            <span className="relative text-sm font-light" style={{ color: AURORA.gold }}>ٱلسَّلَامُ عَلَيْكُمْ</span>
             <h2 className="relative text-white text-2xl font-extrabold mt-2 tracking-tight">
               Ready to elevate your Ramadan?
             </h2>
-            <p className="relative text-white/35 text-sm mt-2 max-w-[260px] mx-auto">
+            <p className="relative text-sm mt-2 max-w-[280px] mx-auto" style={{ color: AURORA.textSecondary }}>
               Join thousands of Lagos families enjoying Iftar & Sahur delivered with care.
             </p>
 
-            <div className="relative flex flex-col gap-2.5 mt-5">
-              <button
+            <div className="relative flex flex-col gap-2.5 mt-5 max-w-xs mx-auto">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
                 onClick={handleGetStarted}
-                className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
-                style={{
-                  background: 'linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37)',
-                  color: '#080B12',
-                  boxShadow: '0 8px 32px rgba(212,175,55,0.2)',
-                }}
+                className="w-full h-14 rounded-2xl font-bold text-base flex items-center justify-center gap-2 gold-gradient green-glow"
+                style={{ color: '#1A1206' }}
               >
                 Begin Your Journey
                 <ArrowRight className="w-5 h-5" />
-              </button>
+              </motion.button>
               <button
                 onClick={handleSignIn}
-                className="w-full h-11 rounded-xl text-white/40 text-sm font-medium hover:text-white/60 transition-colors"
+                className="w-full h-11 rounded-xl text-sm font-medium transition-colors hover:text-white/80"
+                style={{ color: AURORA.textMuted }}
               >
-                Already part of the family? <span className="text-[#D4AF37] font-bold">Sign In</span>
+                Already part of the family? <span className="font-bold" style={{ color: AURORA.gold }}>Sign In</span>
               </button>
             </div>
           </div>
-        </div>
+        </section>
       </div>
 
-      {/* ═══ Floating Bottom Bar ═══ */}
+      {/* ═══ Floating Bottom CTA Bar (mobile-only) ═══ */}
       <motion.div
         initial={{ y: 80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 0.6, type: 'spring', damping: 20 }}
-        className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none"
+        className="sm:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none"
       >
-        <div
-          className="max-w-lg mx-auto rounded-2xl px-4 py-3 flex items-center justify-between pointer-events-auto"
-          style={{
-            background: 'rgba(12,15,22,0.92)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(212,175,55,0.12)',
-            boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.05)',
-          }}
+        <div className="max-w-lg mx-auto rounded-2xl px-4 py-3 flex items-center justify-between pointer-events-auto glass-effect"
+          style={{ border: `1px solid ${AURORA.gold}22`, boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(245,196,81,0.06)' }}
         >
           <div>
             <p className="text-white text-xs font-bold">Start ordering now</p>
-            <p className="text-white/30 text-[10px]">Free delivery on your first order</p>
+            <p className="text-[10px]" style={{ color: AURORA.textMuted }}>Free delivery on your first order</p>
           </div>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={handleGetStarted}
-            className="h-10 px-5 rounded-xl text-xs font-bold flex items-center gap-1.5 active:scale-[0.97] transition-transform shrink-0"
-            style={{
-              background: 'linear-gradient(135deg, #D4AF37, #E8D48B)',
-              color: '#080B12',
-            }}
+            className="h-10 px-5 rounded-xl text-xs font-bold flex items-center gap-1.5 shrink-0 gold-gradient"
+            style={{ color: '#1A1206' }}
           >
             Join Free
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </motion.button>
         </div>
       </motion.div>
 
@@ -727,6 +880,7 @@ export default function WelcomeScreen() {
           <SignUpPrompt
             onClose={() => setShowPrompt(false)}
             onGetStarted={handleGetStarted}
+            onSignIn={handleSignIn}
           />
         )}
       </AnimatePresence>

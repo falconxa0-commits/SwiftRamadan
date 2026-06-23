@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppStore, type TabId } from '@/lib/store';
-import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, BarChart3, Settings } from 'lucide-react';
+import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NavTab {
@@ -37,10 +37,13 @@ export default function BottomNav() {
   const { activeTab, setActiveTab, cartCount, userRole } = useAppStore();
 
   const tabs = userRole === 'rider' ? riderTabs : userRole === 'vendor' ? vendorTabs : customerTabs;
-  const accentColor = userRole === 'rider' ? '#3b82f6' : userRole === 'vendor' ? '#FFD700' : '#13ec13';
+  const accentColor = userRole === 'rider' ? '#38BDF8' : userRole === 'vendor' ? '#F5C451' : '#10E07A';
 
   return (
-    <div className="fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 w-[95%] sm:w-[90%] max-w-lg glass-effect h-16 sm:h-20 rounded-[2rem] sm:rounded-[2.5rem] flex items-center justify-between px-4 sm:px-8 border border-white/10 nav-glow z-50">
+    <nav
+      className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 w-[94%] sm:w-[90%] max-w-lg glass-effect h-16 sm:h-[72px] rounded-[1.75rem] sm:rounded-[2rem] flex items-center justify-between px-2 sm:px-3 border border-white/10 nav-glow z-50"
+      aria-label="Primary"
+    >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const Icon = tab.icon;
@@ -48,32 +51,52 @@ export default function BottomNav() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className="flex flex-col items-center gap-0.5 relative"
+            className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-2xl transition-colors duration-200"
+            aria-label={tab.label}
+            aria-current={isActive ? 'page' : undefined}
           >
+            {/* Active pill background */}
             {isActive && (
               <motion.div
-                layoutId="activeTab"
-                className="absolute -top-1 w-6 h-1 rounded-full"
-                style={{ backgroundColor: accentColor }}
-                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                layoutId="activeTabBg"
+                className="absolute inset-1 rounded-2xl"
+                style={{
+                  background: `linear-gradient(180deg, ${accentColor}22 0%, ${accentColor}0A 100%)`,
+                  border: `1px solid ${accentColor}33`,
+                }}
+                transition={{ type: 'spring', bounce: 0.18, duration: 0.55 }}
               />
             )}
+
+            {/* Top accent dot */}
+            {isActive && (
+              <motion.div
+                layoutId="activeTabDot"
+                className="absolute top-0.5 w-1 h-1 rounded-full"
+                style={{
+                  backgroundColor: accentColor,
+                  boxShadow: `0 0 8px ${accentColor}`,
+                }}
+                transition={{ type: 'spring', bounce: 0.2, duration: 0.5 }}
+              />
+            )}
+
             <div className="relative">
               <Icon
-                className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-200 ${
-                  isActive ? '' : 'text-white/30'
+                className={`w-[18px] h-[18px] sm:w-5 sm:h-5 transition-all duration-200 ${
+                  isActive ? 'scale-110' : 'scale-100'
                 }`}
-                style={isActive ? { color: accentColor } : undefined}
+                style={isActive ? { color: accentColor, filter: `drop-shadow(0 0 6px ${accentColor}80)` } : { color: 'rgba(255,255,255,0.32)' }}
               />
               {tab.id === 'cart' && cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 size-3.5 sm:size-4 bg-[#13ec13] text-[#05070A] text-[8px] sm:text-[9px] font-black rounded-full flex items-center justify-center">
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-[#10E07A] text-[#04140C] text-[9px] font-black rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(16,224,122,0.6)]">
                   {cartCount}
                 </span>
               )}
             </div>
             <span
-              className={`text-[8px] sm:text-[10px] font-bold tracking-wider ${
-                isActive ? '' : 'text-white/30'
+              className={`text-[9px] sm:text-[10px] font-bold tracking-wide transition-colors duration-200 ${
+                isActive ? '' : 'text-white/32'
               }`}
               style={isActive ? { color: accentColor } : undefined}
             >
@@ -82,6 +105,6 @@ export default function BottomNav() {
           </button>
         );
       })}
-    </div>
+    </nav>
   );
 }

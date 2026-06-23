@@ -1,0 +1,602 @@
+     1→'use client';
+     2→
+     3→import {
+     4→  User, Settings, CreditCard, Bell, Heart, Shield, Leaf, ChevronRight,
+     5→  Award, Gift, Users, MapPin, X, Bike, Store, ArrowLeftRight, Palette,
+     6→  MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
+     7→  Navigation, DollarSign, Star, ToggleLeft, ToggleRight, Fingerprint,
+     8→  Lock, Globe, Eye, Map, ChefHat, CalendarDays, Flame, Trophy,
+     9→} from 'lucide-react';
+    10→import { loyaltyData, charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
+    11→import { useAppStore, type TabId } from '@/lib/store';
+    12→import { useToast } from '@/hooks/use-toast';
+    13→import { motion, AnimatePresence } from 'framer-motion';
+    14→import { useState, useEffect, useRef } from 'react';
+    15→
+    16→/* ──────────────── Cooking Journey types ──────────────── */
+    17→
+    18→interface CookingAchievement {
+    19→  id: string;
+    20→  title: string;
+    21→  desc: string;
+    22→  unlocked: boolean;
+    23→  icon: string;
+    24→}
+    25→
+    26→interface CookingStats {
+    27→  totalSessions?: number;
+    28→  completedSessions?: number;
+    29→  totalCookTimeMins?: number;
+    30→  liveAIUses?: number;
+    31→  achievements?: CookingAchievement[];
+    32→}
+    33→
+    34→/* ──────────────── Role Config ──────────────── */
+    35→
+    36→const ROLE_ACCENT = {
+    37→  customer: '#13ec13',
+    38→  vendor: '#FFD700',
+    39→  rider: '#3b82f6',
+    40→} as const;
+    41→
+    42→const ROLE_DEFAULT_TAB: Record<string, TabId> = {
+    43→  customer: 'home',
+    44→  vendor: 'vendor-dashboard',
+    45→  rider: 'rider-dashboard',
+    46→};
+    47→
+    48→/* ──────────────── Menu Items per Role ──────────────── */
+    49→
+    50→const customerMenu = [
+    51→  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+    52→  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+    53→  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#13ec13]', action: 'bnpl', section: 'REWARDS & GIVING' },
+    54→  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards', section: 'REWARDS & GIVING' },
+    55→  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-cyan-400', action: 'refer', section: 'REWARDS & GIVING' },
+    56→  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-rose-400', action: 'charity', section: 'REWARDS & GIVING' },
+    57→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+    58→  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-orange-400', action: 'artisan-market', section: 'REWARDS & GIVING' },
+    59→  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-violet-400', action: 'community', section: 'REWARDS & GIVING' },
+    60→  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-purple-400', action: 'delivery-location', section: 'ACCOUNT' },
+    61→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+    62→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+    63→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+    64→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#13ec13]', action: 'switch-role', section: 'SUPPORT' },
+    65→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
+    66→];
+    67→
+    68→const vendorMenu = [
+    69→  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+    70→  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+    71→  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#FFD700]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
+    72→  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-emerald-400', action: 'vendor-stock', section: 'REWARDS & GIVING' },
+    73→  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-cyan-400', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
+    74→  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#FFD700]', action: 'rewards', section: 'REWARDS & GIVING' },
+    75→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+    76→  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-violet-400', action: 'community', section: 'REWARDS & GIVING' },
+    77→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+    78→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+    79→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+    80→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#FFD700]', action: 'switch-role', section: 'SUPPORT' },
+    81→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
+    82→];
+    83→
+    84→const riderMenu = [
+    85→  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#13ec13]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+    86→  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#8b5cf6]', action: 'meal-planner', section: 'SMART KITCHEN' },
+    87→  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#3b82f6]', action: 'rider-performance', section: 'REWARDS & GIVING' },
+    88→  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-cyan-400', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
+    89→  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#FFD700]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
+    90→  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-cyan-400', action: 'refer', section: 'REWARDS & GIVING' },
+    91→  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-emerald-400', action: 'eco-impact', section: 'REWARDS & GIVING' },
+    92→  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-teal-400', action: 'prayer-times', section: 'ACCOUNT' },
+    93→  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-amber-400', action: 'notifications', section: 'ACCOUNT' },
+    94→  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-blue-400', action: 'security', section: 'SUPPORT' },
+    95→  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#3b82f6]', action: 'switch-role', section: 'SUPPORT' },
+    96→  { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
+    97→];
+    98→
+    99→/* Order in which menu sections render */
+   100→const MENU_SECTION_ORDER = ['SMART KITCHEN', 'REWARDS & GIVING', 'ACCOUNT', 'SUPPORT'] as const;
+   101→
+   102→/* Loyalty tier → pill styling */
+   103→const TIER_STYLES: Record<string, { bg: string; border: string; text: string; glow: string }> = {
+   104→  bronze: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', glow: '0 0 12px rgba(245,158,11,0.25)' },
+   105→  silver: { bg: 'bg-slate-300/10', border: 'border-slate-300/30', text: 'text-slate-200', glow: '0 0 12px rgba(226,232,240,0.18)' },
+   106→  gold: { bg: 'bg-[#FFD700]/10', border: 'border-[#FFD700]/40', text: 'text-[#FFD700]', glow: '0 0 14px rgba(255,215,0,0.35)' },
+   107→  platinum: { bg: 'bg-[#8b5cf6]/10', border: 'border-[#8b5cf6]/40', text: 'text-[#8b5cf6]', glow: '0 0 14px rgba(139,92,246,0.35)' },
+   108→};
+   109→
+   110→/* ──────────────── Modal Content Interface ──────────────── */
+   111→
+   112→interface ModalContent {
+   113→  title: string;
+   114→  content: React.ReactNode;
+   115→}
+   116→
+   117→/* ──────────────── Switch Role Modal Card ──────────────── */
+   118→
+   119→const roleCards = [
+   120→  {
+   121→    role: 'customer' as const,
+   122→    icon: User,
+   123→    title: 'Customer',
+   124→    description: 'Order iftar meals, groceries & more',
+   125→    accent: '#13ec13',
+   126→    bgClass: 'bg-[#13ec13]/10 border-[#13ec13]/30',
+   127→    iconColor: 'text-[#13ec13]',
+   128→  },
+   129→  {
+   130→    role: 'vendor' as const,
+   131→    icon: Store,
+   132→    title: 'Vendor',
+   133→    description: 'Manage your store & accept orders',
+   134→    accent: '#FFD700',
+   135→    bgClass: 'bg-[#FFD700]/10 border-[#FFD700]/30',
+   136→    iconColor: 'text-[#FFD700]',
+   137→  },
+   138→  {
+   139→    role: 'rider' as const,
+   140→    icon: Bike,
+   141→    title: 'Rider',
+   142→    description: 'Deliver orders & earn money',
+   143→    accent: '#3b82f6',
+   144→    bgClass: 'bg-[#3b82f6]/10 border-[#3b82f6]/30',
+   145→    iconColor: 'text-[#3b82f6]',
+   146→  },
+   147→];
+   148→
+   149→/* ──────────────── Toggle Switch Component ──────────────── */
+   150→
+   151→function ToggleSwitch({ enabled, onToggle, label }: { enabled: boolean; onToggle: () => void; label: string }) {
+   152→  return (
+   153→    <button
+   154→      onClick={onToggle}
+   155→      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+   156→      role="switch"
+   157→      aria-checked={enabled}
+   158→      aria-label={label}
+   159→    >
+   160→      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+   161→    </button>
+   162→  );
+   163→}
+   164→
+   165→/* ════════════════════════════════════════════════════════════════
+   166→   ProfileTab Component
+   167→   ════════════════════════════════════════════════════════════════ */
+   168→
+   169→export default function ProfileTab() {
+   170→  const [showModal, setShowModal] = useState(false);
+   171→  const [modalContent, setModalContent] = useState<ModalContent>({ title: '', content: null });
+   172→  const [showSwitchRole, setShowSwitchRole] = useState(false);
+   173→
+   174→  // Settings toggles
+   175→  const [settingsState, setSettingsState] = useState({
+   176→    notifications: true,
+   177→    darkMode: true,
+   178→    locationServices: true,
+   179→    biometric: true,
+   180→    twoFactor: true,
+   181→  });
+   182→
+   183→  const { toast } = useToast();
+   184→  const {
+   185→    userName, userArea, userEmail, logout, setShowAuth,
+   186→    hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints,
+   187→    userRole, setUserRole, setActiveTab,
+   188→    vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
+   189→    vendorTotalEarnings, vendorPendingSettlement,
+   190→    riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
+   191→    orders, cartItems, referralCount,
+   192→  } = useAppStore();
+   193→
+   194→  /* ── Cooking Journey state (ref-guarded fetch, no setState in effect body) ── */
+   195→  const [cookingStats, setCookingStats] = useState<CookingStats | null>(null);
+   196→  const [cookingLoading, setCookingLoading] = useState(true);
+   197→  const fetchedRef = useRef(false);
+   198→  useEffect(() => {
+   199→    if (fetchedRef.current) return;
+   200→    fetchedRef.current = true;
+   201→    fetch('/api/cooking-sessions?email=' + encodeURIComponent(userEmail || 'guest'))
+   202→      .then(r => r.json())
+   203→      .then((data: CookingStats) => {
+   204→        setCookingStats(data);
+   205→        setCookingLoading(false);
+   206→      })
+   207→      .catch(() => {
+   208→        setCookingStats(null);
+   209→        setCookingLoading(false);
+   210→      });
+   211→  }, [userEmail]);
+   212→
+   213→  const tierStyle = TIER_STYLES[loyaltyTier] || TIER_STYLES.bronze;
+   214→
+   215→  const handleClaimDaily = () => {
+   216→    claimDailyPoints();
+   217→    toast({ title: '🎁 +50 Hasanat points claimed!', description: `You're on a ${dailyStreak + 1}-day streak. Come back tomorrow!` });
+   218→  };
+   219→
+   220→  const accent = ROLE_ACCENT[userRole];
+   221→  const currentMenu = userRole === 'vendor' ? vendorMenu : userRole === 'rider' ? riderMenu : customerMenu;
+   222→
+   223→  // Update rewards subtitle dynamically
+   224→  const menuWithDynamicSubtitles = currentMenu.map(item => {
+   225→    if (item.action === 'rewards') return { ...item, subtitle: `${hasanatPoints.toLocaleString()} points` };
+   226→    if (item.action === 'notifications') return { ...item, subtitle: `${useAppStore.getState().unreadCount} unread` };
+   227→    return item;
+   228→  });
+   229→
+   230→  /* ── Display values per role ── */
+   231→  const displayName = userRole === 'vendor'
+   232→    ? (vendorStoreName || 'My Store')
+   233→    : (userName || 'Guest');
+   234→
+   235→  const displayArea = userRole === 'vendor'
+   236→    ? (vendorBusinessCategory || 'General')
+   237→    : (userArea || 'Lagos, Nigeria');
+   238→
+   239→  /* ── Handlers ── */
+   240→
+   241→  const handleMenuClick = (action: string) => {
+   242→    switch (action) {
+   243→      case 'smart-kitchen':
+   244→        useAppStore.getState().setActiveModal('smart-kitchen');
+   245→        break;
+   246→      case 'meal-planner':
+   247→        useAppStore.getState().setActiveModal('meal-planner');
+   248→        break;
+   249→      case 'bnpl':
+   250→        useAppStore.getState().setActiveModal('bnpl');
+   251→        break;
+   252→      case 'refer':
+   253→        useAppStore.getState().setActiveModal('refer');
+   254→        break;
+   255→      case 'charity':
+   256→        useAppStore.getState().setActiveModal('charity');
+   257→        break;
+   258→      case 'rewards':
+   259→        useAppStore.getState().setActiveModal('rewards');
+   260→        break;
+   261→      case 'eco-impact':
+   262→        useAppStore.getState().setActiveModal('eco-impact');
+   263→        break;
+   264→      case 'artisan-market':
+   265→        useAppStore.getState().setActiveModal('artisan-market');
+   266→        break;
+   267→      case 'community':
+   268→        useAppStore.getState().setActiveModal('community');
+   269→        break;
+   270→      case 'delivery-location':
+   271→        useAppStore.getState().setActiveModal('delivery-location');
+   272→        break;
+   273→      case 'prayer-times':
+   274→        useAppStore.getState().setActiveModal('prayer');
+   275→        break;
+   276→      case 'vendor-insights':
+   277→        useAppStore.getState().setActiveModal('vendor-insights');
+   278→        break;
+   279→      case 'vendor-stock':
+   280→        useAppStore.getState().setActiveModal('vendor-stock');
+   281→        break;
+   282→      case 'vendor-pricing':
+   283→        useAppStore.getState().setActiveModal('vendor-pricing');
+   284→        break;
+   285→      case 'rider-performance':
+   286→        useAppStore.getState().setActiveModal('rider-performance');
+   287→        break;
+   288→      case 'rider-smart-route':
+   289→        useAppStore.getState().setActiveModal('rider-smart-route');
+   290→        break;
+   291→      case 'rider-power-finder':
+   292→        useAppStore.getState().setActiveModal('rider-power-finder');
+   293→        break;
+   294→      case 'switch-role':
+   295→        setShowSwitchRole(true);
+   296→        break;
+   297→      case 'notifications':
+   298→        toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
+   299→        break;
+   300→      case 'security':
+   301→        setModalContent({
+   302→          title: 'Security & Privacy',
+   303→          content: (
+   304→            <div className="space-y-3">
+   305→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   306→                <div className="flex items-center gap-3">
+   307→                  <Fingerprint className="w-5 h-5 text-[#13ec13]" />
+   308→                  <div>
+   309→                    <p className="text-white font-bold text-sm">Biometric Login</p>
+   310→                    <p className="text-white/40 text-xs">Use fingerprint or Face ID</p>
+   311→                  </div>
+   312→                </div>
+   313→                <ToggleSwitch
+   314→                  enabled={settingsState.biometric}
+   315→                  onToggle={() => {
+   316→                    setSettingsState(s => ({ ...s, biometric: !s.biometric }));
+   317→                    toast({ title: settingsState.biometric ? 'Biometric Disabled' : 'Biometric Enabled', description: settingsState.biometric ? 'Password login required' : 'You can now use fingerprint/Face ID' });
+   318→                  }}
+   319→                  label="Biometric Login"
+   320→                />
+   321→              </div>
+   322→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   323→                <div className="flex items-center gap-3">
+   324→                  <Lock className="w-5 h-5 text-[#13ec13]" />
+   325→                  <div>
+   326→                    <p className="text-white font-bold text-sm">Two-Factor Auth</p>
+   327→                    <p className="text-white/40 text-xs">Extra security for your account</p>
+   328→                  </div>
+   329→                </div>
+   330→                <ToggleSwitch
+   331→                  enabled={settingsState.twoFactor}
+   332→                  onToggle={() => {
+   333→                    setSettingsState(s => ({ ...s, twoFactor: !s.twoFactor }));
+   334→                    toast({ title: settingsState.twoFactor ? '2FA Disabled' : '2FA Enabled', description: settingsState.twoFactor ? 'Less secure - consider re-enabling' : 'Your account is more secure now' });
+   335→                  }}
+   336→                  label="Two-Factor Auth"
+   337→                />
+   338→              </div>
+   339→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   340→                <div className="flex items-center gap-3">
+   341→                  <Eye className="w-5 h-5 text-[#13ec13]" />
+   342→                  <div>
+   343→                    <p className="text-white font-bold text-sm">Data Encryption</p>
+   344→                    <p className="text-white/40 text-xs">End-to-end encryption</p>
+   345→                  </div>
+   346→                </div>
+   347→                <span className="text-[#13ec13] text-xs font-bold">Active</span>
+   348→              </div>
+   349→            </div>
+   350→          ),
+   351→        });
+   352→        setShowModal(true);
+   353→        break;
+   354→      case 'settings':
+   355→        setModalContent({
+   356→          title: 'Settings',
+   357→          content: (
+   358→            <div className="space-y-3">
+   359→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   360→                <div className="flex items-center gap-3">
+   361→                  <Globe className="w-5 h-5 text-white/40" />
+   362→                  <div>
+   363→                    <p className="text-white font-bold text-sm">Language</p>
+   364→                    <p className="text-white/40 text-xs">English (US)</p>
+   365→                  </div>
+   366→                </div>
+   367→                <ChevronRight className="w-4 h-4 text-white/20" />
+   368→              </div>
+   369→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   370→                <div className="flex items-center gap-3">
+   371→                  <Bell className="w-5 h-5 text-white/40" />
+   372→                  <div>
+   373→                    <p className="text-white font-bold text-sm">Notifications</p>
+   374→                    <p className="text-white/40 text-xs">Push & Email</p>
+   375→                  </div>
+   376→                </div>
+   377→                <ToggleSwitch
+   378→                  enabled={settingsState.notifications}
+   379→                  onToggle={() => {
+   380→                    setSettingsState(s => ({ ...s, notifications: !s.notifications }));
+   381→                    toast({ title: settingsState.notifications ? 'Notifications Off' : 'Notifications On', description: settingsState.notifications ? 'You won\'t receive push alerts' : 'You\'ll receive push & email alerts' });
+   382→                  }}
+   383→                  label="Notifications"
+   384→                />
+   385→              </div>
+   386→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   387→                <div className="flex items-center gap-3">
+   388→                  <Moon className="w-5 h-5 text-white/40" />
+   389→                  <div>
+   390→                    <p className="text-white font-bold text-sm">Dark Mode</p>
+   391→                    <p className="text-white/40 text-xs">Always on</p>
+   392→                  </div>
+   393→                </div>
+   394→                <ToggleSwitch
+   395→                  enabled={settingsState.darkMode}
+   396→                  onToggle={() => {
+   397→                    setSettingsState(s => ({ ...s, darkMode: !s.darkMode }));
+   398→                    toast({ title: 'Dark Mode', description: 'Dark mode is always on in SwiftRamadan' });
+   399→                  }}
+   400→                  label="Dark Mode"
+   401→                />
+   402→              </div>
+   403→              <div className="flex justify-between items-center p-3 bg-[#1A1D26] rounded-xl border border-white/5">
+   404→                <div className="flex items-center gap-3">
+   405→                  <Map className="w-5 h-5 text-white/40" />
+   406→                  <div>
+   407→                    <p className="text-white font-bold text-sm">Location Services</p>
+   408→                    <p className="text-white/40 text-xs">While using the app</p>
+   409→                  </div>
+   410→                </div>
+   411→                <ToggleSwitch
+   412→                  enabled={settingsState.locationServices}
+   413→                  onToggle={() => {
+   414→                    setSettingsState(s => ({ ...s, locationServices: !s.locationServices }));
+   415→                    toast({ title: settingsState.locationServices ? 'Location Off' : 'Location On', description: settingsState.locationServices ? 'Some features may be limited' : 'Location access enabled' });
+   416→                  }}
+   417→                  label="Location Services"
+   418→                />
+   419→              </div>
+   420→            </div>
+   421→          ),
+   422→        });
+   423→        setShowModal(true);
+   424→        break;
+   425→    }
+   426→  };
+   427→
+   428→  const handleSwitchRole = (newRole: 'customer' | 'vendor' | 'rider') => {
+   429→    setUserRole(newRole);
+   430→    setActiveTab(ROLE_DEFAULT_TAB[newRole]);
+   431→    setShowSwitchRole(false);
+   432→    const roleName = newRole.charAt(0).toUpperCase() + newRole.slice(1);
+   433→    toast({
+   434→      title: `Switched to ${roleName} mode ✨`,
+   435→      description: `You're now using SwiftRamadan as a ${roleName.toLowerCase()}`,
+   436→    });
+   437→  };
+   438→
+   439→  const handleCharityClick = (item: typeof charityItems[0]) => {
+   440→    if (item.amount > 0) {
+   441→      useAppStore.getState().addToCart({
+   442→        id: 500 + item.id,
+   443→        name: `Donation: ${item.name}`,
+   444→        price: item.amount,
+   445→        image: '',
+   446→      });
+   447→      toast({ title: `${item.name} 💚`, description: `Donation of ${formatNaira(item.amount)} added to cart` });
+   448→    } else {
+   449→      toast({ title: 'Zakat Calculator 🧮', description: 'Calculate your Zakat based on your assets' });
+   450→    }
+   451→  };
+   452→
+   453→  const handleLogout = () => {
+   454→    logout();
+   455→  };
+   456→
+   457→  /* ══════════════════════ RENDER ══════════════════════ */
+   458→
+   459→  return (
+   460→    <main className="flex-1 overflow-y-auto pb-32">
+   461→
+   462→      {/* ─── Profile Header (sleeker, gradient banner) ─── */}
+   463→      <div className="px-4 pt-6 pb-2">
+   464→        <div
+   465→          className="relative overflow-hidden rounded-3xl border border-white/10"
+   466→          style={{
+   467→            background:
+   468→              'radial-gradient(ellipse at top left, rgba(19,236,19,0.18), transparent 55%),' +
+   469→              'radial-gradient(ellipse at top right, rgba(255,215,0,0.15), transparent 55%),' +
+   470→              'radial-gradient(ellipse at bottom center, rgba(139,92,246,0.14), transparent 60%),' +
+   471→              '#0F1117',
+   472→          }}
+   473→        >
+   474→          <div className="relative p-5 flex items-center gap-4">
+   475→            {/* Avatar wrapped in a green→gold→purple gradient ring */}
+   476→            <div
+   477→              className="p-[2px] rounded-full shrink-0"
+   478→              style={{ background: 'linear-gradient(135deg, #13ec13, #FFD700, #8b5cf6)' }}
+   479→            >
+   480→              {userRole === 'vendor' ? (
+   481→                /* Vendor Header */
+   482→                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#FFD700]/30"
+   483→                  style={{ boxShadow: '0 0 20px #FFD70015' }}>
+   484→                  <Store className="w-8 h-8 text-[#FFD700]" />
+   485→                </div>
+   486→              ) : userRole === 'rider' ? (
+   487→                /* Rider Header */
+   488→                <div className="relative">
+   489→                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#3b82f6]/30"
+   490→                    style={{ boxShadow: '0 0 20px #3b82f615' }}>
+   491→                    <Bike className="w-8 h-8 text-[#3b82f6]" />
+   492→                  </div>
+   493→                  <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#0F1117] ${
+   494→                    riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
+   495→                  }`} />
+   496→                </div>
+   497→              ) : (
+   498→                /* Customer Header */
+   499→                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#0F1117] border border-[#13ec13]/30 green-glow">
+   500→                  <User className="w-8 h-8 text-[#13ec13]" />
+   501→                </div>
+   502→              )}
+   503→            </div>
+   504→
+   505→            <div className="flex-1 min-w-0">
+   506→              <div className="flex items-center gap-2 flex-wrap">
+   507→                <h2 className="text-white text-xl font-bold truncate">{displayName}</h2>
+   508→                <span className="beta-badge">Beta</span>
+   509→                {userRole === 'vendor' && (
+   510→                  <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'}`} />
+   511→                )}
+   512→              </div>
+   513→
+   514→              {userRole === 'vendor' ? (
+   515→                <>
+   516→                  <div className="flex items-center gap-2 mt-1.5">
+   517→                    <span className="text-[#FFD700] text-[10px] font-bold bg-[#FFD700]/10 px-2 py-0.5 rounded-full border border-[#FFD700]/20">
+   518→                      {vendorBusinessCategory || 'General'}
+   519→                    </span>
+   520→                    <span className="text-white/30 text-xs">•</span>
+   521→                    <span className="text-white/50 text-xs">{vendorOnline ? '🟢 Online' : '⚫ Offline'}</span>
+   522→                  </div>
+   523→                  <p className="text-white/40 text-[11px] mt-0.5">Ramadan 2026</p>
+   524→                </>
+   525→              ) : userRole === 'rider' ? (
+   526→                <>
+   527→                  <div className="flex items-center gap-2 mt-1.5">
+   528→                    <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
+   529→                    <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+   530→                      {riderOnline ? 'Online' : 'Offline'}
+   531→                    </span>
+   532→                    <span className="text-white/20 text-xs">•</span>
+   533→                    <span className="text-[#FFD700] text-xs font-bold">⭐ Elite Rider</span>
+   534→                  </div>
+   535→                  <p className="text-white/50 text-[11px] mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
+   536→                </>
+   537→              ) : (
+   538→                <>
+   539→                  <p className="text-white/50 text-sm">{displayArea}</p>
+   540→                  <div className="flex items-center gap-2 mt-1.5">
+   541→                    <span
+   542→                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border ${tierStyle.bg} ${tierStyle.border} ${tierStyle.text}`}
+   543→                      style={{ boxShadow: tierStyle.glow }}
+   544→                    >
+   545→                      <Award className="w-3 h-3" />
+   546→                      {loyaltyTier.charAt(0).toUpperCase() + loyaltyTier.slice(1)} Member
+   547→                    </span>
+   548→                  </div>
+   549→                </>
+   550→              )}
+   551→            </div>
+   552→
+   553→            <button
+   554→              onClick={() => useAppStore.getState().setShowOnboarding(true)}
+   555→              className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors shrink-0"
+   556→              aria-label="Open settings"
+   557→            >
+   558→              <Settings className="w-5 h-5 text-white/50" />
+   559→            </button>
+   560→          </div>
+   561→        </div>
+   562→      </div>
+   563→
+   564→      {/* ─── Stats Row ─── */}
+   565→      <div className="px-4 mt-4">
+   566→        <div className="grid grid-cols-3 gap-3">
+   567→          {userRole === 'vendor' ? (
+   568→            <>
+   569→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   570→                <p className="text-[#13ec13] text-lg font-black">{formatNaira(vendorBalance)}</p>
+   571→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Revenue</p>
+   572→              </div>
+   573→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   574→                <p className="text-[#FFD700] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
+   575→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Orders Today</p>
+   576→              </div>
+   577→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   578→                <p className="text-cyan-400 text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
+   579→                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Avg Order</p>
+   580→              </div>
+   581→            </>
+   582→          ) : userRole === 'rider' ? (
+   583→            <>
+   584→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   585→                <div className="w-8 h-8 bg-[#13ec13]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   586→                  <DollarSign className="w-4 h-4 text-[#13ec13]" />
+   587→                </div>
+   588→                <p className="text-[#13ec13] text-lg font-black">{formatNaira(riderEarnings)}</p>
+   589→                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
+   590→              </div>
+   591→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   592→                <div className="w-8 h-8 bg-[#3b82f6]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   593→                  <Zap className="w-4 h-4 text-[#3b82f6]" />
+   594→                </div>
+   595→                <p className="text-[#3b82f6] text-lg font-black">{riderCompletedToday}</p>
+   596→                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Completed</p>
+   597→              </div>
+   598→              <div className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5">
+   599→                <div className="w-8 h-8 bg-[#FFD700]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+   600→                  <Star className="w-4 h-4 text-[#FFD700]" />
+
+[showing lines 1-600 of 1003; use offset=601 with limit to continue reading]

@@ -87,82 +87,83 @@ export default function HomeTab() {
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
-        <div className="px-4 pt-4 space-y-4">
-          <div className="animate-pulse w-1/3 h-4 bg-[#1A1D26] rounded-md" />
-          <div className="animate-pulse w-full h-12 bg-[#1A1D26] rounded-xl" />
-          <div className="animate-pulse w-full h-40 bg-[#1A1D26] rounded-3xl" />
+        <div className="px-5 pt-4 space-y-5">
+          <div className="flex items-center justify-between">
+            <div className="animate-pulse w-32 h-8 bg-[#0F1118] rounded-xl" />
+            <div className="animate-pulse w-24 h-9 bg-[#0F1118] rounded-xl" />
+          </div>
+          <div className="animate-pulse w-full h-12 bg-[#0F1118] rounded-2xl" />
+          <div className="animate-pulse w-full h-44 bg-[#0F1118] rounded-3xl" />
           <div className="flex gap-3 overflow-hidden">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="flex flex-col items-center gap-2 min-w-[72px]">
-                <div className="w-12 h-12 bg-[#1A1D26] rounded-2xl animate-pulse" />
-                <div className="w-12 h-2 bg-[#1A1D26] rounded animate-pulse" />
+                <div className="w-12 h-12 bg-[#0F1118] rounded-2xl animate-pulse" />
+                <div className="w-12 h-2 bg-[#0F1118] rounded animate-pulse" />
               </div>
             ))}
           </div>
-          <div className="animate-pulse w-full aspect-[16/9] bg-[#1A1D26] rounded-2xl" />
-          <div className="flex gap-6 overflow-hidden">
+          <div className="animate-pulse w-full aspect-[16/9] bg-[#0F1118] rounded-2xl" />
+          <div className="flex gap-5 overflow-hidden">
             {[1, 2, 3, 4].map(i => (
               <div key={i} className="flex flex-col items-center gap-2 min-w-[70px]">
-                <div className="w-16 h-16 bg-[#1A1D26] rounded-full animate-pulse" />
-                <div className="w-12 h-2 bg-[#1A1D26] rounded animate-pulse" />
+                <div className="w-16 h-16 bg-[#0F1118] rounded-full animate-pulse" />
+                <div className="w-12 h-2 bg-[#0F1118] rounded animate-pulse" />
               </div>
             ))}
           </div>
-          <div className="animate-pulse w-full h-64 bg-[#1A1D26] rounded-2xl" />
+          <div className="animate-pulse w-full h-64 bg-[#0F1118] rounded-3xl" />
         </div>
       </main>
     );
   }
 
   return (
-    <main className="flex-1 overflow-y-auto pb-32 space-y-6">
-      {/* ── Greeting + Beta Badge ── */}
-      <div className="px-4 pt-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <motion.div
-            initial={{ opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.4 }}
-            className="flex items-center gap-2"
-          >
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#13ec13] to-[#FFD700] flex items-center justify-center shadow-[0_0_20px_rgba(19,236,19,0.25)]">
-              <Sparkles className="w-4 h-4 text-black" />
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="text-white text-lg font-black tracking-tight">SwiftRamadan</span>
-              <span className="beta-badge">Beta</span>
-            </div>
-          </motion.div>
-        </div>
+    <main className="flex-1 overflow-y-auto pb-32 space-y-7">
+      {/* ── Greeting + Beta Badge (top brand strip) ── */}
+      <div className="px-5 pt-4 flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex items-center gap-2.5"
+        >
+          <div className="icon-tile w-9 h-9 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_20px_rgba(16,224,122,0.28)]">
+            <Sparkles className="w-4 h-4 text-black relative z-10" />
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-white text-lg font-black tracking-tight">SwiftRamadan</span>
+            <span className="beta-badge">Beta</span>
+          </div>
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, x: 8 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
           className="text-right"
         >
-          <p className="text-white/40 text-[10px] font-medium uppercase tracking-wider">Assalamu Alaikum</p>
-          <p className="text-white text-sm font-bold leading-tight">Let&apos;s break fast together 🌙</p>
+          <p className="text-white/40 text-[10px] font-semibold uppercase tracking-[0.14em]">Assalamu Alaikum</p>
+          <p className="text-white text-sm font-bold leading-tight mt-0.5">Let&apos;s break fast together 🌙</p>
         </motion.div>
       </div>
 
-      {/* ── Search Bar ── */}
-      <div className="px-4 flex items-center gap-2">
+      {/* ── Search Bar + Visual Search ── */}
+      <div className="px-5 flex items-center gap-2.5">
         <button
           onClick={() => setShowSearch(true)}
-          className="flex-1 flex items-center gap-3 bg-[#1A1D26] border border-white/5 rounded-2xl px-4 py-3.5 hover:border-white/10 transition-colors"
+          className="glass-card flex-1 flex items-center gap-3 rounded-2xl px-4 py-3.5 hover:border-white/15 transition-colors group"
         >
-          <Search className="w-4 h-4 text-white/30" />
-          <span className="text-white/30 text-sm">Search meals, groceries, restaurants...</span>
-          <span className="ml-auto text-[10px] text-white/20 font-mono bg-white/5 px-2 py-0.5 rounded">⌘K</span>
+          <Search className="w-4 h-4 text-white/40 group-hover:text-[#10E07A] transition-colors" />
+          <span className="text-white/40 text-sm">Search meals, groceries, restaurants...</span>
+          <span className="ml-auto text-[10px] text-white/30 font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/5">⌘K</span>
         </button>
         <button
           onClick={() => setActiveModal('visual-search')}
           aria-label="Snap to Shop - visual search"
-          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#13ec13]/10 border border-[#13ec13]/30 hover:bg-[#13ec13]/20 active:scale-95 transition-all relative"
+          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 hover:bg-[#10E07A]/20 active:scale-95 transition-all relative"
         >
-          <ScanLine className="w-5 h-5 text-[#13ec13]" />
+          <ScanLine className="w-5 h-5 text-[#10E07A]" />
           <motion.span
-            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#FFD700]"
+            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F5C451]"
             animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
             transition={{ duration: 1.6, repeat: Infinity }}
           />
@@ -170,21 +171,21 @@ export default function HomeTab() {
       </div>
 
       {/* ── Smart Kitchen Hero Card (FLAGSHIP) ── */}
-      <div className="px-4">
+      <div className="px-5">
         <motion.div
           initial={{ opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="gradient-border sk-aura relative overflow-hidden rounded-3xl"
+          className="premium-card sk-aura relative overflow-hidden"
         >
-          {/* Floating glow orbs */}
+          {/* Floating aurora glow orbs */}
           <motion.div
-            className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-[#13ec13]/15 blur-3xl pointer-events-none"
+            className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-[#10E07A]/15 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 4, repeat: Infinity }}
           />
           <motion.div
-            className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-[#8b5cf6]/15 blur-3xl pointer-events-none"
+            className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-[#A78BFA]/15 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 5, repeat: Infinity, delay: 1 }}
           />
@@ -196,13 +197,13 @@ export default function HomeTab() {
                 <motion.div
                   animate={{ rotate: [0, 8, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
-                  className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#13ec13] to-[#FFD700] flex items-center justify-center shadow-[0_0_24px_rgba(19,236,19,0.4)]"
+                  className="icon-tile w-12 h-12 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_24px_rgba(16,224,122,0.40)]"
                 >
-                  <ChefHat className="w-6 h-6 text-black" />
+                  <ChefHat className="w-6 h-6 text-black relative z-10" />
                 </motion.div>
                 <div className="flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#FFD700]" />
-                  <Sparkles className="w-2.5 h-2.5 text-[#13ec13]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
+                  <Sparkles className="w-2.5 h-2.5 text-[#10E07A]" />
                 </div>
               </div>
 
@@ -216,16 +217,16 @@ export default function HomeTab() {
                   />
                   <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
                 </span>
-                <span className="text-red-400 text-[10px] font-black tracking-wider uppercase">Live</span>
+                <span className="text-red-400 text-[10px] font-black tracking-[0.14em] uppercase">Live</span>
               </div>
             </div>
 
             {/* Title + subtitle */}
             <div className="mb-5">
-              <h2 className="text-white text-2xl font-black tracking-tight leading-tight">
+              <h2 className="text-white text-[1.65rem] font-black tracking-tight leading-tight">
                 Smart Kitchen
               </h2>
-              <p className="text-[#13ec13] text-sm font-bold flex items-center gap-1.5 mt-0.5">
+              <p className="text-[#10E07A] text-sm font-bold flex items-center gap-1.5 mt-0.5">
                 <Radio className="w-3.5 h-3.5" />
                 Chef Safa Live
               </p>
@@ -238,7 +239,7 @@ export default function HomeTab() {
             <motion.button
               whileTap={{ scale: 0.97 }}
               onClick={() => setActiveModal('smart-kitchen')}
-              className="w-full bg-[#13ec13] text-black font-black text-sm uppercase tracking-widest py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(19,236,19,0.35)] hover:bg-[#13ec13]/90 transition-colors"
+              className="w-full emerald-gradient text-black font-black text-sm uppercase tracking-[0.18em] py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(16,224,122,0.35)] hover:brightness-110 transition-all"
             >
               <Radio className="w-4 h-4" />
               Launch Live Coach
@@ -249,23 +250,23 @@ export default function HomeTab() {
       </div>
 
       {/* ── Live Iftar/Sahur Countdown ── */}
-      <div className="px-4">
+      <div className="px-5">
         <RamadanCountdown />
       </div>
 
-      {/* ── Quick Actions Row (with Meal Planner) ── */}
-      <div className="px-4">
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+      {/* ── Quick Actions Row (with Meal Planner featured) ── */}
+      <div className="px-5">
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
           {/* Meal Planner featured action */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setActiveModal('meal-planner')}
-            className="flex flex-col items-center gap-2 min-w-[72px] p-3 bg-[#8b5cf6]/10 rounded-2xl border border-[#8b5cf6]/20 hover:border-[#8b5cf6]/40 transition-colors"
+            className="flex flex-col items-center gap-2 min-w-[76px] p-3 bg-[#A78BFA]/10 rounded-2xl border border-[#A78BFA]/20 hover:border-[#A78BFA]/40 transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#8b5cf6]/15 flex items-center justify-center">
-              <CalendarDays className="w-5 h-5 text-[#8b5cf6]" />
+            <div className="icon-tile w-10 h-10 bg-[#A78BFA]/15">
+              <CalendarDays className="w-5 h-5 text-[#A78BFA] relative z-10" />
             </div>
-            <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">Plan Meals</span>
+            <span className="text-[10px] font-bold text-white/70 whitespace-nowrap">Plan Meals</span>
           </motion.button>
           {quickActions.map((action) => {
             const config = quickActionConfig[action.icon];
@@ -275,12 +276,12 @@ export default function HomeTab() {
                 key={action.id}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleQuickAction(action)}
-                className="flex flex-col items-center gap-2 min-w-[72px] p-3 bg-[#1A1D26] rounded-2xl border border-white/5 hover:border-white/10 transition-colors"
+                className="flex flex-col items-center gap-2 min-w-[76px] p-3 glass-card rounded-2xl hover:border-white/15 transition-colors"
               >
-                <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center">
-                  <Icon className="w-5 h-5 text-[#13ec13]" />
+                <div className="icon-tile w-10 h-10 bg-[#10E07A]/10">
+                  <Icon className="w-5 h-5 text-[#10E07A] relative z-10" />
                 </div>
-                <span className="text-[10px] font-bold text-white/60 whitespace-nowrap">{action.name}</span>
+                <span className="text-[10px] font-bold text-white/70 whitespace-nowrap">{action.name}</span>
               </motion.button>
             );
           })}
@@ -293,7 +294,7 @@ export default function HomeTab() {
           ref={carouselRef}
           className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
         >
-          <div className="flex items-stretch px-4 gap-4">
+          <div className="flex items-stretch px-5 gap-4">
             {heroSlides.map((slide, index) => (
               <motion.div
                 key={slide.id}
@@ -302,24 +303,24 @@ export default function HomeTab() {
                 whileTap={{ scale: 0.98 }}
               >
                 <div
-                  className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors"
+                  className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/8 hover:border-white/15 transition-colors"
                   style={{ backgroundImage: `url("${slide.image}")` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-transparent to-transparent" />
                   {slide.badge && (
                     <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
                       <Star className="w-3 h-3 text-black fill-black" />
-                      <span className="text-black text-[10px] font-bold uppercase tracking-wider">{slide.badge}</span>
+                      <span className="text-black text-[10px] font-bold uppercase tracking-[0.10em]">{slide.badge}</span>
                     </div>
                   )}
                   {/* Slide counter */}
-                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded-full">
+                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10">
                     <span className="text-white/80 text-[10px] font-bold">{index + 1} / {heroSlides.length}</span>
                   </div>
                 </div>
                 <div className="px-1">
-                  <p className="text-white text-lg font-bold leading-tight">{slide.title}</p>
-                  <p className="text-[#13ec13]/80 text-sm font-medium flex items-center gap-1">
+                  <p className="text-white text-lg font-bold leading-tight tracking-tight">{slide.title}</p>
+                  <p className="text-[#10E07A]/80 text-sm font-semibold flex items-center gap-1 mt-0.5">
                     <Zap className="w-3 h-3" />
                     {slide.subtitle}
                   </p>
@@ -334,8 +335,9 @@ export default function HomeTab() {
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${
-                i === currentSlide ? 'w-6 bg-[#13ec13]' : 'w-1.5 bg-white/20'
+                i === currentSlide ? 'w-6 bg-[#10E07A] shadow-[0_0_8px_rgba(16,224,122,0.5)]' : 'w-1.5 bg-white/20'
               }`}
             />
           ))}
@@ -343,8 +345,8 @@ export default function HomeTab() {
       </div>
 
       {/* ── Category Circles ── */}
-      <div className="px-4">
-        <h3 className="text-white text-xl font-black tracking-tight mb-3 px-1">Categories</h3>
+      <div className="px-5">
+        <h3 className="heading-accent text-white text-xl font-black tracking-tight mb-3 px-1">Categories</h3>
         <div className="flex w-full overflow-x-auto gap-5 pb-2 no-scrollbar">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.name || (!activeCategory && cat.id === 1);
@@ -354,13 +356,13 @@ export default function HomeTab() {
                 onClick={() => handleCategoryClick(cat)}
                 className="flex flex-col items-center gap-2 min-w-[70px]"
               >
-                <div className={`w-16 h-16 bg-[#1A1D26] border-2 ${isActive ? 'border-[#13ec13]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${isActive ? 'green-glow' : ''} hover:border-[#13ec13]/50 transition-colors`}>
+                <div className={`w-16 h-16 bg-[#0F1118] border-2 ${isActive ? 'border-[#10E07A]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${isActive ? 'green-glow' : ''} hover:border-[#10E07A]/50 transition-colors`}>
                   <div
                     className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
                     style={{ backgroundImage: `url("${cat.image}")` }}
                   />
                 </div>
-                <p className={`text-[11px] font-bold whitespace-nowrap ${isActive ? 'text-white/90' : 'text-white/60'}`}>{cat.name}</p>
+                <p className={`text-[11px] font-bold whitespace-nowrap ${isActive ? 'text-white' : 'text-white/60'}`}>{cat.name}</p>
               </button>
             );
           })}
@@ -369,32 +371,33 @@ export default function HomeTab() {
 
       {/* Active category filter indicator */}
       {activeCategory && (
-        <div className="px-4">
-          <div className="flex items-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 rounded-xl px-3 py-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#13ec13]" />
-            <span className="text-[#13ec13] text-xs font-bold">Filtered by: {activeCategory}</span>
+        <div className="px-5">
+          <div className="flex items-center gap-2 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-xl px-3 py-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#10E07A]" />
+            <span className="text-[#10E07A] text-xs font-bold">Filtered by: {activeCategory}</span>
             <button
               onClick={() => setActiveCategory(null)}
-              className="ml-auto p-0.5 hover:bg-[#13ec13]/10 rounded-full transition-colors"
+              aria-label="Clear filter"
+              className="ml-auto p-0.5 hover:bg-[#10E07A]/10 rounded-full transition-colors"
             >
-              <X className="w-3.5 h-3.5 text-[#13ec13]/60" />
+              <X className="w-3.5 h-3.5 text-[#10E07A]/60" />
             </button>
           </div>
         </div>
       )}
 
-      {/* ── Featured Ramadan Box ── */}
-      <div className="px-4">
+      {/* ── Featured Ramadan Box (Editor's Choice) ── */}
+      <div className="px-5">
         <div
-          className="relative overflow-hidden rounded-3xl bg-[#1A1D26] border border-white/5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] cursor-pointer hover:border-white/10 transition-colors"
+          className="premium-card relative overflow-hidden cursor-pointer"
           onClick={() => handleMealClick(100)}
         >
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[#13ec13]/5 blur-[80px]" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#FFD700]/5 blur-[80px]" />
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#10E07A]/8 blur-[80px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#F5C451]/8 blur-[80px] pointer-events-none" />
           <div className="p-5 relative z-10">
             <div className="flex justify-between items-start mb-5">
               <div>
-                <span className="inline-block px-3 py-1 bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-3">
+                <span className="inline-block px-3 py-1 bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20 rounded-full text-[10px] font-extrabold uppercase tracking-[0.16em] mb-3">
                   Editor&apos;s Choice
                 </span>
                 <h3 className="text-2xl font-black text-white leading-[1.1] tracking-tight">
@@ -403,7 +406,7 @@ export default function HomeTab() {
               </div>
               <div className="text-right">
                 <p className="text-white/30 text-[10px] font-medium line-through">{formatNaira(ramadanBox.originalPrice)}</p>
-                <p className="text-[#13ec13] text-xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(19,236,19,0.3)]">
+                <p className="text-gradient-emerald text-xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(16,224,122,0.3)]">
                   {formatNaira(ramadanBox.salePrice)}
                 </p>
               </div>
@@ -420,7 +423,7 @@ export default function HomeTab() {
             </div>
 
             <div className="flex items-center gap-2 mb-5 bg-black/30 p-3 rounded-xl border border-white/5">
-              <BadgeCheck className="w-5 h-5 text-[#FFD700] shrink-0" />
+              <BadgeCheck className="w-5 h-5 text-[#F5C451] shrink-0" />
               <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
             </div>
 
@@ -432,14 +435,14 @@ export default function HomeTab() {
                   price: ramadanBox.salePrice,
                   image: ramadanBox.images[0],
                 })}
-                className="flex-1 bg-white/5 border border-white/10 py-3.5 rounded-2xl text-white font-bold text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-white/10"
+                className="flex-1 bg-white/5 border border-white/10 py-3.5 rounded-2xl text-white font-bold text-sm uppercase tracking-[0.16em] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-white/10"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Add to Cart
               </button>
               <button
                 onClick={() => handleMealClick(100)}
-                className="flex-1 bg-[#13ec13] py-3.5 rounded-2xl text-black font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="flex-1 emerald-gradient py-3.5 rounded-2xl text-black font-black text-sm uppercase tracking-[0.16em] shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:brightness-110"
               >
                 Details
                 <ChevronRight className="w-4 h-4" />
@@ -450,15 +453,17 @@ export default function HomeTab() {
       </div>
 
       {/* ── Flash Sales ── */}
-      <div className="px-4">
+      <div className="px-5">
         <div className="flex justify-between items-end mb-3 px-1">
           <div className="flex items-center gap-2">
-            <Flame className="w-5 h-5 text-[#FFD700]" />
-            <h3 className="text-white text-xl font-black tracking-tight">Flash Sales</h3>
+            <div className="icon-tile w-7 h-7 bg-[#F5C451]/12">
+              <Flame className="w-4 h-4 text-[#F5C451] relative z-10" />
+            </div>
+            <h3 className="heading-accent text-white text-xl font-black tracking-tight">Flash Sales</h3>
           </div>
           <button
             onClick={() => setActiveTab('offers')}
-            className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+            className="text-[#10E07A] text-xs font-extrabold uppercase tracking-[0.12em] cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             See All
           </button>
@@ -468,7 +473,7 @@ export default function HomeTab() {
             <motion.div
               key={sale.id}
               whileTap={{ scale: 0.97 }}
-              className="min-w-[200px] bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden cursor-pointer hover:border-white/10 transition-colors"
+              className="glass-card min-w-[200px] rounded-2xl overflow-hidden cursor-pointer hover:border-white/15 transition-colors"
               onClick={() => handleMealClick(sale.id + 200)}
             >
               <div className="relative">
@@ -476,11 +481,11 @@ export default function HomeTab() {
                   className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
                   style={{ backgroundImage: `url("${sale.image}")` }}
                 />
-                <div className="absolute top-2 left-2 bg-red-500 px-2 py-0.5 rounded-md">
+                <div className="absolute top-2 left-2 bg-red-500 px-2 py-0.5 rounded-md shadow-lg shadow-red-500/30">
                   <span className="text-white text-[10px] font-black">-{sale.discount}%</span>
                 </div>
-                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md">
-                  <span className="text-[#FFD700] text-[9px] font-bold flex items-center gap-1">
+                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md border border-white/10">
+                  <span className="text-[#F5C451] text-[9px] font-bold flex items-center gap-1">
                     <Clock className="w-2.5 h-2.5" />
                     {sale.endsIn}
                   </span>
@@ -489,17 +494,17 @@ export default function HomeTab() {
               <div className="p-3">
                 <h4 className="text-white font-bold text-sm truncate">{sale.name}</h4>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[#13ec13] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+                  <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
                   <span className="text-white/30 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
                 </div>
                 <div className="mt-2">
-                  <div className="w-full bg-white/5 rounded-full h-1.5 mb-1">
+                  <div className="w-full bg-white/5 rounded-full h-1.5 mb-1 overflow-hidden">
                     <div
-                      className="bg-[#FFD700] h-1.5 rounded-full transition-all"
+                      className="gold-gradient h-1.5 rounded-full transition-all"
                       style={{ width: `${sale.claimed}%` }}
                     />
                   </div>
-                  <p className="text-white/30 text-[9px]">{sale.claimed}% claimed</p>
+                  <p className="text-white/40 text-[9px] font-semibold">{sale.claimed}% claimed</p>
                 </div>
                 <button
                   onClick={(e) => {
@@ -511,7 +516,7 @@ export default function HomeTab() {
                       image: sale.image,
                     });
                   }}
-                  className="w-full mt-2 text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 py-1.5 rounded-lg border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                  className="w-full mt-2 text-[10px] font-bold text-[#10E07A] bg-[#10E07A]/10 py-1.5 rounded-lg border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
                 >
                   + Add to Cart
                 </button>
@@ -522,28 +527,28 @@ export default function HomeTab() {
       </div>
 
       {/* ── Trending Iftar Meals ── */}
-      <div className="px-4">
+      <div className="px-5">
         <div className="flex justify-between items-end mb-3 px-1">
-          <h3 className="text-white text-xl font-black tracking-tight">
+          <h3 className="heading-accent text-white text-xl font-black tracking-tight">
             {activeCategory ? activeCategory : 'Trending Iftar'}
           </h3>
           <button
             onClick={() => setActiveTab('explore')}
-            className="text-[#13ec13] text-xs font-extrabold uppercase tracking-wider cursor-pointer hover:text-[#13ec13]/80 transition-colors"
+            className="text-[#10E07A] text-xs font-extrabold uppercase tracking-[0.12em] cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             See All
           </button>
         </div>
 
         {filteredMeals.length > 0 ? (
-          <div className="space-y-3 max-h-96 overflow-y-auto pr-1 no-scrollbar">
+          <div className="space-y-3 max-h-96 overflow-y-auto pr-1 custom-scrollbar">
             {filteredMeals.map((meal) => (
               <motion.div
                 key={meal.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: meal.id * 0.05 }}
-                className="flex gap-4 p-4 bg-[#1A1D26] rounded-2xl border border-white/5 hover:border-white/10 transition-colors cursor-pointer"
+                className="glass-card flex gap-4 p-4 rounded-2xl hover:border-white/15 transition-colors cursor-pointer"
                 onClick={() => handleMealClick(meal.id)}
               >
                 <div
@@ -553,26 +558,26 @@ export default function HomeTab() {
                 <div className="flex flex-col justify-between flex-1 min-w-0">
                   <div>
                     <div className="flex justify-between items-start gap-2">
-                      <h4 className="text-white font-bold text-base truncate">{meal.name}</h4>
-                      <span className="text-[#13ec13] font-black whitespace-nowrap">{formatNaira(meal.price)}</span>
+                      <h4 className="text-white font-bold text-base truncate tracking-tight">{meal.name}</h4>
+                      <span className="text-[#10E07A] font-black whitespace-nowrap">{formatNaira(meal.price)}</span>
                     </div>
                     <p className="text-white/40 text-[11px] leading-relaxed mt-1 line-clamp-2">{meal.description}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center gap-1 text-[10px] text-white/50 font-bold bg-white/5 px-2 py-0.5 rounded-full">
+                    <span className="soft-chip">
                       <Clock className="w-3 h-3" />
                       {meal.deliveryTime}
-                    </div>
-                    <div className="flex items-center gap-1 text-[10px] text-[#FFD700] font-bold">
-                      <Star className="w-3 h-3 fill-[#FFD700]" />
+                    </span>
+                    <span className="soft-chip text-[#F5C451]">
+                      <Star className="w-3 h-3 fill-[#F5C451]" />
                       {meal.rating}
-                    </div>
+                    </span>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleQuickAdd(meal);
                       }}
-                      className="ml-auto text-[10px] font-bold text-[#13ec13] bg-[#13ec13]/10 px-3 py-1 rounded-full border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                      className="ml-auto text-[10px] font-bold text-[#10E07A] bg-[#10E07A]/10 px-3 py-1 rounded-full border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
                     >
                       + Add
                     </button>
@@ -582,11 +587,11 @@ export default function HomeTab() {
             ))}
           </div>
         ) : (
-          <div className="flex flex-col items-center py-8 text-center">
+          <div className="glass-card flex flex-col items-center py-8 text-center rounded-2xl">
             <p className="text-white/40 text-sm">No meals found for &quot;{activeCategory}&quot;</p>
             <button
               onClick={() => setActiveCategory(null)}
-              className="text-[#13ec13] text-sm font-bold mt-2 hover:text-[#13ec13]/80 transition-colors"
+              className="text-[#10E07A] text-sm font-bold mt-2 hover:text-[#10E07A]/80 transition-colors"
             >
               Clear filter
             </button>
@@ -595,26 +600,23 @@ export default function HomeTab() {
       </div>
 
       {/* ── Join the Community CTA ── */}
-      <div className="px-4">
+      <div className="px-5">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => setActiveModal('community')}
-          className="relative overflow-hidden rounded-3xl cursor-pointer border border-white/10 hover:border-white/20 transition-colors"
-          style={{
-            background: 'linear-gradient(135deg, rgba(139,92,246,0.18) 0%, rgba(19,236,19,0.12) 50%, rgba(255,215,0,0.10) 100%)',
-          }}
+          className="aurora-card relative overflow-hidden rounded-3xl cursor-pointer hover:border-white/20 transition-colors"
         >
-          {/* Floating glow orbs */}
+          {/* Floating aurora glow orbs */}
           <motion.div
-            className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-[#8b5cf6]/20 blur-3xl pointer-events-none"
+            className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-[#A78BFA]/20 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 4, repeat: Infinity }}
           />
           <motion.div
-            className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-[#13ec13]/15 blur-3xl pointer-events-none"
+            className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-[#10E07A]/15 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 5, repeat: Infinity, delay: 1 }}
           />
@@ -623,12 +625,12 @@ export default function HomeTab() {
             <motion.div
               animate={{ rotate: [0, 8, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[#8b5cf6] to-[#13ec13] flex items-center justify-center shadow-[0_0_24px_rgba(139,92,246,0.4)]"
+              className="icon-tile shrink-0 w-14 h-14 bg-gradient-to-br from-[#A78BFA] to-[#10E07A] shadow-[0_0_24px_rgba(167,139,250,0.40)]"
             >
-              <Users className="w-7 h-7 text-white" />
+              <Users className="w-7 h-7 text-white relative z-10" />
             </motion.div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-white text-lg font-black tracking-tight leading-tight">
+              <h3 className="text-gradient-aurora text-lg font-black tracking-tight leading-tight">
                 Join the Community
               </h3>
               <p className="text-white/70 text-xs mt-1 leading-relaxed">

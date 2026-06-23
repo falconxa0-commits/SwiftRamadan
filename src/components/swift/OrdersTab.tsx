@@ -1,6 +1,6 @@
 'use client';
 
-import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Star, CircleDot } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Navigation } from 'lucide-react';
 import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
 import { useAppStore, type OrderItem } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -8,11 +8,11 @@ import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
 
 const statusConfig: Record<string, { color: string; bgColor: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
-  'In Transit': { color: 'text-[#13ec13]', bgColor: 'bg-[#13ec13]/10', icon: Truck, label: 'In Transit' },
-  'Preparing': { color: 'text-[#FFD700]', bgColor: 'bg-[#FFD700]/10', icon: Clock, label: 'Preparing' },
+  'In Transit': { color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', icon: Truck, label: 'In Transit' },
+  'Preparing': { color: 'text-[#F5C451]', bgColor: 'bg-[#F5C451]/10', icon: Clock, label: 'Preparing' },
   'Delivered': { color: 'text-white/40', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
-  'Confirmed': { color: 'text-cyan-400', bgColor: 'bg-cyan-400/10', icon: Package, label: 'Confirmed' },
-  'Ready': { color: 'text-purple-400', bgColor: 'bg-purple-400/10', icon: CheckCircle, label: 'Ready for Pickup' },
+  'Confirmed': { color: 'text-[#38BDF8]', bgColor: 'bg-[#38BDF8]/10', icon: Package, label: 'Confirmed' },
+  'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
 };
 
 const progressSteps = [
@@ -40,20 +40,20 @@ function OrderProgressTracker({ progress, status }: { progress: number; status: 
                 <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors ${
                   isActive
                     ? isCurrentStep
-                      ? 'border-[#13ec13] bg-[#13ec13]'
-                      : 'border-[#13ec13]/50 bg-[#13ec13]/20'
-                    : 'border-white/10 bg-[#1A1D26]'
+                      ? 'border-[#10E07A] bg-[#10E07A]'
+                      : 'border-[#10E07A]/50 bg-[#10E07A]/20'
+                    : 'border-white/10 bg-[#0F1118]'
                 }`}>
                   {isActive && (
-                    <div className={`w-1.5 h-1.5 rounded-full ${isCurrentStep ? 'bg-black' : 'bg-[#13ec13]'}`} />
+                    <div className={`w-1.5 h-1.5 rounded-full ${isCurrentStep ? 'bg-[#06070B]' : 'bg-[#10E07A]'}`} />
                   )}
                 </div>
                 <span className={`text-[8px] mt-1 font-bold whitespace-nowrap ${
-                  isActive ? 'text-[#13ec13]' : 'text-white/20'
+                  isActive ? 'text-[#10E07A]' : 'text-white/20'
                 }`}>{step.label}</span>
               </div>
               {i < progressSteps.length - 1 && (
-                <div className={`flex-1 h-px mx-1 ${progress >= progressSteps[i + 1].threshold ? 'bg-[#13ec13]/40' : 'bg-white/5'}`} />
+                <div className={`flex-1 h-px mx-1 ${progress >= progressSteps[i + 1].threshold ? 'bg-[#10E07A]/40' : 'bg-white/5'}`} />
               )}
             </div>
           );
@@ -63,10 +63,13 @@ function OrderProgressTracker({ progress, status }: { progress: number; status: 
   );
 }
 
+type OrderTab = 'active' | 'past';
+
 export default function OrdersTab() {
   const { orders, setOrders } = useAppStore();
   const [isLoading, setIsLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<OrderTab>('active');
   const { toast } = useToast();
 
   // Initialize orders from store, falling back to mock data
@@ -128,13 +131,13 @@ export default function OrdersTab() {
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
-        <div className="px-4 pt-6 pb-2">
-          <h1 className="text-2xl font-bold">Your Orders</h1>
-          <p className="text-white/50 text-sm">Track and manage your Ramadan deliveries</p>
+        <div className="px-5 pt-6 pb-2">
+          <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+          <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
         </div>
-        <div className="px-4 mt-4 space-y-3">
+        <div className="px-5 mt-4 space-y-3">
           {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse h-24 bg-[#1A1D26] rounded-2xl" />
+            <div key={i} className="animate-pulse h-24 glass-card rounded-2xl" />
           ))}
         </div>
       </main>
@@ -145,23 +148,24 @@ export default function OrdersTab() {
   if (orders.length === 0) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
-        <div className="px-4 pt-6 pb-2">
-          <h1 className="text-2xl font-bold">Your Orders</h1>
-          <p className="text-white/50 text-sm">Track and manage your Ramadan deliveries</p>
+        <div className="px-5 pt-6 pb-2">
+          <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+          <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
         </div>
         <div className="flex flex-col items-center justify-center py-20 px-6">
-          <div className="w-24 h-24 bg-[#1A1D26] rounded-full flex items-center justify-center mb-6 border border-white/5">
-            <ShoppingBag className="w-10 h-10 text-white/20" />
+          <div className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft">
+            <ShoppingBag className="w-10 h-10 text-white/20 relative z-10" />
           </div>
-          <h3 className="text-white text-lg font-bold mb-2">No orders yet</h3>
-          <p className="text-white/40 text-sm text-center mb-6">
+          <h3 className="text-white text-lg font-bold mb-2 tracking-tight">No orders yet</h3>
+          <p className="text-white/40 text-sm text-center mb-6 max-w-xs">
             Start ordering Iftar meals, Sahur boxes, and more to see your orders here
           </p>
           <button
             onClick={() => useAppStore.getState().setActiveTab('home')}
-            className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform"
+            className="bg-[#10E07A] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
           >
             Start Ordering
+            <ShoppingBag className="w-4 h-4" />
           </button>
         </div>
       </main>
@@ -170,230 +174,326 @@ export default function OrdersTab() {
 
   return (
     <main className="flex-1 overflow-y-auto pb-32">
-      <div className="px-4 pt-6 pb-2">
-        <h1 className="text-2xl font-bold">Your Orders</h1>
-        <p className="text-white/50 text-sm">Track and manage your Ramadan deliveries</p>
+      <div className="px-5 pt-6 pb-2">
+        <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+        <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
       </div>
 
-      {/* Live Tracking Widget */}
-      {activeOrder && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="px-4 mt-4"
-        >
-          <div
-            className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-[#13ec13]/20 p-5 cursor-pointer hover:border-[#13ec13]/40 transition-colors"
-            onClick={() => handleActiveOrderClick(activeOrder)}
+      {/* Tabs: Active / Past */}
+      <div className="px-5 mt-4">
+        <div className="inline-flex p-1 glass-card rounded-2xl">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === 'active'
+                ? 'bg-[#10E07A] text-[#06070B] green-glow'
+                : 'text-white/60 hover:text-white'
+            }`}
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#13ec13]/5 blur-[60px]" />
-            <div className="relative z-10">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <span className="flex size-2 bg-[#13ec13] rounded-full animate-pulse" />
-                  <span className="text-[#13ec13] text-xs font-bold uppercase tracking-widest">Live Tracking</span>
-                </div>
-                <span className="text-white/30 text-xs font-mono">{activeOrder.id}</span>
-              </div>
+            <Navigation className="w-3.5 h-3.5" />
+            Active
+            {activeOrders.length > 0 && (
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
+                activeTab === 'active' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-[#10E07A]/15 text-[#10E07A]'
+              }`}>
+                {activeOrders.length}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('past')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === 'past'
+                ? 'bg-[#10E07A] text-[#06070B] green-glow'
+                : 'text-white/60 hover:text-white'
+            }`}
+          >
+            <CheckCircle className="w-3.5 h-3.5" />
+            Past
+            {pastOrders.length > 0 && (
+              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
+                activeTab === 'past' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-white/10 text-white/60'
+              }`}>
+                {pastOrders.length}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
 
-              {/* Progress Bar */}
-              <div className="w-full bg-white/5 rounded-full h-2 mb-4">
-                <motion.div
-                  className="bg-[#13ec13] h-2 rounded-full"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${activeOrder.progress}%` }}
-                  transition={{ duration: 1.5, ease: 'easeOut' }}
-                />
-              </div>
-
-              {/* Progress Tracker */}
-              <OrderProgressTracker progress={activeOrder.progress} status={activeOrder.status} />
-
-              <div className="flex items-center justify-between mt-4">
-                <div>
-                  <p className="text-white font-bold">{activeOrder.item}</p>
-                  <p className="text-[#13ec13] text-sm font-medium">{activeOrder.eta}</p>
-                </div>
-                <span className="text-white font-bold">{formatNaira(activeOrder.total)}</span>
-              </div>
-
-              {activeOrder.rider && (
-                <div className="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-white/5 mt-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#13ec13]/20 rounded-full flex items-center justify-center">
-                      <Truck className="w-5 h-5 text-[#13ec13]" />
-                    </div>
-                    <div>
-                      <p className="text-white text-sm font-bold">{activeOrder.rider}</p>
-                      <p className="text-white/40 text-xs">Your rider</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCallRider(activeOrder.rider);
-                      }}
-                      className="w-10 h-10 bg-[#13ec13]/10 rounded-full flex items-center justify-center border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
-                    >
-                      <Phone className="w-4 h-4 text-[#13ec13]" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        useAppStore.getState().setActiveModal('live-tracking');
-                      }}
-                      className="flex items-center gap-2 px-4 h-10 bg-[#FFD700]/10 rounded-full border border-[#FFD700]/20 hover:bg-[#FFD700]/20 transition-colors"
-                    >
-                      <MapPin className="w-4 h-4 text-[#FFD700]" />
-                      <span className="text-[#FFD700] text-xs font-bold">Track</span>
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* Active Orders */}
-      {activeOrders.length > 0 && (
-        <div className="px-4 mt-6">
-          <h3 className="text-white text-lg font-extrabold mb-4">Active Orders</h3>
-          <div className="space-y-3">
-            {activeOrders.map((order) => {
-              const config = statusConfig[order.status];
-              const Icon = config?.icon || Package;
-              const isExpanded = expandedOrder === order.id;
-              return (
-                <div key={order.id}>
-                  <button
-                    onClick={() => handleActiveOrderClick(order)}
-                    className="flex items-center gap-4 p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 w-full text-left hover:border-[#13ec13]/20 transition-colors"
-                  >
-                    <div className={`w-12 h-12 ${config?.bgColor || 'bg-white/5'} rounded-xl flex items-center justify-center shrink-0`}>
-                      <Icon className={`w-6 h-6 ${config?.color || 'text-white/50'}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="text-white font-bold text-sm">{order.item}</p>
-                          <p className="text-white/40 text-xs mt-0.5">{order.eta}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <span className={`text-xs font-bold ${config?.color}`}>{order.status}</span>
-                          <p className="text-white/60 text-xs font-bold">{formatNaira(order.total)}</p>
-                        </div>
+      <AnimatePresence mode="wait">
+        {activeTab === 'active' ? (
+          <motion.div
+            key="active"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Live Tracking Widget */}
+            {activeOrder && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="px-5 mt-4"
+              >
+                <div
+                  className="relative overflow-hidden rounded-2xl premium-card p-5 cursor-pointer hover:border-white/15 transition-colors"
+                  onClick={() => handleActiveOrderClick(activeOrder)}
+                >
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/10 blur-[60px]" />
+                  <div className="relative z-10">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="relative flex size-2">
+                          <span className="absolute inline-flex size-full rounded-full bg-[#10E07A] opacity-60 pulse-soft" />
+                          <span className="relative inline-flex size-2 rounded-full bg-[#10E07A]" />
+                        </span>
+                        <span className="text-[#10E07A] text-xs font-bold uppercase tracking-widest">Live Tracking</span>
                       </div>
-                      {/* Mini progress bar for each active order */}
-                      <div className="w-full bg-white/5 rounded-full h-1 mt-2">
-                        <div
-                          className={`h-1 rounded-full transition-all ${
-                            order.status === 'In Transit' ? 'bg-[#13ec13]' :
-                            order.status === 'Preparing' ? 'bg-[#FFD700]' : 'bg-cyan-400'
-                          }`}
-                          style={{ width: `${order.progress}%` }}
-                        />
-                      </div>
+                      <span className="text-white/30 text-xs font-mono">{activeOrder.id}</span>
                     </div>
-                    <div
-                      className="shrink-0 ml-2"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleExpand(order.id);
-                      }}
-                    >
-                      {isExpanded ? (
-                        <ChevronUp className="w-4 h-4 text-white/30" />
-                      ) : (
-                        <ChevronDown className="w-4 h-4 text-white/30" />
-                      )}
-                    </div>
-                  </button>
-                  <AnimatePresence>
-                    {isExpanded && order.items && (
+
+                    {/* Progress Bar */}
+                    <div className="w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden">
                       <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="bg-[#1A1D26]/20 rounded-b-2xl border border-t-0 border-white/5 p-4 space-y-2">
-                          {order.items.map((item, i) => (
-                            <div key={i} className="flex justify-between text-xs">
-                              <span className="text-white/60">{item.name} x{item.qty}</span>
-                              <span className="text-white/40">{formatNaira(item.price * item.qty)}</span>
-                            </div>
-                          ))}
-                          <div className="h-px bg-white/5 my-1" />
-                          <div className="flex justify-between text-xs font-bold">
-                            <span className="text-white/80">Total</span>
-                            <span className="text-[#13ec13]">{formatNaira(order.total)}</span>
+                        className="bg-gradient-to-r from-[#10E07A] to-[#F5C451] h-2 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${activeOrder.progress}%` }}
+                        transition={{ duration: 1.5, ease: 'easeOut' }}
+                      />
+                    </div>
+
+                    {/* Progress Tracker */}
+                    <OrderProgressTracker progress={activeOrder.progress} status={activeOrder.status} />
+
+                    <div className="flex items-center justify-between mt-4">
+                      <div>
+                        <p className="text-white font-bold tracking-tight">{activeOrder.item}</p>
+                        <p className="text-[#10E07A] text-sm font-medium">{activeOrder.eta}</p>
+                      </div>
+                      <span className="text-white font-bold">{formatNaira(activeOrder.total)}</span>
+                    </div>
+
+                    {activeOrder.rider && (
+                      <div className="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-white/5 mt-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-[#10E07A]/20 rounded-full flex items-center justify-center icon-tile">
+                            <Truck className="w-5 h-5 text-[#10E07A] relative z-10" />
                           </div>
-                          {/* Reorder button */}
+                          <div>
+                            <p className="text-white text-sm font-bold">{activeOrder.rider}</p>
+                            <p className="text-white/40 text-xs">Your rider</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleReorder(order);
+                              handleCallRider(activeOrder.rider);
                             }}
-                            className="w-full mt-2 bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-2 rounded-lg text-xs font-bold hover:bg-[#13ec13]/20 transition-colors"
+                            className="w-10 h-10 bg-[#10E07A]/10 rounded-full flex items-center justify-center border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors active:scale-90"
+                            aria-label="Call rider"
                           >
-                            Reorder Items
+                            <Phone className="w-4 h-4 text-[#10E07A]" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              useAppStore.getState().setActiveModal('live-tracking');
+                            }}
+                            className="flex items-center gap-2 px-4 h-10 bg-[#F5C451]/10 rounded-full border border-[#F5C451]/20 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
+                          >
+                            <MapPin className="w-4 h-4 text-[#F5C451]" />
+                            <span className="text-[#F5C451] text-xs font-bold">Track</span>
                           </button>
                         </div>
-                      </motion.div>
+                      </div>
                     )}
-                  </AnimatePresence>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+              </motion.div>
+            )}
 
-      {/* Past Orders */}
-      {pastOrders.length > 0 && (
-        <div className="px-4 mt-8">
-          <h3 className="text-white text-lg font-extrabold mb-4">Past Orders</h3>
-          <div className="space-y-3">
-            {pastOrders.map((order) => (
-              <div key={order.id} className="bg-[#1A1D26]/20 rounded-2xl border border-white/5 overflow-hidden">
-                <div className="flex items-center gap-4 p-4">
-                  <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center">
-                    <CheckCircle className="w-6 h-6 text-white/30" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-white/70 font-bold text-sm">{order.item}</p>
-                        <p className="text-white/30 text-xs">{order.eta}</p>
+            {/* Active Orders */}
+            {activeOrders.length > 0 && (
+              <div className="px-5 mt-6">
+                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Active Orders</h3>
+                <div className="space-y-3">
+                  {activeOrders.map((order) => {
+                    const config = statusConfig[order.status];
+                    const Icon = config?.icon || Package;
+                    const isExpanded = expandedOrder === order.id;
+                    return (
+                      <div key={order.id}>
+                        <button
+                          onClick={() => handleActiveOrderClick(order)}
+                          className="flex items-center gap-4 p-4 glass-card rounded-2xl w-full text-left hover:border-white/15 transition-colors active:scale-[0.99]"
+                        >
+                          <div className={`w-12 h-12 ${config?.bgColor || 'bg-white/5'} rounded-xl flex items-center justify-center shrink-0 icon-tile border border-white/5`}>
+                            <Icon className={`w-6 h-6 relative z-10 ${config?.color || 'text-white/50'}`} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <p className="text-white font-bold text-sm tracking-tight">{order.item}</p>
+                                <p className="text-white/40 text-xs mt-0.5">{order.eta}</p>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <span className={`text-xs font-bold ${config?.color}`}>{order.status}</span>
+                                <p className="text-white/60 text-xs font-bold">{formatNaira(order.total)}</p>
+                              </div>
+                            </div>
+                            {/* Mini progress bar for each active order */}
+                            <div className="w-full bg-white/5 rounded-full h-1 mt-2 overflow-hidden">
+                              <div
+                                className={`h-1 rounded-full transition-all ${
+                                  order.status === 'In Transit' ? 'bg-[#10E07A]' :
+                                  order.status === 'Preparing' ? 'bg-[#F5C451]' : 'bg-[#38BDF8]'
+                                }`}
+                                style={{ width: `${order.progress}%` }}
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="shrink-0 ml-2 p-1.5 hover:bg-white/5 rounded-lg transition-colors"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpand(order.id);
+                            }}
+                          >
+                            {isExpanded ? (
+                              <ChevronUp className="w-4 h-4 text-white/40" />
+                            ) : (
+                              <ChevronDown className="w-4 h-4 text-white/40" />
+                            )}
+                          </div>
+                        </button>
+                        <AnimatePresence>
+                          {isExpanded && order.items && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              className="overflow-hidden"
+                            >
+                              <div className="glass-card rounded-b-2xl border border-t-0 p-4 space-y-2 mt-1">
+                                {order.items.map((item, i) => (
+                                  <div key={i} className="flex justify-between text-xs">
+                                    <span className="text-white/60">{item.name} x{item.qty}</span>
+                                    <span className="text-white/40">{formatNaira(item.price * item.qty)}</span>
+                                  </div>
+                                ))}
+                                <div className="h-px bg-white/5 my-1" />
+                                <div className="flex justify-between text-xs font-bold">
+                                  <span className="text-white/80">Total</span>
+                                  <span className="text-[#10E07A]">{formatNaira(order.total)}</span>
+                                </div>
+                                {/* Reorder button */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleReorder(order);
+                                  }}
+                                  className="w-full mt-2 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+                                >
+                                  Reorder Items
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       </div>
-                      <div className="text-right">
-                        <span className="text-white/30 text-xs font-bold">Delivered</span>
-                        <p className="text-white/40 text-xs font-bold">{formatNaira(order.total)}</p>
-                      </div>
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
-                {/* Reorder for past orders */}
-                <div className="px-4 pb-3">
+              </div>
+            )}
+
+            {/* No active orders */}
+            {activeOrders.length === 0 && (
+              <div className="px-5 mt-8">
+                <div className="glass-card rounded-2xl p-6 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+                    <CheckCircle className="w-7 h-7 text-[#10E07A] relative z-10" />
+                  </div>
+                  <p className="text-white font-bold text-sm">No active orders</p>
+                  <p className="text-white/40 text-xs mt-1">All your deliveries are complete. Browse past orders or start a new one.</p>
                   <button
-                    onClick={() => handleReorder(order)}
-                    className="w-full bg-white/5 border border-white/5 text-white/50 py-2 rounded-lg text-xs font-bold hover:bg-white/10 hover:text-white/70 transition-colors"
+                    onClick={() => useAppStore.getState().setActiveTab('home')}
+                    className="mt-4 bg-[#10E07A] text-[#06070B] font-bold py-2.5 px-6 rounded-xl text-xs active:scale-[0.98] transition-transform green-glow"
                   >
-                    Reorder
+                    Start New Order
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
+            )}
+          </motion.div>
+        ) : (
+          <motion.div
+            key="past"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+          >
+            {/* Past Orders */}
+            {pastOrders.length > 0 ? (
+              <div className="px-5 mt-6">
+                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Past Orders</h3>
+                <div className="space-y-3">
+                  {pastOrders.map((order) => (
+                    <div key={order.id} className="glass-card rounded-2xl overflow-hidden">
+                      <div className="flex items-center gap-4 p-4">
+                        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center icon-tile border border-white/5">
+                          <CheckCircle className="w-6 h-6 text-white/30 relative z-10" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="text-white/70 font-bold text-sm tracking-tight">{order.item}</p>
+                              <p className="text-white/30 text-xs">{order.eta}</p>
+                            </div>
+                            <div className="text-right">
+                              <span className="soft-chip">Delivered</span>
+                              <p className="text-white/40 text-xs font-bold mt-0.5">{formatNaira(order.total)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      {/* Reorder for past orders */}
+                      <div className="px-4 pb-3">
+                        <button
+                          onClick={() => handleReorder(order)}
+                          className="w-full bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 hover:text-white/80 transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+                        >
+                          <ShoppingBag className="w-3.5 h-3.5" />
+                          Reorder
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="px-5 mt-8">
+                <div className="glass-card rounded-2xl p-6 text-center">
+                  <div className="w-14 h-14 rounded-2xl bg-[#A78BFA]/10 border border-[#A78BFA]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+                    <Clock className="w-7 h-7 text-[#A78BFA] relative z-10" />
+                  </div>
+                  <p className="text-white font-bold text-sm">No past orders yet</p>
+                  <p className="text-white/40 text-xs mt-1">Your completed orders will appear here for easy reordering.</p>
+                </div>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Prayer Times Widget */}
-      <div className="px-4 mt-8 mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/30 to-[#05070A] border border-[#064e3b]/20 p-5">
-          <h3 className="text-[#FFD700] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+      <div className="px-5 mt-8 mb-6">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#06070B] border border-emerald-500/20 p-5 aurora-soft">
+          <h3 className="text-[#F5C451] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
             <span className="material-symbols-outlined text-lg">mosque</span>
             Prayer Times - Lagos
           </h3>
@@ -407,21 +507,21 @@ export default function OrdersTab() {
               return (
                 <div
                   key={prayer.name}
-                  className={`bg-black/30 p-3 rounded-xl border text-center ${
-                    isNext ? 'border-[#FFD700]/30 bg-[#FFD700]/5' : 'border-white/5'
+                  className={`bg-black/30 p-3 rounded-xl border text-center transition-colors ${
+                    isNext ? 'border-[#F5C451]/30 bg-[#F5C451]/5' : 'border-white/5'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[#FFD700] text-lg">{prayer.icon}</span>
+                  <span className="material-symbols-outlined text-[#F5C451] text-lg">{prayer.icon}</span>
                   <p className="text-white text-xs font-bold mt-1">{prayer.name}</p>
                   <p className="text-white/50 text-[10px]">{prayer.time}</p>
-                  {isNext && <span className="text-[#FFD700] text-[8px] font-bold uppercase">Next</span>}
+                  {isNext && <span className="text-[#F5C451] text-[8px] font-bold uppercase">Next</span>}
                 </div>
               );
             })}
           </div>
           <button
             onClick={() => useAppStore.getState().setActiveModal('prayer')}
-            className="w-full mt-4 bg-[#FFD700]/10 border border-[#FFD700]/20 text-[#FFD700] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#FFD700]/20 transition-colors"
+            className="w-full mt-4 bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
           >
             <span className="material-symbols-outlined text-sm">schedule</span>
             View Full Schedule

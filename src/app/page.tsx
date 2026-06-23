@@ -98,23 +98,23 @@ const vendorTabs: Record<string, React.ComponentType> = {
 
 const ROLE_CONFIG = {
   customer: {
-    accent: '#13ec13',
-    accentLight: 'rgba(19,236,19,0.15)',
-    accentMid: 'rgba(19,236,19,0.30)',
+    accent: '#10E07A',
+    accentLight: 'rgba(16,224,122,0.14)',
+    accentMid: 'rgba(16,224,122,0.30)',
     icon: User,
     defaultTab: 'home' as const,
   },
   vendor: {
-    accent: '#FFD700',
-    accentLight: 'rgba(255,215,0,0.15)',
-    accentMid: 'rgba(255,215,0,0.30)',
+    accent: '#F5C451',
+    accentLight: 'rgba(245,196,81,0.14)',
+    accentMid: 'rgba(245,196,81,0.30)',
     icon: Store,
     defaultTab: 'vendor-dashboard' as const,
   },
   rider: {
-    accent: '#3b82f6',
-    accentLight: 'rgba(59,130,246,0.15)',
-    accentMid: 'rgba(59,130,246,0.30)',
+    accent: '#38BDF8',
+    accentLight: 'rgba(56,189,248,0.14)',
+    accentMid: 'rgba(56,189,248,0.30)',
     icon: Bike,
     defaultTab: 'rider-dashboard' as const,
   },
@@ -237,8 +237,7 @@ export default function Home() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
-          className="h-screen w-full"
-          style={{ background: '#030406' }}
+          className="h-screen w-full aurora-app-bg"
         >
           <WelcomeScreen />
         </motion.div>
@@ -250,7 +249,7 @@ export default function Home() {
 
   if (showAuth) {
     return (
-      <div className="h-screen w-full relative" style={{ background: '#030406' }}>
+      <div className="h-screen w-full relative aurora-app-bg">
         {/* Auth is rendered as a full-screen overlay */}
         <AuthScreen />
 
@@ -271,8 +270,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="h-screen w-full"
-          style={{ background: '#030406' }}
+          className="h-screen w-full aurora-app-bg"
         >
           <OnboardingFlow />
         </motion.div>
@@ -283,35 +281,36 @@ export default function Home() {
   /* ──────────────────── Route: Main App ──────────────────── */
 
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-x-hidden bg-[#05070A]">
+    <div className="relative flex h-screen w-full flex-col overflow-x-hidden aurora-app-bg">
       {/* ──── Top App Bar ──── */}
-      <motion.div
+      <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="sticky top-0 z-50 glass-effect border-b border-white/5"
+        className="sticky top-0 z-50 glass-effect"
       >
-        {/* Role accent line */}
+        {/* Role accent line — refined aurora gradient */}
         <div
           className="h-[2px] w-full"
           style={{
-            background: `linear-gradient(90deg, transparent 0%, ${accentColor} 50%, transparent 100%)`,
-            opacity: 0.6,
+            background: `linear-gradient(90deg, transparent 0%, ${accentColor} 35%, ${accentColor} 65%, transparent 100%)`,
+            opacity: 0.7,
           }}
         />
 
-        <div className="flex items-center p-4 pb-2 justify-between">
+        <div className="flex items-center px-5 pt-4 pb-2 justify-between gap-3">
           {/* Left: Avatar + Greeting */}
           <div className="flex items-center gap-3 min-w-0 flex-1">
             <div
-              className="size-11 shrink-0 rounded-full flex items-center justify-center border"
+              className="size-11 shrink-0 rounded-2xl flex items-center justify-center border relative overflow-hidden"
               style={{
                 backgroundColor: roleConfig.accentLight,
                 borderColor: roleConfig.accentMid,
-                boxShadow: isCustomer ? `0 0 12px ${accentColor}20` : 'none',
+                boxShadow: isCustomer ? `0 0 16px ${accentColor}25` : 'none',
               }}
             >
-              <RoleIcon className="w-5 h-5" style={{ color: accentColor }} />
+              <RoleIcon className="w-5 h-5 relative z-10" style={{ color: accentColor }} />
+              <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
@@ -327,13 +326,14 @@ export default function Home() {
                     className="w-2 h-2 rounded-full shrink-0"
                     style={{
                       backgroundColor:
-                        riderOnline || vendorOnline ? '#13ec13' : 'rgba(255,255,255,0.3)',
+                        riderOnline || vendorOnline ? '#10E07A' : 'rgba(255,255,255,0.3)',
+                      boxShadow: riderOnline || vendorOnline ? '0 0 8px #10E07A' : 'none',
                     }}
                   />
                 )}
                 {/* Location pin for customers */}
-                {isCustomer && <MapPin className="w-3 h-3 text-[#13ec13] shrink-0" />}
-                <span className="text-white/50 text-[11px] font-medium truncate">{subtitle}</span>
+                {isCustomer && <MapPin className="w-3 h-3 text-[#10E07A] shrink-0" />}
+                <span className="text-white/55 text-[11px] font-medium truncate">{subtitle}</span>
               </div>
             </div>
           </div>
@@ -343,30 +343,33 @@ export default function Home() {
             {/* Role Switcher Button */}
             <button
               onClick={() => setShowAuth('role')}
-              className="flex size-9 items-center justify-center rounded-full bg-[#1A1D26] border border-white/10 hover:border-white/20 transition-colors"
+              className="flex size-10 items-center justify-center rounded-2xl bg-[#0F1118] border border-white/8 hover:border-white/15 hover:bg-[#161924] transition-all active:scale-95"
               title="Switch role"
+              aria-label="Switch role"
             >
-              <ArrowLeftRight className="w-4 h-4 text-white/60" />
+              <ArrowLeftRight className="w-4 h-4 text-white/65" />
             </button>
 
             {/* Notification Bell */}
             <button
               onClick={() => setShowNotifications(true)}
-              className="flex size-11 items-center justify-center rounded-full bg-[#1A1D26] border border-white/10 relative"
+              className="flex size-11 items-center justify-center rounded-2xl bg-[#0F1118] border border-white/8 hover:border-white/15 hover:bg-[#161924] transition-all active:scale-95 relative"
+              aria-label="Notifications"
             >
               <Bell className="w-5 h-5 text-white" />
-              <span className="absolute top-2 right-2 size-2 bg-[#FFD700] rounded-full border border-[#05070A]" />
+              <span className="absolute top-2.5 right-2.5 size-2 bg-[#F5C451] rounded-full border border-[#06070B] shadow-[0_0_8px_#F5C451]" />
             </button>
 
             {/* Customer: Cart icon */}
             {isCustomer && (
               <button
                 onClick={() => useAppStore.getState().setActiveTab('cart')}
-                className="flex size-11 items-center justify-center rounded-full bg-[#1A1D26] border border-white/10 relative"
+                className="flex size-11 items-center justify-center rounded-2xl bg-[#0F1118] border border-white/8 hover:border-white/15 hover:bg-[#161924] transition-all active:scale-95 relative"
+                aria-label="Cart"
               >
                 <ShoppingBag className="w-5 h-5 text-white" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 size-4 bg-[#13ec13] text-[#05070A] text-[8px] font-black rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-[#10E07A] text-[#04140C] text-[9px] font-black rounded-full flex items-center justify-center shadow-[0_0_10px_rgba(16,224,122,0.5)]">
                     {cartCount}
                   </span>
                 )}
@@ -377,11 +380,12 @@ export default function Home() {
             {isRider && (
               <button
                 onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
-                className="flex size-11 items-center justify-center rounded-full border"
+                className="flex size-11 items-center justify-center rounded-2xl border active:scale-95 transition-all"
                 style={{
                   backgroundColor: roleConfig.accentLight,
                   borderColor: roleConfig.accentMid,
                 }}
+                aria-label="New delivery"
               >
                 <Package className="w-5 h-5" style={{ color: accentColor }} />
               </button>
@@ -391,11 +395,12 @@ export default function Home() {
             {isVendor && (
               <button
                 onClick={() => useAppStore.getState().setActiveModal('vendor-insights')}
-                className="flex size-11 items-center justify-center rounded-full border"
+                className="flex size-11 items-center justify-center rounded-2xl border active:scale-95 transition-all"
                 style={{
                   backgroundColor: roleConfig.accentLight,
                   borderColor: roleConfig.accentMid,
                 }}
+                aria-label="Insights"
               >
                 <BarChart3 className="w-5 h-5" style={{ color: accentColor }} />
               </button>
@@ -413,15 +418,16 @@ export default function Home() {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="px-4 py-3">
+              <div className="px-5 py-3">
                 <button
                   onClick={() => useAppStore.getState().setShowSearch(true)}
-                  className="flex w-full items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#13ec13]/30 transition-all duration-300"
+                  className="flex w-full items-center rounded-2xl h-12 bg-[#0F1118] border border-white/8 hover:border-[#10E07A]/25 focus-within:border-[#10E07A]/40 transition-all duration-300 group"
                 >
-                  <Search className="w-5 h-5 text-[#13ec13]/70 ml-4 shrink-0" />
-                  <span className="flex-1 text-left text-white/30 text-sm px-4 pl-2">
-                    Search Jollof, Groceries, or Boxes...
+                  <Search className="w-5 h-5 text-[#10E07A]/80 ml-4 shrink-0 group-hover:text-[#10E07A] transition-colors" />
+                  <span className="flex-1 text-left text-white/40 text-sm px-3 pl-3">
+                    Search Jollof, groceries, or boxes...
                   </span>
+                  <kbd className="mr-3 text-[10px] text-white/30 font-mono bg-white/5 px-2 py-1 rounded-md border border-white/5">⌘K</kbd>
                 </button>
               </div>
             </motion.div>
@@ -438,19 +444,22 @@ export default function Home() {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-3">
-                <div className="flex items-center justify-between p-3 bg-[#1A1D26] border border-white/10 rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <Bike className="w-4 h-4" style={{ color: accentColor }} />
-                    <span className="text-white text-sm font-medium">
+              <div className="px-5 pb-3">
+                <div className="flex items-center justify-between p-3.5 glass-card rounded-2xl">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: roleConfig.accentLight }}>
+                      <Bike className="w-4 h-4" style={{ color: accentColor }} />
+                    </div>
+                    <span className="text-white text-sm font-semibold">
                       {riderOnline ? 'You are Online' : 'You are Offline'}
                     </span>
                   </div>
                   <button
                     onClick={() => useAppStore.getState().setRiderOnline(!riderOnline)}
                     className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
-                      riderOnline ? 'bg-[#13ec13]' : 'bg-white/10'
+                      riderOnline ? 'bg-[#10E07A]' : 'bg-white/10'
                     }`}
+                    aria-label="Toggle online"
                   >
                     <motion.div
                       animate={{ x: riderOnline ? 20 : 0 }}
@@ -474,19 +483,22 @@ export default function Home() {
               transition={{ duration: 0.2 }}
               className="overflow-hidden"
             >
-              <div className="px-4 pb-3">
-                <div className="flex items-center justify-between p-3 bg-[#1A1D26] border border-white/10 rounded-xl">
-                  <div className="flex items-center gap-2">
-                    <Store className="w-4 h-4" style={{ color: accentColor }} />
-                    <span className="text-white text-sm font-medium">
+              <div className="px-5 pb-3">
+                <div className="flex items-center justify-between p-3.5 glass-card rounded-2xl">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: roleConfig.accentLight }}>
+                      <Store className="w-4 h-4" style={{ color: accentColor }} />
+                    </div>
+                    <span className="text-white text-sm font-semibold">
                       {vendorOnline ? 'Store is Open' : 'Store is Closed'}
                     </span>
                   </div>
                   <button
                     onClick={() => useAppStore.getState().setVendorOnline(!vendorOnline)}
                     className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
-                      vendorOnline ? 'bg-[#FFD700]' : 'bg-white/10'
+                      vendorOnline ? 'bg-[#F5C451]' : 'bg-white/10'
                     }`}
+                    aria-label="Toggle store"
                   >
                     <motion.div
                       animate={{ x: vendorOnline ? 20 : 0 }}
@@ -499,7 +511,7 @@ export default function Home() {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </motion.header>
 
       {/* ──── Tab Content with Ultra-Smooth Transitions ──── */}
       <AnimatePresence mode="wait">
@@ -535,7 +547,7 @@ export default function Home() {
       <AllModals />
 
       {/* ──── Bottom gradient fade ──── */}
-      <div className="fixed bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-[#05070A] to-transparent pointer-events-none z-40" />
+      <div className="fixed bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#06070B] to-transparent pointer-events-none z-40" />
     </div>
   );
 }
