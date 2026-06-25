@@ -1160,7 +1160,17 @@ export default function OnboardingFlow() {
   };
 
   const handleSkip = () => {
-    setShowCelebration(true);
+    // Per Task 3d: Skip completes onboarding immediately (no celebration)
+    // and navigates the user to the main app.
+    setOnboardingComplete(true);
+    setIsLoggedIn(true);
+    setShowOnboarding(false);
+    setActiveTab(ROLE_DEFAULT_TAB[role]);
+    setOnboardingStep(0);
+    toast({
+      title: 'Onboarding skipped ⏭️',
+      description: `Welcome to SwiftRamadan! You can complete your profile later in Settings.`,
+    });
   };
 
   const handleCelebrationDone = () => {

@@ -1,122 +1,309 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 
-const products = [
+/* ──────────── Static seed products (preserved for browse) ──────────── */
+
+const staticProducts = [
   {
     id: 1,
-    name: "The Ultimate Ramadan Box",
-    description: "Curated Iftar & Sahur essentials box filled with premium rice, cooking oil, dates, fruits, and spices to keep you and your family energized throughout the blessed month.",
+    name: 'The Ultimate Ramadan Box',
+    description:
+      'Curated Iftar & Sahur essentials box filled with premium rice, cooking oil, dates, fruits, and spices to keep you and your family energized throughout the blessed month.',
     originalPrice: 25000,
     salePrice: 17500,
-    category: "bundles",
+    category: 'bundles',
     rating: 4.9,
     reviews: 234,
-    deliveryTime: "25-35 min",
+    deliveryTime: '25-35 min',
     inStock: true,
-    image: "/images/products/ramadan-box-1.png",
+    image: '/images/products/ramadan-box-1.png',
     images: [
-      "/images/products/ramadan-box-1.png",
-      "/images/products/ramadan-box-2.png",
-      "/images/products/ramadan-box-3.png",
-      "/images/products/ramadan-box-4.png",
+      '/images/products/ramadan-box-1.png',
+      '/images/products/ramadan-box-2.png',
+      '/images/products/ramadan-box-3.png',
+      '/images/products/ramadan-box-4.png',
     ],
-    contents: "12 Premium Items",
+    contents: '12 Premium Items',
   },
   {
     id: 2,
-    name: "Jollof Rice & Chicken",
-    description: "Smoky party jollof with succulent grilled chicken. A Lagos classic!",
+    name: 'Jollof Rice & Chicken',
+    description: 'Smoky party jollof with succulent grilled chicken. A Lagos classic!',
     price: 4500,
-    category: "meals",
+    category: 'meals',
     rating: 4.9,
     reviews: 289,
-    deliveryTime: "25 min",
+    deliveryTime: '25 min',
     inStock: true,
-    image: "/images/meals/meal-jollof.png",
-    images: ["/images/meals/meal-jollof.png"],
+    image: '/images/meals/meal-jollof.png',
+    images: ['/images/meals/meal-jollof.png'],
   },
   {
     id: 3,
-    name: "Suya Platter",
-    description: "Spicy beef suya with fresh onions and tomatoes. A Lagos street food classic.",
+    name: 'Suya Platter',
+    description: 'Spicy beef suya with fresh onions and tomatoes. A Lagos street food classic.',
     price: 3200,
-    category: "meals",
+    category: 'meals',
     rating: 4.8,
     reviews: 203,
-    deliveryTime: "30 min",
+    deliveryTime: '30 min',
     inStock: true,
-    image: "/images/meals/meal-suya.png",
-    images: ["/images/meals/meal-suya.png"],
+    image: '/images/meals/meal-suya.png',
+    images: ['/images/meals/meal-suya.png'],
   },
   {
     id: 4,
-    name: "Moi Moi & Pap",
-    description: "Steamed bean pudding with creamy corn pap. Perfect for Sahur.",
+    name: 'Moi Moi & Pap',
+    description: 'Steamed bean pudding with creamy corn pap. Perfect for Sahur.',
     price: 2800,
-    category: "meals",
+    category: 'meals',
     rating: 4.7,
     reviews: 156,
-    deliveryTime: "20 min",
+    deliveryTime: '20 min',
     inStock: true,
-    image: "/images/meals/meal-moimoi.png",
-    images: ["/images/meals/meal-moimoi.png"],
+    image: '/images/meals/meal-moimoi.png',
+    images: ['/images/meals/meal-moimoi.png'],
   },
   {
     id: 5,
-    name: "Date & Nut Smoothie",
-    description: "Energy-packed date smoothie with groundnuts. Great for Iftar or Sahur.",
+    name: 'Date & Nut Smoothie',
+    description: 'Energy-packed date smoothie with groundnuts. Great for Iftar or Sahur.',
     price: 1800,
-    category: "drinks",
+    category: 'drinks',
     rating: 4.9,
     reviews: 178,
-    deliveryTime: "15 min",
+    deliveryTime: '15 min',
     inStock: true,
-    image: "/images/meals/meal-smoothie.png",
-    images: ["/images/meals/meal-smoothie.png"],
+    image: '/images/meals/meal-smoothie.png',
+    images: ['/images/meals/meal-smoothie.png'],
   },
   {
     id: 6,
-    name: "Premium Dates Box",
-    description: "Premium Ajwa and Medjool dates. Perfect for breaking your fast.",
+    name: 'Premium Dates Box',
+    description: 'Premium Ajwa and Medjool dates. Perfect for breaking your fast.',
     originalPrice: 12000,
     salePrice: 7500,
-    category: "bundles",
+    category: 'bundles',
     rating: 4.7,
     reviews: 98,
-    deliveryTime: "20-25 min",
+    deliveryTime: '20-25 min',
     inStock: true,
-    image: "/images/flash-sales/flash-dates.png",
-    images: ["/images/flash-sales/flash-dates.png"],
+    image: '/images/flash-sales/flash-dates.png',
+    images: ['/images/flash-sales/flash-dates.png'],
   },
   {
     id: 7,
-    name: "Iftar Family Bundle",
-    description: "Complete Iftar meal for the whole family. Serves 6.",
+    name: 'Iftar Family Bundle',
+    description: 'Complete Iftar meal for the whole family. Serves 6.',
     originalPrice: 18000,
     salePrice: 11000,
-    category: "bundles",
+    category: 'bundles',
     rating: 4.8,
     reviews: 142,
-    deliveryTime: "30-40 min",
+    deliveryTime: '30-40 min',
     inStock: true,
-    image: "/images/flash-sales/flash-iftar-bundle.png",
-    images: ["/images/flash-sales/flash-iftar-bundle.png"],
+    image: '/images/flash-sales/flash-iftar-bundle.png',
+    images: ['/images/flash-sales/flash-iftar-bundle.png'],
   },
   {
     id: 8,
-    name: "Zobo & Kunu Pack",
-    description: "Traditional hibiscus and millet drinks. Refreshing and nutritious.",
+    name: 'Zobo & Kunu Pack',
+    description: 'Traditional hibiscus and millet drinks. Refreshing and nutritious.',
     originalPrice: 5000,
     salePrice: 2800,
-    category: "drinks",
+    category: 'drinks',
     rating: 4.6,
     reviews: 67,
-    deliveryTime: "15-20 min",
+    deliveryTime: '15-20 min',
     inStock: true,
-    image: "/images/flash-sales/flash-zobo-kunu.png",
-    images: ["/images/flash-sales/flash-zobo-kunu.png"],
+    image: '/images/flash-sales/flash-zobo-kunu.png',
+    images: ['/images/flash-sales/flash-zobo-kunu.png'],
   },
 ];
 
+/* ──────────── GET: static + DB-backed products ──────────── */
+
 export async function GET() {
-  return NextResponse.json({ products });
+  try {
+    const dbProducts = await db.product.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+    const dbMapped = dbProducts.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      price: p.price,
+      salePrice: p.salePrice ?? undefined,
+      originalPrice: p.originalPrice ?? undefined,
+      category: p.category,
+      rating: p.rating,
+      reviews: p.reviewCount,
+      deliveryTime: p.deliveryTime,
+      inStock: p.inStock,
+      image: p.image,
+      images: safeParseImages(p.images),
+      vendorId: p.vendorId,
+      createdAt: p.createdAt,
+    }));
+    return NextResponse.json({ products: [...dbMapped, ...staticProducts] });
+  } catch {
+    // Fallback to static if DB unavailable
+    return NextResponse.json({ products: staticProducts });
+  }
+}
+
+function safeParseImages(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function serialize(p: Awaited<ReturnType<typeof db.product.findFirst>>) {
+  if (!p) return null;
+  return {
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    price: p.price,
+    salePrice: p.salePrice ?? undefined,
+    originalPrice: p.originalPrice ?? undefined,
+    category: p.category,
+    rating: p.rating,
+    reviews: p.reviewCount,
+    reviewCount: p.reviewCount,
+    deliveryTime: p.deliveryTime,
+    inStock: p.inStock,
+    image: p.image,
+    images: safeParseImages(p.images),
+    vendorId: p.vendorId,
+    createdAt: p.createdAt,
+  };
+}
+
+/* ──────────── POST: create product ──────────── */
+
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { name, description, price, image, category, vendorId, deliveryTime } = body;
+
+    if (!name || typeof name !== 'string' || !name.trim()) {
+      return NextResponse.json(
+        { success: false, error: 'name is required' },
+        { status: 400 }
+      );
+    }
+    if (typeof price !== 'number' || price < 0) {
+      return NextResponse.json(
+        { success: false, error: 'price must be a non-negative number' },
+        { status: 400 }
+      );
+    }
+
+    const product = await db.product.create({
+      data: {
+        name: name.trim(),
+        description: typeof description === 'string' ? description : '',
+        price,
+        image: typeof image === 'string' ? image : '',
+        images: JSON.stringify(typeof image === 'string' && image ? [image] : []),
+        category: typeof category === 'string' && category ? category : 'meals',
+        deliveryTime: typeof deliveryTime === 'string' && deliveryTime ? deliveryTime : '30 min',
+        vendorId: typeof vendorId === 'string' && vendorId ? vendorId : null,
+        inStock: true,
+        rating: 0,
+        reviewCount: 0,
+      },
+    });
+
+    return NextResponse.json({ success: true, product: serialize(product) }, { status: 201 });
+  } catch (error) {
+    console.error('[api/products] POST error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/* ──────────── PUT: update product (partial) ──────────── */
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, ...fields } = body;
+
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json(
+        { success: false, error: 'id is required' },
+        { status: 400 }
+      );
+    }
+
+    const data: Record<string, unknown> = {};
+    const allowed = [
+      'name',
+      'description',
+      'price',
+      'salePrice',
+      'originalPrice',
+      'image',
+      'category',
+      'deliveryTime',
+      'inStock',
+      'rating',
+      'reviewCount',
+      'vendorId',
+    ];
+    for (const key of allowed) {
+      if (key in fields) data[key] = fields[key];
+    }
+    // Keep images JSON in sync if image provided
+    if (typeof fields.image === 'string' && fields.image) {
+      data.images = JSON.stringify([fields.image]);
+    }
+
+    const product = await db.product.update({
+      where: { id },
+      data,
+    });
+
+    return NextResponse.json({ success: true, product: serialize(product) });
+  } catch (error) {
+    console.error('[api/products] PUT error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/* ──────────── DELETE: delete product ──────────── */
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { success: false, error: 'id query param is required' },
+        { status: 400 }
+      );
+    }
+
+    await db.product.delete({ where: { id } });
+
+    return NextResponse.json({ success: true, message: 'Product deleted' });
+  } catch (error) {
+    console.error('[api/products] DELETE error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Server error' },
+      { status: 500 }
+    );
+  }
 }

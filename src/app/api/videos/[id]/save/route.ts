@@ -1,0 +1,115 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+// Resolve an identifier (id OR email) to a User.id. Returns null if not found.
+async function resolveUserId(identifier: string): Promise<string | null> {
+  if (!identifier) return null;
+  // Try by id first
+  const byId = await db.user.findUnique({ where: { id: identifier }, select: { id: true } });
+  if (byId) return byId.id;
+  // Then by email
+  const byEmail = await db.user.findUnique({ where: { email: identifier }, select: { id: true } });
+  return byEmail ? byEmail.id : null;
+}
+
+// ─────────────────────────────────────────────────────────────
+// POST /api/videos/[id]/save — toggle a SavedVideo bookmark
+// Body: { userId, videoId }  (userId may be a User.id or email)
+// Returns: { saved: true|false, videoId }
+// ─────────────────────────────────────────────────────────────
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const body = await req.json().catch(() => ({}));
+
+    const videoId = String(body.videoId || id);
+    const userRaw = String(body.userId || 'guest');
+
+    const video = await db.video.findUnique({ where: { id: videoId } });
+    if (!video) {
+      return NextResponse.json({ error: 'Video not found' }, { status: 404 });
+    }
+
+    // Resolve userId (email or id) to a real User.id
+    const userId = await resolveUserId(userRaw);
+    if (!userId) {
+      return NextResponse.json({ error: 'User not registered' }, { status: 404 });
+    }
+
+    const existing = await db.savedVideo.findUnique({
+      where: { userId_videoId: { userId, videoId } },
+    });
+
+    if (existing) {
+      await db.savedVideo.delete({ where: { id: existing.id } });
+      return NextResponse.json({ saved: false, videoId });
+    }
+
+    await db.savedVideo.create({ data: { userId, videoId } });
+    return NextResponse.json({ saved: true, videoId }, { status: 201 });
+  } catch (err) {
+    console.error('[videos/save] POST error', err);
+    return NextResponse.json({ error: 'Failed to toggle save' }, { status: 500 });
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// GET /api/videos/[id]/save?userId=xxx
+//   - If [id] matches a real video → returns { saved: true|false, videoId } for that video
+//   - Otherwise (e.g. [id] === 'list') → returns all saved videos for the user
+//   userId may be a User.id or email.
+// ─────────────────────────────────────────────────────────────
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params;
+    const url = new URL(req.url);
+    const userRaw = url.searchParams.get('userId') || 'guest';
+
+    // Resolve userId (email or id) to a real User.id
+    const userId = await resolveUserId(userRaw);
+
+    const video = await db.video.findUnique({ where: { id } }).catch(() => null);
+
+    if (!video) {
+      // Return all saved videos for this user (or empty if user not registered)
+      if (!userId) {
+        return NextResponse.json({ saved: true, videos: [] });
+      }
+      const saved = await db.savedVideo.findMany({
+        where: { userId },
+        include: { video: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      const videos = saved
+        .map((s) => s.video)
+        .filter(Boolean)
+        .map((v) => ({
+          ...v,
+          likedBy: safeParseArr(v.likedBy),
+        }));
+      return NextResponse.json({ saved: true, videos });
+    }
+
+    // Single-video status mode
+    if (!userId) {
+      return NextResponse.json({ saved: false, videoId: id });
+    }
+    const existing = await db.savedVideo.findUnique({
+      where: { userId_videoId: { userId, videoId: id } },
+    });
+    return NextResponse.json({ saved: !!existing, videoId: id });
+  } catch (err) {
+    console.error('[videos/save] GET error', err);
+    return NextResponse.json({ error: 'Failed to fetch saved videos' }, { status: 500 });
+  }
+}
+
+function safeParseArr(s: string | null | undefined): string[] {
+  if (!s) return [];
+  try {
+    const v = JSON.parse(s);
+    return Array.isArray(v) ? v : [];
+  } catch {
+    return [];
+  }
+}

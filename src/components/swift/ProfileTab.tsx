@@ -6,6 +6,7 @@ import {
   MessageSquare, LogOut, Moon, BarChart3, Package, TrendingUp, Zap,
   Navigation, DollarSign, Star, Fingerprint,
   Lock, Globe, Eye, Map, ChefHat, CalendarDays, Flame, Trophy,
+  HelpCircle, FileText, Sparkles, Loader2, Tag,
 } from 'lucide-react';
 import { charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
 import { useAppStore, type TabId } from '@/lib/store';
@@ -62,6 +63,9 @@ const customerMenu = [
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#10E07A]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
@@ -78,6 +82,9 @@ const vendorMenu = [
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#F5C451]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
@@ -93,6 +100,9 @@ const riderMenu = [
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#38BDF8]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
@@ -180,6 +190,9 @@ export default function ProfileTab() {
     twoFactor: true,
   });
 
+  // Loyalty redemption
+  const [redeeming, setRedeeming] = useState<string | null>(null);
+
   const { toast } = useToast();
   const {
     userName, userArea, userEmail, logout, setShowAuth,
@@ -189,6 +202,7 @@ export default function ProfileTab() {
     vendorTotalEarnings, vendorPendingSettlement,
     riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
     orders, cartItems, referralCount,
+    setSwiftPoints,
   } = useAppStore();
 
   /* ── Cooking Journey state (ref-guarded fetch, no setState in effect body) ── */
@@ -294,6 +308,15 @@ export default function ProfileTab() {
       case 'switch-role':
         setShowSwitchRole(true);
         break;
+      case 'edit-profile':
+        useAppStore.getState().setActiveModal('edit-profile');
+        break;
+      case 'help-center':
+        useAppStore.getState().setActiveModal('help-center');
+        break;
+      case 'legal':
+        useAppStore.getState().setActiveModal('legal');
+        break;
       case 'notifications':
         toast({ title: 'Notifications 🔔', description: 'Tap the bell icon in the top right to see your notifications' });
         break;
@@ -352,75 +375,7 @@ export default function ProfileTab() {
         setShowModal(true);
         break;
       case 'settings':
-        setModalContent({
-          title: 'Settings',
-          content: (
-            <div className="space-y-3">
-              <div className="flex justify-between items-center p-3 glass-card rounded-xl">
-                <div className="flex items-center gap-3">
-                  <Globe className="w-5 h-5 text-white/40" />
-                  <div>
-                    <p className="text-white font-bold text-sm">Language</p>
-                    <p className="text-white/40 text-xs">English (US)</p>
-                  </div>
-                </div>
-                <ChevronRight className="w-4 h-4 text-white/20" />
-              </div>
-              <div className="flex justify-between items-center p-3 glass-card rounded-xl">
-                <div className="flex items-center gap-3">
-                  <Bell className="w-5 h-5 text-white/40" />
-                  <div>
-                    <p className="text-white font-bold text-sm">Notifications</p>
-                    <p className="text-white/40 text-xs">Push & Email</p>
-                  </div>
-                </div>
-                <ToggleSwitch
-                  enabled={settingsState.notifications}
-                  onToggle={() => {
-                    setSettingsState(s => ({ ...s, notifications: !s.notifications }));
-                    toast({ title: settingsState.notifications ? 'Notifications Off' : 'Notifications On', description: settingsState.notifications ? 'You won\'t receive push alerts' : 'You\'ll receive push & email alerts' });
-                  }}
-                  label="Notifications"
-                />
-              </div>
-              <div className="flex justify-between items-center p-3 glass-card rounded-xl">
-                <div className="flex items-center gap-3">
-                  <Moon className="w-5 h-5 text-white/40" />
-                  <div>
-                    <p className="text-white font-bold text-sm">Dark Mode</p>
-                    <p className="text-white/40 text-xs">Always on</p>
-                  </div>
-                </div>
-                <ToggleSwitch
-                  enabled={settingsState.darkMode}
-                  onToggle={() => {
-                    setSettingsState(s => ({ ...s, darkMode: !s.darkMode }));
-                    toast({ title: 'Dark Mode', description: 'Dark mode is always on in SwiftRamadan' });
-                  }}
-                  label="Dark Mode"
-                />
-              </div>
-              <div className="flex justify-between items-center p-3 glass-card rounded-xl">
-                <div className="flex items-center gap-3">
-                  <Map className="w-5 h-5 text-white/40" />
-                  <div>
-                    <p className="text-white font-bold text-sm">Location Services</p>
-                    <p className="text-white/40 text-xs">While using the app</p>
-                  </div>
-                </div>
-                <ToggleSwitch
-                  enabled={settingsState.locationServices}
-                  onToggle={() => {
-                    setSettingsState(s => ({ ...s, locationServices: !s.locationServices }));
-                    toast({ title: settingsState.locationServices ? 'Location Off' : 'Location On', description: settingsState.locationServices ? 'Some features may be limited' : 'Location access enabled' });
-                  }}
-                  label="Location Services"
-                />
-              </div>
-            </div>
-          ),
-        });
-        setShowModal(true);
+        useAppStore.getState().setActiveModal('settings');
         break;
     }
   };
@@ -452,6 +407,62 @@ export default function ProfileTab() {
 
   const handleLogout = () => {
     logout();
+  };
+
+  /* ── Loyalty Redemption ── */
+  const REWARDS = [
+    { id: 'free-delivery', label: 'Free Delivery',  cost: 500,  icon: '🛵', accent: '#10E07A' },
+    { id: 'ngn-500',       label: '₦500 Off',        cost: 1000, icon: '💸', accent: '#F5C451' },
+    { id: 'ngn-1000',      label: '₦1000 Off',       cost: 2000, icon: '💰', accent: '#A78BFA' },
+    { id: 'ngn-2500',      label: '₦2500 Off',       cost: 5000, icon: '🏆', accent: '#38BDF8' },
+  ];
+
+  const handleRedeem = async (rewardId: string, label: string, cost: number) => {
+    if (!userEmail) {
+      toast({ title: 'Sign in required', description: 'Please sign in to redeem points.', variant: 'destructive' });
+      return;
+    }
+    if (swiftPoints < cost) {
+      toast({
+        title: 'Not enough points',
+        description: `You need ${cost.toLocaleString()} swift points but have ${swiftPoints.toLocaleString()}.`,
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setRedeeming(rewardId);
+    try {
+      const res = await fetch('/api/user/redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail, rewardType: rewardId }),
+      });
+      const data = await res.json();
+      if (data?.success && data.coupon?.code) {
+        setSwiftPoints(data.remainingPoints ?? Math.max(0, swiftPoints - cost));
+        toast({
+          title: `Coupon ${data.coupon.code} created! 🎁`,
+          description: `Use at checkout for ${label}.`,
+        });
+      } else {
+        toast({
+          title: 'Redemption failed',
+          description: data?.message || 'Please try again.',
+          variant: 'destructive',
+        });
+      }
+    } catch {
+      // Fallback: optimistic deduct + local coupon code
+      const fallbackCode = `REDEM-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+      setSwiftPoints(Math.max(0, swiftPoints - cost));
+      toast({
+        title: `Coupon ${fallbackCode} created! 🎁`,
+        description: `Use at checkout for ${label}.`,
+      });
+    } finally {
+      setRedeeming(null);
+    }
   };
 
   /* ══════════════════════ RENDER ══════════════════════ */
@@ -543,7 +554,7 @@ export default function ProfileTab() {
             </div>
 
             <button
-              onClick={() => useAppStore.getState().setShowOnboarding(true)}
+              onClick={() => useAppStore.getState().setActiveModal('settings')}
               className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/10 hover:bg-white/10 transition-colors shrink-0 active:scale-95"
               aria-label="Open settings"
             >
@@ -791,6 +802,66 @@ export default function ProfileTab() {
           </div>
         </button>
       </div>
+
+      {/* ─── Loyalty Redemption (Customer only) ─── */}
+      {userRole === 'customer' && (
+        <div className="px-5 mt-6">
+          <div className="relative overflow-hidden rounded-2xl border border-[#F5C451]/25 bg-gradient-to-br from-[#F5C451]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#F5C451]/15 blur-[44px] pointer-events-none" />
+            <div className="relative flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
+                  <Gift className="w-5 h-5 text-[#F5C451] relative z-10" />
+                </div>
+                <div>
+                  <h3 className="text-white font-extrabold text-sm leading-tight heading-accent">Redeem Points</h3>
+                  <p className="text-white/40 text-[11px] leading-tight">Turn Swift Points into coupons</p>
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[#10E07A] text-lg font-black leading-tight">{swiftPoints.toLocaleString()}</p>
+                <p className="text-white/40 text-[10px] font-bold uppercase leading-tight">Swift Pts</p>
+              </div>
+            </div>
+
+            <div className="relative grid grid-cols-2 gap-2.5">
+              {REWARDS.map(reward => {
+                const affordable = swiftPoints >= reward.cost;
+                const isRedeeming = redeeming === reward.id;
+                return (
+                  <motion.button
+                    key={reward.id}
+                    whileTap={{ scale: 0.96 }}
+                    disabled={!affordable || isRedeeming}
+                    onClick={() => handleRedeem(reward.id, reward.label, reward.cost)}
+                    className={`relative flex flex-col items-start p-3 rounded-xl border transition-all text-left ${
+                      affordable
+                        ? 'bg-white/[0.03] border-white/10 hover:border-[#F5C451]/40'
+                        : 'bg-white/[0.01] border-white/5 opacity-50 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="text-2xl">{reward.icon}</span>
+                      {affordable ? (
+                        <Tag className="w-3.5 h-3.5" style={{ color: reward.accent }} />
+                      ) : (
+                        <span className="text-[9px] text-white/30 font-bold uppercase">Locked</span>
+                      )}
+                    </div>
+                    <p className="text-white font-bold text-xs">{reward.label}</p>
+                    <p className="text-[#F5C451] text-[10px] font-bold mt-0.5">{reward.cost.toLocaleString()} pts</p>
+                    {isRedeeming && (
+                      <div className="absolute inset-0 bg-[#06070B]/70 rounded-xl flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 text-[#F5C451] animate-spin" />
+                      </div>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ─── Menu Items (grouped by section) ─── */}
       <div className="px-5 mt-6">

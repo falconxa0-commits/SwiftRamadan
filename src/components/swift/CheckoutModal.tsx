@@ -1,11 +1,23 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper, Loader2 } from 'lucide-react';
+import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper, Loader2, Tag, Home, Briefcase, Plus as PlusIcon } from 'lucide-react';
 import { useAppStore, OrderItem } from '@/lib/store';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+
+interface SavedAddress {
+  id: string;
+  label: string;
+  address: string;
+  area: string;
+  city: string;
+  instructions: string;
+  isDefault: boolean;
+}
+
+type CouponState = 'idle' | 'applying' | 'applied' | 'error';
 
 const timeSlots = [
   { id: 'morning', label: 'Morning', time: '8:00 - 11:00 AM', icon: Sun },
@@ -62,12 +74,63 @@ export default function CheckoutModal() {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [editAddressValue, setEditAddressValue] = useState(deliveryAddress);
   const [selectedLocation, setSelectedLocation] = useState(deliveryLocations[0]);
-  const [orderId] = useState(() => `SWR-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [orderId, setOrderId] = useState(() => `SWR-${Math.floor(1000 + Math.random() * 9000)}`);
   const [placing, setPlacing] = useState(false);
 
   // Snapshot cart items for success step (before clearCart wipes them)
   const [placedCartItems, setPlacedCartItems] = useState<typeof cartItems>([]);
   const [placedTotal, setPlacedTotal] = useState(0);
+
+  // Saved addresses state
+  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+  const [fetchingAddresses, setFetchingAddresses] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+  const [newAddrLabel, setNewAddrLabel] = useState('Home');
+  const [newAddrText, setNewAddrText] = useState('');
+  const [newAddrArea, setNewAddrArea] = useState('');
+  const [newAddrInstructions, setNewAddrInstructions] = useState('');
+  const [savingAddress, setSavingAddress] = useState(false);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [couponState, setCouponState] = useState<CouponState>('idle');
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState('');
+  const [appliedCouponCode, setAppliedCouponCode] = useState('');
+
+  // Payment reference (created after /api/payments POST)
+  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+
+  const currentUserEmail = useAppStore.getState().userEmail || 'guest';
+
+  // Fetch saved addresses when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled = false;
+    const fetchAddresses = async () => {
+      setFetchingAddresses(true);
+      try {
+        const res = await fetch(`/api/addresses?userId=${encodeURIComponent(currentUserEmail)}`);
+        const data = await res.json();
+        if (cancelled) return;
+        const addrs: SavedAddress[] = Array.isArray(data.addresses) ? data.addresses : [];
+        setSavedAddresses(addrs);
+        // Auto-select the default address (or the first one)
+        const def = addrs.find(a => a.isDefault) || addrs[0];
+        if (def) {
+          setSelectedAddressId(def.id);
+          setDeliveryAddress(def.address);
+        }
+      } catch {
+        if (!cancelled) setSavedAddresses([]);
+      } finally {
+        if (!cancelled) setFetchingAddresses(false);
+      }
+    };
+    fetchAddresses();
+    return () => { cancelled = true; };
+  }, [isOpen, currentUserEmail]);
 
   // Use deliveryAddress with fallback to first saved location
   const effectiveAddress = deliveryAddress || selectedLocation.address || deliveryLocations[0].address;
@@ -75,7 +138,9 @@ export default function CheckoutModal() {
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = subtotal >= 5000 ? 0 : 500;
   const serviceFee = Math.round(subtotal * 0.02);
-  const total = subtotal + deliveryFee + serviceFee;
+  const grossTotal = subtotal + deliveryFee + serviceFee;
+  const discount = couponState === 'applied' ? couponDiscount : 0;
+  const total = Math.max(0, grossTotal - discount);
 
   const currentStep = checkoutStep;
 
@@ -96,12 +161,103 @@ export default function CheckoutModal() {
     }
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim() || couponState === 'applying') return;
+    setCouponState('applying');
+    setCouponMessage('');
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: couponCode.trim(), cartTotal: grossTotal }),
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setCouponState('applied');
+        setCouponDiscount(data.discount || 0);
+        setCouponMessage(data.message || `Coupon applied — you saved ${formatNaira(data.discount || 0)}`);
+        setAppliedCouponCode(data.code || couponCode.trim().toUpperCase());
+        toast({ title: 'Coupon Applied! 🎉', description: data.message });
+      } else {
+        setCouponState('error');
+        setCouponMessage(data.message || 'Invalid coupon code');
+        setCouponDiscount(0);
+        setAppliedCouponCode('');
+      }
+    } catch {
+      setCouponState('error');
+      setCouponMessage('Failed to validate coupon — try again');
+      setCouponDiscount(0);
+      setAppliedCouponCode('');
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setCouponState('idle');
+    setCouponCode('');
+    setCouponDiscount(0);
+    setCouponMessage('');
+    setAppliedCouponCode('');
+  };
+
+  const handleSaveNewAddress = async () => {
+    if (!newAddrText.trim() || savingAddress) return;
+    setSavingAddress(true);
+    try {
+      const res = await fetch('/api/addresses', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUserEmail,
+          label: newAddrLabel || 'Home',
+          address: newAddrText,
+          area: newAddrArea,
+          city: 'Lagos',
+          instructions: newAddrInstructions,
+          isDefault: savedAddresses.length === 0,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Refetch addresses
+        const refetch = await fetch(`/api/addresses?userId=${encodeURIComponent(currentUserEmail)}`);
+        const refetchData = await refetch.json();
+        const addrs: SavedAddress[] = Array.isArray(refetchData.addresses) ? refetchData.addresses : [];
+        setSavedAddresses(addrs);
+        const newAddr = addrs.find(a => a.address === newAddrText);
+        if (newAddr) {
+          setSelectedAddressId(newAddr.id);
+          setDeliveryAddress(newAddr.address);
+        }
+        setShowAddAddressForm(false);
+        setNewAddrText('');
+        setNewAddrArea('');
+        setNewAddrInstructions('');
+        setNewAddrLabel('Home');
+        toast({ title: 'Address Saved 📍', description: 'New delivery address added' });
+      } else {
+        toast({ title: 'Could not save address', description: data.message || 'Please log in to save addresses', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Could not save address', description: 'Network error — please try again', variant: 'destructive' });
+    } finally {
+      setSavingAddress(false);
+    }
+  };
+
+  const handleSelectAddress = (addr: SavedAddress) => {
+    setSelectedAddressId(addr.id);
+    setDeliveryAddress(addr.address);
+    if (addr.instructions) setDeliveryInstructions(addr.instructions);
+  };
+
   const handlePlaceOrder = async () => {
     if (placing) return;
     setPlacing(true);
     // Snapshot cart before clearing
     const snapshotItems = [...cartItems];
     const snapshotTotal = total;
+    const snapshotDiscount = discount;
 
     // Create the order object
     const order: OrderItem = {
@@ -121,6 +277,8 @@ export default function CheckoutModal() {
     setPlacedCartItems(snapshotItems);
     setPlacedTotal(snapshotTotal);
 
+    let dbOrderId: string | null = null;
+
     // Persist to database via API (so it survives refresh)
     try {
       const res = await fetch('/api/orders', {
@@ -132,19 +290,45 @@ export default function CheckoutModal() {
           riderName: order.rider,
           progress: order.progress,
           items: order.items,
+          userId: currentUserEmail,
         }),
       });
       if (res.ok) {
         const data = await res.json();
         // Use the DB-generated order id if available (format to SWR-XXXXXX)
         if (data.order?.id) {
+          dbOrderId = data.order.id;
           const shortId = `SWR-${data.order.id.replace(/[^a-z0-9]/gi, '').slice(-6).toUpperCase()}`;
           order.id = shortId;
+          setOrderId(shortId);
         }
       }
     } catch (e) {
       // Non-blocking: order still added to local store
       console.error('Failed to persist order to DB', e);
+    }
+
+    // Create a payment record via /api/payments
+    try {
+      const payRes = await fetch('/api/payments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: dbOrderId || undefined,
+          userId: currentUserEmail,
+          amount: snapshotTotal,
+          method: paymentMethod || 'card',
+          reference: `SWR-PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+        }),
+      });
+      if (payRes.ok) {
+        const payData = await payRes.json();
+        if (payData.payment?.reference) {
+          setPaymentReference(payData.payment.reference);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to create payment record', e);
     }
 
     addOrder(order);
@@ -154,7 +338,7 @@ export default function CheckoutModal() {
 
     toast({
       title: 'Order Placed! 🎉',
-      description: `Your order ${order.id} is being prepared.`,
+      description: `Your order ${order.id} is being prepared.${snapshotDiscount > 0 ? ` You saved ${formatNaira(snapshotDiscount)}!` : ''}`,
     });
   };
 
@@ -371,10 +555,128 @@ export default function CheckoutModal() {
               >
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-[#13ec13]" />
+                    <MapPin className="w-5 h-5 text-[#10E07A]" />
                     Delivery Address
                   </h3>
 
+                  {/* Saved Addresses (from /api/addresses) */}
+                  <div className="space-y-2 mb-3">
+                    <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
+                    {fetchingAddresses ? (
+                      <div className="flex items-center gap-2 p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                        <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
+                        <span className="text-white/40 text-sm">Loading saved addresses…</span>
+                      </div>
+                    ) : savedAddresses.length === 0 ? (
+                      <div className="p-4 bg-[#1A1D26] rounded-2xl border border-white/5 text-center">
+                        <p className="text-white/40 text-sm">No saved addresses yet</p>
+                        <p className="text-white/30 text-xs mt-1">Add one below or pick a default location</p>
+                      </div>
+                    ) : (
+                      savedAddresses.map(addr => {
+                        const isSelected = selectedAddressId === addr.id;
+                        const Icon = addr.label?.toLowerCase().includes('office') ? Briefcase : Home;
+                        return (
+                          <button
+                            key={addr.id}
+                            onClick={() => handleSelectAddress(addr)}
+                            className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+                              isSelected
+                                ? 'bg-[#10E07A]/5 border-[#10E07A]/40'
+                                : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                            }`}
+                          >
+                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                              isSelected ? 'bg-[#10E07A]/20' : 'bg-white/5'
+                            }`}>
+                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <p className="text-white font-bold text-sm">{addr.label}</p>
+                                {addr.isDefault && (
+                                  <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#F5C451]/20 uppercase">Default</span>
+                                )}
+                              </div>
+                              <p className="text-white/40 text-xs truncate">{addr.address}{addr.area ? `, ${addr.area}` : ''}</p>
+                            </div>
+                            {isSelected && <Check className="w-5 h-5 text-[#10E07A] shrink-0" />}
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+
+                  {/* Add new address form */}
+                  {showAddAddressForm ? (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="bg-[#1A1D26] rounded-2xl p-4 border border-[#10E07A]/20 space-y-3"
+                    >
+                      <div className="grid grid-cols-2 gap-2">
+                        {['Home', 'Office', 'Partner', 'Other'].map(lbl => (
+                          <button
+                            key={lbl}
+                            onClick={() => setNewAddrLabel(lbl)}
+                            className={`py-2 rounded-lg text-xs font-bold transition-colors ${
+                              newAddrLabel === lbl
+                                ? 'bg-[#10E07A] text-[#06070B]'
+                                : 'bg-white/5 text-white/60 hover:bg-white/10'
+                            }`}
+                          >
+                            {lbl}
+                          </button>
+                        ))}
+                      </div>
+                      <input
+                        value={newAddrText}
+                        onChange={e => setNewAddrText(e.target.value)}
+                        placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                      />
+                      <input
+                        value={newAddrArea}
+                        onChange={e => setNewAddrArea(e.target.value)}
+                        placeholder="Area (e.g. Lekki)"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                      />
+                      <input
+                        value={newAddrInstructions}
+                        onChange={e => setNewAddrInstructions(e.target.value)}
+                        placeholder="Delivery instructions (optional)"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveNewAddress}
+                          disabled={!newAddrText.trim() || savingAddress}
+                          className="flex-1 bg-[#10E07A] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                        >
+                          {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                          Save Address
+                        </button>
+                        <button
+                          onClick={() => setShowAddAddressForm(false)}
+                          className="px-4 bg-white/5 text-white/60 font-bold py-2.5 rounded-xl text-sm"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <button
+                      onClick={() => setShowAddAddressForm(true)}
+                      className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-white/15 text-white/60 hover:text-white hover:border-[#10E07A]/40 transition-colors text-sm font-bold"
+                    >
+                      <PlusIcon className="w-4 h-4" />
+                      Add New Address
+                    </button>
+                  )}
+
+                  <div className="h-px bg-white/5 my-4" />
+
+                  <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold mb-2">Default Locations</p>
                   {/* Saved Locations */}
                   <div className="space-y-2">
                     {deliveryLocations.map(loc => (
@@ -675,10 +977,64 @@ export default function CheckoutModal() {
                   </motion.div>
                 )}
 
+                {/* Coupon Code */}
+                <div>
+                  <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+                    <Tag className="w-4 h-4 text-[#A78BFA]" />
+                    Promo Code
+                  </h4>
+                  {couponState === 'applied' ? (
+                    <div className="bg-[#10E07A]/5 border border-[#10E07A]/30 rounded-2xl p-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-[#10E07A]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-bold text-sm font-mono">{appliedCouponCode}</p>
+                        <p className="text-[#10E07A] text-xs">{couponMessage}</p>
+                      </div>
+                      <button
+                        onClick={handleRemoveCoupon}
+                        className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-white/60 hover:text-white hover:bg-white/10"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        value={couponCode}
+                        onChange={e => {
+                          setCouponCode(e.target.value.toUpperCase());
+                          if (couponState === 'error') setCouponState('idle');
+                        }}
+                        placeholder="Enter code (e.g. RAMADAN)"
+                        className="flex-1 bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
+                      />
+                      <button
+                        onClick={handleApplyCoupon}
+                        disabled={!couponCode.trim() || couponState === 'applying'}
+                        className="px-5 bg-[#10E07A] text-[#06070B] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+                      >
+                        {couponState === 'applying' ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          'Apply'
+                        )}
+                      </button>
+                    </div>
+                  )}
+                  {couponState === 'error' && couponMessage && (
+                    <p className="text-[#FB7185] text-xs mt-2 flex items-center gap-1">
+                      <X className="w-3 h-3" />
+                      {couponMessage}
+                    </p>
+                  )}
+                </div>
+
                 {/* Order Summary */}
                 <div>
                   <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <Package className="w-4 h-4 text-[#FFD700]" />
+                    <Package className="w-4 h-4 text-[#F5C451]" />
                     Order Summary
                   </h4>
                   <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 space-y-3">
@@ -697,7 +1053,7 @@ export default function CheckoutModal() {
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-white/40">Delivery Fee</span>
-                      <span className={deliveryFee === 0 ? 'text-[#13ec13] font-bold' : 'text-white font-bold'}>
+                      <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
@@ -705,10 +1061,16 @@ export default function CheckoutModal() {
                       <span className="text-white/40">Service Fee</span>
                       <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
                     </div>
+                    {discount > 0 && (
+                      <div className="flex justify-between text-xs">
+                        <span className="text-[#10E07A]">Discount ({appliedCouponCode})</span>
+                        <span className="text-[#10E07A] font-bold">-{formatNaira(discount)}</span>
+                      </div>
+                    )}
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between">
                       <span className="text-white font-bold text-sm">Total</span>
-                      <span className="text-[#13ec13] font-black text-lg">{formatNaira(total)}</span>
+                      <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -791,6 +1153,18 @@ export default function CheckoutModal() {
                     <span className="text-white/40 text-xs">Total</span>
                     <span className="text-[#13ec13] font-black text-sm">{formatNaira(placedTotal)}</span>
                   </div>
+                  {appliedCouponCode && (
+                    <div className="flex justify-between">
+                      <span className="text-white/40 text-xs">Promo Code</span>
+                      <span className="text-[#10E07A] font-bold text-xs font-mono">{appliedCouponCode}</span>
+                    </div>
+                  )}
+                  {paymentReference && (
+                    <div className="flex justify-between">
+                      <span className="text-white/40 text-xs">Payment Ref</span>
+                      <span className="text-white/60 font-mono text-[10px] truncate max-w-[60%] text-right">{paymentReference}</span>
+                    </div>
+                  )}
                   {iftarPrecision && (
                     <div className="flex items-center gap-2 bg-[#FFD700]/5 rounded-lg px-3 py-2 border border-[#FFD700]/10">
                       <Sun className="w-3.5 h-3.5 text-[#FFD700]" />

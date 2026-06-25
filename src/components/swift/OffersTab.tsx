@@ -137,27 +137,93 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
   );
 }
 
-/* Active coupons data */
-const ACTIVE_COUPONS = [
+/* Active coupons data — fallback only (used when API has not loaded yet) */
+const ACTIVE_COUPONS_FALLBACK = [
   { code: 'RAMADAN', discount: '10% off', desc: 'Ramadan Special — min ₦5,000', color: '#10E07A' },
   { code: 'IFTAR', discount: '10% off', desc: 'Iftar Deal — meals only', color: '#F5C451' },
   { code: 'SWIFT25', discount: '25% off', desc: 'Swift25 Bonus — min ₦10,000', color: '#A78BFA' },
   { code: 'SAHUR', discount: '15% off', desc: 'Sahur Special — dawn meals', color: '#38BDF8' },
 ];
 
-/* Limited-time offers (static curated) */
-const LIMITED_OFFERS = [
+/* Limited-time offers (static curated) — fallback only */
+const LIMITED_OFFERS_FALLBACK = [
   { id: 1, title: 'Family Iftar Bundle', desc: 'Feeds 4-6 people', price: 12500, originalPrice: 18000, image: '/images/flash-sales/flash-iftar-bundle.png', tag: 'Family' },
   { id: 2, title: 'Sahur Power Pack', desc: 'High-protein dawn meal', price: 4500, originalPrice: 6500, image: '/images/meals/meal-suya.png', tag: 'Sahur' },
   { id: 3, title: 'Date Lovers Box', desc: 'Premium Medjool dates', price: 8000, originalPrice: 11000, image: '/images/flash-sales/flash-dates.png', tag: 'Premium' },
   { id: 4, title: 'Refreshing Drinks Set', desc: 'Hibiscus + Zobo combo', price: 3500, originalPrice: 5000, image: '/images/flash-sales/flash-zobo-kunu.png', tag: 'Drinks' },
 ];
 
+interface ApiCoupon {
+  id: string;
+  code: string;
+  discountLabel: string;
+  description: string;
+  color: string;
+  minOrder: number;
+  value: number;
+  couponType: string;
+  usesLeft: number;
+}
+
+interface ApiOffer {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  image: string;
+  originalPrice: number;
+  salePrice: number;
+  discountPercent: number;
+}
+
 export default function OffersTab() {
   const { setActiveModal, hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints } = useAppStore();
   const { toast } = useToast();
   const [dailyClaimed, setDailyClaimed] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [apiCoupons, setApiCoupons] = useState<ApiCoupon[] | null>(null);
+  const [apiOffers, setApiOffers] = useState<ApiOffer[] | null>(null);
+
+  // Fetch coupons + curated offers from /api/offers
+  useEffect(() => {
+    let cancelled = false;
+    const fetchOffers = async () => {
+      try {
+        const res = await fetch('/api/offers');
+        const data = await res.json();
+        if (cancelled) return;
+        if (Array.isArray(data.coupons)) setApiCoupons(data.coupons);
+        if (Array.isArray(data.offers)) setApiOffers(data.offers);
+      } catch {
+        // keep fallbacks
+      }
+    };
+    fetchOffers();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Normalize API coupons to the same shape as the fallback list
+  const coupons = (apiCoupons && apiCoupons.length > 0)
+    ? apiCoupons.map(c => ({
+        code: c.code,
+        discount: c.discountLabel,
+        desc: c.description,
+        color: c.color,
+      }))
+    : ACTIVE_COUPONS_FALLBACK;
+
+  // Normalize API offers to the same shape as the fallback list
+  const limitedOffers = (apiOffers && apiOffers.length > 0)
+    ? apiOffers.map((o, idx) => ({
+        id: idx + 1,
+        title: o.title,
+        desc: o.description,
+        price: o.salePrice,
+        originalPrice: o.originalPrice,
+        image: o.image,
+        tag: o.type === 'flash-sale' ? 'Flash' : 'Ramadan',
+      }))
+    : LIMITED_OFFERS_FALLBACK;
 
   // Get current tier info
   const currentTierInfo = loyaltyTiers.find(t => t.id === loyaltyTier) || loyaltyTiers[2]; // default gold
@@ -340,7 +406,7 @@ export default function OffersTab() {
           <h3 className="text-white text-lg font-extrabold heading-accent">Active Coupons</h3>
         </div>
         <div className="space-y-3">
-          {ACTIVE_COUPONS.map((coupon) => {
+          {coupons.map((coupon) => {
             const isCopied = copiedCode === coupon.code;
             return (
               <div key={coupon.code} className="glass-card rounded-2xl p-4 flex items-center gap-3">
@@ -386,7 +452,7 @@ export default function OffersTab() {
           <h3 className="text-white text-lg font-extrabold heading-accent">Limited-Time Offers</h3>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {LIMITED_OFFERS.map((offer) => {
+          {limitedOffers.map((offer) => {
             const discount = Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100);
             return (
               <motion.div

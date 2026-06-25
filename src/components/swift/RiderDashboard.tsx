@@ -1,18 +1,55 @@
 'use client';
 
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Bike, Star, DollarSign, CheckCircle, Clock,
+  Bike, Star, Check, Clock,
   MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
-  Package,
+  Package, Loader2, CheckCircle, Moon,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
-import {
-  formatNaira,
-  riderActiveDeliveries,
-  riderDeliveryRequests,
-} from '@/lib/data';
+import { formatNaira } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
+
+/* ───────── Types ───────── */
+
+interface OrderItem {
+  name: string;
+  qty: number;
+  price: number;
+}
+
+interface RiderOrder {
+  id: string;
+  status: string;
+  total: number;
+  riderName: string | null;
+  items: OrderItem[];
+  progress: number;
+  createdAt: string;
+}
+
+interface WeeklyEarning {
+  day: string;
+  amount: number;
+}
+
+interface RiderData {
+  riderName: string;
+  online: boolean;
+  rating: number;
+  completedToday: number;
+  earningsToday: number;
+  totalEarnings: number;
+  activeDeliveries: RiderOrder[];
+  availableDeliveries: RiderOrder[];
+  recentDeliveries: RiderOrder[];
+  weeklyEarnings: WeeklyEarning[];
+  vehicleType: string;
+  area: string;
+}
+
+/* ───────── Animation variants ───────── */
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -24,35 +61,226 @@ const staggerItem = {
   show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
+/* ───────── Helpers ───────── */
+
+function itemsSummary(items: OrderItem[]): string {
+  if (!items || items.length === 0) return 'No items';
+  return items.map((i) => `${i.qty}x ${i.name}`).join(', ');
+}
+
+function shortId(id: string): string {
+  return id.slice(-6).toUpperCase();
+}
+
+function timeAgo(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+/* ───────── Component ───────── */
+
 export default function RiderDashboard() {
   const {
     riderOnline,
     setRiderOnline,
-    riderCompletedToday,
-    riderRating,
-    riderEarnings,
-    riderCurrentDelivery,
+    userEmail,
     setActiveModal,
+    setActiveTab,
   } = useAppStore();
 
-  const activeDelivery = riderCurrentDelivery
-    ? riderActiveDeliveries.find(d => d.id === riderCurrentDelivery) || riderActiveDeliveries[0]
-    : riderActiveDeliveries[0];
+  const [data, setData] = useState<RiderData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const fetchingRef = useRef(false);
 
-  const handleAccept = (id: string, customer: string) => {
-    useAppStore.getState().setRiderCurrentDelivery(id);
+  const email = userEmail || 'sani@swiftramadan.app';
+
+  const fetchRider = useCallback(
+    async (silent = false) => {
+      if (fetchingRef.current) return;
+      fetchingRef.current = true;
+      if (!silent) setLoading(true);
+      try {
+        const res = await fetch(`/api/rider?email=${encodeURIComponent(email)}`);
+        if (!res.ok) throw new Error('Failed to fetch rider data');
+        const json = await res.json();
+        if (json.success) {
+          setData(json);
+          // Sync online state with backend
+          if (typeof json.online === 'boolean') {
+            setRiderOnline(json.online);
+          }
+        }
+      } catch (err) {
+        console.error('RiderDashboard fetch error:', err);
+        if (!silent) {
+          toast({
+            title: 'Failed to load',
+            description: 'Could not reach rider service. Pull to retry.',
+          });
+        }
+      } finally {
+        if (!silent) setLoading(false);
+        setRefreshing(false);
+        fetchingRef.current = false;
+      }
+    },
+    [email, setRiderOnline]
+  );
+
+  useEffect(() => {
+    fetchRider();
+    // Poll every 15s for fresh data
+    const interval = setInterval(() => fetchRider(true), 15000);
+    return () => clearInterval(interval);
+  }, [fetchRider]);
+
+  const handleToggleOnline = async () => {
+    const next = !riderOnline;
+    setRiderOnline(next);
     toast({
-      title: 'Delivery Accepted! 🎉',
-      description: `You accepted ${customer}'s order. Head to pickup!`,
+      title: next ? "You're Online! 🟢" : "You're Offline",
+      description: next
+        ? 'You will now receive delivery requests'
+        : "You won't receive new requests",
     });
+    try {
+      await fetch('/api/rider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, online: next }),
+      });
+    } catch (err) {
+      console.error('Toggle online failed:', err);
+    }
   };
 
-  const handleDecline = (id: string) => {
-    toast({
-      title: 'Delivery Declined',
-      description: `You declined delivery ${id}.`,
-    });
+  const handleAccept = async (orderId: string) => {
+    setActionLoadingId(orderId);
+    try {
+      const res = await fetch('/api/rider/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          riderEmail: email,
+          action: 'accept',
+        }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast({
+          title: 'Delivery Accepted! 🎉',
+          description: 'Head to the pickup location.',
+        });
+        await fetchRider(true);
+      } else {
+        toast({
+          title: 'Accept failed',
+          description: json.message || 'Could not accept delivery',
+        });
+      }
+    } catch (err) {
+      console.error('Accept failed:', err);
+      toast({
+        title: 'Accept failed',
+        description: 'Network error — please retry',
+      });
+    } finally {
+      setActionLoadingId(null);
+    }
   };
+
+  const handleComplete = async (orderId: string) => {
+    setActionLoadingId(orderId);
+    try {
+      const res = await fetch('/api/rider/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId,
+          riderEmail: email,
+          action: 'complete',
+        }),
+      });
+      const json = await res.json();
+      if (json.success) {
+        toast({
+          title: 'Delivery Completed! 🎉',
+          description: `You earned ${formatNaira(json.earnings || 0)}.`,
+        });
+        await fetchRider(true);
+      } else {
+        toast({
+          title: 'Complete failed',
+          description: json.message || 'Could not complete delivery',
+        });
+      }
+    } catch (err) {
+      console.error('Complete failed:', err);
+      toast({
+        title: 'Complete failed',
+        description: 'Network error — please retry',
+      });
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  /* ───────── Loading skeleton ───────── */
+  if (loading) {
+    return (
+      <main className="flex-1 overflow-y-auto pb-32 px-4 pt-4">
+        <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-white/5 animate-pulse" />
+            <div>
+              <div className="h-3 w-16 bg-white/5 rounded animate-pulse mb-1" />
+              <div className="h-2 w-24 bg-white/5 rounded animate-pulse" />
+            </div>
+          </div>
+          <div className="h-6 w-24 bg-white/5 rounded-full animate-pulse" />
+        </div>
+
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-16 h-16 rounded-2xl bg-white/5 animate-pulse" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 w-32 bg-white/5 rounded animate-pulse" />
+            <div className="h-3 w-40 bg-white/5 rounded animate-pulse" />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-6">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-24 rounded-2xl bg-white/5 animate-pulse"
+            />
+          ))}
+        </div>
+
+        <div className="h-20 rounded-2xl bg-white/5 animate-pulse mb-6" />
+        <div className="h-40 rounded-2xl bg-white/5 animate-pulse mb-6" />
+        <div className="space-y-3">
+          {[1, 2].map((i) => (
+            <div key={i} className="h-28 rounded-2xl bg-white/5 animate-pulse" />
+          ))}
+        </div>
+      </main>
+    );
+  }
+
+  const activeDelivery = data?.activeDeliveries?.[0] ?? null;
+  const availableDeliveries = data?.availableDeliveries ?? [];
+  const weeklyEarnings = data?.weeklyEarnings ?? [];
+  const maxWeekly = Math.max(1, ...weeklyEarnings.map((w) => w.amount));
 
   return (
     <motion.main
@@ -62,37 +290,41 @@ export default function RiderDashboard() {
       className="flex-1 overflow-y-auto pb-32 px-4 pt-4"
     >
       {/* Online/Offline Toggle */}
-      <motion.div variants={staggerItem} className="flex items-center justify-between mb-5">
+      <motion.div
+        variants={staggerItem}
+        className="flex items-center justify-between mb-5"
+      >
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              setRiderOnline(!riderOnline);
-              toast({
-                title: riderOnline ? 'You\'re Offline' : 'You\'re Online! 🟢',
-                description: riderOnline
-                  ? 'You won\'t receive new delivery requests'
-                  : 'You\'ll now receive delivery requests',
-              });
-            }}
-            className="relative"
-          >
+          <button onClick={handleToggleOnline} className="relative" aria-label="Toggle online">
             {riderOnline ? (
-              <ToggleRight className="w-12 h-12 text-[#13ec13]" />
+              <ToggleRight className="w-12 h-12 text-[#38BDF8]" />
             ) : (
               <ToggleLeft className="w-12 h-12 text-white/30" />
             )}
           </button>
           <div>
-            <p className={`text-sm font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+            <p
+              className={`text-sm font-bold ${
+                riderOnline ? 'text-[#38BDF8]' : 'text-white/40'
+              }`}
+            >
               {riderOnline ? 'Online' : 'Offline'}
             </p>
             <p className="text-white/30 text-[10px]">Toggle to receive deliveries</p>
           </div>
         </div>
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${
-          riderOnline ? 'bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20' : 'bg-white/5 text-white/30 border border-white/5'
-        }`}>
-          <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/20'}`} />
+        <div
+          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${
+            riderOnline
+              ? 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20'
+              : 'bg-white/5 text-white/30 border border-white/5'
+          }`}
+        >
+          <span
+            className={`size-2 rounded-full ${
+              riderOnline ? 'bg-[#38BDF8] animate-pulse' : 'bg-white/20'
+            }`}
+          />
           {riderOnline ? 'Accepting Orders' : 'Not Available'}
         </div>
       </motion.div>
@@ -100,23 +332,25 @@ export default function RiderDashboard() {
       {/* Profile Header */}
       <motion.div variants={staggerItem} className="flex items-center gap-4 mb-6">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#13ec13]/30 to-[#13ec13]/5 flex items-center justify-center border border-[#13ec13]/20 green-glow">
-            <Bike className="w-7 h-7 text-[#13ec13]" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[#38BDF8]/20">
+            <Bike className="w-7 h-7 text-[#38BDF8]" />
           </div>
           {riderOnline && (
-            <span className="absolute -bottom-1 -right-1 size-4 bg-[#13ec13] rounded-full border-2 border-[#05070A] animate-pulse" />
+            <span className="absolute -bottom-1 -right-1 size-4 bg-[#38BDF8] rounded-full border-2 border-[#0B0D14] animate-pulse" />
           )}
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-white text-lg font-extrabold">Babatunde Yusuf</h2>
-            <span className="material-symbols-outlined text-[#13ec13] text-lg">verified</span>
+            <h2 className="text-white text-lg font-extrabold">
+              {data?.riderName ?? 'Rider'}
+            </h2>
+            <span className="material-symbols-outlined text-[#38BDF8] text-lg">verified</span>
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="material-symbols-outlined text-[#FFD700] text-sm">workspace_premium</span>
-            <span className="text-[#FFD700] text-xs font-bold">Elite Rider</span>
+            <span className="material-symbols-outlined text-[#F5C451] text-sm">workspace_premium</span>
+            <span className="text-[#F5C451] text-xs font-bold">Elite Rider</span>
             <span className="text-white/20 text-xs">•</span>
-            <span className="text-white/40 text-xs">Lagos Island</span>
+            <span className="text-white/40 text-xs">{data?.area ?? 'Lagos'}</span>
           </div>
         </div>
         <ChevronRight className="w-5 h-5 text-white/20" />
@@ -124,45 +358,53 @@ export default function RiderDashboard() {
 
       {/* Stats Grid */}
       <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
-          <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <CheckCircle className="w-5 h-5 text-[#13ec13]" />
+        <div className="glass-card rounded-2xl p-4 text-center">
+          <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <Check className="w-5 h-5 text-[#38BDF8]" />
           </div>
-          <p className="text-white text-xl font-extrabold">{riderCompletedToday}</p>
+          <p className="text-white text-xl font-extrabold">
+            {data?.completedToday ?? 0}
+          </p>
           <p className="text-white/40 text-[10px] mt-0.5">Completed Today</p>
         </div>
-        <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
-          <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <Star className="w-5 h-5 text-[#FFD700]" />
+        <div className="glass-card rounded-2xl p-4 text-center">
+          <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <Star className="w-5 h-5 text-[#F5C451]" />
           </div>
-          <p className="text-white text-xl font-extrabold">{riderRating}</p>
+          <p className="text-white text-xl font-extrabold">
+            {data?.rating?.toFixed(1) ?? '4.8'}
+          </p>
           <p className="text-white/40 text-[10px] mt-0.5">Rating</p>
         </div>
-        <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
-          <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <DollarSign className="w-5 h-5 text-[#13ec13]" />
+        <div className="glass-card rounded-2xl p-4 text-center">
+          <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <span className="material-symbols-outlined text-[#10E07A] text-base">payments</span>
           </div>
-          <p className="text-white text-base font-extrabold">{formatNaira(riderEarnings)}</p>
-          <p className="text-white/40 text-[10px] mt-0.5">Earnings</p>
+          <p className="text-white text-base font-extrabold leading-tight">
+            {formatNaira(data?.earningsToday ?? 0)}
+          </p>
+          <p className="text-white/40 text-[10px] mt-0.5">Earned Today</p>
         </div>
       </motion.div>
 
       {/* Iftar Rush Legend Badge */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FFD700]/10 to-[#FFD700]/5 border border-[#FFD700]/20 p-4 gold-glow">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-[#FFD700]/5 blur-[80px]" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[#F5C451]/20 p-4">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-[#F5C451]/5 blur-[80px]" />
           <div className="relative z-10 flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#FFD700]/20 rounded-2xl flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[#FFD700] text-2xl">bedtime</span>
+            <div className="w-12 h-12 bg-[#F5C451]/20 rounded-2xl flex items-center justify-center shrink-0">
+              <Moon className="w-5 h-5 text-[#F5C451]" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-[#FFD700] font-extrabold text-sm">Iftar Rush Active</h3>
-                <span className="px-2 py-0.5 bg-[#FFD700]/20 rounded-full text-[#FFD700] text-[8px] font-black uppercase tracking-wider">
+                <h3 className="text-[#F5C451] font-extrabold text-sm">Iftar Rush Active</h3>
+                <span className="px-2 py-0.5 bg-[#F5C451]/20 rounded-full text-[#F5C451] text-[8px] font-black uppercase tracking-wider">
                   Ramadan Exclusive
                 </span>
               </div>
-              <p className="text-white/40 text-xs mt-1">2x bonus on all Iftar deliveries until Maghrib</p>
+              <p className="text-white/40 text-xs mt-1">
+                2x bonus on all Iftar deliveries until Maghrib
+              </p>
             </div>
           </div>
         </div>
@@ -172,24 +414,28 @@ export default function RiderDashboard() {
       {activeDelivery && (
         <motion.div variants={staggerItem} className="mb-6">
           <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-            <Navigation className="w-4 h-4 text-[#13ec13]" />
+            <Navigation className="w-4 h-4 text-[#38BDF8]" />
             Active Delivery
           </h3>
-          <div className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-[#13ec13]/20 p-4">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#13ec13]/5 blur-[50px]" />
+          <div className="relative overflow-hidden rounded-2xl bg-[#0F1118] border border-[#38BDF8]/20 p-4">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/5 blur-[50px]" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex size-2 bg-[#13ec13] rounded-full animate-pulse" />
-                  <span className="text-[#13ec13] text-xs font-bold uppercase tracking-widest">In Progress</span>
+                  <span className="flex size-2 bg-[#38BDF8] rounded-full animate-pulse" />
+                  <span className="text-[#38BDF8] text-xs font-bold uppercase tracking-widest">
+                    In Progress
+                  </span>
                 </div>
-                <span className="text-white/30 text-[10px] font-mono">{activeDelivery.id}</span>
+                <span className="text-white/30 text-[10px] font-mono">
+                  #{shortId(activeDelivery.id)}
+                </span>
               </div>
 
               {/* Progress Bar */}
               <div className="w-full bg-white/5 rounded-full h-2 mb-3">
                 <motion.div
-                  className="bg-[#13ec13] h-2 rounded-full"
+                  className="bg-[#38BDF8] h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${activeDelivery.progress}%` }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -198,32 +444,48 @@ export default function RiderDashboard() {
 
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <p className="text-white font-bold text-sm">{activeDelivery.customer}</p>
+                  <p className="text-white font-bold text-sm">
+                    {itemsSummary(activeDelivery.items)}
+                  </p>
                   <div className="flex items-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-white/30" />
-                    <p className="text-white/40 text-xs">{activeDelivery.address}</p>
+                    <p className="text-white/40 text-xs">
+                      {data?.area ?? 'Lagos Island'}
+                    </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[#13ec13] text-sm font-bold">ETA {activeDelivery.eta}</p>
-                  <p className="text-white/40 text-xs">{activeDelivery.items}</p>
+                  <p className="text-[#10E07A] text-sm font-bold">
+                    +{formatNaira(Math.round(activeDelivery.total * 0.15))}
+                  </p>
+                  <p className="text-white/40 text-xs">your earnings</p>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => toast({ title: 'Calling Customer 📞', description: `Connecting to ${activeDelivery.customer}...` })}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-2.5 rounded-xl font-bold text-xs hover:bg-[#13ec13]/20 transition-colors"
+                  onClick={() =>
+                    toast({
+                      title: 'Calling Customer 📞',
+                      description: 'Connecting to customer...',
+                    })
+                  }
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/20 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   Call
                 </button>
                 <button
-                  onClick={() => useAppStore.getState().setActiveTab('rider-deliveries')}
-                  className="flex-1 flex items-center justify-center gap-2 bg-white/5 border border-white/10 text-white py-2.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
+                  onClick={() => handleComplete(activeDelivery.id)}
+                  disabled={actionLoadingId === activeDelivery.id}
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors disabled:opacity-60"
                 >
-                  <Navigation className="w-3.5 h-3.5" />
-                  Navigate
+                  {actionLoadingId === activeDelivery.id ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Check className="w-3.5 h-3.5" />
+                  )}
+                  Complete Delivery
                 </button>
               </div>
             </div>
@@ -232,92 +494,199 @@ export default function RiderDashboard() {
       )}
 
       {/* New Delivery Request CTA */}
-      {riderOnline && !riderCurrentDelivery && (
+      {riderOnline && !activeDelivery && (
         <motion.div variants={staggerItem} className="mb-6">
           <button
             onClick={() => setActiveModal('new-delivery')}
-            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#13ec13]/20 to-[#13ec13]/5 border border-[#13ec13]/30 p-4 flex items-center gap-4 hover:border-[#13ec13]/50 transition-all active:scale-[0.98]"
+            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[#38BDF8]/30 p-4 flex items-center gap-4 hover:border-[#38BDF8]/50 transition-all active:scale-[0.98]"
           >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#13ec13]/10 blur-[50px]" />
-            <div className="w-12 h-12 bg-[#13ec13]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
-              <Package className="w-6 h-6 text-[#13ec13]" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/10 blur-[50px]" />
+            <div className="w-12 h-12 bg-[#38BDF8]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+              <Package className="w-6 h-6 text-[#38BDF8]" />
             </div>
             <div className="flex-1 text-left relative z-10">
               <h3 className="text-white font-extrabold text-sm">New Delivery Request</h3>
-              <p className="text-white/40 text-xs mt-0.5">{riderDeliveryRequests.length} deliveries waiting for you</p>
+              <p className="text-white/40 text-xs mt-0.5">
+                {availableDeliveries.length} deliveries waiting for you
+              </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#13ec13] shrink-0 relative z-10" />
+            <ChevronRight className="w-5 h-5 text-[#38BDF8] shrink-0 relative z-10" />
           </button>
         </motion.div>
       )}
 
-      {/* Delivery Requests */}
+      {/* Available Deliveries */}
       <motion.div variants={staggerItem} className="mb-6">
         <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#FFD700]" />
-          Delivery Requests
-          <span className="ml-auto px-2 py-0.5 bg-[#FFD700]/10 rounded-full text-[#FFD700] text-[10px] font-bold">
-            {riderDeliveryRequests.length} new
+          <Clock className="w-4 h-4 text-[#F5C451]" />
+          Available Deliveries
+          <span className="ml-auto px-2 py-0.5 bg-[#F5C451]/10 rounded-full text-[#F5C451] text-[10px] font-bold">
+            {availableDeliveries.length} new
           </span>
         </h3>
-        <div className="space-y-3">
-          {riderDeliveryRequests.map((req, i) => (
-            <motion.div
-              key={req.id}
-              variants={staggerItem}
-              className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4"
-            >
-              <div className="flex items-start justify-between mb-2">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <p className="text-white font-bold text-sm">{req.customer}</p>
-                    {req.priority === 'iftar' && (
-                      <span className="px-1.5 py-0.5 bg-[#FFD700]/15 text-[#FFD700] text-[8px] font-black rounded uppercase">
-                        Iftar
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3 text-white/30" />
-                    <p className="text-white/40 text-xs">{req.address}</p>
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <p className="text-white font-bold text-sm">{formatNaira(req.amount)}</p>
-                  <p className="text-[#13ec13] text-[10px] font-bold">+{formatNaira(req.deliveryFee)} fee</p>
-                </div>
-              </div>
 
-              <div className="flex items-center gap-3 mb-3 text-[10px] text-white/30">
-                <div className="flex items-center gap-1">
-                  <span className="material-symbols-outlined text-xs">timer</span>
-                  <span className={req.minutesUntilIftar <= 25 ? 'text-red-400 font-bold' : 'text-white/40'}>
-                    {req.minutesUntilIftar} min to Iftar
+        {availableDeliveries.length === 0 ? (
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/5 flex items-center justify-center">
+              <Package className="w-6 h-6 text-white/30" />
+            </div>
+            <p className="text-white font-bold text-sm">No deliveries available</p>
+            <p className="text-white/40 text-xs mt-1">
+              New orders will appear here as vendors mark them ready.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {availableDeliveries.map((req) => (
+              <motion.div
+                key={req.id}
+                variants={staggerItem}
+                className="glass-card rounded-2xl p-4"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-white font-bold text-sm">
+                        #{shortId(req.id)}
+                      </p>
+                      <span className="px-1.5 py-0.5 bg-[#A78BFA]/15 text-[#A78BFA] text-[8px] font-black rounded uppercase">
+                        Ready
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <MapPin className="w-3 h-3 text-white/30" />
+                      <p className="text-white/40 text-xs">{data?.area ?? 'Lagos Island'}</p>
+                    </div>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-white font-bold text-sm">{formatNaira(req.total)}</p>
+                    <p className="text-[#10E07A] text-[10px] font-bold">
+                      +{formatNaira(Math.round(req.total * 0.15))} earn
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 mb-3 text-[10px] text-white/30">
+                  <Package className="w-3 h-3" />
+                  <span className="truncate">{itemsSummary(req.items)}</span>
+                  <span>•</span>
+                  <span>{timeAgo(req.createdAt)}</span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleAccept(req.id)}
+                    disabled={actionLoadingId === req.id}
+                    className="flex-1 bg-[#38BDF8] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                  >
+                    {actionLoadingId === req.id ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    ) : (
+                      <Check className="w-3.5 h-3.5" />
+                    )}
+                    Accept
+                  </button>
+                  <button
+                    onClick={() => setActiveModal('new-delivery')}
+                    className="flex-1 bg-white/5 border border-white/10 text-white/60 py-2.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
+                  >
+                    Details
+                  </button>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Weekly Earnings Chart */}
+      <motion.div variants={staggerItem} className="mb-6">
+        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#10E07A] text-base">bar_chart</span>
+          Weekly Earnings
+          <span className="ml-auto text-white/40 text-[10px] font-bold">
+            Total: {formatNaira(weeklyEarnings.reduce((s, w) => s + w.amount, 0))}
+          </span>
+        </h3>
+        <div className="glass-card rounded-2xl p-4">
+          <div className="flex items-end justify-between gap-2 h-32">
+            {weeklyEarnings.map((w, i) => {
+              const pct = Math.max(4, Math.round((w.amount / maxWeekly) * 100));
+              const isToday = i === weeklyEarnings.length - 1;
+              return (
+                <div
+                  key={`${w.day}-${i}`}
+                  className="flex-1 flex flex-col items-center gap-1.5"
+                >
+                  <span className="text-[9px] text-white/60 font-bold">
+                    {w.amount > 0 ? `${(w.amount / 1000).toFixed(1)}k` : ''}
+                  </span>
+                  <motion.div
+                    initial={{ height: 0 }}
+                    animate={{ height: `${pct}%` }}
+                    transition={{ duration: 0.6, delay: i * 0.05 }}
+                    className={`w-full rounded-t-md ${
+                      isToday
+                        ? 'bg-gradient-to-t from-[#38BDF8] to-[#38BDF8]/60'
+                        : 'bg-gradient-to-t from-[#38BDF8]/40 to-[#38BDF8]/20'
+                    }`}
+                  />
+                  <span
+                    className={`text-[10px] font-bold ${
+                      isToday ? 'text-[#38BDF8]' : 'text-white/40'
+                    }`}
+                  >
+                    {w.day}
                   </span>
                 </div>
-                <span>•</span>
-                <span>{req.distance}</span>
-                <span>•</span>
-                <span>{req.items}</span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleAccept(req.id, req.customer)}
-                  className="flex-1 bg-[#13ec13] text-[#05070A] py-2.5 rounded-xl font-bold text-xs hover:bg-[#13ec13]/90 transition-colors"
-                >
-                  Accept
-                </button>
-                <button
-                  onClick={() => handleDecline(req.id)}
-                  className="flex-1 bg-white/5 border border-white/10 text-white/60 py-2.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
-                >
-                  Decline
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              );
+            })}
+          </div>
         </div>
+      </motion.div>
+
+      {/* Recent Deliveries */}
+      {(data?.recentDeliveries?.length ?? 0) > 0 && (
+        <motion.div variants={staggerItem} className="mb-6">
+          <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-[#10E07A]" />
+            Recent Deliveries
+          </h3>
+          <div className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+            {data!.recentDeliveries.slice(0, 8).map((o) => (
+              <div
+                key={o.id}
+                className="glass-card rounded-2xl p-3 flex items-center gap-3"
+              >
+                <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 flex items-center justify-center shrink-0">
+                  <Check className="w-4 h-4 text-[#10E07A]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-xs font-bold truncate">
+                    {itemsSummary(o.items)}
+                  </p>
+                  <p className="text-white/30 text-[10px]">{timeAgo(o.createdAt)}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <p className="text-[#10E07A] text-xs font-bold">
+                    +{formatNaira(Math.round(o.total * 0.15))}
+                  </p>
+                  <p className="text-white/30 text-[10px]">{formatNaira(o.total)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* Go to deliveries tab button */}
+      <motion.div variants={staggerItem}>
+        <button
+          onClick={() => setActiveTab('rider-deliveries')}
+          className="w-full text-center text-[#38BDF8] text-xs font-bold py-3 hover:underline"
+        >
+          View delivery map →
+        </button>
       </motion.div>
     </motion.main>
   );

@@ -1,8 +1,10 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, MessageCircle, Share2, Bookmark, Music2, Play, Volume2, VolumeX, ShoppingBag } from 'lucide-react';
+import { Heart, MessageCircle, Share2, Bookmark, Music2, Play, Volume2, VolumeX, ShoppingBag, UserPlus, UserCheck } from 'lucide-react';
+import { useAppStore } from '@/lib/store';
+import { useToast } from '@/hooks/use-toast';
 
 export interface ReelVideo {
   id: string;
@@ -13,6 +15,7 @@ export interface ReelVideo {
   authorName: string;
   authorHandle: string;
   authorAvatar: string;
+  authorId?: string | null;
   category: string;
   likes: number;
   comments: number;
@@ -45,8 +48,154 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
   const [showHeart, setShowHeart] = useState(false);
   const [inView, setInView] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [following, setFollowing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [followPending, setFollowPending] = useState(false);
+  const [statusChecked, setStatusChecked] = useState(false);
   const viewRecordedRef = useRef(false);
   const wrapRef = useRef<HTMLDivElement>(null);
+  const { toast } = useToast();
+
+  // Resolve current user id (fall back to 'guest')
+  const currentUserId = useAppStore((s) => s.userEmail) || 'guest';
+  const isLoggedIn = useAppStore((s) => s.isLoggedIn);
+  const setShowAuth = useAppStore((s) => s.setShowAuth);
+
+  const authorId = video.authorId || null;
+
+  // Check initial save + follow status on mount
+  useEffect(() => {
+    let cancelled = false;
+    async function checkStatus() {
+      try {
+        // Save status (single-video GET)
+        const saveRes = await fetch(
+          `/api/videos/${video.id}/save?userId=${encodeURIComponent(currentUserId)}`,
+          { cache: 'no-store' }
+        );
+        if (saveRes.ok) {
+          const data = await saveRes.json();
+          if (!cancelled && typeof data.saved === 'boolean') {
+            setSaved(data.saved);
+          }
+        }
+      } catch {
+        /* ignore */
+      }
+
+      // Follow status — only if author is a registered user
+      if (authorId && currentUserId && currentUserId !== 'guest') {
+        try {
+          const folRes = await fetch(
+            `/api/users/follow?followerId=${encodeURIComponent(currentUserId)}&followeeId=${encodeURIComponent(authorId)}`,
+            { cache: 'no-store' }
+          );
+          if (folRes.ok) {
+            const data = await folRes.json();
+            if (!cancelled && typeof data.following === 'boolean') {
+              setFollowing(data.following);
+            }
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      if (!cancelled) setStatusChecked(true);
+    }
+    checkStatus();
+    return () => {
+      cancelled = true;
+    };
+  }, [video.id, currentUserId, authorId]);
+
+  const handleSave = useCallback(async () => {
+    if (!isLoggedIn) {
+      toast({
+        title: 'Login required',
+        description: 'Please sign in to save reels to your bookmarks.',
+      });
+      setShowAuth('login');
+      return;
+    }
+    if (saving) return;
+    setSaving(true);
+    // Optimistic update
+    const prev = saved;
+    setSaved(!prev);
+    try {
+      const res = await fetch(`/api/videos/${video.id}/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: currentUserId, videoId: video.id }),
+      });
+      const data = await res.json();
+      if (typeof data.saved === 'boolean') {
+        setSaved(data.saved);
+        toast({
+          title: data.saved ? 'Saved to bookmarks' : 'Removed',
+          description: data.saved
+            ? 'You can find this reel in your Saved tab.'
+            : 'Reel removed from your bookmarks.',
+        });
+      }
+    } catch {
+      setSaved(prev);
+      toast({
+        title: 'Could not save reel',
+        description: 'Network issue — please try again.',
+      });
+    } finally {
+      setSaving(false);
+    }
+  }, [isLoggedIn, saving, saved, currentUserId, video.id, toast, setShowAuth]);
+
+  const handleFollow = useCallback(async () => {
+    if (!isLoggedIn) {
+      toast({
+        title: 'Login required',
+        description: 'Please sign in to follow creators.',
+      });
+      setShowAuth('login');
+      return;
+    }
+    if (!authorId) {
+      toast({
+        title: 'Author not registered',
+        description: 'This creator is not yet a registered SwiftRamadan user.',
+      });
+      return;
+    }
+    if (followPending) return;
+    setFollowPending(true);
+    const prev = following;
+    setFollowing(!prev);
+    try {
+      const res = await fetch('/api/users/follow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ followerId: currentUserId, followeeId: authorId }),
+      });
+      const data = await res.json();
+      if (typeof data.following === 'boolean') {
+        setFollowing(data.following);
+        toast({
+          title: data.following ? `Following ${video.authorName}` : 'Unfollowed',
+          description: data.following
+            ? 'You will see new reels from this creator in your feed.'
+            : `You unfollowed ${video.authorName}.`,
+        });
+      }
+    } catch {
+      setFollowing(prev);
+      toast({
+        title: 'Could not follow',
+        description: 'Network issue — please try again.',
+      });
+    } finally {
+      setFollowPending(false);
+    }
+  }, [isLoggedIn, authorId, followPending, following, currentUserId, video.authorName, toast, setShowAuth]);
 
   // Intersection observer to auto-play/pause
   useEffect(() => {
@@ -195,10 +344,19 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
             {initial}
           </div>
           <button
-            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 size-5 rounded-full bg-[#FB7185] flex items-center justify-center text-white text-xs font-bold leading-none"
-            aria-label="Follow"
+            onClick={handleFollow}
+            disabled={followPending || (statusChecked && !authorId)}
+            className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 size-5 rounded-full flex items-center justify-center text-white text-[10px] font-black leading-none active:scale-90 transition-transform disabled:opacity-50"
+            style={{
+              backgroundColor: following ? '#10E07A' : authorId ? '#FB7185' : '#6b7280',
+            }}
+            aria-label={following ? 'Unfollow' : 'Follow'}
           >
-            +
+            {following ? (
+              <UserCheck className="w-3 h-3" strokeWidth={3} />
+            ) : (
+              <UserPlus className="w-3 h-3" strokeWidth={3} />
+            )}
           </button>
         </div>
 
@@ -239,9 +397,10 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
 
         {/* Save */}
         <button
-          onClick={() => setSaved((s) => !s)}
-          className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
-          aria-label="Save"
+          onClick={handleSave}
+          disabled={saving}
+          className="flex flex-col items-center gap-1 active:scale-90 transition-transform disabled:opacity-60"
+          aria-label={saved ? 'Remove from bookmarks' : 'Save to bookmarks'}
         >
           <Bookmark
             className={`w-8 h-8 ${saved ? 'text-[#F5C451] fill-[#F5C451]' : 'text-white'}`}
@@ -263,8 +422,26 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
         <div className="flex items-center gap-2 mb-2">
           <span className="text-white font-black text-sm tracking-tight">{video.authorHandle || `@${video.authorName.toLowerCase().replace(/\s+/g, '')}`}</span>
           <span className="text-white/40 text-xs">•</span>
-          <button className="text-white text-xs font-bold border border-white/30 px-2 h-5 rounded-full flex items-center">
-            Follow
+          <button
+            onClick={handleFollow}
+            disabled={followPending || (statusChecked && !authorId)}
+            className={`text-[11px] font-bold border px-2.5 h-6 rounded-full flex items-center gap-1 active:scale-95 transition-transform disabled:opacity-50 ${
+              following
+                ? 'bg-[#10E07A]/15 text-[#10E07A] border-[#10E07A]/40'
+                : 'text-white border-white/30 hover:border-white/50'
+            }`}
+          >
+            {following ? (
+              <>
+                <UserCheck className="w-3 h-3" strokeWidth={3} />
+                Following
+              </>
+            ) : (
+              <>
+                <UserPlus className="w-3 h-3" strokeWidth={3} />
+                Follow
+              </>
+            )}
           </button>
         </div>
         <h3 className="text-white font-bold text-[15px] leading-snug tracking-tight mb-1.5 drop-shadow">

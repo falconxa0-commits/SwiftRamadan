@@ -2,13 +2,10 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { io, type Socket } from 'socket.io-client';
 import {
   MapPin,
   Bike,
   Phone,
-  MessageSquare,
-  Send,
   Star,
   Check,
   Navigation,
@@ -17,9 +14,12 @@ import {
   Package,
   Store,
   User,
+  Loader2,
+  PartyPopper,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { formatNaira } from '@/lib/data';
 
 /* ──────────────────────────────────────────────────────────
    Types
@@ -55,9 +55,11 @@ interface DeliveryState {
   progress: number;
   customer: GeoPoint;
   store: { name: string; lat: number; lng: number };
+  total: number;
+  items: Array<{ name: string; qty: number; price: number }>;
 }
 
-interface ChatMessage {
+interface UpdateMessage {
   orderId: string;
   from: 'rider' | 'customer' | 'system';
   text: string;
@@ -105,132 +107,187 @@ function formatTime(ts: number): string {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
+/** Map an Order.status (DB string) → internal DeliveryStatus */
+function mapOrderStatus(status: string): DeliveryStatus {
+  switch (status) {
+    case 'Confirmed':
+    case 'Preparing':
+      return 'preparing';
+    case 'Ready':
+      return 'picked_up';
+    case 'In Transit':
+      return 'on_the_way';
+    case 'Delivered':
+      return 'delivered';
+    default:
+      return 'preparing';
+  }
+}
+
+/** Map Order.progress (0-100) → ETA minutes (inverse) */
+function progressToEta(progress: number, status: DeliveryStatus): number {
+  if (status === 'delivered') return 0;
+  if (status === 'arriving') return 2;
+  if (status === 'on_the_way') return Math.max(3, Math.round((100 - progress) / 6));
+  if (status === 'picked_up') return Math.max(5, Math.round((100 - progress) / 6));
+  return Math.max(8, Math.round((100 - progress) / 6));
+}
+
+/** Generate system messages based on status */
+function statusMessage(status: DeliveryStatus, riderName: string): string {
+  switch (status) {
+    case 'preparing':
+      return 'Your order is being prepared with care 🍳';
+    case 'picked_up':
+      return `${riderName} has picked up your order 🏍️`;
+    case 'on_the_way':
+      return `${riderName} is on the way to you 📍`;
+    case 'arriving':
+      return `${riderName} is arriving at your location 🚪`;
+    case 'delivered':
+      return `Delivered! Ramadan Mubarak 🌙 — Enjoy your meal!`;
+    default:
+      return 'Updating...';
+  }
+}
+
 /* ──────────────────────────────────────────────────────────
    Component
    ────────────────────────────────────────────────────────── */
 
 export default function RealTimeTrackingModal() {
-  const { activeModal, setActiveModal, orders } = useAppStore();
+  const { activeModal, setActiveModal, orders, userEmail } = useAppStore();
   const { toast } = useToast();
   const isOpen = activeModal === 'live-tracking';
 
-  const socketRef = useRef<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
-
   const [delivery, setDelivery] = useState<DeliveryState | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [chatInput, setChatInput] = useState('');
+  const [messages, setMessages] = useState<UpdateMessage[]>([]);
+  const [delivered, setDelivered] = useState(false);
 
-  const [activeOrderId, setActiveOrderId] = useState<string>(
-    () => useAppStore.getState().orders?.[0]?.id ?? 'SWR-2847'
-  );
+  // Derive the tracked order id from the store (no setState-in-effect needed)
+  const trackedOrderId =
+    orders.find((o) => o.status !== 'Delivered')?.id ??
+    orders[0]?.id ??
+    null;
+  // Use a ref so the polling callback always has the latest id without re-creating it
+  const trackedOrderIdRef = useRef<string | null>(trackedOrderId);
+  useEffect(() => {
+    trackedOrderIdRef.current = trackedOrderId;
+  }, [trackedOrderId]);
+  // isPolling is purely derived from whether the modal is open
+  const isPolling = isOpen;
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const lastStatusRef = useRef<DeliveryStatus | null>(null);
 
-  // Keep latest activeOrderId available to socket handlers without re-running effect
-  const activeOrderIdRef = useRef(activeOrderId);
-  useEffect(() => {
-    activeOrderIdRef.current = activeOrderId;
-  }, [activeOrderId]);
+  /* ─── Polling: fetch /api/orders every 3s when modal is open ─── */
+  const pollOrder = useCallback(async () => {
+    try {
+      const res = await fetch('/api/orders');
+      if (!res.ok) return;
+      const json = await res.json();
+      const allOrders: Array<{
+        id: string;
+        status: string;
+        total: number;
+        riderName: string | null;
+        items: Array<{ name: string; qty: number; price: number }>;
+        progress: number;
+        createdAt: string;
+      }> = json.orders ?? [];
 
-  /* Connect to socket.io when modal opens */
+      const match =
+        allOrders.find((o) => o.id === trackedOrderIdRef.current) ??
+        allOrders.find((o) => o.status !== 'Delivered') ??
+        allOrders[0];
+
+      if (!match) return;
+
+      const status = mapOrderStatus(match.status);
+      const progress = match.progress ?? 0;
+      const eta = progressToEta(progress, status);
+
+      // Derive rider info — use Order.riderName if present, else placeholder
+      const riderName = match.riderName || 'Your Rider';
+      const rider: Rider = {
+        name: riderName,
+        phone: '+234 800 000 0000',
+        photo: '',
+        rating: 4.9,
+        vehicle: 'Motorcycle',
+        color: '#38BDF8',
+      };
+
+      // Stylized Lagos coordinates around the user's area
+      const baseLat = 6.4541;
+      const baseLng = 3.3947;
+
+      // Position the rider along a path from store → customer based on progress
+      const storeLat = baseLat + 0.01;
+      const storeLng = baseLng - 0.012;
+      const custLat = baseLat - 0.008;
+      const custLng = baseLng + 0.014;
+      const t = Math.min(1, Math.max(0, progress / 100));
+      const locLat = storeLat + (custLat - storeLat) * t;
+      const locLng = storeLng + (custLng - storeLng) * t;
+
+      const next: DeliveryState = {
+        orderId: match.id,
+        rider,
+        location: { lat: locLat, lng: locLng },
+        status,
+        eta,
+        progress,
+        customer: { lat: custLat, lng: custLng },
+        store: { name: 'SwiftRamadan Kitchen', lat: storeLat, lng: storeLng },
+        total: match.total,
+        items: match.items ?? [],
+      };
+
+      setDelivery((prev) => {
+        // If status changed, push a system message
+        if (lastStatusRef.current !== status) {
+          const prevStatus = lastStatusRef.current;
+          lastStatusRef.current = status;
+          if (prevStatus !== null) {
+            const msg: UpdateMessage = {
+              orderId: match.id,
+              from: 'system',
+              text: statusMessage(status, riderName),
+              timestamp: Date.now(),
+            };
+            setMessages((m) =>
+              m.some((x) => x.text === msg.text && x.from === 'system')
+                ? m
+                : [...m, msg]
+            );
+          }
+        }
+        return next;
+      });
+
+      // Trigger delivered state
+      if (status === 'delivered') {
+        setDelivered(true);
+      }
+    } catch (err) {
+      console.error('Polling error:', err);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isOpen) return;
-
-    // CRITICAL: must use relative path with XTransformPort - never use absolute URL
-    const sock = io('/?XTransformPort=3003', {
-      transports: ['websocket', 'polling'],
-      forceNew: true,
-      reconnection: true,
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      timeout: 10000,
-    });
-
-    socketRef.current = sock;
-
-    sock.on('connect', () => {
-      setIsConnected(true);
-    });
-
-    sock.on('disconnect', () => {
-      setIsConnected(false);
-    });
-
-    // Server sends snapshot of all active deliveries on connect
-    sock.on('active_deliveries', (list: DeliveryState[]) => {
-      if (!list || list.length === 0) return;
-      // Prefer the user's selected order, else pick the first
-      const match = list.find((d) => d.orderId === activeOrderIdRef.current);
-      const chosen = match || list[0];
-      setDelivery(chosen);
-      setActiveOrderId(chosen.orderId);
-      sock.emit('subscribe_order', chosen.orderId);
-    });
-
-    sock.on('location_update', (update: DeliveryState) => {
-      if (!update) return;
-      setDelivery((prev) => {
-        // If we have no delivery yet, adopt this one if it's our active order
-        if (!prev) {
-          if (update.orderId === activeOrderIdRef.current) return update;
-          return prev;
-        }
-        if (update.orderId !== prev.orderId) return prev;
-        return update;
-      });
-    });
-
-    sock.on('delivery_assigned', (assigned: DeliveryState) => {
-      if (!assigned) return;
-      setActiveOrderId(assigned.orderId);
-      setDelivery(assigned);
-      toast({
-        title: `${assigned.rider.name} assigned! 🏍️`,
-        description: `${assigned.rider.vehicle} • Rating ${assigned.rider.rating}★`,
-      });
-    });
-
-    sock.on('chat_history', (history: ChatMessage[]) => {
-      if (Array.isArray(history)) {
-        setMessages(history);
-      }
-    });
-
-    sock.on('new_message', (msg: ChatMessage) => {
-      if (!msg) return;
-      setMessages((prev) => {
-        // de-dupe by timestamp+text+from
-        if (
-          prev.some(
-            (m) =>
-              m.timestamp === msg.timestamp &&
-              m.text === msg.text &&
-              m.from === msg.from
-          )
-        ) {
-          return prev;
-        }
-        return [...prev, msg];
-      });
-    });
-
+    // Initial fetch immediately
+    pollOrder();
+    const interval = setInterval(pollOrder, 3000);
     return () => {
-      sock.disconnect();
-      socketRef.current = null;
-      setIsConnected(false);
+      clearInterval(interval);
+      // Don't reset delivery here so the close animation doesn't flash
     };
-  }, [isOpen]);
+  }, [isOpen, pollOrder]);
 
-  /* Auto-subscribe when activeOrderId changes (after first connect) */
-  useEffect(() => {
-    const sock = socketRef.current;
-    if (!sock || !isConnected || !activeOrderId) return;
-    sock.emit('subscribe_order', activeOrderId);
-  }, [isConnected, activeOrderId]);
-
-  /* Auto-scroll chat to bottom on new messages */
+  /* Auto-scroll updates to bottom */
   useEffect(() => {
     if (chatScrollRef.current) {
       chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
@@ -250,51 +307,26 @@ export default function RealTimeTrackingModal() {
     });
   }, [delivery, toast]);
 
-  const handleSendMessage = useCallback(() => {
-    const text = chatInput.trim();
-    const sock = socketRef.current;
-    if (!text || !sock || !delivery) return;
-    sock.emit('send_message', {
-      orderId: delivery.orderId,
-      from: 'customer',
-      text,
-    });
-    // Optimistically show our own message immediately
-    setMessages((prev) => {
-      if (
-        prev.some(
-          (m) =>
-            m.text === text &&
-            m.from === 'customer' &&
-            Date.now() - m.timestamp < 5000
-        )
-      ) {
-        return prev;
-      }
-      return [
-        ...prev,
-        {
+  /** Trigger the rate-delivery modal — stash order info in localStorage since
+   *  store.ts cannot be modified (RateDeliveryModal owner = Agent E). */
+  const handleRateRider = useCallback(() => {
+    if (!delivery) return;
+    try {
+      localStorage.setItem(
+        'rateDeliveryOrder',
+        JSON.stringify({
           orderId: delivery.orderId,
-          from: 'customer',
-          text,
-          timestamp: Date.now(),
-        },
-      ];
-    });
-    setChatInput('');
-  }, [chatInput, delivery]);
-
-  const handleRequestRider = useCallback(() => {
-    const sock = socketRef.current;
-    if (!sock) return;
-    setDelivery(null);
-    setMessages([]);
-    sock.emit('request_rider', {});
-    toast({
-      title: 'Finding a rider... 🌙',
-      description: 'Connecting you with the nearest SwiftRamadan rider',
-    });
-  }, [toast]);
+          riderName: delivery.rider.name,
+          total: delivery.total,
+          items: delivery.items,
+          userEmail,
+        })
+      );
+    } catch (e) {
+      console.error('Failed to stash rate order info:', e);
+    }
+    setActiveModal('rate-delivery');
+  }, [delivery, userEmail, setActiveModal]);
 
   /* ─── derived ─── */
   const currentStageIndex = useMemo(() => {
@@ -315,7 +347,7 @@ export default function RealTimeTrackingModal() {
     const maxLng = Math.max(...lngs);
     const latRange = Math.max(maxLat - minLat, 0.001);
     const lngRange = Math.max(maxLng - minLng, 0.001);
-    const pad = 0.15; // 15% padding
+    const pad = 0.15;
     const project = (p: GeoPoint) => {
       const x = ((p.lng - minLng) / lngRange) * (1 - pad * 2) + pad;
       const y = 1 - (((p.lat - minLat) / latRange) * (1 - pad * 2) + pad);
@@ -346,22 +378,22 @@ export default function RealTimeTrackingModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] flex flex-col overflow-hidden"
+            className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
           >
             {/* ─── Sticky Header ─── */}
             <div className="glass-effect border-b border-white/5 px-4 py-3 flex items-center justify-between shrink-0 z-20">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 border border-[#13ec13]/30 flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5 text-[#13ec13]" />
+                <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/30 flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5 text-[#38BDF8]" />
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-white text-base font-bold leading-tight flex items-center gap-2">
                     Live Tracking
-                    {isConnected ? (
+                    {isPolling ? (
                       <motion.span
                         animate={{ opacity: [1, 0.4, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
-                        className="w-2 h-2 rounded-full bg-[#13ec13] inline-block"
+                        className="w-2 h-2 rounded-full bg-[#38BDF8] inline-block"
                       />
                     ) : (
                       <span className="w-2 h-2 rounded-full bg-white/30 inline-block" />
@@ -369,7 +401,7 @@ export default function RealTimeTrackingModal() {
                   </h2>
                   <p className="text-white/40 text-[11px] truncate">
                     {delivery
-                      ? `Order #${delivery.orderId} • ${delivery.rider.name}`
+                      ? `Order #${delivery.orderId.slice(-6).toUpperCase()} • ${delivery.rider.name}`
                       : 'Connecting to rider...'}
                   </p>
                 </div>
@@ -386,17 +418,50 @@ export default function RealTimeTrackingModal() {
             {/* ─── Scrollable content ─── */}
             <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* Map panel */}
-              <MapPanel
-                delivery={delivery}
-                layout={mapLayout}
-              />
+              <MapPanel delivery={delivery} layout={mapLayout} />
+
+              {/* Delivered banner */}
+              <AnimatePresence>
+                {delivered && (
+                  <motion.section
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="px-4 pt-4"
+                  >
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#10E07A]/15 to-[#F5C451]/10 border border-[#10E07A]/30 p-4">
+                      <div className="absolute -right-4 -top-4 w-32 h-32 bg-[#10E07A]/10 blur-3xl rounded-full" />
+                      <div className="relative z-10 flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-[#10E07A]/20 flex items-center justify-center shrink-0">
+                          <PartyPopper className="w-6 h-6 text-[#10E07A]" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-white font-extrabold text-sm">
+                            Delivered! Ramadan Mubarak 🌙
+                          </h3>
+                          <p className="text-white/50 text-xs mt-0.5">
+                            How was your experience with {delivery?.rider.name ?? 'your rider'}?
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleRateRider}
+                        className="mt-3 w-full bg-[#F5C451] text-[#06070B] py-3 rounded-xl font-black text-sm hover:bg-[#F5C451]/90 transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Star className="w-4 h-4 fill-[#06070B]" />
+                        Rate your rider
+                      </button>
+                    </div>
+                  </motion.section>
+                )}
+              </AnimatePresence>
 
               {/* Status Timeline */}
               <section className="px-4 pt-5">
                 <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
                   Delivery Status
                 </h3>
-                <div className="bg-[#0F1117] rounded-2xl border border-white/5 p-4">
+                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
                   <div className="relative">
                     {STATUS_STAGES.map((stage, idx) => {
                       const isPast = idx < currentStageIndex;
@@ -413,18 +478,18 @@ export default function RealTimeTrackingModal() {
                           <div
                             className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${
                               isActive
-                                ? 'bg-[#13ec13]/20 border-2 border-[#13ec13] scale-110'
+                                ? 'bg-[#38BDF8]/20 border-2 border-[#38BDF8] scale-110'
                                 : isPast
-                                  ? 'bg-[#13ec13] border-2 border-[#13ec13]'
+                                  ? 'bg-[#10E07A] border-2 border-[#10E07A]'
                                   : 'bg-[#1A1D26] border-2 border-white/10'
                             }`}
                           >
                             {isPast ? (
-                              <Check className="w-4 h-4 text-[#05070A]" strokeWidth={3} />
+                              <Check className="w-4 h-4 text-[#06070B]" strokeWidth={3} />
                             ) : (
                               <Icon
                                 className={`w-4 h-4 ${
-                                  isActive ? 'text-[#13ec13]' : 'text-white/30'
+                                  isActive ? 'text-[#38BDF8]' : 'text-white/30'
                                 }`}
                               />
                             )}
@@ -432,7 +497,7 @@ export default function RealTimeTrackingModal() {
                               <motion.div
                                 animate={{ scale: [1, 1.6], opacity: [0.5, 0] }}
                                 transition={{ duration: 1.6, repeat: Infinity }}
-                                className="absolute inset-0 rounded-full bg-[#13ec13]"
+                                className="absolute inset-0 rounded-full bg-[#38BDF8]"
                               />
                             )}
                           </div>
@@ -444,7 +509,7 @@ export default function RealTimeTrackingModal() {
                                   isActive
                                     ? 'text-white'
                                     : isPast
-                                      ? 'text-[#13ec13]'
+                                      ? 'text-[#10E07A]'
                                       : 'text-white/40'
                                 }`}
                               >
@@ -454,7 +519,7 @@ export default function RealTimeTrackingModal() {
                                 <motion.span
                                   animate={{ opacity: [1, 0.5, 1] }}
                                   transition={{ duration: 1.4, repeat: Infinity }}
-                                  className="text-[10px] text-[#13ec13] font-bold uppercase"
+                                  className="text-[10px] text-[#38BDF8] font-bold uppercase"
                                 >
                                   Live
                                 </motion.span>
@@ -478,10 +543,10 @@ export default function RealTimeTrackingModal() {
               {/* ETA + Rider cards */}
               <section className="px-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* ETA card */}
-                <div className="bg-gradient-to-br from-[#13ec13]/10 to-[#0F1117] rounded-2xl border border-[#13ec13]/20 p-4 relative overflow-hidden">
-                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#13ec13]/5 blur-2xl rounded-full" />
+                <div className="bg-gradient-to-br from-[#38BDF8]/10 to-[#0F1118] rounded-2xl border border-[#38BDF8]/20 p-4 relative overflow-hidden">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#38BDF8]/5 blur-2xl rounded-full" />
                   <div className="flex items-center gap-2 mb-2 relative">
-                    <Clock className="w-4 h-4 text-[#13ec13]" />
+                    <Clock className="w-4 h-4 text-[#38BDF8]" />
                     <span className="text-white/50 text-[11px] uppercase tracking-wider font-bold">
                       Estimated arrival
                     </span>
@@ -516,7 +581,7 @@ export default function RealTimeTrackingModal() {
                 </div>
 
                 {/* Rider card */}
-                <div className="bg-[#0F1117] rounded-2xl border border-white/5 p-4">
+                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
                   {delivery ? (
                     <div className="flex items-center gap-3">
                       <div
@@ -534,8 +599,8 @@ export default function RealTimeTrackingModal() {
                           {delivery.rider.name}
                         </p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-[#FFD700] text-[#FFD700]" />
-                          <span className="text-[#FFD700] text-[11px] font-bold">
+                          <Star className="w-3 h-3 fill-[#F5C451] text-[#F5C451]" />
+                          <span className="text-[#F5C451] text-[11px] font-bold">
                             {delivery.rider.rating}
                           </span>
                           <span className="text-white/30 text-[11px]">•</span>
@@ -547,10 +612,10 @@ export default function RealTimeTrackingModal() {
                       <div className="flex gap-2 shrink-0">
                         <button
                           onClick={handleCallRider}
-                          className="w-10 h-10 rounded-xl bg-[#FFD700]/10 border border-[#FFD700]/30 flex items-center justify-center hover:bg-[#FFD700]/20 transition-colors"
+                          className="w-10 h-10 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center hover:bg-[#F5C451]/20 transition-colors"
                           aria-label="Call rider"
                         >
-                          <Phone className="w-4 h-4 text-[#FFD700]" />
+                          <Phone className="w-4 h-4 text-[#F5C451]" />
                         </button>
                       </div>
                     </div>
@@ -561,85 +626,89 @@ export default function RealTimeTrackingModal() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white/40 text-sm">Waiting for rider...</p>
-                        <button
-                          onClick={handleRequestRider}
-                          className="text-[#13ec13] text-xs font-bold mt-1 hover:underline"
-                        >
-                          Request a rider →
-                        </button>
+                        <p className="text-white/30 text-xs mt-1">
+                          {isPolling ? 'Polling for updates...' : 'No active order'}
+                        </p>
                       </div>
                     </div>
                   )}
                 </div>
               </section>
 
-              {/* Live chat */}
+              {/* Order summary */}
+              {delivery && (
+                <section className="px-4 pt-4">
+                  <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Package className="w-4 h-4 text-white/40" />
+                      <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
+                        Order Summary
+                      </span>
+                    </div>
+                    {delivery.items.length > 0 ? (
+                      <div className="space-y-1.5">
+                        {delivery.items.map((it, idx) => (
+                          <div key={idx} className="flex justify-between text-xs">
+                            <span className="text-white/70">
+                              {it.qty}x {it.name}
+                            </span>
+                            <span className="text-white/50">{formatNaira(it.price * it.qty)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-white/40 text-xs">No items</p>
+                    )}
+                    <div className="h-px bg-white/5 my-2" />
+                    <div className="flex justify-between text-xs font-bold">
+                      <span className="text-white/70">Total</span>
+                      <span className="text-white">{formatNaira(delivery.total)}</span>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* Live updates feed (system messages only) */}
               <section className="px-4 pt-4 pb-6">
-                <div className="bg-[#0F1117] rounded-2xl border border-white/5 overflow-hidden">
+                <div className="bg-[#0F1118] rounded-2xl border border-white/5 overflow-hidden">
                   <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-[#13ec13]" />
-                    <span className="text-white text-sm font-bold">Chat with rider</span>
+                    <Clock className="w-4 h-4 text-[#38BDF8]" />
+                    <span className="text-white text-sm font-bold">Delivery Updates</span>
                     <span className="ml-auto text-white/30 text-[10px]">
-                      {messages.length} messages
+                      {messages.length} updates
                     </span>
                   </div>
 
-                  {/* Messages list */}
+                  {/* Updates list */}
                   <div
                     ref={chatScrollRef}
                     className="px-3 py-3 max-h-72 overflow-y-auto custom-scrollbar space-y-2"
                   >
                     {messages.length === 0 ? (
                       <div className="py-8 text-center">
-                        <MessageSquare className="w-8 h-8 text-white/10 mx-auto mb-2" />
+                        <Clock className="w-8 h-8 text-white/10 mx-auto mb-2" />
                         <p className="text-white/30 text-xs">
-                          No messages yet. Say salam to your rider!
+                          Updates will appear here as your order progresses.
                         </p>
                       </div>
                     ) : (
                       messages.map((m, idx) => (
-                        <ChatBubble key={`${m.timestamp}-${idx}`} msg={m} rider={delivery?.rider} />
+                        <UpdateBubble key={`${m.timestamp}-${idx}`} msg={m} />
                       ))
                     )}
                     <div ref={messagesEndRef} />
-                  </div>
-
-                  {/* Input */}
-                  <div className="border-t border-white/5 p-2 flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={chatInput}
-                      onChange={(e) => setChatInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) {
-                          e.preventDefault();
-                          handleSendMessage();
-                        }
-                      }}
-                      placeholder="Type a message..."
-                      disabled={!delivery}
-                      className="flex-1 bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#13ec13]/40 disabled:opacity-50"
-                    />
-                    <button
-                      onClick={handleSendMessage}
-                      disabled={!chatInput.trim() || !delivery}
-                      className="w-11 h-11 rounded-xl bg-[#13ec13] flex items-center justify-center hover:bg-[#13ec13]/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-                      aria-label="Send message"
-                    >
-                      <Send className="w-4 h-4 text-[#05070A]" />
-                    </button>
                   </div>
                 </div>
               </section>
             </div>
 
             {/* ─── Bottom progress bar ─── */}
-            <div className="border-t border-white/5 bg-[#0F1117] px-4 py-3 shrink-0">
+            <div className="border-t border-white/5 bg-[#0F1118] px-4 py-3 shrink-0">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white/50 text-[11px] font-bold uppercase tracking-wider">
                   Delivery progress
                 </span>
-                <span className="text-[#13ec13] text-sm font-black">
+                <span className="text-[#38BDF8] text-sm font-black">
                   {delivery ? Math.round(delivery.progress) : 0}%
                 </span>
               </div>
@@ -647,20 +716,29 @@ export default function RealTimeTrackingModal() {
                 <motion.div
                   className="h-full rounded-full relative"
                   style={{
-                    background: 'linear-gradient(90deg, #13ec13 0%, #FFD700 100%)',
+                    background:
+                      'linear-gradient(90deg, #38BDF8 0%, #10E07A 50%, #F5C451 100%)',
                   }}
                   animate={{
                     width: `${delivery ? delivery.progress : 0}%`,
                   }}
                   transition={{ duration: 0.6, ease: 'easeOut' }}
                 >
-                  <motion.div
-                    animate={{ x: ['-100%', '200%'] }}
-                    transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                  />
+                  {delivery && delivery.status !== 'delivered' && (
+                    <motion.div
+                      animate={{ x: ['-100%', '200%'] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                    />
+                  )}
                 </motion.div>
               </div>
+              {isPolling && (
+                <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Live polling every 3s
+                </p>
+              )}
             </div>
           </motion.div>
         </>
@@ -717,9 +795,9 @@ function MapPanel({
       <div className="absolute bottom-[25%] right-[8%] w-14 h-16 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
 
       {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/40 via-transparent to-[#05070A]" />
-      <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[#FFD700]/5 blur-[60px] rounded-full" />
-      <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[#13ec13]/5 blur-[60px] rounded-full" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D14]/40 via-transparent to-[#0B0D14]" />
+      <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[#F5C451]/5 blur-[60px] rounded-full" />
+      <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[#38BDF8]/5 blur-[60px] rounded-full" />
 
       {/* Route line + markers */}
       {layout && delivery && (
@@ -736,7 +814,7 @@ function MapPanel({
               y1={layout.store.y}
               x2={layout.rider.x}
               y2={layout.rider.y}
-              stroke="#FFD700"
+              stroke="#F5C451"
               strokeWidth="0.6"
               strokeDasharray="2 1.5"
               opacity="0.5"
@@ -747,7 +825,7 @@ function MapPanel({
               y1={layout.rider.y}
               x2={layout.customer.x}
               y2={layout.customer.y}
-              stroke="#13ec13"
+              stroke="#38BDF8"
               strokeWidth="0.6"
               strokeDasharray="2 1.5"
               opacity="0.7"
@@ -765,21 +843,21 @@ function MapPanel({
           {/* Store marker */}
           <Marker
             position={layout.store}
-            color="#FFD700"
+            color="#F5C451"
             label={delivery.store.name}
-            icon={<Store className="w-3.5 h-3.5 text-[#FFD700]" />}
+            icon={<Store className="w-3.5 h-3.5 text-[#F5C451]" />}
           />
 
           {/* Customer marker */}
           <Marker
             position={layout.customer}
-            color="#3b82f6"
+            color="#38BDF8"
             label="Your location"
-            icon={<MapPin className="w-3.5 h-3.5 text-[#3b82f6]" />}
-            pulseColor="rgba(59,130,246,0.4)"
+            icon={<MapPin className="w-3.5 h-3.5 text-[#38BDF8]" />}
+            pulseColor="rgba(56,189,248,0.4)"
           />
 
-          {/* Rider marker - animated position */}
+          {/* Rider marker - animated position synced with progress */}
           <motion.div
             className="absolute z-10"
             animate={{
@@ -793,10 +871,10 @@ function MapPanel({
             <motion.div
               animate={{ scale: [1, 2.4], opacity: [0.4, 0] }}
               transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-              className="absolute inset-0 rounded-full bg-[#13ec13]"
+              className="absolute inset-0 rounded-full bg-[#38BDF8]"
             />
-            <div className="relative w-9 h-9 rounded-full bg-[#13ec13] border-2 border-[#05070A] flex items-center justify-center shadow-[0_0_20px_rgba(19,236,19,0.5)]">
-              <Bike className="w-4 h-4 text-[#05070A]" />
+            <div className="relative w-9 h-9 rounded-full bg-[#38BDF8] border-2 border-[#0B0D14] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+              <Bike className="w-4 h-4 text-[#0B0D14]" />
             </div>
           </motion.div>
         </div>
@@ -804,17 +882,17 @@ function MapPanel({
 
       {/* Legend */}
       {layout && delivery && (
-        <div className="absolute top-3 left-3 bg-[#0F1117]/80 backdrop-blur rounded-xl border border-white/10 p-2 space-y-1.5">
+        <div className="absolute top-3 left-3 bg-[#0F1118]/80 backdrop-blur rounded-xl border border-white/10 p-2 space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#FFD700]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#F5C451]" />
             <span className="text-white/60 text-[10px] font-medium">Restaurant</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#13ec13]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
             <span className="text-white/60 text-[10px] font-medium">Rider</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#10E07A]" />
             <span className="text-white/60 text-[10px] font-medium">You</span>
           </div>
         </div>
@@ -827,7 +905,7 @@ function MapPanel({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="w-10 h-10 border-2 border-[#13ec13]/30 border-t-[#13ec13] rounded-full mx-auto mb-3"
+              className="w-10 h-10 border-2 border-[#38BDF8]/30 border-t-[#38BDF8] rounded-full mx-auto mb-3"
             />
             <p className="text-white/50 text-sm">Locating your rider...</p>
           </div>
@@ -890,60 +968,21 @@ function Marker({
 }
 
 /* ──────────────────────────────────────────────────────────
-   Chat Bubble
+   Update Bubble (system messages only — polling-based)
    ────────────────────────────────────────────────────────── */
 
-function ChatBubble({ msg, rider }: { msg: ChatMessage; rider?: Rider }) {
-  if (msg.from === 'system') {
-    return (
-      <div className="flex justify-center">
-        <span className="text-[10px] text-white/40 bg-white/5 px-3 py-1 rounded-full">
-          {msg.text}
-        </span>
-      </div>
-    );
-  }
-
-  const isCustomer = msg.from === 'customer';
-  const accentColor = rider?.color ?? '#13ec13';
-
+function UpdateBubble({ msg }: { msg: UpdateMessage }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className={`flex items-end gap-2 ${isCustomer ? 'flex-row-reverse' : 'flex-row'}`}
+      className="flex justify-center"
     >
-      {/* Avatar */}
-      <div
-        className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold border"
-        style={{
-          backgroundColor: isCustomer ? '#13ec1322' : `${accentColor}22`,
-          borderColor: isCustomer ? '#13ec1366' : `${accentColor}66`,
-          color: isCustomer ? '#13ec13' : accentColor,
-        }}
-      >
-        {isCustomer ? (
-          'ME'
-        ) : (
-          <Bike className="w-3.5 h-3.5" />
-        )}
-      </div>
-      {/* Bubble */}
-      <div className={`max-w-[75%] ${isCustomer ? 'items-end' : 'items-start'} flex flex-col`}>
-        <div
-          className={`px-3 py-2 rounded-2xl text-sm ${
-            isCustomer
-              ? 'bg-[#13ec13] text-[#05070A] rounded-br-sm'
-              : 'bg-[#1A1D26] text-white rounded-bl-sm border border-white/5'
-          }`}
-        >
-          {msg.text}
-        </div>
-        <span className="text-[9px] text-white/30 mt-0.5 px-1">
-          {formatTime(msg.timestamp)}
-        </span>
-      </div>
+      <span className="text-[11px] text-white/60 bg-white/5 px-3 py-1.5 rounded-full text-center max-w-[90%]">
+        {msg.text}
+        <span className="text-white/30 ml-2">· {formatTime(msg.timestamp)}</span>
+      </span>
     </motion.div>
   );
 }

@@ -47,6 +47,7 @@ import VendorStoreTab from '@/components/swift/VendorStoreTab';
 import VendorSalesInsights from '@/components/swift/VendorSalesInsights';
 import VendorStockControl from '@/components/swift/VendorStockControl';
 import VendorPricingModal from '@/components/swift/VendorPricingModal';
+import VendorAddProductModal from '@/components/swift/VendorAddProductModal';
 import RiderPerformanceHub from '@/components/swift/RiderPerformanceHub';
 import RiderSmartRouteModal from '@/components/swift/RiderSmartRouteModal';
 import RiderPowerFinderModal from '@/components/swift/RiderPowerFinderModal';
@@ -56,6 +57,12 @@ import RiderEarningsHub from '@/components/swift/RiderEarningsHub';
 import RiderDeliveryMap from '@/components/swift/RiderDeliveryMap';
 import RiderProfileTab from '@/components/swift/RiderProfileTab';
 import NewDeliveryRequestModal from '@/components/swift/NewDeliveryRequestModal';
+import ChatModal from '@/components/swift/ChatModal';
+import RateDeliveryModal from '@/components/swift/RateDeliveryModal';
+import SettingsModal from '@/components/swift/SettingsModal';
+import EditProfileModal from '@/components/swift/EditProfileModal';
+import HelpCenterModal from '@/components/swift/HelpCenterModal';
+import LegalPagesModal from '@/components/swift/LegalPagesModal';
 import {
   Search,
   ShoppingBag,
@@ -588,9 +595,16 @@ function AllModals() {
       <NewDeliveryRequestModal />
       <VendorStockControl />
       <VendorPricingModal />
+      <VendorAddProductModal />
       <RiderPerformanceHub />
       <RiderSmartRouteModal />
       <RiderPowerFinderModal />
+      <ChatModal />
+      <RateDeliveryModal />
+      <SettingsModal />
+      <EditProfileModal />
+      <HelpCenterModal />
+      <LegalPagesModal />
     </>
   );
 }

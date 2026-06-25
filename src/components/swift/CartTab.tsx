@@ -61,22 +61,48 @@ export default function CartTab() {
           <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Cart</h1>
           <p className="text-white/50 text-sm mt-1">Items ready for checkout</p>
         </div>
-        <div className="flex flex-col items-center justify-center py-20 px-6">
-          <div className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft">
-            <ShoppingBag className="w-10 h-10 text-white/20 relative z-10" />
-          </div>
-          <h3 className="text-white text-lg font-bold mb-2 tracking-tight">Your cart is empty</h3>
-          <p className="text-white/40 text-sm text-center mb-6 max-w-xs">
-            Discover Iftar meals, Sahur boxes, and more to add to your cart
-          </p>
-          <button
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="flex flex-col items-center justify-center py-20 px-6 text-center"
+        >
+          <motion.div
+            initial={{ scale: 0.7, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: 'spring', damping: 14, stiffness: 180, delay: 0.1 }}
+            className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft"
+            style={{ boxShadow: '0 0 28px rgba(16,224,122,0.18)' }}
+          >
+            <ShoppingBag className="w-10 h-10 text-[#10E07A] relative z-10" />
+          </motion.div>
+          <motion.h3
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="text-white text-lg font-bold mb-2 tracking-tight"
+          >
+            Your cart is empty
+          </motion.h3>
+          <motion.p
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="text-white/40 text-sm text-center mb-6 max-w-xs"
+          >
+            Add some delicious meals — Iftar boxes, Sahur essentials, and more await.
+          </motion.p>
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
             onClick={() => useAppStore.getState().setActiveTab('explore')}
             className="bg-[#10E07A] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
           >
             Browse Menu
             <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </main>
     );
   }

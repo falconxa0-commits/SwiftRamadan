@@ -1,0 +1,534 @@
+     1→'use client';
+     2→
+     3→import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Navigation } from 'lucide-react';
+     4→import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
+     5→import { useAppStore, type OrderItem } from '@/lib/store';
+     6→import { motion, AnimatePresence } from 'framer-motion';
+     7→import { useToast } from '@/hooks/use-toast';
+     8→import { useState, useEffect } from 'react';
+     9→
+    10→const statusConfig: Record<string, { color: string; bgColor: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
+    11→  'In Transit': { color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', icon: Truck, label: 'In Transit' },
+    12→  'Preparing': { color: 'text-[#F5C451]', bgColor: 'bg-[#F5C451]/10', icon: Clock, label: 'Preparing' },
+    13→  'Delivered': { color: 'text-white/40', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
+    14→  'Confirmed': { color: 'text-[#38BDF8]', bgColor: 'bg-[#38BDF8]/10', icon: Package, label: 'Confirmed' },
+    15→  'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
+    16→};
+    17→
+    18→const progressSteps = [
+    19→  { key: 'confirmed', label: 'Confirmed', threshold: 10 },
+    20→  { key: 'preparing', label: 'Preparing', threshold: 35 },
+    21→  { key: 'ready', label: 'Ready', threshold: 55 },
+    22→  { key: 'transit', label: 'In Transit', threshold: 75 },
+    23→  { key: 'delivered', label: 'Delivered', threshold: 100 },
+    24→];
+    25→
+    26→function OrderProgressTracker({ progress, status }: { progress: number; status: string }) {
+    27→  return (
+    28→    <div className="mt-3">
+    29→      <div className="flex items-center justify-between">
+    30→        {progressSteps.map((step, i) => {
+    31→          const isActive = progress >= step.threshold;
+    32→          const isCurrentStep = status === 'Preparing' && step.key === 'preparing' ||
+    33→            status === 'In Transit' && step.key === 'transit' ||
+    34→            status === 'Delivered' && step.key === 'delivered' ||
+    35→            status === 'Confirmed' && step.key === 'confirmed' ||
+    36→            status === 'Ready' && step.key === 'ready';
+    37→          return (
+    38→            <div key={step.key} className="flex items-center flex-1">
+    39→              <div className="flex flex-col items-center">
+    40→                <div className={`w-5 h-5 rounded-full flex items-center justify-center border-2 transition-colors ${
+    41→                  isActive
+    42→                    ? isCurrentStep
+    43→                      ? 'border-[#10E07A] bg-[#10E07A]'
+    44→                      : 'border-[#10E07A]/50 bg-[#10E07A]/20'
+    45→                    : 'border-white/10 bg-[#0F1118]'
+    46→                }`}>
+    47→                  {isActive && (
+    48→                    <div className={`w-1.5 h-1.5 rounded-full ${isCurrentStep ? 'bg-[#06070B]' : 'bg-[#10E07A]'}`} />
+    49→                  )}
+    50→                </div>
+    51→                <span className={`text-[8px] mt-1 font-bold whitespace-nowrap ${
+    52→                  isActive ? 'text-[#10E07A]' : 'text-white/20'
+    53→                }`}>{step.label}</span>
+    54→              </div>
+    55→              {i < progressSteps.length - 1 && (
+    56→                <div className={`flex-1 h-px mx-1 ${progress >= progressSteps[i + 1].threshold ? 'bg-[#10E07A]/40' : 'bg-white/5'}`} />
+    57→              )}
+    58→            </div>
+    59→          );
+    60→        })}
+    61→      </div>
+    62→    </div>
+    63→  );
+    64→}
+    65→
+    66→type OrderTab = 'active' | 'past';
+    67→
+    68→export default function OrdersTab() {
+    69→  const { orders, setOrders } = useAppStore();
+    70→  const [isLoading, setIsLoading] = useState(true);
+    71→  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+    72→  const [activeTab, setActiveTab] = useState<OrderTab>('active');
+    73→  const { toast } = useToast();
+    74→
+    75→  // Initialize orders from store, falling back to mock data
+    76→  useEffect(() => {
+    77→    const initOrders = async () => {
+    78→      try {
+    79→        // If store has orders, use those; otherwise try API then mock
+    80→        if (orders.length > 0) {
+    81→          setIsLoading(false);
+    82→          return;
+    83→        }
+    84→        const res = await fetch('/api/orders');
+    85→        const data = await res.json();
+    86→        if (data.orders && data.orders.length > 0) {
+    87→          setOrders(data.orders);
+    88→        } else {
+    89→          // Use mock data as fallback - add them to the store
+    90→          setOrders(myOrders as unknown as OrderItem[]);
+    91→        }
+    92→      } catch {
+    93→        setOrders(myOrders as unknown as OrderItem[]);
+    94→      } finally {
+    95→        setIsLoading(false);
+    96→      }
+    97→    };
+    98→    initOrders();
+    99→  }, []);
+   100→
+   101→  const activeOrders = orders.filter(o => o.status !== 'Delivered');
+   102→  const pastOrders = orders.filter(o => o.status === 'Delivered');
+   103→  const activeOrder = activeOrders[0];
+   104→
+   105→  const handleCallRider = (riderName: string | null) => {
+   106→    toast({ title: 'Calling Rider 📞', description: `Connecting to ${riderName || 'your rider'}...` });
+   107→  };
+   108→
+   109→  const toggleExpand = (orderId: string) => {
+   110→    setExpandedOrder(expandedOrder === orderId ? null : orderId);
+   111→  };
+   112→
+   113→  const handleActiveOrderClick = (order: OrderItem) => {
+   114→    useAppStore.getState().setActiveModal('live-tracking');
+   115→  };
+   116→
+   117→  const handleReorder = (order: OrderItem) => {
+   118→    const { addToCart } = useAppStore.getState();
+   119→    order.items.forEach(item => {
+   120→      addToCart({
+   121→        id: parseInt(item.name.replace(/\D/g, '')) || Math.floor(Math.random() * 1000) + 500,
+   122→        name: item.name,
+   123→        price: item.price,
+   124→        image: '/images/meals/meal-jollof.png',
+   125→        quantity: item.qty,
+   126→      });
+   127→    });
+   128→    toast({ title: 'Items Added! 🛒', description: `${order.items.length} item(s) from order ${order.id} added to cart` });
+   129→  };
+   130→
+   131→  if (isLoading) {
+   132→    return (
+   133→      <main className="flex-1 overflow-y-auto pb-32">
+   134→        <div className="px-5 pt-6 pb-2">
+   135→          <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+   136→          <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
+   137→        </div>
+   138→        <div className="px-5 mt-4 space-y-3">
+   139→          {[1, 2, 3].map(i => (
+   140→            <div key={i} className="animate-pulse h-24 glass-card rounded-2xl" />
+   141→          ))}
+   142→        </div>
+   143→      </main>
+   144→    );
+   145→  }
+   146→
+   147→  // Empty state
+   148→  if (orders.length === 0) {
+   149→    return (
+   150→      <main className="flex-1 overflow-y-auto pb-32">
+   151→        <div className="px-5 pt-6 pb-2">
+   152→          <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+   153→          <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
+   154→        </div>
+   155→        <div className="flex flex-col items-center justify-center py-20 px-6">
+   156→          <div className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft">
+   157→            <ShoppingBag className="w-10 h-10 text-white/20 relative z-10" />
+   158→          </div>
+   159→          <h3 className="text-white text-lg font-bold mb-2 tracking-tight">No orders yet</h3>
+   160→          <p className="text-white/40 text-sm text-center mb-6 max-w-xs">
+   161→            Start ordering Iftar meals, Sahur boxes, and more to see your orders here
+   162→          </p>
+   163→          <button
+   164→            onClick={() => useAppStore.getState().setActiveTab('home')}
+   165→            className="bg-[#10E07A] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
+   166→          >
+   167→            Start Ordering
+   168→            <ShoppingBag className="w-4 h-4" />
+   169→          </button>
+   170→        </div>
+   171→      </main>
+   172→    );
+   173→  }
+   174→
+   175→  return (
+   176→    <main className="flex-1 overflow-y-auto pb-32">
+   177→      <div className="px-5 pt-6 pb-2">
+   178→        <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+   179→        <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
+   180→      </div>
+   181→
+   182→      {/* Tabs: Active / Past */}
+   183→      <div className="px-5 mt-4">
+   184→        <div className="inline-flex p-1 glass-card rounded-2xl">
+   185→          <button
+   186→            onClick={() => setActiveTab('active')}
+   187→            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+   188→              activeTab === 'active'
+   189→                ? 'bg-[#10E07A] text-[#06070B] green-glow'
+   190→                : 'text-white/60 hover:text-white'
+   191→            }`}
+   192→          >
+   193→            <Navigation className="w-3.5 h-3.5" />
+   194→            Active
+   195→            {activeOrders.length > 0 && (
+   196→              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
+   197→                activeTab === 'active' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-[#10E07A]/15 text-[#10E07A]'
+   198→              }`}>
+   199→                {activeOrders.length}
+   200→              </span>
+   201→            )}
+   202→          </button>
+   203→          <button
+   204→            onClick={() => setActiveTab('past')}
+   205→            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+   206→              activeTab === 'past'
+   207→                ? 'bg-[#10E07A] text-[#06070B] green-glow'
+   208→                : 'text-white/60 hover:text-white'
+   209→            }`}
+   210→          >
+   211→            <CheckCircle className="w-3.5 h-3.5" />
+   212→            Past
+   213→            {pastOrders.length > 0 && (
+   214→              <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
+   215→                activeTab === 'past' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-white/10 text-white/60'
+   216→              }`}>
+   217→                {pastOrders.length}
+   218→              </span>
+   219→            )}
+   220→          </button>
+   221→        </div>
+   222→      </div>
+   223→
+   224→      <AnimatePresence mode="wait">
+   225→        {activeTab === 'active' ? (
+   226→          <motion.div
+   227→            key="active"
+   228→            initial={{ opacity: 0, y: 8 }}
+   229→            animate={{ opacity: 1, y: 0 }}
+   230→            exit={{ opacity: 0, y: -8 }}
+   231→            transition={{ duration: 0.2 }}
+   232→          >
+   233→            {/* Live Tracking Widget */}
+   234→            {activeOrder && (
+   235→              <motion.div
+   236→                initial={{ opacity: 0, y: 10 }}
+   237→                animate={{ opacity: 1, y: 0 }}
+   238→                className="px-5 mt-4"
+   239→              >
+   240→                <div
+   241→                  className="relative overflow-hidden rounded-2xl premium-card p-5 cursor-pointer hover:border-white/15 transition-colors"
+   242→                  onClick={() => handleActiveOrderClick(activeOrder)}
+   243→                >
+   244→                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/10 blur-[60px]" />
+   245→                  <div className="relative z-10">
+   246→                    <div className="flex items-center justify-between mb-4">
+   247→                      <div className="flex items-center gap-2">
+   248→                        <span className="relative flex size-2">
+   249→                          <span className="absolute inline-flex size-full rounded-full bg-[#10E07A] opacity-60 pulse-soft" />
+   250→                          <span className="relative inline-flex size-2 rounded-full bg-[#10E07A]" />
+   251→                        </span>
+   252→                        <span className="text-[#10E07A] text-xs font-bold uppercase tracking-widest">Live Tracking</span>
+   253→                      </div>
+   254→                      <span className="text-white/30 text-xs font-mono">{activeOrder.id}</span>
+   255→                    </div>
+   256→
+   257→                    {/* Progress Bar */}
+   258→                    <div className="w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden">
+   259→                      <motion.div
+   260→                        className="bg-gradient-to-r from-[#10E07A] to-[#F5C451] h-2 rounded-full"
+   261→                        initial={{ width: 0 }}
+   262→                        animate={{ width: `${activeOrder.progress}%` }}
+   263→                        transition={{ duration: 1.5, ease: 'easeOut' }}
+   264→                      />
+   265→                    </div>
+   266→
+   267→                    {/* Progress Tracker */}
+   268→                    <OrderProgressTracker progress={activeOrder.progress} status={activeOrder.status} />
+   269→
+   270→                    <div className="flex items-center justify-between mt-4">
+   271→                      <div>
+   272→                        <p className="text-white font-bold tracking-tight">{activeOrder.item}</p>
+   273→                        <p className="text-[#10E07A] text-sm font-medium">{activeOrder.eta}</p>
+   274→                      </div>
+   275→                      <span className="text-white font-bold">{formatNaira(activeOrder.total)}</span>
+   276→                    </div>
+   277→
+   278→                    {activeOrder.rider && (
+   279→                      <div className="flex items-center justify-between bg-black/30 p-3 rounded-xl border border-white/5 mt-3">
+   280→                        <div className="flex items-center gap-3">
+   281→                          <div className="w-10 h-10 bg-[#10E07A]/20 rounded-full flex items-center justify-center icon-tile">
+   282→                            <Truck className="w-5 h-5 text-[#10E07A] relative z-10" />
+   283→                          </div>
+   284→                          <div>
+   285→                            <p className="text-white text-sm font-bold">{activeOrder.rider}</p>
+   286→                            <p className="text-white/40 text-xs">Your rider</p>
+   287→                          </div>
+   288→                        </div>
+   289→                        <div className="flex items-center gap-2">
+   290→                          <button
+   291→                            onClick={(e) => {
+   292→                              e.stopPropagation();
+   293→                              handleCallRider(activeOrder.rider);
+   294→                            }}
+   295→                            className="w-10 h-10 bg-[#10E07A]/10 rounded-full flex items-center justify-center border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors active:scale-90"
+   296→                            aria-label="Call rider"
+   297→                          >
+   298→                            <Phone className="w-4 h-4 text-[#10E07A]" />
+   299→                          </button>
+   300→                          <button
+   301→                            onClick={(e) => {
+   302→                              e.stopPropagation();
+   303→                              useAppStore.getState().setActiveModal('live-tracking');
+   304→                            }}
+   305→                            className="flex items-center gap-2 px-4 h-10 bg-[#F5C451]/10 rounded-full border border-[#F5C451]/20 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
+   306→                          >
+   307→                            <MapPin className="w-4 h-4 text-[#F5C451]" />
+   308→                            <span className="text-[#F5C451] text-xs font-bold">Track</span>
+   309→                          </button>
+   310→                        </div>
+   311→                      </div>
+   312→                    )}
+   313→                  </div>
+   314→                </div>
+   315→              </motion.div>
+   316→            )}
+   317→
+   318→            {/* Active Orders */}
+   319→            {activeOrders.length > 0 && (
+   320→              <div className="px-5 mt-6">
+   321→                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Active Orders</h3>
+   322→                <div className="space-y-3">
+   323→                  {activeOrders.map((order) => {
+   324→                    const config = statusConfig[order.status];
+   325→                    const Icon = config?.icon || Package;
+   326→                    const isExpanded = expandedOrder === order.id;
+   327→                    return (
+   328→                      <div key={order.id}>
+   329→                        <button
+   330→                          onClick={() => handleActiveOrderClick(order)}
+   331→                          className="flex items-center gap-4 p-4 glass-card rounded-2xl w-full text-left hover:border-white/15 transition-colors active:scale-[0.99]"
+   332→                        >
+   333→                          <div className={`w-12 h-12 ${config?.bgColor || 'bg-white/5'} rounded-xl flex items-center justify-center shrink-0 icon-tile border border-white/5`}>
+   334→                            <Icon className={`w-6 h-6 relative z-10 ${config?.color || 'text-white/50'}`} />
+   335→                          </div>
+   336→                          <div className="flex-1 min-w-0">
+   337→                            <div className="flex justify-between items-start">
+   338→                              <div>
+   339→                                <p className="text-white font-bold text-sm tracking-tight">{order.item}</p>
+   340→                                <p className="text-white/40 text-xs mt-0.5">{order.eta}</p>
+   341→                              </div>
+   342→                              <div className="text-right shrink-0">
+   343→                                <span className={`text-xs font-bold ${config?.color}`}>{order.status}</span>
+   344→                                <p className="text-white/60 text-xs font-bold">{formatNaira(order.total)}</p>
+   345→                              </div>
+   346→                            </div>
+   347→                            {/* Mini progress bar for each active order */}
+   348→                            <div className="w-full bg-white/5 rounded-full h-1 mt-2 overflow-hidden">
+   349→                              <div
+   350→                                className={`h-1 rounded-full transition-all ${
+   351→                                  order.status === 'In Transit' ? 'bg-[#10E07A]' :
+   352→                                  order.status === 'Preparing' ? 'bg-[#F5C451]' : 'bg-[#38BDF8]'
+   353→                                }`}
+   354→                                style={{ width: `${order.progress}%` }}
+   355→                              />
+   356→                            </div>
+   357→                          </div>
+   358→                          <div
+   359→                            className="shrink-0 ml-2 p-1.5 hover:bg-white/5 rounded-lg transition-colors"
+   360→                            onClick={(e) => {
+   361→                              e.stopPropagation();
+   362→                              toggleExpand(order.id);
+   363→                            }}
+   364→                          >
+   365→                            {isExpanded ? (
+   366→                              <ChevronUp className="w-4 h-4 text-white/40" />
+   367→                            ) : (
+   368→                              <ChevronDown className="w-4 h-4 text-white/40" />
+   369→                            )}
+   370→                          </div>
+   371→                        </button>
+   372→                        <AnimatePresence>
+   373→                          {isExpanded && order.items && (
+   374→                            <motion.div
+   375→                              initial={{ height: 0, opacity: 0 }}
+   376→                              animate={{ height: 'auto', opacity: 1 }}
+   377→                              exit={{ height: 0, opacity: 0 }}
+   378→                              className="overflow-hidden"
+   379→                            >
+   380→                              <div className="glass-card rounded-b-2xl border border-t-0 p-4 space-y-2 mt-1">
+   381→                                {order.items.map((item, i) => (
+   382→                                  <div key={i} className="flex justify-between text-xs">
+   383→                                    <span className="text-white/60">{item.name} x{item.qty}</span>
+   384→                                    <span className="text-white/40">{formatNaira(item.price * item.qty)}</span>
+   385→                                  </div>
+   386→                                ))}
+   387→                                <div className="h-px bg-white/5 my-1" />
+   388→                                <div className="flex justify-between text-xs font-bold">
+   389→                                  <span className="text-white/80">Total</span>
+   390→                                  <span className="text-[#10E07A]">{formatNaira(order.total)}</span>
+   391→                                </div>
+   392→                                {/* Reorder button */}
+   393→                                <button
+   394→                                  onClick={(e) => {
+   395→                                    e.stopPropagation();
+   396→                                    handleReorder(order);
+   397→                                  }}
+   398→                                  className="w-full mt-2 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+   399→                                >
+   400→                                  Reorder Items
+   401→                                </button>
+   402→                              </div>
+   403→                            </motion.div>
+   404→                          )}
+   405→                        </AnimatePresence>
+   406→                      </div>
+   407→                    );
+   408→                  })}
+   409→                </div>
+   410→              </div>
+   411→            )}
+   412→
+   413→            {/* No active orders */}
+   414→            {activeOrders.length === 0 && (
+   415→              <div className="px-5 mt-8">
+   416→                <div className="glass-card rounded-2xl p-6 text-center">
+   417→                  <div className="w-14 h-14 rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+   418→                    <CheckCircle className="w-7 h-7 text-[#10E07A] relative z-10" />
+   419→                  </div>
+   420→                  <p className="text-white font-bold text-sm">No active orders</p>
+   421→                  <p className="text-white/40 text-xs mt-1">All your deliveries are complete. Browse past orders or start a new one.</p>
+   422→                  <button
+   423→                    onClick={() => useAppStore.getState().setActiveTab('home')}
+   424→                    className="mt-4 bg-[#10E07A] text-[#06070B] font-bold py-2.5 px-6 rounded-xl text-xs active:scale-[0.98] transition-transform green-glow"
+   425→                  >
+   426→                    Start New Order
+   427→                  </button>
+   428→                </div>
+   429→              </div>
+   430→            )}
+   431→          </motion.div>
+   432→        ) : (
+   433→          <motion.div
+   434→            key="past"
+   435→            initial={{ opacity: 0, y: 8 }}
+   436→            animate={{ opacity: 1, y: 0 }}
+   437→            exit={{ opacity: 0, y: -8 }}
+   438→            transition={{ duration: 0.2 }}
+   439→          >
+   440→            {/* Past Orders */}
+   441→            {pastOrders.length > 0 ? (
+   442→              <div className="px-5 mt-6">
+   443→                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Past Orders</h3>
+   444→                <div className="space-y-3">
+   445→                  {pastOrders.map((order) => (
+   446→                    <div key={order.id} className="glass-card rounded-2xl overflow-hidden">
+   447→                      <div className="flex items-center gap-4 p-4">
+   448→                        <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center icon-tile border border-white/5">
+   449→                          <CheckCircle className="w-6 h-6 text-white/30 relative z-10" />
+   450→                        </div>
+   451→                        <div className="flex-1">
+   452→                          <div className="flex justify-between items-start">
+   453→                            <div>
+   454→                              <p className="text-white/70 font-bold text-sm tracking-tight">{order.item}</p>
+   455→                              <p className="text-white/30 text-xs">{order.eta}</p>
+   456→                            </div>
+   457→                            <div className="text-right">
+   458→                              <span className="soft-chip">Delivered</span>
+   459→                              <p className="text-white/40 text-xs font-bold mt-0.5">{formatNaira(order.total)}</p>
+   460→                            </div>
+   461→                          </div>
+   462→                        </div>
+   463→                      </div>
+   464→                      {/* Reorder for past orders */}
+   465→                      <div className="px-4 pb-3">
+   466→                        <button
+   467→                          onClick={() => handleReorder(order)}
+   468→                          className="w-full bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 hover:text-white/80 transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+   469→                        >
+   470→                          <ShoppingBag className="w-3.5 h-3.5" />
+   471→                          Reorder
+   472→                        </button>
+   473→                      </div>
+   474→                    </div>
+   475→                  ))}
+   476→                </div>
+   477→              </div>
+   478→            ) : (
+   479→              <div className="px-5 mt-8">
+   480→                <div className="glass-card rounded-2xl p-6 text-center">
+   481→                  <div className="w-14 h-14 rounded-2xl bg-[#A78BFA]/10 border border-[#A78BFA]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+   482→                    <Clock className="w-7 h-7 text-[#A78BFA] relative z-10" />
+   483→                  </div>
+   484→                  <p className="text-white font-bold text-sm">No past orders yet</p>
+   485→                  <p className="text-white/40 text-xs mt-1">Your completed orders will appear here for easy reordering.</p>
+   486→                </div>
+   487→              </div>
+   488→            )}
+   489→          </motion.div>
+   490→        )}
+   491→      </AnimatePresence>
+   492→
+   493→      {/* Prayer Times Widget */}
+   494→      <div className="px-5 mt-8 mb-6">
+   495→        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#06070B] border border-emerald-500/20 p-5 aurora-soft">
+   496→          <h3 className="text-[#F5C451] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+   497→            <span className="material-symbols-outlined text-lg">mosque</span>
+   498→            Prayer Times - Lagos
+   499→          </h3>
+   500→          <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+   501→            {prayerTimes.map((prayer) => {
+   502→              const now = new Date();
+   503→              const hours = now.getHours();
+   504→              const isNext = (prayer.name === 'Maghrib' && hours >= 12 && hours < 19) ||
+   505→                (prayer.name === 'Fajr' && hours >= 0 && hours < 6) ||
+   506→                (prayer.name === 'Isha' && hours >= 19);
+   507→              return (
+   508→                <div
+   509→                  key={prayer.name}
+   510→                  className={`bg-black/30 p-3 rounded-xl border text-center transition-colors ${
+   511→                    isNext ? 'border-[#F5C451]/30 bg-[#F5C451]/5' : 'border-white/5'
+   512→                  }`}
+   513→                >
+   514→                  <span className="material-symbols-outlined text-[#F5C451] text-lg">{prayer.icon}</span>
+   515→                  <p className="text-white text-xs font-bold mt-1">{prayer.name}</p>
+   516→                  <p className="text-white/50 text-[10px]">{prayer.time}</p>
+   517→                  {isNext && <span className="text-[#F5C451] text-[8px] font-bold uppercase">Next</span>}
+   518→                </div>
+   519→              );
+   520→            })}
+   521→          </div>
+   522→          <button
+   523→            onClick={() => useAppStore.getState().setActiveModal('prayer')}
+   524→            className="w-full mt-4 bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
+   525→          >
+   526→            <span className="material-symbols-outlined text-sm">schedule</span>
+   527→            View Full Schedule
+   528→          </button>
+   529→        </div>
+   530→      </div>
+   531→    </main>
+   532→  );
+   533→}
+   534→

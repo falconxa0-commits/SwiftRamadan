@@ -1,0 +1,120 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+
+// GET /api/settings?email=xxx — return UserSetting (creates default if missing)
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const email = searchParams.get('email');
+
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: 'Email query parameter is required' },
+        { status: 400 }
+      );
+    }
+
+    const user = await db.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    // Find or create default UserSetting
+    let setting = await db.userSetting.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (!setting) {
+      setting = await db.userSetting.create({
+        data: {
+          userId: user.id,
+          notificationsEnabled: true,
+          pushEnabled: true,
+          emailEnabled: false,
+          language: 'en',
+          currency: 'NGN',
+          theme: 'dark',
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true, setting });
+  } catch (error) {
+    console.error('Settings API GET error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to fetch settings' },
+      { status: 500 }
+    );
+  }
+}
+
+// PUT /api/settings — upsert UserSetting
+// Body: { email, notificationsEnabled?, pushEnabled?, emailEnabled?, language?, currency?, theme? }
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const {
+      email,
+      notificationsEnabled,
+      pushEnabled,
+      emailEnabled,
+      language,
+      currency,
+      theme,
+    } = body;
+
+    if (!email) {
+      return NextResponse.json(
+        { success: false, message: 'Email is required' },
+        { status: 400 }
+      );
+    }
+
+    const user = await db.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    const updateData: Record<string, unknown> = {};
+    if (typeof notificationsEnabled === 'boolean') updateData.notificationsEnabled = notificationsEnabled;
+    if (typeof pushEnabled === 'boolean') updateData.pushEnabled = pushEnabled;
+    if (typeof emailEnabled === 'boolean') updateData.emailEnabled = emailEnabled;
+    if (typeof language === 'string') updateData.language = language;
+    if (typeof currency === 'string') updateData.currency = currency;
+    if (typeof theme === 'string') updateData.theme = theme;
+
+    const setting = await db.userSetting.upsert({
+      where: { userId: user.id },
+      update: updateData,
+      create: {
+        userId: user.id,
+        notificationsEnabled: notificationsEnabled ?? true,
+        pushEnabled: pushEnabled ?? true,
+        emailEnabled: emailEnabled ?? false,
+        language: language ?? 'en',
+        currency: currency ?? 'NGN',
+        theme: theme ?? 'dark',
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Settings saved',
+      setting,
+    });
+  } catch (error) {
+    console.error('Settings API PUT error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to save settings' },
+      { status: 500 }
+    );
+  }
+}

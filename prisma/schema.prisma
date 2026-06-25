@@ -48,9 +48,21 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  orders     Order[]
-  cartItems  CartItem[]
+  orders        Order[]
+  cartItems     CartItem[]
   notifications Notification[]
+
+  // New relations
+  wishlist       WishlistItem[]
+  addresses      Address[]
+  reviews        Review[]
+  payments       Payment[]
+  following      Follow[]        @relation("UserFollows")
+  followers      Follow[]        @relation("UserFollowers")
+  savedVideos    SavedVideo[]
+  chatMessages   ChatMessage[]
+  setting        UserSetting?
+  vendorProducts Product[]       @relation("VendorProducts")
 }
 
 model Product {
@@ -64,9 +76,12 @@ model Product {
   images       String   @default("[]")
   category     String   @default("meals")
   rating       Float    @default(0)
-  reviews      Int      @default(0)
+  reviewCount  Int      @default(0)
   deliveryTime String   @default("30 min")
   inStock      Boolean  @default(true)
+  vendorId     String?
+  vendor       User?    @relation("VendorProducts", fields: [vendorId], references: [id])
+  productReviews Review[]
   createdAt    DateTime @default(now())
 }
 
@@ -80,6 +95,8 @@ model Order {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+  payments  Payment[]
+  orderReviews Review[]
 }
 
 model CartItem {
@@ -174,8 +191,10 @@ model Video {
   shares       Int      @default(0)
   views        Int      @default(0)
   likedBy      String   @default("[]")      // JSON array of viewer emails
+  authorId     String?
   createdAt    DateTime @default(now())
   videoComments VideoComment[]
+  savedBy       SavedVideo[]
 }
 
 model VideoComment {
@@ -188,4 +207,137 @@ model VideoComment {
   content       String
   likes         Int      @default(0)
   createdAt     DateTime @default(now())
+}
+
+// ── Wishlist: saved products per user ──
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  name      String
+  price     Int
+  image     String   @default("")
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+// ── Saved delivery addresses ──
+model Address {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  label        String   @default("Home")
+  address      String
+  area         String   @default("")
+  city         String   @default("Lagos")
+  instructions String   @default("")
+  lat          Float?
+  lng          Float?
+  isDefault    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ── Reviews: products, riders, vendors ──
+model Review {
+  id           String   @id @default(cuid())
+  productId    String?
+  product      Product? @relation(fields: [productId], references: [id])
+  orderId      String?
+  order        Order?   @relation(fields: [orderId], references: [id])
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  authorName   String
+  authorAvatar String   @default("")
+  rating       Int      @default(5)
+  comment      String   @default("")
+  images       String   @default("[]")
+  targetType   String   @default("product") // product, rider, vendor
+  targetId     String?
+  createdAt    DateTime @default(now())
+}
+
+// ── Coupons / promo codes ──
+model Coupon {
+  id         String   @id @default(cuid())
+  code       String   @unique
+  type       String   @default("percent") // percent, fixed
+  value      Int      @default(10)
+  minOrder   Int      @default(0)
+  maxUses    Int      @default(1000)
+  uses       Int      @default(0)
+  validUntil DateTime?
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+}
+
+// ── Payments ──
+model Payment {
+  id        String   @id @default(cuid())
+  orderId   String?
+  order     Order?   @relation(fields: [orderId], references: [id])
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  amount    Int
+  method    String   @default("card") // card, transfer, cash, bnpl
+  status    String   @default("pending") // pending, success, failed, refunded
+  reference String   @unique
+  provider  String   @default("paystack")
+  createdAt DateTime @default(now())
+}
+
+// ── Follow / subscribe ──
+model Follow {
+  id         String   @id @default(cuid())
+  followerId String
+  follower   User     @relation("UserFollows", fields: [followerId], references: [id], onDelete: Cascade)
+  followeeId String
+  followee   User     @relation("UserFollowers", fields: [followeeId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([followerId, followeeId])
+}
+
+// ── Saved / bookmarked videos ──
+model SavedVideo {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  videoId   String
+  video     Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, videoId])
+}
+
+// ── Direct chat messages (rider↔customer↔vendor) ──
+model ChatMessage {
+  id         String   @id @default(cuid())
+  roomId     String
+  senderId   String?
+  sender     User?    @relation(fields: [senderId], references: [id])
+  senderName String
+  senderRole String   @default("customer")
+  content    String
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+// ── User settings ──
+model UserSetting {
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationsEnabled Boolean  @default(true)
+  pushEnabled          Boolean  @default(true)
+  emailEnabled         Boolean  @default(false)
+  language             String   @default("en")
+  currency             String   @default("NGN")
+  theme                String   @default("dark")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([userId])
 }

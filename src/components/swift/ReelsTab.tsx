@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { Plus, Film, ChevronLeft, X, Loader2 } from 'lucide-react';
+import { AnimatePresence } from 'framer-motion';
+import { Plus, Film, Loader2, Bookmark } from 'lucide-react';
 import VideoCard, { type ReelVideo } from './VideoCard';
 import VideoCommentsSheet from './VideoCommentsSheet';
 import UploadVideoModal from './UploadVideoModal';
@@ -15,6 +15,7 @@ const CATEGORIES = [
   { id: 'sahur', label: 'Sahur' },
   { id: 'tips', label: 'Tips' },
   { id: 'reviews', label: 'Reviews' },
+  { id: 'saved', label: 'Saved' },
 ];
 
 export default function ReelsTab() {
@@ -28,19 +29,49 @@ export default function ReelsTab() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const viewer = userEmail || 'guest';
+  const isSavedMode = activeCategory === 'saved';
 
   const fetchVideos = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/videos?category=${activeCategory}&viewer=${encodeURIComponent(viewer)}`);
-      const data = await res.json();
-      setVideos(data.videos || []);
+      if (isSavedMode) {
+        // Fetch user's saved videos
+        const res = await fetch(
+          `/api/videos/list/save?userId=${encodeURIComponent(viewer)}`,
+          { cache: 'no-store' }
+        );
+        const data = await res.json();
+        const list: ReelVideo[] = (data.videos || []).map((v: Record<string, unknown> & { id: string; title: string; description: string; videoUrl: string; thumbnailUrl: string; authorName: string; authorHandle: string; authorAvatar: string; category: string; likes: number; comments: number; shares: number; views: number; createdAt: string; authorId?: string | null }) => ({
+          id: v.id,
+          title: v.title,
+          description: v.description,
+          videoUrl: v.videoUrl,
+          thumbnailUrl: v.thumbnailUrl,
+          authorName: v.authorName,
+          authorHandle: v.authorHandle,
+          authorAvatar: v.authorAvatar,
+          authorId: v.authorId ?? null,
+          category: v.category,
+          likes: v.likes,
+          comments: v.comments,
+          shares: v.shares,
+          views: v.views,
+          liked: Array.isArray(v.likedBy) ? (v.likedBy as string[]).includes(viewer) : false,
+          createdAt: v.createdAt,
+        }));
+        setVideos(list);
+      } else {
+        const res = await fetch(`/api/videos?category=${activeCategory}&viewer=${encodeURIComponent(viewer)}`);
+        const data = await res.json();
+        setVideos(data.videos || []);
+      }
     } catch (e) {
       console.error('Failed to load reels', e);
+      setVideos([]);
     } finally {
       setLoading(false);
     }
-  }, [activeCategory, viewer]);
+  }, [activeCategory, viewer, isSavedMode]);
 
   useEffect(() => {
     fetchVideos();
@@ -157,17 +188,29 @@ export default function ReelsTab() {
       ) : videos.length === 0 ? (
         <div className="flex h-full flex-col items-center justify-center px-8 text-center">
           <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-            <Film className="w-7 h-7 text-white/30" />
+            {isSavedMode ? (
+              <Bookmark className="w-7 h-7 text-[#F5C451]" />
+            ) : (
+              <Film className="w-7 h-7 text-white/30" />
+            )}
           </div>
-          <p className="text-white font-bold text-lg">No reels yet</p>
-          <p className="text-white/40 text-sm mt-1">Be the first to share a Ramadan food short!</p>
-          <button
-            onClick={() => setShowUpload(true)}
-            className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[#10E07A] text-[#04140C] text-sm font-black active:scale-95 transition-transform"
-          >
-            <Plus className="w-4 h-4" strokeWidth={3} />
-            Upload Reel
-          </button>
+          <p className="text-white font-bold text-lg">
+            {isSavedMode ? 'No saved reels' : 'No reels yet'}
+          </p>
+          <p className="text-white/40 text-sm mt-1">
+            {isSavedMode
+              ? 'Bookmark videos to watch later — they will show up here.'
+              : 'Be the first to share a Ramadan food short!'}
+          </p>
+          {!isSavedMode && (
+            <button
+              onClick={() => setShowUpload(true)}
+              className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[#10E07A] text-[#04140C] text-sm font-black active:scale-95 transition-transform"
+            >
+              <Plus className="w-4 h-4" strokeWidth={3} />
+              Upload Reel
+            </button>
+          )}
         </div>
       ) : (
         <div

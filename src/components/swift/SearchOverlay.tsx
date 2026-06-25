@@ -30,6 +30,8 @@ export default function SearchOverlay() {
   const [isSearching, setIsSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const HISTORY_KEY = 'search-history';
+  const MAX_HISTORY = 10;
 
   useEffect(() => {
     if (showSearch) {
@@ -40,11 +42,26 @@ export default function SearchOverlay() {
     }
   }, [showSearch]);
 
-  // Load recent searches from localStorage
+  // Load search history from localStorage
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('swiftramadan-recent-searches');
-      if (saved) setRecentSearches(JSON.parse(saved));
+      const saved = localStorage.getItem(HISTORY_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) setRecentSearches(parsed.slice(0, MAX_HISTORY));
+      }
+      // Also migrate any legacy history into the new key
+      const legacy = localStorage.getItem('swiftramadan-recent-searches');
+      if (legacy) {
+        const legacyParsed = JSON.parse(legacy);
+        if (Array.isArray(legacyParsed)) {
+          setRecentSearches((prev) => {
+            const merged = Array.from(new Set([...legacyParsed, ...prev])).slice(0, MAX_HISTORY);
+            try { localStorage.setItem(HISTORY_KEY, JSON.stringify(merged)); } catch { /* ignore */ }
+            return merged;
+          });
+        }
+      }
     } catch { /* ignore */ }
   }, []);
 
@@ -75,35 +92,51 @@ export default function SearchOverlay() {
     };
   }, [query, performSearch]);
 
-  const addRecentSearch = (q: string) => {
-    const updated = [q, ...recentSearches.filter(s => s !== q)].slice(0, 5);
-    setRecentSearches(updated);
-    try {
-      localStorage.setItem('swiftramadan-recent-searches', JSON.stringify(updated));
-    } catch { /* ignore */ }
-  };
+  // Persist search history to localStorage (max 10, newest first, no duplicates)
+  const saveToHistory = useCallback((q: string) => {
+    const trimmed = q.trim();
+    if (!trimmed) return;
+    setRecentSearches((prev) => {
+      const updated = [trimmed, ...prev.filter((s) => s !== trimmed)].slice(0, MAX_HISTORY);
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
+      return updated;
+    });
+  }, []);
+
+  const removeFromHistory = useCallback((q: string) => {
+    setRecentSearches((prev) => {
+      const updated = prev.filter((s) => s !== q);
+      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(updated)); } catch { /* ignore */ }
+      return updated;
+    });
+  }, []);
+
+  const clearHistory = useCallback(() => {
+    setRecentSearches([]);
+    try { localStorage.removeItem(HISTORY_KEY); } catch { /* ignore */ }
+  }, []);
 
   const handleSearchClick = (q: string) => {
     setQuery(q);
-    addRecentSearch(q);
+    saveToHistory(q);
   };
 
   const handleProductClick = (product: SearchResult) => {
-    addRecentSearch(query);
+    saveToHistory(query);
     setShowSearch(false);
     setSelectedProduct(product.id);
     setActiveModal('product');
   };
 
   const handleCategoryClick = (category: SearchResult) => {
-    addRecentSearch(query);
+    saveToHistory(query);
     setShowSearch(false);
     setActiveCategory(category.name);
     setActiveTab('explore');
   };
 
   const handleRetailerClick = (retailer: SearchResult) => {
-    addRecentSearch(query);
+    saveToHistory(query);
     setShowSearch(false);
     setActiveCategory(retailer.category);
     setActiveTab('explore');
@@ -265,31 +298,48 @@ export default function SearchOverlay() {
             {/* Default: Recent + Popular */}
             {!query && (
               <div className="space-y-6">
-                {/* Recent Searches */}
+                {/* Recent Searches (search history) */}
                 {recentSearches.length > 0 && (
                   <div>
                     <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-white/30" />
+                      <Clock className="w-4 h-4 text-[#A78BFA]" />
                       Recent Searches
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                      {recentSearches.map(s => (
-                        <button
+                      {recentSearches.map((s) => (
+                        <div
                           key={s}
-                          onClick={() => handleSearchClick(s)}
-                          className="px-3 py-1.5 rounded-full bg-[#1A1D26] border border-white/5 text-white/60 text-xs font-medium hover:border-white/10 transition-colors"
+                          className="group flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-full bg-[#0F1118] border border-white/8 hover:border-[#A78BFA]/30 transition-colors"
                         >
-                          {s}
-                        </button>
+                          <button
+                            onClick={() => handleSearchClick(s)}
+                            className="text-white/80 text-xs font-medium"
+                          >
+                            {s}
+                          </button>
+                          <button
+                            onClick={() => removeFromHistory(s)}
+                            className="ml-0.5 w-5 h-5 flex items-center justify-center rounded-full bg-white/5 hover:bg-[#FB7185]/20 transition-colors"
+                            aria-label={`Remove ${s} from history`}
+                          >
+                            <X className="w-3 h-3 text-white/60 group-hover:text-[#FB7185]" />
+                          </button>
+                        </div>
                       ))}
                     </div>
+                    <button
+                      onClick={clearHistory}
+                      className="mt-3 text-[#10E07A] text-[11px] font-bold hover:text-[#10E07A]/80 transition-colors"
+                    >
+                      Clear all history
+                    </button>
                   </div>
                 )}
 
                 {/* Popular Searches */}
                 <div>
                   <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-[#FFD700]" />
+                    <TrendingUp className="w-4 h-4 text-[#F5C451]" />
                     Popular Searches
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -297,7 +347,7 @@ export default function SearchOverlay() {
                       <button
                         key={s}
                         onClick={() => handleSearchClick(s)}
-                        className="px-3 py-1.5 rounded-full bg-[#1A1D26] border border-white/5 text-white/60 text-xs font-medium hover:border-white/10 transition-colors"
+                        className="px-3 py-1.5 rounded-full bg-[#0F1118] border border-white/5 text-white/60 text-xs font-medium hover:border-[#10E07A]/30 hover:text-white/80 transition-colors"
                       >
                         {s}
                       </button>

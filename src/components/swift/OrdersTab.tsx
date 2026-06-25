@@ -1,6 +1,6 @@
 'use client';
 
-import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Navigation } from 'lucide-react';
+import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Navigation, XCircle, Download, RotateCcw } from 'lucide-react';
 import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
 import { useAppStore, type OrderItem } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -13,6 +13,7 @@ const statusConfig: Record<string, { color: string; bgColor: string; icon: React
   'Delivered': { color: 'text-white/40', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
   'Confirmed': { color: 'text-[#38BDF8]', bgColor: 'bg-[#38BDF8]/10', icon: Package, label: 'Confirmed' },
   'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
+  'Cancelled': { color: 'text-[#FB7185]', bgColor: 'bg-[#FB7185]/10', icon: XCircle, label: 'Cancelled' },
 };
 
 const progressSteps = [
@@ -98,8 +99,8 @@ export default function OrdersTab() {
     initOrders();
   }, []);
 
-  const activeOrders = orders.filter(o => o.status !== 'Delivered');
-  const pastOrders = orders.filter(o => o.status === 'Delivered');
+  const activeOrders = orders.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled');
+  const pastOrders = orders.filter(o => o.status === 'Delivered' || o.status === 'Cancelled');
   const activeOrder = activeOrders[0];
 
   const handleCallRider = (riderName: string | null) => {
@@ -126,6 +127,70 @@ export default function OrdersTab() {
       });
     });
     toast({ title: 'Items Added! 🛒', description: `${order.items.length} item(s) from order ${order.id} added to cart` });
+  };
+
+  const handleCancelOrder = async (order: OrderItem) => {
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: order.id, status: 'Cancelled', progress: 0 }),
+      });
+      if (res.ok) {
+        // Update local store: move from active to past (filtered out as Cancelled)
+        const { orders, setOrders } = useAppStore.getState();
+        setOrders(orders.map(o => o.id === order.id ? { ...o, status: 'Cancelled', progress: 0 } : o));
+        toast({ title: 'Order Cancelled', description: `Order ${order.id} has been cancelled` });
+      } else {
+        toast({ title: 'Could not cancel', description: 'Please try again', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Could not cancel', description: 'Network error — please try again', variant: 'destructive' });
+    }
+  };
+
+  const handleDownloadReceipt = (order: OrderItem) => {
+    const date = new Date().toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' });
+    const itemsList = order.items
+      .map(item => `  • ${item.name} x${item.qty} — ${formatNaira(item.price * item.qty)}`)
+      .join('\n');
+    const receipt = `
+SwiftRamadan — Order Receipt
+========================================
+
+Order ID:        ${order.id}
+Date:            ${date}
+Status:          ${order.status}
+ETA:             ${order.eta}
+Rider:           ${order.rider || 'Not assigned'}
+
+Items:
+${itemsList}
+
+----------------------------------------
+Total:           ${formatNaira(order.total)}
+----------------------------------------
+
+Thank you for ordering with SwiftRamadan!
+Ramadan Mubarak 🌙
+
+This is an electronic receipt — no signature required.
+`.trim();
+
+    try {
+      const blob = new Blob([receipt], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SwiftRamadan-Receipt-${order.id}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast({ title: 'Receipt Downloaded 📄', description: `Saved as SwiftRamadan-Receipt-${order.id}.txt` });
+    } catch {
+      toast({ title: 'Download Failed', description: 'Could not generate receipt', variant: 'destructive' });
+    }
   };
 
   if (isLoading) {
@@ -389,16 +454,39 @@ export default function OrdersTab() {
                                   <span className="text-white/80">Total</span>
                                   <span className="text-[#10E07A]">{formatNaira(order.total)}</span>
                                 </div>
-                                {/* Reorder button */}
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleReorder(order);
-                                  }}
-                                  className="w-full mt-2 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors active:scale-95"
-                                >
-                                  Reorder Items
-                                </button>
+                                {/* Reorder + Cancel + Receipt buttons */}
+                                <div className="grid grid-cols-3 gap-2 mt-2">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleReorder(order);
+                                    }}
+                                    className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-[11px] font-bold hover:bg-[#10E07A]/20 transition-colors active:scale-95 flex items-center justify-center gap-1"
+                                  >
+                                    <RotateCcw className="w-3 h-3" />
+                                    Reorder
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleCancelOrder(order);
+                                    }}
+                                    className="bg-[#FB7185]/10 border border-[#FB7185]/20 text-[#FB7185] py-2 rounded-lg text-[11px] font-bold hover:bg-[#FB7185]/20 transition-colors active:scale-95 flex items-center justify-center gap-1"
+                                  >
+                                    <XCircle className="w-3 h-3" />
+                                    Cancel
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDownloadReceipt(order);
+                                    }}
+                                    className="bg-white/5 border border-white/10 text-white/70 py-2 rounded-lg text-[11px] font-bold hover:bg-white/10 hover:text-white transition-colors active:scale-95 flex items-center justify-center gap-1"
+                                  >
+                                    <Download className="w-3 h-3" />
+                                    Receipt
+                                  </button>
+                                </div>
                               </div>
                             </motion.div>
                           )}
@@ -461,14 +549,21 @@ export default function OrdersTab() {
                           </div>
                         </div>
                       </div>
-                      {/* Reorder for past orders */}
-                      <div className="px-4 pb-3">
+                      {/* Reorder + Receipt for past orders */}
+                      <div className="px-4 pb-3 grid grid-cols-2 gap-2">
                         <button
                           onClick={() => handleReorder(order)}
-                          className="w-full bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 hover:text-white/80 transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+                          className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors active:scale-95 flex items-center justify-center gap-1.5"
                         >
-                          <ShoppingBag className="w-3.5 h-3.5" />
+                          <RotateCcw className="w-3.5 h-3.5" />
                           Reorder
+                        </button>
+                        <button
+                          onClick={() => handleDownloadReceipt(order)}
+                          className="bg-white/5 border border-white/10 text-white/60 py-2 rounded-lg text-xs font-bold hover:bg-white/10 hover:text-white/80 transition-colors active:scale-95 flex items-center justify-center gap-1.5"
+                        >
+                          <Download className="w-3.5 h-3.5" />
+                          Receipt
                         </button>
                       </div>
                     </div>

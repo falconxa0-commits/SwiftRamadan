@@ -623,27 +623,52 @@ export default function CommunityForum() {
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
                   className="flex flex-col items-center justify-center py-20 text-center"
                 >
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#13ec13]/10 to-[#8b5cf6]/10 border border-white/5 flex items-center justify-center text-4xl mb-4">
-                    🌙
-                  </div>
-                  <p className="text-white font-bold text-base">
+                  <motion.div
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', damping: 14, stiffness: 180, delay: 0.1 }}
+                    className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(167,139,250,0.18), rgba(167,139,250,0.04))',
+                      border: '1px solid rgba(167,139,250,0.3)',
+                      boxShadow: '0 0 24px rgba(167,139,250,0.18)',
+                    }}
+                  >
+                    <MessageCircle className="w-9 h-9 text-[#A78BFA]" />
+                  </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-white font-bold text-base"
+                  >
                     {activeFilter === 'all'
                       ? 'No posts yet'
                       : `No ${activeFilter} posts yet`}
-                  </p>
-                  <p className="text-white/40 text-sm mt-1 max-w-[240px]">
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-white/40 text-sm mt-1 max-w-[240px]"
+                  >
                     {activeFilter === 'all'
                       ? 'Be the first to share something with the community.'
                       : `Be the first to post in ${activeFilter}! Tap the + button below.`}
-                  </p>
-                  <button
+                  </motion.p>
+                  <motion.button
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
                     onClick={() => setComposerOpen(true)}
-                    className="mt-5 px-5 py-2.5 rounded-full bg-[#13ec13] text-[#05070A] font-bold text-sm green-glow active:scale-95 transition-transform"
+                    className="mt-5 px-5 py-2.5 rounded-full bg-[#A78BFA] text-white font-bold text-sm active:scale-95 transition-transform"
+                    style={{ boxShadow: '0 0 16px rgba(167,139,250,0.35)' }}
                   >
                     + Create a post
-                  </button>
+                  </motion.button>
                 </motion.div>
               ) : (
                 <AnimatePresence mode="popLayout">

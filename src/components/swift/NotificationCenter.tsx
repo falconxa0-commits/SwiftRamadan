@@ -152,10 +152,42 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                   ))}
                 </div>
               ) : filteredNotifications.length === 0 ? (
-                <div className="text-center py-12">
-                  <Bell className="w-8 h-8 text-white/10 mx-auto mb-3" />
-                  <p className="text-white/30 text-sm">No notifications</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  className="flex flex-col items-center justify-center py-16 text-center"
+                >
+                  <motion.div
+                    initial={{ scale: 0.7, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: 'spring', damping: 14, stiffness: 180, delay: 0.1 }}
+                    className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(16,224,122,0.18), rgba(16,224,122,0.04))',
+                      border: '1px solid rgba(16,224,122,0.3)',
+                      boxShadow: '0 0 24px rgba(16,224,122,0.15)',
+                    }}
+                  >
+                    <Bell className="w-9 h-9 text-[#10E07A]" />
+                  </motion.div>
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-white font-bold text-base"
+                  >
+                    No notifications
+                  </motion.p>
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-white/40 text-sm mt-1"
+                  >
+                    You&apos;re all caught up!
+                  </motion.p>
+                </motion.div>
               ) : (
                 filteredNotifications.map((notification) => {
                   const config = typeIcons[notification.type] || typeIcons.order;
