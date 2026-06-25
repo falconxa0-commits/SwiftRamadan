@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, MessageCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, Send, MessageCircle, Loader2, Wifi, WifiOff } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { useSocket } from '@/hooks/use-socket';
 
 // ─────────────────────────────────────────────────────────────
 // Lightweight chat context — set externally before opening the modal.
@@ -88,10 +89,88 @@ export default function ChatModal() {
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
   const [draft, setDraft] = useState('');
+  const [otherTyping, setOtherTyping] = useState<{
+    userId?: string;
+    userName?: string;
+  } | null>(null);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const lastMessageIdRef = useRef<string | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastTypingSentRef = useRef<number>(0);
+
+  // ─── Socket.io for real-time chat ───
+  // Only join the room while the modal is open. The useSocket hook
+  // handles join / leave automatically.
+  const activeRoomId = isOpen ? roomId : undefined;
+  const { socket, isConnected: socketConnected } = useSocket(activeRoomId);
+
+  // Register identity once socket is available
+  useEffect(() => {
+    if (!socket || !isOpen) return;
+    socket.emit('register', {
+      userId: currentUserId,
+      userRole: currentRole,
+      userName: currentName,
+      userEmail,
+    });
+  }, [socket, isOpen, currentUserId, currentRole, currentName, userEmail]);
+
+  // Listen for incoming chat-message + typing events
+  useEffect(() => {
+    if (!socket) return;
+
+    const onChatMessage = (msg: ChatMessage) => {
+      if (!msg || msg.roomId !== roomId) return;
+      setMessages((prev) => {
+        // Dedupe by id (server echoes back the persisted row to all
+        // room members, including the sender)
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+      // Clear typing indicator when a message arrives
+      setOtherTyping(null);
+      // Mark messages from others as read (silent)
+      if (msg.senderId !== currentUserId && msg.senderName !== currentName) {
+        fetch('/api/messages', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ roomId }),
+        }).catch(() => {});
+      }
+    };
+
+    const onTyping = (payload: {
+      roomId: string;
+      userId?: string;
+      userName?: string;
+      isTyping: boolean;
+    }) => {
+      if (!payload || payload.roomId !== roomId) return;
+      if (payload.userId === currentUserId) return; // ignore self
+      if (payload.isTyping) {
+        setOtherTyping({
+          userId: payload.userId,
+          userName: payload.userName,
+        });
+        // Clear after 3 seconds of no updates
+        if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+        typingTimeoutRef.current = setTimeout(() => {
+          setOtherTyping(null);
+        }, 3000);
+      } else {
+        setOtherTyping(null);
+      }
+    };
+
+    socket.on('chat-message', onChatMessage);
+    socket.on('typing', onTyping);
+    return () => {
+      socket.off('chat-message', onChatMessage);
+      socket.off('typing', onTyping);
+    };
+  }, [socket, roomId, currentUserId, currentName]);
 
   // Load messages (called from effect, never setState in effect body)
   const loadMessages = useCallback(async () => {
@@ -129,27 +208,43 @@ export default function ChatModal() {
     loadMessages().finally(() => setLoading(false));
   }, [isOpen, loadMessages]);
 
-  // Polling: every 3 seconds while open
+  // Polling fallback: every 5 seconds while open AND socket not connected
   useEffect(() => {
     if (!isOpen) return;
-    pollingRef.current = setInterval(() => {
-      loadMessages();
-    }, 3000);
+    if (socketConnected) {
+      // Socket is live — no need to poll, but do a slow safety poll every 15s
+      pollingRef.current = setInterval(() => {
+        loadMessages();
+      }, 15000);
+    } else {
+      // Socket offline — poll every 3s as before
+      pollingRef.current = setInterval(() => {
+        loadMessages();
+      }, 3000);
+    }
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
       pollingRef.current = null;
     };
-  }, [isOpen, loadMessages]);
+  }, [isOpen, loadMessages, socketConnected]);
+
+  // Clear typing timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    };
+  }, []);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
     const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
-  }, [messages, loading]);
+  }, [messages, loading, otherTyping]);
 
   const handleClose = useCallback(() => {
     setActiveModal(null);
     setDraft('');
+    setOtherTyping(null);
   }, [setActiveModal]);
 
   const handleSend = useCallback(async () => {
@@ -172,24 +267,52 @@ export default function ChatModal() {
     setDraft('');
     setSending(true);
 
+    // If socket is connected, send via socket (server will persist +
+    // broadcast, including echoing back to us). Otherwise fall back
+    // to a direct HTTP POST.
     try {
-      const res = await fetch('/api/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      if (socket && socketConnected) {
+        socket.emit('chat-message', {
           roomId,
           senderId: currentUserId,
           senderName: currentName,
           senderRole: currentRole,
           content,
-        }),
-      });
-      if (!res.ok) throw new Error('send failed');
-      const data = await res.json();
-      // Replace optimistic with server message
-      setMessages((prev) =>
-        prev.map((m) => (m.id === optimisticId ? (data.message as ChatMessage) : m))
-      );
+        });
+        // The server will broadcast back a chat-message event with the
+        // persisted row; when we receive it, replace the optimistic one.
+        // Set a timeout to remove the optimistic message if no echo
+        // arrives within 4s (in which case we re-fetch via polling).
+        setTimeout(() => {
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === optimisticId)) {
+              // Still present — remove it and reload
+              loadMessages();
+              return prev.filter((m) => m.id !== optimisticId);
+            }
+            return prev;
+          });
+        }, 4000);
+      } else {
+        // HTTP fallback
+        const res = await fetch('/api/messages', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            roomId,
+            senderId: currentUserId,
+            senderName: currentName,
+            senderRole: currentRole,
+            content,
+          }),
+        });
+        if (!res.ok) throw new Error('send failed');
+        const data = await res.json();
+        // Replace optimistic with server message
+        setMessages((prev) =>
+          prev.map((m) => (m.id === optimisticId ? (data.message as ChatMessage) : m))
+        );
+      }
     } catch {
       // Remove optimistic message and notify
       setMessages((prev) => prev.filter((m) => m.id !== optimisticId));
@@ -201,7 +324,39 @@ export default function ChatModal() {
     } finally {
       setSending(false);
     }
-  }, [draft, sending, roomId, currentUserId, currentName, currentRole, toast]);
+  }, [draft, sending, roomId, currentUserId, currentName, currentRole, toast, socket, socketConnected, loadMessages]);
+
+  /** Emit typing events when the user types in the textarea. */
+  const handleDraftChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      setDraft(value);
+      if (!socket || !socketConnected) return;
+      // Throttle typing events to once per second
+      const now = Date.now();
+      if (now - lastTypingSentRef.current > 1000) {
+        lastTypingSentRef.current = now;
+        socket.emit('typing', {
+          roomId,
+          userId: currentUserId,
+          userName: currentName,
+          isTyping: value.trim().length > 0,
+        });
+      }
+    },
+    [socket, socketConnected, roomId, currentUserId, currentName]
+  );
+
+  /** Send a "stopped typing" event on blur / submit. */
+  const emitStopTyping = useCallback(() => {
+    if (!socket || !socketConnected) return;
+    socket.emit('typing', {
+      roomId,
+      userId: currentUserId,
+      userName: currentName,
+      isTyping: false,
+    });
+  }, [socket, socketConnected, roomId, currentUserId, currentName]);
 
   const recipientBadge = recipientRole ? ROLE_BADGES[recipientRole] : undefined;
 
@@ -263,7 +418,23 @@ export default function ChatModal() {
                       </span>
                     )}
                   </div>
-                  <p className="text-[#10E07A] text-[11px] font-medium">Online</p>
+                  <p
+                    className={`text-[11px] font-medium flex items-center gap-1 ${
+                      socketConnected ? 'text-[#10E07A]' : 'text-[#FB7185]'
+                    }`}
+                  >
+                    {socketConnected ? (
+                      <>
+                        <Wifi className="w-3 h-3" />
+                        Online
+                      </>
+                    ) : (
+                      <>
+                        <WifiOff className="w-3 h-3" />
+                        Reconnecting…
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
             </div>
@@ -327,6 +498,30 @@ export default function ChatModal() {
                   );
                 })
               )}
+
+              {/* Typing indicator */}
+              {otherTyping && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-1.5"
+                >
+                  <div className="bg-[#0F1118] border border-white/5 px-3.5 py-3 rounded-2xl rounded-bl-md flex items-center gap-1">
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        animate={{ y: [0, -3, 0], opacity: [0.4, 1, 0.4] }}
+                        transition={{
+                          duration: 0.9,
+                          repeat: Infinity,
+                          delay: i * 0.15,
+                        }}
+                        className="w-1.5 h-1.5 rounded-full bg-white/60"
+                      />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
             {/* ─── Composer ─── */}
@@ -335,10 +530,12 @@ export default function ChatModal() {
                 <div className="flex-1 flex items-center rounded-2xl bg-[#0F1118] border border-white/8 focus-within:border-[#10E07A]/30 transition-all">
                   <textarea
                     value={draft}
-                    onChange={(e) => setDraft(e.target.value)}
+                    onChange={handleDraftChange}
+                    onBlur={emitStopTyping}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault();
+                        emitStopTyping();
                         handleSend();
                       }
                     }}
@@ -348,7 +545,10 @@ export default function ChatModal() {
                   />
                 </div>
                 <button
-                  onClick={handleSend}
+                  onClick={() => {
+                    emitStopTyping();
+                    handleSend();
+                  }}
                   disabled={!draft.trim() || sending}
                   className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[#10E07A] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
                   aria-label="Send message"

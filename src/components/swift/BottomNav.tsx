@@ -3,6 +3,7 @@
 import { useAppStore, type TabId } from '@/lib/store';
 import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings, Clapperboard } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { track } from '@/lib/analytics';
 
 interface NavTab {
   id: TabId;
@@ -52,7 +53,10 @@ export default function BottomNav() {
         return (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              track('tab_switch', { tab: tab.id });
+            }}
             className="relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full rounded-2xl transition-colors duration-200"
             aria-label={tab.label}
             aria-current={isActive ? 'page' : undefined}

@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { allProducts, formatNaira } from '@/lib/data';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { track } from '@/lib/analytics';
 
 interface Review {
   id: string;
@@ -81,6 +82,8 @@ export default function ProductDetailModal() {
   useEffect(() => {
     if (!isOpen || !product?.id) return;
     let cancelled = false;
+    // Analytics: track product view
+    track('product_view', { productId: product.id, name: product.name });
     const fetchReviews = async () => {
       setFetchingReviews(true);
       try {
@@ -122,6 +125,7 @@ export default function ProductDetailModal() {
       image: product.image || '',
       quantity,
     });
+    track('add_to_cart', { productId: product.id, name: product.name, quantity, price: salePrice });
     toast({ title: 'Added to Cart! 🛒', description: `${quantity}x ${product.name}` });
     setActiveModal(null);
     setQuantity(1);
@@ -187,6 +191,7 @@ export default function ProductDetailModal() {
         setNewComment('');
         setNewRating(5);
         setShowReviewForm(false);
+        track('review_submit', { productId: product.id, rating: newRating });
         toast({ title: 'Review Posted! ⭐', description: 'Thanks for sharing your feedback' });
       } else {
         toast({ title: 'Could not post review', description: data.message || 'Please try again', variant: 'destructive' });

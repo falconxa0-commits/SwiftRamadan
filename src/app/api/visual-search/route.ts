@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -102,6 +103,10 @@ function normalizeResult(raw: unknown): VisualSearchResult | null {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 AI requests per minute per IP (VLM calls are expensive)
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
   let image: string | undefined;
   try {
     const body = await request.json();

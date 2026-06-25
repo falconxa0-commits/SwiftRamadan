@@ -5,6 +5,7 @@ import { ChefHat, Mic, Paperclip, Sparkles, X, Send, User, Minus } from 'lucide-
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { track } from '@/lib/analytics';
 
 interface Message {
   id: number;
@@ -73,6 +74,7 @@ export default function AIChatWidget() {
     setMessages((prev) => [...prev, { id: Date.now(), from: 'user', text: userMessage }]);
     setMessage('');
     setIsLoading(true);
+    track('ai_chat_message', { length: userMessage.length });
     try {
       const res = await fetch('/api/chat', {
         method: 'POST',

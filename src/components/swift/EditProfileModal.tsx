@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -11,9 +11,11 @@ import {
   Loader2,
   Check,
   RefreshCw,
+  UploadCloud,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { useUpload } from '@/hooks/use-upload';
 
 const LAGOS_AREAS = [
   'Lekki',
@@ -70,6 +72,8 @@ export default function EditProfileModal() {
     setUserAvatar,
   } = useAppStore();
   const { toast } = useToast();
+  const { upload, uploading: avatarUploading } = useUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const isOpen = activeModal === 'edit-profile';
 
   const [name, setName] = useState(userName || '');
@@ -86,19 +90,28 @@ export default function EditProfileModal() {
     toast({ title: 'Avatar generated', description: `Created from initials: ${getInitials(name || userName)}` });
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
       toast({ title: 'Invalid file', description: 'Please pick a JPG, PNG, or WEBP image.', variant: 'destructive' });
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setAvatar(reader.result as string);
-      toast({ title: 'Avatar selected', description: file.name });
-    };
-    reader.readAsDataURL(file);
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'Image too large', description: 'Max size is 5 MB.', variant: 'destructive' });
+      return;
+    }
+    const url = await upload(file);
+    if (url) {
+      setAvatar(url);
+      toast({ title: 'Avatar uploaded! ✅', description: file.name });
+    }
+    // Reset input value so picking the same file twice still fires onChange
+    if (e.target) e.target.value = '';
+  };
+
+  const handleAvatarClick = () => {
+    if (!avatarUploading) fileInputRef.current?.click();
   };
 
   const handleSave = async () => {
@@ -209,42 +222,85 @@ export default function EditProfileModal() {
                 {/* Avatar */}
                 <div className="flex flex-col items-center gap-3">
                   <div className="relative">
-                    <div
-                      className={`w-24 h-24 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center border-2 border-white/10 overflow-hidden`}
-                      style={{ boxShadow: '0 0 24px rgba(16,224,122,0.25)' }}
-                    >
-                      {avatar ? (
-                        <img
-                          src={avatar}
-                          alt="Avatar"
-                          className="w-full h-full object-cover"
-                          onError={() => setAvatar('')}
-                        />
-                      ) : (
-                        <span className="text-white text-3xl font-black">{initials}</span>
-                      )}
-                    </div>
-                    <label
-                      className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#10E07A] flex items-center justify-center border-2 border-[#06070B] cursor-pointer hover:bg-[#0eB060] transition-colors active:scale-95"
-                      title="Change avatar"
-                    >
-                      <Camera className="w-4 h-4 text-[#06070B]" />
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                  </div>
-                  <div className="flex items-center gap-2">
                     <button
-                      onClick={handleGenerateFromInitials}
-                      className="flex items-center gap-1.5 text-[#10E07A] text-xs font-bold hover:underline"
+                      type="button"
+                      onClick={handleAvatarClick}
+                      disabled={avatarUploading}
+                      className="block focus:outline-none"
+                      aria-label="Change avatar"
                     >
-                      <RefreshCw className="w-3 h-3" />
-                      Generate from initials
+                      <div
+                        className={`w-24 h-24 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center border-2 border-white/10 overflow-hidden relative transition-transform ${
+                          avatarUploading ? 'opacity-60' : 'hover:scale-[1.02] active:scale-[0.98]'
+                        }`}
+                        style={{ boxShadow: '0 0 24px rgba(16,224,122,0.25)' }}
+                      >
+                        {avatar && !avatarUploading ? (
+                          <img
+                            src={avatar}
+                            alt="Avatar"
+                            className="w-full h-full object-cover"
+                            onError={() => setAvatar('')}
+                          />
+                        ) : avatarUploading ? (
+                          <Loader2 className="w-8 h-8 text-white animate-spin" />
+                        ) : (
+                          <span className="text-white text-3xl font-black">{initials}</span>
+                        )}
+                      </div>
+                      <label
+                        className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#10E07A] flex items-center justify-center border-2 border-[#06070B] cursor-pointer hover:bg-[#0eB060] transition-colors active:scale-95"
+                        title="Change avatar"
+                      >
+                        {avatarUploading ? (
+                          <Loader2 className="w-4 h-4 text-[#06070B] animate-spin" />
+                        ) : (
+                          <Camera className="w-4 h-4 text-[#06070B]" />
+                        )}
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp,image/gif"
+                          className="hidden"
+                          onChange={handleFileChange}
+                          disabled={avatarUploading}
+                        />
+                      </label>
                     </button>
+                  </div>
+                  <div className="flex flex-col items-center gap-1.5">
+                    {avatarUploading ? (
+                      <p className="text-[#10E07A] text-xs font-bold flex items-center gap-1.5">
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                        Uploading avatar…
+                      </p>
+                    ) : avatar.startsWith('/uploads/') ? (
+                      <p className="text-[#10E07A] text-xs font-bold flex items-center gap-1">
+                        <Check className="w-3 h-3" />
+                        Avatar uploaded
+                      </p>
+                    ) : null}
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={handleAvatarClick}
+                        disabled={avatarUploading}
+                        className="flex items-center gap-1.5 text-[#10E07A] text-xs font-bold hover:underline disabled:opacity-50"
+                      >
+                        <UploadCloud className="w-3 h-3" />
+                        Upload photo
+                      </button>
+                      <span className="text-white/20 text-xs">·</span>
+                      <button
+                        onClick={handleGenerateFromInitials}
+                        disabled={avatarUploading}
+                        className="flex items-center gap-1.5 text-white/60 text-xs font-bold hover:text-[#10E07A] hover:underline disabled:opacity-50"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        Use initials
+                      </button>
+                    </div>
+                    <p className="text-white/30 text-[10px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
                   </div>
                 </div>
 
@@ -304,13 +360,18 @@ export default function EditProfileModal() {
                 <div className="pt-2">
                   <button
                     onClick={handleSave}
-                    disabled={saving || !name.trim()}
+                    disabled={saving || avatarUploading || !name.trim()}
                     className="w-full py-3.5 rounded-xl bg-[#10E07A] text-[#06070B] font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
                   >
                     {saving ? (
                       <>
                         <Loader2 className="w-4 h-4 animate-spin" />
                         Saving…
+                      </>
+                    ) : avatarUploading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Uploading avatar…
                       </>
                     ) : (
                       <>

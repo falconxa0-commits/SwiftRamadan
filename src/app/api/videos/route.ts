@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, videoCreateSchema } from '@/lib/validation';
 
 // GET /api/videos — fetch reels feed (optionally by category)
 export async function GET(req: NextRequest) {
+  // Rate limit: 100 requests per minute per IP
+  const rateLimited = checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const category = req.nextUrl.searchParams.get('category');
     const viewer = req.nextUrl.searchParams.get('viewer') || 'guest';
@@ -35,9 +41,17 @@ export async function GET(req: NextRequest) {
 
 // POST /api/videos — upload a new reel
 export async function POST(req: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await req.json();
-    const { title, description, videoUrl, thumbnailUrl, authorName, authorHandle, authorAvatar, category } = body;
+
+    // Validate payload
+    const v = validateInput(videoCreateSchema, body);
+    if (!v.success) return v.response;
+    const { title, description, videoUrl, thumbnailUrl, authorName, authorHandle, authorAvatar, category } = v.data;
 
     if (!title || !videoUrl || !authorName) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

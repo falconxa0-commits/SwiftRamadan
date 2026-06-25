@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, MessageCircle, Share2, Bookmark, Music2, Play, Volume2, VolumeX, ShoppingBag, UserPlus, UserCheck } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { track } from '@/lib/analytics';
 
 export interface ReelVideo {
   id: string;
@@ -123,6 +124,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
     // Optimistic update
     const prev = saved;
     setSaved(!prev);
+    track('video_save', { videoId: video.id, saved: !prev });
     try {
       const res = await fetch(`/api/videos/${video.id}/save`, {
         method: 'POST',
@@ -170,6 +172,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
     setFollowPending(true);
     const prev = following;
     setFollowing(!prev);
+    track('follow_user', { followeeId: authorId || '', followeeName: video.authorName, following: !prev });
     try {
       const res = await fetch('/api/users/follow', {
         method: 'POST',
@@ -226,6 +229,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
       // Record a view once
       if (!viewRecordedRef.current) {
         viewRecordedRef.current = true;
+        track('video_view', { videoId: video.id, author: video.authorName });
         fetch(`/api/videos/${video.id}/share`, { method: 'PUT' }).catch(() => {});
       }
     } else {
@@ -261,6 +265,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
 
   const handleLike = () => {
     onLike(video);
+    track('video_like', { videoId: video.id, liked: !video.liked });
     if (!video.liked) {
       setShowHeart(true);
       setTimeout(() => setShowHeart(false), 800);
@@ -377,7 +382,10 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
 
         {/* Comments */}
         <button
-          onClick={() => onOpenComments(video)}
+          onClick={() => {
+            track('video_comment', { videoId: video.id });
+            onOpenComments(video);
+          }}
           className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           aria-label="Comments"
         >
@@ -387,7 +395,10 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
 
         {/* Share */}
         <button
-          onClick={() => onShare(video)}
+          onClick={() => {
+            track('video_share', { videoId: video.id });
+            onShare(video);
+          }}
           className="flex flex-col items-center gap-1 active:scale-90 transition-transform"
           aria-label="Share"
         >

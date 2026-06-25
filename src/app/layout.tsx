@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import PWARegister from "@/components/PWARegister";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
@@ -10,13 +12,61 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "SwiftRamadan Beta — Smart Kitchen & AI Chef Safa",
-  description: "Beta: Ramadan food delivery, live AI cooking coach, smart pantry, community, and logistics for Lagos, Nigeria.",
-  keywords: ["SwiftRamadan", "Ramadan", "Beta", "AI Chef", "Smart Kitchen", "Food Delivery", "Lagos", "Iftar", "Sahur"],
-  authors: [{ name: "SwiftRamadan Team" }],
-  icons: {
-    icon: "/swiftramadan-logo.png",
+  title: {
+    default: "SwiftRamadan — Smart Kitchen & Halal Delivery",
+    template: "%s | SwiftRamadan",
   },
+  description:
+    "Order iftar meals, groceries, and more in Lagos. Deliver before Maghrib. AI-powered meal planning, SwiftReels food shorts, and Ramadan essentials.",
+  keywords: [
+    "Ramadan",
+    "Iftar",
+    "Sahur",
+    "Halal food",
+    "Lagos delivery",
+    "Jollof rice",
+    "Suya",
+    "Dates",
+    "Groceries",
+    "Nigeria",
+  ],
+  authors: [{ name: "SwiftRamadan" }],
+  creator: "SwiftRamadan",
+  publisher: "SwiftRamadan",
+  manifest: "/manifest.json",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "SwiftRamadan — Smart Kitchen & Halal Delivery",
+    description:
+      "Order iftar meals, groceries, and more in Lagos. Deliver before Maghrib.",
+    url: "/",
+    siteName: "SwiftRamadan",
+    type: "website",
+    locale: "en_NG",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SwiftRamadan — Smart Kitchen & Halal Delivery",
+    description:
+      "Order iftar meals, groceries, and more in Lagos. Deliver before Maghrib.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#10E07A",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -35,7 +85,8 @@ export default function RootLayout({
       <body
         className={`${plusJakarta.variable} antialiased bg-[#05070A] text-white font-sans`}
       >
-        {children}
+        <PWARegister />
+        <ErrorBoundary>{children}</ErrorBoundary>
         <Toaster />
       </body>
     </html>

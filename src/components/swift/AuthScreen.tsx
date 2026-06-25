@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { toast } from '@/hooks/use-toast';
+import { track } from '@/lib/analytics';
 import {
   X,
   ArrowLeft,
@@ -258,6 +259,7 @@ function LoginScreen() {
         setUserRole(loginRole);
         setIsLoggedIn(true);
         setShowAuth(null);
+        track('login', { role: loginRole, method: 'password' });
         toast({ title: `Welcome back!`, description: `Signed in as ${config.label}` });
       } else {
         // Demo mode: allow login even without DB account for seamless experience
@@ -266,6 +268,7 @@ function LoginScreen() {
         setUserRole(loginRole);
         setIsLoggedIn(true);
         setShowAuth(null);
+        track('login', { role: loginRole, method: 'demo' });
         toast({ title: `Welcome back!`, description: `Signed in as ${config.label} (demo)` });
       }
     } catch {
@@ -275,6 +278,7 @@ function LoginScreen() {
       setUserRole(loginRole);
       setIsLoggedIn(true);
       setShowAuth(null);
+      track('login', { role: loginRole, method: 'fallback' });
       toast({ title: `Welcome back!`, description: `Signed in as ${config.label}` });
     } finally {
       setLoading(false);
@@ -992,6 +996,7 @@ function OTPScreen() {
 
   const handleVerifySuccess = () => {
     setIsLoggedIn(true);
+    track('signup', { role: userRole || 'customer' });
     if (userRole && userRole !== 'customer') {
       setShowOnboarding(true);
       setShowAuth(null);
@@ -1178,6 +1183,7 @@ function RoleScreen() {
       if (isLoggedIn) {
         // Already logged in - just switch role and go back to main app
         setShowAuth(null);
+        track('role_switch', { role: selected });
         toast({
           title: 'Role Switched! 🔄',
           description: `You're now using SwiftRamadan as a ${selected}.`,

@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import { Plus, Film, Loader2, Bookmark } from 'lucide-react';
+import { Plus, Film, Bookmark } from 'lucide-react';
 import VideoCard, { type ReelVideo } from './VideoCard';
 import VideoCommentsSheet from './VideoCommentsSheet';
 import UploadVideoModal from './UploadVideoModal';
 import { useAppStore } from '@/lib/store';
+import { ReelsTabSkeleton } from './Skeletons';
 
 const CATEGORIES = [
   { id: 'all', label: 'For You' },
@@ -182,9 +183,7 @@ export default function ReelsTab() {
 
       {/* ── Vertical feed ── */}
       {loading ? (
-        <div className="flex h-full items-center justify-center">
-          <Loader2 className="w-8 h-8 text-[#10E07A] animate-spin" />
-        </div>
+        <ReelsTabSkeleton />
       ) : videos.length === 0 ? (
         <div className="flex h-full flex-col items-center justify-center px-8 text-center">
           <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">

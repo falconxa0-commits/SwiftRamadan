@@ -6,6 +6,7 @@ import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Mo
 import { useAppStore, OrderItem } from '@/lib/store';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import { track } from '@/lib/analytics';
 
 interface SavedAddress {
   id: string;
@@ -108,6 +109,8 @@ export default function CheckoutModal() {
   useEffect(() => {
     if (!isOpen) return;
     let cancelled = false;
+    // Analytics: track checkout initiation
+    track('checkout_start', { itemCount: cartItems.length, total: total || grossTotal });
     const fetchAddresses = async () => {
       setFetchingAddresses(true);
       try {
@@ -177,6 +180,7 @@ export default function CheckoutModal() {
         setCouponDiscount(data.discount || 0);
         setCouponMessage(data.message || `Coupon applied — you saved ${formatNaira(data.discount || 0)}`);
         setAppliedCouponCode(data.code || couponCode.trim().toUpperCase());
+        track('coupon_apply', { code: data.code || couponCode.trim().toUpperCase(), discount: data.discount || 0 });
         toast({ title: 'Coupon Applied! 🎉', description: data.message });
       } else {
         setCouponState('error');
@@ -335,6 +339,9 @@ export default function CheckoutModal() {
     clearCart();
     setCheckoutStep(4);
     setPlacing(false);
+
+    track('order_placed', { orderId: order.id, total: snapshotTotal, items: snapshotItems.length, paymentMethod });
+    track('checkout_complete', { orderId: order.id, total: snapshotTotal, paymentMethod });
 
     toast({
       title: 'Order Placed! 🎉',

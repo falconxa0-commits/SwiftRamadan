@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { X, Upload, Film, Link2, Loader2, Check, Sparkles } from 'lucide-react';
+import { X, Upload, Film, Link2, Loader2, Check, Sparkles, Image as ImageIcon, UploadCloud } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useUpload } from '@/hooks/use-upload';
 
 interface UploadVideoModalProps {
   onClose: () => void;
@@ -33,6 +34,8 @@ export default function UploadVideoModal({
   authorHandle,
 }: UploadVideoModalProps) {
   const { toast } = useToast();
+  const { upload, uploading: thumbUploading } = useUpload();
+  const thumbInputRef = useRef<HTMLInputElement>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [videoUrl, setVideoUrl] = useState('');
@@ -40,6 +43,40 @@ export default function UploadVideoModal({
   const [category, setCategory] = useState('cooking');
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  const handleThumbFile = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file',
+        description: 'Please pick a JPG, PNG, WEBP or GIF image.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Image too large',
+        description: 'Max size is 5 MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const url = await upload(file);
+    if (url) {
+      setThumbnailUrl(url);
+      toast({
+        title: 'Thumbnail uploaded! 🖼️',
+        description: file.name,
+      });
+    }
+  };
+
+  const handleThumbInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleThumbFile(file);
+    if (e.target) e.target.value = '';
+  };
 
   const handleSubmit = async () => {
     if (!title.trim() || !videoUrl.trim()) {
@@ -216,15 +253,80 @@ export default function UploadVideoModal({
               </div>
             </div>
 
-            {/* Thumbnail URL (optional) */}
+            {/* Thumbnail upload + URL (optional) */}
             <div>
-              <label className="text-white/60 text-xs font-bold uppercase tracking-wider">Thumbnail URL <span className="text-white/30 normal-case font-normal">(optional)</span></label>
-              <input
-                value={thumbnailUrl}
-                onChange={(e) => setThumbnailUrl(e.target.value)}
-                placeholder="/images/meals/meal-jollof.png"
-                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors font-mono"
-              />
+              <label className="text-white/60 text-xs font-bold uppercase tracking-wider">Thumbnail <span className="text-white/30 normal-case font-normal">(optional)</span></label>
+
+              {/* Preview / upload zone */}
+              <div
+                className="mt-1.5 relative h-28 rounded-xl overflow-hidden border border-white/10 bg-white/5"
+                onClick={() => !thumbUploading && thumbInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    thumbInputRef.current?.click();
+                  }
+                }}
+              >
+                {thumbnailUrl ? (
+                  <>
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ backgroundImage: `url(${thumbnailUrl})` }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
+                      <span className="px-2 py-0.5 rounded-md bg-black/60 text-white/80 text-[9px] font-bold flex items-center gap-1">
+                        <Check className="w-3 h-3 text-[#10E07A]" />
+                        Uploaded
+                      </span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setThumbnailUrl('');
+                        }}
+                        className="px-2 py-0.5 rounded-md bg-black/60 text-white/80 text-[9px] font-bold hover:bg-black/80"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </>
+                ) : thumbUploading ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin mb-1" />
+                    <p className="text-white/60 text-[10px] font-bold">Uploading…</p>
+                  </div>
+                ) : (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+                    <div className="w-9 h-9 rounded-xl bg-[#10E07A]/15 border border-[#10E07A]/30 flex items-center justify-center mb-1">
+                      <UploadCloud className="w-5 h-5 text-[#10E07A]" />
+                    </div>
+                    <p className="text-white/80 text-[11px] font-bold">Tap to upload thumbnail</p>
+                    <p className="text-white/40 text-[9px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
+                  </div>
+                )}
+                <input
+                  ref={thumbInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleThumbInputChange}
+                />
+              </div>
+
+              {/* URL override (kept for manual paste) */}
+              <div className="relative mt-2">
+                <ImageIcon className="w-3.5 h-3.5 text-white/30 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <input
+                  value={thumbnailUrl.startsWith('/uploads/') ? '' : thumbnailUrl}
+                  onChange={(e) => setThumbnailUrl(e.target.value)}
+                  placeholder="…or paste a thumbnail URL"
+                  disabled={thumbUploading}
+                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors disabled:opacity-50 font-mono"
+                />
+              </div>
             </div>
 
             {/* Author note */}
@@ -238,12 +340,16 @@ export default function UploadVideoModal({
             {/* Submit */}
             <button
               onClick={handleSubmit}
-              disabled={submitting || !title.trim() || !videoUrl.trim()}
+              disabled={submitting || thumbUploading || !title.trim() || !videoUrl.trim()}
               className="w-full h-12 rounded-xl bg-[#10E07A] text-[#04140C] font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform shadow-[0_0_24px_rgba(16,224,122,0.35)]"
             >
               {submitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" /> Publishing...
+                </>
+              ) : thumbUploading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" /> Uploading thumbnail...
                 </>
               ) : (
                 <>

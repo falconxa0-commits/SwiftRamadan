@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, couponValidateSchema } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -7,9 +9,17 @@ export const runtime = 'nodejs';
 // Validates a coupon code against the cart total and returns the discount amount
 // and new total. Increments `uses` on successful validation.
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP (coupon validation mutates DB)
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
-    const { code, cartTotal } = body;
+
+    // Validate payload
+    const v = validateInput(couponValidateSchema, body);
+    if (!v.success) return v.response;
+    const { code, cartTotal } = v.data;
 
     if (!code || typeof code !== 'string') {
       return NextResponse.json(

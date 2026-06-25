@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Image as ImageIcon, Loader2, Check, Tag, Truck, Plus } from 'lucide-react';
+import { X, Loader2, Check, Tag, Truck, Plus, UploadCloud } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { useUpload } from '@/hooks/use-upload';
 
 /* ──────────────────── Constants ──────────────────── */
 
@@ -30,6 +31,9 @@ const SAMPLE_IMAGES = [
 export default function VendorAddProductModal() {
   const { activeModal, setActiveModal, userEmail } = useAppStore();
   const { toast } = useToast();
+  const { upload, uploading } = useUpload();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragOver, setDragOver] = useState(false);
   const isOpen = activeModal === 'vendor-add-product';
 
   const [name, setName] = useState('');
@@ -47,12 +51,56 @@ export default function VendorAddProductModal() {
     setCategory('meals');
     setImage('');
     setDeliveryTime('30 min');
+    setDragOver(false);
   };
 
   const handleClose = () => {
     if (submitting) return;
     setActiveModal(null);
     setTimeout(resetForm, 200);
+  };
+
+  /** Handle a single file selected via input or drag-drop. */
+  const handleFileSelected = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file',
+        description: 'Please pick a JPG, PNG, WEBP or GIF image.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'Image too large',
+        description: 'Max size is 5 MB.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    const url = await upload(file);
+    if (url) {
+      setImage(url);
+      toast({
+        title: 'Image uploaded! ✅',
+        description: file.name,
+      });
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) handleFileSelected(file);
+    // Reset input value so picking the same file twice still fires onChange
+    if (e.target) e.target.value = '';
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileSelected(file);
   };
 
   const handleSubmit = async () => {
@@ -153,13 +201,25 @@ export default function VendorAddProductModal() {
             </div>
 
             <div className="px-4 pb-32 pt-4">
-              {/* Image Preview */}
+              {/* Image Preview + Upload */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="rounded-2xl border border-white/5 overflow-hidden bg-[#0F1118] mb-4"
               >
-                <div className="relative h-44 bg-white/5 flex items-center justify-center">
+                <div
+                  className={`relative h-44 flex items-center justify-center transition-all ${
+                    dragOver
+                      ? 'bg-[#F5C451]/10 ring-2 ring-[#F5C451]/40'
+                      : 'bg-white/5'
+                  }`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragOver(true);
+                  }}
+                  onDragLeave={() => setDragOver(false)}
+                  onDrop={handleDrop}
+                >
                   {image ? (
                     <>
                       <div
@@ -171,22 +231,55 @@ export default function VendorAddProductModal() {
                         <span className="px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold">
                           Preview
                         </span>
-                        <button
-                          onClick={() => setImage('')}
-                          className="px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold hover:bg-black/70"
-                        >
-                          Remove
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploading}
+                            className="px-2 py-1 rounded-md bg-[#F5C451]/80 backdrop-blur-sm text-[#06070B] text-[10px] font-bold hover:bg-[#F5C451] disabled:opacity-50"
+                          >
+                            Change
+                          </button>
+                          <button
+                            onClick={() => setImage('')}
+                            disabled={uploading}
+                            className="px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold hover:bg-black/70 disabled:opacity-50"
+                          >
+                            Remove
+                          </button>
+                        </div>
                       </div>
                     </>
-                  ) : (
+                  ) : uploading ? (
                     <div className="flex flex-col items-center text-center px-4">
-                      <ImageIcon className="w-10 h-10 text-white/20 mb-2" />
-                      <p className="text-white/30 text-xs font-semibold">No image selected</p>
-                      <p className="text-white/20 text-[10px] mt-0.5">Pick a sample below or paste a URL</p>
+                      <Loader2 className="w-10 h-10 text-[#F5C451] animate-spin mb-2" />
+                      <p className="text-white/60 text-xs font-bold">Uploading…</p>
+                      <p className="text-white/30 text-[10px] mt-0.5">Saving to /uploads</p>
                     </div>
+                  ) : (
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="flex flex-col items-center text-center px-4 group"
+                      type="button"
+                    >
+                      <div className="w-12 h-12 rounded-2xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                        <UploadCloud className="w-6 h-6 text-[#F5C451]" />
+                      </div>
+                      <p className="text-white text-xs font-bold">Tap to upload</p>
+                      <p className="text-white/30 text-[10px] mt-0.5">
+                        or drop an image here • JPG, PNG, WEBP, GIF (max 5 MB)
+                      </p>
+                    </button>
                   )}
                 </div>
+
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="hidden"
+                  onChange={handleFileInputChange}
+                />
 
                 {/* Quick image picker */}
                 <div className="p-3">
@@ -315,30 +408,42 @@ export default function VendorAddProductModal() {
                   </div>
                 </div>
 
-                {/* Image URL */}
+                {/* Image URL (optional override) */}
                 <div>
                   <label className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1.5 block">
-                    Image URL
+                    Image URL <span className="text-white/30 normal-case font-normal">(optional — overrides upload)</span>
                   </label>
                   <input
                     type="text"
                     placeholder="https://... or pick from samples above"
-                    value={image}
+                    value={image.startsWith('/uploads/') ? '' : image}
                     onChange={(e) => setImage(e.target.value)}
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors"
+                    disabled={uploading}
+                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors disabled:opacity-50"
                   />
+                  {image.startsWith('/uploads/') && (
+                    <p className="text-[#10E07A] text-[10px] mt-1 flex items-center gap-1">
+                      <Check className="w-3 h-3" />
+                      Uploaded image will be used — clear the URL field to override
+                    </p>
+                  )}
                 </div>
 
                 {/* Submit Button */}
                 <button
                   onClick={handleSubmit}
-                  disabled={submitting}
+                  disabled={submitting || uploading}
                   className="w-full mt-2 py-3.5 rounded-xl bg-[#F5C451] text-[#06070B] text-sm font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed gold-glow"
                 >
                   {submitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
                       Adding Product...
+                    </>
+                  ) : uploading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Uploading image...
                     </>
                   ) : (
                     <>

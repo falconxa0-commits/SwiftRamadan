@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
 
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 
@@ -123,7 +125,11 @@ const staticProducts = [
 
 /* ──────────── GET: static + DB-backed products ──────────── */
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // Rate limit: 100 requests per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const dbProducts = await db.product.findMany({
       orderBy: { createdAt: 'desc' },
@@ -187,9 +193,17 @@ function serialize(p: Awaited<ReturnType<typeof db.product.findFirst>>) {
 /* ──────────── POST: create product ──────────── */
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
-    const { name, description, price, image, category, vendorId, deliveryTime } = body;
+
+    // Validate payload — schema strips unknown fields silently
+    const v = validateInput(productCreateSchema, body);
+    if (!v.success) return v.response;
+    const { name, description, price, image, category, vendorId, deliveryTime } = v.data;
 
     if (!name || typeof name !== 'string' || !name.trim()) {
       return NextResponse.json(
@@ -233,6 +247,10 @@ export async function POST(request: NextRequest) {
 /* ──────────── PUT: update product (partial) ──────────── */
 
 export async function PUT(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { id, ...fields } = body;
@@ -243,6 +261,10 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    // Validate the updatable fields (schema strips unknown fields like id silently)
+    const v = validateInput(productUpdateSchema, fields);
+    if (!v.success) return v.response;
 
     const data: Record<string, unknown> = {};
     const allowed = [
@@ -285,6 +307,10 @@ export async function PUT(request: NextRequest) {
 /* ──────────── DELETE: delete product ──────────── */
 
 export async function DELETE(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

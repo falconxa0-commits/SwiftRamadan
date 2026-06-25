@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, chatMessageSchema } from '@/lib/validation';
 
 // ─────────────────────────────────────────────────────────────
 // GET /api/messages?roomId=xxx — list messages in room, oldest first
 // ─────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
+  // Rate limit: 100 requests per minute per IP
+  const rateLimited = checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const url = new URL(req.url);
     const roomId = url.searchParams.get('roomId');
@@ -30,14 +36,17 @@ export async function GET(req: NextRequest) {
 // Body: { roomId, senderId?, senderName, senderRole, content }
 // ─────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await req.json().catch(() => ({}));
 
-    const roomId = String(body.roomId || '');
-    const senderName = String(body.senderName || 'Guest');
-    const senderRole = String(body.senderRole || 'customer');
-    const content = String(body.content || '').slice(0, 4000);
-    const senderId = body.senderId ? String(body.senderId) : null;
+    // Validate payload
+    const v = validateInput(chatMessageSchema, body);
+    if (!v.success) return v.response;
+    const { roomId, senderName, senderRole, content, senderId } = v.data;
 
     if (!roomId || !content.trim()) {
       return NextResponse.json({ error: 'roomId and content are required' }, { status: 400 });
@@ -46,7 +55,7 @@ export async function POST(req: NextRequest) {
     const message = await db.chatMessage.create({
       data: {
         roomId,
-        senderId,
+        senderId: senderId ?? null,
         senderName,
         senderRole,
         content,
@@ -66,6 +75,10 @@ export async function POST(req: NextRequest) {
 // Body: { roomId, messageIds? }  (if messageIds omitted → mark ALL unread in room as read)
 // ─────────────────────────────────────────────────────────────
 export async function PUT(req: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await req.json().catch(() => ({}));
     const roomId = String(body.roomId || '');

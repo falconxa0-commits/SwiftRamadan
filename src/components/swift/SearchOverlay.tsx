@@ -5,6 +5,7 @@ import { Search, X, Clock, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { formatNaira, popularSearches } from '@/lib/data';
+import { track } from '@/lib/analytics';
 
 interface SearchResult {
   id: number;
@@ -71,6 +72,7 @@ export default function SearchOverlay() {
       return;
     }
     setIsSearching(true);
+    track('search', { query: q.trim() });
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}`);
       const data = await res.json();

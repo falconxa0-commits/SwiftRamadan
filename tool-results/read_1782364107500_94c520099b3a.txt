@@ -1,0 +1,694 @@
+     1→'use client';
+     2→
+     3→import { useEffect, useState, useCallback, useRef } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import {
+     6→  Bike, Star, Check, Clock,
+     7→  MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
+     8→  Package, Loader2, CheckCircle, Moon,
+     9→} from 'lucide-react';
+    10→import { useAppStore } from '@/lib/store';
+    11→import { formatNaira } from '@/lib/data';
+    12→import { toast } from '@/hooks/use-toast';
+    13→
+    14→/* ───────── Types ───────── */
+    15→
+    16→interface OrderItem {
+    17→  name: string;
+    18→  qty: number;
+    19→  price: number;
+    20→}
+    21→
+    22→interface RiderOrder {
+    23→  id: string;
+    24→  status: string;
+    25→  total: number;
+    26→  riderName: string | null;
+    27→  items: OrderItem[];
+    28→  progress: number;
+    29→  createdAt: string;
+    30→}
+    31→
+    32→interface WeeklyEarning {
+    33→  day: string;
+    34→  amount: number;
+    35→}
+    36→
+    37→interface RiderData {
+    38→  riderName: string;
+    39→  online: boolean;
+    40→  rating: number;
+    41→  completedToday: number;
+    42→  earningsToday: number;
+    43→  totalEarnings: number;
+    44→  activeDeliveries: RiderOrder[];
+    45→  availableDeliveries: RiderOrder[];
+    46→  recentDeliveries: RiderOrder[];
+    47→  weeklyEarnings: WeeklyEarning[];
+    48→  vehicleType: string;
+    49→  area: string;
+    50→}
+    51→
+    52→/* ───────── Animation variants ───────── */
+    53→
+    54→const staggerContainer = {
+    55→  hidden: { opacity: 0 },
+    56→  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+    57→};
+    58→
+    59→const staggerItem = {
+    60→  hidden: { opacity: 0, y: 12 },
+    61→  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+    62→};
+    63→
+    64→/* ───────── Helpers ───────── */
+    65→
+    66→function itemsSummary(items: OrderItem[]): string {
+    67→  if (!items || items.length === 0) return 'No items';
+    68→  return items.map((i) => `${i.qty}x ${i.name}`).join(', ');
+    69→}
+    70→
+    71→function shortId(id: string): string {
+    72→  return id.slice(-6).toUpperCase();
+    73→}
+    74→
+    75→function timeAgo(iso: string): string {
+    76→  const diff = Date.now() - new Date(iso).getTime();
+    77→  const mins = Math.floor(diff / 60000);
+    78→  if (mins < 1) return 'just now';
+    79→  if (mins < 60) return `${mins}m ago`;
+    80→  const hrs = Math.floor(mins / 60);
+    81→  if (hrs < 24) return `${hrs}h ago`;
+    82→  const days = Math.floor(hrs / 24);
+    83→  return `${days}d ago`;
+    84→}
+    85→
+    86→/* ───────── Component ───────── */
+    87→
+    88→export default function RiderDashboard() {
+    89→  const {
+    90→    riderOnline,
+    91→    setRiderOnline,
+    92→    userEmail,
+    93→    setActiveModal,
+    94→    setActiveTab,
+    95→  } = useAppStore();
+    96→
+    97→  const [data, setData] = useState<RiderData | null>(null);
+    98→  const [loading, setLoading] = useState(true);
+    99→  const [refreshing, setRefreshing] = useState(false);
+   100→  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+   101→  const fetchingRef = useRef(false);
+   102→
+   103→  const email = userEmail || 'sani@swiftramadan.app';
+   104→
+   105→  const fetchRider = useCallback(
+   106→    async (silent = false) => {
+   107→      if (fetchingRef.current) return;
+   108→      fetchingRef.current = true;
+   109→      if (!silent) setLoading(true);
+   110→      try {
+   111→        const res = await fetch(`/api/rider?email=${encodeURIComponent(email)}`);
+   112→        if (!res.ok) throw new Error('Failed to fetch rider data');
+   113→        const json = await res.json();
+   114→        if (json.success) {
+   115→          setData(json);
+   116→          // Sync online state with backend
+   117→          if (typeof json.online === 'boolean') {
+   118→            setRiderOnline(json.online);
+   119→          }
+   120→        }
+   121→      } catch (err) {
+   122→        console.error('RiderDashboard fetch error:', err);
+   123→        if (!silent) {
+   124→          toast({
+   125→            title: 'Failed to load',
+   126→            description: 'Could not reach rider service. Pull to retry.',
+   127→          });
+   128→        }
+   129→      } finally {
+   130→        if (!silent) setLoading(false);
+   131→        setRefreshing(false);
+   132→        fetchingRef.current = false;
+   133→      }
+   134→    },
+   135→    [email, setRiderOnline]
+   136→  );
+   137→
+   138→  useEffect(() => {
+   139→    fetchRider();
+   140→    // Poll every 15s for fresh data
+   141→    const interval = setInterval(() => fetchRider(true), 15000);
+   142→    return () => clearInterval(interval);
+   143→  }, [fetchRider]);
+   144→
+   145→  const handleToggleOnline = async () => {
+   146→    const next = !riderOnline;
+   147→    setRiderOnline(next);
+   148→    toast({
+   149→      title: next ? "You're Online! 🟢" : "You're Offline",
+   150→      description: next
+   151→        ? 'You will now receive delivery requests'
+   152→        : "You won't receive new requests",
+   153→    });
+   154→    try {
+   155→      await fetch('/api/rider', {
+   156→        method: 'POST',
+   157→        headers: { 'Content-Type': 'application/json' },
+   158→        body: JSON.stringify({ email, online: next }),
+   159→      });
+   160→    } catch (err) {
+   161→      console.error('Toggle online failed:', err);
+   162→    }
+   163→  };
+   164→
+   165→  const handleAccept = async (orderId: string) => {
+   166→    setActionLoadingId(orderId);
+   167→    try {
+   168→      const res = await fetch('/api/rider/assign', {
+   169→        method: 'POST',
+   170→        headers: { 'Content-Type': 'application/json' },
+   171→        body: JSON.stringify({
+   172→          orderId,
+   173→          riderEmail: email,
+   174→          action: 'accept',
+   175→        }),
+   176→      });
+   177→      const json = await res.json();
+   178→      if (json.success) {
+   179→        toast({
+   180→          title: 'Delivery Accepted! 🎉',
+   181→          description: 'Head to the pickup location.',
+   182→        });
+   183→        await fetchRider(true);
+   184→      } else {
+   185→        toast({
+   186→          title: 'Accept failed',
+   187→          description: json.message || 'Could not accept delivery',
+   188→        });
+   189→      }
+   190→    } catch (err) {
+   191→      console.error('Accept failed:', err);
+   192→      toast({
+   193→        title: 'Accept failed',
+   194→        description: 'Network error — please retry',
+   195→      });
+   196→    } finally {
+   197→      setActionLoadingId(null);
+   198→    }
+   199→  };
+   200→
+   201→  const handleComplete = async (orderId: string) => {
+   202→    setActionLoadingId(orderId);
+   203→    try {
+   204→      const res = await fetch('/api/rider/assign', {
+   205→        method: 'POST',
+   206→        headers: { 'Content-Type': 'application/json' },
+   207→        body: JSON.stringify({
+   208→          orderId,
+   209→          riderEmail: email,
+   210→          action: 'complete',
+   211→        }),
+   212→      });
+   213→      const json = await res.json();
+   214→      if (json.success) {
+   215→        toast({
+   216→          title: 'Delivery Completed! 🎉',
+   217→          description: `You earned ${formatNaira(json.earnings || 0)}.`,
+   218→        });
+   219→        await fetchRider(true);
+   220→      } else {
+   221→        toast({
+   222→          title: 'Complete failed',
+   223→          description: json.message || 'Could not complete delivery',
+   224→        });
+   225→      }
+   226→    } catch (err) {
+   227→      console.error('Complete failed:', err);
+   228→      toast({
+   229→        title: 'Complete failed',
+   230→        description: 'Network error — please retry',
+   231→      });
+   232→    } finally {
+   233→      setActionLoadingId(null);
+   234→    }
+   235→  };
+   236→
+   237→  /* ───────── Loading skeleton ───────── */
+   238→  if (loading) {
+   239→    return (
+   240→      <main className="flex-1 overflow-y-auto pb-32 px-4 pt-4">
+   241→        <div className="flex items-center justify-between mb-5">
+   242→          <div className="flex items-center gap-3">
+   243→            <div className="w-12 h-12 rounded-full bg-white/5 animate-pulse" />
+   244→            <div>
+   245→              <div className="h-3 w-16 bg-white/5 rounded animate-pulse mb-1" />
+   246→              <div className="h-2 w-24 bg-white/5 rounded animate-pulse" />
+   247→            </div>
+   248→          </div>
+   249→          <div className="h-6 w-24 bg-white/5 rounded-full animate-pulse" />
+   250→        </div>
+   251→
+   252→        <div className="flex items-center gap-4 mb-6">
+   253→          <div className="w-16 h-16 rounded-2xl bg-white/5 animate-pulse" />
+   254→          <div className="flex-1 space-y-2">
+   255→            <div className="h-4 w-32 bg-white/5 rounded animate-pulse" />
+   256→            <div className="h-3 w-40 bg-white/5 rounded animate-pulse" />
+   257→          </div>
+   258→        </div>
+   259→
+   260→        <div className="grid grid-cols-3 gap-3 mb-6">
+   261→          {[1, 2, 3].map((i) => (
+   262→            <div
+   263→              key={i}
+   264→              className="h-24 rounded-2xl bg-white/5 animate-pulse"
+   265→            />
+   266→          ))}
+   267→        </div>
+   268→
+   269→        <div className="h-20 rounded-2xl bg-white/5 animate-pulse mb-6" />
+   270→        <div className="h-40 rounded-2xl bg-white/5 animate-pulse mb-6" />
+   271→        <div className="space-y-3">
+   272→          {[1, 2].map((i) => (
+   273→            <div key={i} className="h-28 rounded-2xl bg-white/5 animate-pulse" />
+   274→          ))}
+   275→        </div>
+   276→      </main>
+   277→    );
+   278→  }
+   279→
+   280→  const activeDelivery = data?.activeDeliveries?.[0] ?? null;
+   281→  const availableDeliveries = data?.availableDeliveries ?? [];
+   282→  const weeklyEarnings = data?.weeklyEarnings ?? [];
+   283→  const maxWeekly = Math.max(1, ...weeklyEarnings.map((w) => w.amount));
+   284→
+   285→  return (
+   286→    <motion.main
+   287→      variants={staggerContainer}
+   288→      initial="hidden"
+   289→      animate="show"
+   290→      className="flex-1 overflow-y-auto pb-32 px-4 pt-4"
+   291→    >
+   292→      {/* Online/Offline Toggle */}
+   293→      <motion.div
+   294→        variants={staggerItem}
+   295→        className="flex items-center justify-between mb-5"
+   296→      >
+   297→        <div className="flex items-center gap-3">
+   298→          <button onClick={handleToggleOnline} className="relative" aria-label="Toggle online">
+   299→            {riderOnline ? (
+   300→              <ToggleRight className="w-12 h-12 text-[#38BDF8]" />
+   301→            ) : (
+   302→              <ToggleLeft className="w-12 h-12 text-white/30" />
+   303→            )}
+   304→          </button>
+   305→          <div>
+   306→            <p
+   307→              className={`text-sm font-bold ${
+   308→                riderOnline ? 'text-[#38BDF8]' : 'text-white/40'
+   309→              }`}
+   310→            >
+   311→              {riderOnline ? 'Online' : 'Offline'}
+   312→            </p>
+   313→            <p className="text-white/30 text-[10px]">Toggle to receive deliveries</p>
+   314→          </div>
+   315→        </div>
+   316→        <div
+   317→          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${
+   318→            riderOnline
+   319→              ? 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20'
+   320→              : 'bg-white/5 text-white/30 border border-white/5'
+   321→          }`}
+   322→        >
+   323→          <span
+   324→            className={`size-2 rounded-full ${
+   325→              riderOnline ? 'bg-[#38BDF8] animate-pulse' : 'bg-white/20'
+   326→            }`}
+   327→          />
+   328→          {riderOnline ? 'Accepting Orders' : 'Not Available'}
+   329→        </div>
+   330→      </motion.div>
+   331→
+   332→      {/* Profile Header */}
+   333→      <motion.div variants={staggerItem} className="flex items-center gap-4 mb-6">
+   334→        <div className="relative">
+   335→          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[#38BDF8]/20">
+   336→            <Bike className="w-7 h-7 text-[#38BDF8]" />
+   337→          </div>
+   338→          {riderOnline && (
+   339→            <span className="absolute -bottom-1 -right-1 size-4 bg-[#38BDF8] rounded-full border-2 border-[#0B0D14] animate-pulse" />
+   340→          )}
+   341→        </div>
+   342→        <div className="flex-1">
+   343→          <div className="flex items-center gap-2">
+   344→            <h2 className="text-white text-lg font-extrabold">
+   345→              {data?.riderName ?? 'Rider'}
+   346→            </h2>
+   347→            <span className="material-symbols-outlined text-[#38BDF8] text-lg">verified</span>
+   348→          </div>
+   349→          <div className="flex items-center gap-2 mt-1">
+   350→            <span className="material-symbols-outlined text-[#F5C451] text-sm">workspace_premium</span>
+   351→            <span className="text-[#F5C451] text-xs font-bold">Elite Rider</span>
+   352→            <span className="text-white/20 text-xs">•</span>
+   353→            <span className="text-white/40 text-xs">{data?.area ?? 'Lagos'}</span>
+   354→          </div>
+   355→        </div>
+   356→        <ChevronRight className="w-5 h-5 text-white/20" />
+   357→      </motion.div>
+   358→
+   359→      {/* Stats Grid */}
+   360→      <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3 mb-6">
+   361→        <div className="glass-card rounded-2xl p-4 text-center">
+   362→          <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   363→            <Check className="w-5 h-5 text-[#38BDF8]" />
+   364→          </div>
+   365→          <p className="text-white text-xl font-extrabold">
+   366→            {data?.completedToday ?? 0}
+   367→          </p>
+   368→          <p className="text-white/40 text-[10px] mt-0.5">Completed Today</p>
+   369→        </div>
+   370→        <div className="glass-card rounded-2xl p-4 text-center">
+   371→          <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   372→            <Star className="w-5 h-5 text-[#F5C451]" />
+   373→          </div>
+   374→          <p className="text-white text-xl font-extrabold">
+   375→            {data?.rating?.toFixed(1) ?? '4.8'}
+   376→          </p>
+   377→          <p className="text-white/40 text-[10px] mt-0.5">Rating</p>
+   378→        </div>
+   379→        <div className="glass-card rounded-2xl p-4 text-center">
+   380→          <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   381→            <span className="material-symbols-outlined text-[#10E07A] text-base">payments</span>
+   382→          </div>
+   383→          <p className="text-white text-base font-extrabold leading-tight">
+   384→            {formatNaira(data?.earningsToday ?? 0)}
+   385→          </p>
+   386→          <p className="text-white/40 text-[10px] mt-0.5">Earned Today</p>
+   387→        </div>
+   388→      </motion.div>
+   389→
+   390→      {/* Iftar Rush Legend Badge */}
+   391→      <motion.div variants={staggerItem} className="mb-6">
+   392→        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[#F5C451]/20 p-4">
+   393→          <div className="absolute top-0 right-0 w-40 h-40 bg-[#F5C451]/5 blur-[80px]" />
+   394→          <div className="relative z-10 flex items-center gap-3">
+   395→            <div className="w-12 h-12 bg-[#F5C451]/20 rounded-2xl flex items-center justify-center shrink-0">
+   396→              <Moon className="w-5 h-5 text-[#F5C451]" />
+   397→            </div>
+   398→            <div className="flex-1">
+   399→              <div className="flex items-center gap-2">
+   400→                <h3 className="text-[#F5C451] font-extrabold text-sm">Iftar Rush Active</h3>
+   401→                <span className="px-2 py-0.5 bg-[#F5C451]/20 rounded-full text-[#F5C451] text-[8px] font-black uppercase tracking-wider">
+   402→                  Ramadan Exclusive
+   403→                </span>
+   404→              </div>
+   405→              <p className="text-white/40 text-xs mt-1">
+   406→                2x bonus on all Iftar deliveries until Maghrib
+   407→              </p>
+   408→            </div>
+   409→          </div>
+   410→        </div>
+   411→      </motion.div>
+   412→
+   413→      {/* Active Delivery Card */}
+   414→      {activeDelivery && (
+   415→        <motion.div variants={staggerItem} className="mb-6">
+   416→          <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   417→            <Navigation className="w-4 h-4 text-[#38BDF8]" />
+   418→            Active Delivery
+   419→          </h3>
+   420→          <div className="relative overflow-hidden rounded-2xl bg-[#0F1118] border border-[#38BDF8]/20 p-4">
+   421→            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/5 blur-[50px]" />
+   422→            <div className="relative z-10">
+   423→              <div className="flex items-center justify-between mb-3">
+   424→                <div className="flex items-center gap-2">
+   425→                  <span className="flex size-2 bg-[#38BDF8] rounded-full animate-pulse" />
+   426→                  <span className="text-[#38BDF8] text-xs font-bold uppercase tracking-widest">
+   427→                    In Progress
+   428→                  </span>
+   429→                </div>
+   430→                <span className="text-white/30 text-[10px] font-mono">
+   431→                  #{shortId(activeDelivery.id)}
+   432→                </span>
+   433→              </div>
+   434→
+   435→              {/* Progress Bar */}
+   436→              <div className="w-full bg-white/5 rounded-full h-2 mb-3">
+   437→                <motion.div
+   438→                  className="bg-[#38BDF8] h-2 rounded-full"
+   439→                  initial={{ width: 0 }}
+   440→                  animate={{ width: `${activeDelivery.progress}%` }}
+   441→                  transition={{ duration: 1.2, ease: 'easeOut' }}
+   442→                />
+   443→              </div>
+   444→
+   445→              <div className="flex items-center justify-between mb-3">
+   446→                <div>
+   447→                  <p className="text-white font-bold text-sm">
+   448→                    {itemsSummary(activeDelivery.items)}
+   449→                  </p>
+   450→                  <div className="flex items-center gap-1 mt-0.5">
+   451→                    <MapPin className="w-3 h-3 text-white/30" />
+   452→                    <p className="text-white/40 text-xs">
+   453→                      {data?.area ?? 'Lagos Island'}
+   454→                    </p>
+   455→                  </div>
+   456→                </div>
+   457→                <div className="text-right">
+   458→                  <p className="text-[#10E07A] text-sm font-bold">
+   459→                    +{formatNaira(Math.round(activeDelivery.total * 0.15))}
+   460→                  </p>
+   461→                  <p className="text-white/40 text-xs">your earnings</p>
+   462→                </div>
+   463→              </div>
+   464→
+   465→              <div className="flex items-center gap-2">
+   466→                <button
+   467→                  onClick={() =>
+   468→                    toast({
+   469→                      title: 'Calling Customer 📞',
+   470→                      description: 'Connecting to customer...',
+   471→                    })
+   472→                  }
+   473→                  className="flex-1 flex items-center justify-center gap-2 bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/20 transition-colors"
+   474→                >
+   475→                  <Phone className="w-3.5 h-3.5" />
+   476→                  Call
+   477→                </button>
+   478→                <button
+   479→                  onClick={() => handleComplete(activeDelivery.id)}
+   480→                  disabled={actionLoadingId === activeDelivery.id}
+   481→                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors disabled:opacity-60"
+   482→                >
+   483→                  {actionLoadingId === activeDelivery.id ? (
+   484→                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+   485→                  ) : (
+   486→                    <Check className="w-3.5 h-3.5" />
+   487→                  )}
+   488→                  Complete Delivery
+   489→                </button>
+   490→              </div>
+   491→            </div>
+   492→          </div>
+   493→        </motion.div>
+   494→      )}
+   495→
+   496→      {/* New Delivery Request CTA */}
+   497→      {riderOnline && !activeDelivery && (
+   498→        <motion.div variants={staggerItem} className="mb-6">
+   499→          <button
+   500→            onClick={() => setActiveModal('new-delivery')}
+   501→            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[#38BDF8]/30 p-4 flex items-center gap-4 hover:border-[#38BDF8]/50 transition-all active:scale-[0.98]"
+   502→          >
+   503→            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/10 blur-[50px]" />
+   504→            <div className="w-12 h-12 bg-[#38BDF8]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+   505→              <Package className="w-6 h-6 text-[#38BDF8]" />
+   506→            </div>
+   507→            <div className="flex-1 text-left relative z-10">
+   508→              <h3 className="text-white font-extrabold text-sm">New Delivery Request</h3>
+   509→              <p className="text-white/40 text-xs mt-0.5">
+   510→                {availableDeliveries.length} deliveries waiting for you
+   511→              </p>
+   512→            </div>
+   513→            <ChevronRight className="w-5 h-5 text-[#38BDF8] shrink-0 relative z-10" />
+   514→          </button>
+   515→        </motion.div>
+   516→      )}
+   517→
+   518→      {/* Available Deliveries */}
+   519→      <motion.div variants={staggerItem} className="mb-6">
+   520→        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   521→          <Clock className="w-4 h-4 text-[#F5C451]" />
+   522→          Available Deliveries
+   523→          <span className="ml-auto px-2 py-0.5 bg-[#F5C451]/10 rounded-full text-[#F5C451] text-[10px] font-bold">
+   524→            {availableDeliveries.length} new
+   525→          </span>
+   526→        </h3>
+   527→
+   528→        {availableDeliveries.length === 0 ? (
+   529→          <div className="glass-card rounded-2xl p-8 text-center">
+   530→            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/5 flex items-center justify-center">
+   531→              <Package className="w-6 h-6 text-white/30" />
+   532→            </div>
+   533→            <p className="text-white font-bold text-sm">No deliveries available</p>
+   534→            <p className="text-white/40 text-xs mt-1">
+   535→              New orders will appear here as vendors mark them ready.
+   536→            </p>
+   537→          </div>
+   538→        ) : (
+   539→          <div className="space-y-3">
+   540→            {availableDeliveries.map((req) => (
+   541→              <motion.div
+   542→                key={req.id}
+   543→                variants={staggerItem}
+   544→                className="glass-card rounded-2xl p-4"
+   545→              >
+   546→                <div className="flex items-start justify-between mb-2">
+   547→                  <div>
+   548→                    <div className="flex items-center gap-2">
+   549→                      <p className="text-white font-bold text-sm">
+   550→                        #{shortId(req.id)}
+   551→                      </p>
+   552→                      <span className="px-1.5 py-0.5 bg-[#A78BFA]/15 text-[#A78BFA] text-[8px] font-black rounded uppercase">
+   553→                        Ready
+   554→                      </span>
+   555→                    </div>
+   556→                    <div className="flex items-center gap-1 mt-0.5">
+   557→                      <MapPin className="w-3 h-3 text-white/30" />
+   558→                      <p className="text-white/40 text-xs">{data?.area ?? 'Lagos Island'}</p>
+   559→                    </div>
+   560→                  </div>
+   561→                  <div className="text-right shrink-0">
+   562→                    <p className="text-white font-bold text-sm">{formatNaira(req.total)}</p>
+   563→                    <p className="text-[#10E07A] text-[10px] font-bold">
+   564→                      +{formatNaira(Math.round(req.total * 0.15))} earn
+   565→                    </p>
+   566→                  </div>
+   567→                </div>
+   568→
+   569→                <div className="flex items-center gap-3 mb-3 text-[10px] text-white/30">
+   570→                  <Package className="w-3 h-3" />
+   571→                  <span className="truncate">{itemsSummary(req.items)}</span>
+   572→                  <span>•</span>
+   573→                  <span>{timeAgo(req.createdAt)}</span>
+   574→                </div>
+   575→
+   576→                <div className="flex items-center gap-2">
+   577→                  <button
+   578→                    onClick={() => handleAccept(req.id)}
+   579→                    disabled={actionLoadingId === req.id}
+   580→                    className="flex-1 bg-[#38BDF8] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+   581→                  >
+   582→                    {actionLoadingId === req.id ? (
+   583→                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+   584→                    ) : (
+   585→                      <Check className="w-3.5 h-3.5" />
+   586→                    )}
+   587→                    Accept
+   588→                  </button>
+   589→                  <button
+   590→                    onClick={() => setActiveModal('new-delivery')}
+   591→                    className="flex-1 bg-white/5 border border-white/10 text-white/60 py-2.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
+   592→                  >
+   593→                    Details
+   594→                  </button>
+   595→                </div>
+   596→              </motion.div>
+   597→            ))}
+   598→          </div>
+   599→        )}
+   600→      </motion.div>
+   601→
+   602→      {/* Weekly Earnings Chart */}
+   603→      <motion.div variants={staggerItem} className="mb-6">
+   604→        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   605→          <span className="material-symbols-outlined text-[#10E07A] text-base">bar_chart</span>
+   606→          Weekly Earnings
+   607→          <span className="ml-auto text-white/40 text-[10px] font-bold">
+   608→            Total: {formatNaira(weeklyEarnings.reduce((s, w) => s + w.amount, 0))}
+   609→          </span>
+   610→        </h3>
+   611→        <div className="glass-card rounded-2xl p-4">
+   612→          <div className="flex items-end justify-between gap-2 h-32">
+   613→            {weeklyEarnings.map((w, i) => {
+   614→              const pct = Math.max(4, Math.round((w.amount / maxWeekly) * 100));
+   615→              const isToday = i === weeklyEarnings.length - 1;
+   616→              return (
+   617→                <div
+   618→                  key={`${w.day}-${i}`}
+   619→                  className="flex-1 flex flex-col items-center gap-1.5"
+   620→                >
+   621→                  <span className="text-[9px] text-white/60 font-bold">
+   622→                    {w.amount > 0 ? `${(w.amount / 1000).toFixed(1)}k` : ''}
+   623→                  </span>
+   624→                  <motion.div
+   625→                    initial={{ height: 0 }}
+   626→                    animate={{ height: `${pct}%` }}
+   627→                    transition={{ duration: 0.6, delay: i * 0.05 }}
+   628→                    className={`w-full rounded-t-md ${
+   629→                      isToday
+   630→                        ? 'bg-gradient-to-t from-[#38BDF8] to-[#38BDF8]/60'
+   631→                        : 'bg-gradient-to-t from-[#38BDF8]/40 to-[#38BDF8]/20'
+   632→                    }`}
+   633→                  />
+   634→                  <span
+   635→                    className={`text-[10px] font-bold ${
+   636→                      isToday ? 'text-[#38BDF8]' : 'text-white/40'
+   637→                    }`}
+   638→                  >
+   639→                    {w.day}
+   640→                  </span>
+   641→                </div>
+   642→              );
+   643→            })}
+   644→          </div>
+   645→        </div>
+   646→      </motion.div>
+   647→
+   648→      {/* Recent Deliveries */}
+   649→      {(data?.recentDeliveries?.length ?? 0) > 0 && (
+   650→        <motion.div variants={staggerItem} className="mb-6">
+   651→          <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   652→            <CheckCircle className="w-4 h-4 text-[#10E07A]" />
+   653→            Recent Deliveries
+   654→          </h3>
+   655→          <div className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+   656→            {data!.recentDeliveries.slice(0, 8).map((o) => (
+   657→              <div
+   658→                key={o.id}
+   659→                className="glass-card rounded-2xl p-3 flex items-center gap-3"
+   660→              >
+   661→                <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 flex items-center justify-center shrink-0">
+   662→                  <Check className="w-4 h-4 text-[#10E07A]" />
+   663→                </div>
+   664→                <div className="flex-1 min-w-0">
+   665→                  <p className="text-white text-xs font-bold truncate">
+   666→                    {itemsSummary(o.items)}
+   667→                  </p>
+   668→                  <p className="text-white/30 text-[10px]">{timeAgo(o.createdAt)}</p>
+   669→                </div>
+   670→                <div className="text-right shrink-0">
+   671→                  <p className="text-[#10E07A] text-xs font-bold">
+   672→                    +{formatNaira(Math.round(o.total * 0.15))}
+   673→                  </p>
+   674→                  <p className="text-white/30 text-[10px]">{formatNaira(o.total)}</p>
+   675→                </div>
+   676→              </div>
+   677→            ))}
+   678→          </div>
+   679→        </motion.div>
+   680→      )}
+   681→
+   682→      {/* Go to deliveries tab button */}
+   683→      <motion.div variants={staggerItem}>
+   684→        <button
+   685→          onClick={() => setActiveTab('rider-deliveries')}
+   686→          className="w-full text-center text-[#38BDF8] text-xs font-bold py-3 hover:underline"
+   687→        >
+   688→          View delivery map →
+   689→        </button>
+   690→      </motion.div>
+   691→    </motion.main>
+   692→  );
+   693→}
+   694→

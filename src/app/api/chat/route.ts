@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 const ramadanResponses: Record<string, string> = {
   iftar: "Our Iftar meals are freshly prepared and delivered before Maghrib! Try our Jollof Rice & Chicken combo for ₦4,500 or the Family Iftar Bundle for ₦17,500. Would you like to order? 🌙",
@@ -31,6 +32,10 @@ function findBestResponse(input: string): string {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 AI requests per minute per IP (LLM calls are expensive)
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const message = body.message as string;

@@ -6,6 +6,7 @@ import { useAppStore, type OrderItem } from '@/lib/store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
+import { OrdersTabSkeleton } from './Skeletons';
 
 const statusConfig: Record<string, { color: string; bgColor: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
   'In Transit': { color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', icon: Truck, label: 'In Transit' },
@@ -196,15 +197,7 @@ This is an electronic receipt — no signature required.
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
-        <div className="px-5 pt-6 pb-2">
-          <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
-          <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
-        </div>
-        <div className="px-5 mt-4 space-y-3">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse h-24 glass-card rounded-2xl" />
-          ))}
-        </div>
+        <OrdersTabSkeleton />
       </main>
     );
   }

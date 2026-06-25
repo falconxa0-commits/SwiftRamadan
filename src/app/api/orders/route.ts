@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/validation';
 
 // GET /api/orders — Get all orders, optionally filter by userId
 export async function GET(request: NextRequest) {
+  // Rate limit: 100 requests per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
@@ -30,9 +36,17 @@ export async function GET(request: NextRequest) {
 
 // POST /api/orders — Create a new order
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
-    const { status, total, riderName, items, progress, userId } = body;
+
+    // Validate payload
+    const v = validateInput(orderCreateSchema, body);
+    if (!v.success) return v.response;
+    const { status, total, riderName, items, progress, userId } = v.data;
 
     if (!total) {
       return NextResponse.json(
@@ -70,9 +84,17 @@ export async function POST(request: NextRequest) {
 
 // PUT /api/orders — Update an order (e.g., status, progress)
 export async function PUT(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
-    const { id, status, progress, riderName } = body;
+
+    // Validate payload
+    const v = validateInput(orderUpdateSchema, body);
+    if (!v.success) return v.response;
+    const { id, status, progress, riderName } = v.data;
 
     if (!id) {
       return NextResponse.json(

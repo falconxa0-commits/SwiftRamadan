@@ -1466,3 +1466,438 @@ Stage Summary:
 - page.tsx AllModals() correctly renders all 7 new modals (VendorAddProductModal, ChatModal, RateDeliveryModal, SettingsModal, EditProfileModal, HelpCenterModal, LegalPagesModal)
 - Dev server healthy on port 3000, 0 errors in recent log
 - App is production-ready with full e-commerce, vendor management, rider dispatch, social features, and user settings
+
+---
+Task ID: PHASE2-1
+Agent: Main Orchestrator
+Task: Foundation for features 55-70 (migrations, env, seed data)
+
+Work Log:
+- Created .env.example documenting all env vars (DB, AI, payments, upload, realtime, analytics, auth)
+- Generated prisma migration baseline (0_init/migration.sql, 324 lines) + migration_lock.toml
+- Created prisma/seed-phase2.ts and ran it:
+  - 68: Created 3 vendor users (sani/fatima/ahmed @swiftramadan.app) with store profiles, bank details
+  - 69: Created 3 rider users (ibrahim/chidi/emeka @swiftramadan.app) with vehicle details
+  - 66: Created 7 orders (2 active, 1 Ready, 1 Confirmed, 3 Delivered) linked to demo customer
+  - 67: Linked 8 products to vendors (Jollof/Suya→Suya Central, Box/Iftar→Iftar Palace, Sahur/Smoothie→Sahur Smoothies)
+  - 70: Created 9 user-scoped notifications (5 customer, 2 vendor, 2 rider) — cleared all global (userId=null) notifications
+  - Ensured UserSetting records for all 11 users
+- All demo accounts use password: demo1234
+
+Stage Summary:
+- DB now has real vendor users, rider users, demo customer, 7 orders, user-scoped notifications
+- Migration baseline captured for production deployments
+- .env.example created for developer onboarding
+- Ready for parallel agents: F (WebSocket+Upload), G (Validation+RateLimit+ErrorBoundary), H (PWA+SEO+Analytics+Skeletons)
+
+---
+Task ID: PHASE2-G
+Agent: Validation + Rate Limiting + Error Boundary Builder
+Task: Build 3 reliability/security features — Zod input validation, in-memory rate limiter, and React error boundaries
+
+Work Log:
+- Read worklog.md to understand prior context (47+ components, 11+ API routes, working dev server, 0 lint errors)
+- Verified `zod` was already installed (v4.3.5) and tested `result.error.flatten().fieldErrors` still works in v4
+- Verified `framer-motion` and `lucide-react` already available for ErrorBoundary UI
+- Inspected existing API route structures (auth, products, orders, addresses, coupons/validate, messages, videos, ai-recipe, chat, visual-search, live-vision) to understand contracts that must be preserved
+- Inspected AuthScreen, CheckoutModal, ChatModal, UploadVideoModal, VendorAddProductModal to confirm what payloads the client actually sends (e.g., signup has no `password` field, items shape `{name,qty,price}`, category enum `cooking/iftar/sahur/tips/reviews`)
+
+Files CREATED:
+
+1. `src/lib/validation.ts`
+   - Zod schemas for: loginSchema, signupSchema (password optional to preserve existing flow that doesn't send password; when provided must be ≥6 chars), productCreateSchema, productUpdateSchema (= partial), orderCreateSchema, orderUpdateSchema, reviewSchema, addressSchema, couponValidateSchema, chatMessageSchema, videoCreateSchema
+   - `validateInput<T>(schema, data)` helper returns `{success:true,data}` on success or `{success:false,response}` containing a ready-to-return `Response` (HTTP 400, JSON body `{success,message:'Validation error',errors:fieldErrors}`)
+   - Discriminated union return type `ValidationResult<T>` so callers can narrow with `if (!v.success) return v.response;`
+
+2. `src/lib/rate-limit.ts`
+   - In-memory `Map<string, RateLimitEntry>` store with 5-minute janitor interval
+   - `rateLimit(identifier, options)` sliding-window counter
+   - `checkRateLimit(request, options)` helper extracts IP from `x-forwarded-for` (Caddy gateway header), returns `null` if allowed or a fully-formed 429 `Response` with `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After` headers + JSON body
+   - `RATE_LIMITS` presets: auth (10/min), general (100/min), write (30/min), upload (10/min), ai (20/min)
+
+3. `src/components/ErrorBoundary.tsx`
+   - React class component (`'use client'`) implementing `getDerivedStateFromError` + `componentDidCatch`
+   - Aurora Luxe dark fallback UI (gold AlertTriangle icon, glass-card, framer-motion fade-in, error details `<details>` with stack trace, Reload + Home buttons)
+   - Accepts optional `fallback` prop for component-level isolation
+   - Exported as named `ErrorBoundary` and default
+
+4. `src/app/error.tsx`
+   - Next.js App Router route-level error boundary (receives `{error, reset}`)
+   - Same Aurora Luxe fallback UI as ErrorBoundary; calls `reset()` then `window.location.reload()` / `window.location.href='/'`
+   - Logs error via `useEffect`
+
+5. `src/app/global-error.tsx`
+   - Next.js App Router root error boundary (catches root layout errors)
+   - Renders its own `<html><body>` with inline `<style>` (because Tailwind/global CSS may not be available when the root layout fails)
+   - Same Aurora Luxe fallback UI; receives `{error, reset}` and includes `error.digest` in details
+
+Files MODIFIED (validation + rate limiting):
+
+- `src/app/api/auth/route.ts`
+  - Top-of-POST: `checkRateLimit(request, RATE_LIMITS.auth)` (10 req/min per IP)
+  - Inside the try block, before the switch: if `action==='login'` validate `{email,password}` against `loginSchema`; if `action==='signup'` validate `{name,email,phone,password,role}` against `signupSchema`. Other actions (verify-otp, get-user, update-profile) skip validation (they have their own checks). On failure returns `v.response` (HTTP 400).
+
+- `src/app/api/products/route.ts`
+  - GET: `RATE_LIMITS.general` (100/min)
+  - POST: `RATE_LIMITS.write` (30/min) + validate `body` against `productCreateSchema`; destructures validated `data` for downstream use
+  - PUT: `RATE_LIMITS.write` + validate `fields` (excluding id) against `productUpdateSchema`
+  - DELETE: `RATE_LIMITS.write`
+
+- `src/app/api/orders/route.ts`
+  - GET: `RATE_LIMITS.general`
+  - POST: `RATE_LIMITS.write` + validate `body` against `orderCreateSchema`; uses validated `data`
+  - PUT: `RATE_LIMITS.write` + validate `body` against `orderUpdateSchema` (which requires `id: z.string()`)
+
+- `src/app/api/addresses/route.ts`
+  - GET: `RATE_LIMITS.general`
+  - POST: `RATE_LIMITS.write` + validate `body` against `addressSchema`; uses validated `data`
+  - PUT: `RATE_LIMITS.write` + validate `body` against `addressSchema.partial()` (allows id + any subset of fields; Zod strips unknown keys silently)
+  - DELETE: `RATE_LIMITS.write`
+
+- `src/app/api/coupons/validate/route.ts`
+  - POST: `RATE_LIMITS.write` + validate `body` against `couponValidateSchema`; uses validated `data`
+
+- `src/app/api/messages/route.ts`
+  - GET: `RATE_LIMITS.general`
+  - POST: `RATE_LIMITS.write` + validate `body` against `chatMessageSchema`; uses validated `data` (with `senderId ?? null` coercion for Prisma)
+  - PUT: `RATE_LIMITS.write`
+
+- `src/app/api/videos/route.ts`
+  - GET: `RATE_LIMITS.general`
+  - POST: `RATE_LIMITS.write` + validate `body` against `videoCreateSchema`; uses validated `data`
+
+Files MODIFIED (rate limiting only — these are read-heavy/AI endpoints):
+
+- `src/app/api/ai-recipe/route.ts` — POST: `RATE_LIMITS.ai` (20/min, LLM calls expensive)
+- `src/app/api/chat/route.ts` — POST: `RATE_LIMITS.ai`
+- `src/app/api/visual-search/route.ts` — POST: `RATE_LIMITS.ai` (VLM)
+- `src/app/api/live-vision/route.ts` — POST: `RATE_LIMITS.ai` (VLM)
+
+Files MODIFIED (error boundary wiring):
+
+- `src/app/layout.tsx`
+  - Added `import { ErrorBoundary } from "@/components/ErrorBoundary"`
+  - Wrapped `{children}` with `<ErrorBoundary>{children}</ErrorBoundary>` (placed between `<PWARegister />` and `<Toaster />`)
+  - Note: A sibling agent had added PWARegister/manifest/viewport changes to layout.tsx concurrently; I re-applied the ErrorBoundary wrapper to the updated file to preserve their changes
+  - Skipped `src/app/api/upload/route.ts` because the route does not exist in this project
+
+Verification:
+- `bun run lint` → 0 errors, 6 warnings (all pre-existing in unrelated files: analytics/route.ts, auth/route.ts unused eslint-disable, layout.tsx custom-font, VoiceShoppingModal.tsx, use-socket.ts, analytics.ts). All my new/modified files are lint-clean.
+- Smoke-tested validation via curl:
+  - `POST /api/auth {"action":"login","email":"bad"}` → HTTP 400 with `{"success":false,"message":"Validation error","errors":{"email":["Invalid email"],"password":["Invalid input: expected string, received undefined"]}}`
+  - `POST /api/auth {"action":"signup","name":"A","email":"not-email","phone":"123","role":"customer"}` → HTTP 400 with all 3 field errors (name/email/phone)
+  - `POST /api/products {"name":"Test","price":0}` → HTTP 400 (price must be >0)
+  - `POST /api/orders {"total":0}` → HTTP 400 (total + items errors)
+  - `POST /api/coupons/validate {"code":"AB","cartTotal":5000}` → HTTP 400 (code too short)
+  - `POST /api/messages {"senderName":"A","content":"hi"}` → HTTP 400 (roomId required)
+  - `POST /api/videos {"title":"Test Video","videoUrl":"not-a-url","authorName":"A"}` → HTTP 400 (videoUrl must be valid URL)
+- Smoke-tested rate limiting via curl:
+  - Sent 12 rapid requests to `/api/auth` from a fresh window: requests 1-10 returned HTTP 404 (passes validation, no user found in DB), requests 11-12 returned HTTP 429 with body `{"success":false,"message":"Too many requests. Please try again later.","retryAfter":N}` and headers `x-ratelimit-limit:10`, `x-ratelimit-remaining:0`, `x-ratelimit-reset:<ts>`, `retry-after:N`
+  - Exactly matches the spec: 11th request returns 429
+- Smoke-tested backward-compat via curl:
+  - Valid login payload `{"action":"login","email":"test@example.com","password":"password123"}` → HTTP 404 (passes validation, falls through to existing "No account found" logic)
+  - `verify-otp` action `{"action":"verify-otp","email":"test@example.com","otp":"123456"}` → HTTP 200 (skips validation, existing flow intact)
+  - `GET /api/products` → HTTP 200 with product list
+- Home page (`GET /`) continues to return HTTP 200 after all changes; dev.log shows no compilation errors after the initial Fast Refresh full-reload caused by introducing the ErrorBoundary class component (expected, not a runtime error)
+
+Stage Summary:
+- Files created: `src/lib/validation.ts`, `src/lib/rate-limit.ts`, `src/components/ErrorBoundary.tsx`, `src/app/error.tsx`, `src/app/global-error.tsx` (5 new)
+- Files modified: `src/app/layout.tsx` (ErrorBoundary wrapper), `src/app/api/auth/route.ts`, `src/app/api/products/route.ts`, `src/app/api/orders/route.ts`, `src/app/api/addresses/route.ts`, `src/app/api/coupons/validate/route.ts`, `src/app/api/messages/route.ts`, `src/app/api/videos/route.ts` (validation + rate limiting); `src/app/api/ai-recipe/route.ts`, `src/app/api/chat/route.ts`, `src/app/api/visual-search/route.ts`, `src/app/api/live-vision/route.ts` (rate limiting only) — 12 modified
+- Skipped: `src/app/api/upload/route.ts` (does not exist)
+- Key decisions:
+  - `validateInput` returns a plain Web `Response` (not `NextResponse`) so callers can `return v.response;` directly — Next.js route handlers accept any `Response`-compatible object
+  - For PUT endpoints where the body contains fields not in the schema (e.g., `id`, `originalPrice`, `inStock`), Zod's default non-strict mode strips unknown keys silently — validation acts as a gate, downstream code keeps using original body where needed
+  - `signupSchema.password` made `.optional().or(z.literal(''))` to preserve the existing AuthScreen signup flow that does NOT send a password (otherwise all signups would 400). When a password IS provided, the min-6 check still applies.
+  - `addressSchema.partial()` used for PUT so `id` and other extra fields don't trip validation
+  - Rate-limit identifier is `ip:${x-forwarded-for}` — the Caddy gateway sets this header, so per-IP limiting works through the gateway
+  - Rate-limit `auth` preset is 10/min (vs. spec's 10) so the test "11 rapid requests → 429 on 11th" passes exactly
+  - All AI/VLM endpoints use `RATE_LIMITS.ai` (20/min) because each call invokes the z-ai-web-dev-sdk LLM/VLM which is expensive
+  - `global-error.tsx` uses inline `<style>` instead of Tailwind classes because the root CSS may not load if the root layout itself crashed
+  - The class-based `ErrorBoundary` is wired into `layout.tsx` for app-wide coverage; `error.tsx` and `global-error.tsx` cover the Next.js-specific route/root segments and receive `error+reset` props from the framework
+
+- Fallback behavior verified:
+  - Bad input → HTTP 400 with structured field errors
+  - Rate-limit exceeded → HTTP 429 with retry-after + rate-limit headers
+  - Valid input → continues to existing handler logic (login → 404 if user unknown, signup → creates user, etc.)
+  - Render-time error in any client component → caught by ErrorBoundary, shows friendly Reload/Home UI
+  - Render-time error in route page → caught by `error.tsx`, shows same UI with `reset()` recovery
+  - Render-time error in root layout → caught by `global-error.tsx`, renders full HTML doc with same UI
+
+---
+Task ID: PHASE2-H
+Agent: PWA / SEO / Analytics / Skeletons Builder
+Task: 4 polish/UX features — PWA offline, SEO metadata, analytics, loading skeletons
+
+Work Log:
+- Read /home/z/my-project/worklog.md (1491 lines) to understand prior agents' work — 47+ components built, Aurora Luxe redesign (#0B0D14 bg, #10E07A green, #F5C451 gold), 50+ API routes, real Prisma data, 0 lint errors at handoff
+- Audited existing files I needed to touch: layout.tsx (basic metadata), skeleton.tsx (already shadcn), BottomNav, ProductDetailModal, CheckoutModal, VideoCard, AuthScreen, SearchOverlay, AIChatWidget, OrdersTab, ReelsTab, VendorDashboard, RiderDashboard, HomeTab
+- Discovered Agent F had already modified VendorDashboard + RiderDashboard to add useSocket hook for realtime — kept their import intact alongside my new Skeletons import
+- Created /agent-ctx/PHASE2-H-pwa-seo-analytics-skeletons.md work record
+
+Feature 57 — PWA / Offline Support:
+1. CREATED public/manifest.json — full PWA manifest with name, short_name, description, start_url=/, display=standalone, bg=#0B0D14, theme=#10E07A, portrait orientation, 3 categories (food/lifestyle/shopping), 3 icons (icon.svg + 2 PNG fallbacks using existing swiftramadan-logo.png), 3 app shortcuts (Order Iftar, My Cart, SwiftReels)
+2. CREATED public/icon.svg — 512×512 vector icon: dark rounded-rect background (#0B0D14 → #06070B gradient), subtle green/gold decorative rings, plate rim with green gradient stroke, glowing green crescent moon, glowing gold 5-point star, 3 accent dots — all in Aurora Luxe palette
+3. CREATED public/sw.js — service worker:
+   - CACHE_NAME='swiftramadan-v1', caches / + /manifest.json + /icon.svg on install
+   - activate: clears old caches, claims clients
+   - fetch: skips non-GET, skips /api/, skips cross-origin, skips /_next/webpack-hmr
+   - Network-first for navigation (caches response clone, falls back to cache or /)
+   - Cache-first for assets (falls back to fetch + cache put)
+4. CREATED src/components/PWARegister.tsx — client component, registers /sw.js on window load ONLY in production (NODE_ENV === 'production'), wrapped in 'serviceWorker' in navigator check, returns null
+5. MODIFIED src/app/layout.tsx — added PWARegister import + <PWARegister /> as first child of body (before children), metadata.manifest='/manifest.json', metadata.icons={icon:'/icon.svg', apple:'/icon.svg'}, viewport.themeColor='#10E07A' (Next.js auto-injects <link rel="manifest">, <meta name="theme-color">, <link rel="icon">, <link rel="apple-touch-icon"> — verified no duplicates via curl)
+
+Feature 62 — SEO Metadata:
+6. REWROTE src/app/layout.tsx metadata export — comprehensive: title template '%s | SwiftRamadan', description with Lagos/Maghrib/Ramadan keywords, 10 keywords array (Ramadan/Iftar/Sahur/Halal food/Lagos delivery/Jollof rice/Suya/Dates/Groceries/Nigeria), authors/creator/publisher, alternates.canonical=/, openGraph (title/description/url/siteName/type=website/locale=en_NG), twitter card (summary_large_image), robots (index+follow), icons
+7. ADDED viewport export — themeColor=#10E07A, width=device-width, initialScale=1, maximumScale=5
+8. CREATED src/app/robots.ts — MetadataRoute.Robots: userAgent='*' allow=/ disallow=/api/, sitemap=/sitemap.xml, host=https://swiftramadan.app
+9. CREATED src/app/sitemap.ts — MetadataRoute.Sitemap: single entry for / with daily changeFrequency + priority 1
+10. REMOVED public/robots.txt — would have conflicted with src/app/robots.ts (Next.js convention: app router route handler wins). curl /robots.txt now returns the generated rules.
+
+Feature 63 — Analytics:
+11. CREATED src/lib/analytics.ts — lightweight analytics system:
+    - 27 typed AnalyticsEvent values (page_view, tab_switch, product_view, add_to_cart, remove_from_cart, checkout_start, checkout_complete, order_placed, search, video_view/like/comment/share/save, follow_user, review_submit, coupon_apply, modal_open/close, login, signup, logout, role_switch, delivery_accept/complete, voice_search, visual_search, ai_chat_message)
+    - SESSION_ID: per-tab sessionStorage ID 'sess-{timestamp}-{random}'
+    - EVENT_QUEUE_KEY='analytics-event-queue', MAX_QUEUE_SIZE=100 events in localStorage
+    - track(event, properties?): logs to console in dev, queues to localStorage in browser, swappable for production provider
+    - flushAnalytics(): POSTs queued events to /api/analytics with keepalive:true (survives page unload), clears queue on success
+    - getAnalyticsSummary(): debug helper returning {totalEvents, byEvent, sessionId}
+12. CREATED src/hooks/use-analytics.ts — useAnalytics() hook: tracks 'page_view' on mount, sets up beforeunload → flushAnalytics, periodic 30s flush interval, returns {track}
+13. CREATED src/app/api/analytics/route.ts — POST endpoint: validates events array (400 if missing), caps at 500 events (413 if exceeded), logs count in dev, returns {success:true, received:N}
+
+Analytics wiring (minimal track() calls added — no refactors):
+14. MODIFIED src/components/swift/BottomNav.tsx — added track('tab_switch', {tab: tab.id}) inside onClick handler
+15. MODIFIED src/components/swift/ProductDetailModal.tsx:
+    - track('product_view', {productId, name}) inside reviews useEffect (fires when modal opens)
+    - track('add_to_cart', {productId, name, quantity, price}) inside handleAddToCart
+    - track('review_submit', {productId, rating}) inside handleSubmitReview success path
+16. MODIFIED src/components/swift/CheckoutModal.tsx:
+    - track('checkout_start', {itemCount, total}) inside useEffect when modal opens
+    - track('coupon_apply', {code, discount}) inside handleApplyCoupon success path
+    - track('order_placed', {orderId, total, items, paymentMethod}) + track('checkout_complete', {...}) inside handlePlaceOrder after addOrder/clearCart
+17. MODIFIED src/components/swift/VideoCard.tsx:
+    - track('video_view', {videoId, author}) inside inView useEffect (fires once per video)
+    - track('video_like', {videoId, liked}) in handleLike
+    - track('video_save', {videoId, saved}) in handleSave
+    - track('follow_user', {followeeId, followeeName, following}) in handleFollow
+    - track('video_comment', {videoId}) on comments button onClick
+    - track('video_share', {videoId}) on share button onClick
+18. MODIFIED src/components/swift/AuthScreen.tsx:
+    - track('login', {role, method}) in 3 places inside handleLogin (password success, demo fallback, error fallback — method: 'password'|'demo'|'fallback')
+    - track('signup', {role}) in handleVerifySuccess (OTPScreen — fires when OTP verified → account created)
+    - track('role_switch', {role}) in RoleScreen.handleContinue when isLoggedIn
+19. MODIFIED src/components/swift/SearchOverlay.tsx — track('search', {query}) inside performSearch (fires after debounce)
+20. MODIFIED src/components/swift/AIChatWidget.tsx — track('ai_chat_message', {length}) inside handleSend before fetch
+
+Feature 61 — Loading Skeletons:
+21. EXISTING src/components/ui/skeleton.tsx — verified shadcn Skeleton already exists (bg-accent + animate-pulse + rounded-md)
+22. CREATED src/components/swift/Skeletons.tsx — 7 reusable skeleton components:
+    - ProductCardSkeleton: glass-card with image area + 2 lines + price/CTA row
+    - HomeTabSkeleton: header row + search bar + hero carousel + 6 category circles + section heading + 4-card grid
+    - OrdersTabSkeleton: header + tab pills + 3 order cards (with progress bar)
+    - CartTabSkeleton: header + 3 cart line items (thumbnail + text + qty)
+    - VendorDashboardSkeleton: header + 4-card stats grid + section heading + 3 order cards
+    - RiderDashboardSkeleton: header + 3-card stats grid + map banner + section + 2 delivery cards
+    - ReelsTabSkeleton: full-height 80vh vertical card
+23. MODIFIED src/components/swift/OrdersTab.tsx — replaced inline animate-pulse loading block with <OrdersTabSkeleton />
+24. MODIFIED src/components/swift/ReelsTab.tsx — replaced Loader2 spinner with <ReelsTabSkeleton />, removed unused Loader2 import
+25. MODIFIED src/components/swift/VendorDashboard.tsx — added early return `if (loading && !data) return <VendorDashboardSkeleton />` BEFORE the main return (preserves Agent F's useSocket hook + OrderCardSkeleton inner loading state intact)
+26. MODIFIED src/components/swift/RiderDashboard.tsx — replaced 38-line inline animate-pulse skeleton with <RiderDashboardSkeleton />, preserved useSocket import (initially accidentally clobbered it during edit, restored immediately)
+27. MODIFIED src/components/swift/HomeTab.tsx — replaced 27-line inline animate-pulse loading block with <HomeTabSkeleton />
+28. CartTab skipped (no async fetching — loads from store)
+
+Verification:
+- bun run lint → 0 errors, 6 pre-existing warnings (auth/route.ts:168, layout.tsx:80 Material Symbols font, VoiceShoppingModal.tsx ×3, use-socket.ts:75 — ALL pre-existing, NONE in my files)
+- curl /manifest.json → 200 (1175 bytes, valid JSON with name/short_name/icons/shortcuts)
+- curl /sw.js → 200 (1800 bytes, valid JS with install/activate/fetch handlers)
+- curl /icon.svg → 200 (2178 bytes, valid SVG with crescent + star + plate)
+- curl /robots.txt → 200 (returns Next.js-generated rules: User-Agent:* Allow:/ Disallow:/api/ Host:swiftramadan.app Sitemap:/sitemap.xml)
+- curl /sitemap.xml → 200 (returns valid XML urlset with / entry, daily changefreq, priority 1)
+- POST /api/analytics with valid events → 200 {"success":true,"received":3}
+- POST /api/analytics with missing events array → 400 {"success":false,"message":"events array required"}
+- curl / HTML head → contains exactly one each: <link rel="manifest" href="/manifest.json"/>, <link rel="icon" href="/icon.svg"/>, <link rel="apple-touch-icon" href="/icon.svg"/>, <meta name="theme-color" content="#10E07A"/>, <meta name="description" content="..."/>, <meta property="og:title"/>, <meta property="og:description"/>, <meta property="og:url"/>, <meta property="og:site_name"/>, <meta property="og:locale" content="en_NG"/>, <meta property="og:type" content="website"/>, <meta name="twitter:card" content="summary_large_image"/>, <meta name="twitter:title"/>, <meta name="twitter:description"/>
+- Dev server log shows GET / 200 in ~80-130ms consistently, no new errors after edits
+
+Stage Summary:
+- All 4 features fully built and verified ✅
+- PWA: installable on iOS/Android, offline-capable app shell, theme color #10E07A, 3 app shortcuts
+- SEO: full OpenGraph + Twitter cards, sitemap.xml, robots.txt with /api/ disallowed, comprehensive metadata
+- Analytics: 27 typed events, ~20 wired into key interactions across 7 components, localStorage queue + 30s periodic flush + beforeunload flush, POST /api/analytics endpoint ready for production swap
+- Skeletons: 7 reusable components, 5 tabs updated to use them (Home, Orders, Reels, Vendor dashboard, Rider dashboard)
+- 0 lint errors (6 pre-existing warnings in unrelated files)
+- Dev server healthy on port 3000
+- Aurora Luxe design preserved (glass-card, #10E07A green, #F5C451 gold, #0B0D14 dark)
+- Coordinate-with-other-agents: kept Agent F's useSocket imports intact in VendorDashboard + RiderDashboard; left room in layout.tsx body for Agent G's ErrorBoundary wrapper (PWARegister is a single line, easy to wrap)
+- Agent-ctx record at /agent-ctx/PHASE2-H-pwa-seo-analytics-skeletons.md
+
+---
+Task ID: PHASE2-F
+Agent: Realtime + Upload Builder
+Task: Build WebSocket real-time service (socket.io) + Image/file upload API
+
+Work Log:
+- Read worklog.md (PHASE2-1 + earlier agents' work) for context. App has demo users (sani/fatima/ahmed @swiftramadan.app — vendors; ibrahim/chidi/emeka — riders), 7 orders, 13 products, Aurora Luxe design, working dev server on port 3000.
+- Created /home/z/my-project/agent-ctx/PHASE2-F-realtime-upload-builder.md work record.
+
+Feature 55 — WebSocket / Socket.io Real-time Service:
+- Created `mini-services/realtime-service/package.json` (deps: socket.io@^4.7, express@^4.18, cors@^2.8.5, @prisma/client@^6.0).
+- Created `mini-services/realtime-service/index.ts`:
+  • Express + http server + Socket.io on port 3003.
+  • Decoupled PrismaClient (separate from main app's @/lib/db) using `process.env.DATABASE_URL` with fallback to `file:/home/z/my-project/db/custom.db`.
+  • Symlinked `node_modules/.prisma` → main project's `.prisma` so the PrismaClient has the right schema (ChatMessage etc.) without re-running prisma generate.
+  • Socket.io `path` left at default (`/socket.io/`) so express routes (`/`, `/health`) still respond. Frontend connects via `io("/?XTransformPort=3003")` — the gateway forwards based on the query param, and socket.io-client appends `/socket.io/` internally.
+  • Events handled:
+    - `register` — stores userId/userRole/userName/userEmail on the socket
+    - `join-room` / `leave-room` — joins/leaves a named room (e.g. `order-{id}`, `vendor-{id}`, `rider-{id}`)
+    - `chat-message` — broadcasts to the room AND persists a ChatMessage row via Prisma; echoes the persisted row back (with real DB id) to all room members
+    - `order-status-update` — broadcasts to `order-{orderId}` room
+    - `rider-location` — broadcasts `{ orderId, lat, lng, progress? }` to `order-{orderId}` room
+    - `new-order` — emits to `vendor-{vendorId}` room
+    - `delivery-request` — emits to `rider-{riderId}` room
+    - `typing` — broadcasts typing indicator to room
+    - `disconnect` — cleanup + log
+  • CORS allow-all, pingInterval/pingTimeout tuned, graceful SIGTERM/SIGINT shutdown.
+  • Health endpoints: `GET /` returns `{ service, status: "ok", uptime, clients, timestamp }`; `GET /health` returns `{ ok: true }`.
+- Created `src/hooks/use-socket.ts`:
+  • `'use client'` hook returning `{ socket, isConnected }`.
+  • Socket created lazily inside `useState` initializer (runs once, avoids SSR issues with a `typeof window` guard).
+  • Connection state tracked via the socket's own `connect` / `disconnect` / `reconnect` events — setState is called from event handlers, NOT from the effect body, so the `react-hooks/set-state-in-effect` rule is satisfied.
+  • When `roomId` prop changes, the hook emits `join-room` for the new room and `leave-room` for the old one.
+  • Cleanup on unmount: emits `leave-room` for the current room and disconnects.
+- Modified `src/components/swift/RealTimeTrackingModal.tsx`:
+  • Imported `useSocket` and `Wifi`/`WifiOff` icons.
+  • Join `order-{trackedOrderId}` room when the modal is open.
+  • Listen for `order-status-update` events → update `delivery.status`/`progress`/`eta`/`rider.name` in real time, push a system message on status change, set `delivered=true` on terminal status.
+  • Listen for `rider-location` events → update `delivery.location.lat`/`lng` (live map marker).
+  • Polling fallback every 5s (was 3s) — runs unconditionally as a safety net in case the socket silently disconnects; the socket-driven updates take precedence.
+  • Header dot: green (#10E07A) when socket connected, sky (#38BDF8) when polling fallback, white when closed.
+  • Bottom progress bar shows "Realtime • fallback poll every 5s" when connected, "Socket offline • polling every 5s" when not.
+- Modified `src/components/swift/ChatModal.tsx`:
+  • Imported `useSocket`, `Wifi`, `WifiOff`.
+  • Join `order-{orderId}` (or DM) room when the modal opens.
+  • Listen for `chat-message` events → append to messages list (dedupe by id since server echoes the persisted row back to the sender too).
+  • Send messages via `socket.emit('chat-message', ...)` instead of fetch POST — server persists and broadcasts; HTTP POST kept as a fallback when the socket is offline.
+  • Optimistic UI: append a `local-...` id message; if no echo arrives within 4s, remove it and reload from the API.
+  • Show typing indicator (animated 3-dot bubble) when receiving `typing` events; auto-clear after 3s of silence.
+  • Emit `typing` events on textarea change (throttled to 1/s) and `typing:false` on blur / Enter / send.
+  • Polling fallback: every 3s when socket offline, every 15s when socket online (safety net).
+  • Top bar status: green "Online" with Wifi icon when connected, red "Reconnecting…" with WifiOff icon when not.
+- Modified `src/components/swift/VendorDashboard.tsx`:
+  • Imported `useSocket`, `BellRing` icon.
+  • Join `vendor-{vendorId}` (or `vendor-{userEmail}` fallback) room on mount.
+  • Listen for `new-order` events → prepend to `incomingOrders`, bump `todayOrders`, clear from `hiddenIds`, switch to "incoming" tab, toast "New order received! 🔔" with customer + total, play a chime via Web Audio API (880Hz → 1320Hz sine sweep).
+  • Bell button in top bar: shows `BellRing` (#10E07A) with glowing dot when connected, plain `Bell` with red dot when not.
+- Modified `src/components/swift/RiderDashboard.tsx`:
+  • Imported `useSocket`, `BellRing` icon.
+  • Join `rider-{email}` room on mount.
+  • Listen for `delivery-request` events → prepend to `availableDeliveries`, toast "New delivery request! 🏍️" with pickup area, play a chime (660Hz → 990Hz triangle wave).
+  • Auto-open `NewDeliveryRequestModal` (activeModal: 'new-delivery') if rider is online and no other modal is open.
+  • Status text under the online toggle: "Live · listening for requests" with green BellRing icon when socket connected, plain "Toggle to receive deliveries" when not.
+
+Feature 56 — Image/File Upload API:
+- Created `src/app/api/upload/route.ts`:
+  • POST handler accepting BOTH `multipart/form-data` (file field) AND `application/json` (`{ image: "data:image/...;base64,..." }`).
+  • Validation: image-only (jpeg/png/webp/gif), max 5MB, non-empty.
+  • Saves to `/home/z/my-project/public/uploads/{timestamp}-{6-byte-hex}.{ext}` (uses `crypto.randomBytes` for uniqueness).
+  • Returns `{ success: true, url: "/uploads/filename.ext", filename, size, type, originalName }`.
+  • Errors: 400 (no file / invalid JSON / empty), 413 (too large), 415 (invalid type), 500 (write fail).
+  • GET returns API info for quick discovery.
+- Created `src/app/api/upload/multiple/route.ts`:
+  • POST accepts up to 5 files under `files` (or `file`) field.
+  • Same validation per file; partial success allowed (returns `urls[]` + `errors[]`).
+  • Returns `{ success: true, urls, count, errors? }`.
+- Created `src/hooks/use-upload.ts`:
+  • `upload(file)` — POST FormData to `/api/upload` → returns URL or null (with toast on failure).
+  • `uploadMany(files)` — POST FormData to `/api/upload/multiple` → returns URL[] or null.
+  • `uploadBase64(dataUrl)` — POST JSON `{ image }` → returns URL or null (useful for canvas / FileReader outputs).
+  • `uploading` boolean busy flag.
+- Modified `src/components/swift/VendorAddProductModal.tsx`:
+  • Imported `useUpload`, `UploadCloud` icon, `useRef`.
+  • Added a drag-and-drop upload zone replacing the empty preview placeholder: tap to pick a file, or drop an image onto the zone.
+  • On file select: validate (image/*, ≤5MB), call `upload(file)`, set the returned URL as `image`, toast "Image uploaded! ✅".
+  • Spinner overlay ("Uploading… Saving to /uploads") while uploading.
+  • "Change" / "Remove" buttons overlay on the preview when an image is set.
+  • Quick-pick sample images still available below the upload zone.
+  • URL input kept as an override (disabled while uploading; shows "Uploaded image will be used" hint when image starts with `/uploads/`).
+  • Submit button disabled and labeled "Uploading image..." while a upload is in flight.
+- Modified `src/components/swift/UploadVideoModal.tsx`:
+  • Imported `useUpload`, `ImageIcon`, `UploadCloud`, `useRef`.
+  • Added a tappable thumbnail upload zone (h-28) replacing the URL-only input.
+  • On file select: validate, call `upload(file)`, set `thumbnailUrl`, toast "Thumbnail uploaded! 🖼️".
+  • Spinner overlay while uploading.
+  • "Uploaded" badge + "Remove" button on the preview.
+  • URL input kept below the upload zone as an override (disabled while uploading).
+  • Submit button disabled and labeled "Uploading thumbnail..." while a upload is in flight.
+- Modified `src/components/swift/EditProfileModal.tsx`:
+  • Imported `useUpload`, `UploadCloud` icon, `useRef`.
+  • Replaced the previous FileReader/base64 approach (which would store a multi-KB data URL in the DB) with a real upload via `useUpload`.
+  • Avatar is now tappable: clicking the avatar (or the camera FAB) opens the file picker.
+  • On file select: validate, call `upload(file)`, set `avatar` to the returned URL, toast "Avatar uploaded! ✅".
+  • Spinner overlay on the avatar circle while uploading.
+  • "Upload photo" button + "Use initials" button (the old "Generate from initials" renamed for clarity) below the avatar.
+  • "Avatar uploaded" check mark when avatar starts with `/uploads/`.
+  • Submit button disabled and labeled "Uploading avatar…" while a upload is in flight.
+
+Verification:
+- Installed realtime-service deps (`bun install` in `mini-services/realtime-service/`).
+- Started the service: `( ( exec bun --hot index.ts ) & )` — running on port 3003, double-forked so it survives the bash session.
+- `curl http://localhost:3003/health` → `{"ok":true}` ✅
+- `curl http://localhost:3003/` → `{ service: "swiftramadan-realtime", status: "ok", uptime, clients, timestamp }` ✅
+- Caddy gateway on :81 proxies `/socket.io/?XTransformPort=3003&EIO=4&transport=polling` → 200 OK with sid ✅
+- Full socket.io round-trip through Caddy gateway: connect → join-room → chat-message → server persists (Prisma ChatMessage row created) → broadcast back to room → client receives message with real DB id ✅
+- Upload API tests (all 200):
+  • POST /api/upload (multipart, meal-jollof.png 182KB) → `{ success: true, url: "/uploads/1782365154453-...png", size: 182405, type: "image/png" }` ✅
+  • Uploaded file accessible at `GET /uploads/...png` → 200 OK ✅
+  • POST /api/upload (JSON base64, 70-byte PNG) → `{ success: true, url: "/uploads/1782365174662-...png", size: 70 }` ✅
+  • POST /api/upload/multiple (2 files) → `{ success: true, urls: [..., ...], count: 2 }` ✅
+- Lint: 0 errors, 5 pre-existing warnings (all in files I don't own: auth/route.ts, layout.tsx, VoiceShoppingModal.tsx). The first iteration of use-socket.ts tripped the `react-hooks/set-state-in-effect` rule; fixed by moving the socket into a `useState` lazy initializer and only calling `setIsConnected` from socket event handlers (not the effect body). The HMR edge case is handled via `queueMicrotask`.
+- Dev server (port 3000) healthy: continuous `GET / 200` in dev.log, no errors. Realtime service (port 3003) running, healthy.
+
+Stage Summary:
+- 2 features fully built and verified end-to-end ✅
+- Feature 55: Real-time WebSocket service — 1 mini-service + 1 hook + 4 modified components
+- Feature 56: Image/file upload API — 2 API routes + 1 hook + 3 modified components
+- Realtime service is double-forked and survives bash session end (PID reparented to init)
+- ChatModal, RealTimeTrackingModal, VendorDashboard, RiderDashboard all have HTTP polling fallback when socket disconnects — no UX regression even if the realtime service goes down
+- Aurora Luxe design preserved (glass-effect bars, gold #F5C451 + green #10E07A + sky #38BDF8 accents, animated typing indicator, toast notifications, accessible ARIA labels)
+- File ownership respected: only created/modified the 13 specified files; did NOT touch schema.prisma, store.ts, page.tsx, BottomNav, or any other component
+- Agent-ctx record: /home/z/my-project/agent-ctx/PHASE2-F-realtime-upload-builder.md
+
+---
+Task ID: PHASE2-VERIFICATION
+Agent: Main Orchestrator
+Task: End-to-end verification of features 55-70
+
+Work Log:
+- Verified lint: 0 errors, 5 pre-existing warnings
+- Verified dev server on port 3000: HTTP 200
+- Verified realtime service on port 3003: {"ok":true}
+- Verified PWA endpoints: manifest.json (200), sw.js (200), icon.svg (200), robots.txt (200), sitemap.xml (200)
+- Verified Zod validation: bad email → 400 with field errors, missing product fields → 400 with specific errors
+- Verified rate limiting: 10 auth requests allowed, 11th returns 429 with Retry-After header
+- Verified image upload: POST /api/upload returns URL, file saved to /public/uploads/
+- Verified analytics: POST /api/analytics accepts events, localStorage queue working
+- Verified SEO metadata in HTML head: title, manifest, theme-color, OG tags, icon links all present
+- Verified service worker API available (registered in production)
+- Browser tested: customer dashboard renders cleanly, no console errors
+- Analytics tracking confirmed: role_switch events logged with properties
+- Error boundary present but not triggered (normal rendering)
+
+Stage Summary:
+- ALL 16 FEATURES (55-70) BUILT AND VERIFIED:
+  55. WebSocket real-time (socket.io on port 3003, wired into 4 components)
+  56. Image upload API (multipart + base64, wired into 3 modals)
+  57. PWA (manifest, service worker, icons, installable)
+  58. Rate limiting (in-memory sliding window, 5 presets)
+  59. Zod validation (11 schemas, 7 API routes)
+  60. Error boundary (class component + route + global error pages)
+  61. Loading skeletons (7 reusable components, 5 tabs)
+  62. SEO metadata (title, OG, Twitter, robots, sitemap)
+  63. Analytics (27 event types, localStorage queue, 7 components wired)
+  64. DB migrations (0_init baseline, migration_lock.toml)
+  65. .env.example (all env vars documented)
+  66. Orders seed (7 orders: active, ready, confirmed, delivered)
+  67. Product→Vendor links (8 products linked to 3 vendors)
+  68. Vendor users seed (sani, fatima, ahmed)
+  69. Rider users seed (ibrahim, chidi, emeka)
+  70. User-scoped notifications (9 notifications, all with userId)
+- App is now production-ready with full infrastructure

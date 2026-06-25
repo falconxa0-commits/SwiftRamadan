@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, addressSchema } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -14,6 +16,10 @@ async function resolveUserId(raw: string | null | undefined): Promise<string | n
 
 // GET /api/addresses?userId=xxx → returns addresses (default first)
 export async function GET(request: NextRequest) {
+  // Rate limit: 100 requests per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const rawUserId = searchParams.get('userId');
@@ -40,9 +46,17 @@ export async function GET(request: NextRequest) {
 
 // POST /api/addresses { userId, label, address, area, city, instructions, lat?, lng?, isDefault }
 export async function POST(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
-    const { userId: rawUserId, label, address, area, city, instructions, lat, lng, isDefault } = body;
+
+    // Validate payload
+    const v = validateInput(addressSchema, body);
+    if (!v.success) return v.response;
+    const { userId: rawUserId, label, address, area, city, instructions, lat, lng, isDefault } = v.data;
 
     if (!rawUserId || !address) {
       return NextResponse.json(
@@ -93,6 +107,10 @@ export async function POST(request: NextRequest) {
 
 // PUT /api/addresses { id, ...fields } → update address
 export async function PUT(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { id, label, address, area, city, instructions, lat, lng, isDefault } = body;
@@ -103,6 +121,10 @@ export async function PUT(request: NextRequest) {
         { status: 400 },
       );
     }
+
+    // Validate updateable fields (partial schema strips `id` silently)
+    const v = validateInput(addressSchema.partial(), body);
+    if (!v.success) return v.response;
 
     const existing = await db.address.findUnique({ where: { id: String(id) } });
     if (!existing) {
@@ -147,6 +169,10 @@ export async function PUT(request: NextRequest) {
 
 // DELETE /api/addresses?id=xxx → delete address
 export async function DELETE(request: NextRequest) {
+  // Rate limit: 30 write operations per minute per IP
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

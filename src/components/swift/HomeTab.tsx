@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import RamadanCountdown from './RamadanCountdown';
+import { HomeTabSkeleton } from './Skeletons';
 
 const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
   replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
@@ -87,32 +88,7 @@ export default function HomeTab() {
   if (isLoading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32">
-        <div className="px-5 pt-4 space-y-5">
-          <div className="flex items-center justify-between">
-            <div className="animate-pulse w-32 h-8 bg-[#0F1118] rounded-xl" />
-            <div className="animate-pulse w-24 h-9 bg-[#0F1118] rounded-xl" />
-          </div>
-          <div className="animate-pulse w-full h-12 bg-[#0F1118] rounded-2xl" />
-          <div className="animate-pulse w-full h-44 bg-[#0F1118] rounded-3xl" />
-          <div className="flex gap-3 overflow-hidden">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="flex flex-col items-center gap-2 min-w-[72px]">
-                <div className="w-12 h-12 bg-[#0F1118] rounded-2xl animate-pulse" />
-                <div className="w-12 h-2 bg-[#0F1118] rounded animate-pulse" />
-              </div>
-            ))}
-          </div>
-          <div className="animate-pulse w-full aspect-[16/9] bg-[#0F1118] rounded-2xl" />
-          <div className="flex gap-5 overflow-hidden">
-            {[1, 2, 3, 4].map(i => (
-              <div key={i} className="flex flex-col items-center gap-2 min-w-[70px]">
-                <div className="w-16 h-16 bg-[#0F1118] rounded-full animate-pulse" />
-                <div className="w-12 h-2 bg-[#0F1118] rounded animate-pulse" />
-              </div>
-            ))}
-          </div>
-          <div className="animate-pulse w-full h-64 bg-[#0F1118] rounded-3xl" />
-        </div>
+        <HomeTabSkeleton />
       </main>
     );
   }

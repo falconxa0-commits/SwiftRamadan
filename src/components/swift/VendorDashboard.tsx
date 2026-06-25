@@ -15,10 +15,13 @@ import {
   Loader2,
   Package,
   Truck,
+  BellRing,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import { VendorDashboardSkeleton } from './Skeletons';
+import { useSocket } from '@/hooks/use-socket';
 
 /* ──────────────────── Types ──────────────────── */
 
@@ -223,6 +226,116 @@ export default function VendorDashboard() {
   // Marked-as-ready processing orders (for quick visual feedback)
   const [readyIds, setReadyIds] = useState<Set<string>>(new Set());
 
+  // ─── Realtime: join vendor room when we have the vendorId ───
+  // We use the vendor's email as a stable identifier when the API
+  // doesn't expose a numeric id (vendorId may be null on first load).
+  const vendorRoomId = data?.vendorId
+    ? `vendor-${data.vendorId}`
+    : userEmail
+      ? `vendor-${userEmail}`
+      : undefined;
+  const { socket, isConnected: socketConnected } = useSocket(vendorRoomId);
+
+  /** Play a short notification chime using the Web Audio API. */
+  const playChime = useCallback(() => {
+    try {
+      const AudioCtx =
+        (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext })
+          .AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(880, ctx.currentTime); // A5
+      osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.12); // E6
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.15, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.4);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.42);
+      // Close context shortly after to free resources
+      setTimeout(() => ctx.close().catch(() => {}), 600);
+    } catch {
+      /* Audio API not available */
+    }
+  }, []);
+
+  // Listen for new-order events
+  useEffect(() => {
+    if (!socket) return;
+
+    const onNewOrder = (payload: {
+      vendorId?: string;
+      orderData?: Record<string, unknown> & {
+        id?: string;
+        customer?: string;
+        area?: string;
+        total?: number;
+        items?: { name: string; qty: number; price: number }[];
+        image?: string;
+        minutesUntilIftar?: number;
+      };
+      timestamp?: string;
+    }) => {
+      if (!payload) return;
+      const od = payload.orderData || {};
+      const newOrder: IncomingOrder = {
+        id:
+          (typeof od.id === 'string' && od.id) ||
+          `SWR-${Date.now().toString(36).toUpperCase()}`,
+        customer: (typeof od.customer === 'string' && od.customer) || 'New customer',
+        area: (typeof od.area === 'string' && od.area) || 'Lagos',
+        items: Array.isArray(od.items) ? od.items : [],
+        total: typeof od.total === 'number' ? od.total : 0,
+        minutesUntilIftar:
+          typeof od.minutesUntilIftar === 'number' ? od.minutesUntilIftar : 30,
+        status: 'incoming',
+        image:
+          (typeof od.image === 'string' && od.image) ||
+          '/images/meals/meal-jollof.png',
+        createdAt: new Date().toISOString(),
+        progress: 0,
+      };
+
+      // Prepend to incoming orders if not already present
+      setData((prev) => {
+        if (!prev) return prev;
+        if (prev.incomingOrders.some((o) => o.id === newOrder.id)) return prev;
+        return {
+          ...prev,
+          incomingOrders: [newOrder, ...prev.incomingOrders],
+          todayOrders: prev.todayOrders + 1,
+        };
+      });
+
+      // Remove from hiddenIds in case it was hidden before
+      setHiddenIds((s) => {
+        const next = new Set(s);
+        next.delete(newOrder.id);
+        return next;
+      });
+
+      // Switch to "incoming" tab so the vendor sees it immediately
+      setActiveFilter('incoming');
+
+      // Toast + chime
+      toast({
+        title: 'New order received! 🔔',
+        description: `${newOrder.customer} • ${formatNaira(newOrder.total)}`,
+      });
+      playChime();
+    };
+
+    socket.on('new-order', onNewOrder);
+    return () => {
+      socket.off('new-order', onNewOrder);
+    };
+  }, [socket, toast, playChime]);
+
   /* ── Fetch vendor dashboard data ── */
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -397,6 +510,11 @@ export default function VendorDashboard() {
     { id: 'dispatched', label: 'Dispatched', count: dispatchedOrders.length },
   ];
 
+  // Top-level skeleton on first load (before data arrives)
+  if (loading && !data) {
+    return <VendorDashboardSkeleton />;
+  }
+
   return (
     <div className="flex flex-col gap-5 px-4 pb-32 pt-2">
       {/* Top Bar */}
@@ -418,12 +536,31 @@ export default function VendorDashboard() {
           <button
             onClick={() => setActiveModal('vendor-insights')}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0F1118] border border-white/10 hover:border-[#F5C451]/30 transition-all"
+            aria-label="Sales insights"
           >
             <span className="material-symbols-outlined text-[#F5C451] text-lg">bar_chart</span>
           </button>
-          <button className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0F1118] border border-white/10 relative">
-            <Bell className="w-4 h-4 text-white" />
-            <span className="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full" />
+          <button
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-[#0F1118] border border-white/10 relative"
+            aria-label="Notifications"
+            title={
+              socketConnected
+                ? 'Live — listening for new orders'
+                : 'Reconnecting realtime…'
+            }
+          >
+            {socketConnected ? (
+              <BellRing className="w-4 h-4 text-[#10E07A]" />
+            ) : (
+              <Bell className="w-4 h-4 text-white" />
+            )}
+            <span
+              className={`absolute top-1.5 right-1.5 size-2 rounded-full ${
+                socketConnected
+                  ? 'bg-[#10E07A] shadow-[0_0_6px_#10E07A]'
+                  : 'bg-red-500'
+              }`}
+            />
           </button>
         </div>
       </motion.div>

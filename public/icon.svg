@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0B0D14"/>
+      <stop offset="100%" stop-color="#06070B"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10E07A"/>
+      <stop offset="100%" stop-color="#0FAA5E"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F5C451"/>
+      <stop offset="100%" stop-color="#E0A82E"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background with rounded corners (maskable-friendly) -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Subtle decorative ring -->
+  <circle cx="256" cy="256" r="200" fill="none" stroke="#10E07A" stroke-opacity="0.10" stroke-width="2"/>
+  <circle cx="256" cy="256" r="170" fill="none" stroke="#F5C451" stroke-opacity="0.06" stroke-width="1.5"/>
+
+  <!-- Plate (outer rim) -->
+  <circle cx="256" cy="266" r="150" fill="#0F1118" stroke="url(#accent)" stroke-width="4" stroke-opacity="0.45"/>
+  <circle cx="256" cy="266" r="118" fill="#06070B" stroke="#10E07A" stroke-opacity="0.18" stroke-width="2"/>
+
+  <!-- Crescent moon (green, glowing) -->
+  <g filter="url(#glow)" transform="translate(244, 206)">
+    <path d="M 42 0 A 64 64 0 1 1 -42 0 A 50 50 0 1 0 42 0 Z" fill="url(#accent)"/>
+  </g>
+
+  <!-- Gold star next to crescent -->
+  <g filter="url(#glow)" transform="translate(312, 162)">
+    <path d="M 0 -16 L 4.7 -4.9 L 16 -4.9 L 6.7 2.9 L 10.4 14 L 0 7.1 L -10.4 14 L -6.7 2.9 L -16 -4.9 L -4.7 -4.9 Z" fill="url(#gold)"/>
+  </g>
+
+  <!-- Tiny accent dots on plate rim -->
+  <circle cx="256" cy="392" r="4" fill="#F5C451" opacity="0.7"/>
+  <circle cx="146" cy="266" r="3" fill="#10E07A" opacity="0.5"/>
+  <circle cx="366" cy="266" r="3" fill="#10E07A" opacity="0.5"/>
+</svg>

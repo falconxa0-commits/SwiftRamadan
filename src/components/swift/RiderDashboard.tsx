@@ -5,11 +5,13 @@ import { motion } from 'framer-motion';
 import {
   Bike, Star, Check, Clock,
   MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
-  Package, Loader2, CheckCircle, Moon,
+  Package, Loader2, CheckCircle, Moon, BellRing,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
+import { RiderDashboardSkeleton } from './Skeletons';
+import { useSocket } from '@/hooks/use-socket';
 
 /* ───────── Types ───────── */
 
@@ -101,6 +103,107 @@ export default function RiderDashboard() {
   const fetchingRef = useRef(false);
 
   const email = userEmail || 'sani@swiftramadan.app';
+
+  // ─── Realtime: join the rider room so the backend can push
+  // delivery requests directly to this rider. We use the email as a
+  // stable identifier (the spec says `rider-{riderId}`).
+  const riderRoomId = `rider-${email}`;
+  const { socket, isConnected: socketConnected } = useSocket(riderRoomId);
+
+  /** Play a short delivery-request chime. */
+  const playChime = useCallback(() => {
+    try {
+      const AudioCtx =
+        (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext })
+          .AudioContext ||
+        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(660, ctx.currentTime); // E5
+      osc.frequency.exponentialRampToValueAtTime(990, ctx.currentTime + 0.18); // B5
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.55);
+      setTimeout(() => ctx.close().catch(() => {}), 800);
+    } catch {
+      /* Audio API not available */
+    }
+  }, []);
+
+  // Listen for delivery-request events
+  useEffect(() => {
+    if (!socket) return;
+
+    const onDeliveryRequest = (payload: {
+      riderId?: string;
+      orderData?: Record<string, unknown> & {
+        id?: string;
+        items?: { name: string; qty: number; price: number }[];
+        total?: number;
+        area?: string;
+        customer?: string;
+      };
+      timestamp?: string;
+    }) => {
+      if (!payload) return;
+      const od = payload.orderData || {};
+
+      // Prepend to available deliveries locally so the rider sees it
+      setData((prev) => {
+        if (!prev) return prev;
+        const newOrder: RiderOrder = {
+          id:
+            (typeof od.id === 'string' && od.id) ||
+            `SWR-${Date.now().toString(36).toUpperCase()}`,
+          status: 'Ready',
+          total: typeof od.total === 'number' ? od.total : 0,
+          riderName: null,
+          items: Array.isArray(od.items) ? od.items : [],
+          progress: 0,
+          createdAt: new Date().toISOString(),
+        };
+        if (prev.availableDeliveries.some((o) => o.id === newOrder.id)) {
+          return prev;
+        }
+        return {
+          ...prev,
+          availableDeliveries: [newOrder, ...prev.availableDeliveries],
+        };
+      });
+
+      // Notify the rider
+      toast({
+        title: 'New delivery request! 🏍️',
+        description: od.area
+          ? `Pickup near ${od.area}`
+          : 'Open the app to accept',
+      });
+      playChime();
+
+      // Auto-open the NewDeliveryRequestModal so the rider can act
+      // quickly (only when online and not currently in another modal)
+      try {
+        const store = useAppStore.getState();
+        if (store.riderOnline && !store.activeModal) {
+          store.setActiveModal('new-delivery');
+        }
+      } catch {
+        /* store not ready */
+      }
+    };
+
+    socket.on('delivery-request', onDeliveryRequest);
+    return () => {
+      socket.off('delivery-request', onDeliveryRequest);
+    };
+  }, [socket, toast, playChime]);
 
   const fetchRider = useCallback(
     async (silent = false) => {
@@ -238,41 +341,7 @@ export default function RiderDashboard() {
   if (loading) {
     return (
       <main className="flex-1 overflow-y-auto pb-32 px-4 pt-4">
-        <div className="flex items-center justify-between mb-5">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-white/5 animate-pulse" />
-            <div>
-              <div className="h-3 w-16 bg-white/5 rounded animate-pulse mb-1" />
-              <div className="h-2 w-24 bg-white/5 rounded animate-pulse" />
-            </div>
-          </div>
-          <div className="h-6 w-24 bg-white/5 rounded-full animate-pulse" />
-        </div>
-
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-2xl bg-white/5 animate-pulse" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 w-32 bg-white/5 rounded animate-pulse" />
-            <div className="h-3 w-40 bg-white/5 rounded animate-pulse" />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-24 rounded-2xl bg-white/5 animate-pulse"
-            />
-          ))}
-        </div>
-
-        <div className="h-20 rounded-2xl bg-white/5 animate-pulse mb-6" />
-        <div className="h-40 rounded-2xl bg-white/5 animate-pulse mb-6" />
-        <div className="space-y-3">
-          {[1, 2].map((i) => (
-            <div key={i} className="h-28 rounded-2xl bg-white/5 animate-pulse" />
-          ))}
-        </div>
+        <RiderDashboardSkeleton />
       </main>
     );
   }
@@ -310,7 +379,17 @@ export default function RiderDashboard() {
             >
               {riderOnline ? 'Online' : 'Offline'}
             </p>
-            <p className="text-white/30 text-[10px]">Toggle to receive deliveries</p>
+            <p className="text-white/30 text-[10px] flex items-center gap-1">
+              {socketConnected ? (
+                <>
+                  <BellRing className="w-3 h-3 text-[#10E07A]" />
+                  <span className="text-[#10E07A]">Live</span>
+                  <span>· listening for requests</span>
+                </>
+              ) : (
+                'Toggle to receive deliveries'
+              )}
+            </p>
           </div>
         </div>
         <div

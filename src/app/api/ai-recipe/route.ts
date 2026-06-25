@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 /* ----------------------------------------------------------------------------
  * AI Recipe Generator API
@@ -197,6 +198,10 @@ function extractJson(content: string): unknown {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 20 AI requests per minute per IP (LLM calls are expensive)
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json().catch(() => ({}));
     const prompt = typeof body?.prompt === 'string' ? body.prompt.trim() : '';

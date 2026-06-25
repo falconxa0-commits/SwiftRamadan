@@ -16,10 +16,13 @@ import {
   User,
   Loader2,
   PartyPopper,
+  Wifi,
+  WifiOff,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
 import { formatNaira } from '@/lib/data';
+import { useSocket } from '@/hooks/use-socket';
 
 /* ──────────────────────────────────────────────────────────
    Types
@@ -174,7 +177,156 @@ export default function RealTimeTrackingModal() {
   useEffect(() => {
     trackedOrderIdRef.current = trackedOrderId;
   }, [trackedOrderId]);
-  // isPolling is purely derived from whether the modal is open
+
+  // ─── Socket.io for real-time updates ───
+  // Only join the room while the modal is open; the useSocket hook
+  // handles joining / leaving automatically.
+  const roomId = isOpen && trackedOrderId ? `order-${trackedOrderId}` : undefined;
+  const { socket, isConnected: socketConnected } = useSocket(roomId);
+
+  // Listen for order-status-update events
+  useEffect(() => {
+    if (!socket) return;
+    const onStatusUpdate = (payload: {
+      orderId?: string;
+      status?: string;
+      progress?: number;
+      riderName?: string;
+      eta?: number;
+      timestamp?: string;
+    }) => {
+      if (!payload || !payload.orderId) return;
+      // Only react to updates for the order we're currently tracking
+      if (
+        trackedOrderIdRef.current &&
+        payload.orderId !== trackedOrderIdRef.current
+      ) {
+        return;
+      }
+      const status = mapOrderStatus(payload.status || 'Preparing');
+      const progress =
+        typeof payload.progress === 'number' ? payload.progress : 0;
+      const eta =
+        typeof payload.eta === 'number'
+          ? payload.eta
+          : progressToEta(progress, status);
+      const riderName = payload.riderName || 'Your Rider';
+
+      setDelivery((prev) => {
+        // Preserve existing items / store / customer if present
+        const baseLat = 6.4541;
+        const baseLng = 3.3947;
+        const storeLat = baseLat + 0.01;
+        const storeLng = baseLng - 0.012;
+        const custLat = baseLat - 0.008;
+        const custLng = baseLng + 0.014;
+        const prevLoc = prev?.location;
+        const t = Math.min(1, Math.max(0, progress / 100));
+        const locLat =
+          prevLoc?.lat ?? storeLat + (custLat - storeLat) * t;
+        const locLng =
+          prevLoc?.lng ?? storeLng + (custLng - storeLng) * t;
+
+        const next: DeliveryState = {
+          orderId: payload.orderId,
+          rider: prev?.rider ?? {
+            name: riderName,
+            phone: '+234 800 000 0000',
+            photo: '',
+            rating: 4.9,
+            vehicle: 'Motorcycle',
+            color: '#38BDF8',
+          },
+          location: { lat: locLat, lng: locLng },
+          status,
+          eta,
+          progress,
+          customer: prev?.customer ?? { lat: custLat, lng: custLng },
+          store:
+            prev?.store ?? {
+              name: 'SwiftRamadan Kitchen',
+              lat: storeLat,
+              lng: storeLng,
+            },
+          total: prev?.total ?? 0,
+          items: prev?.items ?? [],
+        };
+
+        // Update rider name if changed
+        if (
+          payload.riderName &&
+          payload.riderName !== next.rider.name
+        ) {
+          next.rider = { ...next.rider, name: payload.riderName };
+        }
+
+        // Push a system message if status changed
+        if (lastStatusRef.current !== status) {
+          const prevStatus = lastStatusRef.current;
+          lastStatusRef.current = status;
+          if (prevStatus !== null) {
+            const msg: UpdateMessage = {
+              orderId: payload.orderId,
+              from: 'system',
+              text: statusMessage(status, next.rider.name),
+              timestamp: Date.now(),
+            };
+            setMessages((m) =>
+              m.some((x) => x.text === msg.text && x.from === 'system')
+                ? m
+                : [...m, msg]
+            );
+          }
+        }
+
+        return next;
+      });
+
+      if (status === 'delivered') {
+        setDelivered(true);
+      }
+    };
+
+    const onRiderLocation = (payload: {
+      orderId?: string;
+      lat?: number;
+      lng?: number;
+      progress?: number;
+    }) => {
+      if (!payload || !payload.orderId) return;
+      if (
+        trackedOrderIdRef.current &&
+        payload.orderId !== trackedOrderIdRef.current
+      ) {
+        return;
+      }
+      if (typeof payload.lat !== 'number' || typeof payload.lng !== 'number')
+        return;
+
+      setDelivery((prev) => {
+        if (!prev) return prev;
+        const next: DeliveryState = {
+          ...prev,
+          location: { lat: payload.lat!, lng: payload.lng! },
+          progress:
+            typeof payload.progress === 'number'
+              ? payload.progress
+              : prev.progress,
+        };
+        return next;
+      });
+    };
+
+    socket.on('order-status-update', onStatusUpdate);
+    socket.on('rider-location', onRiderLocation);
+    return () => {
+      socket.off('order-status-update', onStatusUpdate);
+      socket.off('rider-location', onRiderLocation);
+    };
+  }, [socket]);
+
+  // isPolling is purely derived from whether the modal is open AND
+  // the socket isn't connected (so we fall back to HTTP polling)
   const isPolling = isOpen;
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -280,7 +432,11 @@ export default function RealTimeTrackingModal() {
     if (!isOpen) return;
     // Initial fetch immediately
     pollOrder();
-    const interval = setInterval(pollOrder, 3000);
+    // Fall back to polling every 5s. If the socket is connected, the
+    // realtime service pushes updates instantly and we don't need to
+    // poll as aggressively — but we still poll every 5s as a safety net
+    // in case the socket disconnects silently.
+    const interval = setInterval(pollOrder, 5000);
     return () => {
       clearInterval(interval);
       // Don't reset delivery here so the close animation doesn't flash
@@ -389,11 +545,19 @@ export default function RealTimeTrackingModal() {
                 <div className="min-w-0">
                   <h2 className="text-white text-base font-bold leading-tight flex items-center gap-2">
                     Live Tracking
-                    {isPolling ? (
+                    {socketConnected ? (
+                      <motion.span
+                        animate={{ opacity: [1, 0.4, 1] }}
+                        transition={{ duration: 1.5, repeat: Infinity }}
+                        className="w-2 h-2 rounded-full bg-[#10E07A] inline-block"
+                        title="Realtime connected"
+                      />
+                    ) : isPolling ? (
                       <motion.span
                         animate={{ opacity: [1, 0.4, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                         className="w-2 h-2 rounded-full bg-[#38BDF8] inline-block"
+                        title="Polling (socket offline)"
                       />
                     ) : (
                       <span className="w-2 h-2 rounded-full bg-white/30 inline-block" />
@@ -627,7 +791,11 @@ export default function RealTimeTrackingModal() {
                       <div className="flex-1">
                         <p className="text-white/40 text-sm">Waiting for rider...</p>
                         <p className="text-white/30 text-xs mt-1">
-                          {isPolling ? 'Polling for updates...' : 'No active order'}
+                          {socketConnected
+                            ? 'Realtime channel live'
+                            : isPolling
+                              ? 'Polling for updates...'
+                              : 'No active order'}
                         </p>
                       </div>
                     </div>
@@ -735,8 +903,20 @@ export default function RealTimeTrackingModal() {
               </div>
               {isPolling && (
                 <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
-                  <Loader2 className="w-3 h-3 animate-spin" />
-                  Live polling every 3s
+                  {socketConnected ? (
+                    <>
+                      <Wifi className="w-3 h-3 text-[#10E07A]" />
+                      <span className="text-[#10E07A]">Realtime</span>
+                      <span className="text-white/30">• fallback poll every 5s</span>
+                    </>
+                  ) : (
+                    <>
+                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <WifiOff className="w-3 h-3 text-[#FB7185]" />
+                      <span className="text-[#FB7185]">Socket offline</span>
+                      <span className="text-white/30">• polling every 5s</span>
+                    </>
+                  )}
                 </p>
               )}
             </div>

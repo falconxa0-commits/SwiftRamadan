@@ -1,13 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { validateInput, loginSchema, signupSchema } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
+  // Rate limit: 10 requests per minute per IP (brute-force protection)
+  const rateLimited = checkRateLimit(request, RATE_LIMITS.auth);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { action, email, phone, name, otp, password, role, area, avatar,
             storeName, businessCategory, businessAddress, bankName, accountNumber,
             openTime, closeTime, vehicleType, plateNumber, licenseNumber,
             vehicleColor, riderBankName, riderAccountNumber } = body;
+
+    // Validate login/signup payloads (other actions keep their existing checks)
+    if (action === 'login') {
+      const v = validateInput(loginSchema, { email, password });
+      if (!v.success) return v.response;
+    } else if (action === 'signup') {
+      const v = validateInput(signupSchema, { name, email, phone, password, role });
+      if (!v.success) return v.response;
+    }
 
     switch (action) {
       case 'login': {
