@@ -1,0 +1,1280 @@
+     1→'use client';
+     2→
+     3→import { useState, useMemo } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { useAppStore } from '@/lib/store';
+     6→import { toast } from '@/hooks/use-toast';
+     7→import {
+     8→  X,
+     9→  ArrowLeft,
+    10→  Check,
+    11→  Camera,
+    12→  Truck,
+    13→  Users,
+    14→  Heart,
+    15→  Clock,
+    16→  ShoppingBag,
+    17→  MapPin,
+    18→  Bike,
+    19→  Car,
+    20→  Zap,
+    21→  UtensilsCrossed,
+    22→  Moon,
+    23→  CupSoda,
+    24→  Apple,
+    25→  Cookie,
+    26→  Flower2,
+    27→  ShoppingCart,
+    28→  ShieldCheck,
+    29→  CreditCard,
+    30→  User,
+    31→  ChevronDown,
+    32→  Sparkles,
+    33→  Award,
+    34→  Star,
+    35→  Store,
+    36→} from 'lucide-react';
+    37→
+    38→/* ──────────────────── Accent Colors per Role ──────────────────── */
+    39→
+    40→const ROLE_ACCENT = {
+    41→  customer: '#13ec13',
+    42→  vendor: '#FFD700',
+    43→  rider: '#3b82f6',
+    44→} as const;
+    45→
+    46→const ROLE_BTN_CLASS = {
+    47→  customer: 'bg-[#13ec13] text-[#05070A] shadow-[#13ec13]/20',
+    48→  vendor: 'bg-[#FFD700] text-[#05070A] shadow-[#FFD700]/20',
+    49→  rider: 'bg-[#3b82f6] text-white shadow-[#3b82f6]/20',
+    50→} as const;
+    51→
+    52→const ROLE_CTA = {
+    53→  customer: 'Start Shopping',
+    54→  vendor: 'Start Selling',
+    55→  rider: 'Start Earning',
+    56→} as const;
+    57→
+    58→const ROLE_DEFAULT_TAB = {
+    59→  customer: 'home' as const,
+    60→  vendor: 'vendor-dashboard' as const,
+    61→  rider: 'rider-dashboard' as const,
+    62→};
+    63→
+    64→/* ──────────────────── Data ──────────────────── */
+    65→
+    66→const DIETARY_PREFS = [
+    67→  { id: 'halal', label: 'Halal Only', emoji: '🥩' },
+    68→  { id: 'vegetarian', label: 'Vegetarian Options', emoji: '🥬' },
+    69→  { id: 'no-spicy', label: 'No Spicy', emoji: '🌶️' },
+    70→  { id: 'gluten-free', label: 'Gluten Free', emoji: '🌾' },
+    71→  { id: 'nut-free', label: 'Nut Free', emoji: '🥜' },
+    72→  { id: 'diabetic', label: 'Diabetic Friendly', emoji: '💉' },
+    73→];
+    74→
+    75→const FAVORITE_CATEGORIES = [
+    76→  { id: 'iftar', label: 'Iftar Meals', emoji: '🍽️' },
+    77→  { id: 'sahur', label: 'Sahur', emoji: '🌙' },
+    78→  { id: 'dates', label: 'Dates', emoji: '🌴' },
+    79→  { id: 'drinks', label: 'Drinks', emoji: '🥤' },
+    80→  { id: 'snacks', label: 'Snacks', emoji: '🍿' },
+    81→  { id: 'fruits', label: 'Fruits', emoji: '🍇' },
+    82→  { id: 'groceries', label: 'Groceries', emoji: '🛒' },
+    83→];
+    84→
+    85→const LAGOS_AREAS = ['Lekki', 'Ikoyi', 'Victoria Island', 'Surulere', 'Ikeja', 'Yaba'];
+    86→
+    87→const VENDOR_CATEGORIES = [
+    88→  'Iftar Meals', 'Grills', 'Sahur', 'Drinks', 'Groceries', 'Pharmacy', 'Bundles',
+    89→];
+    90→
+    91→const VEHICLE_TYPES = [
+    92→  { id: 'motorcycle', label: 'Motorcycle', icon: Bike, description: 'Fast & agile for Lagos traffic' },
+    93→  { id: 'electric-bike', label: 'Electric Bike', icon: Zap, description: 'Eco-friendly & efficient' },
+    94→  { id: 'bicycle', label: 'Bicycle', icon: Bike, description: 'For short-distance deliveries' },
+    95→  { id: 'car', label: 'Car', icon: Car, description: 'For bulk & large orders' },
+    96→];
+    97→
+    98→const ID_TYPES = ['National ID', "Driver's License", "Voter's Card", 'International Passport'];
+    99→
+   100→/* ──────────────────── Progress Bar ──────────────────── */
+   101→
+   102→function ProgressBar({ step, total, accent }: { step: number; total: number; accent: string }) {
+   103→  return (
+   104→    <div className="flex items-center gap-2 w-full">
+   105→      {Array.from({ length: total }).map((_, i) => (
+   106→        <div key={i} className="flex-1 flex flex-col items-center gap-1.5">
+   107→          <div
+   108→            className="w-full h-1.5 rounded-full transition-all duration-500"
+   109→            style={{
+   110→              backgroundColor: i <= step ? accent : 'rgba(255,255,255,0.1)',
+   111→              boxShadow: i === step ? `0 0 8px ${accent}40` : 'none',
+   112→            }}
+   113→          />
+   114→        </div>
+   115→      ))}
+   116→      <span className="text-white/30 text-xs font-medium ml-2 shrink-0">
+   117→        Step {step + 1} of {total}
+   118→      </span>
+   119→    </div>
+   120→  );
+   121→}
+   122→
+   123→/* ──────────────────── Confetti Particle ──────────────────── */
+   124→
+   125→function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
+   126→  const randomX = Math.random() * 300 - 150;
+   127→  const randomY = Math.random() * 400 + 100;
+   128→  const randomRotate = Math.random() * 720 - 360;
+   129→  const size = Math.random() * 8 + 4;
+   130→
+   131→  return (
+   132→    <motion.div
+   133→      initial={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+   134→      animate={{ opacity: 0, x: randomX, y: randomY, rotate: randomRotate, scale: 0.3 }}
+   135→      transition={{ duration: 1.8, delay, ease: 'easeOut' }}
+   136→      className="absolute rounded-sm"
+   137→      style={{
+   138→        width: size,
+   139→        height: size,
+   140→        backgroundColor: color,
+   141→        left: '50%',
+   142→        top: '40%',
+   143→      }}
+   144→    />
+   145→  );
+   146→}
+   147→
+   148→/* ════════════════════════════════════════════════════════════════
+   149→   CUSTOMER ONBOARDING STEPS
+   150→   ════════════════════════════════════════════════════════════════ */
+   151→
+   152→function CustomerStep1() {
+   153→  const { userName } = useAppStore();
+   154→  const firstName = userName?.split(' ')[0] || 'there';
+   155→
+   156→  return (
+   157→    <motion.div
+   158→      initial={{ x: 60, opacity: 0 }}
+   159→      animate={{ x: 0, opacity: 1 }}
+   160→      exit={{ x: -60, opacity: 0 }}
+   161→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   162→      className="flex flex-col items-center text-center px-6 py-8"
+   163→    >
+   164→      {/* Animated Welcome */}
+   165→      <motion.div
+   166→        initial={{ scale: 0.5, opacity: 0 }}
+   167→        animate={{ scale: 1, opacity: 1 }}
+   168→        transition={{ type: 'spring', damping: 15, stiffness: 150, delay: 0.1 }}
+   169→        className="w-24 h-24 rounded-full bg-[#13ec13]/10 border-2 border-[#13ec13]/30 flex items-center justify-center mb-6"
+   170→        style={{ boxShadow: '0 0 30px #13ec1320' }}
+   171→      >
+   172→        <span className="text-5xl">🌙</span>
+   173→      </motion.div>
+   174→
+   175→      <motion.h1
+   176→        initial={{ y: 20, opacity: 0 }}
+   177→        animate={{ y: 0, opacity: 1 }}
+   178→        transition={{ delay: 0.2 }}
+   179→        className="text-white text-3xl font-extrabold tracking-tight mb-2"
+   180→      >
+   181→        Welcome to SwiftRamadan!
+   182→      </motion.h1>
+   183→
+   184→      <motion.p
+   185→        initial={{ y: 20, opacity: 0 }}
+   186→        animate={{ y: 0, opacity: 1 }}
+   187→        transition={{ delay: 0.3 }}
+   188→        className="text-[#13ec13] text-xl font-bold mb-1"
+   189→      >
+   190→        Ramadan Mubarak, {firstName}! 🎉
+   191→      </motion.p>
+   192→
+   193→      <motion.p
+   194→        initial={{ y: 20, opacity: 0 }}
+   195→        animate={{ y: 0, opacity: 1 }}
+   196→        transition={{ delay: 0.4 }}
+   197→        className="text-white/50 text-sm mb-8"
+   198→      >
+   199→        Let&apos;s personalize your experience
+   200→      </motion.p>
+   201→
+   202→      {/* Feature Highlights */}
+   203→      <motion.div
+   204→        initial={{ y: 30, opacity: 0 }}
+   205→        animate={{ y: 0, opacity: 1 }}
+   206→        transition={{ delay: 0.5 }}
+   207→        className="w-full flex flex-col gap-4"
+   208→      >
+   209→        {[
+   210→          { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: '#13ec13' },
+   211→          { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: '#FFD700' },
+   212→          { icon: Heart, title: 'Charity & Zakat', desc: 'Give back this blessed month', color: '#f472b6' },
+   213→        ].map((feature, i) => (
+   214→          <motion.div
+   215→            key={feature.title}
+   216→            initial={{ x: -30, opacity: 0 }}
+   217→            animate={{ x: 0, opacity: 1 }}
+   218→            transition={{ delay: 0.6 + i * 0.1 }}
+   219→            className="flex items-center gap-4 p-4 bg-[#1A1D26] border border-white/10 rounded-xl"
+   220→          >
+   221→            <div
+   222→              className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
+   223→              style={{ backgroundColor: `${feature.color}15`, border: `1px solid ${feature.color}30` }}
+   224→            >
+   225→              <feature.icon className="w-6 h-6" style={{ color: feature.color }} />
+   226→            </div>
+   227→            <div className="text-left flex-1">
+   228→              <h3 className="text-white font-bold text-sm">{feature.title}</h3>
+   229→              <p className="text-white/50 text-xs">{feature.desc}</p>
+   230→            </div>
+   231→          </motion.div>
+   232→        ))}
+   233→      </motion.div>
+   234→    </motion.div>
+   235→  );
+   236→}
+   237→
+   238→function CustomerStep2() {
+   239→  const { customerDietaryPrefs, setCustomerDietaryPrefs, customerFavoriteCategories, setCustomerFavoriteCategories } = useAppStore();
+   240→
+   241→  const toggleDietary = (id: string) => {
+   242→    setCustomerDietaryPrefs(
+   243→      customerDietaryPrefs.includes(id)
+   244→        ? customerDietaryPrefs.filter((p) => p !== id)
+   245→        : [...customerDietaryPrefs, id]
+   246→    );
+   247→  };
+   248→
+   249→  const toggleCategory = (id: string) => {
+   250→    setCustomerFavoriteCategories(
+   251→      customerFavoriteCategories.includes(id)
+   252→        ? customerFavoriteCategories.filter((c) => c !== id)
+   253→        : [...customerFavoriteCategories, id]
+   254→    );
+   255→  };
+   256→
+   257→  return (
+   258→    <motion.div
+   259→      initial={{ x: 60, opacity: 0 }}
+   260→      animate={{ x: 0, opacity: 1 }}
+   261→      exit={{ x: -60, opacity: 0 }}
+   262→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   263→      className="flex flex-col px-6 py-8"
+   264→    >
+   265→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Your Preferences</h1>
+   266→      <p className="text-white/50 text-sm mb-6">Help us tailor your Ramadan experience</p>
+   267→
+   268→      {/* Dietary Preferences */}
+   269→      <div className="mb-6">
+   270→        <h3 className="text-white/70 text-xs font-bold uppercase tracking-wider mb-3">Dietary Preferences</h3>
+   271→        <div className="flex flex-wrap gap-2">
+   272→          {DIETARY_PREFS.map((pref) => {
+   273→            const isSelected = customerDietaryPrefs.includes(pref.id);
+   274→            return (
+   275→              <motion.button
+   276→                key={pref.id}
+   277→                onClick={() => toggleDietary(pref.id)}
+   278→                whileTap={{ scale: 0.95 }}
+   279→                className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-sm font-medium transition-all ${
+   280→                  isSelected
+   281→                    ? 'bg-[#13ec13]/15 border border-[#13ec13]/40 text-[#13ec13]'
+   282→                    : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:border-white/20'
+   283→                }`}
+   284→              >
+   285→                <span className="text-base">{pref.emoji}</span>
+   286→                {pref.label}
+   287→                {isSelected && <Check className="w-3.5 h-3.5 ml-0.5" />}
+   288→              </motion.button>
+   289→            );
+   290→          })}
+   291→        </div>
+   292→      </div>
+   293→
+   294→      {/* Favorite Categories */}
+   295→      <div>
+   296→        <h3 className="text-white/70 text-xs font-bold uppercase tracking-wider mb-3">Favorite Categories</h3>
+   297→        <div className="grid grid-cols-3 gap-3">
+   298→          {FAVORITE_CATEGORIES.map((cat) => {
+   299→            const isSelected = customerFavoriteCategories.includes(cat.id);
+   300→            return (
+   301→              <motion.button
+   302→                key={cat.id}
+   303→                onClick={() => toggleCategory(cat.id)}
+   304→                whileTap={{ scale: 0.95 }}
+   305→                className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
+   306→                  isSelected
+   307→                    ? 'bg-[#13ec13]/10 border-2 border-[#13ec13]/40'
+   308→                    : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
+   309→                }`}
+   310→              >
+   311→                <span className="text-3xl">{cat.emoji}</span>
+   312→                <span className={`text-xs font-semibold ${isSelected ? 'text-[#13ec13]' : 'text-white/60'}`}>
+   313→                  {cat.label}
+   314→                </span>
+   315→                {isSelected && (
+   316→                  <motion.div
+   317→                    initial={{ scale: 0 }}
+   318→                    animate={{ scale: 1 }}
+   319→                    className="w-4 h-4 rounded-full bg-[#13ec13] flex items-center justify-center"
+   320→                  >
+   321→                    <Check className="w-2.5 h-2.5 text-[#05070A]" />
+   322→                  </motion.div>
+   323→                )}
+   324→              </motion.button>
+   325→            );
+   326→          })}
+   327→        </div>
+   328→      </div>
+   329→    </motion.div>
+   330→  );
+   331→}
+   332→
+   333→function CustomerStep3() {
+   334→  const {
+   335→    deliveryAddress, setDeliveryAddress,
+   336→    userArea, setUserArea,
+   337→  } = useAppStore();
+   338→  const [deliverBeforeIftar, setDeliverBeforeIftar] = useState(false);
+   339→  const [areaOpen, setAreaOpen] = useState(false);
+   340→
+   341→  return (
+   342→    <motion.div
+   343→      initial={{ x: 60, opacity: 0 }}
+   344→      animate={{ x: 0, opacity: 1 }}
+   345→      exit={{ x: -60, opacity: 0 }}
+   346→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   347→      className="flex flex-col px-6 py-8"
+   348→    >
+   349→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Set Your Delivery Location</h1>
+   350→      <p className="text-white/50 text-sm mb-6">Where should we deliver your iftar?</p>
+   351→
+   352→      <div className="flex flex-col gap-5">
+   353→        {/* Address Input */}
+   354→        <div className="relative">
+   355→          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#13ec13]/60" />
+   356→          <input
+   357→            type="text"
+   358→            placeholder="Enter delivery address"
+   359→            value={deliveryAddress}
+   360→            onChange={(e) => setDeliveryAddress(e.target.value)}
+   361→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
+   362→          />
+   363→        </div>
+   364→
+   365→        {/* Area Selector */}
+   366→        <div className="relative">
+   367→          <button
+   368→            onClick={() => setAreaOpen(!areaOpen)}
+   369→            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/30'}`}
+   370→          >
+   371→            <MapPin className="w-4 h-4 mr-2 text-[#13ec13]/60" />
+   372→            {userArea || 'Select your area'}
+   373→          </button>
+   374→          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+   375→
+   376→          <AnimatePresence>
+   377→            {areaOpen && (
+   378→              <motion.div
+   379→                initial={{ opacity: 0, y: -8 }}
+   380→                animate={{ opacity: 1, y: 0 }}
+   381→                exit={{ opacity: 0, y: -8 }}
+   382→                transition={{ duration: 0.15 }}
+   383→                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   384→              >
+   385→                {LAGOS_AREAS.map((a) => (
+   386→                  <button
+   387→                    key={a}
+   388→                    onClick={() => { setUserArea(a); setAreaOpen(false); }}
+   389→                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${userArea === a ? 'text-[#13ec13]' : 'text-white/70'}`}
+   390→                  >
+   391→                    {a}
+   392→                    {userArea === a && <Check className="w-4 h-4" />}
+   393→                  </button>
+   394→                ))}
+   395→              </motion.div>
+   396→            )}
+   397→          </AnimatePresence>
+   398→        </div>
+   399→
+   400→        {/* Deliver Before Iftar Toggle */}
+   401→        <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+   402→          <div className="flex items-center gap-3">
+   403→            <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center">
+   404→              <Moon className="w-5 h-5 text-[#13ec13]" />
+   405→            </div>
+   406→            <div>
+   407→              <p className="text-white text-sm font-semibold">Deliver before Iftar</p>
+   408→              <p className="text-white/40 text-xs">Priority delivery before Maghrib</p>
+   409→            </div>
+   410→          </div>
+   411→          <button
+   412→            onClick={() => setDeliverBeforeIftar(!deliverBeforeIftar)}
+   413→            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
+   414→              deliverBeforeIftar ? 'bg-[#13ec13]' : 'bg-white/10'
+   415→            }`}
+   416→          >
+   417→            <motion.div
+   418→              animate={{ x: deliverBeforeIftar ? 20 : 0 }}
+   419→              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+   420→              className="w-6 h-6 rounded-full bg-white shadow-md"
+   421→            />
+   422→          </button>
+   423→        </div>
+   424→      </div>
+   425→    </motion.div>
+   426→  );
+   427→}
+   428→
+   429→/* ════════════════════════════════════════════════════════════════
+   430→   VENDOR ONBOARDING STEPS
+   431→   ════════════════════════════════════════════════════════════════ */
+   432→
+   433→function VendorStep1() {
+   434→  const {
+   435→    vendorStoreName, setVendorStoreName,
+   436→    vendorBusinessCategory, setVendorBusinessCategory,
+   437→    vendorBusinessAddress, setVendorBusinessAddress,
+   438→  } = useAppStore();
+   439→  const [storeDesc, setStoreDesc] = useState('');
+   440→  const [catOpen, setCatOpen] = useState(false);
+   441→
+   442→  return (
+   443→    <motion.div
+   444→      initial={{ x: 60, opacity: 0 }}
+   445→      animate={{ x: 0, opacity: 1 }}
+   446→      exit={{ x: -60, opacity: 0 }}
+   447→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   448→      className="flex flex-col px-6 py-8"
+   449→    >
+   450→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Set Up Your Store</h1>
+   451→      <p className="text-white/50 text-sm mb-6">Tell us about your business</p>
+   452→
+   453→      <div className="flex flex-col gap-4">
+   454→        {/* Store Logo Placeholder */}
+   455→        <div className="flex justify-center mb-2">
+   456→          <motion.button
+   457→            whileTap={{ scale: 0.95 }}
+   458→            onClick={() => toast({ title: 'Coming soon', description: 'Logo upload will be available soon.' })}
+   459→            className="w-24 h-24 rounded-2xl bg-[#1A1D26] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[#FFD700]/40 transition-colors"
+   460→          >
+   461→            <Camera className="w-6 h-6 text-white/30" />
+   462→            <span className="text-white/30 text-[10px] font-medium">Store Logo</span>
+   463→          </motion.button>
+   464→        </div>
+   465→
+   466→        {/* Store Name */}
+   467→        <div className="relative">
+   468→          <Store className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+   469→          <input
+   470→            type="text"
+   471→            placeholder="Store name"
+   472→            value={vendorStoreName}
+   473→            onChange={(e) => setVendorStoreName(e.target.value)}
+   474→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   475→          />
+   476→        </div>
+   477→
+   478→        {/* Business Category */}
+   479→        <div className="relative">
+   480→          <button
+   481→            onClick={() => setCatOpen(!catOpen)}
+   482→            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/30'}`}
+   483→          >
+   484→            <ShoppingBag className="w-4 h-4 mr-2 text-[#FFD700]/60" />
+   485→            {vendorBusinessCategory || 'Business category'}
+   486→          </button>
+   487→          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
+   488→          <AnimatePresence>
+   489→            {catOpen && (
+   490→              <motion.div
+   491→                initial={{ opacity: 0, y: -8 }}
+   492→                animate={{ opacity: 1, y: 0 }}
+   493→                exit={{ opacity: 0, y: -8 }}
+   494→                transition={{ duration: 0.15 }}
+   495→                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   496→              >
+   497→                {VENDOR_CATEGORIES.map((cat) => (
+   498→                  <button
+   499→                    key={cat}
+   500→                    onClick={() => { setVendorBusinessCategory(cat); setCatOpen(false); }}
+   501→                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${vendorBusinessCategory === cat ? 'text-[#FFD700]' : 'text-white/70'}`}
+   502→                  >
+   503→                    {cat}
+   504→                    {vendorBusinessCategory === cat && <Check className="w-4 h-4" />}
+   505→                  </button>
+   506→                ))}
+   507→              </motion.div>
+   508→            )}
+   509→          </AnimatePresence>
+   510→        </div>
+   511→
+   512→        {/* Business Address */}
+   513→        <div className="relative">
+   514→          <MapPin className="absolute left-4 top-4 w-5 h-5 text-[#FFD700]/60" />
+   515→          <input
+   516→            type="text"
+   517→            placeholder="Business address"
+   518→            value={vendorBusinessAddress}
+   519→            onChange={(e) => setVendorBusinessAddress(e.target.value)}
+   520→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   521→          />
+   522→        </div>
+   523→
+   524→        {/* Store Description */}
+   525→        <textarea
+   526→          placeholder="Describe your store (what makes it special?)"
+   527→          value={storeDesc}
+   528→          onChange={(e) => setStoreDesc(e.target.value)}
+   529→          rows={3}
+   530→          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors resize-none"
+   531→        />
+   532→      </div>
+   533→    </motion.div>
+   534→  );
+   535→}
+   536→
+   537→function VendorStep2() {
+   538→  const {
+   539→    vendorOpenTime, setVendorOpenTime,
+   540→    vendorCloseTime, setVendorCloseTime,
+   541→  } = useAppStore();
+   542→  const [sahurOrders, setSahurOrders] = useState(false);
+   543→  const [iftarRush, setIftarRush] = useState(true);
+   544→  const [maxOrders, setMaxOrders] = useState('50');
+   545→
+   546→  return (
+   547→    <motion.div
+   548→      initial={{ x: 60, opacity: 0 }}
+   549→      animate={{ x: 0, opacity: 1 }}
+   550→      exit={{ x: -60, opacity: 0 }}
+   551→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   552→      className="flex flex-col px-6 py-8"
+   553→    >
+   554→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Business Hours & Details</h1>
+   555→      <p className="text-white/50 text-sm mb-6">When are you open for orders?</p>
+   556→
+   557→      <div className="flex flex-col gap-5">
+   558→        {/* Open/Close Time */}
+   559→        <div className="flex gap-3">
+   560→          <div className="flex-1">
+   561→            <label className="text-white/50 text-xs font-semibold mb-2 block">Opening Time</label>
+   562→            <div className="relative">
+   563→              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+   564→              <input
+   565→                type="time"
+   566→                value={vendorOpenTime}
+   567→                onChange={(e) => setVendorOpenTime(e.target.value)}
+   568→                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   569→              />
+   570→            </div>
+   571→          </div>
+   572→          <div className="flex-1">
+   573→            <label className="text-white/50 text-xs font-semibold mb-2 block">Closing Time</label>
+   574→            <div className="relative">
+   575→              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+   576→              <input
+   577→                type="time"
+   578→                value={vendorCloseTime}
+   579→                onChange={(e) => setVendorCloseTime(e.target.value)}
+   580→                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   581→              />
+   582→            </div>
+   583→          </div>
+   584→        </div>
+   585→
+   586→        {/* Sahur Orders Toggle */}
+   587→        <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+   588→          <div className="flex items-center gap-3">
+   589→            <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center">
+   590→              <Moon className="w-5 h-5 text-[#FFD700]" />
+   591→            </div>
+   592→            <div>
+   593→              <p className="text-white text-sm font-semibold">Open for Sahur orders</p>
+   594→              <p className="text-white/40 text-xs">Accept orders between 4-5 AM</p>
+   595→            </div>
+   596→          </div>
+   597→          <button
+   598→            onClick={() => setSahurOrders(!sahurOrders)}
+   599→            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${sahurOrders ? 'bg-[#FFD700]' : 'bg-white/10'}`}
+   600→          >
+   601→            <motion.div
+   602→              animate={{ x: sahurOrders ? 20 : 0 }}
+   603→              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+   604→              className="w-6 h-6 rounded-full bg-white shadow-md"
+   605→            />
+   606→          </button>
+   607→        </div>
+   608→
+   609→        {/* Iftar Rush Toggle */}
+   610→        <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+   611→          <div className="flex items-center gap-3">
+   612→            <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center">
+   613→              <Zap className="w-5 h-5 text-[#FFD700]" />
+   614→            </div>
+   615→            <div>
+   616→              <p className="text-white text-sm font-semibold">Accept Iftar rush orders</p>
+   617→              <p className="text-white/40 text-xs">High-demand period before Maghrib</p>
+   618→            </div>
+   619→          </div>
+   620→          <button
+   621→            onClick={() => setIftarRush(!iftarRush)}
+   622→            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${iftarRush ? 'bg-[#FFD700]' : 'bg-white/10'}`}
+   623→          >
+   624→            <motion.div
+   625→              animate={{ x: iftarRush ? 20 : 0 }}
+   626→              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+   627→              className="w-6 h-6 rounded-full bg-white shadow-md"
+   628→            />
+   629→          </button>
+   630→        </div>
+   631→
+   632→        {/* Max Daily Orders */}
+   633→        <div>
+   634→          <label className="text-white/50 text-xs font-semibold mb-2 block">Maximum Daily Orders</label>
+   635→          <div className="relative">
+   636→            <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+   637→            <input
+   638→              type="number"
+   639→              placeholder="e.g., 50"
+   640→              value={maxOrders}
+   641→              onChange={(e) => setMaxOrders(e.target.value)}
+   642→              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   643→            />
+   644→          </div>
+   645→        </div>
+   646→      </div>
+   647→    </motion.div>
+   648→  );
+   649→}
+   650→
+   651→function VendorStep3() {
+   652→  const {
+   653→    vendorBankName, setVendorBankName,
+   654→    vendorAccountNumber, setVendorAccountNumber,
+   655→  } = useAppStore();
+   656→  const [accountHolder, setAccountHolder] = useState('');
+   657→
+   658→  return (
+   659→    <motion.div
+   660→      initial={{ x: 60, opacity: 0 }}
+   661→      animate={{ x: 0, opacity: 1 }}
+   662→      exit={{ x: -60, opacity: 0 }}
+   663→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   664→      className="flex flex-col px-6 py-8"
+   665→    >
+   666→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Payment Setup</h1>
+   667→      <p className="text-white/50 text-sm mb-6">Where should we send your earnings?</p>
+   668→
+   669→      <div className="flex flex-col gap-5">
+   670→        {/* Bank Illustration */}
+   671→        <div className="flex justify-center mb-2">
+   672→          <div
+   673→            className="w-20 h-20 rounded-2xl flex items-center justify-center"
+   674→            style={{ backgroundColor: '#FFD70010', border: '1px solid #FFD70030' }}
+   675→          >
+   676→            <CreditCard className="w-10 h-10 text-[#FFD700]" />
+   677→          </div>
+   678→        </div>
+   679→
+   680→        {/* Bank Name */}
+   681→        <div className="relative">
+   682→          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+   683→          <input
+   684→            type="text"
+   685→            placeholder="Bank name"
+   686→            value={vendorBankName}
+   687→            onChange={(e) => setVendorBankName(e.target.value)}
+   688→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   689→          />
+   690→        </div>
+   691→
+   692→        {/* Account Number */}
+   693→        <div className="relative">
+   694→          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+   695→          <input
+   696→            type="text"
+   697→            placeholder="Account number"
+   698→            value={vendorAccountNumber}
+   699→            onChange={(e) => setVendorAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+   700→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   701→          />
+   702→        </div>
+   703→
+   704→        {/* Account Holder Name */}
+   705→        <div className="relative">
+   706→          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+   707→          <input
+   708→            type="text"
+   709→            placeholder="Account holder name"
+   710→            value={accountHolder}
+   711→            onChange={(e) => setAccountHolder(e.target.value)}
+   712→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+   713→          />
+   714→        </div>
+   715→
+   716→        {/* Security Note */}
+   717→        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#FFD700]/10 rounded-xl">
+   718→          <ShieldCheck className="w-5 h-5 text-[#FFD700] shrink-0 mt-0.5" />
+   719→          <p className="text-white/50 text-xs leading-relaxed">
+   720→            Your banking details are encrypted and secure. SwiftRamadan never stores raw account numbers.
+   721→          </p>
+   722→        </div>
+   723→      </div>
+   724→    </motion.div>
+   725→  );
+   726→}
+   727→
+   728→/* ════════════════════════════════════════════════════════════════
+   729→   RIDER ONBOARDING STEPS
+   730→   ════════════════════════════════════════════════════════════════ */
+   731→
+   732→function RiderStep1() {
+   733→  const {
+   734→    riderVehicleType, setRiderVehicleType,
+   735→    riderVehicleColor, setRiderVehicleColor,
+   736→    riderPlateNumber, setRiderPlateNumber,
+   737→  } = useAppStore();
+   738→
+   739→  return (
+   740→    <motion.div
+   741→      initial={{ x: 60, opacity: 0 }}
+   742→      animate={{ x: 0, opacity: 1 }}
+   743→      exit={{ x: -60, opacity: 0 }}
+   744→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   745→      className="flex flex-col px-6 py-8"
+   746→    >
+   747→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Vehicle Information</h1>
+   748→      <p className="text-white/50 text-sm mb-6">Tell us about your ride</p>
+   749→
+   750→      <div className="flex flex-col gap-5">
+   751→        {/* Vehicle Type Cards */}
+   752→        <div className="grid grid-cols-2 gap-3">
+   753→          {VEHICLE_TYPES.map((vehicle, i) => {
+   754→            const Icon = vehicle.icon;
+   755→            const isSelected = riderVehicleType.toLowerCase().replace(/\s+/g, '-') === vehicle.id ||
+   756→              (vehicle.id === 'motorcycle' && riderVehicleType === 'Motorcycle');
+   757→            return (
+   758→              <motion.button
+   759→                key={vehicle.id}
+   760→                initial={{ y: 20, opacity: 0 }}
+   761→                animate={{ y: 0, opacity: 1 }}
+   762→                transition={{ delay: i * 0.05 }}
+   763→                onClick={() => setRiderVehicleType(vehicle.label)}
+   764→                whileTap={{ scale: 0.97 }}
+   765→                className={`flex flex-col items-center gap-2 p-5 rounded-xl transition-all ${
+   766→                  isSelected
+   767→                    ? 'bg-[#3b82f6]/10 border-2 border-[#3b82f6]/50'
+   768→                    : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
+   769→                }`}
+   770→                style={{ boxShadow: isSelected ? '0 0 15px #3b82f620' : 'none' }}
+   771→              >
+   772→                <Icon className={`w-8 h-8 ${isSelected ? 'text-[#3b82f6]' : 'text-white/40'}`} />
+   773→                <span className={`text-sm font-bold ${isSelected ? 'text-[#3b82f6]' : 'text-white/70'}`}>
+   774→                  {vehicle.label}
+   775→                </span>
+   776→                <span className="text-white/30 text-[10px] text-center">{vehicle.description}</span>
+   777→                {isSelected && (
+   778→                  <motion.div
+   779→                    initial={{ scale: 0 }}
+   780→                    animate={{ scale: 1 }}
+   781→                    className="w-5 h-5 rounded-full bg-[#3b82f6] flex items-center justify-center mt-1"
+   782→                  >
+   783→                    <Check className="w-3 h-3 text-white" />
+   784→                  </motion.div>
+   785→                )}
+   786→              </motion.button>
+   787→            );
+   788→          })}
+   789→        </div>
+   790→
+   791→        {/* Vehicle Color */}
+   792→        <div className="relative">
+   793→          <div className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full border-2 border-white/20 bg-gradient-to-br from-red-400 via-green-400 to-blue-400" />
+   794→          <input
+   795→            type="text"
+   796→            placeholder="Vehicle color"
+   797→            value={riderVehicleColor}
+   798→            onChange={(e) => setRiderVehicleColor(e.target.value)}
+   799→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   800→          />
+   801→        </div>
+   802→
+   803→        {/* Plate Number */}
+   804→        <div className="relative">
+   805→          <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   806→          <input
+   807→            type="text"
+   808→            placeholder="Plate number (e.g., LSR 123 AB)"
+   809→            value={riderPlateNumber}
+   810→            onChange={(e) => setRiderPlateNumber(e.target.value.toUpperCase())}
+   811→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors uppercase tracking-wider font-mono"
+   812→          />
+   813→        </div>
+   814→      </div>
+   815→    </motion.div>
+   816→  );
+   817→}
+   818→
+   819→function RiderStep2() {
+   820→  const { riderLicenseNumber, setRiderLicenseNumber } = useAppStore();
+   821→  const [idType, setIdType] = useState('');
+   822→  const [idNumber, setIdNumber] = useState('');
+   823→  const [idOpen, setIdOpen] = useState(false);
+   824→
+   825→  return (
+   826→    <motion.div
+   827→      initial={{ x: 60, opacity: 0 }}
+   828→      animate={{ x: 0, opacity: 1 }}
+   829→      exit={{ x: -60, opacity: 0 }}
+   830→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   831→      className="flex flex-col px-6 py-8"
+   832→    >
+   833→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Documents & Verification</h1>
+   834→      <p className="text-white/50 text-sm mb-6">We need to verify your identity</p>
+   835→
+   836→      <div className="flex flex-col gap-5">
+   837→        {/* License Number */}
+   838→        <div className="relative">
+   839→          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   840→          <input
+   841→            type="text"
+   842→            placeholder="License number"
+   843→            value={riderLicenseNumber}
+   844→            onChange={(e) => setRiderLicenseNumber(e.target.value)}
+   845→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   846→          />
+   847→        </div>
+   848→
+   849→        {/* ID Type */}
+   850→        <div className="relative">
+   851→          <button
+   852→            onClick={() => setIdOpen(!idOpen)}
+   853→            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/30'}`}
+   854→          >
+   855→            <User className="w-4 h-4 mr-2 text-[#3b82f6]/60" />
+   856→            {idType || 'ID type'}
+   857→          </button>
+   858→          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${idOpen ? 'rotate-180' : ''}`} />
+   859→          <AnimatePresence>
+   860→            {idOpen && (
+   861→              <motion.div
+   862→                initial={{ opacity: 0, y: -8 }}
+   863→                animate={{ opacity: 1, y: 0 }}
+   864→                exit={{ opacity: 0, y: -8 }}
+   865→                transition={{ duration: 0.15 }}
+   866→                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   867→              >
+   868→                {ID_TYPES.map((type) => (
+   869→                  <button
+   870→                    key={type}
+   871→                    onClick={() => { setIdType(type); setIdOpen(false); }}
+   872→                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${idType === type ? 'text-[#3b82f6]' : 'text-white/70'}`}
+   873→                  >
+   874→                    {type}
+   875→                    {idType === type && <Check className="w-4 h-4" />}
+   876→                  </button>
+   877→                ))}
+   878→              </motion.div>
+   879→            )}
+   880→          </AnimatePresence>
+   881→        </div>
+   882→
+   883→        {/* ID Number */}
+   884→        <div className="relative">
+   885→          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   886→          <input
+   887→            type="text"
+   888→            placeholder="ID number"
+   889→            value={idNumber}
+   890→            onChange={(e) => setIdNumber(e.target.value)}
+   891→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   892→          />
+   893→        </div>
+   894→
+   895→        {/* Upload Documents Placeholder */}
+   896→        <div>
+   897→          <label className="text-white/50 text-xs font-semibold mb-3 block">Upload Documents</label>
+   898→          <div className="grid grid-cols-2 gap-3">
+   899→            {['License Photo', 'ID Card Photo'].map((doc) => (
+   900→              <motion.button
+   901→                key={doc}
+   902→                whileTap={{ scale: 0.97 }}
+   903→                onClick={() => toast({ title: 'Coming soon', description: `${doc} upload will be available soon.` })}
+   904→                className="flex flex-col items-center gap-2 p-5 bg-[#1A1D26] border border-dashed border-white/20 rounded-xl hover:border-[#3b82f6]/30 transition-colors"
+   905→              >
+   906→                <Camera className="w-6 h-6 text-white/25" />
+   907→                <span className="text-white/40 text-[11px] font-medium text-center">{doc}</span>
+   908→              </motion.button>
+   909→            ))}
+   910→          </div>
+   911→        </div>
+   912→
+   913→        {/* Security Note */}
+   914→        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#3b82f6]/10 rounded-xl">
+   915→          <ShieldCheck className="w-5 h-5 text-[#3b82f6] shrink-0 mt-0.5" />
+   916→          <p className="text-white/50 text-xs leading-relaxed">
+   917→            Your documents are encrypted and used only for verification. Processing takes 24-48 hours.
+   918→          </p>
+   919→        </div>
+   920→      </div>
+   921→    </motion.div>
+   922→  );
+   923→}
+   924→
+   925→function RiderStep3() {
+   926→  const {
+   927→    riderBankName, setRiderBankName,
+   928→    riderAccountNumber, setRiderAccountNumber,
+   929→  } = useAppStore();
+   930→  const [accountHolder, setAccountHolder] = useState('');
+   931→
+   932→  return (
+   933→    <motion.div
+   934→      initial={{ x: 60, opacity: 0 }}
+   935→      animate={{ x: 0, opacity: 1 }}
+   936→      exit={{ x: -60, opacity: 0 }}
+   937→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   938→      className="flex flex-col px-6 py-8"
+   939→    >
+   940→      <h1 className="text-white text-2xl font-extrabold tracking-tight mb-1">Payment Setup</h1>
+   941→      <p className="text-white/50 text-sm mb-6">Where should we send your earnings?</p>
+   942→
+   943→      <div className="flex flex-col gap-5">
+   944→        {/* Earnings Illustration */}
+   945→        <div className="flex justify-center mb-2">
+   946→          <div
+   947→            className="w-20 h-20 rounded-2xl flex items-center justify-center"
+   948→            style={{ backgroundColor: '#3b82f610', border: '1px solid #3b82f630' }}
+   949→          >
+   950→            <Star className="w-10 h-10 text-[#3b82f6]" />
+   951→          </div>
+   952→        </div>
+   953→
+   954→        {/* Bank Name */}
+   955→        <div className="relative">
+   956→          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   957→          <input
+   958→            type="text"
+   959→            placeholder="Bank name"
+   960→            value={riderBankName}
+   961→            onChange={(e) => setRiderBankName(e.target.value)}
+   962→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   963→          />
+   964→        </div>
+   965→
+   966→        {/* Account Number */}
+   967→        <div className="relative">
+   968→          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   969→          <input
+   970→            type="text"
+   971→            placeholder="Account number"
+   972→            value={riderAccountNumber}
+   973→            onChange={(e) => setRiderAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
+   974→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   975→          />
+   976→        </div>
+   977→
+   978→        {/* Account Holder Name */}
+   979→        <div className="relative">
+   980→          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+   981→          <input
+   982→            type="text"
+   983→            placeholder="Account holder name"
+   984→            value={accountHolder}
+   985→            onChange={(e) => setAccountHolder(e.target.value)}
+   986→            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+   987→          />
+   988→        </div>
+   989→
+   990→        {/* Security Note */}
+   991→        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#3b82f6]/10 rounded-xl">
+   992→          <ShieldCheck className="w-5 h-5 text-[#3b82f6] shrink-0 mt-0.5" />
+   993→          <p className="text-white/50 text-xs leading-relaxed">
+   994→            Your banking details are encrypted and secure. Payments are settled daily.
+   995→          </p>
+   996→        </div>
+   997→      </div>
+   998→    </motion.div>
+   999→  );
+  1000→}
+  1001→
+  1002→/* ════════════════════════════════════════════════════════════════
+  1003→   CELEBRATION SCREEN
+  1004→   ════════════════════════════════════════════════════════════════ */
+  1005→
+  1006→function CelebrationScreen({ role, onDone }: { role: 'customer' | 'vendor' | 'rider'; onDone: () => void }) {
+  1007→  const accent = ROLE_ACCENT[role];
+  1008→  const confettiColors = useMemo(() => {
+  1009→    const base = [accent, '#FFD700', '#ffffff', '#f472b6', '#06b6d4', '#a78bfa'];
+  1010→    return base;
+  1011→  }, [accent]);
+  1012→
+  1013→  const ctaText = ROLE_CTA[role];
+  1014→  const btnClass = ROLE_BTN_CLASS[role];
+  1015→  const roleLabel = role.charAt(0).toUpperCase() + role.slice(1);
+  1016→
+  1017→  const messages: Record<string, string> = {
+  1018→    customer: 'Your personalized Ramadan experience is ready!',
+  1019→    vendor: 'Your store is now live on SwiftRamadan!',
+  1020→    rider: 'You\'re all set to start delivering & earning!',
+  1021→  };
+  1022→
+  1023→  return (
+  1024→    <motion.div
+  1025→      initial={{ opacity: 0 }}
+  1026→      animate={{ opacity: 1 }}
+  1027→      exit={{ opacity: 0 }}
+  1028→      className="fixed inset-0 z-[130] bg-[#05070A] flex flex-col items-center justify-center px-8"
+  1029→    >
+  1030→      {/* Confetti Particles */}
+  1031→      {confettiColors.map((color, i) => (
+  1032→        <ConfettiParticle key={i} delay={i * 0.08} color={color} />
+  1033→      ))}
+  1034→
+  1035→      {/* Checkmark */}
+  1036→      <motion.div
+  1037→        initial={{ scale: 0, rotate: -180 }}
+  1038→        animate={{ scale: 1, rotate: 0 }}
+  1039→        transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.2 }}
+  1040→        className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
+  1041→        style={{
+  1042→          backgroundColor: `${accent}15`,
+  1043→          border: `3px solid ${accent}50`,
+  1044→          boxShadow: `0 0 40px ${accent}30`,
+  1045→        }}
+  1046→      >
+  1047→        <Check className="w-12 h-12" style={{ color: accent }} />
+  1048→      </motion.div>
+  1049→
+  1050→      {/* Text */}
+  1051→      <motion.h1
+  1052→        initial={{ y: 30, opacity: 0 }}
+  1053→        animate={{ y: 0, opacity: 1 }}
+  1054→        transition={{ delay: 0.5 }}
+  1055→        className="text-white text-3xl font-extrabold tracking-tight text-center mb-3"
+  1056→      >
+  1057→        You&apos;re All Set! 🎉
+  1058→      </motion.h1>
+  1059→
+  1060→      <motion.p
+  1061→        initial={{ y: 20, opacity: 0 }}
+  1062→        animate={{ y: 0, opacity: 1 }}
+  1063→        transition={{ delay: 0.6 }}
+  1064→        className="text-white/50 text-sm text-center mb-2"
+  1065→      >
+  1066→        {messages[role]}
+  1067→      </motion.p>
+  1068→
+  1069→      <motion.p
+  1070→        initial={{ y: 20, opacity: 0 }}
+  1071→        animate={{ y: 0, opacity: 1 }}
+  1072→        transition={{ delay: 0.7 }}
+  1073→        className="text-sm font-bold text-center mb-10"
+  1074→        style={{ color: accent }}
+  1075→      >
+  1076→        Welcome, {roleLabel}!
+  1077→      </motion.p>
+  1078→
+  1079→      {/* CTA Button */}
+  1080→      <motion.button
+  1081→        initial={{ y: 30, opacity: 0 }}
+  1082→        animate={{ y: 0, opacity: 1 }}
+  1083→        transition={{ delay: 0.9 }}
+  1084→        onClick={onDone}
+  1085→        whileTap={{ scale: 0.97 }}
+  1086→        className={`w-full max-w-xs h-14 rounded-xl font-bold text-base shadow-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2 ${btnClass}`}
+  1087→      >
+  1088→        <Sparkles className="w-5 h-5" />
+  1089→        {ctaText}
+  1090→      </motion.button>
+  1091→    </motion.div>
+  1092→  );
+  1093→}
+  1094→
+  1095→/* ════════════════════════════════════════════════════════════════
+  1096→   MAIN ONBOARDING FLOW
+  1097→   ════════════════════════════════════════════════════════════════ */
+  1098→
+  1099→export default function OnboardingFlow() {
+  1100→  const {
+  1101→    showOnboarding,
+  1102→    setShowOnboarding,
+  1103→    onboardingStep,
+  1104→    setOnboardingStep,
+  1105→    onboardingComplete,
+  1106→    setOnboardingComplete,
+  1107→    userRole,
+  1108→    setActiveTab,
+  1109→    setIsLoggedIn,
+  1110→  } = useAppStore();
+  1111→
+  1112→  const [showCelebration, setShowCelebration] = useState(false);
+  1113→
+  1114→  const role = userRole as 'customer' | 'vendor' | 'rider';
+  1115→  const accent = ROLE_ACCENT[role] || ROLE_ACCENT.customer;
+  1116→  const btnClass = ROLE_BTN_CLASS[role] || ROLE_BTN_CLASS.customer;
+  1117→  const ctaText = ROLE_CTA[role] || ROLE_CTA.customer;
+  1118→  const totalSteps = 3;
+  1119→
+  1120→  const getStepContent = () => {
+  1121→    switch (userRole) {
+  1122→      case 'customer':
+  1123→        return [
+  1124→          <CustomerStep1 key="c1" />,
+  1125→          <CustomerStep2 key="c2" />,
+  1126→          <CustomerStep3 key="c3" />,
+  1127→        ];
+  1128→      case 'vendor':
+  1129→        return [
+  1130→          <VendorStep1 key="v1" />,
+  1131→          <VendorStep2 key="v2" />,
+  1132→          <VendorStep3 key="v3" />,
+  1133→        ];
+  1134→      case 'rider':
+  1135→        return [
+  1136→          <RiderStep1 key="r1" />,
+  1137→          <RiderStep2 key="r2" />,
+  1138→          <RiderStep3 key="r3" />,
+  1139→        ];
+  1140→      default:
+  1141→        return [<CustomerStep1 key="c1" />, <CustomerStep2 key="c2" />, <CustomerStep3 key="c3" />];
+  1142→    }
+  1143→  };
+  1144→
+  1145→  const steps = getStepContent();
+  1146→
+  1147→  const handleNext = () => {
+  1148→    if (onboardingStep < totalSteps - 1) {
+  1149→      setOnboardingStep(onboardingStep + 1);
+  1150→    } else {
+  1151→      // Complete onboarding - show celebration
+  1152→      setShowCelebration(true);
+  1153→    }
+  1154→  };
+  1155→
+  1156→  const handleBack = () => {
+  1157→    if (onboardingStep > 0) {
+  1158→      setOnboardingStep(onboardingStep - 1);
+  1159→    }
+  1160→  };
+  1161→
+  1162→  const handleSkip = () => {
+  1163→    // Per Task 3d: Skip completes onboarding immediately (no celebration)
+  1164→    // and navigates the user to the main app.
+  1165→    setOnboardingComplete(true);
+  1166→    setIsLoggedIn(true);
+  1167→    setShowOnboarding(false);
+  1168→    setActiveTab(ROLE_DEFAULT_TAB[role]);
+  1169→    setOnboardingStep(0);
+  1170→    toast({
+  1171→      title: 'Onboarding skipped ⏭️',
+  1172→      description: `Welcome to SwiftRamadan! You can complete your profile later in Settings.`,
+  1173→    });
+  1174→  };
+  1175→
+  1176→  const handleCelebrationDone = () => {
+  1177→    setOnboardingComplete(true);
+  1178→    setIsLoggedIn(true);
+  1179→    setShowOnboarding(false);
+  1180→    setActiveTab(ROLE_DEFAULT_TAB[role]);
+  1181→    setOnboardingStep(0);
+  1182→    setShowCelebration(false);
+  1183→    toast({
+  1184→      title: `Welcome to SwiftRamadan! 🌙`,
+  1185→      description: `Your ${role} experience is ready.`,
+  1186→    });
+  1187→  };
+  1188→
+  1189→  // Reset celebration state when onboarding reopens
+  1190→  const handleOnboardingClose = () => {
+  1191→    if (!showCelebration) {
+  1192→      setShowCelebration(true);
+  1193→    }
+  1194→  };
+  1195→
+  1196→  if (!showOnboarding || onboardingComplete) return null;
+  1197→
+  1198→  // Show celebration overlay
+  1199→  if (showCelebration) {
+  1200→    return (
+  1201→      <AnimatePresence>
+  1202→        <CelebrationScreen role={role} onDone={handleCelebrationDone} />
+  1203→      </AnimatePresence>
+  1204→    );
+  1205→  }
+  1206→
+  1207→  return (
+  1208→    <AnimatePresence>
+  1209→      <motion.div
+  1210→        initial={{ opacity: 0 }}
+  1211→        animate={{ opacity: 1 }}
+  1212→        exit={{ opacity: 0 }}
+  1213→        transition={{ duration: 0.25 }}
+  1214→        className="fixed inset-0 z-[120] bg-[#05070A] flex flex-col"
+  1215→      >
+  1216→        {/* Top Bar */}
+  1217→        <div className="flex items-center justify-between px-4 h-14 shrink-0 border-b border-white/5">
+  1218→          <div className="flex items-center gap-3">
+  1219→            {onboardingStep > 0 ? (
+  1220→              <button
+  1221→                onClick={handleBack}
+  1222→                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:border-white/20 transition-colors"
+  1223→                aria-label="Go back"
+  1224→              >
+  1225→                <ArrowLeft className="w-5 h-5 text-white" />
+  1226→              </button>
+  1227→            ) : (
+  1228→              <div className="w-10" />
+  1229→            )}
+  1230→          </div>
+  1231→
+  1232→          {/* Progress */}
+  1233→          <div className="flex-1 mx-4">
+  1234→            <ProgressBar step={onboardingStep} total={totalSteps} accent={accent} />
+  1235→          </div>
+  1236→
+  1237→          {/* Skip Button */}
+  1238→          <button
+  1239→            onClick={handleSkip}
+  1240→            className="text-white/40 text-sm font-semibold hover:text-white/60 transition-colors px-2"
+  1241→          >
+  1242→            Skip
+  1243→          </button>
+  1244→        </div>
+  1245→
+  1246→        {/* Step Content */}
+  1247→        <div className="flex-1 overflow-y-auto custom-scrollbar">
+  1248→          <AnimatePresence mode="wait">
+  1249→            {steps[onboardingStep]}
+  1250→          </AnimatePresence>
+  1251→        </div>
+  1252→
+  1253→        {/* Bottom Action Button */}
+  1254→        <div className="shrink-0 px-6 py-5 border-t border-white/5 bg-[#05070A]">
+  1255→          <motion.button
+  1256→            onClick={handleNext}
+  1257→            whileTap={{ scale: 0.97 }}
+  1258→            className={`w-full h-14 rounded-xl font-bold text-base shadow-lg active:scale-[0.98] transition-transform flex items-center justify-center gap-2 ${btnClass}`}
+  1259→          >
+  1260→            {onboardingStep === totalSteps - 1 ? (
+  1261→              <>
+  1262→                <Sparkles className="w-5 h-5" />
+  1263→                {ctaText}
+  1264→              </>
+  1265→            ) : (
+  1266→              <>
+  1267→                Continue
+  1268→                <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+  1269→              </>
+  1270→            )}
+  1271→          </motion.button>
+  1272→        </div>
+  1273→
+  1274→        {/* Bottom Safe Area */}
+  1275→        <div className="shrink-0 h-2 bg-[#05070A]" />
+  1276→      </motion.div>
+  1277→    </AnimatePresence>
+  1278→  );
+  1279→}
+  1280→
