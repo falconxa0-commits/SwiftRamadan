@@ -15,6 +15,7 @@ const customerTabs: NavTab[] = [
   { id: 'explore', label: 'Explore', icon: Compass },
   { id: 'reels', label: 'Reels', icon: Clapperboard },
   { id: 'cart', label: 'Cart', icon: ShoppingCart },
+  { id: 'offers', label: 'Offers', icon: Percent },
   { id: 'orders', label: 'Orders', icon: ClipboardList },
   { id: 'profile', label: 'Profile', icon: User },
 ];
@@ -38,10 +39,11 @@ export default function BottomNav() {
 
   const tabs = userRole === 'rider' ? riderTabs : userRole === 'vendor' ? vendorTabs : customerTabs;
   const accentColor = userRole === 'rider' ? '#38BDF8' : userRole === 'vendor' ? '#F5C451' : '#10E07A';
+  const isCompact = tabs.length > 6; // tighter sizing when 7 tabs
 
   return (
     <nav
-      className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 w-[94%] sm:w-[90%] max-w-lg glass-effect h-16 sm:h-[72px] rounded-[1.75rem] sm:rounded-[2rem] flex items-center justify-between px-2 sm:px-3 border border-white/10 nav-glow z-50"
+      className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 w-[96%] sm:w-[92%] max-w-lg glass-effect h-16 sm:h-[72px] rounded-[1.75rem] sm:rounded-[2rem] flex items-center justify-between px-1.5 sm:px-2 border border-white/10 nav-glow z-50"
       aria-label="Primary"
     >
       {tabs.map((tab) => {
@@ -83,7 +85,7 @@ export default function BottomNav() {
 
             <div className="relative">
               <Icon
-                className={`w-[18px] h-[18px] sm:w-5 sm:h-5 transition-all duration-200 ${
+                className={`${isCompact ? 'w-[17px] h-[17px] sm:w-[19px] sm:h-[19px]' : 'w-[18px] h-[18px] sm:w-5 sm:h-5'} transition-all duration-200 ${
                   isActive ? 'scale-110' : 'scale-100'
                 }`}
                 style={isActive ? { color: accentColor, filter: `drop-shadow(0 0 6px ${accentColor}80)` } : { color: 'rgba(255,255,255,0.32)' }}
@@ -95,7 +97,7 @@ export default function BottomNav() {
               )}
             </div>
             <span
-              className={`text-[9px] sm:text-[10px] font-bold tracking-wide transition-colors duration-200 ${
+              className={`${isCompact ? 'text-[8px] sm:text-[9px]' : 'text-[9px] sm:text-[10px]'} font-bold tracking-wide transition-colors duration-200 ${
                 isActive ? '' : 'text-white/32'
               }`}
               style={isActive ? { color: accentColor } : undefined}

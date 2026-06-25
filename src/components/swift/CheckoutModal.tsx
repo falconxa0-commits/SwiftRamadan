@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper } from 'lucide-react';
+import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper, Loader2 } from 'lucide-react';
 import { useAppStore, OrderItem } from '@/lib/store';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
@@ -63,6 +63,7 @@ export default function CheckoutModal() {
   const [editAddressValue, setEditAddressValue] = useState(deliveryAddress);
   const [selectedLocation, setSelectedLocation] = useState(deliveryLocations[0]);
   const [orderId] = useState(() => `SWR-${Math.floor(1000 + Math.random() * 9000)}`);
+  const [placing, setPlacing] = useState(false);
 
   // Snapshot cart items for success step (before clearCart wipes them)
   const [placedCartItems, setPlacedCartItems] = useState<typeof cartItems>([]);
@@ -95,12 +96,14 @@ export default function CheckoutModal() {
     }
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
+    if (placing) return;
+    setPlacing(true);
     // Snapshot cart before clearing
     const snapshotItems = [...cartItems];
     const snapshotTotal = total;
 
-    // Create the order and add to store
+    // Create the order object
     const order: OrderItem = {
       id: orderId,
       item: snapshotItems.length === 1 ? snapshotItems[0].name : `${snapshotItems[0].name} + ${snapshotItems.length - 1} more`,
@@ -118,13 +121,40 @@ export default function CheckoutModal() {
     setPlacedCartItems(snapshotItems);
     setPlacedTotal(snapshotTotal);
 
+    // Persist to database via API (so it survives refresh)
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: order.status,
+          total: order.total,
+          riderName: order.rider,
+          progress: order.progress,
+          items: order.items,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        // Use the DB-generated order id if available (format to SWR-XXXXXX)
+        if (data.order?.id) {
+          const shortId = `SWR-${data.order.id.replace(/[^a-z0-9]/gi, '').slice(-6).toUpperCase()}`;
+          order.id = shortId;
+        }
+      }
+    } catch (e) {
+      // Non-blocking: order still added to local store
+      console.error('Failed to persist order to DB', e);
+    }
+
     addOrder(order);
     clearCart();
     setCheckoutStep(4);
+    setPlacing(false);
 
     toast({
       title: 'Order Placed! 🎉',
-      description: `Your order ${orderId} is being prepared.`,
+      description: `Your order ${order.id} is being prepared.`,
     });
   };
 
@@ -821,17 +851,27 @@ export default function CheckoutModal() {
                   <button
                     onClick={handleNext}
                     disabled={currentStep === 0 && cartItems.length === 0}
-                    className="px-8 py-3 rounded-xl bg-[#13ec13] text-[#05070A] font-bold text-sm hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
                   >
                     Continue
                   </button>
                 ) : (
                   <button
                     onClick={handlePlaceOrder}
-                    className="px-8 py-3 rounded-xl bg-[#13ec13] text-[#05070A] font-black text-sm hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#13ec13]/20"
+                    disabled={placing}
+                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#10E07A]/30 disabled:opacity-60 disabled:pointer-events-none"
                   >
-                    Place Order
-                    <ChevronRight className="w-4 h-4" />
+                    {placing ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Placing...
+                      </>
+                    ) : (
+                      <>
+                        Place Order
+                        <ChevronRight className="w-4 h-4" />
+                      </>
+                    )}
                   </button>
                 )}
               </div>
