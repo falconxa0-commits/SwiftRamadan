@@ -1,7 +1,7 @@
 'use client';
 
 import { useAppStore, type TabId } from '@/lib/store';
-import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings } from 'lucide-react';
+import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings, Clapperboard } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NavTab {
@@ -13,9 +13,9 @@ interface NavTab {
 const customerTabs: NavTab[] = [
   { id: 'home', label: 'Home', icon: Home },
   { id: 'explore', label: 'Explore', icon: Compass },
+  { id: 'reels', label: 'Reels', icon: Clapperboard },
   { id: 'cart', label: 'Cart', icon: ShoppingCart },
   { id: 'orders', label: 'Orders', icon: ClipboardList },
-  { id: 'offers', label: 'Offers', icon: Percent },
   { id: 'profile', label: 'Profile', icon: User },
 ];
 

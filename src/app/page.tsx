@@ -11,6 +11,7 @@ import CartTab from '@/components/swift/CartTab';
 import OrdersTab from '@/components/swift/OrdersTab';
 import OffersTab from '@/components/swift/OffersTab';
 import ProfileTab from '@/components/swift/ProfileTab';
+import ReelsTab from '@/components/swift/ReelsTab';
 import AIChatWidget from '@/components/swift/AIChatWidget';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
@@ -74,6 +75,7 @@ import {
 const customerTabs: Record<string, React.ComponentType> = {
   home: HomeTab,
   explore: ExploreTab,
+  reels: ReelsTab,
   cart: CartTab,
   orders: OrdersTab,
   offers: OffersTab,
@@ -522,7 +524,7 @@ export default function Home() {
           animate="animate"
           exit="exit"
           transition={{ duration: 0.2, ease: 'easeInOut' }}
-          className="flex-1 flex flex-col overflow-y-auto"
+          className={`flex-1 flex flex-col ${activeTab === 'reels' ? 'overflow-hidden' : 'overflow-y-auto'}`}
         >
           <ActiveTabComponent />
         </motion.div>

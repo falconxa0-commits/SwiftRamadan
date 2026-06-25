@@ -156,3 +156,36 @@ model CommunityComment {
   content   String
   createdAt DateTime @default(now())
 }
+
+// ── Reels: TikTok-style short videos ──
+model Video {
+  id           String   @id @default(cuid())
+  title        String
+  description  String   @default("")
+  videoUrl     String
+  thumbnailUrl String   @default("")
+  authorName   String
+  authorHandle String   @default("")
+  authorAvatar String   @default("")
+  category     String   @default("cooking") // cooking, iftar, sahur, tips, reviews
+  duration     Int      @default(0)         // seconds
+  likes        Int      @default(0)
+  comments     Int      @default(0)
+  shares       Int      @default(0)
+  views        Int      @default(0)
+  likedBy      String   @default("[]")      // JSON array of viewer emails
+  createdAt    DateTime @default(now())
+  videoComments VideoComment[]
+}
+
+model VideoComment {
+  id            String   @id @default(cuid())
+  videoId       String
+  video         Video    @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  authorName    String
+  authorHandle  String   @default("")
+  authorAvatar  String   @default("")
+  content       String
+  likes         Int      @default(0)
+  createdAt     DateTime @default(now())
+}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays } from 'lucide-react';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays, Clapperboard, Play } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
@@ -286,6 +286,47 @@ export default function HomeTab() {
             );
           })}
         </div>
+      </div>
+
+      {/* ── SwiftReel: TikTok-style feed link ── */}
+      <div className="px-5">
+        <motion.button
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setActiveTab('reels')}
+          className="relative w-full overflow-hidden rounded-2xl border border-[#10E07A]/25 text-left group"
+          style={{
+            background: 'linear-gradient(110deg, rgba(16,224,122,0.18) 0%, rgba(245,196,81,0.10) 55%, rgba(167,139,250,0.14) 100%)',
+          }}
+        >
+          {/* Floating orbs */}
+          <div className="absolute -top-6 -right-4 w-24 h-24 rounded-full bg-[#10E07A]/20 blur-2xl" />
+          <div className="absolute -bottom-8 -left-2 w-20 h-20 rounded-full bg-[#A78BFA]/20 blur-2xl" />
+
+          <div className="relative flex items-center gap-3 p-3.5">
+            {/* Animated clapper icon */}
+            <div className="relative size-14 shrink-0 rounded-2xl bg-black/40 backdrop-blur-sm border border-white/15 flex items-center justify-center overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#10E07A]/30 to-[#F5C451]/20" />
+              <Clapperboard className="w-7 h-7 text-white relative z-10" />
+              <span className="absolute top-1 right-1 size-2 rounded-full bg-[#FB7185] animate-pulse" />
+            </div>
+
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-1.5">
+                <h3 className="text-white font-black text-base tracking-tight">SwiftReel</h3>
+                <span className="px-1.5 h-4 rounded-full bg-[#FB7185] text-white text-[9px] font-black flex items-center">LIVE</span>
+              </div>
+              <p className="text-white/65 text-xs font-medium leading-tight mt-0.5">
+                Watch food shorts from Lagos chefs & creators
+              </p>
+            </div>
+
+            {/* Play CTA */}
+            <div className="shrink-0 flex items-center gap-1 px-3 h-9 rounded-full bg-white text-black text-xs font-black active:scale-95 transition-transform">
+              <Play className="w-3.5 h-3.5 fill-black" />
+              Watch
+            </div>
+          </div>
+        </motion.button>
       </div>
 
       {/* ── Hero Carousel ── */}

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile'
+export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile' | 'reels'
   | 'rider-dashboard' | 'rider-earnings' | 'rider-deliveries' | 'rider-profile'
   | 'vendor-dashboard' | 'vendor-orders' | 'vendor-earnings' | 'vendor-store' | 'vendor-profile';
 
