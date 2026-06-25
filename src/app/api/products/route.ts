@@ -3,6 +3,16 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
 
+// Returns true if the user exists (or vendorId is null/undefined). Returns
+// false if a vendorId was provided but no matching User record was found —
+// which would otherwise cause a Prisma foreign-key violation on
+// `db.product.create()`.
+async function assertUserExists(userId: string | undefined): Promise<boolean> {
+  if (!userId) return true;
+  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  return !!u;
+}
+
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 
 const staticProducts = [
@@ -218,6 +228,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Normalize vendorId: treat empty string as null so the FK guard treats it
+    // as "no vendor specified" rather than a malformed id.
+    const normalizedVendorId =
+      typeof vendorId === 'string' && vendorId.trim() ? vendorId : undefined;
+
+    // FK guard: verify the vendor exists before creating the product,
+    // otherwise Prisma throws a foreign-key violation → 500.
+    if (normalizedVendorId && !(await assertUserExists(normalizedVendorId))) {
+      return NextResponse.json(
+        { success: false, error: 'Vendor not found' },
+        { status: 400 }
+      );
+    }
+
     const product = await db.product.create({
       data: {
         name: name.trim(),
@@ -227,7 +251,7 @@ export async function POST(request: NextRequest) {
         images: JSON.stringify(typeof image === 'string' && image ? [image] : []),
         category: typeof category === 'string' && category ? category : 'meals',
         deliveryTime: typeof deliveryTime === 'string' && deliveryTime ? deliveryTime : '30 min',
-        vendorId: typeof vendorId === 'string' && vendorId ? vendorId : null,
+        vendorId: normalizedVendorId ?? null,
         inStock: true,
         rating: 0,
         reviewCount: 0,

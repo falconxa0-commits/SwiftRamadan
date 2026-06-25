@@ -3,6 +3,16 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, chatMessageSchema } from '@/lib/validation';
 
+// Returns true if the user exists (or senderId is null/undefined). Returns
+// false if a senderId was provided but no matching User record was found —
+// which would otherwise cause a Prisma foreign-key violation on
+// `db.chatMessage.create()`.
+async function assertUserExists(userId: string | null | undefined): Promise<boolean> {
+  if (!userId) return true;
+  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  return !!u;
+}
+
 // ─────────────────────────────────────────────────────────────
 // GET /api/messages?roomId=xxx — list messages in room, oldest first
 // ─────────────────────────────────────────────────────────────
@@ -50,6 +60,15 @@ export async function POST(req: NextRequest) {
 
     if (!roomId || !content.trim()) {
       return NextResponse.json({ error: 'roomId and content are required' }, { status: 400 });
+    }
+
+    // FK guard: verify the sender exists before creating the message,
+    // otherwise Prisma throws a foreign-key violation → 500.
+    if (senderId && !(await assertUserExists(senderId))) {
+      return NextResponse.json(
+        { success: false, message: 'Sender not found' },
+        { status: 400 }
+      );
     }
 
     const message = await db.chatMessage.create({

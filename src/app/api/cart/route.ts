@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { validateInput, cartItemSchema } from '@/lib/validation';
+
+// Returns true if the user exists (or userId is null/undefined). Returns false
+// if a userId was provided but no matching User record was found — which would
+// otherwise cause a Prisma foreign-key violation on `db.cartItem.create()`.
+async function assertUserExists(userId: string | undefined): Promise<boolean> {
+  if (!userId) return true;
+  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  return !!u;
+}
 
 // GET /api/cart?sessionId=...&userId=... — Get cart items
 export async function GET(request: NextRequest) {
@@ -36,11 +46,29 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, price, image, quantity = 1, sessionId = 'default', userId } = body;
 
-    if (!id || !name || !price) {
+    // Backward-compat: legacy callers sent `id` instead of `productId`. Map it
+    // through so both shapes are accepted before Zod validation runs.
+    if (
+      body &&
+      typeof body === 'object' &&
+      !('productId' in body) &&
+      'id' in body
+    ) {
+      body.productId = body.id;
+    }
+
+    // Validate payload — Zod rejects negative prices, non-integer quantities,
+    // missing name, etc., with a structured 400 response.
+    const v = validateInput(cartItemSchema, body);
+    if (!v.success) return v.response;
+    const { productId, name, price, image, quantity, sessionId, userId } = v.data;
+
+    // FK guard: verify the referenced user exists before writing the cart item,
+    // otherwise Prisma throws a foreign-key violation → 500.
+    if (userId && !(await assertUserExists(userId))) {
       return NextResponse.json(
-        { error: 'id, name, and price are required' },
+        { success: false, message: 'User not found' },
         { status: 400 }
       );
     }
@@ -48,7 +76,7 @@ export async function POST(request: NextRequest) {
     // Check for existing item by productId + session/user
     const existing = await db.cartItem.findFirst({
       where: {
-        productId: id,
+        productId: typeof productId === 'number' ? productId : Number(productId),
         ...(userId ? { userId } : { sessionId }),
       },
     });
@@ -56,16 +84,16 @@ export async function POST(request: NextRequest) {
     if (existing) {
       await db.cartItem.update({
         where: { id: existing.id },
-        data: { quantity: existing.quantity + (quantity || 1) },
+        data: { quantity: existing.quantity + quantity },
       });
     } else {
       await db.cartItem.create({
         data: {
-          productId: id,
+          productId: typeof productId === 'number' ? productId : Number(productId),
           name,
           price,
           image: image || '',
-          quantity: quantity || 1,
+          quantity,
           sessionId,
           userId: userId || null,
         },

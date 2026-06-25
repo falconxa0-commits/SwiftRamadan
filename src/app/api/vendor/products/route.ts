@@ -3,11 +3,18 @@ import { db } from '@/lib/db';
 
 /* ──────────── helpers ──────────── */
 
+// Resolve vendorId / vendorEmail to a real User.id.
+// SECURITY (fix S8): previously this returned the raw `vendorId` string without verifying
+// it referred to an existing user — meaning any opaque string was treated as a valid
+// vendor identity. Now both branches verify the user actually exists in the DB.
 async function resolveVendorId(vendorId?: string | null, vendorEmail?: string | null) {
-  if (vendorId) return vendorId;
+  if (vendorId) {
+    const byId = await db.user.findUnique({ where: { id: vendorId }, select: { id: true } });
+    if (byId) return byId.id;
+  }
   if (vendorEmail) {
-    const user = await db.user.findUnique({ where: { email: vendorEmail } });
-    return user?.id ?? null;
+    const byEmail = await db.user.findUnique({ where: { email: vendorEmail }, select: { id: true } });
+    if (byEmail) return byEmail.id;
   }
   return null;
 }
@@ -135,8 +142,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/* ──────────── PUT: update product (verify ownership) ──────────── */
-
+/* ──────────── PUT: update product (verify ownership) ────────────
+ * SECURITY (fix S8 — ownership bypass):
+ *   Previously the ownership check was `if (resolvedVendorId && existing.vendorId !== ...)`.
+ *   When the request supplied NEITHER `vendorId` NOR `vendorEmail`, `resolvedVendorId`
+ *   was `null` and the entire check was skipped — letting anyone edit any product.
+ *
+ * New behaviour:
+ *   - Require `vendorId` or `vendorEmail` (401 "Vendor identity required" if neither).
+ *   - Resolve to a real User.id (401 if the identifier doesn't match any user).
+ *   - Block updates on legacy products (vendorId === null) — no admin role exists to allow
+ *     an override, so 403 "You don't own this product".
+ *   - 403 if `existing.vendorId !== resolvedVendorId`.
+ */
 export async function PUT(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -152,7 +170,20 @@ export async function PUT(request: NextRequest) {
     }
 
     const body = await request.json();
+
+    if (!vendorIdQ && !vendorEmail) {
+      return NextResponse.json(
+        { success: false, error: 'Vendor identity required — pass vendorId or vendorEmail' },
+        { status: 401 }
+      );
+    }
     const resolvedVendorId = await resolveVendorId(vendorIdQ, vendorEmail);
+    if (!resolvedVendorId) {
+      return NextResponse.json(
+        { success: false, error: 'Vendor identity required — pass vendorId or vendorEmail' },
+        { status: 401 }
+      );
+    }
 
     const existing = await db.product.findUnique({ where: { id } });
     if (!existing) {
@@ -161,9 +192,9 @@ export async function PUT(request: NextRequest) {
         { status: 404 }
       );
     }
-    if (resolvedVendorId && existing.vendorId !== resolvedVendorId) {
+    if (!existing.vendorId || existing.vendorId !== resolvedVendorId) {
       return NextResponse.json(
-        { success: false, error: 'Not authorized — product does not belong to vendor' },
+        { success: false, error: "You don't own this product" },
         { status: 403 }
       );
     }
@@ -198,8 +229,9 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-/* ──────────── DELETE: delete product (verify ownership) ──────────── */
-
+/* ──────────── DELETE: delete product (verify ownership) ────────────
+ * SECURITY (fix S8 — ownership bypass): same fix as PUT — see comment above.
+ */
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -214,7 +246,20 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    if (!vendorIdQ && !vendorEmail) {
+      return NextResponse.json(
+        { success: false, error: 'Vendor identity required — pass vendorId or vendorEmail' },
+        { status: 401 }
+      );
+    }
     const resolvedVendorId = await resolveVendorId(vendorIdQ, vendorEmail);
+    if (!resolvedVendorId) {
+      return NextResponse.json(
+        { success: false, error: 'Vendor identity required — pass vendorId or vendorEmail' },
+        { status: 401 }
+      );
+    }
+
     const existing = await db.product.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json(
@@ -222,9 +267,9 @@ export async function DELETE(request: NextRequest) {
         { status: 404 }
       );
     }
-    if (resolvedVendorId && existing.vendorId !== resolvedVendorId) {
+    if (!existing.vendorId || existing.vendorId !== resolvedVendorId) {
       return NextResponse.json(
-        { success: false, error: 'Not authorized — product does not belong to vendor' },
+        { success: false, error: "You don't own this product" },
         { status: 403 }
       );
     }

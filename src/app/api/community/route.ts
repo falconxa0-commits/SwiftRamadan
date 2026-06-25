@@ -3,6 +3,29 @@ import { db } from '@/lib/db';
 
 export const runtime = 'nodejs';
 
+/**
+ * Sanitize a user-provided text field for safe storage & rendering.
+ *
+ * Community posts & comments are plain text — line breaks are expressed with
+ * "\n", never HTML — so we strip ALL HTML tags and then escape any residual
+ * HTML-special characters to their entities. This neutralises stored XSS
+ * payloads such as `<script>alert(1)</script>` even if a future UI change
+ * ever renders the field with `dangerouslySetInnerHTML`.
+ *
+ * Order matters: `&` must be escaped first so that the entities we emit
+ * (`&lt;`, `&gt;`, …) are not themselves double-escaped.
+ */
+function sanitizeText(s: unknown): string {
+  if (typeof s !== 'string') return '';
+  return s
+    .replace(/<[^>]*>/g, '') // strip HTML tags (e.g. <script>, <b>, </…>)
+    .replace(/&/g, '&amp;') // escape & FIRST
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 // Safely parse the likedBy JSON string column.
 function safeParseLikedBy(raw: string | null | undefined): string[] {
   if (!raw) return [];
@@ -56,8 +79,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const email =
-    typeof body.email === 'string' && body.email.trim() ? body.email : 'guest';
+  const email = sanitizeText(
+    typeof body.email === 'string' && body.email.trim() ? body.email : 'guest',
+  );
   const action = typeof body.action === 'string' ? body.action : '';
 
   try {
@@ -73,10 +97,10 @@ export async function POST(request: NextRequest) {
       const comment = await db.communityComment.create({
         data: {
           postId,
-          authorName: String(body.authorName || 'Anonymous'),
-          authorInitial: String(body.authorInitial || 'U'),
+          authorName: sanitizeText(body.authorName || 'Anonymous'),
+          authorInitial: sanitizeText(body.authorInitial || 'U'),
           authorEmail: email,
-          content: String(body.content || ''),
+          content: sanitizeText(body.content || ''),
         },
       });
       return NextResponse.json({ comment }, { status: 200 });
@@ -124,14 +148,14 @@ export async function POST(request: NextRequest) {
     // ── Default action: create post ──
     const post = await db.communityPost.create({
       data: {
-        authorName: String(body.authorName || 'Anonymous'),
-        authorInitial: String(body.authorInitial || 'U'),
+        authorName: sanitizeText(body.authorName || 'Anonymous'),
+        authorInitial: sanitizeText(body.authorInitial || 'U'),
         authorEmail: email,
-        category: String(body.category || 'General'),
-        content: String(body.content || ''),
+        category: sanitizeText(body.category || 'General'),
+        content: sanitizeText(body.content || ''),
         imageUrl:
           typeof body.imageUrl === 'string' && body.imageUrl.trim()
-            ? body.imageUrl
+            ? sanitizeText(body.imageUrl)
             : null,
       },
       include: {

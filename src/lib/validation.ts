@@ -117,6 +117,18 @@ export const videoCreateSchema = z.object({
   duration: z.number().int().nonnegative().default(0),
 });
 
+/* ─────────────────────────── Cart ────────────────────────────── */
+
+export const cartItemSchema = z.object({
+  productId: z.union([z.string(), z.number()]),
+  name: z.string().min(1),
+  price: z.number().int().nonnegative(),
+  image: z.string().optional().default(''),
+  quantity: z.number().int().positive().default(1),
+  sessionId: z.string().optional().default('default'),
+  userId: z.string().optional(),
+});
+
 /* ─────────────────────────── Helper ──────────────────────────── */
 
 export type ValidationResult<T> =

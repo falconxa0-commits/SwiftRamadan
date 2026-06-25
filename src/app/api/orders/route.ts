@@ -3,6 +3,15 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/validation';
 
+// Returns true if the user exists (or userId is null/undefined). Returns false
+// if a userId was provided but no matching User record was found — which would
+// otherwise cause a Prisma foreign-key violation on `db.order.create()`.
+async function assertUserExists(userId: string | undefined): Promise<boolean> {
+  if (!userId) return true;
+  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  return !!u;
+}
+
 // GET /api/orders — Get all orders, optionally filter by userId
 export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
@@ -51,6 +60,15 @@ export async function POST(request: NextRequest) {
     if (!total) {
       return NextResponse.json(
         { success: false, message: 'Order total is required' },
+        { status: 400 }
+      );
+    }
+
+    // FK guard: verify the referenced user exists before creating the order,
+    // otherwise Prisma throws a foreign-key violation → 500.
+    if (userId && !(await assertUserExists(userId))) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
         { status: 400 }
       );
     }

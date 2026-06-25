@@ -52,8 +52,27 @@ type ProcessingOrder = {
 type DispatchedOrder = {
   id: string;
   customer: string;
+  area: string;
   total: number;
-  status: 'dispatched';
+  items: { name: string; qty: number; price: number }[];
+  riderName: string | null;
+  orderStatus: string; // 'Ready' | 'In Transit'
+  createdAtLabel: string;
+  image: string;
+};
+
+// Shape returned by GET /api/vendor/orders (all vendor orders, newest first)
+type VendorApiOrder = {
+  id: string;
+  shortId: string;
+  status: string;
+  total: number;
+  items: { name?: string; qty?: number; price?: number }[];
+  progress: number;
+  riderName: string | null;
+  createdAt: string;
+  createdAtLabel: string;
+  image: string;
 };
 
 type VendorData = {
@@ -225,6 +244,10 @@ export default function VendorDashboard() {
   const [hiddenIds, setHiddenIds] = useState<Set<string>>(new Set());
   // Marked-as-ready processing orders (for quick visual feedback)
   const [readyIds, setReadyIds] = useState<Set<string>>(new Set());
+  // All vendor orders (polled from /api/vendor/orders) — used to derive the
+  // Processing & Dispatched tabs. The /api/vendor endpoint only returns the
+  // "incoming" slice, so we keep this second list for accepted/dispatched orders.
+  const [allOrders, setAllOrders] = useState<VendorApiOrder[]>([]);
 
   // ─── Realtime: join vendor room when we have the vendorId ───
   // We use the vendor's email as a stable identifier when the API
@@ -365,6 +388,25 @@ export default function VendorDashboard() {
     fetchData();
   }, [fetchData]);
 
+  /* ── Fetch all vendor orders (for Processing & Dispatched tabs) ── */
+  const fetchVendorOrders = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `/api/vendor/orders?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`,
+      );
+      const json = await res.json();
+      if (json.success && Array.isArray(json.orders)) {
+        setAllOrders(json.orders);
+      }
+    } catch (err) {
+      console.error('[VendorDashboard] fetch orders error:', err);
+    }
+  }, [userEmail]);
+
+  useEffect(() => {
+    fetchVendorOrders();
+  }, [fetchVendorOrders]);
+
   /* ── Accept order ── */
   const handleAccept = async (order: IncomingOrder) => {
     setProcessing((p) => ({ ...p, [order.id]: 'accept' }));
@@ -381,8 +423,13 @@ export default function VendorDashboard() {
           title: 'Order Accepted! ✅',
           description: `Order ${order.id.slice(-6).toUpperCase()} is now being prepared`,
         });
-        // Refresh data after a brief delay so the new state propagates
-        setTimeout(() => fetchData(), 600);
+        // Refresh data after a brief delay so the new state propagates.
+        // fetchData refreshes the stats + incoming slice, fetchVendorOrders
+        // refreshes the all-orders list so the order moves to the Processing tab.
+        setTimeout(() => {
+          fetchData();
+          fetchVendorOrders();
+        }, 600);
       } else {
         throw new Error(json.error || 'Failed to accept order');
       }
@@ -419,6 +466,12 @@ export default function VendorDashboard() {
           description: `Order ${order.id.slice(-6).toUpperCase()} has been rejected`,
           variant: 'destructive',
         });
+        // Refresh the all-orders list so counts stay accurate (rejected orders
+        // move to status 'Cancelled' and should drop out of every tab).
+        setTimeout(() => {
+          fetchData();
+          fetchVendorOrders();
+        }, 600);
       } else {
         throw new Error(json.error || 'Failed to reject order');
       }
@@ -454,6 +507,11 @@ export default function VendorDashboard() {
           title: 'Order Ready! 🎉',
           description: `Order ${orderId.slice(-6).toUpperCase()} marked as ready for dispatch`,
         });
+        // Refresh both lists so the order moves from Processing → Dispatched.
+        setTimeout(() => {
+          fetchData();
+          fetchVendorOrders();
+        }, 600);
       } else {
         throw new Error(json.error || 'Failed to mark order ready');
       }
@@ -495,14 +553,68 @@ export default function VendorDashboard() {
   };
 
   /* ── Derived lists ── */
-  const incomingOrders = (data?.incomingOrders || []).filter((o) => !hiddenIds.has(o.id));
-  // Processing: orders with status Preparing (after accept) - derive from incoming once accepted
-  // Since accepted orders move to status "Confirmed" with progress 15, they leave incomingOrders.
-  // We'll show orders that vendor has accepted (status Confirmed but not yet Ready) in the "Processing" tab.
-  // For simplicity, derive processing from incomingOrders by checking progress > 0... but they're filtered out.
-  // Use a separate fetch or build from incomingOrders + show all in incoming as processing candidates.
-  const processingOrders: ProcessingOrder[] = [];
-  const dispatchedOrders: DispatchedOrder[] = [];
+  // /api/vendor returns incomingOrders for BOTH 'Preparing' (truly incoming)
+  // and 'Confirmed' (already accepted) statuses. To prevent accepted orders
+  // from showing in BOTH the Incoming and Processing tabs (especially after a
+  // page refresh, when hiddenIds is empty), we exclude any order whose id is
+  // present in allOrders with a status that belongs to Processing or Dispatched.
+  const otherTabOrderIds = new Set(
+    allOrders
+      .filter(
+        (o) =>
+          o.status === 'Confirmed' ||
+          o.status === 'Ready' ||
+          o.status === 'In Transit',
+      )
+      .map((o) => o.id),
+  );
+  const incomingOrders = (data?.incomingOrders || []).filter(
+    (o) => !hiddenIds.has(o.id) && !otherTabOrderIds.has(o.id),
+  );
+
+  // Processing: vendor has accepted the order (status 'Confirmed') and is preparing it.
+  // NOTE: In this codebase the Order schema defaults to status="Preparing" for newly
+  // placed orders (see prisma/schema.prisma & /api/orders POST). That means "Preparing"
+  // is the INCOMING state — orders awaiting vendor action — not an "in progress" state.
+  // The vendor-orders PUT handler flips status to "Confirmed" on accept and "Ready" on
+  // mark-ready. We therefore filter Processing to status==='Confirmed' so accepted
+  // orders appear here without overlapping with the Incoming tab.
+  const processingOrders: ProcessingOrder[] = allOrders
+    .filter((o) => o.status === 'Confirmed')
+    .map((o) => ({
+      id: o.id,
+      customer: `Order ${o.shortId}`,
+      area: 'Lagos, Nigeria',
+      items: (o.items || []).map((i) => ({
+        name: i.name || 'Item',
+        qty: i.qty || 1,
+        price: i.price || 0,
+      })),
+      total: o.total,
+      startedAt: o.createdAtLabel,
+      estimatedReady: 'Soon',
+      status: 'processing',
+    }));
+
+  // Dispatched: vendor marked the order Ready (awaiting rider pickup) or rider has
+  // picked it up (In Transit).
+  const dispatchedOrders: DispatchedOrder[] = allOrders
+    .filter((o) => o.status === 'Ready' || o.status === 'In Transit')
+    .map((o) => ({
+      id: o.id,
+      customer: `Order ${o.shortId}`,
+      area: 'Lagos, Nigeria',
+      items: (o.items || []).map((i) => ({
+        name: i.name || 'Item',
+        qty: i.qty || 1,
+        price: i.price || 0,
+      })),
+      total: o.total,
+      riderName: o.riderName,
+      orderStatus: o.status,
+      createdAtLabel: o.createdAtLabel,
+      image: o.image,
+    }));
 
   const filters: { id: OrderStatus; label: string; count: number }[] = [
     { id: 'incoming', label: 'Incoming', count: incomingOrders.length },
@@ -889,13 +1001,85 @@ export default function VendorDashboard() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex flex-col items-center justify-center py-16 text-center"
+            className="space-y-4"
           >
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-              <Truck className="w-8 h-8 text-white/20" />
+            <div className="flex items-center gap-2">
+              <h3 className="text-white font-bold text-sm">Dispatched Orders</h3>
+              <span className="px-2 py-0.5 rounded-full bg-[#10E07A]/20 text-[#10E07A] text-[10px] font-black border border-[#10E07A]/20">
+                {dispatchedOrders.length}
+              </span>
             </div>
-            <p className="text-white/40 text-sm font-semibold">No dispatched orders</p>
-            <p className="text-white/20 text-xs mt-1">Orders being delivered will appear here</p>
+
+            {dispatchedOrders.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                  <Truck className="w-8 h-8 text-white/20" />
+                </div>
+                <p className="text-white/40 text-sm font-semibold">No dispatched orders</p>
+                <p className="text-white/20 text-xs mt-1">
+                  Orders marked ready or out for delivery will appear here
+                </p>
+              </div>
+            ) : (
+              dispatchedOrders.map((order, i) => (
+                <motion.div
+                  key={order.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.08 }}
+                  className="rounded-2xl bg-[#0F1118] border border-[#10E07A]/20 p-4"
+                >
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-white text-sm font-bold">{order.customer}</span>
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                            order.orderStatus === 'In Transit'
+                              ? 'bg-[#38BDF8]/20 text-[#38BDF8]'
+                              : 'bg-[#10E07A]/20 text-[#10E07A]'
+                          }`}
+                        >
+                          {order.orderStatus === 'In Transit' ? 'In Transit' : 'Ready'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1 mt-0.5">
+                        <MapPin className="w-3 h-3 text-white/30" />
+                        <span className="text-white/40 text-xs">{order.area}</span>
+                      </div>
+                    </div>
+                    <p className="text-[#F5C451] font-black text-sm">{formatNaira(order.total)}</p>
+                  </div>
+
+                  <div className="space-y-1 mb-3">
+                    {order.items.map((item, idx) => (
+                      <div key={idx} className="flex items-center justify-between">
+                        <span className="text-white/50 text-xs">
+                          {item.qty}x {item.name}
+                        </span>
+                        <span className="text-white/30 text-xs">
+                          {formatNaira(item.price * item.qty)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-white/5">
+                    <div className="flex items-center gap-1.5">
+                      <Truck className="w-3.5 h-3.5 text-[#10E07A]" />
+                      <span className="text-white/40 text-xs">
+                        {order.riderName
+                          ? `Rider: ${order.riderName}`
+                          : order.orderStatus === 'In Transit'
+                            ? 'Awaiting rider assignment'
+                            : 'Ready for pickup'}
+                      </span>
+                    </div>
+                    <span className="text-white/30 text-[10px]">Placed {order.createdAtLabel}</span>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </motion.div>
         )}
       </AnimatePresence>

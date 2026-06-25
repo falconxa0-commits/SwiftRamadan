@@ -2557,3 +2557,497 @@ Stage Summary:
 - Aurora Luxe dark theme consistently applied (#05070A bg, green/gold/sky accents, glass-effect cards).
 - 42 screenshots saved to /home/z/my-project/audit-screenshots/ as evidence.
 - Recommended next action: replace the 8 broken video URLs in prisma/seed-videos.ts (and re-seed) OR add a video poster fallback so the Reels tab gracefully degrades when video src fails. After that fix, app is production-ready.
+
+---
+Task ID: FIX-C
+Agent: Upload API + Video URL Restorer
+Task: Restore missing upload API (F4) and fix broken video URLs (F2)
+
+Work Log:
+- Read /home/z/my-project/worklog.md (AUDIT-API §5 + PHASE2-F) for context. AUDIT-API confirmed both `/api/upload/route.ts` and `/api/upload/multiple/route.ts` are MISSING from disk despite PHASE2-F claiming they were built and tested; `POST /api/upload` returns 404. PHASE2-F also confirms the `useUpload` hook in `src/hooks/use-upload.ts` calls `/api/upload` (multipart + JSON base64) and `/api/upload/multiple`.
+- Read `src/hooks/use-upload.ts` to extract the API contract:
+  • `upload(file)` → POST FormData `file=@` to `/api/upload`, expects `{ success, url?, message? }`.
+  • `uploadMany(files)` → POST FormData `files=@` (repeated) to `/api/upload/multiple`, expects `{ success, urls?, message? }`.
+  • `uploadBase64(dataUrl)` → POST JSON `{ image }` to `/api/upload`, expects `{ success, url?, message? }`.
+- Read `src/lib/rate-limit.ts`: `checkRateLimit(req, options)` returns `null` on allow or a 429 `Response` on block. `RATE_LIMITS.upload = { limit: 10, windowMs: 60_000 }` exists and is the correct preset.
+- Read `src/app/api/videos/route.ts` for in-repo API conventions (NextRequest/NextResponse, db import path, rate-limit call placement).
+
+Feature F4 fix — Restored upload API:
+- Created `src/app/api/upload/route.ts` (NEW):
+  • `export const runtime = 'nodejs'` (needs fs/path/crypto).
+  • POST handler supports BOTH `multipart/form-data` (field name `file`) and `application/json` (`{ image: "data:image/...;base64,..." }`).
+  • Validation: image-only (jpeg/png/webp/gif via `ALLOWED` MIME→ext map), non-empty, ≤5 MB (5_242_880 bytes).
+  • Filenames: `${Date.now()}-${crypto.randomBytes(6).toString('hex')}.${ext}` written to `process.cwd()/public/uploads/` via `fs/promises.mkdir({ recursive: true })` + `fs.writeFile`.
+  • Returns 200 `{ success: true, url: "/uploads/<file>", filename, size, type, originalName }`.
+  • Errors: 400 (no file / invalid JSON / empty), 413 (too large), 415 (invalid type), 500 (write fail).
+  • GET returns API discovery info (endpoint, methods, constraints).
+  • Rate-limited via `checkRateLimit(req, RATE_LIMITS.upload)` (10/min per IP).
+- Created `src/app/api/upload/multiple/route.ts` (NEW):
+  • POST accepts `files` (or fallback `file`) FormData field, up to 5 files (MAX_FILES).
+  • Per-file validation identical to single route (image-only, ≤5 MB).
+  • Partial success: returns 200 `{ success: true, urls, count, files, errors? }` when ≥1 file saved; returns 500 when 0 saved. `errors[]` contains `{ originalName, message }` for each reject.
+  • Rate-limited with same `RATE_LIMITS.upload` preset.
+- Ensured `/home/z/my-project/public/uploads/` exists (already present with historical uploads; `mkdir -p` runs in-route as a safety net).
+- Both files are self-contained (no shared helper module) to stay within the 3 owned files.
+
+Feature F2 fix — Replaced broken Google sample MP4 URLs:
+- Verified the 8 original URLs at `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/*.mp4` all return HTTP 403 (sampled BigBuckBunny.mp4 + Sintel.mp4, both 403). Google deprecated public access.
+- Tested 6 candidate replacement URLs with `curl -sI`:
+  • `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4` → 200 ✅
+  • `https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4` → 200 ✅
+  • `https://www.w3schools.com/html/mov_bbb.mp4` → 200 ✅
+  • `https://www.w3schools.com/html/movie.mp4` → 200 ✅
+  • `https://media.w3.org/2010/05/sintel/trailer.mp4` → 200 ✅
+  • `https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4` → 200 ✅
+  • `https://test-videos.co.uk/vids/jellyfish/mp4/h264/720/Jellyfish_720_10s_1MB.mp4` → 200 ✅
+  • `https://test-videos.co.uk/vids/sintel/mp4/h264/360/Sintel_360_10s_1MB.mp4` → 200 ✅
+  • Rejected: `https://test-videos.co.uk/vids/elephantsdream/mp4/h264/360/Elephants_Dream_360_10s_1MB.mp4` → 404 ❌; archive.org URL → 302 (would work with -L but skipped in favor of direct 200s).
+- Modified `prisma/seed-videos.ts` (only the URL strings, as instructed): replaced all 8 entries in `SAMPLE_VIDEOS[]` with verified-working URLs; added a 4-line comment block explaining why (Google bucket deprecated, returns 403, verified 200 — see worklog FIX-C). Did NOT touch the `REELS` array, the comments seeding, or the import path.
+- Wrote one-off migration script `/home/z/my-project/_tmp_update_video_urls.ts` to `updateMany` existing DB rows by `videoUrl`. Ran with `bun run`. Output: 9 rows updated across 8 URL mappings (the "nmmn" user-created reel also used `ForBiggerFun.mp4` so it was caught by the same `updateMany`). Verified `db.video.count({ where: { videoUrl: { contains: 'commondatastorage.googleapis.com' } } })` → 0. Deleted the temp script after.
+- Verified via `GET /api/videos`: all 9 video records now point to working test-videos.co.uk / w3schools / media.w3.org URLs. Sample HEAD check on one new URL → `HTTP/2 200, content-type: video/mp4`.
+
+Verification:
+- `bun run lint` → 0 errors, 5 warnings — all 5 are pre-existing in files I do NOT own (`auth/route.ts` unused eslint-disable, `layout.tsx` custom-font warning, `VoiceShoppingModal.tsx` unused eslint-disable ×3). Both new upload route files are lint-clean.
+- Upload API tests (dev server on :3000, hot-reloaded after file creation):
+  • POST `/api/upload` (multipart, `meal-jollof.png` 182 KB) → 200 `{ success: true, url: "/uploads/1782426100166-e646de077db0.png", filename, size: 182405, type: "image/png", originalName: "meal-jollof.png" }` ✅
+  • GET `/api/upload` → 200 API info `{ endpoint, methods: ["GET","POST"], constraints: { maxBytes: 5242880, allowedTypes: [...] } }` ✅
+  • POST `/api/upload` (JSON base64 1×1 PNG, 70 bytes) → 200 `{ success: true, url: "/uploads/1782426112246-...png", size: 70, originalName: "base64-image" }` ✅
+  • POST `/api/upload/multiple` (2 PNGs) → 200 `{ success: true, urls: [...,...], count: 2, files: [{...},{...}] }` ✅
+  • POST `/api/upload` (no file) → 400 ✅
+  • POST `/api/upload` (wrong type `.txt`) → 415 ✅
+  • POST `/api/upload` (6 MB zeroed `.png`) → 413 ✅
+  • GET `/uploads/1782426100166-e646de077db0.png` → 200 OK (uploaded file accessible) ✅
+- Video URL tests:
+  • `GET /api/videos` → 9 records, all videoUrls now use working `test-videos.co.uk` / `w3schools` / `media.w3.org` hosts; zero `commondatastorage.googleapis.com` references remain ✅
+  • `curl -sI https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4` → `HTTP/2 200, content-type: video/mp4` ✅
+- Dev server (port 3000) healthy throughout, no errors in dev.log for the new routes.
+
+Stage Summary:
+- Files created: `src/app/api/upload/route.ts`, `src/app/api/upload/multiple/route.ts` (2 new)
+- Files modified: `prisma/seed-videos.ts` (URL strings only, +4-line explanatory comment)
+- Files deleted: `/home/z/my-project/_tmp_update_video_urls.ts` (one-off DB migration script, removed after running)
+- DB state: 9 existing `Video` rows patched to use working URLs; zero broken googleapis references remain. Re-seeding is NOT required (the seed file change + the migration script together mean both fresh seeds and existing rows are correct).
+- API state: `/api/upload` (POST + GET) and `/api/upload/multiple` (POST) now serve 200, fully match the contract used by `src/hooks/use-upload.ts` (`upload`, `uploadMany`, `uploadBase64` all functional).
+- Regression closed: AUDIT-API §5 ("upload routes from PHASE2-F are MISSING from disk despite worklog claims") is now resolved — the routes exist on disk and behave as documented.
+- F2 closed: Reels tab videos now load (was previously failing on every reel with 403, flagged as CRITICAL by the visual auditor in the prior stage summary).
+- Lint: 0 errors, 5 pre-existing warnings (none in my files).
+- No changes to: schema.prisma, store.ts, page.tsx, BottomNav, use-upload.ts hook, rate-limit.ts, validation.ts, or any other component/route outside the 3 owned files.
+
+
+---
+Task ID: FIX-B2
+Agent: Security Fix Agent (data-leak + ownership-bypass)
+Task: Fix data-leak and ownership-bypass bugs S4, S5, S8 from AUDIT-API report.
+
+Scope: Edited exactly 2 files (per ownership rules):
+- `src/app/api/notifications/route.ts` — full rewrite of GET, PUT, POST handlers
+- `src/app/api/vendor/products/route.ts` — fixed PUT, DELETE handlers + `resolveVendorId` helper
+
+Files NOT touched (coordination):
+- `src/app/api/orders/route.ts` — assigned to FIX-B1 (POST/PUT) and the GET handler's userId filter is deferred. The orchestrator should assign the `GET /api/orders` userId filter (same soft pattern as notifications: return `{ orders: [] }` when no `userId`/`all`/`role=admin` param is present) to FIX-B1 or a follow-up task. DO NOT silently leak all orders.
+- `src/components/swift/NotificationCenter.tsx` — still calls `/api/notifications` without `?userId=`. It will now show "No notifications" instead of leaked global data. Frontend team should update it to pass `?userId=` (the user's email/id is in the Zustand `userEmail` store).
+
+## Bugs fixed
+
+### S4 — Global data leak in `GET /api/notifications`
+- BEFORE: `db.notification.findMany({ orderBy, take: 50 })` with no `where` clause returned EVERY user's notifications to anyone who called.
+- AFTER:
+  - `?userId=` absent → HTTP 200 with `{ notifications: [], unreadCount: 0, deprecated: true, warning: "..." }`. App keeps working; no data leaks.
+  - `?userId=<id|email>` present → resolves to a real `User.id` (tries by-id then by-email) and filters `where: { userId: resolvedId }`.
+  - `?userId=` present but unresolvable → empty list + warning (no 404 — frontend treats 4xx as errors and falls back to a hard-coded demo list).
+  - DB-error path also returns empty (NOT the legacy hard-coded `fallbackNotifications` demo array — that was a leak too).
+- Removed the `fallbackNotifications` constant entirely (no longer referenced).
+
+### S5 — `PUT /api/notifications {all:true}` wipes everyone
+- BEFORE: `{all:true}` without `userId` ran `updateMany({ where: { read: false } })` — marks EVERY user's notifications as read globally.
+- AFTER:
+  - `userId` is REQUIRED in the body → 400 "userId is required" if missing.
+  - `userId` is resolved to a real `User.id` → 404 "User not found" if unresolvable.
+  - `{userId, all:true}` → `updateMany({ where: { userId: resolvedId, read: false } })` — only the requesting user's notifications are touched.
+  - `{userId, id}` (single notification) → fetches the notification first; if `existing.userId !== resolvedId` → 403 "You do not own this notification". Only then is it marked read. Prevents a user from dismissing someone else's notification by guessing its id.
+- Removed the old "no-userId bulk update" branch entirely.
+
+### Bonus (audit C1 on notifications): `POST /api/notifications` FK crash + scope
+- BEFORE: `userId: userId || null` was passed straight to Prisma → 500 on invalid IDs, and also allowed global (userId=null) notifications.
+- AFTER:
+  - `userId` is REQUIRED in the body → 400 if missing.
+  - Resolves to a real `User.id` → 404 "User not found" if unresolvable (no more FK-violation 500).
+  - Only the resolved id is written to `Notification.userId`.
+
+### S8 — Vendor product ownership bypass
+- BEFORE (PUT and DELETE): `if (resolvedVendorId && existing.vendorId !== resolvedVendorId)` — if the request supplied NEITHER `vendorId` NOR `vendorEmail`, `resolvedVendorId` was `null`, the check was skipped entirely, and anyone could update/delete any product. Same flaw in DELETE. Also, `resolveVendorId` returned the raw `vendorId` string without verifying it referred to a real user — any opaque string was treated as a valid vendor identity.
+- AFTER:
+  - `resolveVendorId` now does `db.user.findUnique({ where: { id: vendorId } })` (and same for email) — both branches verify the user actually exists. Side benefit: this also fixes the latent C1 FK-crash on `POST /api/vendor/products` (which now 400s instead of 500-ing on a bad vendorId).
+  - PUT and DELETE: if neither `vendorId` nor `vendorEmail` is supplied → 401 "Vendor identity required — pass vendorId or vendorEmail".
+  - If supplied but doesn't resolve to a real user → 401 (same message).
+  - If the product has no `vendorId` (legacy) → 403 "You don't own this product" (no admin role exists to allow override, per task spec).
+  - If `existing.vendorId !== resolvedVendorId` → 403 "You don't own this product".
+  - Otherwise proceed with update/delete.
+- GET and POST handlers already required vendor identity (audit confirmed) — left their behaviour unchanged, only the helper got stricter (which makes POST more robust against FK crashes).
+
+## Verification (curl, dev server at :3000)
+
+| # | Test | Expected | Got |
+|---|------|----------|-----|
+| 1 | `GET /api/notifications` (no userId) | 200, `{notifications:[]}` + deprecation warning | ✓ 200 `{"notifications":[],"unreadCount":0,"deprecated":true,"warning":"..."}` |
+| 2 | `PUT /api/notifications {all:true}` (no userId) | 400 | ✓ 400 `{"success":false,"message":"userId is required"}` |
+| 3 | `PUT /api/vendor/products?id=cm_test_id {price:100}` (no vendor identity) | 401 | ✓ 401 `{"error":"Vendor identity required — pass vendorId or vendorEmail"}` |
+| 4 | `DELETE /api/vendor/products?id=cm_test_id` (no vendor identity) | 401 | ✓ 401 |
+| 5 | `PUT /api/vendor/products?id=..&vendorEmail=nonexistent@x.com` (unresolvable) | 401 | ✓ 401 |
+| 6 | `GET /api/notifications?userId=sani@swiftramadan.app` | 200, user-scoped list | ✓ 200, 1 notification (sani's "New Order!" — userId filter working) |
+| 7 | `PUT /api/notifications {userId:"nobody@example.com",all:true}` | 404 user not found | ✓ 404 `{"message":"User not found"}` |
+| 8 | `POST /api/notifications {title,message}` (no userId) | 400 | ✓ 400 `{"message":"userId is required"}` |
+| 9 | `POST /api/notifications {title,message,userId:"nonexistent"}` | 404 (FK check) | ✓ 404 `{"message":"User not found"}` (was 500 before) |
+| 10 | `GET /api/vendor/products?vendorEmail=sani@swiftramadan.app` | 200 + products | ✓ 200, sani's products |
+| 11 | Cross-user: `PUT /api/notifications {userId:fatima@..., id:<sani's notif>}` | 403 | ✓ 403 `{"message":"You do not own this notification"}` |
+| 12 | Cross-vendor: `PUT /api/vendor/products?id=<sani's product>&vendorEmail=fatima@...` | 403 | ✓ 403 `{"error":"You don't own this product"}` |
+| 13 | Happy path: `PUT /api/vendor/products?id=<sani's product>&vendorEmail=sani@...` | 200 | ✓ 200, product updated |
+| 14 | Unresolvable vendorId: `PUT ?vendorId=cm_invalid_but_resolvable` | 401 | ✓ 401 |
+
+## Lint
+- `bun run lint` → 0 errors, 5 warnings (all pre-existing, none in the 2 modified files).
+
+## Frontend impact (expected, NOT fixed in this task per spec)
+- `NotificationCenter.tsx` calls `/api/notifications` without `?userId=`. It will now show "No notifications / You're all caught up!" instead of leaked global data. Frontend team should update the fetch to `fetch('/api/notifications?userId=' + encodeURIComponent(userEmail))` — the user's email is already in the Zustand `userEmail` store.
+- `VendorStoreTab.tsx` already passes `vendorEmail=${userEmail||''}` on every PUT/DELETE. When `userEmail` is empty (not logged in), the API now 401s and the existing toast handler shows "Update failed" / "Delete failed" — which is the correct UX for an unauthenticated vendor session. When logged in as a vendor, everything works as before.
+
+## Notes for orchestrator / follow-up
+1. **`GET /api/orders` still leaks globally** — assigned to FIX-B1's territory (orders/route.ts). If FIX-B1 hasn't already added it, please apply the same soft pattern: if no `userId` (and no `role=admin` / `all=true` for admin/vendor/rider views) → return `{ orders: [] }` with a deprecation warning; otherwise filter `where: { userId }`. This is the same class of bug as S4 and should not ship unfixed.
+2. Consider adding a shared `resolveUserId` helper to `src/lib/` (currently copy-pasted in 7+ route files: addresses, payments, products/[id]/reviews, orders/[id]/rate, videos/[id]/save, users/follow, wishlist, and now notifications). Would prevent drift and let us tighten FK safety everywhere at once.
+3. No rate limit added to `/api/notifications` (audit I1) — out of scope for this task but worth a follow-up.
+
+Stage Summary:
+- S4 fixed (notifications GET no longer leaks; soft-empty when no userId).
+- S5 fixed (notifications PUT requires userId; cross-user single-id updates blocked with 403).
+- S8 fixed (vendor products PUT/DELETE require vendor identity; ownership strictly enforced; legacy/null-vendorId products blocked).
+- Bonus: audit C1 FK-crash fixed on `POST /api/notifications` (now 404 instead of 500) and on `POST /api/vendor/products` (now 400 instead of 500, via stricter `resolveVendorId`).
+- 14/14 curl tests pass. Lint clean (0 errors). No regressions to happy-path flows (verified sani can still list/update own products and notifications).
+- File ownership respected: only `src/app/api/notifications/route.ts` and `src/app/api/vendor/products/route.ts` modified. `src/app/api/orders/route.ts` left entirely alone for FIX-B1.
+
+---
+Task ID: FIX-B1
+Agent: API FK + Validation Fix Agent (FK crashes + cart validation)
+Task: Fix 5 POST routes that crash with Prisma FK errors (500) on non-existent userId/vendorId/senderId, and add Zod validation to POST /api/cart to reject negative prices (audit C1 + C8).
+
+Scope: Read worklog AUDIT-API section + 6 owned files (5 routes + validation.ts). Modified 5 files: `src/app/api/orders/route.ts`, `src/app/api/cart/route.ts`, `src/app/api/messages/route.ts`, `src/app/api/products/route.ts`, `src/lib/validation.ts`. Did NOT modify `src/app/api/notifications/route.ts` (already fixed by FIX-B2 agent via `resolveUserId` — see notes below). No other files touched.
+
+## Bugs addressed
+
+### F1 — Foreign-key crashes (audit C1)
+The following POST routes called `db.*.create()` with an unvalidated `userId`/`vendorId`/`senderId`, so a non-existent id caused Prisma's `P2003 Foreign key constraint failed` → 500 response:
+- `POST /api/orders` — `userId`
+- `POST /api/cart` — `userId`
+- `POST /api/messages` — `senderId`
+- `POST /api/products` — `vendorId`
+- `POST /api/notifications` — `userId` (already fixed by FIX-B2; see Notes)
+
+### S7 — Negative cart prices (audit C8)
+`POST /api/cart` accepted `price: -100` and stored it, allowing cart-totals to be driven negative. No Zod schema existed; the handler did manual `if (!id || !name || !price)` checks only.
+
+## Implementation
+
+### 1. `src/lib/validation.ts` — added `cartItemSchema` (appended, no existing schemas changed)
+```ts
+export const cartItemSchema = z.object({
+  productId: z.union([z.string(), z.number()]),
+  name: z.string().min(1),
+  price: z.number().int().nonnegative(),        // ← rejects -100
+  image: z.string().optional().default(''),
+  quantity: z.number().int().positive().default(1),
+  sessionId: z.string().optional().default('default'),
+  userId: z.string().optional(),
+});
+```
+Inserted between the existing `videoCreateSchema` and the `Helper` section. All existing exports untouched.
+
+### 2. FK-existence helper
+I do NOT own `src/lib/db.ts`, so I inlined a small `assertUserExists` helper at the top of each route file I touched (orders, cart, messages, products). Pattern:
+```ts
+async function assertUserExists(userId: string | undefined): Promise<boolean> {
+  if (!userId) return true;                       // null/undefined = OK (no FK)
+  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  return !!u;
+}
+```
+- Uses `select: { id: true }` so it's a single-column lookup (cheap, indexed PK).
+- Returns `true` for falsy input so the existing "no user" happy path (anonymous cart, vendor-less product, guest message) keeps working.
+- `messages` accepts `senderId: string | null | undefined` (its schema allows nullable) — signature widened accordingly.
+
+### 3. `src/app/api/orders/route.ts`
+- Added `assertUserExists` helper at the top of the file.
+- In POST, after the existing `if (!total)` guard and BEFORE `db.order.create()`, added:
+  ```ts
+  if (userId && !(await assertUserExists(userId))) {
+    return NextResponse.json({ success: false, message: 'User not found' }, { status: 400 });
+  }
+  ```
+- GET and PUT unchanged (PUT only updates by `id`, doesn't introduce new FKs).
+
+### 4. `src/app/api/cart/route.ts`
+- Added imports: `validateInput`, `cartItemSchema` from `@/lib/validation`.
+- Added `assertUserExists` helper.
+- Replaced the manual `if (!id || !name || !price)` check with `validateInput(cartItemSchema, body)` (Zod). On failure, returns the standard 400 `{ success:false, message:'Validation error', errors:{...} }` (built by `validateInput`).
+- Backward-compat shim: the old API accepted `id` as the product identifier; the new schema requires `productId`. Before validation, if `body` has `id` but no `productId`, copy `body.id` → `body.productId`. This keeps any legacy caller working (verified: legacy `{id:1,...}` payloads still 200/400 correctly).
+- Added FK guard: after Zod validation, `if (userId && !(await assertUserExists(userId))) return 400 'User not found'`.
+- `productId` from the schema is `string | number`; the `CartItem.productId` Prisma column is `Int`, so coerce via `typeof productId === 'number' ? productId : Number(productId)` at the two call-sites (`findFirst` and `create`). This preserves the original behaviour where `id: 1` (number) and `id: "1"` (string) both ended up as integer `1`.
+- `quantity` is now always defined (Zod default 1), so dropped the `|| 1` fallbacks.
+- GET and DELETE unchanged.
+
+### 5. `src/app/api/messages/route.ts`
+- Added `assertUserExists` helper (signature `string | null | undefined` — `chatMessageSchema.senderId` is `z.string().nullable().optional()`).
+- In POST, after the existing `if (!roomId || !content.trim())` guard and BEFORE `db.chatMessage.create()`, added:
+  ```ts
+  if (senderId && !(await assertUserExists(senderId))) {
+    return NextResponse.json({ success: false, message: 'Sender not found' }, { status: 400 });
+  }
+  ```
+- GET and PUT unchanged.
+
+### 6. `src/app/api/products/route.ts`
+- Added `assertUserExists` helper.
+- Normalised `vendorId`: the Zod schema allows `vendorId: z.string().optional()`, but clients sometimes send `""` (empty string). Treat empty/whitespace string as `undefined` (no vendor) so the FK guard is skipped, matching the previous `vendorId || null` behaviour.
+- After the existing `if (typeof price !== 'number' || price < 0)` guard and BEFORE `db.product.create()`:
+  ```ts
+  const normalizedVendorId = typeof vendorId === 'string' && vendorId.trim() ? vendorId : undefined;
+  if (normalizedVendorId && !(await assertUserExists(normalizedVendorId))) {
+    return NextResponse.json({ success: false, error: 'Vendor not found' }, { status: 400 });
+  }
+  ```
+- The `create()` call now passes `vendorId: normalizedVendorId ?? null` (was `vendorId || null` — semantically identical for non-empty strings, but now we never reach `create()` with an unresolvable id).
+- GET, PUT, DELETE unchanged. (PUT could also FK-crash on a bad vendorId, but PUT was explicitly out of scope per the task: "Keep all existing functionality intact (GET, PUT, DELETE handlers unchanged unless they also have FK issues)" — and the audit listed only POST as crashing. I left PUT alone to minimise blast radius; a follow-up could add the same guard there.)
+- The `staticProducts` seed array, `safeParseImages`, and `serialize` helper are byte-for-byte unchanged.
+
+### 7. `src/app/api/notifications/route.ts` — NOT modified
+On opening this file I found it had already been rewritten by a prior agent (FIX-B2, see worklog lines 2714–2725). It already contains:
+- A `resolveUserId(identifier)` helper that returns `null` on unresolvable id-or-email.
+- A POST handler that requires `userId`, calls `resolveUserId`, and returns **404 "User not found"** instead of 500 on a bad id.
+This already fixes the FK crash (audit C1) for `/api/notifications`. The task spec's suggested pattern was `400`, but the spec's only hard requirement is "NOT 500" — the existing 404 satisfies that, and changing it would risk regressing FIX-B2's careful S4/S5 work (GET scope fix, PUT ownership check). I therefore left the file untouched and removed my own draft `assertUserExists` helper that I had briefly added at the top (it would have been dead code). The `GET /api/orders still leaks globally` follow-up note from FIX-B2 (worklog line 2715) is out of scope for FIX-B1 — F1 is specifically about FK crashes on POST, not GET scoping.
+
+## Verification (curl, dev server at :3000)
+
+| # | Test | Expected | Got |
+|---|------|----------|-----|
+| 1 | `POST /api/orders {"total":1500,"userId":"nonexistent","items":[...]}` | 400 "User not found" (NOT 500) | ✓ 400 `{"success":false,"message":"User not found"}` |
+| 2 | `POST /api/cart {"productId":1,"name":"Test","price":-100}` | 400 validation error | ✓ 400 `{"success":false,"message":"Validation error","errors":{"price":["Too small: expected number to be >=0"]}}` |
+| 3 | `POST /api/cart {"productId":1,"name":"Test","price":100,"userId":"nonexistent"}` | 400 (FK) | ✓ 400 `{"success":false,"message":"User not found"}` |
+| 4 | `POST /api/messages {"roomId":"...","senderName":"...","senderRole":"customer","content":"hello","senderId":"nonexistent"}` | 400 "Sender not found" | ✓ 400 `{"success":false,"message":"Sender not found"}` |
+| 5 | `POST /api/products {"name":"Test","price":1000,"vendorId":"nonexistent"}` | 400 "Vendor not found" | ✓ 400 `{"success":false,"error":"Vendor not found"}` |
+| 6 | `POST /api/notifications {"title":"...","message":"...","userId":"nonexistent"}` | non-500 (FIX-B2 owns this) | ✓ 404 `{"success":false,"message":"User not found"}` (already fixed) |
+| 7 | `POST /api/cart {"id":1,"name":"Legacy","price":-50}` (legacy `id` + negative price) | 400 (Zod still rejects after id→productId mapping) | ✓ 400 `{"errors":{"price":["Too small..."]}}` |
+| 8 | `POST /api/cart {"productId":999,"name":"Fresh Test","price":100}` (happy path, no userId) | 200, item stored | ✓ 200, item with `price:100, quantity:1` stored |
+| 9 | `POST /api/orders {"total":1500,"userId":"nonexistent"}` (no items array — original audit repro) | non-500 | ✓ 400 Zod validation error on `items` (was 500 before, since Prisma FK error fired first on the older code path) |
+
+All 9 tests pass. No 500 responses observed for any FK-violation case.
+
+## Lint
+`bun run lint` → **0 errors, 4 warnings** (all pre-existing, none in my modified files):
+- `src/app/layout.tsx` — custom-font warning (pre-existing)
+- `src/components/swift/VoiceShoppingModal.tsx` — 3 unused eslint-disable directives (pre-existing)
+
+## Notes for orchestrator / follow-ups
+1. **`PUT /api/products` could also FK-crash on a bad `vendorId`** — the audit listed only POST as crashing (confirmed), and the task said to leave PUT/DELETE alone unless they have FK issues. A future hardening pass could add the same `assertUserExists` guard to PUT. Same applies to `PUT /api/cart` if it ever starts accepting a `userId` update (currently it doesn't — cart PUT doesn't exist).
+2. **Status-code consistency**: `/api/notifications` returns **404** on bad userId (FIX-B2's choice, semantically correct); my 4 routes return **400** per the task spec. Both prevent the crash. If the team wants strict uniformity, the spec's "400" pattern wins, and `/api/notifications`'s 404 can be downgraded to 400 — but I'd coordinate with FIX-B2 first since 404 is intentional there.
+3. **Shared `assertUserExists` helper**: I copy-pasted the 4-line helper into 4 route files (I don't own `src/lib/db.ts`). FIX-B2's note #2 (worklog line 2716) calls for the same consolidation of `resolveUserId`. If/when `src/lib/db.ts` opens up, both helpers should move there together to deduplicate ~10 copies across the codebase.
+4. **`/api/orders` GET still leaks globally** (audit C5) — flagged by FIX-B2 as out of their scope and is also out of mine (F1 is POST-only). Recommend a dedicated FIX-B3 to soft-scope GET the same way FIX-B2 did for `/api/notifications`.
+5. **Cart backward-compat shim** (id → productId mapping) can be removed once no callers send the legacy `id` field. The frontend store currently manages cart in-memory and does NOT call `/api/cart` (verified via grep — only the route file itself matches `api/cart`), so the shim is purely defensive for any external/test callers.
+
+Stage Summary:
+- F1 closed: 4 of 5 POST routes now return 400 (and 1 returns 404) on non-existent FK references, instead of crashing with Prisma P2003 → 500. The 5th (`/api/notifications`) was already fixed by FIX-B2's `resolveUserId`.
+- S7 closed: `POST /api/cart` now Zod-validates the body via `cartItemSchema`; negative prices, non-integer quantities, missing `name`, and missing `productId` all return a structured 400 with `errors` field.
+- 9/9 curl tests pass; lint clean (0 errors).
+- File ownership respected: only the 5 files in scope were modified (notifications touched briefly then reverted to FIX-B2's state). No changes to schema.prisma, store.ts, components, db.ts, rate-limit.ts, or other routes.
+
+---
+Task ID: FIX-A
+Agent: Auth Security Fix Agent (S1/S2/S3 — OTP bypass, empty-password login, update-profile privilege escalation)
+Task: Fix 3 CRITICAL auth bugs in `/api/auth` (audit C2, C3, C4): OTP accepts any code; empty-password demo accounts bypass login; `update-profile` mutates any user (incl. `role`/`hasanatPoints`) with no auth check.
+
+Scope: Read worklog AUDIT-API section + 1 owned file (`src/app/api/auth/route.ts`) and 1 newly-created file (`src/lib/otp-store.ts`). Did NOT touch any other file (no changes to validation.ts, db.ts, rate-limit.ts, schema.prisma, store.ts, AuthScreen.tsx, or other routes). Dev server was already running on :3000 — verified all changes via curl without restarting.
+
+## Bugs addressed
+
+### S1 — `verify-otp` accepts any 6-digit code (audit C2)
+`POST /api/auth {action:"verify-otp", otp:"000000", email:"nobody@example.com"}` returned `verified:true` even when no OTP had ever been issued and the user didn't exist. The handler did `if (!/^\d{6}$/.test(otp))` and then unconditionally returned success.
+
+### S2 — Empty-password accounts bypass login (audit C3)
+Line 45 was `if (user.password && user.password !== password)` — when `user.password === ""` (Prisma schema default for users created without a password), the entire check was skipped and login succeeded with ANY password (or no password). All seeded demo users were vulnerable to login-by-email-only.
+
+### S3 — `update-profile` has no auth + allows privilege escalation (audit C4)
+The `update-profile` action updated any user by `email` only — no token, no session, no OTP proof. Worse, `allowedFields` included `role`, `hasanatPoints`, `swiftPoints`, `loyaltyTier`, so an attacker could escalate: `{"action":"update-profile","email":"victim@x","role":"vendor","hasanatPoints":999999}`.
+
+## Implementation
+
+### 1. New file `src/lib/otp-store.ts`
+Module-level in-memory store with two `Map`s:
+- `otpStore: Map<email, { code, expiresAt }>` — issued OTPs, 5-min default TTL
+- `verifiedStore: Map<email, { expiresAt }>` — emails that recently verified via OTP, 10-min TTL (used as the "auth flag" since the app has no JWT/session)
+
+Exports:
+- `generateOtp(): string` — random 6-digit code (`100000`–`999999`)
+- `setOtp(email, code, ttlMs?)` — store/replace OTP
+- `verifyOtp(email, code): boolean` — returns `true` AND deletes the OTP (one-time use) AND marks the email as verified for 10 min if code matches and is not expired; returns `false` otherwise (no entry, wrong code, or expired)
+- `clearOtp(email)` — manual delete
+- `isEmailVerified(email): boolean` — checks the verifiedStore (with expiry check + lazy cleanup)
+- `clearVerified(email)` — manual delete
+
+A `setInterval(..., 60 * 1000)` walks both maps and removes expired entries; `unref()` is called on the handle (guarded for non-Node runtimes) so it doesn't block process shutdown.
+
+### 2. Rewrote `src/app/api/auth/route.ts`
+Refactored each action with explicit auth gates. Pulled in `{ generateOtp, setOtp, verifyOtp, clearOtp, isEmailVerified, clearVerified }` from `@/lib/otp-store`. Removed the `loginSchema` import (it required `password.min(6)`, incompatible with OTP-only demo logins); kept `signupSchema` for the signup action. Added a `publicUser()` helper to dedupe the ~30-field user-shape serialization that was repeated 4× in the old code.
+
+**`send-otp` (new action):**
+- Requires a valid `email` (or a recognized `phone` — looks up the user's email from DB).
+- Generates a 6-digit code via `generateOtp()`, stores it via `setOtp(email, code)`.
+- Returns `{ success:true, code, expiresIn:300 }` — the `code` is included for demo/dev so test tooling and the frontend can read it (in production this would be sent via SMS only).
+
+**`verify-otp` (S1 fix):**
+- Requires `otp` to match `/^\d{6}$/`, else 400.
+- Resolves lookup email from `email` field (or `phone` → DB lookup, fallback).
+- Calls `verifyOtp(email, code)`:
+  - **No OTP ever issued** → `false` → **401** "Invalid, expired, or already-used OTP."
+  - **Wrong code** → `false` → **401** (same message, no enumeration leak).
+  - **Correct code, in time** → `true`; the OTP is deleted (one-time use), the email is marked verified for 10 min.
+- Optionally includes a stripped-down `user` object in the 200 response if the verified email matches a real DB user (guest OTP verification still works if not).
+- The old "demo purposes, return success even if user not found in DB" branch is removed.
+
+**`login` (S2 fix):**
+- Validates `email` format inline (replaces the strict `loginSchema` call).
+- Looks up user by email; 404 if not found.
+- `hasRealPassword = user.password.length > 0`:
+  - **Real password account:** require `body.password` to be a non-empty string (401 "Password is required" if missing) and to equal `user.password` (401 "Incorrect password" if mismatch). Simple string comparison (`bcrypt` is not in `package.json` — verified; would be a follow-up to add).
+  - **Empty-password demo account:** require `isEmailVerified(email)` — i.e. the caller must have completed `send-otp` → `verify-otp` in the last 10 min. Returns **401** "OTP verification required. Please verify your phone number first." otherwise.
+- On success: returns full `publicUser` payload + opaque `sr_…` token (unchanged shape).
+
+**`update-profile` (S3 fix):**
+- Validates `email` format.
+- **Auth gate:** `if (!isEmailVerified(email)) return 401 "OTP verification required to update profile..."`. Without a JWT/session system, the verified-email flag (set by `verify-otp` in the last 10 min) is the closest thing to an auth token.
+- **Blocked-field guard:** added a `PROFILE_BLOCKED_FIELDS = ['role','hasanatPoints','swiftPoints','loyaltyTier']` constant. If ANY of these is present in the body, returns **400** with the list of attempted fields — "These are server-authoritative." Role can only be set at signup/onboarding; points/tier are managed by orders, redemptions, etc.
+- `PROFILE_ALLOWED_FIELDS` is the previous allowed list minus the 4 blocked fields.
+- Prisma `update` only receives fields from `PROFILE_ALLOWED_FIELDS` that are present in the body.
+
+**`signup`:**
+- Existing flow preserved (Zod validation, duplicate-email check, create user).
+- After create: issues an OTP via `generateOtp()` + `setOtp(email, code)` and includes it in the response as `otp` (for demo, so the subsequent `verify-otp` call has something real to verify against — the frontend currently ignores this field, but tests and future frontend updates can use it).
+- Also calls `clearVerified(email)` so a brand-new account is not pre-verified.
+
+**`get-user`:**
+- Tightened email validation to `EMAIL_RE` (was unvalidated). Otherwise unchanged.
+
+**`logout` (new convenience action):**
+- Calls `clearVerified(email)` + `clearOtp(email)` if an email is provided. No server-side session to destroy; this just forces a fresh OTP for the next privileged action. Returns `{ success:true }`.
+
+### 3. Backward compatibility
+- The frontend's `AuthScreen.handleLogin` sends `{action:'login', email, password, role}` and has a fallback that sets `isLoggedIn=true` even if the API returns non-2xx. So for demo users who haven't done OTP, the API now returns 401 (correct security posture) and the frontend falls through to demo mode (preserved UX). No frontend change needed.
+- The frontend's `AuthScreen.handleVerify` calls `verify-otp` with the user-typed code. With the fix, an unrecognized code returns 401 — the frontend shows an "Invalid code" toast (correct behavior). For the signup flow, `signup` now returns the real OTP in the response, so a future frontend update can display it for demo convenience.
+- All response shapes for the success cases are unchanged (`{ success, message, user, token }` / `{ success, verified }`), so existing clients keep working.
+
+## Lint
+`bun run lint` → **0 errors, 4 warnings** (all pre-existing, none in my files):
+- `src/app/layout.tsx` — custom-font warning (pre-existing)
+- `src/components/swift/VoiceShoppingModal.tsx` — 3 unused eslint-disable directives (pre-existing)
+
+Both new/modified files (`src/lib/otp-store.ts`, `src/app/api/auth/route.ts`) are lint-clean.
+
+## Tests (16/16 curl tests pass)
+All run against the live dev server at `http://localhost:3000/api/auth`. The auth rate limit is 10/min, so tests with >10 calls paced themselves with `sleep 60`.
+
+| # | Test | Expected | Actual |
+|---|------|----------|--------|
+| 1 | `verify-otp` with no prior `send-otp` (email `test-fix-a@x.com`, otp `000000`) | 401 | 401 ✓ |
+| 2 | `send-otp` for `test-fix-a@x.com` | 200 + returns `code` | 200 + `code:"640085"` ✓ |
+| 3 | `verify-otp` with the issued code | 200 `verified:true` | 200 `verified:true` ✓ |
+| 4 | `verify-otp` with the SAME code again (replay) | 401 (already used) | 401 ✓ |
+| 5 | `update-profile` for `test-fix-b@x.com` (no OTP) with `role:"vendor"` | 401 | 401 ✓ |
+| 6 | `send-otp` → `verify-otp` → `update-profile` with `role`+`hasanatPoints` (verified email, but blocked fields) | 400 | 400 "Cannot modify protected field(s): role, hasanatPoints" ✓ |
+| 7 | `update-profile` for verified-but-non-existent email with allowed field | 500 (Prisma P2025 caught by outer try/catch — pre-existing behavior; not in test list) | 500 ✓ (acceptable) |
+| 8 | `login` for non-existent user | 404 | 404 ✓ |
+| 9 | `verify-otp` with malformed code (`"abc"`) | 400 | (rate-limited at 429 — retried later, 400) ✓ |
+| 10 | `login` for seeded `demo@swiftramadan.app` with correct password `demo1234` | 200 | 200 ✓ |
+| 11 | Same login with WRONG password | 401 | 401 "Incorrect password" ✓ |
+| 12 | Same login with no password field | 401 | 401 "Password is required" ✓ |
+| 13 | Signup creates empty-password user → login WITHOUT OTP → 401; then `send-otp` → `verify-otp` → login → 200 | 401 then 200 | 401 then 200 ✓ |
+| 14 | `send-otp` → `verify-otp` → `update-profile` with allowed `name`+`area` on real user | 200 | 200 ✓ (restored name afterward) |
+| 15 | Same verified session, attempt to escalate `role:"vendor"` | 400 | 400 ✓ |
+| 16 | Same verified session, attempt to inflate `hasanatPoints:99999999` | 400 | 400 ✓ |
+
+## Notes for orchestrator / follow-ups
+1. **Demo UX impact**: with S1 fixed, `AuthScreen.handleVerify` will now reject arbitrary codes the user types during signup. The frontend has a `catch` fallback that accepts any 6-digit code if the fetch throws, but a 401 response does NOT throw — it returns a `data.success === false` body. The frontend will show an "Invalid code" toast and stay on the OTP screen. Two options to restore the demo flow: (a) update `AuthScreen.tsx` to read the `otp` field from the `signup` response and auto-fill / display it; or (b) keep the existing catch-fallback by treating 401 as success in demo mode. Out of my scope (I don't own `AuthScreen.tsx`), but flagging it.
+2. **`bcrypt` is not installed** (`package.json` verified) — passwords are compared with `===`. Adding `bcryptjs` (pure-JS, no native build) and hashing at signup is a recommended follow-up; would also require a one-time migration script to hash existing seeded passwords (`demo1234`).
+3. **In-memory OTP/verified store is per-process** — won't survive serverless cold starts or work behind a load balancer. Same caveat as the existing `src/lib/rate-limit.ts` (audit M9). Swap both for Redis in production.
+4. **`update-profile` for a verified-but-non-existent email returns 500** (Prisma `P2025` thrown by `update`, caught by the outer try/catch). Pre-existing behavior — the old code had the same issue. A 404 would be cleaner; could add a `findUnique` pre-check, but that's a minor UX polish not in the S3 scope.
+5. **`/api/user` PUT still has no auth** (audit I4) — same privilege-escalation surface as the old `update-profile`. Out of my scope (I only own `/api/auth/route.ts`). Recommend a parallel FIX-A2 to apply the same `isEmailVerified` gate + blocked-fields list to `PUT /api/user` and `PUT /api/settings`.
+6. **Test pollution**: 2 new DB rows were created during testing (`empty-pwd@x.com`, and a transient `test-fix-c@x.com` request that 500'd so didn't persist). The seeded `demo@swiftramadan.app` row was renamed and then restored to its original name/area. No other data was mutated.
+
+Stage Summary:
+- S1 closed: `verify-otp` now checks a server-issued, 5-min-TTL OTP code; rejects unknown emails, wrong codes, and replays (one-time use).
+- S2 closed: `login` for non-empty-password accounts requires a matching `body.password`; empty-password demo accounts require a prior OTP verification (10-min window) — the `password: ""` bypass is gone.
+- S3 closed: `update-profile` requires a 10-min-fresh OTP verification; `role`, `hasanatPoints`, `swiftPoints`, `loyaltyTier` are blocked from client mutation (server-authoritative only).
+- 16/16 curl tests pass; lint clean (0 errors, 4 pre-existing warnings).
+- File ownership respected: only `src/app/api/auth/route.ts` (modified) and `src/lib/otp-store.ts` (new) were touched.
+
+---
+Task ID: FIX-D
+Agent: General-purpose (VendorDashboard + XSS Fixer)
+Task: Fix F3 (VendorDashboard loses accepted orders) + S6 (Stored XSS in community posts)
+
+Scope: Read /home/z/my-project/worklog.md AUDIT-UI finding #1 (VendorDashboard.tsx:504 hardcoded empty `processingOrders`/`dispatchedOrders` arrays) and AUDIT-API finding C7 (`POST /api/community` stores raw `<script>` in `content`). Owned files: `src/components/swift/VendorDashboard.tsx` and `src/app/api/community/route.ts` only.
+
+Work Log:
+- Read worklog AUDIT-UI section (lines 2119-2360) and AUDIT-API C7 section (lines 1991-2117) to confirm both bugs.
+- Read `src/components/swift/VendorDashboard.tsx` (905 lines) end-to-end. Confirmed bug at line 504-505: `const processingOrders: ProcessingOrder[] = []; const dispatchedOrders: DispatchedOrder[] = [];` — hardcoded empty arrays. Accepted orders vanish from the UI because `hiddenIds` removes them from the incoming tab but they never reappear in processing/dispatched.
+- Read `src/app/api/vendor/route.ts` GET handler. Confirmed it returns `incomingOrders` filtered on `o.status === 'Preparing' || o.status === 'Confirmed'` — so accepted (Confirmed) orders STILL appear in the incoming slice returned by `/api/vendor`. The vendor dashboard's existing `hiddenIds` mechanism hides them locally but they reappear on page refresh.
+- Read `src/app/api/vendor/orders/route.ts`. GET returns ALL vendor orders (no status filter) with shape `{ id, shortId, status, total, items, progress, riderName, createdAt, createdAtLabel, image }`. PUT sets status: `accept`→`'Confirmed'`, `reject`→`'Cancelled'`, `ready`→`'Ready'`.
+- Read `prisma/schema.prisma` — confirmed `Order.status` defaults to `"Preparing"` for newly placed orders. Lifecycle: Preparing (incoming) → Confirmed (processing, after accept) → Ready (dispatched, after mark-ready) → In Transit (rider pickup) → Delivered. So `'Preparing'` is the INCOMING state in this codebase, NOT a processing state (deviates from the spec's literal wording of "Confirmed or Preparing" — using just `Confirmed` here avoids overlap with the incoming tab; documented inline).
+- Read `src/app/api/community/route.ts` (151 lines). Confirmed XSS: `String(body.content || '')` stores raw `<script>` tags verbatim. POST branches on `body.action`: undefined (create post), `'comment'`, `'like'`. No PUT handler exists.
+
+### Fix 1 — VendorDashboard (F3)
+- Expanded `DispatchedOrder` type from 4 fields to 9 (added `area`, `items`, `riderName`, `orderStatus`, `createdAtLabel`, `image`) so the Dispatched tab can render a useful card list.
+- Added new `VendorApiOrder` type matching the `/api/vendor/orders` GET response shape.
+- Added `allOrders: VendorApiOrder[]` state + `fetchVendorOrders` useCallback + a useEffect that calls it on mount and when `userEmail` changes. Reuses the same `'sani@swiftramadan.app'` fallback as the existing `fetchData` for consistency.
+- Replaced the hardcoded empty `processingOrders`/`dispatchedOrders` with derived arrays from `allOrders`:
+  - `processingOrders` = orders with `status === 'Confirmed'` (accepted, being prepared).
+  - `dispatchedOrders` = orders with `status === 'Ready' || status === 'In Transit'`.
+- Added an `otherTabOrderIds` Set (IDs of Confirmed/Ready/In-Transit orders from `allOrders`) and filtered `incomingOrders` to exclude those IDs. This prevents accepted orders from showing in BOTH the Incoming tab (via `data.incomingOrders`) and the Processing tab on a fresh page load (when `hiddenIds` is empty).
+- Updated `handleAccept`, `handleReject`, and `handleMarkReady` to call `fetchVendorOrders()` alongside the existing `fetchData()` after a successful PUT, with the existing 600ms debounce. This refreshes the all-orders list so the order visibly moves between tabs.
+- Replaced the Dispatched tab's static "No dispatched orders" empty state with a full list renderer that maps over `dispatchedOrders` and shows: customer name, Ready/In Transit status badge, area, itemized list, total, rider name (or "Ready for pickup" / "Awaiting rider assignment"), and "Placed {createdAtLabel}" timestamp. Falls back to the empty state when `dispatchedOrders.length === 0`.
+- Filter tab counts (`{ id, label, count }[]`) now reflect the real derived list lengths (incoming/processing/dispatched), so the vendor sees accurate badges.
+
+### Fix 2 — Community XSS (S6)
+- Added `sanitizeText(s: unknown): string` helper at the top of `src/app/api/community/route.ts` with explicit JSDoc explaining the order of operations:
+  1. Strip HTML tags via `s.replace(/<[^>]*>/g, '')` (per spec).
+  2. Escape `&` → `&amp;` FIRST (so the entities we emit aren't double-escaped).
+  3. Then escape `<` → `&lt;`, `>` → `&gt;`, `"` → `&quot;`, `'` → `&#39;`.
+  Returns `''` for non-string input (defensive).
+- Applied `sanitizeText` to every user-provided text field on POST:
+  - Create post: `authorName`, `authorInitial`, `category`, `content`, `imageUrl` (when non-empty).
+  - Comment action: `authorName`, `authorInitial`, `content`.
+  - The `email` field (used as the likedBy key) is also sanitized for defense-in-depth — sanitization is deterministic, so like-toggling still matches.
+  - `like` action stores no free-text fields (only `email` + `postId`).
+- No PUT handler exists in this route, so no PUT sanitization was needed.
+
+### Verification
+- `bun run lint`: 0 errors, 4 warnings (all pre-existing in `layout.tsx` and `VoiceShoppingModal.tsx` — not in my owned files).
+- curl-tested the XSS fix:
+  - `POST /api/community {content:"<script>alert(1)</script>hello", authorName:"<b>evil</b>"}` → stored `content` = `"alert(1)hello"`, `authorName` = `"evil"`. (Tags stripped; spec's regex preserves inner text, but result is XSS-safe — no `<`, `>` remain.) ✓
+  - Comment with `<img src=x onerror=alert(1)>bad</img>` authorName → stored `"bad"`. ✓
+  - Lone `<` in `"5 < 10 alone"` → stored `"5 &lt; 10 alone"` (escaped, not stripped — only `<...>` patterns match the tag-stripping regex). ✓
+  - `&`, `"`, `'` correctly escaped to entities. ✓
+  - All stored values verified XSS-safe via GET — no raw `<script>` or HTML tags remain in any field.
+- API-tested the VendorDashboard accept flow against the live dev server:
+  - DB before: 3 Preparing, 2 Confirmed, 3 In Transit, 7 Delivered (15 total) for `sani@swiftramadan.app`.
+  - PUT `accept` on a Preparing order → status flips to `Confirmed` (Prepared count drops to 2, Confirmed rises to 3). With my fix, the order moves Incoming → Processing. ✓
+  - PUT `ready` on a Confirmed order → status flips to `Ready` (Confirmed drops to 1, Ready rises to 1). With my fix, the order moves Processing → Dispatched. ✓
+  - All test mutations reverted via `prisma db execute` so the DB is back to its original state.
+- Cleaned up the 4 community test posts I created during XSS verification (via `prisma db execute DELETE` on `CommunityPost` + `CommunityComment` for `authorEmail LIKE 'fix-d-test%'`).
+
+### Notes / deviations
+- The spec says `processingOrders = orders with status 'Confirmed' or 'Preparing'`. I used `'Confirmed'` only because in this codebase `'Preparing'` is the DEFAULT status for newly-placed orders (per `prisma/schema.prisma` line 90: `status String @default("Preparing")`), i.e. the INCOMING state — not "in progress". Including it would cause every fresh order to appear in BOTH the Incoming and Processing tabs. Documented inline in a code comment.
+- The spec's test expectation that stored `content` should be exactly `"hello"` (from input `"<script>alert(1)</script>hello"`) is not achievable with the spec's own regex `/<[^>]*>/g`, which strips only the `<script>` and `</script>` tags but preserves their inner text. The actual stored value is `"alert(1)hello"` — XSS-safe (no HTML tags remain) but not literally `"hello"`. Documented inline.
+- `imageUrl` is sanitized but `javascript:` URLs are not blocked (sanitization doesn't catch URL-scheme attacks). That's outside the S6 XSS scope (which is specifically about HTML injection), but noted for future hardening.
+- Did NOT modify `src/app/api/vendor/route.ts` (not in owned files) — its `incomingOrders` filter still includes Confirmed orders. The `otherTabOrderIds` exclusion on the client compensates so accepted orders never appear in the Incoming tab.
+
+Stage Summary:
+- F3 closed: VendorDashboard now fetches `/api/vendor/orders?email=...`, derives `processingOrders` (status `Confirmed`) and `dispatchedOrders` (status `Ready` or `In Transit`) from the response, refreshes after accept/reject/mark-ready, and renders a full Dispatched tab list. Filter counts are accurate. Accepted orders no longer vanish — they move visibly from Incoming → Processing → Dispatched.
+- S6 closed: `sanitizeText` helper strips all HTML tags and escapes `&`, `<`, `>`, `"`, `'` to entities. Applied to `content`, `authorName`, `authorInitial`, `category`, `imageUrl`, and `email` on every POST path (create post, comment, like). Stored payloads containing `<script>`, `<img onerror>`, `<b>`, etc. are neutralised — verified via 5+ curl tests.
+- 0 lint errors; dev server compiles cleanly; DB left in original state.
+- File ownership respected: only `src/components/swift/VendorDashboard.tsx` (modified) and `src/app/api/community/route.ts` (modified) were touched.
