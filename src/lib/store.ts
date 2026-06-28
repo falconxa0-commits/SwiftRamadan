@@ -22,6 +22,13 @@ export interface NotificationItem {
   type: string;
 }
 
+export interface SpinReward {
+  type: string;
+  value: number;
+  label: string;
+  claimed: boolean;
+}
+
 export interface OrderItem {
   id: string;
   item: string;
@@ -145,6 +152,15 @@ interface AppState {
   dailyStreak: number;
   setDailyStreak: (streak: number) => void;
   claimDailyPoints: () => void;
+
+  // Spin Wheel
+  lastSpinDate: string;
+  setLastSpinDate: (date: string) => void;
+  spinStreak: number;
+  setSpinStreak: (streak: number) => void;
+  pendingRewards: SpinReward[];
+  addPendingReward: (reward: Omit<SpinReward, 'claimed'>) => void;
+  claimReward: (index: number) => void;
 
   // Orders
   orders: OrderItem[];
@@ -414,6 +430,22 @@ export const useAppStore = create<AppState>()(
         });
       },
 
+      // Spin Wheel
+      lastSpinDate: '',
+      setLastSpinDate: (date) => set({ lastSpinDate: date }),
+      spinStreak: 0,
+      setSpinStreak: (streak) => set({ spinStreak: streak }),
+      pendingRewards: [],
+      addPendingReward: (reward) => {
+        const { pendingRewards } = get();
+        set({ pendingRewards: [...pendingRewards, { ...reward, claimed: false }] });
+      },
+      claimReward: (index) => {
+        const { pendingRewards } = get();
+        const updated = pendingRewards.map((r, i) => i === index ? { ...r, claimed: true } : r);
+        set({ pendingRewards: updated });
+      },
+
       // Orders
       orders: [],
       setOrders: (orders) => set({ orders }),
@@ -551,6 +583,9 @@ export const useAppStore = create<AppState>()(
           swiftPoints: 0,
           loyaltyTier: 'bronze',
           dailyStreak: 0,
+          lastSpinDate: '',
+          spinStreak: 0,
+          pendingRewards: [],
         });
       },
     }),
@@ -613,6 +648,9 @@ export const useAppStore = create<AppState>()(
         riderPlateNumber: state.riderPlateNumber,
         customerDietaryPrefs: state.customerDietaryPrefs,
         customerFavoriteCategories: state.customerFavoriteCategories,
+        lastSpinDate: state.lastSpinDate,
+        spinStreak: state.spinStreak,
+        pendingRewards: state.pendingRewards,
       }),
     }
   )

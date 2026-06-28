@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Star, Trophy, Flame, ChevronRight, Gift, Zap } from 'lucide-react';
+import { X, Star, Trophy, Flame, ChevronRight, Gift, Zap, Sparkles, Clock } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { loyaltyRewards, loyaltyTiers, pointEarningActivities, loyaltyData } from '@/lib/data';
+import LoyaltySpinWheel from './LoyaltySpinWheel';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RewardsModal() {
@@ -16,12 +17,15 @@ export default function RewardsModal() {
     loyaltyTier,
     dailyStreak,
     claimDailyPoints,
+    lastSpinDate,
+    spinStreak,
   } = useAppStore();
   const { toast } = useToast();
   const isOpen = activeModal === 'rewards';
 
   const [dailyClaimed, setDailyClaimed] = useState(false);
   const [redeemingId, setRedeemingId] = useState<number | null>(null);
+  const [showSpinWheel, setShowSpinWheel] = useState(false);
 
   const currentTierData = loyaltyTiers.find(t => t.id === loyaltyTier) || loyaltyTiers[2];
   const nextTierIndex = loyaltyTiers.findIndex(t => t.id === loyaltyTier) + 1;
@@ -189,6 +193,71 @@ export default function RewardsModal() {
                 </div>
               </motion.div>
 
+              {/* Daily Spin & Win */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 }}
+                className="mt-4"
+              >
+                <button
+                  onClick={() => setShowSpinWheel(true)}
+                  className="w-full relative overflow-hidden rounded-2xl border text-left transition-all active:scale-[0.98] hover:border-[#F5C451]/50"
+                  style={{
+                    background: 'linear-gradient(135deg, #1A1D26, #0F1117)',
+                    borderColor: 'rgba(245,196,81,0.2)',
+                  }}
+                >
+                  {/* Glow effects */}
+                  <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[#F5C451]/10 blur-[40px]" />
+                  <div className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-[#10E07A]/10 blur-[30px]" />
+
+                  <div className="relative z-10 p-5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-[#F5C451]/30"
+                          style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
+                          <span className="text-2xl">🎰</span>
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-white font-bold text-sm">Daily Spin & Win</span>
+                            {(() => {
+                              const today = new Date().toISOString().split('T')[0];
+                              const canSpinNow = lastSpinDate !== today;
+                              return canSpinNow ? (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/30">
+                                  FREE SPIN
+                                </span>
+                              ) : (
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-white/30 border border-white/5">
+                                  SPUN TODAY
+                                </span>
+                              );
+                            })()}
+                          </div>
+                          <p className="text-white/40 text-xs mt-0.5">
+                            {lastSpinDate !== new Date().toISOString().split('T')[0]
+                              ? 'Spin the wheel for free rewards!'
+                              : 'Come back tomorrow for another spin'}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-[#F5C451]/60 shrink-0" />
+                    </div>
+                    {spinStreak > 0 && (
+                      <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-white/5">
+                        <Flame className="w-3 h-3 text-orange-400" />
+                        <span className="text-white/50 text-[10px] font-semibold">{spinStreak} day spin streak</span>
+                        {spinStreak >= 3 && (
+                          <span className="text-[#A78BFA] text-[10px] font-bold ml-1">• 2x bonus active!</span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </button>
+              </motion.div>
+
               {/* How to Earn Points */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -333,6 +402,19 @@ export default function RewardsModal() {
           </motion.div>
         </>
       )}
+
+      {/* Spin Wheel Overlay */}
+      <AnimatePresence>
+        {showSpinWheel && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <LoyaltySpinWheel onClose={() => setShowSpinWheel(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 }

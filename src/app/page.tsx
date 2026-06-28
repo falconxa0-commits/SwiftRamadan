@@ -1,8 +1,15 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import {
+  getTabDirection,
+  createDirectionalVariants,
+  springConfig,
+  screenVariants,
+  screenTransition,
+} from '@/components/swift/PageTransition';
 import BottomNav from '@/components/swift/BottomNav';
 import WelcomeScreen from '@/components/swift/WelcomeScreen';
 import HomeTab from '@/components/swift/HomeTab';
@@ -12,7 +19,7 @@ import OrdersTab from '@/components/swift/OrdersTab';
 import OffersTab from '@/components/swift/OffersTab';
 import ProfileTab from '@/components/swift/ProfileTab';
 import ReelsTab from '@/components/swift/ReelsTab';
-import AIChatWidget from '@/components/swift/AIChatWidget';
+import SafaAIAssistant from '@/components/swift/SafaAIAssistant';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
 import SearchOverlay from '@/components/swift/SearchOverlay';
@@ -131,12 +138,6 @@ const ROLE_CONFIG = {
 
 /* ──────────────────── Page Transition Variants ──────────────────── */
 
-const pageVariants = {
-  initial: { opacity: 0, y: 8 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
-};
-
 const overlayVariants = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
@@ -168,6 +169,17 @@ export default function Home() {
   } = useAppStore();
 
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // Tab direction tracking for directional transitions
+  const prevTabRef = useRef<string>(activeTab);
+  const [tabDirection, setTabDirection] = useState<1 | -1>(1);
+
+  // Detect tab direction change (forward vs back)
+  useEffect(() => {
+    const direction = getTabDirection(prevTabRef.current, activeTab);
+    setTabDirection(direction);
+    prevTabRef.current = activeTab;
+  }, [activeTab]);
 
   // Derived role helpers
   const isRider = userRole === 'rider';
@@ -242,10 +254,11 @@ export default function Home() {
       <AnimatePresence mode="wait">
         <motion.div
           key="welcome"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.4 }}
+          variants={screenVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={screenTransition}
           className="h-screen w-full aurora-app-bg"
         >
           <WelcomeScreen />
@@ -275,10 +288,11 @@ export default function Home() {
       <AnimatePresence mode="wait">
         <motion.div
           key="onboarding"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
+          variants={screenVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={screenTransition}
           className="h-screen w-full aurora-app-bg"
         >
           <OnboardingFlow />
@@ -295,7 +309,7 @@ export default function Home() {
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
+        transition={{ type: 'spring', stiffness: 220, damping: 24 }}
         className="sticky top-0 z-50 glass-effect"
       >
         {/* Role accent line — refined aurora gradient */}
@@ -522,16 +536,17 @@ export default function Home() {
         </AnimatePresence>
       </motion.header>
 
-      {/* ──── Tab Content with Ultra-Smooth Transitions ──── */}
+      {/* ──── Tab Content with Directional Spring Transitions ──── */}
       <AnimatePresence mode="wait">
         <motion.div
           key={activeTab}
-          variants={pageVariants}
+          variants={createDirectionalVariants(tabDirection)}
           initial="initial"
           animate="animate"
           exit="exit"
-          transition={{ duration: 0.2, ease: 'easeInOut' }}
+          transition={springConfig}
           className={`flex-1 flex flex-col ${activeTab === 'reels' ? 'overflow-hidden' : 'overflow-y-auto'}`}
+          style={{ willChange: 'transform, opacity' }}
         >
           <ActiveTabComponent />
         </motion.div>
@@ -540,8 +555,8 @@ export default function Home() {
       {/* ──── Floating Bottom Navigation ──── */}
       <BottomNav />
 
-      {/* ──── AI Chat Widget (customers only) ──── */}
-      {isCustomer && <AIChatWidget />}
+      {/* ──── Safa AI Assistant (customers only) ──── */}
+      {isCustomer && <SafaAIAssistant />}
 
       {/* ──── Notification Center ──── */}
       <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />

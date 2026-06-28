@@ -1,0 +1,666 @@
+     1→     1→'use client';
+     2→     2→
+     3→     3→import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays, Clapperboard, Play } from 'lucide-react';
+     4→     4→import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
+     5→     5→import { useAppStore } from '@/lib/store';
+     6→     6→import { motion } from 'framer-motion';
+     7→     7→import { useState, useEffect, useRef } from 'react';
+     8→     8→import { useToast } from '@/hooks/use-toast';
+     9→     9→import RamadanCountdown from './RamadanCountdown';
+    10→    10→import { HomeTabSkeleton } from './Skeletons';
+    11→    11→
+    12→    12→const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
+    13→    13→  replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
+    14→    14→  groups: { icon: Users, action: (s) => s.setActiveModal('groupBuy') },
+    15→    15→  card_giftcard: { icon: Gift, action: (s) => s.setActiveModal('giftcard') },
+    16→    16→  restaurant: { icon: BookOpen, action: (s) => s.setActiveModal('recipes') },
+    17→    17→  mosque: { icon: Landmark, action: (s) => s.setActiveModal('mosque') },
+    18→    18→  local_shipping: { icon: MapPin, action: (s) => s.setActiveTab('orders') },
+    19→    19→};
+    20→    20→
+    21→    21→export default function HomeTab() {
+    22→    22→  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory } = useAppStore();
+    23→    23→  const { toast } = useToast();
+    24→    24→  const [currentSlide, setCurrentSlide] = useState(0);
+    25→    25→  const [isLoading, setIsLoading] = useState(true);
+    26→    26→  const carouselRef = useRef<HTMLDivElement>(null);
+    27→    27→
+    28→    28→  // Filtered meals based on active category
+    29→    29→  const filteredMeals = activeCategory
+    30→    30→    ? trendingMeals.filter(m => m.category === activeCategory)
+    31→    31→    : trendingMeals;
+    32→    32→
+    33→    33→  // Auto-scroll hero carousel
+    34→    34→  useEffect(() => {
+    35→    35→    const timer = setInterval(() => {
+    36→    36→      setCurrentSlide(prev => (prev + 1) % heroSlides.length);
+    37→    37→    }, 4000);
+    38→    38→    return () => clearInterval(timer);
+    39→    39→  }, []);
+    40→    40→
+    41→    41→  // Scroll carousel when slide changes
+    42→    42→  useEffect(() => {
+    43→    43→    if (carouselRef.current) {
+    44→    44→      const slideWidth = carouselRef.current.scrollWidth / heroSlides.length;
+    45→    45→      carouselRef.current.scrollTo({ left: slideWidth * currentSlide, behavior: 'smooth' });
+    46→    46→    }
+    47→    47→  }, [currentSlide]);
+    48→    48→
+    49→    49→  // Simulate loading
+    50→    50→  useEffect(() => {
+    51→    51→    const timer = setTimeout(() => setIsLoading(false), 800);
+    52→    52→    return () => clearTimeout(timer);
+    53→    53→  }, []);
+    54→    54→
+    55→    55→  const handleCategoryClick = (category: typeof categories[0]) => {
+    56→    56→    if (activeCategory === category.name) {
+    57→    57→      // Toggle off if already selected
+    58→    58→      setActiveCategory(null);
+    59→    59→    } else {
+    60→    60→      setActiveCategory(category.name);
+    61→    61→    }
+    62→    62→  };
+    63→    63→
+    64→    64→  const handleMealClick = (id: number) => {
+    65→    65→    setSelectedProduct(id);
+    66→    66→    setActiveModal('product');
+    67→    67→  };
+    68→    68→
+    69→    69→  const handleQuickAdd = (item: { id: number; name: string; price: number; image: string }) => {
+    70→    70→    addToCart({
+    71→    71→      id: item.id,
+    72→    72→      name: item.name,
+    73→    73→      price: item.price,
+    74→    74→      image: item.image,
+    75→    75→    });
+    76→    76→    toast({ title: 'Added to Cart! 🛒', description: `${item.name} added to your cart` });
+    77→    77→  };
+    78→    78→
+    79→    79→  const handleQuickAction = (action: typeof quickActions[0]) => {
+    80→    80→    const config = quickActionConfig[action.icon];
+    81→    81→    if (config) {
+    82→    82→      config.action(useAppStore.getState());
+    83→    83→    } else {
+    84→    84→      toast({ title: action.name, description: `${action.name} feature coming soon!` });
+    85→    85→    }
+    86→    86→  };
+    87→    87→
+    88→    88→  if (isLoading) {
+    89→    89→    return (
+    90→    90→      <main className="flex-1 overflow-y-auto pb-32">
+    91→    91→        <HomeTabSkeleton />
+    92→    92→      </main>
+    93→    93→    );
+    94→    94→  }
+    95→    95→
+    96→    96→  return (
+    97→    97→    <main className="flex-1 overflow-y-auto pb-32 space-y-7">
+    98→    98→      {/* ── Greeting + Beta Badge (top brand strip) ── */}
+    99→    99→      <div className="px-5 pt-4 flex items-center justify-between">
+   100→   100→        <motion.div
+   101→   101→          initial={{ opacity: 0, x: -8 }}
+   102→   102→          animate={{ opacity: 1, x: 0 }}
+   103→   103→          transition={{ duration: 0.4 }}
+   104→   104→          className="flex items-center gap-2.5"
+   105→   105→        >
+   106→   106→          <div className="icon-tile w-9 h-9 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_20px_rgba(16,224,122,0.28)]">
+   107→   107→            <Sparkles className="w-4 h-4 text-black relative z-10" />
+   108→   108→          </div>
+   109→   109→          <div className="flex items-center gap-1.5">
+   110→   110→            <span className="text-white text-lg font-black tracking-tight">SwiftRamadan</span>
+   111→   111→            <span className="beta-badge">Beta</span>
+   112→   112→          </div>
+   113→   113→        </motion.div>
+   114→   114→        <motion.div
+   115→   115→          initial={{ opacity: 0, x: 8 }}
+   116→   116→          animate={{ opacity: 1, x: 0 }}
+   117→   117→          transition={{ duration: 0.4, delay: 0.05 }}
+   118→   118→          className="text-right"
+   119→   119→        >
+   120→   120→          <p className="text-white/40 text-[10px] font-semibold uppercase tracking-[0.14em]">Assalamu Alaikum</p>
+   121→   121→          <p className="text-white text-sm font-bold leading-tight mt-0.5">Let&apos;s break fast together 🌙</p>
+   122→   122→        </motion.div>
+   123→   123→      </div>
+   124→   124→
+   125→   125→      {/* ── Search Bar + Visual Search ── */}
+   126→   126→      <div className="px-5 flex items-center gap-2.5">
+   127→   127→        <button
+   128→   128→          onClick={() => setShowSearch(true)}
+   129→   129→          className="glass-card flex-1 flex items-center gap-3 rounded-2xl px-4 py-3.5 hover:border-white/15 transition-colors group"
+   130→   130→        >
+   131→   131→          <Search className="w-4 h-4 text-white/40 group-hover:text-[#10E07A] transition-colors" />
+   132→   132→          <span className="text-white/40 text-sm">Search meals, groceries, restaurants...</span>
+   133→   133→          <span className="ml-auto text-[10px] text-white/30 font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/5">⌘K</span>
+   134→   134→        </button>
+   135→   135→        <button
+   136→   136→          onClick={() => setActiveModal('visual-search')}
+   137→   137→          aria-label="Snap to Shop - visual search"
+   138→   138→          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 hover:bg-[#10E07A]/20 active:scale-95 transition-all relative"
+   139→   139→        >
+   140→   140→          <ScanLine className="w-5 h-5 text-[#10E07A]" />
+   141→   141→          <motion.span
+   142→   142→            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F5C451]"
+   143→   143→            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
+   144→   144→            transition={{ duration: 1.6, repeat: Infinity }}
+   145→   145→          />
+   146→   146→        </button>
+   147→   147→      </div>
+   148→   148→
+   149→   149→      {/* ── Smart Kitchen Hero Card (FLAGSHIP) ── */}
+   150→   150→      <div className="px-5">
+   151→   151→        <motion.div
+   152→   152→          initial={{ opacity: 0, y: 16, scale: 0.98 }}
+   153→   153→          animate={{ opacity: 1, y: 0, scale: 1 }}
+   154→   154→          transition={{ duration: 0.5, ease: 'easeOut' }}
+   155→   155→          className="premium-card sk-aura relative overflow-hidden"
+   156→   156→        >
+   157→   157→          {/* Floating aurora glow orbs */}
+   158→   158→          <motion.div
+   159→   159→            className="absolute -top-16 -right-16 w-40 h-40 rounded-full bg-[#10E07A]/15 blur-3xl pointer-events-none"
+   160→   160→            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
+   161→   161→            transition={{ duration: 4, repeat: Infinity }}
+   162→   162→          />
+   163→   163→          <motion.div
+   164→   164→            className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-[#A78BFA]/15 blur-3xl pointer-events-none"
+   165→   165→            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
+   166→   166→            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+   167→   167→          />
+   168→   168→
+   169→   169→          <div className="relative z-10 p-5">
+   170→   170→            {/* Top row: icon + LIVE badge */}
+   171→   171→            <div className="flex items-start justify-between mb-4">
+   172→   172→              <div className="flex items-center gap-3">
+   173→   173→                <motion.div
+   174→   174→                  animate={{ rotate: [0, 8, -8, 0] }}
+   175→   175→                  transition={{ duration: 4, repeat: Infinity }}
+   176→   176→                  className="icon-tile w-12 h-12 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_24px_rgba(16,224,122,0.40)]"
+   177→   177→                >
+   178→   178→                  <ChefHat className="w-6 h-6 text-black relative z-10" />
+   179→   179→                </motion.div>
+   180→   180→                <div className="flex items-center gap-1.5">
+   181→   181→                  <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
+   182→   182→                  <Sparkles className="w-2.5 h-2.5 text-[#10E07A]" />
+   183→   183→                </div>
+   184→   184→              </div>
+   185→   185→
+   186→   186→              {/* LIVE pulsing red dot */}
+   187→   187→              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/15 border border-red-500/30">
+   188→   188→                <span className="relative flex w-2 h-2">
+   189→   189→                  <motion.span
+   190→   190→                    className="absolute inline-flex w-full h-full rounded-full bg-red-500"
+   191→   191→                    animate={{ scale: [1, 2.2], opacity: [0.8, 0] }}
+   192→   192→                    transition={{ duration: 1.4, repeat: Infinity }}
+   193→   193→                  />
+   194→   194→                  <span className="relative inline-flex w-2 h-2 rounded-full bg-red-500" />
+   195→   195→                </span>
+   196→   196→                <span className="text-red-400 text-[10px] font-black tracking-[0.14em] uppercase">Live</span>
+   197→   197→              </div>
+   198→   198→            </div>
+   199→   199→
+   200→   200→            {/* Title + subtitle */}
+   201→   201→            <div className="mb-5">
+   202→   202→              <h2 className="text-white text-[1.65rem] font-black tracking-tight leading-tight">
+   203→   203→                Smart Kitchen
+   204→   204→              </h2>
+   205→   205→              <p className="text-[#10E07A] text-sm font-bold flex items-center gap-1.5 mt-0.5">
+   206→   206→                <Radio className="w-3.5 h-3.5" />
+   207→   207→                Chef Safa Live
+   208→   208→              </p>
+   209→   209→              <p className="text-white/60 text-sm mt-2 leading-relaxed">
+   210→   210→                AI watches you cook &amp; guides you in real-time.
+   211→   211→              </p>
+   212→   212→            </div>
+   213→   213→
+   214→   214→            {/* CTA button */}
+   215→   215→            <motion.button
+   216→   216→              whileTap={{ scale: 0.97 }}
+   217→   217→              onClick={() => setActiveModal('smart-kitchen')}
+   218→   218→              className="w-full emerald-gradient text-black font-black text-sm uppercase tracking-[0.18em] py-3.5 rounded-2xl flex items-center justify-center gap-2 shadow-[0_0_30px_rgba(16,224,122,0.35)] hover:brightness-110 transition-all"
+   219→   219→            >
+   220→   220→              <Radio className="w-4 h-4" />
+   221→   221→              Launch Live Coach
+   222→   222→              <ChevronRight className="w-4 h-4" />
+   223→   223→            </motion.button>
+   224→   224→          </div>
+   225→   225→        </motion.div>
+   226→   226→      </div>
+   227→   227→
+   228→   228→      {/* ── Live Iftar/Sahur Countdown ── */}
+   229→   229→      <div className="px-5">
+   230→   230→        <RamadanCountdown />
+   231→   231→      </div>
+   232→   232→
+   233→   233→      {/* ── Quick Actions Row (with Meal Planner featured) ── */}
+   234→   234→      <div className="px-5">
+   235→   235→        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
+   236→   236→          {/* Meal Planner featured action */}
+   237→   237→          <motion.button
+   238→   238→            whileTap={{ scale: 0.95 }}
+   239→   239→            onClick={() => setActiveModal('meal-planner')}
+   240→   240→            className="flex flex-col items-center gap-2 min-w-[76px] p-3 bg-[#A78BFA]/10 rounded-2xl border border-[#A78BFA]/20 hover:border-[#A78BFA]/40 transition-colors"
+   241→   241→          >
+   242→   242→            <div className="icon-tile w-10 h-10 bg-[#A78BFA]/15">
+   243→   243→              <CalendarDays className="w-5 h-5 text-[#A78BFA] relative z-10" />
+   244→   244→            </div>
+   245→   245→            <span className="text-[10px] font-bold text-white/70 whitespace-nowrap">Plan Meals</span>
+   246→   246→          </motion.button>
+   247→   247→          {quickActions.map((action) => {
+   248→   248→            const config = quickActionConfig[action.icon];
+   249→   249→            const Icon = config?.icon || Zap;
+   250→   250→            return (
+   251→   251→              <motion.button
+   252→   252→                key={action.id}
+   253→   253→                whileTap={{ scale: 0.95 }}
+   254→   254→                onClick={() => handleQuickAction(action)}
+   255→   255→                className="flex flex-col items-center gap-2 min-w-[76px] p-3 glass-card rounded-2xl hover:border-white/15 transition-colors"
+   256→   256→              >
+   257→   257→                <div className="icon-tile w-10 h-10 bg-[#10E07A]/10">
+   258→   258→                  <Icon className="w-5 h-5 text-[#10E07A] relative z-10" />
+   259→   259→                </div>
+   260→   260→                <span className="text-[10px] font-bold text-white/70 whitespace-nowrap">{action.name}</span>
+   261→   261→              </motion.button>
+   262→   262→            );
+   263→   263→          })}
+   264→   264→        </div>
+   265→   265→      </div>
+   266→   266→
+   267→   267→      {/* ── SwiftReel: TikTok-style feed link ── */}
+   268→   268→      <div className="px-5">
+   269→   269→        <motion.button
+   270→   270→          whileTap={{ scale: 0.98 }}
+   271→   271→          onClick={() => setActiveTab('reels')}
+   272→   272→          className="relative w-full overflow-hidden rounded-2xl border border-[#10E07A]/25 text-left group"
+   273→   273→          style={{
+   274→   274→            background: 'linear-gradient(110deg, rgba(16,224,122,0.18) 0%, rgba(245,196,81,0.10) 55%, rgba(167,139,250,0.14) 100%)',
+   275→   275→          }}
+   276→   276→        >
+   277→   277→          {/* Floating orbs */}
+   278→   278→          <div className="absolute -top-6 -right-4 w-24 h-24 rounded-full bg-[#10E07A]/20 blur-2xl" />
+   279→   279→          <div className="absolute -bottom-8 -left-2 w-20 h-20 rounded-full bg-[#A78BFA]/20 blur-2xl" />
+   280→   280→
+   281→   281→          <div className="relative flex items-center gap-3 p-3.5">
+   282→   282→            {/* Animated clapper icon */}
+   283→   283→            <div className="relative size-14 shrink-0 rounded-2xl bg-black/40 backdrop-blur-sm border border-white/15 flex items-center justify-center overflow-hidden">
+   284→   284→              <div className="absolute inset-0 bg-gradient-to-br from-[#10E07A]/30 to-[#F5C451]/20" />
+   285→   285→              <Clapperboard className="w-7 h-7 text-white relative z-10" />
+   286→   286→              <span className="absolute top-1 right-1 size-2 rounded-full bg-[#FB7185] animate-pulse" />
+   287→   287→            </div>
+   288→   288→
+   289→   289→            <div className="flex-1 min-w-0">
+   290→   290→              <div className="flex items-center gap-1.5">
+   291→   291→                <h3 className="text-white font-black text-base tracking-tight">SwiftReel</h3>
+   292→   292→                <span className="px-1.5 h-4 rounded-full bg-[#FB7185] text-white text-[9px] font-black flex items-center">LIVE</span>
+   293→   293→              </div>
+   294→   294→              <p className="text-white/65 text-xs font-medium leading-tight mt-0.5">
+   295→   295→                Watch food shorts from Lagos chefs & creators
+   296→   296→              </p>
+   297→   297→            </div>
+   298→   298→
+   299→   299→            {/* Play CTA */}
+   300→   300→            <div className="shrink-0 flex items-center gap-1 px-3 h-9 rounded-full bg-white text-black text-xs font-black active:scale-95 transition-transform">
+   301→   301→              <Play className="w-3.5 h-3.5 fill-black" />
+   302→   302→              Watch
+   303→   303→            </div>
+   304→   304→          </div>
+   305→   305→        </motion.button>
+   306→   306→      </div>
+   307→   307→
+   308→   308→      {/* ── Hero Carousel ── */}
+   309→   309→      <div className="relative">
+   310→   310→        <div
+   311→   311→          ref={carouselRef}
+   312→   312→          className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
+   313→   313→        >
+   314→   314→          <div className="flex items-stretch px-5 gap-4">
+   315→   315→            {heroSlides.map((slide, index) => (
+   316→   316→              <motion.div
+   317→   317→                key={slide.id}
+   318→   318→                className="flex h-full flex-1 flex-col gap-3 rounded-2xl min-w-[300px] cursor-pointer"
+   319→   319→                onClick={() => handleMealClick(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100)}
+   320→   320→                whileTap={{ scale: 0.98 }}
+   321→   321→              >
+   322→   322→                <div
+   323→   323→                  className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/8 hover:border-white/15 transition-colors"
+   324→   324→                  style={{ backgroundImage: `url("${slide.image}")` }}
+   325→   325→                >
+   326→   326→                  <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-transparent to-transparent" />
+   327→   327→                  {slide.badge && (
+   328→   328→                    <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
+   329→   329→                      <Star className="w-3 h-3 text-black fill-black" />
+   330→   330→                      <span className="text-black text-[10px] font-bold uppercase tracking-[0.10em]">{slide.badge}</span>
+   331→   331→                    </div>
+   332→   332→                  )}
+   333→   333→                  {/* Slide counter */}
+   334→   334→                  <div className="absolute top-3 right-3 bg-black/40 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10">
+   335→   335→                    <span className="text-white/80 text-[10px] font-bold">{index + 1} / {heroSlides.length}</span>
+   336→   336→                  </div>
+   337→   337→                </div>
+   338→   338→                <div className="px-1">
+   339→   339→                  <p className="text-white text-lg font-bold leading-tight tracking-tight">{slide.title}</p>
+   340→   340→                  <p className="text-[#10E07A]/80 text-sm font-semibold flex items-center gap-1 mt-0.5">
+   341→   341→                    <Zap className="w-3 h-3" />
+   342→   342→                    {slide.subtitle}
+   343→   343→                  </p>
+   344→   344→                </div>
+   345→   345→              </motion.div>
+   346→   346→            ))}
+   347→   347→          </div>
+   348→   348→        </div>
+   349→   349→        {/* Slide indicators */}
+   350→   350→        <div className="flex justify-center gap-1.5 mt-1">
+   351→   351→          {heroSlides.map((_, i) => (
+   352→   352→            <button
+   353→   353→              key={i}
+   354→   354→              onClick={() => setCurrentSlide(i)}
+   355→   355→              aria-label={`Go to slide ${i + 1}`}
+   356→   356→              className={`h-1.5 rounded-full transition-all duration-300 ${
+   357→   357→                i === currentSlide ? 'w-6 bg-[#10E07A] shadow-[0_0_8px_rgba(16,224,122,0.5)]' : 'w-1.5 bg-white/20'
+   358→   358→              }`}
+   359→   359→            />
+   360→   360→          ))}
+   361→   361→        </div>
+   362→   362→      </div>
+   363→   363→
+   364→   364→      {/* ── Category Circles ── */}
+   365→   365→      <div className="px-5">
+   366→   366→        <h3 className="heading-accent text-white text-xl font-black tracking-tight mb-3 px-1">Categories</h3>
+   367→   367→        <div className="flex w-full overflow-x-auto gap-5 pb-2 no-scrollbar">
+   368→   368→          {categories.map((cat) => {
+   369→   369→            const isActive = activeCategory === cat.name || (!activeCategory && cat.id === 1);
+   370→   370→            return (
+   371→   371→              <button
+   372→   372→                key={cat.id}
+   373→   373→                onClick={() => handleCategoryClick(cat)}
+   374→   374→                className="flex flex-col items-center gap-2 min-w-[70px]"
+   375→   375→              >
+   376→   376→                <div className={`w-16 h-16 bg-[#0F1118] border-2 ${isActive ? 'border-[#10E07A]' : 'border-white/10'} rounded-full flex items-center justify-center p-1 ${isActive ? 'green-glow' : ''} hover:border-[#10E07A]/50 transition-colors`}>
+   377→   377→                  <div
+   378→   378→                    className="w-full h-full bg-center bg-no-repeat bg-cover rounded-full"
+   379→   379→                    style={{ backgroundImage: `url("${cat.image}")` }}
+   380→   380→                  />
+   381→   381→                </div>
+   382→   382→                <p className={`text-[11px] font-bold whitespace-nowrap ${isActive ? 'text-white' : 'text-white/60'}`}>{cat.name}</p>
+   383→   383→              </button>
+   384→   384→            );
+   385→   385→          })}
+   386→   386→        </div>
+   387→   387→      </div>
+   388→   388→
+   389→   389→      {/* Active category filter indicator */}
+   390→   390→      {activeCategory && (
+   391→   391→        <div className="px-5">
+   392→   392→          <div className="flex items-center gap-2 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-xl px-3 py-2">
+   393→   393→            <SlidersHorizontal className="w-3.5 h-3.5 text-[#10E07A]" />
+   394→   394→            <span className="text-[#10E07A] text-xs font-bold">Filtered by: {activeCategory}</span>
+   395→   395→            <button
+   396→   396→              onClick={() => setActiveCategory(null)}
+   397→   397→              aria-label="Clear filter"
+   398→   398→              className="ml-auto p-0.5 hover:bg-[#10E07A]/10 rounded-full transition-colors"
+   399→   399→            >
+   400→   400→              <X className="w-3.5 h-3.5 text-[#10E07A]/60" />
+   401→   401→            </button>
+   402→   402→          </div>
+   403→   403→        </div>
+   404→   404→      )}
+   405→   405→
+   406→   406→      {/* ── Featured Ramadan Box (Editor's Choice) ── */}
+   407→   407→      <div className="px-5">
+   408→   408→        <div
+   409→   409→          className="premium-card relative overflow-hidden cursor-pointer"
+   410→   410→          onClick={() => handleMealClick(100)}
+   411→   411→        >
+   412→   412→          <div className="absolute top-0 right-0 w-48 h-48 bg-[#10E07A]/8 blur-[80px] pointer-events-none" />
+   413→   413→          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#F5C451]/8 blur-[80px] pointer-events-none" />
+   414→   414→          <div className="p-5 relative z-10">
+   415→   415→            <div className="flex justify-between items-start mb-5">
+   416→   416→              <div>
+   417→   417→                <span className="inline-block px-3 py-1 bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20 rounded-full text-[10px] font-extrabold uppercase tracking-[0.16em] mb-3">
+   418→   418→                  Editor&apos;s Choice
+   419→   419→                </span>
+   420→   420→                <h3 className="text-2xl font-black text-white leading-[1.1] tracking-tight">
+   421→   421→                  The Ultimate<br />Ramadan Box
+   422→   422→                </h3>
+   423→   423→              </div>
+   424→   424→              <div className="text-right">
+   425→   425→                <p className="text-white/30 text-[10px] font-medium line-through">{formatNaira(ramadanBox.originalPrice)}</p>
+   426→   426→                <p className="text-gradient-emerald text-xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(16,224,122,0.3)]">
+   427→   427→                  {formatNaira(ramadanBox.salePrice)}
+   428→   428→                </p>
+   429→   429→              </div>
+   430→   430→            </div>
+   431→   431→
+   432→   432→            <div className="grid grid-cols-2 gap-3 mb-5">
+   433→   433→              {ramadanBox.images.map((img, i) => (
+   434→   434→                <div
+   435→   435→                  key={i}
+   436→   436→                  className="aspect-square bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10"
+   437→   437→                  style={{ backgroundImage: `url("${img}")` }}
+   438→   438→                />
+   439→   439→              ))}
+   440→   440→            </div>
+   441→   441→
+   442→   442→            <div className="flex items-center gap-2 mb-5 bg-black/30 p-3 rounded-xl border border-white/5">
+   443→   443→              <BadgeCheck className="w-5 h-5 text-[#F5C451] shrink-0" />
+   444→   444→              <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
+   445→   445→            </div>
+   446→   446→
+   447→   447→            <div className="flex gap-3" onClick={(e) => e.stopPropagation()}>
+   448→   448→              <button
+   449→   449→                onClick={() => handleQuickAdd({
+   450→   450→                  id: ramadanBox.id,
+   451→   451→                  name: 'The Ultimate Ramadan Box',
+   452→   452→                  price: ramadanBox.salePrice,
+   453→   453→                  image: ramadanBox.images[0],
+   454→   454→                })}
+   455→   455→                className="flex-1 bg-white/5 border border-white/10 py-3.5 rounded-2xl text-white font-bold text-sm uppercase tracking-[0.16em] flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:bg-white/10"
+   456→   456→              >
+   457→   457→                <ShoppingCart className="w-4 h-4" />
+   458→   458→                Add to Cart
+   459→   459→              </button>
+   460→   460→              <button
+   461→   461→                onClick={() => handleMealClick(100)}
+   462→   462→                className="flex-1 emerald-gradient py-3.5 rounded-2xl text-black font-black text-sm uppercase tracking-[0.16em] shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:brightness-110"
+   463→   463→              >
+   464→   464→                Details
+   465→   465→                <ChevronRight className="w-4 h-4" />
+   466→   466→              </button>
+   467→   467→            </div>
+   468→   468→          </div>
+   469→   469→        </div>
+   470→   470→      </div>
+   471→   471→
+   472→   472→      {/* ── Flash Sales ── */}
+   473→   473→      <div className="px-5">
+   474→   474→        <div className="flex justify-between items-end mb-3 px-1">
+   475→   475→          <div className="flex items-center gap-2">
+   476→   476→            <div className="icon-tile w-7 h-7 bg-[#F5C451]/12">
+   477→   477→              <Flame className="w-4 h-4 text-[#F5C451] relative z-10" />
+   478→   478→            </div>
+   479→   479→            <h3 className="heading-accent text-white text-xl font-black tracking-tight">Flash Sales</h3>
+   480→   480→          </div>
+   481→   481→          <button
+   482→   482→            onClick={() => setActiveTab('offers')}
+   483→   483→            className="text-[#10E07A] text-xs font-extrabold uppercase tracking-[0.12em] cursor-pointer hover:text-[#10E07A]/80 transition-colors"
+   484→   484→          >
+   485→   485→            See All
+   486→   486→          </button>
+   487→   487→        </div>
+   488→   488→        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+   489→   489→          {flashSales.map((sale) => (
+   490→   490→            <motion.div
+   491→   491→              key={sale.id}
+   492→   492→              whileTap={{ scale: 0.97 }}
+   493→   493→              className="glass-card min-w-[200px] rounded-2xl overflow-hidden cursor-pointer hover:border-white/15 transition-colors"
+   494→   494→              onClick={() => handleMealClick(sale.id + 200)}
+   495→   495→            >
+   496→   496→              <div className="relative">
+   497→   497→                <div
+   498→   498→                  className="w-full aspect-[4/3] bg-center bg-no-repeat bg-cover"
+   499→   499→                  style={{ backgroundImage: `url("${sale.image}")` }}
+   500→   500→                />
+   501→   501→                <div className="absolute top-2 left-2 bg-red-500 px-2 py-0.5 rounded-md shadow-lg shadow-red-500/30">
+   502→   502→                  <span className="text-white text-[10px] font-black">-{sale.discount}%</span>
+   503→   503→                </div>
+   504→   504→                <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md border border-white/10">
+   505→   505→                  <span className="text-[#F5C451] text-[9px] font-bold flex items-center gap-1">
+   506→   506→                    <Clock className="w-2.5 h-2.5" />
+   507→   507→                    {sale.endsIn}
+   508→   508→                  </span>
+   509→   509→                </div>
+   510→   510→              </div>
+   511→   511→              <div className="p-3">
+   512→   512→                <h4 className="text-white font-bold text-sm truncate">{sale.name}</h4>
+   513→   513→                <div className="flex items-center gap-2 mt-1">
+   514→   514→                  <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+   515→   515→                  <span className="text-white/30 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
+   516→   516→                </div>
+   517→   517→                <div className="mt-2">
+   518→   518→                  <div className="w-full bg-white/5 rounded-full h-1.5 mb-1 overflow-hidden">
+   519→   519→                    <div
+   520→   520→                      className="gold-gradient h-1.5 rounded-full transition-all"
+   521→   521→                      style={{ width: `${sale.claimed}%` }}
+   522→   522→                    />
+   523→   523→                  </div>
+   524→   524→                  <p className="text-white/40 text-[9px] font-semibold">{sale.claimed}% claimed</p>
+   525→   525→                </div>
+   526→   526→                <button
+   527→   527→                  onClick={(e) => {
+   528→   528→                    e.stopPropagation();
+   529→   529→                    handleQuickAdd({
+   530→   530→                      id: sale.id + 200,
+   531→   531→                      name: sale.name,
+   532→   532→                      price: sale.salePrice,
+   533→   533→                      image: sale.image,
+   534→   534→                    });
+   535→   535→                  }}
+   536→   536→                  className="w-full mt-2 text-[10px] font-bold text-[#10E07A] bg-[#10E07A]/10 py-1.5 rounded-lg border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
+   537→   537→                >
+   538→   538→                  + Add to Cart
+   539→   539→                </button>
+   540→   540→              </div>
+   541→   541→            </motion.div>
+   542→   542→          ))}
+   543→   543→        </div>
+   544→   544→      </div>
+   545→   545→
+   546→   546→      {/* ── Trending Iftar Meals ── */}
+   547→   547→      <div className="px-5">
+   548→   548→        <div className="flex justify-between items-end mb-3 px-1">
+   549→   549→          <h3 className="heading-accent text-white text-xl font-black tracking-tight">
+   550→   550→            {activeCategory ? activeCategory : 'Trending Iftar'}
+   551→   551→          </h3>
+   552→   552→          <button
+   553→   553→            onClick={() => setActiveTab('explore')}
+   554→   554→            className="text-[#10E07A] text-xs font-extrabold uppercase tracking-[0.12em] cursor-pointer hover:text-[#10E07A]/80 transition-colors"
+   555→   555→          >
+   556→   556→            See All
+   557→   557→          </button>
+   558→   558→        </div>
+   559→   559→
+   560→   560→        {filteredMeals.length > 0 ? (
+   561→   561→          <div className="space-y-3 max-h-96 overflow-y-auto pr-1 custom-scrollbar">
+   562→   562→            {filteredMeals.map((meal) => (
+   563→   563→              <motion.div
+   564→   564→                key={meal.id}
+   565→   565→                initial={{ opacity: 0, y: 10 }}
+   566→   566→                animate={{ opacity: 1, y: 0 }}
+   567→   567→                transition={{ delay: meal.id * 0.05 }}
+   568→   568→                className="glass-card flex gap-4 p-4 rounded-2xl hover:border-white/15 transition-colors cursor-pointer"
+   569→   569→                onClick={() => handleMealClick(meal.id)}
+   570→   570→              >
+   571→   571→                <div
+   572→   572→                  className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10"
+   573→   573→                  style={{ backgroundImage: `url("${meal.image}")` }}
+   574→   574→                />
+   575→   575→                <div className="flex flex-col justify-between flex-1 min-w-0">
+   576→   576→                  <div>
+   577→   577→                    <div className="flex justify-between items-start gap-2">
+   578→   578→                      <h4 className="text-white font-bold text-base truncate tracking-tight">{meal.name}</h4>
+   579→   579→                      <span className="text-[#10E07A] font-black whitespace-nowrap">{formatNaira(meal.price)}</span>
+   580→   580→                    </div>
+   581→   581→                    <p className="text-white/40 text-[11px] leading-relaxed mt-1 line-clamp-2">{meal.description}</p>
+   582→   582→                  </div>
+   583→   583→                  <div className="flex items-center gap-2 mt-2">
+   584→   584→                    <span className="soft-chip">
+   585→   585→                      <Clock className="w-3 h-3" />
+   586→   586→                      {meal.deliveryTime}
+   587→   587→                    </span>
+   588→   588→                    <span className="soft-chip text-[#F5C451]">
+   589→   589→                      <Star className="w-3 h-3 fill-[#F5C451]" />
+   590→   590→                      {meal.rating}
+   591→   591→                    </span>
+   592→   592→                    <button
+   593→   593→                      onClick={(e) => {
+   594→   594→                        e.stopPropagation();
+   595→   595→                        handleQuickAdd(meal);
+   596→   596→                      }}
+   597→   597→                      className="ml-auto text-[10px] font-bold text-[#10E07A] bg-[#10E07A]/10 px-3 py-1 rounded-full border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
+   598→   598→                    >
+   599→   599→                      + Add
+   600→   600→                    </button>
+   601→   601→                  </div>
+   602→   602→                </div>
+   603→   603→              </motion.div>
+   604→   604→            ))}
+   605→   605→          </div>
+   606→   606→        ) : (
+   607→   607→          <div className="glass-card flex flex-col items-center py-8 text-center rounded-2xl">
+   608→   608→            <p className="text-white/40 text-sm">No meals found for &quot;{activeCategory}&quot;</p>
+   609→   609→            <button
+   610→   610→              onClick={() => setActiveCategory(null)}
+   611→   611→              className="text-[#10E07A] text-sm font-bold mt-2 hover:text-[#10E07A]/80 transition-colors"
+   612→   612→            >
+   613→   613→              Clear filter
+   614→   614→            </button>
+   615→   615→          </div>
+   616→   616→        )}
+   617→   617→      </div>
+   618→   618→
+   619→   619→      {/* ── Join the Community CTA ── */}
+   620→   620→      <div className="px-5">
+   621→   621→        <motion.div
+   622→   622→          initial={{ opacity: 0, y: 16 }}
+   623→   623→          animate={{ opacity: 1, y: 0 }}
+   624→   624→          transition={{ duration: 0.5 }}
+   625→   625→          whileTap={{ scale: 0.98 }}
+   626→   626→          onClick={() => setActiveModal('community')}
+   627→   627→          className="aurora-card relative overflow-hidden rounded-3xl cursor-pointer hover:border-white/20 transition-colors"
+   628→   628→        >
+   629→   629→          {/* Floating aurora glow orbs */}
+   630→   630→          <motion.div
+   631→   631→            className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-[#A78BFA]/20 blur-3xl pointer-events-none"
+   632→   632→            animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
+   633→   633→            transition={{ duration: 4, repeat: Infinity }}
+   634→   634→          />
+   635→   635→          <motion.div
+   636→   636→            className="absolute -bottom-12 -right-12 w-32 h-32 rounded-full bg-[#10E07A]/15 blur-3xl pointer-events-none"
+   637→   637→            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
+   638→   638→            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
+   639→   639→          />
+   640→   640→
+   641→   641→          <div className="relative z-10 p-5 flex items-center gap-4">
+   642→   642→            <motion.div
+   643→   643→              animate={{ rotate: [0, 8, -8, 0] }}
+   644→   644→              transition={{ duration: 4, repeat: Infinity }}
+   645→   645→              className="icon-tile shrink-0 w-14 h-14 bg-gradient-to-br from-[#A78BFA] to-[#10E07A] shadow-[0_0_24px_rgba(167,139,250,0.40)]"
+   646→   646→            >
+   647→   647→              <Users className="w-7 h-7 text-white relative z-10" />
+   648→   648→            </motion.div>
+   649→   649→            <div className="flex-1 min-w-0">
+   650→   650→              <h3 className="text-gradient-aurora text-lg font-black tracking-tight leading-tight">
+   651→   651→                Join the Community
+   652→   652→              </h3>
+   653→   653→              <p className="text-white/70 text-xs mt-1 leading-relaxed">
+   654→   654→                Connect with thousands of Muslims breaking fast together.
+   655→   655→              </p>
+   656→   656→            </div>
+   657→   657→            <div className="shrink-0 w-10 h-10 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+   658→   658→              <ChevronRight className="w-5 h-5 text-white" />
+   659→   659→            </div>
+   660→   660→          </div>
+   661→   661→        </motion.div>
+   662→   662→      </div>
+   663→   663→    </main>
+   664→   664→  );
+   665→   665→}
+   666→   666→

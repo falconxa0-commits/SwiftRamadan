@@ -378,6 +378,24 @@
   animation: shimmer-line 2.5s ease-in-out infinite;
 }
 
+/* ─── Premium Shimmer Sweep (ShimmerSkeleton components) ─── */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.shimmer-sweep {
+  position: relative;
+  overflow: hidden;
+  background: #1A1D26;
+}
+.shimmer-sweep::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #1A1D26, #252833, #1A1D26);
+  animation: shimmer-sweep 1.5s ease-in-out infinite;
+}
+
 @keyframes pulse-soft {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50% { opacity: 0.8; transform: scale(1.06); }

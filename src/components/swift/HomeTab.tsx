@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import RamadanCountdown from './RamadanCountdown';
-import { HomeTabSkeleton } from './Skeletons';
+import { HomeTabSkeleton } from './HomeTabSkeleton';
 
 const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?: string }>; action: (store: ReturnType<typeof useAppStore.getState>) => void }> = {
   replay: { icon: RotateCcw, action: (s) => s.setActiveTab('orders') },
@@ -19,7 +19,7 @@ const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?
 };
 
 export default function HomeTab() {
-  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory } = useAppStore();
+  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory, lastSpinDate } = useAppStore();
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,16 +85,12 @@ export default function HomeTab() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <main className="flex-1 overflow-y-auto pb-32">
-        <HomeTabSkeleton />
-      </main>
-    );
-  }
-
   return (
-    <main className="flex-1 overflow-y-auto pb-32 space-y-7">
+    <main className="flex-1 overflow-y-auto pb-32">
+      {isLoading ? (
+        <HomeTabSkeleton />
+      ) : (
+        <div className="space-y-7 animate-in fade-in duration-500">
       {/* ── Greeting + Beta Badge (top brand strip) ── */}
       <div className="px-5 pt-4 flex items-center justify-between">
         <motion.div
@@ -121,6 +117,41 @@ export default function HomeTab() {
           <p className="text-white text-sm font-bold leading-tight mt-0.5">Let&apos;s break fast together 🌙</p>
         </motion.div>
       </div>
+
+      {/* ── Free Spin Available Card ── */}
+      {lastSpinDate !== new Date().toISOString().split('T')[0] && (
+        <div className="px-5">
+          <motion.button
+            initial={{ opacity: 0, y: -10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            onClick={() => setActiveModal('rewards')}
+            className="w-full relative overflow-hidden rounded-2xl p-3.5 flex items-center gap-3 border border-[#F5C451]/30 active:scale-[0.98] transition-transform"
+            style={{
+              background: 'linear-gradient(135deg, rgba(245,196,81,0.12), rgba(16,224,122,0.08))',
+            }}
+          >
+            {/* Glow */}
+            <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[#F5C451]/15 blur-3xl pointer-events-none" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[#F5C451]/30 shrink-0"
+              style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
+              <span className="text-xl">🎰</span>
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-white text-sm font-bold">Free Spin Available!</p>
+              <p className="text-white/40 text-[10px]">Spin the wheel for free rewards</p>
+            </div>
+            <motion.div
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="px-3 py-1.5 rounded-xl text-[10px] font-black text-[#0B0D14] shrink-0"
+              style={{ background: 'linear-gradient(135deg, #F5C451, #E5A830)' }}
+            >
+              SPIN NOW
+            </motion.div>
+          </motion.button>
+        </div>
+      )}
 
       {/* ── Search Bar + Visual Search ── */}
       <div className="px-5 flex items-center gap-2.5">
@@ -660,6 +691,8 @@ export default function HomeTab() {
           </div>
         </motion.div>
       </div>
+        </div>
+      )}
     </main>
   );
 }

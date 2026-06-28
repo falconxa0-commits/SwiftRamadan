@@ -7,6 +7,7 @@ import { useAppStore, OrderItem } from '@/lib/store';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { track } from '@/lib/analytics';
+import { triggerOrderCelebration } from './OrderCelebration';
 
 interface SavedAddress {
   id: string;
@@ -339,6 +340,9 @@ export default function CheckoutModal() {
     clearCart();
     setCheckoutStep(4);
     setPlacing(false);
+
+    // Trigger premium canvas-confetti celebration
+    setTimeout(() => triggerOrderCelebration(), 300);
 
     track('order_placed', { orderId: order.id, total: snapshotTotal, items: snapshotItems.length, paymentMethod });
     track('checkout_complete', { orderId: order.id, total: snapshotTotal, paymentMethod });
@@ -1093,24 +1097,21 @@ export default function CheckoutModal() {
                 exit={{ opacity: 0, scale: 0.95 }}
                 className="relative flex flex-col items-center text-center py-8 space-y-6 overflow-hidden"
               >
-                {/* Confetti */}
-                {['#13ec13', '#FFD700', '#3b82f6', '#ffffff', '#f472b6', '#06b6d4'].map((color, i) => (
-                  <ConfettiParticle key={i} delay={i * 0.08} color={color} />
-                ))}
+                {/* Confetti is handled by canvas-confetti via triggerOrderCelebration() */}
 
                 {/* Success Animation */}
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 10, stiffness: 100, delay: 0.2 }}
-                  className="w-24 h-24 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow"
+                  className="w-24 h-24 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
                 >
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.5, type: 'spring', damping: 10 }}
                   >
-                    <PartyPopper className="w-12 h-12 text-[#13ec13]" />
+                    <PartyPopper className="w-12 h-12 text-[#10E07A]" />
                   </motion.div>
                 </motion.div>
 
@@ -1146,7 +1147,7 @@ export default function CheckoutModal() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/40 text-xs">Estimated Delivery</span>
-                    <span className="text-[#13ec13] font-bold text-xs">
+                    <span className="text-[#10E07A] font-bold text-xs">
                       {selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
                        selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
                        selectedTimeSlot === 'evening' ? '4:00 - 7:00 PM' : '8:00 - 10:00 PM'}
@@ -1158,7 +1159,7 @@ export default function CheckoutModal() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/40 text-xs">Total</span>
-                    <span className="text-[#13ec13] font-black text-sm">{formatNaira(placedTotal)}</span>
+                    <span className="text-[#10E07A] font-black text-sm">{formatNaira(placedTotal)}</span>
                   </div>
                   {appliedCouponCode && (
                     <div className="flex justify-between">
@@ -1179,9 +1180,9 @@ export default function CheckoutModal() {
                     </div>
                   )}
                   {sahurAlarm && (
-                    <div className="flex items-center gap-2 bg-[#13ec13]/5 rounded-lg px-3 py-2 border border-[#13ec13]/10">
-                      <Bell className="w-3.5 h-3.5 text-[#13ec13]" />
-                      <span className="text-[#13ec13] text-[10px] font-bold">Sahur alarm set - you&apos;ll be reminded before Fajr</span>
+                    <div className="flex items-center gap-2 bg-[#10E07A]/5 rounded-lg px-3 py-2 border border-[#10E07A]/10">
+                      <Bell className="w-3.5 h-3.5 text-[#10E07A]" />
+                      <span className="text-[#10E07A] text-[10px] font-bold">Sahur alarm set - you&apos;ll be reminded before Fajr</span>
                     </div>
                   )}
                 </motion.div>
@@ -1192,7 +1193,7 @@ export default function CheckoutModal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
                   onClick={handleTrackOrder}
-                  className="w-full bg-[#13ec13] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#13ec13]/20"
+                  className="w-full bg-[#10E07A] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
                 >
                   <Truck className="w-5 h-5" />
                   Track Order
