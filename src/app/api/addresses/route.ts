@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, addressSchema } from '@/lib/validation';
+import { geocodeAddress } from '@/lib/maps';
 
 export const runtime = 'nodejs';
 
@@ -17,7 +18,7 @@ async function resolveUserId(raw: string | null | undefined): Promise<string | n
 // GET /api/addresses?userId=xxx → returns addresses (default first)
 export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
   try {
@@ -47,7 +48,7 @@ export async function GET(request: NextRequest) {
 // POST /api/addresses { userId, label, address, area, city, instructions, lat?, lng?, isDefault }
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {
@@ -73,6 +74,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Auto-geocode if lat/lng not provided
+    let finalLat = typeof lat === 'number' ? lat : null;
+    let finalLng = typeof lng === 'number' ? lng : null;
+
+    if (!finalLat || !finalLng) {
+      const fullAddress = [address, area, city].filter(Boolean).join(', ');
+      const geocoded = await geocodeAddress(fullAddress);
+      if (geocoded) {
+        finalLat = geocoded.lat;
+        finalLng = geocoded.lng;
+      }
+    }
+
     // If this is set as default, unset previous defaults
     if (isDefault) {
       await db.address.updateMany({
@@ -89,8 +103,8 @@ export async function POST(request: NextRequest) {
         area: String(area || ''),
         city: String(city || 'Lagos'),
         instructions: String(instructions || ''),
-        lat: typeof lat === 'number' ? lat : null,
-        lng: typeof lng === 'number' ? lng : null,
+        lat: finalLat,
+        lng: finalLng,
         isDefault: Boolean(isDefault),
       },
     });
@@ -108,7 +122,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/addresses { id, ...fields } → update address
 export async function PUT(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {
@@ -170,7 +184,7 @@ export async function PUT(request: NextRequest) {
 // DELETE /api/addresses?id=xxx → delete address
 export async function DELETE(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {

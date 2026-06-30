@@ -4,12 +4,14 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, signupSchema } from '@/lib/validation';
 import {
   generateOtp,
-  setOtp,
-  verifyOtp,
-  clearOtp,
-  isEmailVerified,
-  clearVerified,
+  setOtpAsync,
+  verifyOtpAsync,
+  clearOtpAsync,
+  isEmailVerifiedAsync,
+  clearVerifiedAsync,
 } from '@/lib/otp-store';
+import { hashPassword, verifyPassword } from '@/lib/auth-utils';
+import { sendOTP } from '@/lib/communications';
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
@@ -98,7 +100,7 @@ function publicUser(user: {
 
 export async function POST(request: NextRequest) {
   // Rate limit: 10 requests per minute per IP (brute-force protection)
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.auth);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.auth);
   if (rateLimited) return rateLimited;
 
   try {
@@ -147,7 +149,9 @@ export async function POST(request: NextRequest) {
               { status: 401 },
             );
           }
-          if (user.password !== password) {
+          // Use bcrypt comparison with legacy plain-text fallback
+          const isValid = await verifyPassword(password, user.password);
+          if (!isValid) {
             return NextResponse.json(
               { success: false, message: 'Incorrect password' },
               { status: 401 },
@@ -156,7 +160,7 @@ export async function POST(request: NextRequest) {
         } else {
           // Demo account (empty password in DB) — require a recent OTP
           // verification for this email, otherwise anyone could log in.
-          if (!isEmailVerified(email)) {
+          if (!(await isEmailVerifiedAsync(email))) {
             return NextResponse.json(
               {
                 success: false,
@@ -196,12 +200,15 @@ export async function POST(request: NextRequest) {
           );
         }
 
+        // Hash password with bcrypt before storing
+        const hashedPassword = password ? await hashPassword(password) : '';
+
         const user = await db.user.create({
           data: {
             name,
             email,
             phone: phone || '',
-            password: password || '',
+            password: hashedPassword,
             role: role || 'customer',
             area: area || '',
             avatar: avatar || '',
@@ -225,9 +232,22 @@ export async function POST(request: NextRequest) {
         // verify-otp call has something to verify against. Returned in the
         // response for demo purposes (in production it would be sent via SMS).
         const otpCode = generateOtp();
-        setOtp(email, otpCode);
+        await setOtpAsync(email, otpCode);
         // A brand-new account is not "verified" yet.
-        clearVerified(email);
+        await clearVerifiedAsync(email);
+
+        // Try to send the OTP via SMS + Email (graceful degradation)
+        try {
+          await sendOTP({
+            email,
+            phone: phone || undefined,
+            code: otpCode,
+            name,
+          });
+        } catch (err) {
+          // Don't fail the auth flow if notification sending fails
+          console.error('[Auth] OTP notification error:', err);
+        }
 
         const token = `sr_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
@@ -261,7 +281,23 @@ export async function POST(request: NextRequest) {
         }
 
         const code = generateOtp();
-        setOtp(lookupEmail, code);
+        await setOtpAsync(lookupEmail, code);
+
+        // Try to send the OTP via SMS + Email (graceful degradation)
+        try {
+          const otpUser = await db.user.findUnique({ where: { email: lookupEmail } });
+          if (otpUser) {
+            await sendOTP({
+              email: lookupEmail,
+              phone: otpUser.phone || undefined,
+              code,
+              name: otpUser.name,
+            });
+          }
+        } catch (err) {
+          // Don't fail the auth flow if notification sending fails
+          console.error('[Auth] OTP notification error (send-otp):', err);
+        }
 
         return NextResponse.json({
           success: true,
@@ -298,7 +334,7 @@ export async function POST(request: NextRequest) {
 
         // Verify against the in-memory store. One-time use: a successful
         // verification deletes the OTP so it can't be replayed.
-        const ok = verifyOtp(lookupEmail, String(otp));
+        const ok = await verifyOtpAsync(lookupEmail, String(otp));
         if (!ok) {
           return NextResponse.json(
             {
@@ -370,7 +406,7 @@ export async function POST(request: NextRequest) {
         // Require the caller to have verified this email via OTP in the last
         // 10 minutes. There's no JWT/session system, so the verified-email
         // flag is the closest thing to an auth token here.
-        if (!isEmailVerified(email)) {
+        if (!(await isEmailVerifiedAsync(email))) {
           return NextResponse.json(
             {
               success: false,
@@ -403,6 +439,11 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // If a new password is provided, hash it before storing
+        if (typeof body.password === 'string' && body.password.length > 0) {
+          updateData.password = await hashPassword(body.password);
+        }
+
         const user = await db.user.update({
           where: { email },
           data: updateData,
@@ -416,6 +457,27 @@ export async function POST(request: NextRequest) {
       }
 
       /* ------------------------------------------------------------------- */
+      /* oauth — Google / Apple sign-in                                       */
+      /* ------------------------------------------------------------------- */
+      case 'oauth': {
+        const { provider } = body;
+        if (!provider || !['google', 'apple'].includes(provider)) {
+          return NextResponse.json(
+            { success: false, message: 'Invalid OAuth provider' },
+            { status: 400 },
+          );
+        }
+        // In production, this would redirect to the OAuth provider's consent screen.
+        // For now, check if a user with the same email exists from a previous OAuth flow.
+        // Return a helpful message that OAuth needs to be configured with real credentials.
+        return NextResponse.json({
+          success: false,
+          message: `${provider} OAuth requires client credentials. Set ${provider.toUpperCase()}_CLIENT_ID and ${provider.toUpperCase()}_CLIENT_SECRET in your environment variables.`,
+          provider,
+        });
+      }
+
+      /* ------------------------------------------------------------------- */
       /* logout — optional convenience action                                */
       /* ------------------------------------------------------------------- */
       case 'logout': {
@@ -423,8 +485,8 @@ export async function POST(request: NextRequest) {
         // the caller provides an email so a fresh OTP is required for any
         // subsequent privileged action.
         if (typeof email === 'string' && email) {
-          clearVerified(email);
-          clearOtp(email);
+          await clearVerifiedAsync(email);
+          await clearOtpAsync(email);
         }
         return NextResponse.json({ success: true, message: 'Logged out' });
       }
@@ -434,7 +496,7 @@ export async function POST(request: NextRequest) {
           {
             success: false,
             message:
-              'Invalid action. Use login, signup, send-otp, verify-otp, get-user, update-profile, or logout.',
+              'Invalid action. Use login, signup, send-otp, verify-otp, get-user, update-profile, oauth, or logout.',
           },
           { status: 400 },
         );

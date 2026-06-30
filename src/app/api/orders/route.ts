@@ -15,7 +15,7 @@ async function assertUserExists(userId: string | undefined): Promise<boolean> {
 // GET /api/orders — Get all orders, optionally filter by userId
 export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
   try {
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 // POST /api/orders — Create a new order
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 // PUT /api/orders — Update an order (e.g., status, progress)
 export async function PUT(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {

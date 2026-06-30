@@ -1,0 +1,502 @@
+     1→   500→   500→          action: 'signup',
+     2→   501→   501→          name: fullName,
+     3→   502→   502→          phone: `+234${phone}`,
+     4→   503→   503→          email,
+     5→   504→   504→          area,
+     6→   505→   505→          role: signupRole,
+     7→   506→   506→          ...(signupRole === 'vendor' ? { businessName, businessCategory, businessAddress } : {}),
+     8→   507→   507→          ...(signupRole === 'rider' ? { vehicleType, plateNumber, licenseNumber } : {}),
+     9→   508→   508→        }),
+    10→   509→   509→      });
+    11→   510→   510→      const data = await res.json();
+    12→   511→   511→      if (data.success) {
+    13→   512→   512→        store.setUserName(fullName);
+    14→   513→   513→        store.setUserPhone(`+234${phone}`);
+    15→   514→   514→        store.setUserEmail(email);
+    16→   515→   515→        store.setUserArea(area);
+    17→   516→   516→        store.setShowAuth('otp');
+    18→   517→   517→        toast({ title: 'Account created!', description: 'Please verify your phone number.' });
+    19→   518→   518→      } else {
+    20→   519→   519→        toast({ title: 'Signup failed', description: data.message || 'Could not create account', variant: 'destructive' });
+    21→   520→   520→      }
+    22→   521→   521→    } catch {
+    23→   522→   522→      // Fallback for demo
+    24→   523→   523→      store.setUserName(fullName);
+    25→   524→   524→      store.setUserPhone(`+234${phone}`);
+    26→   525→   525→      store.setUserEmail(email);
+    27→   526→   526→      store.setUserArea(area);
+    28→   527→   527→      store.setShowAuth('otp');
+    29→   528→   528→      toast({ title: 'Account created!', description: 'Please verify your phone number.' });
+    30→   529→   529→    } finally {
+    31→   530→   530→      setLoading(false);
+    32→   531→   531→    }
+    33→   532→   532→  };
+    34→   533→   533→
+    35→   534→   534→  const handleStep2Submit = () => {
+    36→   535→   535→    if (signupRole === 'vendor') {
+    37→   536→   536→      if (!businessName.trim() || !businessCategory || !businessAddress.trim()) {
+    38→   537→   537→        toast({ title: 'Missing fields', description: 'Please fill in all business details.', variant: 'destructive' });
+    39→   538→   538→        return;
+    40→   539→   539→      }
+    41→   540→   540→    } else if (signupRole === 'rider') {
+    42→   541→   541→      if (!vehicleType || !plateNumber.trim() || !licenseNumber.trim()) {
+    43→   542→   542→        toast({ title: 'Missing fields', description: 'Please fill in all vehicle details.', variant: 'destructive' });
+    44→   543→   543→        return;
+    45→   544→   544→      }
+    46→   545→   545→    }
+    47→   546→   546→    handleSubmit();
+    48→   547→   547→  };
+    49→   548→   548→
+    50→   549→   549→  // Progress bar segments
+    51→   550→   550→  const progressSegments = signupRole === 'customer' ? 2 : 3;
+    52→   551→   551→  const filledSegments = step === 1 ? 1 : (signupRole === 'customer' ? 2 : 2);
+    53→   552→   552→
+    54→   553→   553→  return (
+    55→   554→   554→    <motion.div
+    56→   555→   555→      initial={{ x: 40, opacity: 0 }}
+    57→   556→   556→      animate={{ x: 0, opacity: 1 }}
+    58→   557→   557→      exit={{ x: -40, opacity: 0 }}
+    59→   558→   558→      transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+    60→   559→   559→      className="flex flex-col min-h-full px-6 pt-4 pb-8"
+    61→   560→   560→    >
+    62→   561→   561→      {/* Header */}
+    63→   562→   562→      <div className="mb-4">
+    64→   563→   563→        <h1 className="text-white text-2xl font-extrabold tracking-tight">Create Account</h1>
+    65→   564→   564→        <p className="text-white/50 text-sm mt-1">Join the SwiftRamadan community</p>
+    66→   565→   565→      </div>
+    67→   566→   566→
+    68→   567→   567→      {/* Progress Bar */}
+    69→   568→   568→      <div className="flex items-center gap-2 mb-6">
+    70→   569→   569→        {Array.from({ length: progressSegments }).map((_, i) => (
+    71→   570→   570→          <motion.div
+    72→   571→   571→            key={i}
+    73→   572→   572→            className="flex-1 h-1.5 rounded-full"
+    74→   573→   573→            initial={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
+    75→   574→   574→            animate={{
+    76→   575→   575→              backgroundColor: i < filledSegments ? config.accent : 'rgba(255,255,255,0.1)',
+    77→   576→   576→            }}
+    78→   577→   577→            transition={{ duration: 0.3, delay: i * 0.1 }}
+    79→   578→   578→          />
+    80→   579→   579→        ))}
+    81→   580→   580→        <span className="text-white/30 text-xs ml-2">
+    82→   581→   581→          Step {filledSegments}/{progressSegments}
+    83→   582→   582→        </span>
+    84→   583→   583→      </div>
+    85→   584→   584→
+    86→   585→   585→      <AnimatePresence mode="wait">
+    87→   586→   586→        {step === 1 ? (
+    88→   587→   587→          /* ─── Step 1: Basic Info + Role Selection ─── */
+    89→   588→   588→          <motion.div
+    90→   589→   589→            key="step1"
+    91→   590→   590→            initial={{ x: 40, opacity: 0 }}
+    92→   591→   591→            animate={{ x: 0, opacity: 1 }}
+    93→   592→   592→            exit={{ x: -40, opacity: 0 }}
+    94→   593→   593→            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+    95→   594→   594→            className="flex flex-col gap-4 flex-1"
+    96→   595→   595→          >
+    97→   596→   596→            {/* Role Selection */}
+    98→   597→   597→            <div>
+    99→   598→   598→              <label className="text-white/60 text-xs font-semibold uppercase tracking-wider mb-2 block">I am a</label>
+   100→   599→   599→              <div className="flex gap-2 p-1.5 bg-[#1A1D26] rounded-2xl border border-white/5">
+   101→   600→   600→                {(['customer', 'vendor', 'rider'] as RoleKey[]).map((role) => {
+   102→   601→   601→                  const rc = ROLE_CONFIG[role];
+   103→   602→   602→                  const RIcon = rc.icon;
+   104→   603→   603→                  const isSelected = signupRole === role;
+   105→   604→   604→                  return (
+   106→   605→   605→                    <button
+   107→   606→   606→                      key={role}
+   108→   607→   607→                      onClick={() => setSignupRole(role)}
+   109→   608→   608→                      className="relative flex-1 flex items-center justify-center gap-2 py-3 px-2 rounded-xl transition-all"
+   110→   609→   609→                      style={{
+   111→   610→   610→                        backgroundColor: isSelected ? rc.accentLight : 'transparent',
+   112→   611→   611→                        border: isSelected ? `1px solid ${rc.accentMid}` : '1px solid transparent',
+   113→   612→   612→                      }}
+   114→   613→   613→                    >
+   115→   614→   614→                      <RIcon
+   116→   615→   615→                        className="w-4 h-4"
+   117→   616→   616→                        style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.35)' }}
+   118→   617→   617→                      />
+   119→   618→   618→                      <span
+   120→   619→   619→                        className="text-xs font-bold"
+   121→   620→   620→                        style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.35)' }}
+   122→   621→   621→                      >
+   123→   622→   622→                        {rc.label}
+   124→   623→   623→                      </span>
+   125→   624→   624→                    </button>
+   126→   625→   625→                  );
+   127→   626→   626→                })}
+   128→   627→   627→              </div>
+   129→   628→   628→            </div>
+   130→   629→   629→
+   131→   630→   630→            {/* Full Name */}
+   132→   631→   631→            <InputField
+   133→   632→   632→              icon={User}
+   134→   633→   633→              placeholder="Full name"
+   135→   634→   634→              value={fullName}
+   136→   635→   635→              onChange={setFullName}
+   137→   636→   636→              accentColor={config.accent}
+   138→   637→   637→            />
+   139→   638→   638→
+   140→   639→   639→            {/* Phone */}
+   141→   640→   640→            <div className="relative">
+   142→   641→   641→              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+   143→   642→   642→              <div className="absolute left-12 top-1/2 -translate-y-1/2 flex items-center pr-2 border-r border-white/10">
+   144→   643→   643→                <span className="text-white/50 text-sm font-medium">+234</span>
+   145→   644→   644→              </div>
+   146→   645→   645→              <input
+   147→   646→   646→                type="tel"
+   148→   647→   647→                inputMode="numeric"
+   149→   648→   648→                placeholder="Phone number"
+   150→   649→   649→                value={phone}
+   151→   650→   650→                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+   152→   651→   651→                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20 transition-colors"
+   153→   652→   652→                style={{ borderColor: phone ? `${config.accent}50` : undefined }}
+   154→   653→   653→              />
+   155→   654→   654→            </div>
+   156→   655→   655→
+   157→   656→   656→            {/* Email */}
+   158→   657→   657→            <InputField
+   159→   658→   658→              icon={Mail}
+   160→   659→   659→              placeholder="Email address"
+   161→   660→   660→              value={email}
+   162→   661→   661→              onChange={setEmail}
+   163→   662→   662→              accentColor={config.accent}
+   164→   663→   663→              inputMode="email"
+   165→   664→   664→            />
+   166→   665→   665→
+   167→   666→   666→            {/* Residential Area */}
+   168→   667→   667→            <div className="relative">
+   169→   668→   668→              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+   170→   669→   669→              <button
+   171→   670→   670→                onClick={() => setAreaOpen(!areaOpen)}
+   172→   671→   671→                className={`w-full h-14 bg-[#1A1D26] border rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${area ? 'text-white' : 'text-white/30'}`}
+   173→   672→   672→                style={{ borderColor: area ? `${config.accent}50` : 'rgba(255,255,255,0.1)' }}
+   174→   673→   673→              >
+   175→   674→   674→                {area || 'Residential area'}
+   176→   675→   675→              </button>
+   177→   676→   676→              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+   178→   677→   677→
+   179→   678→   678→              <AnimatePresence>
+   180→   679→   679→                {areaOpen && (
+   181→   680→   680→                  <motion.div
+   182→   681→   681→                    initial={{ opacity: 0, y: -8 }}
+   183→   682→   682→                    animate={{ opacity: 1, y: 0 }}
+   184→   683→   683→                    exit={{ opacity: 0, y: -8 }}
+   185→   684→   684→                    transition={{ duration: 0.15 }}
+   186→   685→   685→                    className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   187→   686→   686→                  >
+   188→   687→   687→                    <div className="max-h-48 overflow-y-auto custom-scrollbar">
+   189→   688→   688→                      {RESIDENTIAL_AREAS.map((a) => (
+   190→   689→   689→                        <button
+   191→   690→   690→                          key={a}
+   192→   691→   691→                          onClick={() => { setArea(a); setAreaOpen(false); }}
+   193→   692→   692→                          className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${area === a ? 'font-semibold' : 'text-white/70'}`}
+   194→   693→   693→                          style={{ color: area === a ? config.accent : undefined }}
+   195→   694→   694→                        >
+   196→   695→   695→                          {a}
+   197→   696→   696→                          {area === a && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+   198→   697→   697→                        </button>
+   199→   698→   698→                      ))}
+   200→   699→   699→                    </div>
+   201→   700→   700→                  </motion.div>
+   202→   701→   701→                )}
+   203→   702→   702→              </AnimatePresence>
+   204→   703→   703→            </div>
+   205→   704→   704→
+   206→   705→   705→            {/* Join Community */}
+   207→   706→   706→            <button
+   208→   707→   707→              onClick={() => setJoinCommunity(!joinCommunity)}
+   209→   708→   708→              className="flex items-center gap-3 py-1"
+   210→   709→   709→            >
+   211→   710→   710→              <div
+   212→   711→   711→                className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all`}
+   213→   712→   712→                style={{
+   214→   713→   713→                  backgroundColor: joinCommunity ? config.accent : 'transparent',
+   215→   714→   714→                  borderColor: joinCommunity ? config.accent : 'rgba(255,255,255,0.2)',
+   216→   715→   715→                }}
+   217→   716→   716→              >
+   218→   717→   717→                {joinCommunity && <Check className="w-4 h-4 text-[#05070A]" />}
+   219→   718→   718→              </div>
+   220→   719→   719→              <div className="flex flex-col items-start">
+   221→   720→   720→                <span className="text-white text-sm font-medium">Join Community</span>
+   222→   721→   721→                <span className="text-white/40 text-xs">Get group buy deals & community offers</span>
+   223→   722→   722→              </div>
+   224→   723→   723→            </button>
+   225→   724→   724→
+   226→   725→   725→            {/* Continue Button */}
+   227→   726→   726→            <ActionButton
+   228→   727→   727→              label={signupRole === 'customer' ? 'Create Account' : 'Continue'}
+   229→   728→   728→              onClick={handleStep1Next}
+   230→   729→   729→              loading={loading}
+   231→   730→   730→              accentColor={config.accent}
+   232→   731→   731→              icon={signupRole === 'customer' ? Sparkles : undefined}
+   233→   732→   732→            />
+   234→   733→   733→          </motion.div>
+   235→   734→   734→        ) : (
+   236→   735→   735→          /* ─── Step 2: Role-Specific Fields ─── */
+   237→   736→   736→          <motion.div
+   238→   737→   737→            key="step2"
+   239→   738→   738→            initial={{ x: 40, opacity: 0 }}
+   240→   739→   739→            animate={{ x: 0, opacity: 1 }}
+   241→   740→   740→            exit={{ x: -40, opacity: 0 }}
+   242→   741→   741→            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   243→   742→   742→            className="flex flex-col gap-4 flex-1"
+   244→   743→   743→          >
+   245→   744→   744→            {/* Role-specific header */}
+   246→   745→   745→            <motion.div
+   247→   746→   746→              initial={{ y: 10, opacity: 0 }}
+   248→   747→   747→              animate={{ y: 0, opacity: 1 }}
+   249→   748→   748→              className="flex items-center gap-3 p-4 rounded-2xl border"
+   250→   749→   749→              style={{
+   251→   750→   750→                backgroundColor: config.accentLight,
+   252→   751→   751→                borderColor: config.accentMid,
+   253→   752→   752→              }}
+   254→   753→   753→            >
+   255→   754→   754→              <div
+   256→   755→   755→                className="w-12 h-12 rounded-xl flex items-center justify-center"
+   257→   756→   756→                style={{ backgroundColor: `${config.accent}30` }}
+   258→   757→   757→              >
+   259→   758→   758→                <config.icon className="w-6 h-6" style={{ color: config.accent }} />
+   260→   759→   759→              </div>
+   261→   760→   760→              <div>
+   262→   761→   761→                <h3 className="text-white font-bold text-base">
+   263→   762→   762→                  {signupRole === 'vendor' ? 'Business Details' : 'Rider Details'}
+   264→   763→   763→                </h3>
+   265→   764→   764→                <p className="text-white/50 text-xs">
+   266→   765→   765→                  {signupRole === 'vendor'
+   267→   766→   766→                    ? 'Tell us about your business on SwiftRamadan'
+   268→   767→   767→                    : 'Provide your vehicle and license information'}
+   269→   768→   768→                </p>
+   270→   769→   769→              </div>
+   271→   770→   770→            </motion.div>
+   272→   771→   771→
+   273→   772→   772→            {signupRole === 'vendor' && (
+   274→   773→   773→              <>
+   275→   774→   774→                {/* Business Name */}
+   276→   775→   775→                <InputField
+   277→   776→   776→                  icon={Building2}
+   278→   777→   777→                  placeholder="Business name"
+   279→   778→   778→                  value={businessName}
+   280→   779→   779→                  onChange={setBusinessName}
+   281→   780→   780→                  accentColor={config.accent}
+   282→   781→   781→                />
+   283→   782→   782→
+   284→   783→   783→                {/* Business Category */}
+   285→   784→   784→                <div className="relative">
+   286→   785→   785→                  <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+   287→   786→   786→                  <button
+   288→   787→   787→                    onClick={() => setBusinessCategoryOpen(!businessCategoryOpen)}
+   289→   788→   788→                    className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
+   290→   789→   789→                    style={{ borderColor: businessCategory ? `${config.accent}50` : undefined }}
+   291→   790→   790→                  >
+   292→   791→   791→                    <span className="flex items-center gap-2">
+   293→   792→   792→                      {(() => {
+   294→   793→   793→                        const cat = BUSINESS_CATEGORIES.find(c => c.value === businessCategory);
+   295→   794→   794→                        const CatIcon = cat?.icon;
+   296→   795→   795→                        return CatIcon ? <CatIcon className="w-4 h-4" style={{ color: config.accent }} /> : null;
+   297→   796→   796→                      })()}
+   298→   797→   797→                      {businessCategory || 'Business category'}
+   299→   798→   798→                    </span>
+   300→   799→   799→                  </button>
+   301→   800→   800→                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${businessCategoryOpen ? 'rotate-180' : ''}`} />
+   302→   801→   801→
+   303→   802→   802→                  <AnimatePresence>
+   304→   803→   803→                    {businessCategoryOpen && (
+   305→   804→   804→                      <motion.div
+   306→   805→   805→                        initial={{ opacity: 0, y: -8 }}
+   307→   806→   806→                        animate={{ opacity: 1, y: 0 }}
+   308→   807→   807→                        exit={{ opacity: 0, y: -8 }}
+   309→   808→   808→                        transition={{ duration: 0.15 }}
+   310→   809→   809→                        className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   311→   810→   810→                      >
+   312→   811→   811→                        <div className="max-h-56 overflow-y-auto custom-scrollbar">
+   313→   812→   812→                          {BUSINESS_CATEGORIES.map((cat) => {
+   314→   813→   813→                            const CatIcon = cat.icon;
+   315→   814→   814→                            const isSelected = businessCategory === cat.value;
+   316→   815→   815→                            return (
+   317→   816→   816→                              <button
+   318→   817→   817→                                key={cat.value}
+   319→   818→   818→                                onClick={() => { setBusinessCategory(cat.value); setBusinessCategoryOpen(false); }}
+   320→   819→   819→                                className="w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between"
+   321→   820→   820→                                style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.7)' }}
+   322→   821→   821→                              >
+   323→   822→   822→                                <span className="flex items-center gap-3">
+   324→   823→   823→                                  <CatIcon className="w-4 h-4" style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.4)' }} />
+   325→   824→   824→                                  {cat.label}
+   326→   825→   825→                                </span>
+   327→   826→   826→                                {isSelected && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+   328→   827→   827→                              </button>
+   329→   828→   828→                            );
+   330→   829→   829→                          })}
+   331→   830→   830→                        </div>
+   332→   831→   831→                      </motion.div>
+   333→   832→   832→                    )}
+   334→   833→   833→                  </AnimatePresence>
+   335→   834→   834→                </div>
+   336→   835→   835→
+   337→   836→   836→                {/* Business Address */}
+   338→   837→   837→                <InputField
+   339→   838→   838→                  icon={MapPin}
+   340→   839→   839→                  placeholder="Business address"
+   341→   840→   840→                  value={businessAddress}
+   342→   841→   841→                  onChange={setBusinessAddress}
+   343→   842→   842→                  accentColor={config.accent}
+   344→   843→   843→                />
+   345→   844→   844→              </>
+   346→   845→   845→            )}
+   347→   846→   846→
+   348→   847→   847→            {signupRole === 'rider' && (
+   349→   848→   848→              <>
+   350→   849→   849→                {/* Vehicle Type */}
+   351→   850→   850→                <div className="relative">
+   352→   851→   851→                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+   353→   852→   852→                  <button
+   354→   853→   853→                    onClick={() => setVehicleTypeOpen(!vehicleTypeOpen)}
+   355→   854→   854→                    className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
+   356→   855→   855→                    style={{ borderColor: vehicleType ? `${config.accent}50` : undefined }}
+   357→   856→   856→                  >
+   358→   857→   857→                    {vehicleType || 'Vehicle type'}
+   359→   858→   858→                  </button>
+   360→   859→   859→                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${vehicleTypeOpen ? 'rotate-180' : ''}`} />
+   361→   860→   860→
+   362→   861→   861→                  <AnimatePresence>
+   363→   862→   862→                    {vehicleTypeOpen && (
+   364→   863→   863→                      <motion.div
+   365→   864→   864→                        initial={{ opacity: 0, y: -8 }}
+   366→   865→   865→                        animate={{ opacity: 1, y: 0 }}
+   367→   866→   866→                        exit={{ opacity: 0, y: -8 }}
+   368→   867→   867→                        transition={{ duration: 0.15 }}
+   369→   868→   868→                        className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+   370→   869→   869→                      >
+   371→   870→   870→                        {VEHICLE_TYPES.map((vt) => {
+   372→   871→   871→                          const isSelected = vehicleType === vt.value;
+   373→   872→   872→                          return (
+   374→   873→   873→                            <button
+   375→   874→   874→                              key={vt.value}
+   376→   875→   875→                              onClick={() => { setVehicleType(vt.value); setVehicleTypeOpen(false); }}
+   377→   876→   876→                              className="w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between"
+   378→   877→   877→                              style={{ color: isSelected ? config.accent : 'rgba(255,255,255,0.7)' }}
+   379→   878→   878→                            >
+   380→   879→   879→                              {vt.label}
+   381→   880→   880→                              {isSelected && <Check className="w-4 h-4" style={{ color: config.accent }} />}
+   382→   881→   881→                            </button>
+   383→   882→   882→                          );
+   384→   883→   883→                        })}
+   385→   884→   884→                      </motion.div>
+   386→   885→   885→                    )}
+   387→   886→   886→                  </AnimatePresence>
+   388→   887→   887→                </div>
+   389→   888→   888→
+   390→   889→   889→                {/* Plate Number */}
+   391→   890→   890→                <InputField
+   392→   891→   891→                  icon={CreditCard}
+   393→   892→   892→                  placeholder="Plate number (e.g. LSR 123 AB)"
+   394→   893→   893→                  value={plateNumber}
+   395→   894→   894→                  onChange={(v) => setPlateNumber(v.toUpperCase())}
+   396→   895→   895→                  accentColor={config.accent}
+   397→   896→   896→                />
+   398→   897→   897→
+   399→   898→   898→                {/* License Number */}
+   400→   899→   899→                <InputField
+   401→   900→   900→                  icon={Clock}
+   402→   901→   901→                  placeholder="Driver's license number"
+   403→   902→   902→                  value={licenseNumber}
+   404→   903→   903→                  onChange={setLicenseNumber}
+   405→   904→   904→                  accentColor={config.accent}
+   406→   905→   905→                />
+   407→   906→   906→              </>
+   408→   907→   907→            )}
+   409→   908→   908→
+   410→   909→   909→            {/* Submit Button */}
+   411→   910→   910→            <ActionButton
+   412→   911→   911→              label="Create Account"
+   413→   912→   912→              onClick={handleStep2Submit}
+   414→   913→   913→              loading={loading}
+   415→   914→   914→              accentColor={config.accent}
+   416→   915→   915→              icon={Sparkles}
+   417→   916→   916→            />
+   418→   917→   917→
+   419→   918→   918→            {/* Back link */}
+   420→   919→   919→            <button
+   421→   920→   920→              onClick={() => setStep(1)}
+   422→   921→   921→              className="text-white/40 text-sm text-center hover:text-white/60 transition-colors"
+   423→   922→   922→            >
+   424→   923→   923→              ← Back to basic info
+   425→   924→   924→            </button>
+   426→   925→   925→          </motion.div>
+   427→   926→   926→        )}
+   428→   927→   927→      </AnimatePresence>
+   429→   928→   928→
+   430→   929→   929→      {/* Login Link */}
+   431→   930→   930→      <div className="mt-6 text-center">
+   432→   931→   931→        <button
+   433→   932→   932→          onClick={() => store.setShowAuth('login')}
+   434→   933→   933→          className="text-white/50 text-sm"
+   435→   934→   934→        >
+   436→   935→   935→          Already have an account?{' '}
+   437→   936→   936→          <span className="font-bold" style={{ color: config.accent }}>Sign In</span>
+   438→   937→   937→        </button>
+   439→   938→   938→      </div>
+   440→   939→   939→    </motion.div>
+   441→   940→   940→  );
+   442→   941→   941→}
+   443→   942→   942→
+   444→   943→   943→/* ─────────────── OTP Screen ─────────────── */
+   445→   944→   944→
+   446→   945→   945→function OTPScreen() {
+   447→   946→   946→  const { userPhone, userEmail, userRole, setUserRole, setShowAuth, setIsLoggedIn, setShowOnboarding } = useAppStore();
+   448→   947→   947→  const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
+   449→   948→   948→  const [countdown, setCountdown] = useState(60);
+   450→   949→   949→  const [canResend, setCanResend] = useState(false);
+   451→   950→   950→  const [loading, setLoading] = useState(false);
+   452→   951→   951→  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+   453→   952→   952→
+   454→   953→   953→  const config = ROLE_CONFIG[userRole || 'customer'];
+   455→   954→   954→  const accentColor = userRole ? config.accent : '#13ec13';
+   456→   955→   955→
+   457→   956→   956→  useEffect(() => {
+   458→   957→   957→    if (countdown <= 0) {
+   459→   958→   958→      setCanResend(true);
+   460→   959→   959→      return;
+   461→   960→   960→    }
+   462→   961→   961→    const timer = setInterval(() => {
+   463→   962→   962→      setCountdown((prev) => prev - 1);
+   464→   963→   963→    }, 1000);
+   465→   964→   964→    return () => clearInterval(timer);
+   466→   965→   965→  }, [countdown]);
+   467→   966→   966→
+   468→   967→   967→  const handleChange = useCallback((index: number, value: string) => {
+   469→   968→   968→    if (!/^\d*$/.test(value)) return;
+   470→   969→   969→    const newOtp = [...otp];
+   471→   970→   970→    newOtp[index] = value.slice(-1);
+   472→   971→   971→    setOtp(newOtp);
+   473→   972→   972→    if (value && index < 5) {
+   474→   973→   973→      inputRefs.current[index + 1]?.focus();
+   475→   974→   974→    }
+   476→   975→   975→  }, [otp]);
+   477→   976→   976→
+   478→   977→   977→  const handleKeyDown = useCallback((index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+   479→   978→   978→    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+   480→   979→   979→      inputRefs.current[index - 1]?.focus();
+   481→   980→   980→    }
+   482→   981→   981→  }, [otp]);
+   483→   982→   982→
+   484→   983→   983→  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+   485→   984→   984→    e.preventDefault();
+   486→   985→   985→    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+   487→   986→   986→    if (pasted.length > 0) {
+   488→   987→   987→      const newOtp = [...otp];
+   489→   988→   988→      for (let i = 0; i < pasted.length; i++) {
+   490→   989→   989→        newOtp[i] = pasted[i];
+   491→   990→   990→      }
+   492→   991→   991→      setOtp(newOtp);
+   493→   992→   992→      const nextEmpty = pasted.length < 6 ? pasted.length : 5;
+   494→   993→   993→      inputRefs.current[nextEmpty]?.focus();
+   495→   994→   994→    }
+   496→   995→   995→  }, [otp]);
+   497→   996→   996→
+   498→   997→   997→  const handleVerifySuccess = () => {
+   499→   998→   998→    setIsLoggedIn(true);
+   500→   999→   999→    track('signup', { role: userRole || 'customer' });
+
+[showing lines 1-500 of 879; use offset=501 with limit to continue reading]

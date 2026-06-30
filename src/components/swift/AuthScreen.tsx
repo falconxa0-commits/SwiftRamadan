@@ -285,6 +285,34 @@ function LoginScreen() {
     }
   };
 
+  const handleOAuthLogin = async (provider: 'google' | 'apple') => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'oauth', provider }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // OAuth flow completed or user logged in
+        setUserName(data.user?.name || '');
+        setUserEmail(data.user?.email || '');
+        setUserRole(data.user?.role || 'customer');
+        setIsLoggedIn(true);
+        setShowAuth(null);
+        track('login', { role: loginRole, method: provider });
+        toast({ title: 'Welcome back!', description: `Signed in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}` });
+      } else {
+        toast({ title: 'OAuth Not Configured', description: data.message || `${provider} sign-in is not available yet.`, variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Error', description: `Could not connect to ${provider}`, variant: 'destructive' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ x: 40, opacity: 0 }}
@@ -390,7 +418,7 @@ function LoginScreen() {
         {/* Social Login */}
         <div className="flex gap-3">
           <button
-            onClick={() => toast({ title: 'Coming soon', description: 'Google login will be available soon.' })}
+            onClick={() => handleOAuthLogin('google')}
             className="flex-1 h-12 rounded-xl bg-[#1A1D26] border border-white/10 flex items-center justify-center gap-2 text-white text-sm font-medium hover:border-white/20 transition-colors active:scale-[0.98]"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5">
@@ -402,7 +430,7 @@ function LoginScreen() {
             Google
           </button>
           <button
-            onClick={() => toast({ title: 'Coming soon', description: 'Apple login will be available soon.' })}
+            onClick={() => handleOAuthLogin('apple')}
             className="flex-1 h-12 rounded-xl bg-[#1A1D26] border border-white/10 flex items-center justify-center gap-2 text-white text-sm font-medium hover:border-white/20 transition-colors active:scale-[0.98]"
           >
             <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor">

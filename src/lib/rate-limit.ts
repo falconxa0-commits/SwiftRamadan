@@ -1,7 +1,10 @@
 /* ----------------------------------------------------------------------------
- * Simple in-memory rate limiter (per-process, suitable for single-server dev).
- * For production, use Redis-based rate limiting.
+ * Rate limiter with Redis (Upstash) as primary, in-memory as fallback.
+ * For production with multiple instances, Redis ensures shared rate-limit state.
+ * For single-server dev, the in-memory store is sufficient.
  * ------------------------------------------------------------------------- */
+
+import { checkRedisRateLimit } from '@/lib/redis';
 
 interface RateLimitEntry {
   count: number;
@@ -11,12 +14,17 @@ interface RateLimitEntry {
 const store = new Map<string, RateLimitEntry>();
 
 // Clean up expired entries every 5 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of store.entries()) {
-    if (entry.resetTime < now) store.delete(key);
+if (typeof setInterval !== 'undefined') {
+  const handle = setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of store.entries()) {
+      if (entry.resetTime < now) store.delete(key);
+    }
+  }, 5 * 60 * 1000);
+  if (typeof handle === 'object' && handle && typeof (handle as NodeJS.Timeout).unref === 'function') {
+    (handle as NodeJS.Timeout).unref();
   }
-}, 5 * 60 * 1000);
+}
 
 export interface RateLimitOptions {
   /** Maximum number of requests in the window */
@@ -73,17 +81,48 @@ export function rateLimit(
 
 /**
  * Helper for API routes: returns `null` if allowed, or a 429 `Response` if
- * rate-limited. The IP is derived from the `x-forwarded-for` header (set by
+ * rate-limited. Checks Redis first (when configured), then falls back to
+ * in-memory. The IP is derived from the `x-forwarded-for` header (set by
  * the Caddy gateway), falling back to `'unknown'`.
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   request: Request,
   options: RateLimitOptions = { limit: 100, windowMs: 60 * 1000 },
-): Response | null {
+): Promise<Response | null> {
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
   const identifier = `ip:${ip}`;
 
+  // Try Redis rate limiting first
+  const redisResult = await checkRedisRateLimit(identifier, options.limit, Math.floor(options.windowMs / 1000));
+  if (redisResult.allowed === false) {
+    const retryAfter = Math.ceil((redisResult.resetAt - Date.now()) / 1000);
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: 'Too many requests. Please try again later.',
+        retryAfter,
+      }),
+      {
+        status: 429,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-RateLimit-Limit': String(options.limit),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(redisResult.resetAt),
+          'Retry-After': String(retryAfter),
+        },
+      },
+    );
+  }
+
+  // If Redis is configured and allowed the request, we're done
+  if (redisResult.remaining < options.limit) {
+    // Redis handled this request — it was not a "Redis not configured" fallback
+    return null;
+  }
+
+  // Fall through to in-memory rate limiting (Redis not configured or first request)
   const result = rateLimit(identifier, options);
   if (!result.success) {
     const retryAfter = Math.ceil((result.resetTime - Date.now()) / 1000);

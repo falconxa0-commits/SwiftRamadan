@@ -3,6 +3,7 @@
 import React, { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { captureException } from '@/lib/monitoring/sentry';
 
 interface Props {
   children: ReactNode;
@@ -31,6 +32,13 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('ErrorBoundary caught:', error, errorInfo);
+    captureException(error, {
+      tags: {
+        component: 'ErrorBoundary',
+        componentStack: errorInfo.componentStack?.substring(0, 200),
+      },
+      extra: { componentStack: errorInfo.componentStack },
+    }).catch(() => {}); // Don't fail if Sentry is down
   }
 
   handleReload = () => {

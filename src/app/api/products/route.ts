@@ -137,7 +137,7 @@ const staticProducts = [
 
 export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
   try {
@@ -204,7 +204,7 @@ function serialize(p: Awaited<ReturnType<typeof db.product.findFirst>>) {
 
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {
@@ -272,7 +272,7 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {
@@ -332,7 +332,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {

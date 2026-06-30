@@ -1,0 +1,263 @@
+// Google Maps — Location services, geocoding, routing, distance matrix
+// Docs: https://developers.google.com/maps/documentation
+
+const GOOGLE_MAPS_API_KEY = process.env.GOOGLE_MAPS_API_KEY || '';
+const NEXT_PUBLIC_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '';
+const MAPS_BASE_URL = 'https://maps.googleapis.com/maps/api';
+
+export function getMapsApiKey(): string {
+  return NEXT_PUBLIC_MAPS_KEY || GOOGLE_MAPS_API_KEY;
+}
+
+export function isMapsConfigured(): boolean {
+  return !!(NEXT_PUBLIC_MAPS_KEY || GOOGLE_MAPS_API_KEY);
+}
+
+// ─── Geocoding ───
+export interface GeocodingResult {
+  lat: number;
+  lng: number;
+  formattedAddress: string;
+  area: string;
+  city: string;
+}
+
+export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    // Mock: return Lagos coordinates
+    return {
+      lat: 6.5244 + (Math.random() - 0.5) * 0.05,
+      lng: 3.3792 + (Math.random() - 0.5) * 0.05,
+      formattedAddress: address,
+      area: 'Lagos Island',
+      city: 'Lagos',
+    };
+  }
+
+  try {
+    const response = await fetch(
+      `${MAPS_BASE_URL}/geocode/json?address=${encodeURIComponent(address)}&region=ng&key=${GOOGLE_MAPS_API_KEY}`,
+    );
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const result = data.results[0];
+      const components: any[] = result.address_components || [];
+      const area = components.find((c: any) => c.types.includes('sublocality') || c.types.includes('neighborhood'));
+      const city = components.find((c: any) => c.types.includes('locality'));
+
+      return {
+        lat: result.geometry.location.lat,
+        lng: result.geometry.location.lng,
+        formattedAddress: result.formatted_address,
+        area: area?.long_name || '',
+        city: city?.long_name || 'Lagos',
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('[Maps] Geocoding error:', error);
+    return null;
+  }
+}
+
+// ─── Reverse Geocoding ───
+export async function reverseGeocode(lat: number, lng: number): Promise<GeocodingResult | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    return {
+      lat,
+      lng,
+      formattedAddress: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+      area: 'Lagos',
+      city: 'Lagos',
+    };
+  }
+
+  try {
+    const response = await fetch(
+      `${MAPS_BASE_URL}/geocode/json?latlng=${lat},${lng}&key=${GOOGLE_MAPS_API_KEY}`,
+    );
+    const data = await response.json();
+
+    if (data.results && data.results.length > 0) {
+      const result = data.results[0];
+      const components: any[] = result.address_components || [];
+      const area = components.find((c: any) => c.types.includes('sublocality'));
+      const city = components.find((c: any) => c.types.includes('locality'));
+
+      return {
+        lat,
+        lng,
+        formattedAddress: result.formatted_address,
+        area: area?.long_name || '',
+        city: city?.long_name || 'Lagos',
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('[Maps] Reverse geocoding error:', error);
+    return null;
+  }
+}
+
+// ─── Distance Matrix ───
+export interface DistanceResult {
+  distance: { text: string; value: number }; // value in meters
+  duration: { text: string; value: number }; // value in seconds
+}
+
+export async function getDistanceMatrix(
+  origins: string, // "lat,lng" or address
+  destinations: string, // "lat,lng" or address
+): Promise<DistanceResult | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    // Mock: return random realistic Lagos distances
+    const distanceMeters = 2000 + Math.floor(Math.random() * 12000);
+    const durationSeconds = Math.round(distanceMeters / 5); // ~18 km/h average
+    return {
+      distance: { text: `${(distanceMeters / 1000).toFixed(1)} km`, value: distanceMeters },
+      duration: { text: `${Math.round(durationSeconds / 60)} mins`, value: durationSeconds },
+    };
+  }
+
+  try {
+    const response = await fetch(
+      `${MAPS_BASE_URL}/distancematrix/json?origins=${encodeURIComponent(origins)}&destinations=${encodeURIComponent(destinations)}&units=metric&region=ng&key=${GOOGLE_MAPS_API_KEY}`,
+    );
+    const data = await response.json();
+
+    if (data.rows && data.rows[0]?.elements?.[0]?.status === 'OK') {
+      const element = data.rows[0].elements[0];
+      return {
+        distance: element.distance,
+        duration: element.duration,
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('[Maps] Distance matrix error:', error);
+    return null;
+  }
+}
+
+// ─── Directions ───
+export interface DirectionsStep {
+  instruction: string;
+  distance: string;
+  duration: string;
+  startLocation: { lat: number; lng: number };
+  endLocation: { lat: number; lng: number };
+}
+
+export interface DirectionsResult {
+  distance: string;
+  duration: string;
+  steps: DirectionsStep[];
+  polyline: string; // encoded polyline for map rendering
+}
+
+export async function getDirections(
+  origin: string,
+  destination: string,
+): Promise<DirectionsResult | null> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    return {
+      distance: '5.2 km',
+      duration: '18 mins',
+      steps: [
+        { instruction: 'Head north on Awolowo Rd', distance: '0.8 km', duration: '3 mins', startLocation: { lat: 6.44, lng: 3.42 }, endLocation: { lat: 6.45, lng: 3.42 } },
+        { instruction: 'Turn right onto Falomo Bridge', distance: '1.2 km', duration: '4 mins', startLocation: { lat: 6.45, lng: 3.42 }, endLocation: { lat: 6.44, lng: 3.41 } },
+        { instruction: 'Continue to destination', distance: '3.2 km', duration: '11 mins', startLocation: { lat: 6.44, lng: 3.41 }, endLocation: { lat: 6.45, lng: 3.39 } },
+      ],
+      polyline: '',
+    };
+  }
+
+  try {
+    const response = await fetch(
+      `${MAPS_BASE_URL}/directions/json?origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&region=ng&key=${GOOGLE_MAPS_API_KEY}`,
+    );
+    const data = await response.json();
+
+    if (data.routes && data.routes.length > 0) {
+      const route = data.routes[0];
+      const leg = route.legs[0];
+      return {
+        distance: leg.distance.text,
+        duration: leg.duration.text,
+        steps: leg.steps.map((step: any) => ({
+          instruction: step.html_instructions?.replace(/<[^>]*>/g, '') || '',
+          distance: step.distance.text,
+          duration: step.duration.text,
+          startLocation: step.start_location,
+          endLocation: step.end_location,
+        })),
+        polyline: route.overview_polyline?.points || '',
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('[Maps] Directions error:', error);
+    return null;
+  }
+}
+
+// ─── Nearby Search (for Iftar Radar) ───
+export interface NearbyPlace {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+  rating: number;
+  types: string[];
+  openNow: boolean;
+}
+
+export async function searchNearbyPlaces({
+  lat,
+  lng,
+  radius = 3000,
+  type = 'restaurant',
+  keyword,
+}: {
+  lat: number;
+  lng: number;
+  radius?: number;
+  type?: string;
+  keyword?: string;
+}): Promise<NearbyPlace[]> {
+  if (!GOOGLE_MAPS_API_KEY) {
+    // Mock: return Lagos restaurants/mosques
+    const mockPlaces: NearbyPlace[] = [
+      { name: 'Iftar Central Mosque', address: 'Lagos Island', lat: 6.4541, lng: 3.3947, rating: 4.8, types: ['mosque'], openNow: true },
+      { name: 'The Food Hub', address: 'Victoria Island', lat: 6.4281, lng: 3.4219, rating: 4.6, types: ['restaurant'], openNow: true },
+      { name: 'Suya Palace', address: 'Ikeja', lat: 6.6018, lng: 3.3515, rating: 4.7, types: ['restaurant'], openNow: true },
+      { name: 'Lagos Fresh Mart', address: 'Lekki', lat: 6.4393, lng: 3.4537, rating: 4.5, types: ['grocery_or_supermarket'], openNow: true },
+    ];
+    return mockPlaces;
+  }
+
+  try {
+    let url = `${MAPS_BASE_URL}/place/nearbysearch/json?location=${lat},${lng}&radius=${radius}&type=${type}&key=${GOOGLE_MAPS_API_KEY}`;
+    if (keyword) url += `&keyword=${encodeURIComponent(keyword)}`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.results) {
+      return data.results.slice(0, 10).map((place: any) => ({
+        name: place.name,
+        address: place.vicinity,
+        lat: place.geometry.location.lat,
+        lng: place.geometry.location.lng,
+        rating: place.rating || 0,
+        types: place.types || [],
+        openNow: place.opening_hours?.open_now || false,
+      }));
+    }
+    return [];
+  } catch (error) {
+    console.error('[Maps] Nearby search error:', error);
+    return [];
+  }
+}

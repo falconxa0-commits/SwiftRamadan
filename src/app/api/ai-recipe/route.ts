@@ -199,7 +199,7 @@ function extractJson(content: string): unknown {
 
 export async function POST(request: NextRequest) {
   // Rate limit: 20 AI requests per minute per IP (LLM calls are expensive)
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.ai);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
   try {

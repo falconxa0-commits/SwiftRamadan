@@ -347,8 +347,54 @@ io.on('connection', (socket: Socket) => {
     });
   });
 
+  /* ── Online user tracking ─────────────────────────────────── */
+  socket.on('user:online', (payload: { userId?: string; name?: string; role?: string }) => {
+    const userId = safeString(payload?.userId, 100);
+    if (!userId) return;
+    const ext = socket as Socket & { userId?: string; userName?: string; userRole?: string };
+    ext.userId = userId;
+    ext.userName = safeString(payload?.name, 100);
+    ext.userRole = safeString(payload?.role, 50);
+
+    // Broadcast current online list to all connected clients
+    const onlineList: { id: string; socketId: string; name: string; role: string }[] = [];
+    for (const [, s] of io.sockets.sockets) {
+      const es = s as Socket & { userId?: string; userName?: string; userRole?: string };
+      if (es.userId) {
+        onlineList.push({ id: es.userId, socketId: s.id, name: es.userName || '', role: es.userRole || '' });
+      }
+    }
+    io.emit('users:online', onlineList);
+  });
+
+  /* ── Auction bidding ─────────────────────────────────────── */
+  socket.on('auction:bid', (payload: { auctionId?: string; bidderName?: string; amount?: number }) => {
+    const auctionId = safeString(payload?.auctionId, 100);
+    if (!auctionId) return;
+    if (typeof payload?.amount !== 'number') return;
+    const room = `auction-${auctionId}`;
+    io.to(room).emit('auction:bid-update', {
+      auctionId,
+      bidderName: safeString(payload?.bidderName, 100),
+      amount: payload.amount,
+      timestamp: new Date().toISOString(),
+    });
+  });
+
   /* ── Disconnect ───────────────────────────────────────────── */
   socket.on('disconnect', (reason: string) => {
+    const ext = socket as Socket & { userId?: string; userName?: string; userRole?: string };
+    if (ext.userId) {
+      // Broadcast updated online list
+      const onlineList: { id: string; socketId: string; name: string; role: string }[] = [];
+      for (const [, s] of io.sockets.sockets) {
+        const es = s as Socket & { userId?: string; userName?: string; userRole?: string };
+        if (es.userId && s.id !== socket.id) {
+          onlineList.push({ id: es.userId, socketId: s.id, name: es.userName || '', role: es.userRole || '' });
+        }
+      }
+      io.emit('users:online', onlineList);
+    }
     console.log(
       `[realtime] ✗ disconnected: ${socket.id} (reason: ${reason})`
     );

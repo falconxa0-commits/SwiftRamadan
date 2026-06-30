@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { initiatePayment, PaymentProvider } from '@/lib/payments';
 
 export const runtime = 'nodejs';
 
@@ -16,6 +17,14 @@ async function resolveUserId(raw: string | null | undefined): Promise<string | n
 function generateReference(): string {
   return `SWR-PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
+
+// Map frontend method names to payment provider identifiers
+const methodToProvider: Record<string, PaymentProvider> = {
+  card: 'paystack',
+  transfer: 'monnify',
+  bnpl: 'bnpl',
+  cash: 'swift-pay',
+};
 
 // GET /api/payments?userId=xxx  or  /api/payments?orderId=xxx
 export async function GET(request: NextRequest) {
@@ -53,8 +62,9 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/payments { orderId?, userId?, amount, method, reference? }
-// Simulates a successful payment. If orderId provided, also updates Order.status to "Confirmed"
-// and Order.progress to 10.
+// Initiates payment through the appropriate gateway, then creates a Payment record.
+// For card/transfer/bnpl: initializes with the payment gateway first.
+// For cash (swift-pay): creates a pending payment directly.
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -69,6 +79,7 @@ export async function POST(request: NextRequest) {
 
     const validMethods = ['card', 'transfer', 'cash', 'bnpl'];
     const finalMethod = validMethods.includes(method) ? method : 'card';
+    const provider = methodToProvider[finalMethod] || 'swift-pay';
 
     // Use provided reference, ensure uniqueness by appending a suffix if needed
     let finalReference = typeof reference === 'string' && reference.trim()
@@ -91,20 +102,64 @@ export async function POST(request: NextRequest) {
       finalReference = `${finalReference}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
     }
 
+    // Initialize payment with the real gateway for non-COD methods
+    let paymentInitResult: { checkoutUrl?: string; accountNumber?: string; bankName?: string } = {};
+    const initialStatus = provider === 'swift-pay' ? 'success' : 'pending';
+
+    if (provider !== 'swift-pay') {
+      const result = await initiatePayment({
+        provider,
+        amount: Number(amount),
+        reference: finalReference,
+        email: rawUserId || 'customer@swiftramadan.com',
+        name: 'SwiftRamadan Customer',
+        callbackUrl: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/payments/callback`,
+      });
+
+      paymentInitResult = {
+        checkoutUrl: result.checkoutUrl,
+        accountNumber: result.accountNumber,
+        bankName: result.bankName,
+      };
+
+      if (!result.success) {
+        // If real gateway fails but we're in dev mode (no keys), still allow
+        const isDev = !process.env.PAYSTACK_SECRET_KEY;
+        if (!isDev) {
+          return NextResponse.json(
+            { success: false, message: result.message || 'Payment initialization failed' },
+            { status: 400 },
+          );
+        }
+        // In dev mode with mock responses, treat as successful
+      }
+
+      // For card payments that redirect to a checkout URL, mark as pending
+      // The callback will update the status to 'success' after verification
+      if (provider === 'paystack' || provider === 'flutterwave') {
+        // Payment is pending until the callback confirms it
+      } else if (provider === 'monnify') {
+        // Bank transfer — the customer needs to transfer to the provided account
+        // We still create a pending payment; webhook/callback will confirm
+      } else if (provider === 'bnpl') {
+        // BNPL — checkout URL provided, pending until confirmed
+      }
+    }
+
     const payment = await db.payment.create({
       data: {
         orderId: validOrderId,
         userId,
         amount: Number(amount),
         method: finalMethod,
-        status: 'success',
+        status: initialStatus,
         reference: finalReference,
-        provider: finalMethod === 'card' ? 'paystack' : finalMethod === 'transfer' ? 'monnify' : 'swift-pay',
+        provider,
       },
     });
 
-    // If linked to an order, mark it as Confirmed with progress 10 (no-op if already past that)
-    if (validOrderId) {
+    // If linked to an order and payment is already successful (COD), mark it as Confirmed
+    if (validOrderId && initialStatus === 'success') {
       const order = await db.order.findUnique({ where: { id: validOrderId } });
       if (order && (order.status === 'Preparing' || order.progress < 10)) {
         await db.order.update({
@@ -114,7 +169,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, payment }, { status: 201 });
+    return NextResponse.json({
+      success: true,
+      payment,
+      checkoutUrl: paymentInitResult.checkoutUrl,
+      accountNumber: paymentInitResult.accountNumber,
+      bankName: paymentInitResult.bankName,
+    }, { status: 201 });
   } catch (error) {
     console.error('Payments API POST error:', error);
     return NextResponse.json(

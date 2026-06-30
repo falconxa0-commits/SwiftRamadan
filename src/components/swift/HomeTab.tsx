@@ -691,6 +691,110 @@ export default function HomeTab() {
           </div>
         </motion.div>
       </div>
+
+      {/* ── ✨ Next-Gen Features ── */}
+      <div className="px-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Sparkles className="w-5 h-5 text-[#A78BFA]" />
+          <h2 className="text-white text-xl font-black tracking-tight">✨ Next-Gen Features</h2>
+        </div>
+
+        {/* AI-Powered */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🤖 AI-Powered</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '🧬', label: 'Taste DNA', modal: 'taste-dna' },
+            { emoji: '📸', label: 'Fridge Scanner', modal: 'fridge-scanner' },
+            { emoji: '😊', label: 'Mood Order', modal: 'mood-ordering' },
+            { emoji: '🔮', label: 'Smart Reorder', modal: 'predictive-reorder' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Gamification */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🎮 Gamification</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '🏆', label: 'Challenges', modal: 'challenge-board' },
+            { emoji: '🎁', label: 'Gift-a-Meal', modal: 'gift-meal' },
+            { emoji: '👨‍🍳', label: 'Chef Battles', modal: 'chef-battles' },
+            { emoji: '🔥', label: 'Streak Shrine', modal: 'streak-shrine' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Location */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">📍 Location</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '📡', label: 'Iftar Radar', modal: 'iftar-radar' },
+            { emoji: '🎉', label: 'ETA Party', modal: 'rider-eta-party' },
+            { emoji: '🕌', label: 'Mosque Hub', modal: 'mosque-partnership' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#38BDF8]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Social */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💬 Social</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '📖', label: 'Iftar Stories', modal: 'iftar-stories' },
+            { emoji: '🍳', label: 'Recipe Remix', modal: 'recipe-remix' },
+            { emoji: '📓', label: 'Ramadan Diary', modal: 'ramadan-diary' },
+            { emoji: '🏘️', label: 'Neighbor Alerts', modal: 'neighbor-alerts' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#10E07A]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Commerce */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💰 Commerce</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '⚡', label: 'Flash Auction', modal: 'flashAuction' },
+            { emoji: '📦', label: 'Sub Boxes', modal: 'subscriptionBoxes' },
+            { emoji: '🏪', label: 'Storefront', modal: 'vendorStorefront' },
+            { emoji: '💰', label: 'Tip Kiosk', modal: 'tippingKiosk' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Ambient & Delight */}
+        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🌙 Ambient</p>
+        <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
+          {[
+            { emoji: '🕌', label: 'Adhan Sync', modal: 'adhan-sync' },
+            { emoji: '⏰', label: 'Iftar Countdown', modal: 'haptic-countdown' },
+            { emoji: '🌗', label: 'Theme Shift', modal: 'theme-transition' },
+            { emoji: '🤲', label: "Du'a of Day", modal: 'dua-of-the-day' },
+            { emoji: '🎊', label: 'Post-Ramadan', modal: 'post-ramadan' },
+          ].map(f => (
+            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+              <span className="text-xl">{f.emoji}</span>
+              <span className="text-[10px] font-bold text-white/70">{f.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
         </div>
       )}
     </main>

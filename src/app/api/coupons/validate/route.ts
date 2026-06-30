@@ -10,7 +10,7 @@ export const runtime = 'nodejs';
 // and new total. Increments `uses` on successful validation.
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP (coupon validation mutates DB)
-  const rateLimited = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
   try {

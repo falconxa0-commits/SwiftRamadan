@@ -105,8 +105,54 @@ export function track(
     }
   }
 
-  // In production, send to your analytics provider here
-  // Example: if NEXT_PUBLIC_ANALYTICS_ID is set, send to GA
+  // ─── Google Analytics 4 ───
+  sendToGA(payload);
+
+  // ─── Mixpanel ───
+  sendToMixpanel(payload);
+}
+
+// ─── Google Analytics 4 ───
+const GA_MEASUREMENT_ID = typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '' : '';
+
+function sendToGA(payload: AnalyticsPayload) {
+  if (!GA_MEASUREMENT_ID || typeof window === 'undefined') return;
+  try {
+    // Use gtag if loaded
+    if ((window as unknown as Record<string, unknown>).gtag) {
+      ((window as unknown as Record<string, unknown>).gtag as (
+        command: string,
+        eventName: string,
+        params: Record<string, unknown>,
+      ) => void)('event', payload.event, {
+        event_category: payload.event,
+        event_label: JSON.stringify(payload.properties || {}),
+        value: payload.properties?.value as number,
+      });
+    }
+  } catch {
+    // GA not loaded or blocked — silent fail
+  }
+}
+
+// ─── Mixpanel ───
+const MIXPANEL_TOKEN = typeof window !== 'undefined' ? process.env.NEXT_PUBLIC_MIXPANEL_TOKEN || '' : '';
+
+function sendToMixpanel(payload: AnalyticsPayload) {
+  if (!MIXPANEL_TOKEN || typeof window === 'undefined') return;
+  try {
+    if ((window as unknown as Record<string, unknown>).mixpanel) {
+      ((window as unknown as Record<string, unknown>).mixpanel as {
+        track: (event: string, props: Record<string, unknown>) => void;
+      }).track(payload.event, {
+        ...payload.properties,
+        sessionId: payload.sessionId,
+        timestamp: payload.timestamp,
+      });
+    }
+  } catch {
+    // Mixpanel not loaded — silent fail
+  }
 }
 
 // Flush events to server (called periodically or on page unload)
