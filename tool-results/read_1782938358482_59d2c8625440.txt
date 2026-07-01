@@ -1,0 +1,1169 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  MapPin,
+     7→  Bike,
+     8→  Phone,
+     9→  Star,
+    10→  Check,
+    11→  Navigation,
+    12→  X,
+    13→  Clock,
+    14→  Package,
+    15→  Store,
+    16→  User,
+    17→  Loader2,
+    18→  PartyPopper,
+    19→  Wifi,
+    20→  WifiOff,
+    21→} from 'lucide-react';
+    22→import { useAppStore } from '@/lib/store';
+    23→import { useToast } from '@/hooks/use-toast';
+    24→import { formatNaira } from '@/lib/data';
+    25→import { useSocket } from '@/hooks/use-socket';
+    26→
+    27→/* ──────────────────────────────────────────────────────────
+    28→   Types
+    29→   ────────────────────────────────────────────────────────── */
+    30→
+    31→type DeliveryStatus =
+    32→  | 'preparing'
+    33→  | 'picked_up'
+    34→  | 'on_the_way'
+    35→  | 'arriving'
+    36→  | 'delivered';
+    37→
+    38→interface GeoPoint {
+    39→  lat: number;
+    40→  lng: number;
+    41→}
+    42→
+    43→interface Rider {
+    44→  name: string;
+    45→  phone: string;
+    46→  photo: string;
+    47→  rating: number;
+    48→  vehicle: string;
+    49→  color: string;
+    50→}
+    51→
+    52→interface DeliveryState {
+    53→  orderId: string;
+    54→  rider: Rider;
+    55→  location: GeoPoint;
+    56→  status: DeliveryStatus;
+    57→  eta: number;
+    58→  progress: number;
+    59→  customer: GeoPoint;
+    60→  store: { name: string; lat: number; lng: number };
+    61→  total: number;
+    62→  items: Array<{ name: string; qty: number; price: number }>;
+    63→}
+    64→
+    65→interface UpdateMessage {
+    66→  orderId: string;
+    67→  from: 'rider' | 'customer' | 'system';
+    68→  text: string;
+    69→  timestamp: number;
+    70→}
+    71→
+    72→/* ──────────────────────────────────────────────────────────
+    73→   Status config
+    74→   ────────────────────────────────────────────────────────── */
+    75→
+    76→const STATUS_STAGES: Array<{
+    77→  key: DeliveryStatus;
+    78→  label: string;
+    79→  desc: string;
+    80→  icon: typeof Package;
+    81→}> = [
+    82→  { key: 'preparing', label: 'Order Placed', desc: 'Restaurant preparing your meal', icon: Package },
+    83→  { key: 'picked_up', label: 'Picked Up', desc: 'Rider collected your order', icon: Store },
+    84→  { key: 'on_the_way', label: 'On The Way', desc: 'Heading to your location', icon: Bike },
+    85→  { key: 'arriving', label: 'Arriving', desc: 'Rider is at your doorstep', icon: Navigation },
+    86→  { key: 'delivered', label: 'Delivered', desc: 'Order completed - Ramadan Mubarak!', icon: Check },
+    87→];
+    88→
+    89→const STATUS_ORDER: DeliveryStatus[] = [
+    90→  'preparing',
+    91→  'picked_up',
+    92→  'on_the_way',
+    93→  'arriving',
+    94→  'delivered',
+    95→];
+    96→
+    97→/* ──────────────────────────────────────────────────────────
+    98→   Helpers
+    99→   ────────────────────────────────────────────────────────── */
+   100→
+   101→function initials(name: string): string {
+   102→  const parts = name.trim().split(/\s+/);
+   103→  if (parts.length === 0) return '?';
+   104→  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+   105→  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+   106→}
+   107→
+   108→function formatTime(ts: number): string {
+   109→  const d = new Date(ts);
+   110→  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+   111→}
+   112→
+   113→/** Map an Order.status (DB string) → internal DeliveryStatus */
+   114→function mapOrderStatus(status: string): DeliveryStatus {
+   115→  switch (status) {
+   116→    case 'Confirmed':
+   117→    case 'Preparing':
+   118→      return 'preparing';
+   119→    case 'Ready':
+   120→      return 'picked_up';
+   121→    case 'In Transit':
+   122→      return 'on_the_way';
+   123→    case 'Delivered':
+   124→      return 'delivered';
+   125→    default:
+   126→      return 'preparing';
+   127→  }
+   128→}
+   129→
+   130→/** Map Order.progress (0-100) → ETA minutes (inverse) */
+   131→function progressToEta(progress: number, status: DeliveryStatus): number {
+   132→  if (status === 'delivered') return 0;
+   133→  if (status === 'arriving') return 2;
+   134→  if (status === 'on_the_way') return Math.max(3, Math.round((100 - progress) / 6));
+   135→  if (status === 'picked_up') return Math.max(5, Math.round((100 - progress) / 6));
+   136→  return Math.max(8, Math.round((100 - progress) / 6));
+   137→}
+   138→
+   139→/** Generate system messages based on status */
+   140→function statusMessage(status: DeliveryStatus, riderName: string): string {
+   141→  switch (status) {
+   142→    case 'preparing':
+   143→      return 'Your order is being prepared with care 🍳';
+   144→    case 'picked_up':
+   145→      return `${riderName} has picked up your order 🏍️`;
+   146→    case 'on_the_way':
+   147→      return `${riderName} is on the way to you 📍`;
+   148→    case 'arriving':
+   149→      return `${riderName} is arriving at your location 🚪`;
+   150→    case 'delivered':
+   151→      return `Delivered! Ramadan Mubarak 🌙 — Enjoy your meal!`;
+   152→    default:
+   153→      return 'Updating...';
+   154→  }
+   155→}
+   156→
+   157→/* ──────────────────────────────────────────────────────────
+   158→   Component
+   159→   ────────────────────────────────────────────────────────── */
+   160→
+   161→export default function RealTimeTrackingModal() {
+   162→  const { activeModal, setActiveModal, orders, userEmail } = useAppStore();
+   163→  const { toast } = useToast();
+   164→  const isOpen = activeModal === 'live-tracking';
+   165→
+   166→  const [delivery, setDelivery] = useState<DeliveryState | null>(null);
+   167→  const [messages, setMessages] = useState<UpdateMessage[]>([]);
+   168→  const [delivered, setDelivered] = useState(false);
+   169→
+   170→  // Derive the tracked order id from the store (no setState-in-effect needed)
+   171→  const trackedOrderId =
+   172→    orders.find((o) => o.status !== 'Delivered')?.id ??
+   173→    orders[0]?.id ??
+   174→    null;
+   175→  // Use a ref so the polling callback always has the latest id without re-creating it
+   176→  const trackedOrderIdRef = useRef<string | null>(trackedOrderId);
+   177→  useEffect(() => {
+   178→    trackedOrderIdRef.current = trackedOrderId;
+   179→  }, [trackedOrderId]);
+   180→
+   181→  // ─── Socket.io for real-time updates ───
+   182→  // Only join the room while the modal is open; the useSocket hook
+   183→  // handles joining / leaving automatically.
+   184→  const roomId = isOpen && trackedOrderId ? `order-${trackedOrderId}` : undefined;
+   185→  const { socket, isConnected: socketConnected } = useSocket(roomId);
+   186→
+   187→  // Listen for order-status-update events
+   188→  useEffect(() => {
+   189→    if (!socket) return;
+   190→    const onStatusUpdate = (payload: {
+   191→      orderId?: string;
+   192→      status?: string;
+   193→      progress?: number;
+   194→      riderName?: string;
+   195→      eta?: number;
+   196→      timestamp?: string;
+   197→    }) => {
+   198→      if (!payload || !payload.orderId) return;
+   199→      // Only react to updates for the order we're currently tracking
+   200→      if (
+   201→        trackedOrderIdRef.current &&
+   202→        payload.orderId !== trackedOrderIdRef.current
+   203→      ) {
+   204→        return;
+   205→      }
+   206→      const status = mapOrderStatus(payload.status || 'Preparing');
+   207→      const progress =
+   208→        typeof payload.progress === 'number' ? payload.progress : 0;
+   209→      const eta =
+   210→        typeof payload.eta === 'number'
+   211→          ? payload.eta
+   212→          : progressToEta(progress, status);
+   213→      const riderName = payload.riderName || 'Your Rider';
+   214→
+   215→      setDelivery((prev) => {
+   216→        // Preserve existing items / store / customer if present
+   217→        const baseLat = 6.4541;
+   218→        const baseLng = 3.3947;
+   219→        const storeLat = baseLat + 0.01;
+   220→        const storeLng = baseLng - 0.012;
+   221→        const custLat = baseLat - 0.008;
+   222→        const custLng = baseLng + 0.014;
+   223→        const prevLoc = prev?.location;
+   224→        const t = Math.min(1, Math.max(0, progress / 100));
+   225→        const locLat =
+   226→          prevLoc?.lat ?? storeLat + (custLat - storeLat) * t;
+   227→        const locLng =
+   228→          prevLoc?.lng ?? storeLng + (custLng - storeLng) * t;
+   229→
+   230→        const next: DeliveryState = {
+   231→          orderId: payload.orderId,
+   232→          rider: prev?.rider ?? {
+   233→            name: riderName,
+   234→            phone: '+234 800 000 0000',
+   235→            photo: '',
+   236→            rating: 4.9,
+   237→            vehicle: 'Motorcycle',
+   238→            color: '#38BDF8',
+   239→          },
+   240→          location: { lat: locLat, lng: locLng },
+   241→          status,
+   242→          eta,
+   243→          progress,
+   244→          customer: prev?.customer ?? { lat: custLat, lng: custLng },
+   245→          store:
+   246→            prev?.store ?? {
+   247→              name: 'SwiftRamadan Kitchen',
+   248→              lat: storeLat,
+   249→              lng: storeLng,
+   250→            },
+   251→          total: prev?.total ?? 0,
+   252→          items: prev?.items ?? [],
+   253→        };
+   254→
+   255→        // Update rider name if changed
+   256→        if (
+   257→          payload.riderName &&
+   258→          payload.riderName !== next.rider.name
+   259→        ) {
+   260→          next.rider = { ...next.rider, name: payload.riderName };
+   261→        }
+   262→
+   263→        // Push a system message if status changed
+   264→        if (lastStatusRef.current !== status) {
+   265→          const prevStatus = lastStatusRef.current;
+   266→          lastStatusRef.current = status;
+   267→          if (prevStatus !== null) {
+   268→            const msg: UpdateMessage = {
+   269→              orderId: payload.orderId,
+   270→              from: 'system',
+   271→              text: statusMessage(status, next.rider.name),
+   272→              timestamp: Date.now(),
+   273→            };
+   274→            setMessages((m) =>
+   275→              m.some((x) => x.text === msg.text && x.from === 'system')
+   276→                ? m
+   277→                : [...m, msg]
+   278→            );
+   279→          }
+   280→        }
+   281→
+   282→        return next;
+   283→      });
+   284→
+   285→      if (status === 'delivered') {
+   286→        setDelivered(true);
+   287→      }
+   288→    };
+   289→
+   290→    const onRiderLocation = (payload: {
+   291→      orderId?: string;
+   292→      lat?: number;
+   293→      lng?: number;
+   294→      progress?: number;
+   295→    }) => {
+   296→      if (!payload || !payload.orderId) return;
+   297→      if (
+   298→        trackedOrderIdRef.current &&
+   299→        payload.orderId !== trackedOrderIdRef.current
+   300→      ) {
+   301→        return;
+   302→      }
+   303→      if (typeof payload.lat !== 'number' || typeof payload.lng !== 'number')
+   304→        return;
+   305→
+   306→      setDelivery((prev) => {
+   307→        if (!prev) return prev;
+   308→        const next: DeliveryState = {
+   309→          ...prev,
+   310→          location: { lat: payload.lat!, lng: payload.lng! },
+   311→          progress:
+   312→            typeof payload.progress === 'number'
+   313→              ? payload.progress
+   314→              : prev.progress,
+   315→        };
+   316→        return next;
+   317→      });
+   318→    };
+   319→
+   320→    socket.on('order-status-update', onStatusUpdate);
+   321→    socket.on('rider-location', onRiderLocation);
+   322→    return () => {
+   323→      socket.off('order-status-update', onStatusUpdate);
+   324→      socket.off('rider-location', onRiderLocation);
+   325→    };
+   326→  }, [socket]);
+   327→
+   328→  // isPolling is purely derived from whether the modal is open AND
+   329→  // the socket isn't connected (so we fall back to HTTP polling)
+   330→  const isPolling = isOpen;
+   331→
+   332→  const messagesEndRef = useRef<HTMLDivElement>(null);
+   333→  const chatScrollRef = useRef<HTMLDivElement>(null);
+   334→  const lastStatusRef = useRef<DeliveryStatus | null>(null);
+   335→
+   336→  /* ─── Polling: fetch /api/orders every 3s when modal is open ─── */
+   337→  const pollOrder = useCallback(async () => {
+   338→    try {
+   339→      const res = await fetch('/api/orders');
+   340→      if (!res.ok) return;
+   341→      const json = await res.json();
+   342→      const allOrders: Array<{
+   343→        id: string;
+   344→        status: string;
+   345→        total: number;
+   346→        riderName: string | null;
+   347→        items: Array<{ name: string; qty: number; price: number }>;
+   348→        progress: number;
+   349→        createdAt: string;
+   350→      }> = json.orders ?? [];
+   351→
+   352→      const match =
+   353→        allOrders.find((o) => o.id === trackedOrderIdRef.current) ??
+   354→        allOrders.find((o) => o.status !== 'Delivered') ??
+   355→        allOrders[0];
+   356→
+   357→      if (!match) return;
+   358→
+   359→      const status = mapOrderStatus(match.status);
+   360→      const progress = match.progress ?? 0;
+   361→      const eta = progressToEta(progress, status);
+   362→
+   363→      // Derive rider info — use Order.riderName if present, else placeholder
+   364→      const riderName = match.riderName || 'Your Rider';
+   365→      const rider: Rider = {
+   366→        name: riderName,
+   367→        phone: '+234 800 000 0000',
+   368→        photo: '',
+   369→        rating: 4.9,
+   370→        vehicle: 'Motorcycle',
+   371→        color: '#38BDF8',
+   372→      };
+   373→
+   374→      // Stylized Lagos coordinates around the user's area
+   375→      const baseLat = 6.4541;
+   376→      const baseLng = 3.3947;
+   377→
+   378→      // Position the rider along a path from store → customer based on progress
+   379→      const storeLat = baseLat + 0.01;
+   380→      const storeLng = baseLng - 0.012;
+   381→      const custLat = baseLat - 0.008;
+   382→      const custLng = baseLng + 0.014;
+   383→      const t = Math.min(1, Math.max(0, progress / 100));
+   384→      const locLat = storeLat + (custLat - storeLat) * t;
+   385→      const locLng = storeLng + (custLng - storeLng) * t;
+   386→
+   387→      const next: DeliveryState = {
+   388→        orderId: match.id,
+   389→        rider,
+   390→        location: { lat: locLat, lng: locLng },
+   391→        status,
+   392→        eta,
+   393→        progress,
+   394→        customer: { lat: custLat, lng: custLng },
+   395→        store: { name: 'SwiftRamadan Kitchen', lat: storeLat, lng: storeLng },
+   396→        total: match.total,
+   397→        items: match.items ?? [],
+   398→      };
+   399→
+   400→      setDelivery((prev) => {
+   401→        // If status changed, push a system message
+   402→        if (lastStatusRef.current !== status) {
+   403→          const prevStatus = lastStatusRef.current;
+   404→          lastStatusRef.current = status;
+   405→          if (prevStatus !== null) {
+   406→            const msg: UpdateMessage = {
+   407→              orderId: match.id,
+   408→              from: 'system',
+   409→              text: statusMessage(status, riderName),
+   410→              timestamp: Date.now(),
+   411→            };
+   412→            setMessages((m) =>
+   413→              m.some((x) => x.text === msg.text && x.from === 'system')
+   414→                ? m
+   415→                : [...m, msg]
+   416→            );
+   417→          }
+   418→        }
+   419→        return next;
+   420→      });
+   421→
+   422→      // Trigger delivered state
+   423→      if (status === 'delivered') {
+   424→        setDelivered(true);
+   425→      }
+   426→    } catch (err) {
+   427→      console.error('Polling error:', err);
+   428→    }
+   429→  }, []);
+   430→
+   431→  useEffect(() => {
+   432→    if (!isOpen) return;
+   433→    // Initial fetch immediately
+   434→    pollOrder();
+   435→    // Fall back to polling every 5s. If the socket is connected, the
+   436→    // realtime service pushes updates instantly and we don't need to
+   437→    // poll as aggressively — but we still poll every 5s as a safety net
+   438→    // in case the socket disconnects silently.
+   439→    const interval = setInterval(pollOrder, 5000);
+   440→    return () => {
+   441→      clearInterval(interval);
+   442→      // Don't reset delivery here so the close animation doesn't flash
+   443→    };
+   444→  }, [isOpen, pollOrder]);
+   445→
+   446→  /* Auto-scroll updates to bottom */
+   447→  useEffect(() => {
+   448→    if (chatScrollRef.current) {
+   449→      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+   450→    }
+   451→  }, [messages]);
+   452→
+   453→  /* ─── handlers ─── */
+   454→  const handleClose = useCallback(() => {
+   455→    setActiveModal(null);
+   456→  }, [setActiveModal]);
+   457→
+   458→  const handleCallRider = useCallback(() => {
+   459→    if (!delivery?.rider) return;
+   460→    toast({
+   461→      title: `Calling ${delivery.rider.name}... 📞`,
+   462→      description: delivery.rider.phone,
+   463→    });
+   464→  }, [delivery, toast]);
+   465→
+   466→  /** Trigger the rate-delivery modal — stash order info in localStorage since
+   467→   *  store.ts cannot be modified (RateDeliveryModal owner = Agent E). */
+   468→  const handleRateRider = useCallback(() => {
+   469→    if (!delivery) return;
+   470→    try {
+   471→      localStorage.setItem(
+   472→        'rateDeliveryOrder',
+   473→        JSON.stringify({
+   474→          orderId: delivery.orderId,
+   475→          riderName: delivery.rider.name,
+   476→          total: delivery.total,
+   477→          items: delivery.items,
+   478→          userEmail,
+   479→        })
+   480→      );
+   481→    } catch (e) {
+   482→      console.error('Failed to stash rate order info:', e);
+   483→    }
+   484→    setActiveModal('rate-delivery');
+   485→  }, [delivery, userEmail, setActiveModal]);
+   486→
+   487→  /* ─── derived ─── */
+   488→  const currentStageIndex = useMemo(() => {
+   489→    if (!delivery) return 0;
+   490→    const idx = STATUS_ORDER.indexOf(delivery.status);
+   491→    return idx < 0 ? 0 : idx;
+   492→  }, [delivery]);
+   493→
+   494→  // Map coordinates → pixel positions on the map panel (percentage)
+   495→  const mapLayout = useMemo(() => {
+   496→    if (!delivery) return null;
+   497→    const pts = [delivery.store, delivery.customer, delivery.location];
+   498→    const lats = pts.map((p) => p.lat);
+   499→    const lngs = pts.map((p) => p.lng);
+   500→    const minLat = Math.min(...lats);
+   501→    const maxLat = Math.max(...lats);
+   502→    const minLng = Math.min(...lngs);
+   503→    const maxLng = Math.max(...lngs);
+   504→    const latRange = Math.max(maxLat - minLat, 0.001);
+   505→    const lngRange = Math.max(maxLng - minLng, 0.001);
+   506→    const pad = 0.15;
+   507→    const project = (p: GeoPoint) => {
+   508→      const x = ((p.lng - minLng) / lngRange) * (1 - pad * 2) + pad;
+   509→      const y = 1 - (((p.lat - minLat) / latRange) * (1 - pad * 2) + pad);
+   510→      return { x: x * 100, y: y * 100 };
+   511→    };
+   512→    const store = project(delivery.store);
+   513→    const customer = project(delivery.customer);
+   514→    const rider = project(delivery.location);
+   515→    return { store, customer, rider };
+   516→  }, [delivery]);
+   517→
+   518→  return (
+   519→    <AnimatePresence>
+   520→      {isOpen && (
+   521→        <>
+   522→          {/* Backdrop */}
+   523→          <motion.div
+   524→            initial={{ opacity: 0 }}
+   525→            animate={{ opacity: 1 }}
+   526→            exit={{ opacity: 0 }}
+   527→            className="fixed inset-0 bg-black/80 z-[95]"
+   528→            onClick={handleClose}
+   529→          />
+   530→
+   531→          {/* Full-screen modal */}
+   532→          <motion.div
+   533→            initial={{ y: '100%' }}
+   534→            animate={{ y: 0 }}
+   535→            exit={{ y: '100%' }}
+   536→            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+   537→            className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+   538→          >
+   539→            {/* ─── Sticky Header ─── */}
+   540→            <div className="glass-effect border-b border-white/5 px-4 py-3 flex items-center justify-between shrink-0 z-20">
+   541→              <div className="flex items-center gap-3 min-w-0">
+   542→                <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/30 flex items-center justify-center shrink-0">
+   543→                  <MapPin className="w-5 h-5 text-[#38BDF8]" />
+   544→                </div>
+   545→                <div className="min-w-0">
+   546→                  <h2 className="text-white text-base font-bold leading-tight flex items-center gap-2">
+   547→                    Live Tracking
+   548→                    {socketConnected ? (
+   549→                      <motion.span
+   550→                        animate={{ opacity: [1, 0.4, 1] }}
+   551→                        transition={{ duration: 1.5, repeat: Infinity }}
+   552→                        className="w-2 h-2 rounded-full bg-[#10E07A] inline-block"
+   553→                        title="Realtime connected"
+   554→                      />
+   555→                    ) : isPolling ? (
+   556→                      <motion.span
+   557→                        animate={{ opacity: [1, 0.4, 1] }}
+   558→                        transition={{ duration: 1.5, repeat: Infinity }}
+   559→                        className="w-2 h-2 rounded-full bg-[#38BDF8] inline-block"
+   560→                        title="Polling (socket offline)"
+   561→                      />
+   562→                    ) : (
+   563→                      <span className="w-2 h-2 rounded-full bg-white/30 inline-block" />
+   564→                    )}
+   565→                  </h2>
+   566→                  <p className="text-white/40 text-[11px] truncate">
+   567→                    {delivery
+   568→                      ? `Order #${delivery.orderId.slice(-6).toUpperCase()} • ${delivery.rider.name}`
+   569→                      : 'Connecting to rider...'}
+   570→                  </p>
+   571→                </div>
+   572→              </div>
+   573→              <button
+   574→                onClick={handleClose}
+   575→                className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors shrink-0"
+   576→                aria-label="Close live tracking"
+   577→              >
+   578→                <X className="w-5 h-5 text-white/60" />
+   579→              </button>
+   580→            </div>
+   581→
+   582→            {/* ─── Scrollable content ─── */}
+   583→            <div className="flex-1 overflow-y-auto custom-scrollbar">
+   584→              {/* Map panel */}
+   585→              <MapPanel delivery={delivery} layout={mapLayout} />
+   586→
+   587→              {/* Delivered banner */}
+   588→              <AnimatePresence>
+   589→                {delivered && (
+   590→                  <motion.section
+   591→                    initial={{ opacity: 0, y: -10 }}
+   592→                    animate={{ opacity: 1, y: 0 }}
+   593→                    exit={{ opacity: 0 }}
+   594→                    className="px-4 pt-4"
+   595→                  >
+   596→                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#10E07A]/15 to-[#F5C451]/10 border border-[#10E07A]/30 p-4">
+   597→                      <div className="absolute -right-4 -top-4 w-32 h-32 bg-[#10E07A]/10 blur-3xl rounded-full" />
+   598→                      <div className="relative z-10 flex items-center gap-3">
+   599→                        <div className="w-12 h-12 rounded-2xl bg-[#10E07A]/20 flex items-center justify-center shrink-0">
+   600→                          <PartyPopper className="w-6 h-6 text-[#10E07A]" />
+   601→                        </div>
+   602→                        <div className="flex-1">
+   603→                          <h3 className="text-white font-extrabold text-sm">
+   604→                            Delivered! Ramadan Mubarak 🌙
+   605→                          </h3>
+   606→                          <p className="text-white/50 text-xs mt-0.5">
+   607→                            How was your experience with {delivery?.rider.name ?? 'your rider'}?
+   608→                          </p>
+   609→                        </div>
+   610→                      </div>
+   611→                      <button
+   612→                        onClick={handleRateRider}
+   613→                        className="mt-3 w-full bg-[#F5C451] text-[#06070B] py-3 rounded-xl font-black text-sm hover:bg-[#F5C451]/90 transition-colors flex items-center justify-center gap-2"
+   614→                      >
+   615→                        <Star className="w-4 h-4 fill-[#06070B]" />
+   616→                        Rate your rider
+   617→                      </button>
+   618→                    </div>
+   619→                  </motion.section>
+   620→                )}
+   621→              </AnimatePresence>
+   622→
+   623→              {/* Status Timeline */}
+   624→              <section className="px-4 pt-5">
+   625→                <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
+   626→                  Delivery Status
+   627→                </h3>
+   628→                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+   629→                  <div className="relative">
+   630→                    {STATUS_STAGES.map((stage, idx) => {
+   631→                      const isPast = idx < currentStageIndex;
+   632→                      const isActive = idx === currentStageIndex;
+   633→                      const isFuture = idx > currentStageIndex;
+   634→                      const Icon = stage.icon;
+   635→                      return (
+   636→                        <div key={stage.key} className="flex gap-3 relative">
+   637→                          {/* Vertical line */}
+   638→                          {idx < STATUS_STAGES.length - 1 && (
+   639→                            <div className="absolute left-[18px] top-9 bottom-0 w-[2px] bg-white/5" />
+   640→                          )}
+   641→                          {/* Marker */}
+   642→                          <div
+   643→                            className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${
+   644→                              isActive
+   645→                                ? 'bg-[#38BDF8]/20 border-2 border-[#38BDF8] scale-110'
+   646→                                : isPast
+   647→                                  ? 'bg-[#10E07A] border-2 border-[#10E07A]'
+   648→                                  : 'bg-[#1A1D26] border-2 border-white/10'
+   649→                            }`}
+   650→                          >
+   651→                            {isPast ? (
+   652→                              <Check className="w-4 h-4 text-[#06070B]" strokeWidth={3} />
+   653→                            ) : (
+   654→                              <Icon
+   655→                                className={`w-4 h-4 ${
+   656→                                  isActive ? 'text-[#38BDF8]' : 'text-white/30'
+   657→                                }`}
+   658→                              />
+   659→                            )}
+   660→                            {isActive && (
+   661→                              <motion.div
+   662→                                animate={{ scale: [1, 1.6], opacity: [0.5, 0] }}
+   663→                                transition={{ duration: 1.6, repeat: Infinity }}
+   664→                                className="absolute inset-0 rounded-full bg-[#38BDF8]"
+   665→                              />
+   666→                            )}
+   667→                          </div>
+   668→                          {/* Label */}
+   669→                          <div className="flex-1 pb-5 pt-1">
+   670→                            <div className="flex items-center gap-2">
+   671→                              <p
+   672→                                className={`text-sm font-bold ${
+   673→                                  isActive
+   674→                                    ? 'text-white'
+   675→                                    : isPast
+   676→                                      ? 'text-[#10E07A]'
+   677→                                      : 'text-white/40'
+   678→                                }`}
+   679→                              >
+   680→                                {stage.label}
+   681→                              </p>
+   682→                              {isActive && (
+   683→                                <motion.span
+   684→                                  animate={{ opacity: [1, 0.5, 1] }}
+   685→                                  transition={{ duration: 1.4, repeat: Infinity }}
+   686→                                  className="text-[10px] text-[#38BDF8] font-bold uppercase"
+   687→                                >
+   688→                                  Live
+   689→                                </motion.span>
+   690→                              )}
+   691→                            </div>
+   692→                            <p
+   693→                              className={`text-[11px] mt-0.5 ${
+   694→                                isFuture ? 'text-white/30' : 'text-white/50'
+   695→                              }`}
+   696→                            >
+   697→                              {stage.desc}
+   698→                            </p>
+   699→                          </div>
+   700→                        </div>
+   701→                      );
+   702→                    })}
+   703→                  </div>
+   704→                </div>
+   705→              </section>
+   706→
+   707→              {/* ETA + Rider cards */}
+   708→              <section className="px-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+   709→                {/* ETA card */}
+   710→                <div className="bg-gradient-to-br from-[#38BDF8]/10 to-[#0F1118] rounded-2xl border border-[#38BDF8]/20 p-4 relative overflow-hidden">
+   711→                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#38BDF8]/5 blur-2xl rounded-full" />
+   712→                  <div className="flex items-center gap-2 mb-2 relative">
+   713→                    <Clock className="w-4 h-4 text-[#38BDF8]" />
+   714→                    <span className="text-white/50 text-[11px] uppercase tracking-wider font-bold">
+   715→                      Estimated arrival
+   716→                    </span>
+   717→                  </div>
+   718→                  <div className="flex items-baseline gap-2 relative">
+   719→                    <motion.span
+   720→                      key={delivery?.eta ?? 0}
+   721→                      initial={{ scale: 1.2, opacity: 0 }}
+   722→                      animate={{ scale: 1, opacity: 1 }}
+   723→                      transition={{ duration: 0.3 }}
+   724→                      className="text-white text-4xl font-black leading-none"
+   725→                    >
+   726→                      {delivery?.status === 'delivered' ? '0' : delivery?.eta ?? '--'}
+   727→                    </motion.span>
+   728→                    <span className="text-white/50 text-sm font-medium">
+   729→                      {delivery?.status === 'delivered' ? 'Delivered' : 'min'}
+   730→                    </span>
+   731→                  </div>
+   732→                  {delivery && (
+   733→                    <p className="text-white/40 text-[11px] mt-2 relative">
+   734→                      {delivery.status === 'delivered'
+   735→                        ? 'Order completed 🎉'
+   736→                        : delivery.status === 'arriving'
+   737→                          ? 'Rider is at your doorstep!'
+   738→                          : delivery.status === 'on_the_way'
+   739→                            ? 'Rider approaching your area'
+   740→                            : delivery.status === 'picked_up'
+   741→                              ? 'Order picked up from restaurant'
+   742→                              : 'Restaurant preparing your order'}
+   743→                    </p>
+   744→                  )}
+   745→                </div>
+   746→
+   747→                {/* Rider card */}
+   748→                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+   749→                  {delivery ? (
+   750→                    <div className="flex items-center gap-3">
+   751→                      <div
+   752→                        className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-2 font-bold text-sm"
+   753→                        style={{
+   754→                          backgroundColor: `${delivery.rider.color}22`,
+   755→                          borderColor: `${delivery.rider.color}66`,
+   756→                          color: delivery.rider.color,
+   757→                        }}
+   758→                      >
+   759→                        {initials(delivery.rider.name)}
+   760→                      </div>
+   761→                      <div className="flex-1 min-w-0">
+   762→                        <p className="text-white text-sm font-bold truncate">
+   763→                          {delivery.rider.name}
+   764→                        </p>
+   765→                        <div className="flex items-center gap-1">
+   766→                          <Star className="w-3 h-3 fill-[#F5C451] text-[#F5C451]" />
+   767→                          <span className="text-[#F5C451] text-[11px] font-bold">
+   768→                            {delivery.rider.rating}
+   769→                          </span>
+   770→                          <span className="text-white/30 text-[11px]">•</span>
+   771→                          <span className="text-white/40 text-[11px] truncate">
+   772→                            {delivery.rider.vehicle}
+   773→                          </span>
+   774→                        </div>
+   775→                      </div>
+   776→                      <div className="flex gap-2 shrink-0">
+   777→                        <button
+   778→                          onClick={handleCallRider}
+   779→                          className="w-10 h-10 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center hover:bg-[#F5C451]/20 transition-colors"
+   780→                          aria-label="Call rider"
+   781→                        >
+   782→                          <Phone className="w-4 h-4 text-[#F5C451]" />
+   783→                        </button>
+   784→                      </div>
+   785→                    </div>
+   786→                  ) : (
+   787→                    <div className="flex items-center gap-3">
+   788→                      <div className="w-12 h-12 rounded-full bg-[#1A1D26] border-2 border-white/10 flex items-center justify-center">
+   789→                        <User className="w-5 h-5 text-white/30" />
+   790→                      </div>
+   791→                      <div className="flex-1">
+   792→                        <p className="text-white/40 text-sm">Waiting for rider...</p>
+   793→                        <p className="text-white/30 text-xs mt-1">
+   794→                          {socketConnected
+   795→                            ? 'Realtime channel live'
+   796→                            : isPolling
+   797→                              ? 'Polling for updates...'
+   798→                              : 'No active order'}
+   799→                        </p>
+   800→                      </div>
+   801→                    </div>
+   802→                  )}
+   803→                </div>
+   804→              </section>
+   805→
+   806→              {/* Order summary */}
+   807→              {delivery && (
+   808→                <section className="px-4 pt-4">
+   809→                  <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+   810→                    <div className="flex items-center gap-2 mb-3">
+   811→                      <Package className="w-4 h-4 text-white/40" />
+   812→                      <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
+   813→                        Order Summary
+   814→                      </span>
+   815→                    </div>
+   816→                    {delivery.items.length > 0 ? (
+   817→                      <div className="space-y-1.5">
+   818→                        {delivery.items.map((it, idx) => (
+   819→                          <div key={idx} className="flex justify-between text-xs">
+   820→                            <span className="text-white/70">
+   821→                              {it.qty}x {it.name}
+   822→                            </span>
+   823→                            <span className="text-white/50">{formatNaira(it.price * it.qty)}</span>
+   824→                          </div>
+   825→                        ))}
+   826→                      </div>
+   827→                    ) : (
+   828→                      <p className="text-white/40 text-xs">No items</p>
+   829→                    )}
+   830→                    <div className="h-px bg-white/5 my-2" />
+   831→                    <div className="flex justify-between text-xs font-bold">
+   832→                      <span className="text-white/70">Total</span>
+   833→                      <span className="text-white">{formatNaira(delivery.total)}</span>
+   834→                    </div>
+   835→                  </div>
+   836→                </section>
+   837→              )}
+   838→
+   839→              {/* Live updates feed (system messages only) */}
+   840→              <section className="px-4 pt-4 pb-6">
+   841→                <div className="bg-[#0F1118] rounded-2xl border border-white/5 overflow-hidden">
+   842→                  <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
+   843→                    <Clock className="w-4 h-4 text-[#38BDF8]" />
+   844→                    <span className="text-white text-sm font-bold">Delivery Updates</span>
+   845→                    <span className="ml-auto text-white/30 text-[10px]">
+   846→                      {messages.length} updates
+   847→                    </span>
+   848→                  </div>
+   849→
+   850→                  {/* Updates list */}
+   851→                  <div
+   852→                    ref={chatScrollRef}
+   853→                    className="px-3 py-3 max-h-72 overflow-y-auto custom-scrollbar space-y-2"
+   854→                  >
+   855→                    {messages.length === 0 ? (
+   856→                      <div className="py-8 text-center">
+   857→                        <Clock className="w-8 h-8 text-white/10 mx-auto mb-2" />
+   858→                        <p className="text-white/30 text-xs">
+   859→                          Updates will appear here as your order progresses.
+   860→                        </p>
+   861→                      </div>
+   862→                    ) : (
+   863→                      messages.map((m, idx) => (
+   864→                        <UpdateBubble key={`${m.timestamp}-${idx}`} msg={m} />
+   865→                      ))
+   866→                    )}
+   867→                    <div ref={messagesEndRef} />
+   868→                  </div>
+   869→                </div>
+   870→              </section>
+   871→            </div>
+   872→
+   873→            {/* ─── Bottom progress bar ─── */}
+   874→            <div className="border-t border-white/5 bg-[#0F1118] px-4 py-3 shrink-0">
+   875→              <div className="flex items-center justify-between mb-2">
+   876→                <span className="text-white/50 text-[11px] font-bold uppercase tracking-wider">
+   877→                  Delivery progress
+   878→                </span>
+   879→                <span className="text-[#38BDF8] text-sm font-black">
+   880→                  {delivery ? Math.round(delivery.progress) : 0}%
+   881→                </span>
+   882→              </div>
+   883→              <div className="h-2 bg-white/5 rounded-full overflow-hidden relative">
+   884→                <motion.div
+   885→                  className="h-full rounded-full relative"
+   886→                  style={{
+   887→                    background:
+   888→                      'linear-gradient(90deg, #38BDF8 0%, #10E07A 50%, #F5C451 100%)',
+   889→                  }}
+   890→                  animate={{
+   891→                    width: `${delivery ? delivery.progress : 0}%`,
+   892→                  }}
+   893→                  transition={{ duration: 0.6, ease: 'easeOut' }}
+   894→                >
+   895→                  {delivery && delivery.status !== 'delivered' && (
+   896→                    <motion.div
+   897→                      animate={{ x: ['-100%', '200%'] }}
+   898→                      transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
+   899→                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+   900→                    />
+   901→                  )}
+   902→                </motion.div>
+   903→              </div>
+   904→              {isPolling && (
+   905→                <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
+   906→                  {socketConnected ? (
+   907→                    <>
+   908→                      <Wifi className="w-3 h-3 text-[#10E07A]" />
+   909→                      <span className="text-[#10E07A]">Realtime</span>
+   910→                      <span className="text-white/30">• fallback poll every 5s</span>
+   911→                    </>
+   912→                  ) : (
+   913→                    <>
+   914→                      <Loader2 className="w-3 h-3 animate-spin" />
+   915→                      <WifiOff className="w-3 h-3 text-[#FB7185]" />
+   916→                      <span className="text-[#FB7185]">Socket offline</span>
+   917→                      <span className="text-white/30">• polling every 5s</span>
+   918→                    </>
+   919→                  )}
+   920→                </p>
+   921→              )}
+   922→            </div>
+   923→          </motion.div>
+   924→        </>
+   925→      )}
+   926→    </AnimatePresence>
+   927→  );
+   928→}
+   929→
+   930→/* ──────────────────────────────────────────────────────────
+   931→   Map Panel - stylized CSS map with markers + route
+   932→   ────────────────────────────────────────────────────────── */
+   933→
+   934→function MapPanel({
+   935→  delivery,
+   936→  layout,
+   937→}: {
+   938→  delivery: DeliveryState | null;
+   939→  layout: {
+   940→    store: { x: number; y: number };
+   941→    customer: { x: number; y: number };
+   942→    rider: { x: number; y: number };
+   943→  } | null;
+   944→}) {
+   945→  return (
+   946→    <div className="relative h-[280px] sm:h-[320px] overflow-hidden">
+   947→      {/* Dark base */}
+   948→      <div className="absolute inset-0 bg-[#080c12]" />
+   949→
+   950→      {/* Grid pattern - streets */}
+   951→      <div
+   952→        className="absolute inset-0 opacity-[0.07]"
+   953→        style={{
+   954→          backgroundImage: `
+   955→            repeating-linear-gradient(0deg, rgba(255,255,255,0.6) 0px, transparent 1px, transparent 60px),
+   956→            repeating-linear-gradient(90deg, rgba(255,255,255,0.6) 0px, transparent 1px, transparent 60px)
+   957→          `,
+   958→        }}
+   959→      />
+   960→
+   961→      {/* Major roads */}
+   962→      <svg className="absolute inset-0 w-full h-full opacity-[0.08]">
+   963→        <line x1="0" y1="35%" x2="100%" y2="35%" stroke="white" strokeWidth="3" />
+   964→        <line x1="0" y1="65%" x2="100%" y2="65%" stroke="white" strokeWidth="2" />
+   965→        <line x1="30%" y1="0" x2="30%" y2="100%" stroke="white" strokeWidth="2" />
+   966→        <line x1="70%" y1="0" x2="70%" y2="100%" stroke="white" strokeWidth="3" />
+   967→        <line x1="0" y1="0" x2="100%" y2="100%" stroke="white" strokeWidth="1.5" opacity="0.5" />
+   968→      </svg>
+   969→
+   970→      {/* Block buildings */}
+   971→      <div className="absolute top-[12%] left-[10%] w-14 h-10 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
+   972→      <div className="absolute top-[42%] left-[35%] w-16 h-8 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
+   973→      <div className="absolute top-[18%] right-[15%] w-12 h-14 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
+   974→      <div className="absolute bottom-[15%] left-[18%] w-20 h-10 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
+   975→      <div className="absolute bottom-[25%] right-[8%] w-14 h-16 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
+   976→
+   977→      {/* Gradient overlays */}
+   978→      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D14]/40 via-transparent to-[#0B0D14]" />
+   979→      <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[#F5C451]/5 blur-[60px] rounded-full" />
+   980→      <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[#38BDF8]/5 blur-[60px] rounded-full" />
+   981→
+   982→      {/* Route line + markers */}
+   983→      {layout && delivery && (
+   984→        <div className="absolute inset-0">
+   985→          {/* SVG route overlay */}
+   986→          <svg
+   987→            className="absolute inset-0 w-full h-full"
+   988→            viewBox="0 0 100 100"
+   989→            preserveAspectRatio="none"
+   990→          >
+   991→            {/* Dashed route from store → rider */}
+   992→            <line
+   993→              x1={layout.store.x}
+   994→              y1={layout.store.y}
+   995→              x2={layout.rider.x}
+   996→              y2={layout.rider.y}
+   997→              stroke="#F5C451"
+   998→              strokeWidth="0.6"
+   999→              strokeDasharray="2 1.5"
+  1000→              opacity="0.5"
+  1001→            />
+  1002→            {/* Dashed route from rider → customer */}
+  1003→            <line
+  1004→              x1={layout.rider.x}
+  1005→              y1={layout.rider.y}
+  1006→              x2={layout.customer.x}
+  1007→              y2={layout.customer.y}
+  1008→              stroke="#38BDF8"
+  1009→              strokeWidth="0.6"
+  1010→              strokeDasharray="2 1.5"
+  1011→              opacity="0.7"
+  1012→            >
+  1013→              <animate
+  1014→                attributeName="stroke-dashoffset"
+  1015→                from="0"
+  1016→                to="-7"
+  1017→                dur="1.4s"
+  1018→                repeatCount="indefinite"
+  1019→              />
+  1020→            </line>
+  1021→          </svg>
+  1022→
+  1023→          {/* Store marker */}
+  1024→          <Marker
+  1025→            position={layout.store}
+  1026→            color="#F5C451"
+  1027→            label={delivery.store.name}
+  1028→            icon={<Store className="w-3.5 h-3.5 text-[#F5C451]" />}
+  1029→          />
+  1030→
+  1031→          {/* Customer marker */}
+  1032→          <Marker
+  1033→            position={layout.customer}
+  1034→            color="#38BDF8"
+  1035→            label="Your location"
+  1036→            icon={<MapPin className="w-3.5 h-3.5 text-[#38BDF8]" />}
+  1037→            pulseColor="rgba(56,189,248,0.4)"
+  1038→          />
+  1039→
+  1040→          {/* Rider marker - animated position synced with progress */}
+  1041→          <motion.div
+  1042→            className="absolute z-10"
+  1043→            animate={{
+  1044→              left: `${layout.rider.x}%`,
+  1045→              top: `${layout.rider.y}%`,
+  1046→            }}
+  1047→            transition={{ duration: 1.8, ease: 'easeInOut' }}
+  1048→            style={{ transform: 'translate(-50%, -50%)' }}
+  1049→          >
+  1050→            {/* Pulsing halo */}
+  1051→            <motion.div
+  1052→              animate={{ scale: [1, 2.4], opacity: [0.4, 0] }}
+  1053→              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
+  1054→              className="absolute inset-0 rounded-full bg-[#38BDF8]"
+  1055→            />
+  1056→            <div className="relative w-9 h-9 rounded-full bg-[#38BDF8] border-2 border-[#0B0D14] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+  1057→              <Bike className="w-4 h-4 text-[#0B0D14]" />
+  1058→            </div>
+  1059→          </motion.div>
+  1060→        </div>
+  1061→      )}
+  1062→
+  1063→      {/* Legend */}
+  1064→      {layout && delivery && (
+  1065→        <div className="absolute top-3 left-3 bg-[#0F1118]/80 backdrop-blur rounded-xl border border-white/10 p-2 space-y-1.5">
+  1066→          <div className="flex items-center gap-2">
+  1067→            <div className="w-2.5 h-2.5 rounded-full bg-[#F5C451]" />
+  1068→            <span className="text-white/60 text-[10px] font-medium">Restaurant</span>
+  1069→          </div>
+  1070→          <div className="flex items-center gap-2">
+  1071→            <div className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
+  1072→            <span className="text-white/60 text-[10px] font-medium">Rider</span>
+  1073→          </div>
+  1074→          <div className="flex items-center gap-2">
+  1075→            <div className="w-2.5 h-2.5 rounded-full bg-[#10E07A]" />
+  1076→            <span className="text-white/60 text-[10px] font-medium">You</span>
+  1077→          </div>
+  1078→        </div>
+  1079→      )}
+  1080→
+  1081→      {/* Empty state overlay */}
+  1082→      {!delivery && (
+  1083→        <div className="absolute inset-0 flex items-center justify-center">
+  1084→          <div className="text-center">
+  1085→            <motion.div
+  1086→              animate={{ rotate: 360 }}
+  1087→              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+  1088→              className="w-10 h-10 border-2 border-[#38BDF8]/30 border-t-[#38BDF8] rounded-full mx-auto mb-3"
+  1089→            />
+  1090→            <p className="text-white/50 text-sm">Locating your rider...</p>
+  1091→          </div>
+  1092→        </div>
+  1093→      )}
+  1094→    </div>
+  1095→  );
+  1096→}
+  1097→
+  1098→function Marker({
+  1099→  position,
+  1100→  color,
+  1101→  label,
+  1102→  icon,
+  1103→  pulseColor,
+  1104→}: {
+  1105→  position: { x: number; y: number };
+  1106→  color: string;
+  1107→  label: string;
+  1108→  icon: React.ReactNode;
+  1109→  pulseColor?: string;
+  1110→}) {
+  1111→  return (
+  1112→    <div
+  1113→      className="absolute z-[5]"
+  1114→      style={{
+  1115→        left: `${position.x}%`,
+  1116→        top: `${position.y}%`,
+  1117→        transform: 'translate(-50%, -50%)',
+  1118→      }}
+  1119→    >
+  1120→      {pulseColor && (
+  1121→        <motion.div
+  1122→          animate={{ scale: [1, 2.2], opacity: [0.5, 0] }}
+  1123→          transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+  1124→          className="absolute inset-0 rounded-full"
+  1125→          style={{ backgroundColor: pulseColor }}
+  1126→        />
+  1127→      )}
+  1128→      <div
+  1129→        className="relative w-8 h-8 rounded-full flex items-center justify-center border-2"
+  1130→        style={{
+  1131→          backgroundColor: `${color}22`,
+  1132→          borderColor: color,
+  1133→        }}
+  1134→      >
+  1135→        {icon}
+  1136→      </div>
+  1137→      <div
+  1138→        className="absolute left-1/2 -translate-x-1/2 mt-1 px-2 py-0.5 rounded-md text-[9px] font-bold whitespace-nowrap"
+  1139→        style={{
+  1140→          backgroundColor: 'rgba(15,17,23,0.9)',
+  1141→          color,
+  1142→        }}
+  1143→      >
+  1144→        {label}
+  1145→      </div>
+  1146→    </div>
+  1147→  );
+  1148→}
+  1149→
+  1150→/* ──────────────────────────────────────────────────────────
+  1151→   Update Bubble (system messages only — polling-based)
+  1152→   ────────────────────────────────────────────────────────── */
+  1153→
+  1154→function UpdateBubble({ msg }: { msg: UpdateMessage }) {
+  1155→  return (
+  1156→    <motion.div
+  1157→      initial={{ opacity: 0, y: 8 }}
+  1158→      animate={{ opacity: 1, y: 0 }}
+  1159→      transition={{ duration: 0.2 }}
+  1160→      className="flex justify-center"
+  1161→    >
+  1162→      <span className="text-[11px] text-white/60 bg-white/5 px-3 py-1.5 rounded-full text-center max-w-[90%]">
+  1163→        {msg.text}
+  1164→        <span className="text-white/30 ml-2">· {formatTime(msg.timestamp)}</span>
+  1165→      </span>
+  1166→    </motion.div>
+  1167→  );
+  1168→}
+  1169→

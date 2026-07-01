@@ -1,0 +1,987 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useCallback, useRef } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  X,
+     7→  Heart,
+     8→  MessageCircle,
+     9→  Plus,
+    10→  Share2,
+    11→  Send,
+    12→  Users,
+    13→  Flame,
+    14→  Clock,
+    15→} from 'lucide-react';
+    16→import { useAppStore } from '@/lib/store';
+    17→import { communityPosts } from '@/lib/data';
+    18→import { useToast } from '@/hooks/use-toast';
+    19→
+    20→/* ──────────────────────────────────────────────────────────────────
+    21→   SwiftCommunity — full community feed with real posts / comments / likes
+    22→   Backed by /api/community (built by Task 2). Falls back to mock
+    23→   seed data so the feed is never visually empty.
+    24→   ────────────────────────────────────────────────────────────────── */
+    25→
+    26→interface ApiComment {
+    27→  id: string;
+    28→  authorName: string;
+    29→  authorInitial: string;
+    30→  content: string;
+    31→  createdAt: string;
+    32→}
+    33→
+    34→interface ApiPost {
+    35→  id: string;
+    36→  authorName: string;
+    37→  authorInitial: string;
+    38→  authorEmail?: string;
+    39→  category: string;
+    40→  content: string;
+    41→  imageUrl?: string | null;
+    42→  likes: number;
+    43→  likedBy?: string | string[];
+    44→  createdAt: string;
+    45→  comments: ApiComment[];
+    46→  /** Client-only stable React key for optimistic posts. */
+    47→  _localId?: string;
+    48→}
+    49→
+    50→const CATEGORIES = [
+    51→  { id: 'all', label: 'All' },
+    52→  { id: 'Reviews', label: 'Reviews' },
+    53→  { id: 'Recipes', label: 'Recipes' },
+    54→  { id: 'Tips', label: 'Tips' },
+    55→  { id: 'Questions', label: 'Questions' },
+    56→  { id: 'General', label: 'General' },
+    57→];
+    58→
+    59→const COMPOSER_CATEGORIES = ['Reviews', 'Recipes', 'Tips', 'Questions', 'General'];
+    60→
+    61→// Cycle 5 palette gradients by initial letter
+    62→// (A→green, B→gold, C→purple, D→cyan, E→red, F→green, …).
+    63→const PALETTE = [
+    64→  'from-[#13ec13]/40 to-[#13ec13]/10',
+    65→  'from-[#FFD700]/40 to-[#FFD700]/10',
+    66→  'from-[#8b5cf6]/40 to-[#8b5cf6]/10',
+    67→  'from-[#06b6d4]/40 to-[#06b6d4]/10',
+    68→  'from-[#FF6B6B]/40 to-[#FF6B6B]/10',
+    69→];
+    70→
+    71→function gradientFor(initial: string): string {
+    72→  const code = (initial || 'G').toUpperCase().charCodeAt(0) || 65;
+    73→  return PALETTE[(code - 65) % PALETTE.length];
+    74→}
+    75→
+    76→const CATEGORY_BADGES: Record<string, string> = {
+    77→  Reviews: 'bg-[#13ec13]/10 text-[#13ec13] border-[#13ec13]/20',
+    78→  Recipes: 'bg-[#06b6d4]/10 text-[#06b6d4] border-[#06b6d4]/20',
+    79→  Tips: 'bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/20',
+    80→  Questions: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
+    81→  General: 'bg-white/5 text-white/60 border-white/10',
+    82→  'Group Buy': 'bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/20',
+    83→  Charity: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
+    84→};
+    85→
+    86→function formatRelativeTime(dateString: string): string {
+    87→  try {
+    88→    const date = new Date(dateString);
+    89→    if (isNaN(date.getTime())) return 'just now';
+    90→    const diffMs = Date.now() - date.getTime();
+    91→    if (diffMs < 0) return 'just now';
+    92→    const sec = Math.floor(diffMs / 1000);
+    93→    if (sec < 60) return 'just now';
+    94→    const min = Math.floor(sec / 60);
+    95→    if (min < 60) return `${min}m ago`;
+    96→    const hr = Math.floor(min / 60);
+    97→    if (hr < 24) return `${hr}h ago`;
+    98→    const day = Math.floor(hr / 24);
+    99→    if (day < 7) return `${day}d ago`;
+   100→    const week = Math.floor(day / 7);
+   101→    if (week < 5) return `${week}w ago`;
+   102→    const month = Math.floor(day / 30);
+   103→    if (month < 12) return `${month}mo ago`;
+   104→    const year = Math.floor(day / 365);
+   105→    return `${year}y ago`;
+   106→  } catch {
+   107→    return 'just now';
+   108→  }
+   109→}
+   110→
+   111→function isLikedByMe(post: ApiPost, email: string): boolean {
+   112→  const lb = post.likedBy;
+   113→  if (!lb) return false;
+   114→  if (Array.isArray(lb)) return lb.includes(email);
+   115→  try {
+   116→    const arr = JSON.parse(lb);
+   117→    return Array.isArray(arr) && arr.includes(email);
+   118→  } catch {
+   119→    return false;
+   120→  }
+   121→}
+   122→
+   123→function likedByArray(post: ApiPost): string[] {
+   124→  const lb = post.likedBy;
+   125→  if (!lb) return [];
+   126→  if (Array.isArray(lb)) return lb;
+   127→  try {
+   128→    const arr = JSON.parse(lb);
+   129→    return Array.isArray(arr) ? arr.filter((x) => typeof x === 'string') : [];
+   130→  } catch {
+   131→    return [];
+   132→  }
+   133→}
+   134→
+   135→// Convert mock communityPosts (from @/lib/data) into ApiPost shape for fallback.
+   136→function seedToApiPosts(): ApiPost[] {
+   137→  const now = Date.now();
+   138→  return communityPosts.map((p, idx) => {
+   139→    const created = new Date(now - (idx + 1) * 60 * 60 * 1000).toISOString();
+   140→    return {
+   141→      id: `seed-${p.id}`,
+   142→      authorName: p.author,
+   143→      authorInitial: p.avatar,
+   144→      category: p.category,
+   145→      content: p.content,
+   146→      imageUrl: null,
+   147→      likes: p.likes,
+   148→      likedBy: [],
+   149→      createdAt: created,
+   150→      comments: Array.from({ length: Math.min(p.replies, 2) }).map((_, ci) => ({
+   151→        id: `seed-c-${p.id}-${ci}`,
+   152→        authorName: ci === 0 ? 'Sister Khadija' : 'Brother Yusuf',
+   153→        authorInitial: ci === 0 ? 'S' : 'Y',
+   154→        content:
+   155→          ci === 0
+   156→            ? 'Subhanallah, thank you for sharing! 🤲'
+   157→            : 'Jazak Allahu khairan for the tip 🌙',
+   158→        createdAt: new Date(
+   159→          now - (idx + 1) * 60 * 60 * 1000 + (ci + 1) * 5 * 60 * 1000,
+   160→        ).toISOString(),
+   161→      })),
+   162→    };
+   163→  });
+   164→}
+   165→
+   166→export default function CommunityForum() {
+   167→  const { activeModal, setActiveModal, userEmail, userName } = useAppStore();
+   168→  const { toast } = useToast();
+   169→
+   170→  const isOpen = activeModal === 'community';
+   171→  const email = userEmail?.trim() || 'guest';
+   172→  const authorName = userName?.trim() || 'Guest';
+   173→  const authorInitial = (authorName[0] || 'G').toUpperCase();
+   174→
+   175→  // ─── Feed state ───
+   176→  const [posts, setPosts] = useState<ApiPost[]>([]);
+   177→  const [loading, setLoading] = useState(true);
+   178→  const [loadError, setLoadError] = useState<string | null>(null);
+   179→  const [activeFilter, setActiveFilter] = useState('all');
+   180→  const [sortMode, setSortMode] = useState<'latest' | 'trending'>('latest');
+   181→  const [expandedComments, setExpandedComments] = useState<Record<string, boolean>>({});
+   182→  const [commentDrafts, setCommentDrafts] = useState<Record<string, string>>({});
+   183→  const [commentSending, setCommentSending] = useState<Record<string, boolean>>({});
+   184→  const [likePending, setLikePending] = useState<Record<string, boolean>>({});
+   185→
+   186→  // ─── Composer state ───
+   187→  const [composerOpen, setComposerOpen] = useState(false);
+   188→  const [composerContent, setComposerContent] = useState('');
+   189→  const [composerCategory, setComposerCategory] = useState('General');
+   190→  const [submittingPost, setSubmittingPost] = useState(false);
+   191→
+   192→  // Stable React key for each post (so optimistic→server swap doesn't remount).
+   193→  const reactKeyRef = useRef(0);
+   194→  function nextLocalId(): string {
+   195→    reactKeyRef.current += 1;
+   196→    return `local-${reactKeyRef.current}`;
+   197→  }
+   198→
+   199→  const reqIdRef = useRef(0);
+   200→
+   201→  // ─── Load posts (useCallback → called from useEffect; never setState
+   202→  //     directly in the effect body so we stay clean of the
+   203→  //     react-hooks/set-state-in-effect lint rule). ───
+   204→  const loadPosts = useCallback(async (ownerEmail: string) => {
+   205→    const reqId = (reqIdRef.current += 1);
+   206→    setLoading(true);
+   207→    setLoadError(null);
+   208→    try {
+   209→      const res = await fetch(
+   210→        `/api/community?email=${encodeURIComponent(ownerEmail)}`,
+   211→        { cache: 'no-store' },
+   212→      );
+   213→      const data = (await res.json()) as { posts?: ApiPost[] };
+   214→      if (reqId !== reqIdRef.current) return; // stale
+   215→      if (data.posts && data.posts.length > 0) {
+   216→        setPosts(data.posts);
+   217→      } else {
+   218→        setPosts(seedToApiPosts());
+   219→      }
+   220→    } catch {
+   221→      if (reqId !== reqIdRef.current) return;
+   222→      setLoadError('Could not reach the community feed. Showing sample posts.');
+   223→      setPosts(seedToApiPosts());
+   224→    } finally {
+   225→      if (reqId === reqIdRef.current) setLoading(false);
+   226→    }
+   227→  }, []);
+   228→
+   229→  useEffect(() => {
+   230→    if (!isOpen) return;
+   231→    loadPosts(email);
+   232→  }, [isOpen, email, loadPosts]);
+   233→
+   234→  // ─── Derived: filtered + sorted feed ───
+   235→  const visiblePosts = (() => {
+   236→    const list =
+   237→      activeFilter === 'all'
+   238→        ? posts
+   239→        : posts.filter((p) => p.category === activeFilter);
+   240→    return [...list].sort((a, b) => {
+   241→      if (sortMode === 'trending') {
+   242→        if (b.likes !== a.likes) return b.likes - a.likes;
+   243→        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+   244→      }
+   245→      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+   246→    });
+   247→  })();
+   248→
+   249→  // ─── Like handler (optimistic + sync) ───
+   250→  const handleLike = useCallback(
+   251→    async (post: ApiPost) => {
+   252→      if (likePending[post.id]) return;
+   253→      const liked = isLikedByMe(post, email);
+   254→      const arr = likedByArray(post);
+   255→      const newArr = liked
+   256→        ? arr.filter((e) => e !== email)
+   257→        : [...arr, email];
+   258→      const newCount = newArr.length;
+   259→
+   260→      // Optimistic update
+   261→      setPosts((prev) =>
+   262→        prev.map((p) =>
+   263→          p.id === post.id ? { ...p, likes: newCount, likedBy: newArr } : p,
+   264→        ),
+   265→      );
+   266→      setLikePending((prev) => ({ ...prev, [post.id]: true }));
+   267→
+   268→      try {
+   269→        const res = await fetch('/api/community', {
+   270→          method: 'POST',
+   271→          headers: { 'Content-Type': 'application/json' },
+   272→          body: JSON.stringify({ email, postId: post.id, action: 'like' }),
+   273→        });
+   274→        const data = (await res.json()) as { post?: ApiPost; liked?: boolean };
+   275→        if (data.post) {
+   276→          // Preserve stable local React key across the server sync.
+   277→          setPosts((prev) =>
+   278→            prev.map((p) =>
+   279→              p.id === post.id
+   280→                ? { ...data.post!, _localId: p._localId }
+   281→                : p,
+   282→            ),
+   283→          );
+   284→        }
+   285→        if (data.liked) {
+   286→          toast({ title: 'Liked! ❤️', description: 'Thanks for the love' });
+   287→        }
+   288→      } catch {
+   289→        // Revert on failure
+   290→        setPosts((prev) =>
+   291→          prev.map((p) =>
+   292→            p.id === post.id
+   293→              ? { ...p, likes: post.likes, likedBy: post.likedBy }
+   294→              : p,
+   295→          ),
+   296→        );
+   297→        toast({ title: 'Like failed', description: 'Tap again to retry' });
+   298→      } finally {
+   299→        setLikePending((prev) => {
+   300→          const next = { ...prev };
+   301→          delete next[post.id];
+   302→          return next;
+   303→        });
+   304→      }
+   305→    },
+   306→    [email, likePending, toast],
+   307→  );
+   308→
+   309→  // ─── Comment handlers ───
+   310→  const toggleComments = (postId: string) => {
+   311→    setExpandedComments((prev) => ({ ...prev, [postId]: !prev[postId] }));
+   312→  };
+   313→
+   314→  const setCommentDraft = (postId: string, value: string) => {
+   315→    setCommentDrafts((prev) => ({ ...prev, [postId]: value }));
+   316→  };
+   317→
+   318→  const handleSubmitComment = useCallback(
+   319→    async (post: ApiPost) => {
+   320→      const draft = (commentDrafts[post.id] || '').trim();
+   321→      if (!draft || commentSending[post.id]) return;
+   322→
+   323→      const tempId = `temp-c-${Date.now()}`;
+   324→      const tempComment: ApiComment = {
+   325→        id: tempId,
+   326→        authorName,
+   327→        authorInitial,
+   328→        content: draft,
+   329→        createdAt: new Date().toISOString(),
+   330→      };
+   331→
+   332→      // Optimistic append (comments are oldest-first).
+   333→      setPosts((prev) =>
+   334→        prev.map((p) =>
+   335→          p.id === post.id
+   336→            ? { ...p, comments: [...p.comments, tempComment] }
+   337→            : p,
+   338→        ),
+   339→      );
+   340→      setCommentDrafts((prev) => ({ ...prev, [post.id]: '' }));
+   341→      setCommentSending((prev) => ({ ...prev, [post.id]: true }));
+   342→
+   343→      try {
+   344→        const res = await fetch('/api/community', {
+   345→          method: 'POST',
+   346→          headers: { 'Content-Type': 'application/json' },
+   347→          body: JSON.stringify({
+   348→            email,
+   349→            postId: post.id,
+   350→            authorName,
+   351→            authorInitial,
+   352→            content: draft,
+   353→            action: 'comment',
+   354→          }),
+   355→        });
+   356→        const data = (await res.json()) as { comment?: ApiComment };
+   357→        if (data.comment) {
+   358→          setPosts((prev) =>
+   359→            prev.map((p) =>
+   360→              p.id === post.id
+   361→                ? {
+   362→                    ...p,
+   363→                    comments: [
+   364→                      ...p.comments.filter((c) => c.id !== tempId),
+   365→                      data.comment!,
+   366→                    ],
+   367→                  }
+   368→                : p,
+   369→            ),
+   370→          );
+   371→        }
+   372→      } catch {
+   373→        // Remove optimistic comment + restore draft
+   374→        setPosts((prev) =>
+   375→          prev.map((p) =>
+   376→            p.id === post.id
+   377→              ? {
+   378→                  ...p,
+   379→                  comments: p.comments.filter((c) => c.id !== tempId),
+   380→                }
+   381→              : p,
+   382→          ),
+   383→        );
+   384→        setCommentDrafts((prev) => ({ ...prev, [post.id]: draft }));
+   385→        toast({ title: 'Comment failed', description: 'Tap send to retry' });
+   386→      } finally {
+   387→        setCommentSending((prev) => {
+   388→          const next = { ...prev };
+   389→          delete next[post.id];
+   390→          return next;
+   391→        });
+   392→      }
+   393→    },
+   394→    [authorInitial, authorName, commentDrafts, commentSending, email, toast],
+   395→  );
+   396→
+   397→  // ─── Create post handler ───
+   398→  const handleCreatePost = useCallback(async () => {
+   399→    const content = composerContent.trim();
+   400→    if (!content || submittingPost) return;
+   401→
+   402→    const localId = nextLocalId();
+   403→    const tempPost: ApiPost = {
+   404→      id: `temp-${localId}`,
+   405→      authorName,
+   406→      authorInitial,
+   407→      authorEmail: email,
+   408→      category: composerCategory,
+   409→      content,
+   410→      imageUrl: null,
+   411→      likes: 0,
+   412→      likedBy: [],
+   413→      createdAt: new Date().toISOString(),
+   414→      comments: [],
+   415→      _localId: localId,
+   416→    };
+   417→
+   418→    setSubmittingPost(true);
+   419→    setComposerOpen(false);
+   420→    setComposerContent('');
+   421→    setComposerCategory('General');
+   422→
+   423→    // Optimistic prepend
+   424→    setPosts((prev) => [tempPost, ...prev]);
+   425→    // Jump to latest sort + all filter so the user sees their new post.
+   426→    setSortMode('latest');
+   427→    setActiveFilter('all');
+   428→    toast({ title: 'Posted! 🎉', description: 'Your post is live in the community' });
+   429→
+   430→    try {
+   431→      const res = await fetch('/api/community', {
+   432→        method: 'POST',
+   433→        headers: { 'Content-Type': 'application/json' },
+   434→        body: JSON.stringify({
+   435→          email,
+   436→          authorName,
+   437→          authorInitial,
+   438→          category: tempPost.category,
+   439→          content: tempPost.content,
+   440→        }),
+   441→      });
+   442→      const data = (await res.json()) as { post?: ApiPost };
+   443→      if (data.post) {
+   444→        // Replace temp post in place, preserving the stable _localId so
+   445→        // framer-motion doesn't remount the card.
+   446→        setPosts((prev) =>
+   447→          prev.map((p) =>
+   448→            p.id === tempPost.id
+   449→              ? { ...data.post!, _localId: tempPost._localId }
+   450→              : p,
+   451→          ),
+   452→        );
+   453→      }
+   454→    } catch {
+   455→      // Remove the optimistic post + reopen composer with content
+   456→      setPosts((prev) => prev.filter((p) => p.id !== tempPost.id));
+   457→      setComposerContent(content);
+   458→      setComposerCategory(tempPost.category);
+   459→      setComposerOpen(true);
+   460→      toast({ title: 'Post failed', description: 'Tap Post to retry' });
+   461→    } finally {
+   462→      setSubmittingPost(false);
+   463→    }
+   464→  }, [authorInitial, authorName, composerCategory, composerContent, email, submittingPost, toast]);
+   465→
+   466→  const handleShare = (post: ApiPost) => {
+   467→    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+   468→      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/?post=${post.id}`;
+   469→      navigator.clipboard.writeText(url).catch(() => {});
+   470→    }
+   471→    toast({ title: 'Link copied!', description: 'Share with your community' });
+   472→  };
+   473→
+   474→  const handleClose = () => {
+   475→    setActiveModal(null);
+   476→    setComposerOpen(false);
+   477→    setComposerContent('');
+   478→    setExpandedComments({});
+   479→    setCommentDrafts({});
+   480→  };
+   481→
+   482→  // ─── Render ───
+   483→  return (
+   484→    <AnimatePresence>
+   485→      {isOpen && (
+   486→        <>
+   487→          {/* Backdrop */}
+   488→          <motion.div
+   489→            initial={{ opacity: 0 }}
+   490→            animate={{ opacity: 1 }}
+   491→            exit={{ opacity: 0 }}
+   492→            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[110]"
+   493→            onClick={handleClose}
+   494→          />
+   495→
+   496→          {/* Full-screen modal */}
+   497→          <motion.div
+   498→            initial={{ y: '100%' }}
+   499→            animate={{ y: 0 }}
+   500→            exit={{ y: '100%' }}
+   501→            transition={{ type: 'spring', damping: 28, stiffness: 220 }}
+   502→            className="fixed inset-0 z-[120] bg-[#05070A] flex flex-col overflow-y-auto custom-scrollbar"
+   503→          >
+   504→            {/* Decorative top glow */}
+   505→            <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[320px] h-[200px] rounded-full bg-[#13ec13]/10 blur-3xl" />
+   506→
+   507→            {/* ──── Sticky Header ──── */}
+   508→            <div className="sticky top-0 z-20 glass-effect border-b border-white/5">
+   509→              {/* Accent bar */}
+   510→              <div className="h-[3px] bg-gradient-to-r from-[#13ec13] via-[#FFD700] to-[#8b5cf6]" />
+   511→
+   512→              <div className="flex items-center justify-between p-4">
+   513→                <div className="flex items-center gap-3 min-w-0 flex-1">
+   514→                  <motion.div
+   515→                    initial={{ scale: 0.8, rotate: -10 }}
+   516→                    animate={{ scale: 1, rotate: 0 }}
+   517→                    transition={{ type: 'spring', damping: 15, stiffness: 200 }}
+   518→                    className="w-10 h-10 bg-gradient-to-br from-[#13ec13]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[#13ec13]/30 shrink-0"
+   519→                  >
+   520→                    <Users className="w-5 h-5 text-[#13ec13]" />
+   521→                  </motion.div>
+   522→                  <div className="min-w-0">
+   523→                    <h2 className="text-white font-black text-lg leading-tight flex items-center gap-2">
+   524→                      <span>SwiftCommunity</span>
+   525→                      <span className="text-base">🌙</span>
+   526→                      <span className="beta-badge text-[9px]">BETA</span>
+   527→                    </h2>
+   528→                    <p className="text-white/40 text-xs">
+   529→                      {posts.length} {posts.length === 1 ? 'post' : 'posts'} · break fast together
+   530→                    </p>
+   531→                  </div>
+   532→                </div>
+   533→                <button
+   534→                  onClick={handleClose}
+   535→                  aria-label="Close"
+   536→                  className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors shrink-0"
+   537→                >
+   538→                  <X className="w-5 h-5 text-white/70" />
+   539→                </button>
+   540→              </div>
+   541→
+   542→              {/* Category Filter Chips */}
+   543→              <div className="px-4 pb-3 flex gap-2 overflow-x-auto no-scrollbar">
+   544→                {CATEGORIES.map((cat) => (
+   545→                  <button
+   546→                    key={cat.id}
+   547→                    onClick={() => setActiveFilter(cat.id)}
+   548→                    className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
+   549→                      activeFilter === cat.id
+   550→                        ? 'bg-[#13ec13]/20 border border-[#13ec13]/40 text-[#13ec13]'
+   551→                        : 'bg-[#1A1D26] border border-white/5 text-white/50 hover:bg-white/5 hover:text-white/80'
+   552→                    }`}
+   553→                  >
+   554→                    {cat.label}
+   555→                  </button>
+   556→                ))}
+   557→              </div>
+   558→            </div>
+   559→
+   560→            {/* ──── Sort toggle + error strip ──── */}
+   561→            <div className="px-4 pt-4 pb-2 flex items-center justify-between gap-2">
+   562→              <div className="flex items-center gap-1 p-1 bg-[#0F1117] rounded-full border border-white/5">
+   563→                <button
+   564→                  onClick={() => setSortMode('latest')}
+   565→                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+   566→                    sortMode === 'latest'
+   567→                      ? 'bg-[#13ec13]/20 text-[#13ec13]'
+   568→                      : 'text-white/40 hover:text-white/70'
+   569→                  }`}
+   570→                >
+   571→                  <Clock className="w-3.5 h-3.5" />
+   572→                  Latest
+   573→                </button>
+   574→                <button
+   575→                  onClick={() => setSortMode('trending')}
+   576→                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
+   577→                    sortMode === 'trending'
+   578→                      ? 'bg-[#FFD700]/20 text-[#FFD700]'
+   579→                      : 'text-white/40 hover:text-white/70'
+   580→                  }`}
+   581→                >
+   582→                  <Flame className="w-3.5 h-3.5" />
+   583→                  Trending
+   584→                </button>
+   585→              </div>
+   586→              {loadError && (
+   587→                <span className="text-[10px] text-[#FF6B6B]/70 truncate text-right max-w-[55%]">
+   588→                  {loadError}
+   589→                </span>
+   590→              )}
+   591→            </div>
+   592→
+   593→            {/* ──── Feed ──── */}
+   594→            <div className="px-4 pt-2 pb-32 space-y-3 flex-1">
+   595→              {loading ? (
+   596→                <div className="space-y-3">
+   597→                  {Array.from({ length: 4 }).map((_, i) => (
+   598→                    <div
+   599→                      key={i}
+   600→                      className="bg-[#0F1117] rounded-2xl border border-white/5 p-4 animate-pulse"
+   601→                    >
+   602→                      <div className="flex items-center gap-3 mb-3">
+   603→                        <div className="w-10 h-10 rounded-full bg-white/10" />
+   604→                        <div className="flex-1 space-y-1.5">
+   605→                          <div className="h-3 w-1/3 rounded bg-white/10" />
+   606→                          <div className="h-2 w-1/4 rounded bg-white/5" />
+   607→                        </div>
+   608→                        <div className="w-16 h-5 rounded-full bg-white/5" />
+   609→                      </div>
+   610→                      <div className="space-y-2">
+   611→                        <div className="h-3 w-full rounded bg-white/10" />
+   612→                        <div className="h-3 w-2/3 rounded bg-white/10" />
+   613→                      </div>
+   614→                      <div className="flex gap-5 mt-3">
+   615→                        <div className="h-4 w-12 rounded bg-white/5" />
+   616→                        <div className="h-4 w-12 rounded bg-white/5" />
+   617→                        <div className="h-4 w-12 rounded bg-white/5" />
+   618→                      </div>
+   619→                    </div>
+   620→                  ))}
+   621→                </div>
+   622→              ) : visiblePosts.length === 0 ? (
+   623→                <motion.div
+   624→                  initial={{ opacity: 0, y: 12 }}
+   625→                  animate={{ opacity: 1, y: 0 }}
+   626→                  transition={{ duration: 0.4, ease: 'easeOut' }}
+   627→                  className="flex flex-col items-center justify-center py-20 text-center"
+   628→                >
+   629→                  <motion.div
+   630→                    initial={{ scale: 0.7, opacity: 0 }}
+   631→                    animate={{ scale: 1, opacity: 1 }}
+   632→                    transition={{ type: 'spring', damping: 14, stiffness: 180, delay: 0.1 }}
+   633→                    className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
+   634→                    style={{
+   635→                      background: 'radial-gradient(circle at center, rgba(167,139,250,0.18), rgba(167,139,250,0.04))',
+   636→                      border: '1px solid rgba(167,139,250,0.3)',
+   637→                      boxShadow: '0 0 24px rgba(167,139,250,0.18)',
+   638→                    }}
+   639→                  >
+   640→                    <MessageCircle className="w-9 h-9 text-[#A78BFA]" />
+   641→                  </motion.div>
+   642→                  <motion.p
+   643→                    initial={{ opacity: 0, y: 8 }}
+   644→                    animate={{ opacity: 1, y: 0 }}
+   645→                    transition={{ delay: 0.2 }}
+   646→                    className="text-white font-bold text-base"
+   647→                  >
+   648→                    {activeFilter === 'all'
+   649→                      ? 'No posts yet'
+   650→                      : `No ${activeFilter} posts yet`}
+   651→                  </motion.p>
+   652→                  <motion.p
+   653→                    initial={{ opacity: 0, y: 8 }}
+   654→                    animate={{ opacity: 1, y: 0 }}
+   655→                    transition={{ delay: 0.3 }}
+   656→                    className="text-white/40 text-sm mt-1 max-w-[240px]"
+   657→                  >
+   658→                    {activeFilter === 'all'
+   659→                      ? 'Be the first to share something with the community.'
+   660→                      : `Be the first to post in ${activeFilter}! Tap the + button below.`}
+   661→                  </motion.p>
+   662→                  <motion.button
+   663→                    initial={{ opacity: 0, y: 8 }}
+   664→                    animate={{ opacity: 1, y: 0 }}
+   665→                    transition={{ delay: 0.4 }}
+   666→                    onClick={() => setComposerOpen(true)}
+   667→                    className="mt-5 px-5 py-2.5 rounded-full bg-[#A78BFA] text-white font-bold text-sm active:scale-95 transition-transform"
+   668→                    style={{ boxShadow: '0 0 16px rgba(167,139,250,0.35)' }}
+   669→                  >
+   670→                    + Create a post
+   671→                  </motion.button>
+   672→                </motion.div>
+   673→              ) : (
+   674→                <AnimatePresence mode="popLayout">
+   675→                  {visiblePosts.map((post, i) => {
+   676→                    const liked = isLikedByMe(post, email);
+   677→                    const expanded = !!expandedComments[post.id];
+   678→                    const commentCount = post.comments?.length || 0;
+   679→                    const draft = commentDrafts[post.id] || '';
+   680→                    const sending = !!commentSending[post.id];
+   681→                    const pending = !!likePending[post.id];
+   682→                    const reactKey = post._localId || post.id;
+   683→
+   684→                    return (
+   685→                      <motion.div
+   686→                        key={reactKey}
+   687→                        layout
+   688→                        initial={{ opacity: 0, y: 16 }}
+   689→                        animate={{ opacity: 1, y: 0 }}
+   690→                        exit={{ opacity: 0, scale: 0.97 }}
+   691→                        transition={{
+   692→                          delay: Math.min(i * 0.04, 0.3),
+   693→                          type: 'spring',
+   694→                          damping: 25,
+   695→                        }}
+   696→                        className="bg-[#0F1117] rounded-2xl border border-white/5 hover:border-white/10 transition-colors p-4"
+   697→                      >
+   698→                        {/* Author row */}
+   699→                        <div className="flex items-center gap-3 mb-3">
+   700→                          <div
+   701→                            className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradientFor(post.authorInitial)} flex items-center justify-center border border-white/10 shrink-0`}
+   702→                          >
+   703→                            <span className="text-white text-sm font-bold">
+   704→                              {post.authorInitial || 'U'}
+   705→                            </span>
+   706→                          </div>
+   707→                          <div className="flex-1 min-w-0">
+   708→                            <p className="text-white text-sm font-bold truncate">
+   709→                              {post.authorName}
+   710→                            </p>
+   711→                            <p className="text-white/30 text-[11px]">
+   712→                              {formatRelativeTime(post.createdAt)}
+   713→                            </p>
+   714→                          </div>
+   715→                          <span
+   716→                            className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
+   717→                              CATEGORY_BADGES[post.category] || CATEGORY_BADGES.General
+   718→                            }`}
+   719→                          >
+   720→                            {post.category}
+   721→                          </span>
+   722→                        </div>
+   723→
+   724→                        {/* Content */}
+   725→                        <p className="text-white/80 text-sm leading-relaxed mb-3 whitespace-pre-wrap break-words">
+   726→                          {post.content}
+   727→                        </p>
+   728→
+   729→                        {/* Optional image */}
+   730→                        {post.imageUrl ? (
+   731→                          <div className="rounded-xl overflow-hidden border border-white/5 mb-3">
+   732→                            <img
+   733→                              src={post.imageUrl}
+   734→                              alt="Post attachment"
+   735→                              className="w-full object-cover max-h-80"
+   736→                            />
+   737→                          </div>
+   738→                        ) : null}
+   739→
+   740→                        {/* Action row */}
+   741→                        <div className="flex items-center gap-5 pt-1">
+   742→                          <button
+   743→                            onClick={() => handleLike(post)}
+   744→                            disabled={pending}
+   745→                            aria-label={liked ? 'Unlike' : 'Like'}
+   746→                            className={`flex items-center gap-1.5 transition-all active:scale-90 disabled:opacity-50 ${
+   747→                              liked
+   748→                                ? 'text-[#FF6B6B]'
+   749→                                : 'text-white/40 hover:text-[#FF6B6B]'
+   750→                            }`}
+   751→                          >
+   752→                            <motion.span
+   753→                              key={liked ? 'filled' : 'outline'}
+   754→                              initial={{ scale: 0.5 }}
+   755→                              animate={{ scale: 1 }}
+   756→                              transition={{ type: 'spring', damping: 12, stiffness: 300 }}
+   757→                              className="flex items-center"
+   758→                            >
+   759→                              <Heart
+   760→                                className={`w-4 h-4 ${liked ? 'fill-current' : ''}`}
+   761→                              />
+   762→                            </motion.span>
+   763→                            <span className="text-xs font-semibold">{post.likes}</span>
+   764→                          </button>
+   765→
+   766→                          <button
+   767→                            onClick={() => toggleComments(post.id)}
+   768→                            aria-label="Comments"
+   769→                            className={`flex items-center gap-1.5 transition-all active:scale-90 ${
+   770→                              expanded
+   771→                                ? 'text-[#13ec13]'
+   772→                                : 'text-white/40 hover:text-[#13ec13]'
+   773→                            }`}
+   774→                          >
+   775→                            <MessageCircle className="w-4 h-4" />
+   776→                            <span className="text-xs font-semibold">{commentCount}</span>
+   777→                          </button>
+   778→
+   779→                          <button
+   780→                            onClick={() => handleShare(post)}
+   781→                            aria-label="Share"
+   782→                            className="flex items-center gap-1.5 text-white/40 hover:text-[#FFD700] transition-all active:scale-90"
+   783→                          >
+   784→                            <Share2 className="w-4 h-4" />
+   785→                            <span className="text-xs font-semibold">Share</span>
+   786→                          </button>
+   787→                        </div>
+   788→
+   789→                        {/* Comments section */}
+   790→                        <AnimatePresence initial={false}>
+   791→                          {expanded && (
+   792→                            <motion.div
+   793→                              initial={{ height: 0, opacity: 0 }}
+   794→                              animate={{ height: 'auto', opacity: 1 }}
+   795→                              exit={{ height: 0, opacity: 0 }}
+   796→                              transition={{ duration: 0.2 }}
+   797→                              className="overflow-hidden"
+   798→                            >
+   799→                              <div className="mt-3 pt-3 border-t border-white/5 space-y-3">
+   800→                                {commentCount === 0 && !draft && (
+   801→                                  <p className="text-white/30 text-xs text-center py-2">
+   802→                                    No comments yet · be the first to reply
+   803→                                  </p>
+   804→                                )}
+   805→                                {post.comments.map((c) => (
+   806→                                  <div key={c.id} className="flex items-start gap-2.5">
+   807→                                    <div
+   808→                                      className={`w-7 h-7 rounded-full bg-gradient-to-br ${gradientFor(c.authorInitial)} flex items-center justify-center border border-white/10 shrink-0`}
+   809→                                    >
+   810→                                      <span className="text-white text-[10px] font-bold">
+   811→                                        {c.authorInitial || 'U'}
+   812→                                      </span>
+   813→                                    </div>
+   814→                                    <div className="flex-1 min-w-0">
+   815→                                      <div className="flex items-center gap-2 mb-0.5">
+   816→                                        <p className="text-white text-xs font-bold truncate">
+   817→                                          {c.authorName}
+   818→                                        </p>
+   819→                                        <span className="text-white/30 text-[10px] shrink-0">
+   820→                                          {formatRelativeTime(c.createdAt)}
+   821→                                        </span>
+   822→                                      </div>
+   823→                                      <p className="text-white/70 text-xs leading-relaxed break-words">
+   824→                                        {c.content}
+   825→                                      </p>
+   826→                                    </div>
+   827→                                  </div>
+   828→                                ))}
+   829→
+   830→                                {/* Comment input */}
+   831→                                <div className="flex items-center gap-2 mt-2">
+   832→                                  <div
+   833→                                    className={`w-7 h-7 rounded-full bg-gradient-to-br ${gradientFor(authorInitial)} flex items-center justify-center border border-white/10 shrink-0`}
+   834→                                  >
+   835→                                    <span className="text-white text-[10px] font-bold">
+   836→                                      {authorInitial}
+   837→                                    </span>
+   838→                                  </div>
+   839→                                  <input
+   840→                                    value={draft}
+   841→                                    onChange={(e) => setCommentDraft(post.id, e.target.value)}
+   842→                                    onKeyDown={(e) => {
+   843→                                      if (e.key === 'Enter' && !e.shiftKey) {
+   844→                                        e.preventDefault();
+   845→                                        handleSubmitComment(post);
+   846→                                      }
+   847→                                    }}
+   848→                                    placeholder="Write a comment…"
+   849→                                    className="flex-1 bg-white/5 border border-white/5 focus:border-[#13ec13]/30 rounded-full px-3.5 py-2 text-white text-xs placeholder:text-white/30 outline-none transition-colors"
+   850→                                  />
+   851→                                  <button
+   852→                                    onClick={() => handleSubmitComment(post)}
+   853→                                    disabled={!draft.trim() || sending}
+   854→                                    aria-label="Send comment"
+   855→                                    className="w-9 h-9 rounded-full bg-[#13ec13] flex items-center justify-center text-[#05070A] active:scale-90 transition-transform disabled:opacity-40 disabled:active:scale-100 shrink-0"
+   856→                                  >
+   857→                                    <Send className="w-4 h-4" />
+   858→                                  </button>
+   859→                                </div>
+   860→                              </div>
+   861→                            </motion.div>
+   862→                          )}
+   863→                        </AnimatePresence>
+   864→                      </motion.div>
+   865→                    );
+   866→                  })}
+   867→                </AnimatePresence>
+   868→              )}
+   869→            </div>
+   870→
+   871→            {/* ──── FAB ──── */}
+   872→            {!composerOpen && (
+   873→              <motion.button
+   874→                initial={{ scale: 0, opacity: 0 }}
+   875→                animate={{ scale: 1, opacity: 1 }}
+   876→                exit={{ scale: 0, opacity: 0 }}
+   877→                transition={{ delay: 0.2, type: 'spring', damping: 15, stiffness: 250 }}
+   878→                onClick={() => setComposerOpen(true)}
+   879→                aria-label="Create a post"
+   880→                className="fixed bottom-6 right-5 z-[130] w-14 h-14 rounded-full bg-[#13ec13] flex items-center justify-center green-glow active:scale-90 transition-transform"
+   881→              >
+   882→                <Plus className="w-6 h-6 text-[#05070A]" strokeWidth={2.5} />
+   883→              </motion.button>
+   884→            )}
+   885→
+   886→            {/* ──── Composer sheet ──── */}
+   887→            <AnimatePresence>
+   888→              {composerOpen && (
+   889→                <>
+   890→                  <motion.div
+   891→                    initial={{ opacity: 0 }}
+   892→                    animate={{ opacity: 1 }}
+   893→                    exit={{ opacity: 0 }}
+   894→                    onClick={() => setComposerOpen(false)}
+   895→                    className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[140]"
+   896→                  />
+   897→                  <motion.div
+   898→                    initial={{ y: '100%' }}
+   899→                    animate={{ y: 0 }}
+   900→                    exit={{ y: '100%' }}
+   901→                    transition={{ type: 'spring', damping: 28, stiffness: 240 }}
+   902→                    className="fixed bottom-0 left-0 right-0 z-[150] bg-[#0F1117] rounded-t-3xl border-t border-white/10 p-5 pb-8 max-w-md mx-auto"
+   903→                  >
+   904→                    {/* Drag handle */}
+   905→                    <div className="flex justify-center mb-4">
+   906→                      <div className="w-10 h-1.5 rounded-full bg-white/15" />
+   907→                    </div>
+   908→
+   909→                    <div className="flex items-center justify-between mb-4">
+   910→                      <h3 className="text-white font-black text-lg">New Post ✍️</h3>
+   911→                      <button
+   912→                        onClick={() => setComposerOpen(false)}
+   913→                        aria-label="Close composer"
+   914→                        className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   915→                      >
+   916→                        <X className="w-4 h-4 text-white/60" />
+   917→                      </button>
+   918→                    </div>
+   919→
+   920→                    {/* Author row */}
+   921→                    <div className="flex items-center gap-2.5 mb-3">
+   922→                      <div
+   923→                        className={`w-8 h-8 rounded-full bg-gradient-to-br ${gradientFor(authorInitial)} flex items-center justify-center border border-white/10 shrink-0`}
+   924→                      >
+   925→                        <span className="text-white text-xs font-bold">
+   926→                          {authorInitial}
+   927→                        </span>
+   928→                      </div>
+   929→                      <div className="min-w-0">
+   930→                        <p className="text-white text-xs font-bold truncate">
+   931→                          {authorName}
+   932→                        </p>
+   933→                        <p className="text-white/30 text-[10px]">Posting as you</p>
+   934→                      </div>
+   935→                    </div>
+   936→
+   937→                    {/* Category chips */}
+   938→                    <div className="flex gap-2 overflow-x-auto no-scrollbar mb-3">
+   939→                      {COMPOSER_CATEGORIES.map((cat) => (
+   940→                        <button
+   941→                          key={cat}
+   942→                          onClick={() => setComposerCategory(cat)}
+   943→                          className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
+   944→                            composerCategory === cat
+   945→                              ? CATEGORY_BADGES[cat] || CATEGORY_BADGES.General
+   946→                              : 'bg-white/5 border-white/5 text-white/40 hover:text-white/70'
+   947→                          }`}
+   948→                        >
+   949→                          {cat}
+   950→                        </button>
+   951→                      ))}
+   952→                    </div>
+   953→
+   954→                    {/* Textarea */}
+   955→                    <textarea
+   956→                      value={composerContent}
+   957→                      onChange={(e) => setComposerContent(e.target.value)}
+   958→                      placeholder="Share your Ramadan cooking story, a recipe, or ask the community…"
+   959→                      rows={4}
+   960→                      maxLength={1000}
+   961→                      className="w-full bg-white/5 border border-white/5 focus:border-[#13ec13]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/30 outline-none resize-none transition-colors custom-scrollbar"
+   962→                    />
+   963→                    <div className="flex justify-end mb-3">
+   964→                      <span className="text-[10px] text-white/30">
+   965→                        {composerContent.length}/1000
+   966→                      </span>
+   967→                    </div>
+   968→
+   969→                    {/* Submit */}
+   970→                    <button
+   971→                      onClick={handleCreatePost}
+   972→                      disabled={!composerContent.trim() || submittingPost}
+   973→                      className="w-full py-3.5 rounded-2xl bg-[#13ec13] text-[#05070A] font-black text-sm green-glow active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100"
+   974→                    >
+   975→                      {submittingPost ? 'Posting…' : 'Post to Community'}
+   976→                    </button>
+   977→                  </motion.div>
+   978→                </>
+   979→              )}
+   980→            </AnimatePresence>
+   981→          </motion.div>
+   982→        </>
+   983→      )}
+   984→    </AnimatePresence>
+   985→  );
+   986→}
+   987→
