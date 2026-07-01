@@ -240,7 +240,8 @@ export async function verifyPayment(
         };
       }
       default:
-        return { verified: true }; // COD/Monnify/swift-pay assumed verified
+        console.warn(`[Payments] No verification implemented for provider: ${provider}. Refusing to auto-verify.`);
+        return { verified: false };
     }
   } catch {
     return { verified: false };

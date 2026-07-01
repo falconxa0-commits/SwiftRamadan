@@ -12,6 +12,7 @@ import {
   clearVerifiedAsync,
 } from '@/lib/otp-store';
 import { hashPassword, verifyPassword } from '@/lib/auth-utils';
+import { setSessionCookie, clearSessionCookie } from '@/lib/session';
 import { sendOTP } from '@/lib/communications';
 
 /* -------------------------------------------------------------------------- */
@@ -174,12 +175,14 @@ export async function POST(request: NextRequest) {
 
         const token = `sr_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-        return NextResponse.json({
+        const response = NextResponse.json({
           success: true,
           message: 'Login successful',
           user: publicUser(user),
           token,
         });
+        await setSessionCookie(response, { userId: user.id, email: user.email, role: user.role });
+        return response;
       }
 
       /* ------------------------------------------------------------------- */
@@ -252,7 +255,7 @@ export async function POST(request: NextRequest) {
 
         const token = `sr_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-        return NextResponse.json({
+        const signupResponse = NextResponse.json({
           success: true,
           message: 'Account created. Please verify your phone number.',
           // Demo only: expose the code so the caller (test/dev tooling) can
@@ -261,6 +264,8 @@ export async function POST(request: NextRequest) {
           user: publicUser(user),
           token,
         });
+        await setSessionCookie(signupResponse, { userId: user.id, email: user.email, role: user.role });
+        return signupResponse;
       }
 
       /* ------------------------------------------------------------------- */
@@ -350,7 +355,7 @@ export async function POST(request: NextRequest) {
         // real account (it may not — e.g. for guest OTP flows).
         const user = await db.user.findUnique({ where: { email: lookupEmail } });
 
-        return NextResponse.json({
+        const verifyResponse = NextResponse.json({
           success: true,
           message: 'Phone number verified successfully',
           verified: true,
@@ -366,6 +371,10 @@ export async function POST(request: NextRequest) {
               }
             : {}),
         });
+        if (user) {
+          await setSessionCookie(verifyResponse, { userId: user.id, email: user.email, role: user.role });
+        }
+        return verifyResponse;
       }
 
       /* ------------------------------------------------------------------- */
@@ -482,14 +491,15 @@ export async function POST(request: NextRequest) {
       /* logout — optional convenience action                                */
       /* ------------------------------------------------------------------- */
       case 'logout': {
-        // No server-side session to destroy; just clear the verified flag if
-        // the caller provides an email so a fresh OTP is required for any
-        // subsequent privileged action.
+        // Clear server-side verified flag if the caller provides an email so
+        // a fresh OTP is required for any subsequent privileged action.
         if (typeof email === 'string' && email) {
           await clearVerifiedAsync(email);
           await clearOtpAsync(email);
         }
-        return NextResponse.json({ success: true, message: 'Logged out' });
+        const logoutResponse = NextResponse.json({ success: true, message: 'Logged out' });
+        clearSessionCookie(logoutResponse);
+        return logoutResponse;
       }
 
       default:

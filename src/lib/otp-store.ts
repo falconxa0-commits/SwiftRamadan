@@ -29,9 +29,14 @@ const verifiedStore = new Map<string, VerifiedEntry>();
 const DEFAULT_OTP_TTL_MS = 5 * 60 * 1000;        // 5 minutes for an issued OTP
 const VERIFIED_TTL_MS = 10 * 60 * 1000;          // 10 minutes for the verified-email flag
 
-/** Generate a random 6-digit OTP code (100000–999999 inclusive). */
+/** Generate a cryptographically secure random 6-digit OTP code (100000–999999 inclusive). */
 export function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return (100000 + (array[0] % 900000)).toString();
+  }
+  throw new Error('crypto.getRandomValues is not available — cannot generate secure OTP');
 }
 
 /** Store (or replace) the OTP code for `email` — synchronous in-memory only. */

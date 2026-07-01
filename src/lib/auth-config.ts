@@ -11,8 +11,14 @@ import { verifyPassword } from '@/lib/auth-utils';
 import { db } from '@/lib/db';
 
 export const authOptions: NextAuthOptions = {
-  // Dev secret fallback when NEXTAUTH_SECRET not set
-  secret: process.env.NEXTAUTH_SECRET || 'swift-ramadan-dev-secret-change-in-production',
+  secret: (() => {
+    if (process.env.NEXTAUTH_SECRET) return process.env.NEXTAUTH_SECRET;
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('[Auth] WARNING: Using development-only secret. Set NEXTAUTH_SECRET for production.');
+      return 'swift-ramadan-dev-secret-for-development-only';
+    }
+    throw new Error('NEXTAUTH_SECRET environment variable is required in production');
+  })(),
 
   // Custom sign-in page
   pages: {

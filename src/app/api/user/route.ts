@@ -2,15 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // GET /api/user?email=... — Get user by email
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
+    const email = auth.email || searchParams.get('email');
 
     if (!email) {
       return NextResponse.json(
@@ -79,9 +83,13 @@ export async function PUT(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { email, action } = body;
+    const email = auth.email || body.email;
+    const { action } = body;
 
     if (!email) {
       return NextResponse.json(

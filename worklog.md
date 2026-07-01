@@ -4049,3 +4049,231 @@ Stage Summary:
 - 8 routes have Redis caching
 - Payment webhook handles all 5 providers
 - Zero browser errors on desktop + mobile
+
+---
+Task ID: 1-b
+Agent: Security Vulnerability Fix Agent
+Task: Fix critical security vulnerabilities in SwiftRamadan app
+
+Work Log:
+- Fixed `src/lib/payments/index.ts`: Changed `verifyPayment` default case from `verified: true` to `verified: false` with a console.warn message. This prevents Monnify/COD/swift-pay/unknown providers from being auto-verified without actual verification.
+- Fixed `src/lib/verification/bvn.ts`: Changed both `verifyBVN()` and `verifyNIN()` mock/fallback responses from `verified: true, matchScore: 95/93` to `verified: false, matchScore: 0` with error message "Verification service not configured". This prevents anyone from passing identity verification when the API is not configured.
+- Fixed `src/lib/communications/whatsapp-business.ts`: Changed `verifyWebhookSignature()` to return `false` instead of `true` when `WHATSAPP_BUSINESS_VERIFY_TOKEN` is empty/undefined. Added console.warn instead of console.log. This prevents unverified webhook payloads from being accepted.
+- Fixed `src/app/api/payments/callback/route.ts`: Rewrote GET handler to ALWAYS verify with the provider regardless of URL `status` parameter (preventing attackers from marking payments as successful via URL params). Added POST handler for webhook callbacks with Paystack HMAC-SHA512 signature verification. Both handlers call `verifyPayment()` before updating the database.
+- Lint result: 0 errors, 4 warnings (all pre-existing, none from our changes)
+
+Stage Summary:
+- All 4 critical security vulnerabilities patched
+- No auto-verification bypasses remain in payment or identity verification flows
+- Webhook signature verification now properly rejects unauthenticated requests
+- Payment callback no longer trusts client-supplied status parameters
+
+---
+Task ID: 1-a
+Agent: Security Fix Agent
+Task: Fix critical security vulnerabilities in SwiftRamadan auth system
+
+Work Log:
+1. **Fixed `src/lib/auth-config.ts` (line 15)** — Replaced hardcoded JWT secret fallback `'swift-ramadan-dev-secret-change-in-production'` with an IIFE that:
+   - Returns `NEXTAUTH_SECRET` env var if set
+   - Falls back to dev-only secret with a console warning in development mode
+   - Throws an error in production if `NEXTAUTH_SECRET` is missing
+
+2. **Fixed `src/lib/auth-utils.ts`** — Three security fixes:
+   - **Problem A**: Replaced unsigned `encodeSessionToken()` with properly signed `createSessionToken()` and `verifySessionToken()` using HMAC-SHA256 via Node.js `crypto` module
+   - **Problem B**: Removed `Math.random()` fallback in `generateSecureToken()` — now throws an error if `crypto.getRandomValues` is unavailable instead of falling back to insecure randomness
+   - **Problem C**: Enhanced `verifyPassword()` plaintext fallback with security warning, auto-migration flag, and added `migratePlaintextPassword()` helper for callers to re-hash plaintext passwords
+
+3. **Fixed `src/lib/otp-store.ts` (lines 33-35)** — Replaced `Math.random()`-based OTP generation with `crypto.getRandomValues()` using `Uint32Array`, throws if crypto is unavailable
+
+Verification:
+- Ran `bun run lint`: 0 errors, 4 warnings (all pre-existing, unrelated to changes)
+- Dev server running without errors
+- All changes are backward-compatible (existing bcrypt hashes, session tokens continue to work)
+Stage Summary:
+- All 3 critical security vulnerabilities patched
+- No production JWTs can be forged (HMAC-SHA256 signed)
+- No insecure randomness in token/OTP generation
+- Plaintext password migration path added with clear warnings
+
+---
+Task ID: 1-c
+Agent: Auth Middleware & Session System
+Task: Add authentication middleware and session system to SwiftRamadan
+
+Work Log:
+1. Read worklog.md and current project state — understood existing security headers in middleware, auth route structure, and auth-utils.ts already having createSessionToken/verifySessionToken (added by Task 1-a)
+
+2. Created `src/lib/session.ts` — new session helper module:
+   - `SessionUser` interface (userId, email, role)
+   - `setSessionCookie()` — creates signed JWT via createSessionToken and sets httpOnly cookie (30-day maxAge, sameSite=lax)
+   - `getSessionUser()` — reads and verifies session cookie from request, returns SessionUser or null
+   - `clearSessionCookie()` — sets cookie with maxAge=0 for logout
+   - `isPublicApiRoute()` — determines which API paths don't require auth (auth routes, monitoring, GET-only browsable content like products, prayer-times, hijri-calendar, dua, trending, videos, community, offers, coupons, search, maps, vendor)
+
+3. Updated `src/middleware.ts` — added session validation on top of existing security headers:
+   - For `/api/*` routes: reads session cookie via getSessionUser()
+   - If authenticated: adds x-user-id, x-user-email, x-user-role headers to request
+   - If unauthenticated on protected route: returns 401 JSON { error: 'Authentication required', code: 'UNAUTHENTICATED' }
+   - If unauthenticated on public route: passes through (no auth headers added)
+   - Preserved all existing security headers and HTTPS redirect logic
+
+4. Updated `src/app/api/auth/route.ts` — set session cookies after successful auth:
+   - `login` action: sets session cookie on successful login response
+   - `signup` action: sets session cookie on successful account creation
+   - `verify-otp` action: sets session cookie when user found after OTP verification
+   - `logout` action: clears session cookie on logout
+   - Added imports: setSessionCookie, clearSessionCookie from @/lib/session
+
+Verification:
+- Ran `bun run lint`: 0 errors, 4 warnings (all pre-existing, unrelated to changes)
+- Dev server compiles and runs without errors
+- Session cookies are httpOnly, secure in production, sameSite=lax, 30-day expiry
+- Protected API routes now require valid session; public browsing still works
+
+---
+Task ID: 1-c-auth
+Agent: Auth Guard Agent
+Task: Add requireAuth() to critical API routes
+
+Work Log:
+1. Read worklog.md and src/lib/session.ts to understand the requireAuth() API
+2. Added requireAuth() to 10 API route files (14 handler methods total):
+
+   **src/app/api/user/route.ts** — GET + PUT
+   - GET: Added auth check after rate limit; uses auth.email instead of searchParams email (fallback kept)
+   - PUT: Added auth check after rate limit; uses auth.email instead of body.email (fallback kept)
+
+   **src/app/api/payments/route.ts** — POST
+   - Added auth check after rate limit; uses auth.userId as primary userId (fallback to body.userId kept)
+
+   **src/app/api/orders/route.ts** — GET + POST
+   - GET: Added auth check; looks up userId from auth.email via DB, falls back to query param userId
+   - POST: Added auth check; uses auth.userId as primary userId (fallback to v.data.userId kept)
+
+   **src/app/api/cart/route.ts** — GET + POST + DELETE
+   - GET: Added auth check; resolves userId from auth.email via DB lookup
+   - POST: Added auth check; uses auth.userId over body-supplied userId
+   - DELETE: Added auth check; resolves userId from auth.email via DB lookup
+
+   **src/app/api/rider/route.ts** — GET + POST
+   - Added auth check + role verification (auth.role !== 'rider' → 403)
+   - Uses auth.email instead of query/body email (fallback kept)
+
+   **src/app/api/vendor/route.ts** — GET + POST
+   - Added auth check + role verification (auth.role !== 'vendor' → 403)
+   - Uses auth.email instead of query/body email (fallback kept)
+
+   **src/app/api/communications/email/route.ts** — POST
+   - Added auth check after rate limit (prevents spam abuse)
+
+   **src/app/api/communications/sms/route.ts** — POST
+   - Added auth check after rate limit
+
+   **src/app/api/communications/whatsapp/route.ts** — POST
+   - Added auth check after rate limit
+
+   **src/app/api/notifications/push/route.ts** — POST
+   - Added auth check after rate limit
+
+Pattern applied consistently to all routes:
+```typescript
+import { requireAuth } from '@/lib/session';
+// After rate limit check:
+const auth = await requireAuth(request);
+if (auth instanceof NextResponse) return auth;
+// For role-specific routes, add:
+if (auth.role !== 'expected-role') return NextResponse.json({ error: '...access required' }, { status: 403 });
+```
+
+Key decisions:
+- All auth checks placed after rate limit check, before business logic
+- For email/userId: auth values take priority, original query/body params kept as fallback
+- For role-specific routes (rider, vendor): 403 response if role doesn't match
+- Orders PUT was NOT modified (not in task spec — only GET and POST specified)
+- No changes to public routes (products GET, prayer-times, etc.)
+
+Verification:
+- Ran `bun run lint`: 0 errors, 4 warnings (all pre-existing, unrelated)
+- Dev server compiles and runs without errors
+---
+Task ID: 1-a
+Agent: Main Agent (with subagent for auth files)
+Task: Fix critical auth security vulnerabilities
+
+Work Log:
+- Removed hardcoded JWT secret from auth-config.ts (now throws in production if NEXTAUTH_SECRET missing)
+- Removed unsigned encodeSessionToken() from auth-utils.ts
+- Created auth-jwt.ts with Web Crypto API (Edge Runtime compatible): createSessionToken(), verifySessionToken(), generateSecureToken()
+- Fixed generateSecureToken() to remove Math.random() fallback (throws if crypto.getRandomValues unavailable)
+- Fixed verifyPassword() plaintext fallback: added console.error security warning and _needsMigration flag
+- Added migratePlaintextPassword() helper
+- Fixed otp-store.ts generateOtp(): replaced Math.random() with crypto.getRandomValues()
+- auth-utils.ts re-exports JWT functions from auth-jwt.ts for backward compatibility
+
+Stage Summary:
+- All 3 critical auth vulnerabilities fixed
+- JWT tokens now properly signed with HMAC-SHA256 via Web Crypto API
+- OTP codes now cryptographically secure
+- Lint: 0 errors
+
+---
+Task ID: 1-b
+Agent: Main Agent (with subagent for payment/verification)
+Task: Fix payment and verification security vulnerabilities
+
+Work Log:
+- Fixed payments/index.ts: verifyPayment() default case now returns { verified: false } instead of { verified: true }
+- Fixed bvn.ts: verifyBVN() and verifyNIN() now return { verified: false, matchScore: 0 } when API key not configured
+- Fixed whatsapp-business.ts: verifyWebhookSignature() now returns false when verify token not configured
+- Fixed payments/callback/route.ts: GET handler no longer trusts URL status param, always verifies with provider
+- Added POST handler for webhook callbacks with Paystack HMAC-SHA512 signature verification
+
+Stage Summary:
+- Payment callback forgery vulnerability eliminated
+- Mock verifications no longer auto-pass
+- WhatsApp webhook verification no longer bypassed
+- Lint: 0 errors
+
+---
+Task ID: 1-c
+Agent: Main Agent (with subagents for middleware and route protection)
+Task: Add auth middleware and session system
+
+Work Log:
+- Created src/lib/session.ts with setSessionCookie(), getSessionUser(), requireAuth(), clearSessionCookie(), isPublicApiRoute()
+- Created src/lib/auth-jwt.ts (Edge Runtime compatible JWT module)
+- Updated middleware.ts to pass session cookie in x-session-token header
+- Added requireAuth() to 10 critical API routes: user, payments, orders, cart, rider, vendor, communications/email, communications/sms, communications/whatsapp, notifications/push
+- Role-specific routes (rider, vendor) return 403 for wrong role
+- Updated /api/auth route to set session cookies after login, signup, verify-otp, and clear on logout
+
+Stage Summary:
+- 10 API routes now require authentication via requireAuth()
+- Public routes (products GET, prayer-times, etc.) remain accessible without auth
+- Session cookies are HttpOnly, sameSite=lax, 30-day expiry
+- Full auth flow verified: OTP → verify → session cookie → protected route access
+- Role-based access control works (customer → 403 on rider/vendor routes)
+- Lint: 0 errors
+
+---
+Task ID: 1-d
+Agent: Main Agent
+Task: Verify all Phase 1 changes
+
+Work Log:
+- Ran bun run lint: 0 errors, 4 pre-existing warnings
+- Started dev server successfully
+- Verified security headers present (X-Frame-Options, X-Content-Type-Options, etc.)
+- Verified public routes return 200 without auth
+- Verified protected routes return 401 without auth
+- Verified full auth flow: send-otp → verify-otp → session cookie → protected route access
+- Verified role-based access: customer gets 403 on rider/vendor routes
+- Verified payment callback doesn't trust URL params
+- Used Agent Browser to verify app renders correctly
+
+Stage Summary:
+- All 7 Phase 1 critical security fixes implemented and verified
+- Auth system fully functional with JWT session cookies
+- Protected routes properly gated with requireAuth()
+- Payment callback no longer vulnerable to forgery

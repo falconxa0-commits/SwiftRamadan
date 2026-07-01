@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendTermiiSMS } from '@/lib/communications/termii';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { to, message } = await request.json();

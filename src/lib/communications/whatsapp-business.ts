@@ -334,8 +334,8 @@ export function verifyWebhookSignature(
   signatureHeader: string,
 ): boolean {
   if (!WHATSAPP_BUSINESS_VERIFY_TOKEN) {
-    console.log('[WhatsApp] Verify token not configured — skipping webhook verification');
-    return true; // Allow in dev
+    console.warn('[WhatsApp] Webhook verification token not configured — rejecting webhook');
+    return false;
   }
 
   const expectedSignature = crypto

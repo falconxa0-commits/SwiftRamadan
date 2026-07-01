@@ -18,6 +18,15 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // Pass session cookie to headers for API routes (if present)
+  // Actual verification happens in API route handlers via requireAuth()
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    const sessionCookie = request.cookies.get('swiftramadan-session')?.value;
+    if (sessionCookie) {
+      response.headers.set('x-session-token', sessionCookie);
+    }
+  }
+
   return response;
 }
 

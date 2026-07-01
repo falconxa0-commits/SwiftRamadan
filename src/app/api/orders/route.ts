@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // Returns true if the user exists (or userId is null/undefined). Returns false
 // if a userId was provided but no matching User record was found — which would
@@ -19,9 +20,18 @@ export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    // Prefer authenticated user's email to look up userId, fall back to query param
+    const userEmail = auth.email || searchParams.get('email');
+    let userId = searchParams.get('userId');
+    if (!userId && userEmail) {
+      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
+      userId = user?.id || null;
+    }
 
     const orders = await db.order.findMany({
       where: userId ? { userId } : undefined,
@@ -51,13 +61,18 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
 
     // Validate payload
     const v = validateInput(orderCreateSchema, body);
     if (!v.success) return v.response;
-    const { status, total, riderName, items, progress, userId } = v.data;
+    const { status, total, riderName, items, progress } = v.data;
+    // Prefer authenticated user's userId
+    const userId = auth.userId || v.data.userId;
 
     if (!total) {
       return NextResponse.json(

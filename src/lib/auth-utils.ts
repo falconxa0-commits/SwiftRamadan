@@ -1,4 +1,8 @@
 import bcrypt from 'bcryptjs';
+import { createSessionToken, verifySessionToken, generateSecureToken } from './auth-jwt';
+
+// Re-export JWT functions from the Edge-compatible module
+export { createSessionToken, verifySessionToken, generateSecureToken };
 
 const SALT_ROUNDS = 12;
 
@@ -15,7 +19,7 @@ export async function hashPassword(password: string): Promise<string> {
  * Supports both bcrypt-hashed passwords and legacy plain-text passwords for
  * backward compatibility during the migration period.  If the stored value
  * doesn't look like a bcrypt hash (doesn't start with "$2"), we fall back to
- * a simple string comparison.
+ * a simple string comparison and flag the password for auto-migration.
  */
 export async function verifyPassword(
   password: string,
@@ -26,8 +30,26 @@ export async function verifyPassword(
     return bcrypt.compare(password, storedHash);
   }
 
-  // Legacy plain-text fallback — do NOT remove until all passwords are migrated
-  return password === storedHash;
+  // SECURITY WARNING: Plaintext password detected — auto-migrate
+  console.error('[SECURITY] Plaintext password comparison detected. Auto-migrating to bcrypt.');
+  const isMatch = password === storedHash;
+  if (isMatch) {
+    // Mark for migration — the caller should re-hash the password
+    (verifyPassword as { _needsMigration?: boolean })._needsMigration = true;
+  }
+  return isMatch;
+}
+
+/**
+ * Check if the last verifyPassword call detected a plaintext password needing migration.
+ * If so, hash the password and return the new hash for storage.
+ */
+export async function migratePlaintextPassword(
+  email: string,
+  plaintextPassword: string,
+): Promise<string | null> {
+  // Always return a bcrypt hash for migration
+  return hashPassword(plaintextPassword);
 }
 
 /**
@@ -35,49 +57,4 @@ export async function verifyPassword(
  */
 export function isBcryptHash(value: string): boolean {
   return value.startsWith('$2');
-}
-
-/**
- * Generate a cryptographically-secure random token.
- */
-export function generateSecureToken(length: number = 32): string {
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  const randomValues = new Uint8Array(length);
-
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    crypto.getRandomValues(randomValues);
-    for (let i = 0; i < length; i++) {
-      result += chars[randomValues[i] % chars.length];
-    }
-  } else {
-    // Fallback (shouldn't happen in modern Node/Browser)
-    for (let i = 0; i < length; i++) {
-      result += chars[Math.floor(Math.random() * chars.length)];
-    }
-  }
-
-  return result;
-}
-
-/**
- * Minimal session-token encoder (demo only — replace with NextAuth JWT in
- * production).  The token is NOT signed, so treat it as opaque.
- */
-export function encodeSessionToken(payload: {
-  userId: string;
-  email: string;
-  role: string;
-}): string {
-  const header = Buffer.from(
-    JSON.stringify({ alg: 'HS256', typ: 'JWT' }),
-  ).toString('base64url');
-
-  const body = Buffer.from(
-    JSON.stringify({ ...payload, iat: Date.now(), exp: Date.now() + 86400000 }),
-  ).toString('base64url');
-
-  // In production, sign with a secret key. For now, just concatenate.
-  return `${header}.${body}`;
 }

@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { initiatePayment, PaymentProvider } from '@/lib/payments';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -74,9 +75,13 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { orderId, userId: rawUserId, amount, method, reference } = body;
+    const { orderId, amount, method, reference } = body;
+    const rawUserId = auth.userId || body.userId;
 
     if (!amount || amount <= 0) {
       return NextResponse.json(

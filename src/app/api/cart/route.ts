@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { validateInput, cartItemSchema } from '@/lib/validation';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // Returns true if the user exists (or userId is null/undefined). Returns false
 // if a userId was provided but no matching User record was found — which would
@@ -18,10 +19,19 @@ export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId') || 'default';
-    const userId = searchParams.get('userId') || undefined;
+    // Prefer authenticated user's email to resolve userId
+    const userEmail = auth.email;
+    let userId = searchParams.get('userId') || undefined;
+    if (!userId && userEmail) {
+      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
+      userId = user?.id || undefined;
+    }
 
     const cartItems = await db.cartItem.findMany({
       where: userId ? { userId } : { sessionId },
@@ -55,6 +65,9 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
 
@@ -73,7 +86,10 @@ export async function POST(request: NextRequest) {
     // missing name, etc., with a structured 400 response.
     const v = validateInput(cartItemSchema, body);
     if (!v.success) return v.response;
-    const { productId, name, price, image, quantity, sessionId, userId } = v.data;
+    const { productId, name, price, image, quantity, sessionId: bodySessionId } = v.data;
+    // Prefer authenticated user's userId over body-supplied value
+    const userId = auth.userId || v.data.userId;
+    const sessionId = bodySessionId;
 
     // FK guard: verify the referenced user exists before writing the cart item,
     // otherwise Prisma throws a foreign-key violation → 500.
@@ -143,11 +159,20 @@ export async function DELETE(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const sessionId = searchParams.get('sessionId') || 'default';
-    const userId = searchParams.get('userId') || undefined;
+    // Prefer authenticated user's userId over query param
+    const userEmail = auth.email;
+    let userId = searchParams.get('userId') || undefined;
+    if (!userId && userEmail) {
+      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
+      userId = user?.id || undefined;
+    }
 
     if (id) {
       // Delete specific item by its database id

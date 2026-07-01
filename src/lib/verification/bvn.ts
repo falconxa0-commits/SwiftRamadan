@@ -32,15 +32,16 @@ export async function verifyBVN({
   phone?: string;
 }): Promise<VerificationResult> {
   if (!VERIFICATION_API_KEY) {
-    console.log('[BVN] Verification not configured — returning mock success');
+    console.warn('[BVN] Verification service not configured — refusing to auto-verify');
     return {
-      success: true,
-      verified: true,
-      matchScore: 95,
-      firstName: firstName || 'Verified',
-      lastName: lastName || 'User',
-      dateOfBirth: dateOfBirth || '1990-01-01',
-      phone: phone || '080XXXXXXXX',
+      success: false,
+      verified: false,
+      matchScore: 0,
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
+      phone: '',
+      error: 'Verification service not configured',
     };
   }
 
@@ -95,15 +96,16 @@ export async function verifyNIN({
   lastName?: string;
 }): Promise<VerificationResult> {
   if (!VERIFICATION_API_KEY) {
-    console.log('[NIN] Verification not configured — returning mock success');
+    console.warn('[NIN] Verification service not configured — refusing to auto-verify');
     return {
-      success: true,
-      verified: true,
-      matchScore: 93,
-      firstName: firstName || 'Verified',
-      lastName: lastName || 'User',
-      dateOfBirth: '1990-01-01',
+      success: false,
+      verified: false,
+      matchScore: 0,
+      firstName: '',
+      lastName: '',
+      dateOfBirth: '',
       phone: '',
+      error: 'Verification service not configured',
     };
   }
 

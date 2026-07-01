@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 /* ──────────── helpers ──────────── */
 
@@ -62,9 +63,13 @@ export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+  if (auth.role !== 'vendor') return NextResponse.json({ error: 'Vendor access required' }, { status: 403 });
+
   try {
     const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
+    const email = auth.email || searchParams.get('email');
 
     if (!email) {
       return NextResponse.json(
@@ -233,9 +238,14 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+  if (auth.role !== 'vendor') return NextResponse.json({ error: 'Vendor access required' }, { status: 403 });
+
   try {
     const body = await request.json();
-    const { action, email, online, amount } = body;
+    const { action, online, amount } = body;
+    const email = auth.email || body.email;
 
     if (action === 'toggle-online') {
       if (!email) {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendPushNotification } from '@/lib/supabase';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -9,6 +10,9 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { userId, title, body, data } = await request.json();
