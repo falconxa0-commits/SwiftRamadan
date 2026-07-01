@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
+import { cacheGet, cacheSet, cacheInvalidate } from '@/lib/redis';
 
 // Returns true if the user exists (or vendorId is null/undefined). Returns
 // false if a vendorId was provided but no matching User record was found —
@@ -141,6 +143,11 @@ export async function GET(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
+    // Check Redis cache (5 minutes)
+    const cacheKey = 'products:all';
+    const cached = await cacheGet(cacheKey);
+    if (cached) return NextResponse.json({ products: cached });
+
     const dbProducts = await db.product.findMany({
       orderBy: { createdAt: 'desc' },
     });
@@ -161,9 +168,13 @@ export async function GET(request: NextRequest) {
       vendorId: p.vendorId,
       createdAt: p.createdAt,
     }));
-    return NextResponse.json({ products: [...dbMapped, ...staticProducts] });
-  } catch {
+    const result = [...dbMapped, ...staticProducts];
+    // Cache for 5 minutes
+    await cacheSet(cacheKey, result, 300);
+    return NextResponse.json({ products: result });
+  } catch (error) {
     // Fallback to static if DB unavailable
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/products' } });
     return NextResponse.json({ products: staticProducts });
   }
 }
@@ -258,9 +269,14 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Invalidate products cache
+    await cacheInvalidate('products:all');
+
     return NextResponse.json({ success: true, product: serialize(product) }, { status: 201 });
   } catch (error) {
     console.error('[api/products] POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/products' } });
+    await cacheInvalidate('products:all');
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
@@ -318,9 +334,14 @@ export async function PUT(request: NextRequest) {
       data,
     });
 
+    // Invalidate products cache
+    await cacheInvalidate('products:all');
+
     return NextResponse.json({ success: true, product: serialize(product) });
   } catch (error) {
     console.error('[api/products] PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/products' } });
+    await cacheInvalidate('products:all');
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
@@ -348,9 +369,14 @@ export async function DELETE(request: NextRequest) {
 
     await db.product.delete({ where: { id } });
 
+    // Invalidate products cache
+    await cacheInvalidate('products:all');
+
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (error) {
     console.error('[api/products] DELETE error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/products' } });
+    await cacheInvalidate('products:all');
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }

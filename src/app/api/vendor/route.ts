@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /* ──────────── helpers ──────────── */
 
@@ -57,6 +59,9 @@ function emptyVendorData(storeName = 'Your Store') {
 /* ──────────── GET: real DB-backed vendor dashboard data ──────────── */
 
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
@@ -110,7 +115,6 @@ export async function GET(request: NextRequest) {
       .filter((o) => o.status === 'Preparing' || o.status === 'Confirmed')
       .map((o) => {
         const items = parseItems(o.items);
-        // Find first matching product image
         const matchImage =
           items
             .map((i) => i.name && productImageByName.get(i.name.toLowerCase()))
@@ -145,7 +149,6 @@ export async function GET(request: NextRequest) {
     }));
 
     // ── Sales insights ──
-    // Daily trend (last 7 days)
     const dailyTrend: { day: string; revenue: number }[] = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
@@ -163,7 +166,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Top selling item by frequency across all orders
     const itemCounts: Record<string, number> = {};
     vendorOrders.forEach((o) => {
       parseItems(o.items).forEach((item) => {
@@ -174,7 +176,6 @@ export async function GET(request: NextRequest) {
     const topSellingItem =
       Object.entries(itemCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '—';
 
-    // Peak hour bucket
     const hourCounts: Record<string, number> = {};
     vendorOrders.forEach((o) => {
       const h = new Date(o.createdAt).getHours();
@@ -184,7 +185,6 @@ export async function GET(request: NextRequest) {
     const peakHour =
       Object.entries(hourCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || '5:00 PM - 7:00 PM';
 
-    // Derived financial figures
     const totalEarnings = vendorOrders
       .filter((o) => o.status !== 'Cancelled')
       .reduce((sum, o) => sum + (o.total || 0), 0);
@@ -217,6 +217,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[api/vendor] GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error', data: emptyVendorData() },
       { status: 500 }
@@ -227,6 +230,9 @@ export async function GET(request: NextRequest) {
 /* ──────────── POST: vendor-level actions (toggle-online, withdraw) ──────────── */
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { action, email, online, amount } = body;
@@ -250,7 +256,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'withdraw') {
-      // Mock payout: no DB ledger table; just return success
       return NextResponse.json({
         success: true,
         message: 'Withdrawal request submitted. Payment will arrive in 24 hours.',
@@ -264,6 +269,9 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('[api/vendor] POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor' },
+    });
     return NextResponse.json(
       { success: false, message: 'Server error' },
       { status: 500 }

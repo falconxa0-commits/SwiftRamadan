@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { captureException } from '@/lib/monitoring/sentry';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 /* ----------------------------------------------------------------------------

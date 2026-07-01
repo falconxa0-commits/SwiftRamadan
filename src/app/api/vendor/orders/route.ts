@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /* ──────────── helpers ──────────── */
 
@@ -36,6 +38,9 @@ function formatDate(date: Date | string): string {
 /* ──────────── GET: orders containing vendor's products ──────────── */
 
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const vendorId = searchParams.get('vendorId');
@@ -86,6 +91,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, orders, vendorId: resolvedId });
   } catch (error) {
     console.error('[api/vendor/orders] GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/orders' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error', orders: [] },
       { status: 500 }
@@ -96,6 +104,9 @@ export async function GET(request: NextRequest) {
 /* ──────────── PUT: accept | reject | ready ──────────── */
 
 export async function PUT(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { orderId, action } = body;
@@ -155,6 +166,9 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('[api/vendor/orders] PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/orders' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // GET /api/offers → returns a mix of active coupons from DB + curated static offers.
-export async function GET(_request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     // Pull active coupons from DB; seed defaults if empty
     let coupons = await db.coupon.findMany({
@@ -109,6 +114,9 @@ export async function GET(_request: NextRequest) {
     });
   } catch (error) {
     console.error('Offers API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/offers' },
+    });
     return NextResponse.json(
       { coupons: [], offers: [], flashSales: [], ramadanSpecials: [], message: 'Failed to fetch offers' },
       { status: 500 },

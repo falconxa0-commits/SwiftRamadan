@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, chatMessageSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Returns true if the user exists (or senderId is null/undefined). Returns
 // false if a senderId was provided but no matching User record was found —
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ messages });
   } catch (err) {
     console.error('[messages] GET error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), { tags: { route: '/api/messages' } });
     return NextResponse.json({ error: 'Failed to load messages' }, { status: 500 });
   }
 }
@@ -85,6 +87,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message }, { status: 201 });
   } catch (err) {
     console.error('[messages] POST error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), { tags: { route: '/api/messages' } });
     return NextResponse.json({ error: 'Failed to send message' }, { status: 500 });
   }
 }
@@ -124,6 +127,7 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ updated: result.count });
   } catch (err) {
     console.error('[messages] PUT error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), { tags: { route: '/api/messages' } });
     return NextResponse.json({ error: 'Failed to mark messages as read' }, { status: 500 });
   }
 }

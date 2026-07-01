@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, addressSchema } from '@/lib/validation';
 import { geocodeAddress } from '@/lib/maps';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ addresses });
   } catch (error) {
     console.error('Addresses API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/addresses' } });
     return NextResponse.json(
       { addresses: [], message: 'Failed to fetch addresses' },
       { status: 500 },
@@ -112,6 +114,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, address: addressRecord }, { status: 201 });
   } catch (error) {
     console.error('Addresses API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/addresses' } });
     return NextResponse.json(
       { success: false, message: 'Failed to create address' },
       { status: 500 },
@@ -174,6 +177,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ success: true, address: updated });
   } catch (error) {
     console.error('Addresses API PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/addresses' } });
     return NextResponse.json(
       { success: false, message: 'Failed to update address' },
       { status: 500 },
@@ -203,6 +207,7 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Addresses API DELETE error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/addresses' } });
     return NextResponse.json(
       { success: false, message: 'Failed to delete address' },
       { status: 500 },

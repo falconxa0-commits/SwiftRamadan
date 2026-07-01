@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Returns true if the user exists (or userId is null/undefined). Returns false
 // if a userId was provided but no matching User record was found — which would
@@ -36,6 +37,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ orders: parsedOrders });
   } catch (error) {
     console.error('Orders API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/orders' } });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch orders' },
       { status: 500 }
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
   } catch (error) {
     console.error('Orders API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/orders' } });
     return NextResponse.json(
       { success: false, message: 'Failed to create order' },
       { status: 500 }
@@ -140,6 +143,7 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('Orders API PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/orders' } });
     return NextResponse.json(
       { success: false, message: 'Failed to update order' },
       { status: 500 }

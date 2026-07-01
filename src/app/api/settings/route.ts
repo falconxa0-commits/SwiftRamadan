@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // GET /api/settings?email=xxx — return UserSetting (creates default if missing)
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
@@ -45,6 +50,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, setting });
   } catch (error) {
     console.error('Settings API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/settings' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch settings' },
       { status: 500 }
@@ -53,8 +61,10 @@ export async function GET(request: NextRequest) {
 }
 
 // PUT /api/settings — upsert UserSetting
-// Body: { email, notificationsEnabled?, pushEnabled?, emailEnabled?, language?, currency?, theme? }
 export async function PUT(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const {
@@ -112,6 +122,9 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error('Settings API PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/settings' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to save settings' },
       { status: 500 }

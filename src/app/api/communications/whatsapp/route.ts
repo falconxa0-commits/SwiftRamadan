@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendWhatsApp } from '@/lib/communications/twilio';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { to, body, templateSid, templateParams } = await request.json();
     if (!to) {
@@ -10,6 +15,10 @@ export async function POST(request: NextRequest) {
     const result = await sendWhatsApp({ to, body, templateSid, templateParams });
     return NextResponse.json(result);
   } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/communications/whatsapp' },
+    });
     return NextResponse.json({ success: false, message: 'WhatsApp failed' }, { status: 500 });
   }
 }

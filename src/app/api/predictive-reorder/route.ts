@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -105,6 +106,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[Predictive Reorder] Error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/predictive-reorder' } });
     return NextResponse.json(
       { success: false, message: 'Predictions failed' },
       { status: 500 },

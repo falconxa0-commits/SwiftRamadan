@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
+import { cacheInvalidate } from '@/lib/redis';
 
 /* ──────────── helpers ──────────── */
 
-// Resolve vendorId / vendorEmail to a real User.id.
-// SECURITY (fix S8): previously this returned the raw `vendorId` string without verifying
-// it referred to an existing user — meaning any opaque string was treated as a valid
-// vendor identity. Now both branches verify the user actually exists in the DB.
 async function resolveVendorId(vendorId?: string | null, vendorEmail?: string | null) {
   if (vendorId) {
     const byId = await db.user.findUnique({ where: { id: vendorId }, select: { id: true } });
@@ -53,6 +52,9 @@ function serialize(p: Awaited<ReturnType<typeof db.product.findFirst>>) {
 /* ──────────── GET: vendor's products ──────────── */
 
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const vendorId = searchParams.get('vendorId');
@@ -78,6 +80,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('[api/vendor/products] GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/products' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error', products: [] },
       { status: 500 }
@@ -88,6 +93,9 @@ export async function GET(request: NextRequest) {
 /* ──────────── POST: create product (auto-sets vendorId) ──────────── */
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { name, description, price, image, category, deliveryTime, vendorId, vendorEmail } = body;
@@ -129,12 +137,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Invalidate products cache
+    await cacheInvalidate('products');
+
     return NextResponse.json(
       { success: true, product: serialize(product) },
       { status: 201 }
     );
   } catch (error) {
     console.error('[api/vendor/products] POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/products' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
@@ -142,20 +156,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/* ──────────── PUT: update product (verify ownership) ────────────
- * SECURITY (fix S8 — ownership bypass):
- *   Previously the ownership check was `if (resolvedVendorId && existing.vendorId !== ...)`.
- *   When the request supplied NEITHER `vendorId` NOR `vendorEmail`, `resolvedVendorId`
- *   was `null` and the entire check was skipped — letting anyone edit any product.
- *
- * New behaviour:
- *   - Require `vendorId` or `vendorEmail` (401 "Vendor identity required" if neither).
- *   - Resolve to a real User.id (401 if the identifier doesn't match any user).
- *   - Block updates on legacy products (vendorId === null) — no admin role exists to allow
- *     an override, so 403 "You don't own this product".
- *   - 403 if `existing.vendorId !== resolvedVendorId`.
- */
+/* ──────────── PUT: update product (verify ownership) ──────────── */
 export async function PUT(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -219,9 +224,16 @@ export async function PUT(request: NextRequest) {
     }
 
     const product = await db.product.update({ where: { id }, data });
+
+    // Invalidate products cache
+    await cacheInvalidate('products');
+
     return NextResponse.json({ success: true, product: serialize(product) });
   } catch (error) {
     console.error('[api/vendor/products] PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/products' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }
@@ -229,10 +241,11 @@ export async function PUT(request: NextRequest) {
   }
 }
 
-/* ──────────── DELETE: delete product (verify ownership) ────────────
- * SECURITY (fix S8 — ownership bypass): same fix as PUT — see comment above.
- */
+/* ──────────── DELETE: delete product (verify ownership) ──────────── */
 export async function DELETE(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -275,9 +288,16 @@ export async function DELETE(request: NextRequest) {
     }
 
     await db.product.delete({ where: { id } });
+
+    // Invalidate products cache
+    await cacheInvalidate('products');
+
     return NextResponse.json({ success: true, message: 'Product deleted' });
   } catch (error) {
     console.error('[api/vendor/products] DELETE error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/vendor/products' },
+    });
     return NextResponse.json(
       { success: false, error: 'Server error' },
       { status: 500 }

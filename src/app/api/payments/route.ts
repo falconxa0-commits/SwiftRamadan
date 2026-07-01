@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { initiatePayment, PaymentProvider } from '@/lib/payments';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -28,6 +30,9 @@ const methodToProvider: Record<string, PaymentProvider> = {
 
 // GET /api/payments?userId=xxx  or  /api/payments?orderId=xxx
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const rawUserId = searchParams.get('userId');
@@ -54,6 +59,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ payments });
   } catch (error) {
     console.error('Payments API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/payments' },
+    });
     return NextResponse.json(
       { payments: [], message: 'Failed to fetch payments' },
       { status: 500 },
@@ -62,10 +70,10 @@ export async function GET(request: NextRequest) {
 }
 
 // POST /api/payments { orderId?, userId?, amount, method, reference? }
-// Initiates payment through the appropriate gateway, then creates a Payment record.
-// For card/transfer/bnpl: initializes with the payment gateway first.
-// For cash (swift-pay): creates a pending payment directly.
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { orderId, userId: rawUserId, amount, method, reference } = body;
@@ -140,7 +148,6 @@ export async function POST(request: NextRequest) {
         // Payment is pending until the callback confirms it
       } else if (provider === 'monnify') {
         // Bank transfer — the customer needs to transfer to the provided account
-        // We still create a pending payment; webhook/callback will confirm
       } else if (provider === 'bnpl') {
         // BNPL — checkout URL provided, pending until confirmed
       }
@@ -178,6 +185,9 @@ export async function POST(request: NextRequest) {
     }, { status: 201 });
   } catch (error) {
     console.error('Payments API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/payments' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to process payment' },
       { status: 500 },

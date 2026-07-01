@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
+import { cacheGet, cacheSet } from '@/lib/redis';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 /* ──────────────────────────────────────────────────────────────────
    Trending in Lagos — Web Search Powered Feed
-   Uses z-ai-web-dev-sdk's function.invoke('web_search') to fetch
-   real-time Ramadan deals, recipes, news, and tips from Lagos/Nigeria.
-   Falls back to a curated mock list when the web search is unavailable
-   so the UI always shows something.
    ────────────────────────────────────────────────────────────────── */
 
 type TrendingCategory = 'deals' | 'recipes' | 'news' | 'tips';
@@ -206,13 +205,11 @@ async function runSearch(query: string, category: TrendingCategory): Promise<Tre
     const ZAI = (await import('z-ai-web-dev-sdk')).default;
     const zai = await ZAI.create();
 
-    // The SDK response shape is not typed — cast defensively below.
     const response: unknown = await zai.functions.invoke('web_search', {
       query,
       num: 10,
     });
 
-    // The SDK may return results in many possible shapes — be defensive.
     const resp = (response ?? {}) as Record<string, unknown>;
     let rawList: RawSearchResult[] = [];
     const results = resp.results as unknown;
@@ -231,7 +228,6 @@ async function runSearch(query: string, category: TrendingCategory): Promise<Tre
     } else if (resultField && Array.isArray(resultField)) {
       rawList = resultField as RawSearchResult[];
     } else if (choices && Array.isArray(choices)) {
-      // Some providers wrap results as a chat completion
       const firstChoice = (choices as Array<{ message?: { content?: string } }>)[0];
       const text = firstChoice?.message?.content || '';
       rawList = text
@@ -267,7 +263,6 @@ async function fetchTrending(category?: TrendingCategory): Promise<TrendingItem[
   if (category) {
     merged.push(...resultsPerCat[0]);
   } else {
-    // Interleave results so the default feed shows a mix
     const maxLen = Math.max(...resultsPerCat.map(r => r.length));
     for (let i = 0; i < maxLen; i++) {
       resultsPerCat.forEach(group => {
@@ -277,7 +272,6 @@ async function fetchTrending(category?: TrendingCategory): Promise<TrendingItem[
   }
 
   if (merged.length === 0) {
-    // Final fallback — return curated mock items (filtered by category if provided)
     return category ? FALLBACK_ITEMS.filter(item => item.category === category) : FALLBACK_ITEMS;
   }
 
@@ -287,6 +281,9 @@ async function fetchTrending(category?: TrendingCategory): Promise<TrendingItem[
 /* ──────────────────────── Route Handlers ──────────────────────── */
 
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   const { searchParams } = new URL(request.url);
   const categoryParam = searchParams.get('category') as TrendingCategory | null;
   const category =
@@ -295,15 +292,28 @@ export async function GET(request: NextRequest) {
       : undefined;
 
   try {
+    // Check Redis cache (5 minutes)
+    const cacheKey = `trending:${category || 'all'}`;
+    const cached = await cacheGet(cacheKey);
+    if (cached) return NextResponse.json(cached);
+
     const items = await fetchTrending(category);
-    return NextResponse.json({
+    const result = {
       items,
       count: items.length,
-      source: 'live',
+      source: 'live' as const,
       category: category || 'all',
-    });
+    };
+
+    // Cache for 5 minutes
+    await cacheSet(cacheKey, result, 300);
+
+    return NextResponse.json(result);
   } catch (err) {
     console.warn('[trending] GET failed, returning fallback:', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/trending' },
+    });
     const items = category
       ? FALLBACK_ITEMS.filter(item => item.category === category)
       : FALLBACK_ITEMS;
@@ -317,6 +327,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
   let body: { category?: string } = {};
   try {
     body = await request.json();
@@ -340,6 +353,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (err) {
     console.warn('[trending] POST failed, returning fallback:', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/trending' },
+    });
     const items = category
       ? FALLBACK_ITEMS.filter(item => item.category === category)
       : FALLBACK_ITEMS;

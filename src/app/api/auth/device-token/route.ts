@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { registerDeviceToken } from '@/lib/supabase';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // POST /api/auth/device-token — Register device for push notifications
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.auth);
+  if (rateLimited) return rateLimited;
+
   try {
     const { userId, token, platform } = await request.json();
 
@@ -19,6 +24,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Device token API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/auth/device-token' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to register device' },
       { status: 500 },

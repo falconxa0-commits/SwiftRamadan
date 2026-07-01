@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /**
  * GET /api/rider/assign?email=xxx
- * Returns all orders currently assigned to this rider (riderName matches user.name)
  */
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
@@ -47,6 +51,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ success: true, orders: parsed });
   } catch (error) {
     console.error('Rider assign GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/rider/assign' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch assigned orders' },
       { status: 500 }
@@ -56,12 +63,11 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/rider/assign
- * Body: { orderId, riderEmail, action }
- *   action = "accept"   → set Order.riderName = rider's name, status = "In Transit", progress = 75
- *   action = "decline"  → no-op (order stays available)
- *   action = "complete" → set Order.status = "Delivered", progress = 100
  */
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { orderId, riderEmail, action } = body as {
@@ -102,7 +108,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'accept') {
-      // Assign rider + set In Transit
       const updated = await db.order.update({
         where: { id: orderId },
         data: {
@@ -127,7 +132,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'decline') {
-      // No-op — order stays available
       let parsedItems: Array<{ name: string; qty: number; price: number }> = [];
       try {
         parsedItems = JSON.parse(order.items);
@@ -143,7 +147,6 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'complete') {
-      // Verify this rider owns the order before completing
       if (order.riderName !== user.name) {
         return NextResponse.json(
           {
@@ -169,7 +172,6 @@ export async function POST(request: NextRequest) {
         parsedItems = [];
       }
 
-      // Earnings: 15% of order total
       const earnings = Math.round(updated.total * 0.15);
 
       return NextResponse.json({
@@ -186,6 +188,9 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Rider assign POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/rider/assign' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to process rider action' },
       { status: 500 }

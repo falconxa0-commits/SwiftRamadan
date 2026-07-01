@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
 async function resolveUserId(identifier: string | null | undefined): Promise<string | null> {
@@ -18,6 +20,9 @@ async function resolveUserId(identifier: string | null | undefined): Promise<str
 //   userId may be a User.id or email.
 // ─────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
@@ -56,6 +61,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ review }, { status: 201 });
   } catch (err) {
     console.error('[orders/rate] POST error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/orders/[id]/rate' },
+    });
     return NextResponse.json({ error: 'Failed to create review' }, { status: 500 });
   }
 }
@@ -64,6 +72,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
 // GET /api/orders/[id]/rate?orderId=xxx — list reviews for an order
 // ─────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
     const url = new URL(req.url);
@@ -77,6 +88,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ reviews });
   } catch (err) {
     console.error('[orders/rate] GET error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/orders/[id]/rate' },
+    });
     return NextResponse.json({ error: 'Failed to load reviews' }, { status: 500 });
   }
 }

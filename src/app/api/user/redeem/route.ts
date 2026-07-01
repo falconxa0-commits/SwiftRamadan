@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Reward catalog — each rewardType maps to a points cost and a Coupon payload
 const REWARDS: Record<string, { cost: number; type: 'fixed' | 'delivery'; value: number; label: string }> = {
@@ -19,9 +21,10 @@ function generateCode(prefix = 'REDEM'): string {
 }
 
 // POST /api/user/redeem
-// Body: { email, rewardType }
-// → deduct points from User.swiftPoints, create Coupon record, return coupon code
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { email, rewardType } = body;
@@ -106,6 +109,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Redeem API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/user/redeem' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to redeem points' },
       { status: 500 }

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -123,6 +125,9 @@ function emptyAnalytics() {
 
 // POST /api/cooking-sessions  body: { email, recipeName, difficulty, durationSec, completed, usedLiveAI }
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const email = body?.email || 'guest';
@@ -139,8 +144,12 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ ok: true, session }, { status: 200 });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Failed to log session';
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Failed to log session';
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/cooking-sessions' },
+    });
     return NextResponse.json(
       { ok: true, session: null, error: msg },
       { status: 200 },
@@ -151,6 +160,9 @@ export async function POST(request: NextRequest) {
 // GET /api/cooking-sessions?email=foo@bar.com
 // Returns full analytics + gamified achievements. Always 200.
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   const email = request.nextUrl.searchParams.get('email') || 'guest';
   try {
     const sessions = await db.cookingSession.findMany({
@@ -241,7 +253,11 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 },
     );
-  } catch {
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/cooking-sessions' },
+    });
     return NextResponse.json(emptyAnalytics(), { status: 200 });
   }
 }

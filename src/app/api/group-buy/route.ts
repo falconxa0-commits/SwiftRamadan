@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -101,7 +103,10 @@ const slotStore: Map<number, GroupBuySlot> = new Map(
 );
 
 // GET /api/group-buy → returns active group buys with slot counts
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const groupBuys = GROUP_BUY_DEALS.map(deal => {
       const slot = slotStore.get(deal.id);
@@ -117,6 +122,9 @@ export async function GET() {
     return NextResponse.json({ groupBuys });
   } catch (error) {
     console.error('Group buy API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/group-buy' },
+    });
     return NextResponse.json(
       { groupBuys: [], message: 'Failed to fetch group buys' },
       { status: 500 },
@@ -126,6 +134,9 @@ export async function GET() {
 
 // POST /api/group-buy { userId, groupBuyId } → joins a group buy
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { userId: rawUserId, groupBuyId } = body;
@@ -199,6 +210,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Group buy API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/group-buy' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to join group buy' },
       { status: 500 },

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, videoCreateSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // GET /api/videos — fetch reels feed (optionally by category)
 export async function GET(req: NextRequest) {
@@ -35,6 +36,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ videos: serialized });
   } catch (err) {
     console.error('[videos/GET] error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), { tags: { route: '/api/videos' } });
     return NextResponse.json({ error: 'Failed to load videos' }, { status: 500 });
   }
 }
@@ -73,6 +75,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ video: { ...video, liked: false } }, { status: 201 });
   } catch (err) {
     console.error('[videos/POST] error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), { tags: { route: '/api/videos' } });
     return NextResponse.json({ error: 'Failed to upload video' }, { status: 500 });
   }
 }

@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // GET /api/videos/[id]/comments — list comments for a video
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
 
@@ -15,12 +20,18 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ comments });
   } catch (err) {
     console.error('[videos/comments/GET] error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/videos/[id]/comments' },
+    });
     return NextResponse.json({ error: 'Failed to load comments' }, { status: 500 });
   }
 }
 
 // POST /api/videos/[id]/comments — add a comment
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
     const body = await req.json();
@@ -53,6 +64,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ comment }, { status: 201 });
   } catch (err) {
     console.error('[videos/comments/POST] error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/videos/[id]/comments' },
+    });
     return NextResponse.json({ error: 'Failed to add comment' }, { status: 500 });
   }
 }

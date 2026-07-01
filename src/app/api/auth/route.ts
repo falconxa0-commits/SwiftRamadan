@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, signupSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
 import {
   generateOtp,
   setOtpAsync,
@@ -503,6 +504,7 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('Auth API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/auth' } });
     return NextResponse.json(
       { success: false, message: 'An error occurred. Please try again.' },
       { status: 500 },

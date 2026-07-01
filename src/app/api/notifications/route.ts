@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /* ──────────── helpers ──────────── */
 
@@ -27,19 +29,11 @@ function timeAgo(date: Date): string {
   return `${day} day${day > 1 ? 's' : ''} ago`;
 }
 
-/* ──────────── GET /api/notifications ────────────
- * SECURITY (fix S4 — global data leak):
- *   Previously this did `findMany({})` with no `where` clause, returning EVERY user's
- *   notifications to anyone who called the endpoint.
- *
- * New behaviour:
- *   - `?userId=<id|email>` provided → resolve to a real user, return only their notifications.
- *   - `?userId=` absent → return 200 with `{ notifications: [], unreadCount: 0 }` plus a
- *     `deprecated` flag so the frontend doesn't crash but no data leaks.
- *   - `?userId=` provided but unresolvable → return empty list with a warning (don't 404,
- *     because the frontend treats 4xx/5xx as errors and falls back to a hard-coded list).
- */
+/* ──────────── GET /api/notifications ──────────── */
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const userIdRaw = searchParams.get('userId');
@@ -84,6 +78,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Notifications API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/notifications' },
+    });
     // On DB failure, return empty list (NOT the legacy global demo array — that was a leak too).
     return NextResponse.json({
       notifications: [],
@@ -93,13 +90,11 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/* ──────────── POST /api/notifications — create ────────────
- * SECURITY (fix audit C1 FK crash + scope):
- *   `userId` is now REQUIRED and must reference an existing user. Previously the route
- *   passed `userId: userId || null` straight to Prisma, which (a) crashed with 500 on
- *   invalid IDs and (b) allowed global (userId=null) notifications.
- */
+/* ──────────── POST /api/notifications — create ──────────── */
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { title, message, type = 'info', userId } = body;
@@ -138,6 +133,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, notification });
   } catch (error) {
     console.error('Notifications API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/notifications' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to create notification' },
       { status: 500 }
@@ -145,19 +143,11 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/* ──────────── PUT /api/notifications — mark as read ────────────
- * SECURITY (fix S5 — mark-all wipes everyone):
- *   Previously `{all:true}` with no `userId` ran `updateMany({ where: { read: false } })`
- *   which marked EVERY user's notifications as read across the whole DB.
- *
- * New behaviour:
- *   - `userId` is REQUIRED in the body (400 if missing).
- *   - `{userId, all:true}` → mark only that user's unread notifications as read.
- *   - `{userId, id}` → mark a single notification as read, but FIRST verify it belongs to
- *     the requesting user (403 if mismatch). This prevents a user from dismissing someone
- *     else's notification by guessing its id.
- */
+/* ──────────── PUT /api/notifications — mark as read ──────────── */
 export async function PUT(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { id, userId, all } = body;
@@ -224,6 +214,9 @@ export async function PUT(request: NextRequest) {
     );
   } catch (error) {
     console.error('Notifications API PUT error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/notifications' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to mark notifications as read' },
       { status: 500 }

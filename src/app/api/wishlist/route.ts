@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -19,6 +21,9 @@ async function resolveUserId(raw: string | null): Promise<string | null> {
 
 // GET /api/wishlist?userId=xxx → returns the user's wishlist items (newest first)
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const rawUserId = searchParams.get('userId');
@@ -36,6 +41,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ items });
   } catch (error) {
     console.error('Wishlist API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/wishlist' },
+    });
     return NextResponse.json(
       { items: [], message: 'Failed to fetch wishlist' },
       { status: 500 },
@@ -46,6 +54,9 @@ export async function GET(request: NextRequest) {
 // POST /api/wishlist { userId, productId, name, price, image }
 // Toggle behavior: if the item already exists, remove it; otherwise create it.
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { userId: rawUserId, productId, name, price, image } = body;
@@ -92,6 +103,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, action: 'added', item }, { status: 201 });
   } catch (error) {
     console.error('Wishlist API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/wishlist' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to update wishlist' },
       { status: 500 },
@@ -101,6 +115,9 @@ export async function POST(request: NextRequest) {
 
 // DELETE /api/wishlist?userId=xxx&productId=xxx → removes item
 export async function DELETE(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const rawUserId = searchParams.get('userId');
@@ -133,6 +150,9 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ success: true, action: 'removed' });
   } catch (error) {
     console.error('Wishlist API DELETE error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/wishlist' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to remove wishlist item' },
       { status: 500 },

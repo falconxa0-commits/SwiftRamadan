@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -114,6 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, profile: fallbackProfile, source: 'fallback' });
   } catch (error) {
     console.error('[Taste DNA] Error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/taste-dna' } });
     return NextResponse.json(
       { success: false, message: 'Taste analysis failed' },
       { status: 500 },

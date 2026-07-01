@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -79,6 +81,9 @@ function isRecipeShape(v: unknown): v is RawRecipe {
 }
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const items: string[] = Array.isArray(body?.items)
@@ -121,10 +126,18 @@ export async function POST(request: NextRequest) {
       }
 
       return NextResponse.json({ recipe: FALLBACK_RECIPE }, { status: 200 });
-    } catch {
+    } catch (error) {
+      console.error('API error:', error);
+      await captureException(error instanceof Error ? error : new Error(String(error)), {
+        tags: { route: '/api/pantry/rescue' },
+      });
       return NextResponse.json({ recipe: FALLBACK_RECIPE }, { status: 200 });
     }
-  } catch {
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/pantry/rescue' },
+    });
     return NextResponse.json({ recipe: FALLBACK_RECIPE }, { status: 200 });
   }
 }

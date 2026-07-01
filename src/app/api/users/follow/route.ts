@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
 async function resolveUserId(identifier: string): Promise<string | null> {
@@ -14,10 +16,11 @@ async function resolveUserId(identifier: string): Promise<string | null> {
 
 // ─────────────────────────────────────────────────────────────
 // POST /api/users/follow — toggle follow relationship
-// Body: { followerId, followeeId }  (each may be a User.id or email)
-// Returns: { following: true|false, followerId, followeeId }
 // ─────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await req.json().catch(() => ({}));
     const followerRaw = String(body.followerId || '');
@@ -56,18 +59,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ following: true, followerId, followeeId }, { status: 201 });
   } catch (err) {
     console.error('[users/follow] POST error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/users/follow' },
+    });
     return NextResponse.json({ error: 'Failed to toggle follow' }, { status: 500 });
   }
 }
 
 // ─────────────────────────────────────────────────────────────
 // GET /api/users/follow
-//   - ?followerId=xxx&followeeId=yyy  → { following: true|false }
-//   - ?userId=xxx&type=followers      → { users: [...] } (followers of userId)
-//   - ?userId=xxx&type=following      → { users: [...] } (people userId follows)
-// All identifiers may be User.id or email.
 // ─────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const url = new URL(req.url);
     const followerRaw = url.searchParams.get('followerId');
@@ -138,6 +143,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid query parameters' }, { status: 400 });
   } catch (err) {
     console.error('[users/follow] GET error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/users/follow' },
+    });
     return NextResponse.json({ error: 'Failed to query follows' }, { status: 500 });
   }
 }

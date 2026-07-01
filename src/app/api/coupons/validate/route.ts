@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, couponValidateSchema } from '@/lib/validation';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -100,6 +101,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Coupons validate API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), { tags: { route: '/api/coupons/validate' } });
     return NextResponse.json(
       { valid: false, message: 'Failed to validate coupon' },
       { status: 500 },

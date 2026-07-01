@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDuaOfDay, getDuasByCategory, getRandomDua } from '@/lib/islamic/dua';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
@@ -20,6 +25,10 @@ export async function GET(request: NextRequest) {
     const dua = getDuaOfDay();
     return NextResponse.json({ dua });
   } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/dua' },
+    });
     return NextResponse.json({ dua: null, error: "Failed to get du'a" }, { status: 500 });
   }
 }

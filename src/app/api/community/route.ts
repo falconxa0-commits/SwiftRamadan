@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
@@ -44,6 +46,9 @@ function safeParseLikedBy(raw: string | null | undefined): string[] {
 // Returns all posts (newest first) with their comments (oldest first).
 // Always 200. If DB fails, returns empty array.
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   // email param kept for API symmetry / future owner-specific filtering;
   // community posts are global, so it's accepted but not strictly required.
   const _email = request.nextUrl.searchParams.get('email') || 'guest';
@@ -58,7 +63,11 @@ export async function GET(request: NextRequest) {
       },
     });
     return NextResponse.json({ posts }, { status: 200 });
-  } catch {
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/community' },
+    });
     return NextResponse.json({ posts: [] }, { status: 200 });
   }
 }
@@ -69,6 +78,9 @@ export async function GET(request: NextRequest) {
 //   'like'         → toggle the requester's email in the post's likedBy array
 // Always returns 200.
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   let body: Record<string, unknown> = {};
   try {
     body = (await request.json()) as Record<string, unknown>;
@@ -164,8 +176,11 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ post }, { status: 200 });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Unknown error';
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Unknown error';
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/community' },
+    });
     return NextResponse.json(
       { post: null, comment: null, liked: false, error: msg },
       { status: 200 },

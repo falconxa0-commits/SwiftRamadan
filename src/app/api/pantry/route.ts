@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // GET /api/pantry?email=foo@bar.com
 // Returns owner-scoped pantry items sorted by createdAt desc. Always 200.
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   const email = request.nextUrl.searchParams.get('email') || 'guest';
   try {
     const items = await db.pantryItem.findMany({
@@ -13,7 +18,11 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
     return NextResponse.json({ items }, { status: 200 });
-  } catch {
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/pantry' },
+    });
     return NextResponse.json({ items: [] }, { status: 200 });
   }
 }
@@ -21,6 +30,9 @@ export async function GET(request: NextRequest) {
 // POST /api/pantry  body: { email, name, category, quantity, unit, expiresAt? }
 // Creates a PantryItem. Always 200. On failure returns { item: null, error }.
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const email = body?.email || 'guest';
@@ -59,8 +71,12 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ item }, { status: 200 });
-  } catch (e: unknown) {
-    const msg = e instanceof Error ? e.message : 'Failed to create pantry item';
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : 'Failed to create pantry item';
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/pantry' },
+    });
     return NextResponse.json({ item: null, error: msg }, { status: 200 });
   }
 }
@@ -68,6 +84,9 @@ export async function POST(request: NextRequest) {
 // DELETE /api/pantry?email=foo@bar.com&id=xyz
 // Deletes the item only if it belongs to that owner. Always returns { ok: true }.
 export async function DELETE(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   const email = request.nextUrl.searchParams.get('email') || 'guest';
   const id = request.nextUrl.searchParams.get('id') || '';
   try {
@@ -75,7 +94,11 @@ export async function DELETE(request: NextRequest) {
       await db.pantryItem.deleteMany({ where: { id, ownerEmail: email } });
     }
     return NextResponse.json({ ok: true }, { status: 200 });
-  } catch {
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/pantry' },
+    });
     return NextResponse.json({ ok: true }, { status: 200 });
   }
 }

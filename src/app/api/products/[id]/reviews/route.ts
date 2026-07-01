@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-
-export const runtime = 'nodejs';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /** Resolve email-or-id to real User.id; returns null if not found. */
 async function resolveUserId(raw: string | null | undefined): Promise<string | null> {
@@ -17,8 +17,10 @@ interface RouteContext {
 }
 
 // GET /api/products/[id]/reviews → reviews for a product (newest first)
-// We match on either Review.productId (FK cuid) OR Review.targetId (stringified numeric id).
-export async function GET(_request: NextRequest, context: RouteContext) {
+export async function GET(request: NextRequest, context: RouteContext) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await context.params;
 
@@ -41,6 +43,9 @@ export async function GET(_request: NextRequest, context: RouteContext) {
     return NextResponse.json({ reviews: parsed });
   } catch (error) {
     console.error('Product reviews GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/products/[id]/reviews' },
+    });
     return NextResponse.json(
       { reviews: [], message: 'Failed to fetch reviews' },
       { status: 500 },
@@ -49,8 +54,10 @@ export async function GET(_request: NextRequest, context: RouteContext) {
 }
 
 // POST /api/products/[id]/reviews { productId, userId?, authorName, authorAvatar, rating, comment, images? }
-// Creates Review and updates Product.rating + reviewCount if the product exists in DB.
 export async function POST(request: NextRequest, context: RouteContext) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id: routeId } = await context.params;
     const body = await request.json();
@@ -129,6 +136,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   } catch (error) {
     console.error('Product reviews POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/products/[id]/reviews' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to create review' },
       { status: 500 },

@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendPushNotification } from '@/lib/supabase';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // POST /api/notifications/push — Send push notification
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { userId, title, body, data } = await request.json();
 
@@ -20,6 +25,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('Push notification API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/notifications/push' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to send notification' },
       { status: 500 },

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 const searchableItems = [
   // Products
@@ -33,25 +35,39 @@ const searchableItems = [
 ];
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get('q')?.toLowerCase().trim();
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
 
-  if (!query) {
-    return NextResponse.json({ results: { products: [], categories: [], retailers: [] }, query: '' });
+  try {
+    const { searchParams } = new URL(request.url);
+    const query = searchParams.get('q')?.toLowerCase().trim();
+
+    if (!query) {
+      return NextResponse.json({ results: { products: [], categories: [], retailers: [] }, query: '' });
+    }
+
+    const results = searchableItems.filter(item =>
+      item.name.toLowerCase().includes(query) ||
+      item.category.toLowerCase().includes(query)
+    );
+
+    const products = results.filter(r => r.type === 'product');
+    const categories = results.filter(r => r.type === 'category');
+    const retailers = results.filter(r => r.type === 'retailer');
+
+    return NextResponse.json({
+      results: { products, categories, retailers },
+      query,
+      total: results.length,
+    });
+  } catch (error) {
+    console.error('API error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/search' },
+    });
+    return NextResponse.json(
+      { results: { products: [], categories: [], retailers: [] }, query: '', message: 'Search failed' },
+      { status: 500 },
+    );
   }
-
-  const results = searchableItems.filter(item =>
-    item.name.toLowerCase().includes(query) ||
-    item.category.toLowerCase().includes(query)
-  );
-
-  const products = results.filter(r => r.type === 'product');
-  const categories = results.filter(r => r.type === 'category');
-  const retailers = results.filter(r => r.type === 'retailer');
-
-  return NextResponse.json({
-    results: { products, categories, retailers },
-    query,
-    total: results.length,
-  });
 }

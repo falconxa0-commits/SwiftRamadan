@@ -1,12 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // GET /api/coupons → returns all active coupons
 // If DB has no coupons, returns a seeded static fallback list (also upserts them
 // into the DB so subsequent validations work consistently).
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     let coupons = await db.coupon.findMany({
       where: { active: true },
@@ -36,6 +41,9 @@ export async function GET() {
     return NextResponse.json({ coupons });
   } catch (error) {
     console.error('Coupons API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/coupons' },
+    });
     return NextResponse.json(
       { coupons: [], message: 'Failed to fetch coupons' },
       { status: 500 },

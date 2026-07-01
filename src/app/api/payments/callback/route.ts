@@ -1,11 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyPayment } from '@/lib/payments';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
 // GET /api/payments/callback — Payment gateway callback (Paystack/Flutterwave redirect)
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const reference = searchParams.get('reference') || searchParams.get('tx_ref');
@@ -59,6 +64,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/?payment=failed', request.url));
   } catch (error) {
     console.error('Payment callback error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/payments/callback' },
+    });
     return NextResponse.redirect(new URL('/?payment=error', request.url));
   }
 }

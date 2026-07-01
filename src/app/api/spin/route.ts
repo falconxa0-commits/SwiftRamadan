@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { captureException } from '@/lib/monitoring/sentry';
 // Prize definitions with probabilities
 const PRIZES = [
   { id: 1, type: 'discount', value: 500, label: '₦500 Off', probability: 0.20 },

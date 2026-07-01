@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { validateInput, cartItemSchema } from '@/lib/validation';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Returns true if the user exists (or userId is null/undefined). Returns false
 // if a userId was provided but no matching User record was found — which would
@@ -13,6 +15,9 @@ async function assertUserExists(userId: string | undefined): Promise<boolean> {
 
 // GET /api/cart?sessionId=...&userId=... — Get cart items
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId') || 'default';
@@ -35,6 +40,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Cart API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/cart' },
+    });
     return NextResponse.json(
       { error: 'Failed to fetch cart' },
       { status: 500 }
@@ -44,6 +52,9 @@ export async function GET(request: NextRequest) {
 
 // POST /api/cart — Add item to cart
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
 
@@ -117,6 +128,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Cart API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/cart' },
+    });
     return NextResponse.json(
       { error: 'Failed to add item to cart' },
       { status: 500 }
@@ -126,6 +140,9 @@ export async function POST(request: NextRequest) {
 
 // DELETE /api/cart?id=...&sessionId=...&userId=... — Remove item or clear cart
 export async function DELETE(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -159,6 +176,9 @@ export async function DELETE(request: NextRequest) {
     });
   } catch (error) {
     console.error('Cart API DELETE error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/cart' },
+    });
     return NextResponse.json(
       { error: 'Failed to remove item from cart' },
       { status: 500 }

@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 /**
  * GET /api/rider?email=xxx
- * Fetch rider dashboard data:
- *   - riderName, online, rating, completedToday, earningsToday, totalEarnings
- *   - activeDeliveries    (status "In Transit", assigned to this rider)
- *   - availableDeliveries (status "Ready", no riderName)
- *   - recentDeliveries    (status "Delivered", assigned to this rider)
- *   - weeklyEarnings      (last 7 days of delivered orders)
- *
- * Earnings: 15% of order total per delivery
- * Rating: default 4.8 (no data yet)
  */
 export async function GET(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
@@ -49,8 +45,6 @@ export async function GET(request: NextRequest) {
 
     const riderName = user.name;
 
-    // Query Orders where riderName matches user.name OR status in ["Confirmed", "Ready", "In Transit"]
-    // (unassigned available + assigned to this rider)
     const orders = await db.order.findMany({
       where: {
         OR: [
@@ -87,8 +81,6 @@ export async function GET(request: NextRequest) {
 
     // Today's date string for comparison
     const todayStr = new Date().toDateString();
-    const startOfToday = new Date();
-    startOfToday.setHours(0, 0, 0, 0);
 
     const todaysDelivered = recentDeliveries.filter(
       (o) => new Date(o.createdAt).toDateString() === todayStr
@@ -143,6 +135,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Rider API GET error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/rider' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to fetch rider data' },
       { status: 500 }
@@ -152,10 +147,12 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/rider
- * Toggle online status (kept for backwards compat)
- * Body: { email, online }
+ * Toggle online status
  */
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
     const { email, online } = body;
@@ -180,6 +177,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Rider API POST error:', error);
+    await captureException(error instanceof Error ? error : new Error(String(error)), {
+      tags: { route: '/api/rider' },
+    });
     return NextResponse.json(
       { success: false, message: 'Failed to update rider state' },
       { status: 500 }

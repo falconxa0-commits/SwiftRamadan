@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { captureException } from '@/lib/monitoring/sentry';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
 async function resolveUserId(identifier: string): Promise<string | null> {
@@ -14,10 +16,11 @@ async function resolveUserId(identifier: string): Promise<string | null> {
 
 // ─────────────────────────────────────────────────────────────
 // POST /api/videos/[id]/save — toggle a SavedVideo bookmark
-// Body: { userId, videoId }  (userId may be a User.id or email)
-// Returns: { saved: true|false, videoId }
 // ─────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
     const body = await req.json().catch(() => ({}));
@@ -49,17 +52,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     return NextResponse.json({ saved: true, videoId }, { status: 201 });
   } catch (err) {
     console.error('[videos/save] POST error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/videos/[id]/save' },
+    });
     return NextResponse.json({ error: 'Failed to toggle save' }, { status: 500 });
   }
 }
 
 // ─────────────────────────────────────────────────────────────
 // GET /api/videos/[id]/save?userId=xxx
-//   - If [id] matches a real video → returns { saved: true|false, videoId } for that video
-//   - Otherwise (e.g. [id] === 'list') → returns all saved videos for the user
-//   userId may be a User.id or email.
 // ─────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const rateLimited = await checkRateLimit(req, RATE_LIMITS.general);
+  if (rateLimited) return rateLimited;
+
   try {
     const { id } = await params;
     const url = new URL(req.url);
@@ -100,6 +106,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ saved: !!existing, videoId: id });
   } catch (err) {
     console.error('[videos/save] GET error', err);
+    await captureException(err instanceof Error ? err : new Error(String(err)), {
+      tags: { route: '/api/videos/[id]/save' },
+    });
     return NextResponse.json({ error: 'Failed to fetch saved videos' }, { status: 500 });
   }
 }
