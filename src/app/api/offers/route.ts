@@ -6,35 +6,17 @@ import { captureException } from '@/lib/monitoring/sentry';
 export const runtime = 'nodejs';
 
 // GET /api/offers → returns a mix of active coupons from DB + curated static offers.
+// Seeding is handled by /api/coupons (same table) — this GET does NOT mutate.
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
   try {
-    // Pull active coupons from DB; seed defaults if empty
-    let coupons = await db.coupon.findMany({
+    // Pull active coupons from DB (read-only — no seeding on GET)
+    const coupons = await db.coupon.findMany({
       where: { active: true },
       orderBy: { createdAt: 'desc' },
     });
-
-    if (coupons.length === 0) {
-      const seed = [
-        { code: 'RAMADAN', type: 'percent', value: 10, minOrder: 5000, maxUses: 1000 },
-        { code: 'IFTAR', type: 'percent', value: 10, minOrder: 3000, maxUses: 500 },
-        { code: 'SWIFT25', type: 'percent', value: 25, minOrder: 10000, maxUses: 200 },
-        { code: 'SAHUR', type: 'percent', value: 15, minOrder: 2000, maxUses: 300 },
-        { code: 'LAGOS5K', type: 'fixed', value: 1000, minOrder: 5000, maxUses: 150 },
-      ];
-
-      await db.coupon.createMany({
-        data: seed.map(c => ({ ...c, uses: 0, active: true })),
-      });
-
-      coupons = await db.coupon.findMany({
-        where: { active: true },
-        orderBy: { createdAt: 'desc' },
-      });
-    }
 
     // Static curated offers (flash sales + Ramadan specials that aren't coupons)
     const curatedOffers = [
@@ -107,6 +89,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({
+      success: true,
       coupons: couponOffers,
       offers: curatedOffers,
       flashSales: curatedOffers.filter(o => o.type === 'flash-sale'),
@@ -118,7 +101,7 @@ export async function GET(request: NextRequest) {
       tags: { route: '/api/offers' },
     });
     return NextResponse.json(
-      { coupons: [], offers: [], flashSales: [], ramadanSpecials: [], message: 'Failed to fetch offers' },
+      { success: false, message: 'Failed to fetch offers' },
       { status: 500 },
     );
   }

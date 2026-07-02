@@ -114,13 +114,37 @@ export function buildImageUrl(publicId: string, options?: {
 
 // ─── Delete image ───
 export async function deleteImage(publicId: string): Promise<boolean> {
-  if (!CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) return true;
+  if (!CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET || !CLOUDINARY_CLOUD_NAME) {
+    console.warn('[Cloudinary] Cannot delete — not configured. Public ID:', publicId);
+    return false;
+  }
 
   try {
-    // Cloudinary delete requires admin API with signature — simplified version
-    console.log('[Cloudinary] Delete requested for:', publicId);
-    return true;
-  } catch {
+    const crypto = await import('crypto');
+    const timestamp = Math.floor(Date.now() / 1000);
+    const signatureStr = `public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
+    const signature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('api_key', CLOUDINARY_API_KEY);
+    formData.append('signature', signature);
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`,
+      { method: 'POST', body: formData },
+    );
+
+    const data = await response.json();
+    if (data.result === 'ok' || data.result === 'not found') {
+      return true;
+    }
+
+    console.error('[Cloudinary] Delete failed:', data.error?.message || data.result);
+    return false;
+  } catch (error) {
+    console.error('[Cloudinary] Delete error:', error);
     return false;
   }
 }

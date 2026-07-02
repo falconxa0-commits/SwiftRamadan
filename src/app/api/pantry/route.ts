@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { validateInput, pantryItemSchema } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -23,7 +24,10 @@ export async function GET(request: NextRequest) {
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/pantry' },
     });
-    return NextResponse.json({ items: [] }, { status: 200 });
+    return NextResponse.json(
+        { success: false, message: 'Failed to load pantry items' },
+        { status: 500 },
+      );
   }
 }
 
@@ -34,55 +38,45 @@ export async function POST(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
-    const body = await request.json();
-    const email = body?.email || 'guest';
-    const name = typeof body?.name === 'string' ? body.name.trim() : '';
+    const rawBody = await request.json();
+    const email = rawBody?.email || 'guest';
 
-    if (!name) {
-      return NextResponse.json(
-        { item: null, error: 'Name is required' },
-        { status: 200 },
-      );
-    }
-
-    const rawQty = body?.quantity;
-    const quantity =
-      typeof rawQty === 'number'
-        ? String(rawQty)
-        : typeof rawQty === 'string'
-          ? rawQty
-          : '1';
+    const v = validateInput(pantryItemSchema, rawBody);
+    if (!v.success) return v.response;
 
     let expiresAt: Date | null = null;
-    if (body?.expiresAt) {
-      const d = new Date(body.expiresAt);
+    if (v.data.expiresAt) {
+      const d = new Date(v.data.expiresAt);
       if (!isNaN(d.getTime())) expiresAt = d;
     }
 
     const item = await db.pantryItem.create({
       data: {
         ownerEmail: email,
-        name,
-        category: typeof body?.category === 'string' ? body.category : 'other',
-        quantity,
-        unit: typeof body?.unit === 'string' ? body.unit : 'pcs',
+        name: v.data.name,
+        category: v.data.category,
+        quantity: String(v.data.quantity),
+        unit: v.data.unit,
         expiresAt,
       },
     });
 
-    return NextResponse.json({ item }, { status: 200 });
+    return NextResponse.json({ success: true, item }, { status: 200 });
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Failed to create pantry item';
     console.error('API error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/pantry' },
     });
-    return NextResponse.json({ item: null, error: msg }, { status: 200 });
+    return NextResponse.json(
+      { success: false, message: msg },
+      { status: 500 },
+    );
   }
 }
 
 // DELETE /api/pantry?email=foo@bar.com&id=xyz
-// Deletes the item only if it belongs to that owner. Always returns { ok: true }.
+// Deletes the item only if it belongs to that owner.
 export async function DELETE(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
@@ -93,12 +87,15 @@ export async function DELETE(request: NextRequest) {
     if (id) {
       await db.pantryItem.deleteMany({ where: { id, ownerEmail: email } });
     }
-    return NextResponse.json({ ok: true }, { status: 200 });
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error('API error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/pantry' },
     });
-    return NextResponse.json({ ok: true }, { status: 200 });
+    return NextResponse.json(
+      { success: false, message: 'Failed to delete pantry item' },
+      { status: 500 },
+    );
   }
 }

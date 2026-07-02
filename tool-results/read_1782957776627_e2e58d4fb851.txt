@@ -1,0 +1,252 @@
+  2119→Task ID: AUDIT-UI
+  2120→Agent: UI Component Auditor (general-purpose)
+  2121→Task: Audit all UI components for bugs, UX issues, accessibility, and missing features
+  2122→
+  2123→Scope: /home/z/my-project/src/app/page.tsx, /home/z/my-project/src/app/layout.tsx, /home/z/my-project/src/components/swift/ (60+ files), /home/z/my-project/src/components/{ErrorBoundary,PWARegister}.tsx, /home/z/my-project/src/lib/{store,data}.ts
+  2124→
+  2125→Work Log:
+  2126→- Read worklog.md to understand prior agent work (47+ components, mock data, API routes, PWA, real-time sockets)
+  2127→- Read store.ts (619 lines, Zustand persisted store), data.ts (887 lines mock data), layout.tsx (root layout + PWA + metadata)
+  2128→- Audited src/app/page.tsx (main orchestrator, 611 lines) — route switching, top bar, role config, AllModals composition
+  2129→- Audited AuthScreen.tsx (1378 lines) — login, signup multi-step, OTP, role screen
+  2130→- Audited WelcomeScreen.tsx (890 lines) — guest-browseable landing, hero carousel, category filters
+  2131→- Audited OnboardingFlow.tsx (1280 lines) — 3-step per-role onboarding, celebration screen
+  2132→- Audited HomeTab.tsx (666 lines), ExploreTab.tsx (397 lines), ReelsTab.tsx (267 lines), VideoCard.tsx (483 lines)
+  2133→- Audited CartTab.tsx (305 lines), OrdersTab.tsx (622 lines), OffersTab.tsx (676 lines), ProfileTab.tsx (1068 lines)
+  2134→- Audited BottomNav.tsx (117 lines), CheckoutModal.tsx (1266 lines), ProductDetailModal.tsx (585 lines)
+  2135→- Audited NotificationCenter.tsx (238 lines), SearchOverlay.tsx (367 lines), ChatModal.tsx (570 lines)
+  2136→- Audited RealTimeTrackingModal.tsx (read 600/1169 lines), CommunityForum.tsx (read 300/987 lines)
+  2137→- Audited VendorDashboard.tsx (905 lines), RiderDashboard.tsx (773 lines), ErrorBoundary.tsx (103 lines), PWARegister.tsx (29 lines)
+  2138→- Cross-referenced accent color usage via Grep across all swift components (522 hits for #13ec13, 374 for #FFD700, 329 for #10E07A)
+  2139→- Verified CSS utility classes exist in globals.css (aurora-app-bg, glass-card, etc.)
+  2140→- Did NOT fix anything — audit only
+  2141→
+  2142→Findings Report:
+  2143→
+  2144→═══════════════════════════════════════════════════════════════════
+  2145→🚨 CRITICAL BUGS (will crash UI or break core flows)
+  2146→═══════════════════════════════════════════════════════════════════
+  2147→
+  2148→1. **VendorDashboard.tsx:504** — `processingOrders` and `dispatchedOrders` are hardcoded empty arrays (`const processingOrders: ProcessingOrder[] = []; const dispatchedOrders: DispatchedOrder[] = [];`). The "Processing" and "Dispatched" filter tabs will ALWAYS show 0 orders and an empty list, even after the vendor accepts orders. Vendor can accept an order but cannot see it again in the dashboard. Filter counts always read 0/0/0. This is a major broken flow.
+  2149→
+  2150→2. **page.tsx:241-254 vs 261-268** — When `showWelcome` is true, the page returns early WITHOUT rendering `<AllModals />`. When `showAuth` is truthy, `<AllModals />` IS rendered underneath. When `showOnboarding` is true, `<AllModals />` is NOT rendered. Inconsistency: if a modal was open (e.g., `activeModal='checkout'`) and the user navigates back to welcome, the modal state stays in the store but no modal renders. Re-entering the app may show a stale modal unexpectedly.
+  2151→
+  2152→3. **ProfileTab.tsx handleCharityClick (line 394-406)** — Donations are added to cart with `image: ''` (empty string). In CartTab.tsx:144, the empty image is used as `backgroundImage: url("")` which is invalid CSS — browsers may show a broken-image placeholder or no background. Also affects CheckoutModal which only checks `item.image ?` truthiness (empty string is falsy, so CheckoutModal shows the Package icon fallback — OK there, but CartTab does NOT have the same fallback).
+  2153→
+  2154→4. **OrdersTab.tsx handleReorder (line 119-131)** — Generates cart item IDs via `parseInt(item.name.replace(/\D/g, '')) || Math.floor(Math.random() * 1000) + 500`. For items whose names contain no digits (most meal names), this produces a random ID each call. Calling "Reorder" twice on the same order adds DUPLICATE cart items with different IDs instead of incrementing quantity. Also collides with real product IDs (100, 101, 102, 200+) causing potential mismatches when the cart item is clicked to open ProductDetailModal.
+  2155→
+  2156→5. **OffersTab.tsx FlashSaleCard (line 50-54)** — `endTime = new Date(Date.now() + minutes * 60 * 1000)` is recomputed on every render. The `useCountdown` hook depends on `endTime` in its useEffect deps (line 36), so the interval is torn down and recreated every second. Causes 1 re-render per second per mounted FlashSaleCard → 3 cards = 3 renders/sec. Not a crash but a performance cliff that can jank scrolling on low-end devices.
+  2157→
+  2158→6. **OnboardingFlow.tsx:1114** — `const role = userRole as 'customer' | 'vendor' | 'rider'` — Type assertion without runtime check. If `userRole` somehow becomes an unexpected string (e.g., from corrupted persisted state), `ROLE_ACCENT[role]` returns undefined, and `accent` is undefined. Downstream `accent` is used in inline styles — undefined accent produces broken CSS (e.g., `backgroundColor: undefined` works but `border: 1px solid ${accent}30` becomes "1px solid undefined30" which is invalid). Fix has a fallback at line 1115 (`|| ROLE_ACCENT.customer`) so this is mostly mitigated, but the pattern is fragile.
+  2159→
+  2160→7. **VideoCard.tsx:233** — `fetch(`/api/videos/${video.id}/share`, { method: 'PUT' })` is called to record a view, but the endpoint is `/share` with PUT method. This is semantically wrong (should be a `/view` or `/views` endpoint). May or may not work depending on the API route handler — if it doesn't accept PUT, the view is silently not recorded.
+  2161→
+  2162→═══════════════════════════════════════════════════════════════════
+  2163→⚠️ IMPORTANT UX ISSUES (broken flows, missing states, inconsistencies)
+  2164→═══════════════════════════════════════════════════════════════════
+  2165→
+  2166→8. **MASSIVE ACCENT COLOR INCONSISTENCY** — The codebase uses TWO different color systems:
+  2167→   - "Correct" (per page.tsx ROLE_CONFIG, store, BottomNav): customer=#10E07A, vendor=#F5C451, rider=#38BDF8
+  2168→   - "Wrong" (legacy, in AuthScreen, OnboardingFlow, CheckoutModal, NotificationCenter, SearchOverlay, AIChatWidget, CommunityForum, SmartKitchenHub, and 30+ other files): customer=#13ec13, vendor=#FFD700, rider=#3b82f6
+  2169→   
+  2170→   Grep results: **522 occurrences of `#13ec13`** across 37 files; **374 occurrences of `#FFD700`** across 36 files; only 329 occurrences of correct `#10E07A` across 27 files. The AuthScreen, OnboardingFlow, CheckoutModal, and NotificationCenter are dominated by the wrong palette. Visual result: when a customer logs in via AuthScreen (#13ec13 lime) and lands on HomeTab (#10E07A emerald), the accent color visibly shifts. Same for vendor flow (FFD700 pure gold → F5C451 champagne) and rider flow (#3b82f6 strong blue → #38BDF8 sky blue).
+  2171→
+  2172→9. **AuthScreen.tsx handleVerifySuccess (line 997-1012)** — When OTP verifies successfully and `userRole === 'customer'`, both branches of the if/else call `setShowOnboarding(true); setShowAuth(null)`. The redundant branching is confusing but not broken. The `else` (no role) branch calls `setShowAuth('role')` which forces the user back to role selection — but they just signed up, so this is a confusing UX. The flow assumes the user picked a role before OTP, but if they didn't, they're bounced to role selection post-verification.
+  2173→
+  2174→10. **AuthScreen.tsx SignupScreen (line 502)** — `phone: \`+234${phone}\`` blindly prepends +234 to whatever the user typed. If the user enters "08012345678" (with leading 0, common Nigerian format), they get "+23408012345678" (14 digits, invalid). Should strip leading 0 before prepending.
+  2175→
+  2176→11. **ProfileTab.tsx handleSwitchRole (line 383-392)** — Switches role WITHOUT triggering onboarding for the new role. A customer switching to vendor mode skips vendor onboarding entirely (no business hours, no bank details collected). The app just dumps them into VendorDashboard with no profile data. Inconsistent with the signup flow which requires onboarding.
+  2177→
+  2178→12. **ProfileTab.tsx (line 240)** — `useAppStore.getState().unreadCount` is read once during render to build the notifications subtitle, but it's NOT reactive. If unreadCount changes while ProfileTab is mounted, the subtitle won't update. Should use the `useAppStore(s => s.unreadCount)` hook form for reactivity.
+  2179→
+  2180→13. **NotificationCenter.tsx markAllRead (line 68-71)** — Only updates local React state, never calls the API. Next time the user opens NotificationCenter, it refetches from `/api/notifications` and all "marked read" notifications appear unread again. The "Mark all read" button is effectively useless across sessions.
+  2181→
+  2182→14. **NotificationCenter.tsx notification click (line 201-207)** — Clicking a notification only marks it as read locally. Doesn't navigate to the related order/promo/reward. Dead tap target from the user's perspective.
+  2183→
+  2184→15. **OrdersTab.tsx handleActiveOrderClick (line 115-117)** — Opens `live-tracking` modal but never passes the specific order ID. RealTimeTrackingModal.tsx:171-174 derives the tracked order as "first non-delivered order or first order" — so if the user has multiple active orders and taps one specific order, the modal might track a DIFFERENT order. Confusing.
+  2185→
+  2186→16. **OrdersTab.tsx handleCancelOrder (line 133-151)** — One-click cancel with NO confirmation dialog. User can accidentally cancel an active order with a single tap. Should require confirmation.
+  2187→
+  2188→17. **CartTab.tsx handleApplyCoupon (line 33-42)** — Silent fallback: `discountPercent = effectiveCouponApplied ? (VALID_COUPONS[appliedCouponCode]?.discount || 0.10) : 0`. If `appliedCouponCode` somehow doesn't match a known coupon, it silently defaults to 10% off. Should fail loud or default to 0.
+  2189→
+  2190→18. **ExploreTab.tsx handleQuickAction (line 53-74)** — Switch statement on `action.name` (e.g., 'Reorder', 'Group Buy', 'Gift', 'Recipes', 'Mosques', 'Track'). If `quickActions` data has any other name, the button does NOTHING — no toast, no fallback, no visual feedback. Compare to HomeTab's `quickActionConfig` which uses `action.icon` as the key with a `else` toast fallback.
+  2191→
+  2192→19. **ExploreTab.tsx handleRetailerClick "View Store" button (line 290-299)** — Button labeled "View Store" only sets `activeCategory` and shows a toast. Doesn't navigate to a vendor storefront. Misleading label.
+  2193→
+  2194→20. **VendorDashboard.tsx fetchData (line 343)** — Falls back to `'sani@swiftramadan.app'` if userEmail is empty. Same hardcoded fallback in RiderDashboard.tsx:105. A logged-out user opening these tabs sees another user's data (Sani's). Should redirect to auth instead.
+  2195→
+  2196→21. **VendorDashboard.tsx handleAccept (line 385)** — `setTimeout(() => fetchData(), 600)` after accepting. If user accepts 3 orders quickly, 3 fetches fire with race conditions. Should use a single debounce or wait for all to complete.
+  2197→
+  2198→22. **RiderDashboard.tsx:243-246** — Polls every 15s with `setInterval(() => fetchRider(true), 15000)`. Never stops polling even if the tab is hidden. Wastes battery and bandwidth. Should use `document.visibilityState` to pause when hidden.
+  2199→
+  2200→23. **ChatModal.tsx module-level `_chatContext` (line 24)** — Singleton state that doesn't trigger re-renders. If `setChatContext()` is called while the modal is open, the modal won't update to show the new recipient. The modal reads `getChatContext()` once on mount.
+  2201→
+  2202→24. **ChatModal.tsx online indicator (line 404)** — Always shows a green dot next to recipient avatar, even when socket is disconnected and the status text says "Reconnecting…". Visual contradiction.
+  2203→
+  2204→25. **RealTimeTrackingModal.tsx trackedOrderId (line 171-174)** — Derives tracked order from store but has no way for the user to switch which order is being tracked. If the user has 2 active orders, they're stuck tracking whichever the store picks first.
+  2205→
+  2206→26. **OffersTab.tsx claimDailyPoints (line 248-253)** — `dailyClaimed` is local component state, not persisted. After claiming, refreshing the page resets `dailyClaimed` to false and the user can claim again. The store's `claimDailyPoints` also has no daily limit — it increments streak and points infinitely. User can spam-claim for unlimited points.
+  2207→
+  2208→27. **CheckoutModal.tsx orderId (line 78)** — Initialized once via `useState(() => \`SWR-${Math.floor(1000 + Math.random() * 9000)}\`)`. After placing an order, `setOrderId(shortId)` updates it. If the user closes the modal (handleClose line 150-153) and opens a new checkout, the orderId is still the LAST order's ID, not a fresh random. Could collide with the existing order.
+  2209→
+  2210→28. **CheckoutModal.tsx handlePlaceOrder (line 269)** — `item: snapshotItems.length === 1 ? snapshotItems[0].name : \`${snapshotItems[0].name} + ${snapshotItems.length - 1} more\`` — If `snapshotItems` is empty (race condition where cart was cleared between clicking checkout and placing order), this crashes with "Cannot read properties of undefined (reading 'name')". The `handleCheckout` in CartTab prevents this by checking `cartItems.length === 0` first, but the race window exists.
+  2211→
+  2212→29. **VideoCard.tsx:275** — `video.authorName.charCodeAt(0)` — If `authorName` is empty string, `charCodeAt(0)` returns NaN, and `NaN % AVATAR_COLORS.length` is NaN. `AVATAR_COLORS[NaN]` is undefined. Then `style={{ backgroundColor: undefined }}` — no crash but no avatar color either. Should default to a fallback.
+  2213→
+  2214→30. **HomeTab.tsx carousel scroll (line 43-47)** — `slideWidth = carouselRef.current.scrollWidth / heroSlides.length` assumes equal-width slides with no gaps. But the JSX uses `gap-4` (16px gap) between slides. The scroll position will drift over time, eventually misaligning slides with the indicator dots.
+  2215→
+  2216→31. **HomeTab.tsx hero slide click mapping (line 319)** — `onClick={() => handleMealClick(slide.id === 1 ? 2 : slide.id === 2 ? 3 : 100)}` — Magic-number mapping from slide IDs to product IDs. Fragile and undocumented. If `heroSlides` data changes, this breaks silently.
+  2217→
+  2218→32. **WelcomeScreen.tsx SignUpPrompt backdrop (line 88)** — `onClick={onClose}` on the outer motion.div, but no `onClick={(e) => e.stopPropagation()}` on the inner motion.div. Wait — line 97 has `onClick={(e) => e.stopPropagation()}`. OK that's fine. Actually no issue.
+  2219→
+  2220→═══════════════════════════════════════════════════════════════════
+  2221→♿ ACCESSIBILITY ISSUES
+  2222→═══════════════════════════════════════════════════════════════════
+  2223→
+  2224→33. **WIDESPREAD: No aria-labels on ~26 of 60 components** — Grep found `aria-label=` in only 34 files. Major components like WelcomeScreen, ExploreTab, OffersTab, OrdersTab (mostly), VendorDashboard, RiderDashboard, CheckoutModal (most buttons), RealTimeTrackingModal, CommunityForum, and most modal files lack aria-labels on icon-only buttons. Screen readers will announce "button" with no context.
+  2225→
+  2226→34. **No keyboard navigation in modals** — None of the modals (CheckoutModal, ProductDetailModal, ChatModal, RealTimeTrackingModal, NotificationCenter, SearchOverlay) close on Escape key. Only AIChatWidget.tsx has an Escape handler (line 57-67). All others require clicking the X button or backdrop.
+  2227→
+  2228→35. **No focus trap in modals** — When modals open, focus doesn't move to the modal. When closed, focus doesn't return to the trigger. Tab key can navigate to elements behind the modal.
+  2229→
+  2230→36. **SearchOverlay.tsx** — No Enter key handler on the input (search happens via debounce only). No Escape to close. No `role="dialog"` or `aria-modal="true"`.
+  2231→
+  2232→37. **AuthScreen.tsx InputField (line 147-191)** — Inputs use placeholder text only, no `<label>` element and no `aria-label`. Screen readers won't announce the field purpose. The `inputMode` attribute is good for mobile keyboards but doesn't help a11y.
+  2233→
+  2234→38. **AuthScreen.tsx OTP inputs (line 1098-1113)** — Inputs have no `aria-label`. Screen readers announce "edit text" 6 times with no context.
+  2235→
+  2236→39. **OnboardingFlow.tsx** — Custom dropdowns (area selector, vehicle type, ID type, business category) are `<button>` elements that toggle a `<motion.div>` list. No `role="listbox"`, no `aria-expanded`, no `aria-selected`, no keyboard arrow navigation. Completely inaccessible to screen readers and keyboard users.
+  2237→
+  2238→40. **BottomNav.tsx** — Good: has `aria-label` and `aria-current`. But the cart badge has no `aria-label` — screen readers announce "1" with no context.
+  2239→
+  2240→41. **VideoCard.tsx** — Video element has no `captions`/`<track>` for accessibility. No way to disable autoplay for users with motion sensitivity. The double-tap-to-like gesture has no keyboard equivalent.
+  2241→
+  2242→42. **ReelsTab.tsx** — Snap-scrolling feed has no keyboard navigation. No way to advance to next reel via keyboard.
+  2243→
+  2244→43. **Color contrast** — Many `text-white/40` and `text-white/30` usages on dark backgrounds fail WCAG AA contrast ratios (4.5:1 for normal text). Examples: `text-white/30` on `#06070B` background = ~2.3:1 contrast. Affects time stamps, subtitles, helper text throughout the app.
+  2245→
+  2246→44. **Images without alt text** — Most `<img>` tags (e.g., WelcomeScreen.tsx:483 logo, ProductDetailModal.tsx:473 cart item image, ProductDetailModal.tsx:495 review avatar) have `alt` attributes but they're often generic ("SwiftRamadan") or redundant with adjacent text. Decorative background images via `style={{ backgroundImage }}` have no text alternative.
+  2247→
+  2248→45. **No `lang` attribute on modals** — Modals render with `lang="en"` inherited from `<html>`, but Arabic text (e.g., "ٱلسَّلَامُ عَلَيْكُمْ" in WelcomeScreen.tsx:821) has no `dir="rtl"` or `lang="ar"` wrapper. Screen readers will mispronounce Arabic.
+  2249→
+  2250→═══════════════════════════════════════════════════════════════════
+  2251→🔧 MINOR ISSUES (polish, consistency, type safety)
+  2252→═══════════════════════════════════════════════════════════════════
+  2253→
+  2254→46. **Type safety: NodeJS.Timeout in browser code** — `useRef<NodeJS.Timeout | null>(null)` in ChatModal.tsx:98,100 and SearchOverlay.tsx:33. Should be `ReturnType<typeof setTimeout>` or `number` for browser code. Works because Next.js bundles Node types, but technically incorrect.
+  2255→
+  2256→47. **AuthScreen.tsx:443** — `const [signupRole, setSignupRole] = useState<RoleKey>(store.userRole || 'customer')` — `store.userRole` is always defined (defaults to 'customer' in store.ts:351), so the `|| 'customer'` fallback is dead code.
+  2257→
+  2258→48. **AuthScreen.tsx:464** — `const currentStep = step === 1 ? 1 : (signupRole === 'customer' ? 2 : 2)` — Both branches of the ternary return 2. The conditional is meaningless. Same issue at line 551: `const filledSegments = step === 1 ? 1 : (signupRole === 'customer' ? 2 : 2)`.
+  2259→
+  2260→49. **OnboardingFlow.tsx handleOnboardingClose (line 1190-1194)** — Dead code. The function `handleOnboardingClose` is defined but never called anywhere in the component. Looks like leftover from a refactor.
+  2261→
+  2262→50. **OnboardingFlow.tsx RiderStep1 isSelected logic (line 755-756)** — `const isSelected = riderVehicleType.toLowerCase().replace(/\s+/g, '-') === vehicle.id || (vehicle.id === 'motorcycle' && riderVehicleType === 'Motorcycle')`. The second condition is redundant — if `riderVehicleType === 'Motorcycle'`, then `.toLowerCase().replace(/\s+/g,'-')` already equals 'motorcycle'. The first condition catches it.
+  2263→
+  2264→51. **OnboardingFlow.tsx VendorStep1 storeDesc (line 439)** — Local state `storeDesc` is collected but NEVER sent to the API or store. Dead input — user types a description and it's silently discarded.
+  2265→
+  2266→52. **OnboardingFlow.tsx VendorStep2 sahurOrders, iftarRush, maxOrders (lines 542-544)** — All three are local state, never persisted to store or API. Dead inputs.
+  2267→
+  2268→53. **OnboardingFlow.tsx RiderStep2 idType, idNumber (line 821-822)** — Local state, never persisted. Dead inputs.
+  2269→
+  2270→54. **OnboardingFlow.tsx VendorStep3 accountHolder (line 656)** — Local state, never persisted. Same in RiderStep3 (line 930). Dead inputs.
+  2271→
+  2272→55. **CartTab.tsx coupon state (line 21-22)** — `couponApplied` and `appliedCouponCode` are local state. They survive tab switches (component unmount/remount) — actually no, they DON'T. If user applies a coupon, switches to Home tab, switches back to Cart tab, the coupon is gone (local state reset). The coupon is NOT synced to the global store. Should be in store.checkout or similar.
+  2273→
+  2274→56. **CartTab.tsx handleRemoveCoupon (line 44-49)** — Resets `couponApplied`, `appliedCouponCode`, AND `coupon` (the input field). If user just wanted to remove the applied coupon to try a different one, they have to re-type the code. Minor annoyance.
+  2275→
+  2276→57. **ProfileTab.tsx settingsState (line 185-191)** — Local state for toggles (notifications, darkMode, locationServices, biometric, twoFactor). Not persisted. After refresh, all toggles reset to defaults. Also `darkMode` is collected but the app is always dark (per layout.tsx `className="dark"`), so the toggle does nothing.
+  2277→
+  2278→58. **ProfileTab.tsx menuWithDynamicSubtitles (line 238-242)** — Rebuilds the entire menu array on every render. Could be memoized with `useMemo`.
+  2279→
+  2280→59. **CheckoutModal.tsx:106** — `const currentUserEmail = useAppStore.getState().userEmail || 'guest'` — Reads store via `getState()` instead of the hook. Won't trigger re-render if user logs in/out while modal is open. Should be `const currentUserEmail = useAppStore(s => s.userEmail) || 'guest'`.
+  2281→
+  2282→60. **CheckoutModal.tsx:404-407** — Progress stepper uses `bg-[#13ec13]` (wrong green). Should be `#10E07A`. Same wrong color throughout the modal (45 occurrences of `#13ec13`).
+  2283→
+  2284→61. **VideoCard.tsx IntersectionObserver (line 207-221)** — `useEffect(() => { ... }, [])` — empty deps. The observer is created once. If `wrapRef.current` changes (it shouldn't, but if the component is re-rendered with a different key), the observer won't re-attach. Minor.
+  2285→
+  2286→62. **VideoCard.tsx view recording (line 230-233)** — `viewRecordedRef.current` is set to true after first view, never reset. If the same VideoCard instance is reused for a different video (it shouldn't be, since ReelsTab keys by `video.id`), the view won't be recorded for the second video. Defensive coding would reset on `video.id` change.
+  2287→
+  2288→63. **ReelsTab.tsx handleShare (line 112-121)** — Optimistically increments share count, fires POST to `/api/videos/${video.id}/share`. On failure, does NOTHING (catch is empty `/* noop */`). The share count stays incremented even if the API failed. Should revert on failure like `handleLike` does.
+  2289→
+  2290→64. **ReelsTab.tsx fetchVideos (line 35-75)** — The complex mapping in the `isSavedMode` branch (line 45-62) manually maps API response fields. If the API adds a new field, it's silently dropped. Could use a cleaner type or zod schema.
+  2291→
+  2292→65. **SearchOverlay.tsx:55-65** — Legacy migration code reads `swiftramadan-recent-searches` from localStorage and merges into the new `search-history` key. But never REMOVES the legacy key after migration. Runs the migration logic on every mount. Minor inefficiency.
+  2293→
+  2294→66. **NotificationCenter.tsx:38-42** — `useEffect(() => { if (isOpen) fetchNotifications(); }, [isOpen])` — `fetchNotifications` is not in deps. ESLint will warn. Functionally OK because `fetchNotifications` is recreated on every render (not memoized), so the effect would re-run if it were in deps. Current behavior is intentional but lint-unclean.
+  2295→
+  2296→67. **WelcomeScreen.tsx:483** — `<img src="/swiftramadan-logo.png" alt="SwiftRamadan" className="w-full h-full object-cover" />` — Logo image is stretched to fill a 9x9 rounded container with `object-cover`. If the logo has a different aspect ratio, it'll be cropped. Should use `object-contain` for logos.
+  2297→
+  2298→68. **VendorDashboard.tsx IftarCountdown (line 85-117)** — `isUrgent ? 'bg-red-500/90 border-red-400/30 animate-pulse' : 'bg-red-500/90 border-red-400/30'` — Both branches are IDENTICAL except for `animate-pulse`. Non-urgent state looks exactly like urgent state (just without the pulse animation). Should use different colors (e.g., yellow for non-urgent, red for urgent).
+  2299→
+  2300→69. **VendorDashboard.tsx playChime (line 240-265)** — Creates a new `AudioContext` on every chime, closes it after 600ms. If chimes fire rapidly (multiple new orders), multiple contexts coexist. Should reuse a single context.
+  2301→
+  2302→70. **RiderDashboard.tsx ChevronRight (line 435)** — Decorative chevron next to rider name in profile header. Looks clickable but has no onClick. Minor confusion.
+  2303→
+  2304→71. **RiderDashboard.tsx "Accepting Orders" label (line 407)** — Says "Accepting Orders" when online, but this is the RIDER dashboard. Riders don't accept orders — they accept DELIVERIES. Should say "Available for Deliveries".
+  2305→
+  2306→72. **PWARegister.tsx:9** — `if (process.env.NODE_ENV !== 'production') return;` — Service worker only registers in production. During development, no SW. This is correct behavior but means PWA features (offline, installable) can't be tested in dev mode. Documented in comments.
+  2307→
+  2308→73. **ErrorBoundary.tsx:36-44** — `handleReload` and `handleHome` call `this.setState({ hasError: false })` THEN `window.location.reload()`. The setState is unnecessary since the page reloads immediately after. Minor wasted work.
+  2309→
+  2310→74. **ErrorBoundary.tsx** — Only catches client-side render errors. Does NOT catch errors in event handlers, async code, or effects. Standard React limitation but worth noting — many runtime errors will bypass this boundary.
+  2311→
+  2312→75. **global-error.tsx** — Inline styles instead of Tailwind classes. This is intentional (Next.js requires global-error to render its own html/body, and Tailwind may not be loaded). Acceptable tradeoff.
+  2313→
+  2314→═══════════════════════════════════════════════════════════════════
+  2315→✅ WHAT WORKS WELL
+  2316→═══════════════════════════════════════════════════════════════════
+  2317→
+  2318→- **Zustand store** is well-structured with proper typing, persistence with migration, and a clean `partialize` to avoid persisting transient state. The `logout()` action comprehensively resets user-specific state.
+  2319→
+  2320→- **Error boundaries** are layered correctly: `ErrorBoundary` (client class component) in layout.tsx wraps all children, `error.tsx` handles route errors, `global-error.tsx` handles root errors with inline styles (correct Next.js pattern).
+  2321→
+  2322→- **PWA setup** is production-correct: manifest.json, theme color, viewport meta, SW registration gated to production (avoids dev caching issues).
+  2323→
+  2324→- **SEO metadata** in layout.tsx is comprehensive: title template, description, keywords, OpenGraph, Twitter card, robots, canonical, icons.
+  2325→
+  2326→- **Real-time infrastructure** is solid: `useSocket` hook used in VendorDashboard, RiderDashboard, ChatModal, RealTimeTrackingModal. Proper room-based subscriptions (`vendor-${id}`, `rider-${id}`, `order-${id}`). Polling fallbacks when socket disconnects.
+  2327→
+  2328→- **Optimistic updates** are consistently applied: VideoCard.tsx handleSave/handleFollow, ChatModal.tsx handleSend, CommunityForum.tsx handleLike, ReelsTab.tsx handleLike. All revert on failure.
+  2329→
+  2330→- **Loading skeletons** (Skeletons.tsx) used by HomeTab, OrdersTab, ReelsTab, VendorDashboard, RiderDashboard. Prevents layout shift during data fetching.
+  2331→
+  2332→- **Empty states** are well-designed across all tabs: CartTab (empty cart illustration + CTA), OrdersTab (no orders), ReelsTab (no reels), VendorDashboard (no incoming orders), RiderDashboard (no deliveries), NotificationCenter (no notifications), SearchOverlay (no results), CommunityForum (no posts). Each has helpful copy and a next-action button.
+  2333→
+  2334→- **API integration** is consistent: most components fetch from the correct endpoints (`/api/orders`, `/api/vendor`, `/api/rider`, `/api/videos`, `/api/community`, `/api/products/${id}/reviews`, `/api/coupons/validate`, `/api/addresses`, `/api/payments`). All have try/catch with meaningful fallbacks.
+  2335→
+  2336→- **Toast notifications** via `useToast` hook are used consistently for user feedback (add to cart, login, errors, etc.).
+  2337→
+  2338→- **Analytics tracking** (`track()` from `@/lib/analytics`) is wired into key user actions across AuthScreen, HomeTab, CartTab, VideoCard, ReelsTab, ProfileTab, CheckoutModal.
+  2339→
+  2340→- **Mobile-first responsive design** — BottomNav is mobile-optimized (max-w-lg, floating), all tabs use `overflow-y-auto pb-32` to clear the floating nav, modals use `fixed inset-0` full-screen overlays.
+  2341→
+  2342→- **Sticky footer behavior** — BottomNav uses `fixed bottom-3 sm:bottom-5` and is rendered AFTER the tab content in page.tsx. The `z-50` keeps it above tab content. The bottom gradient fade (`fixed bottom-0 ... z-40 pointer-events-none`) provides visual softening. The main page container uses `flex h-screen flex-col` so the tab content area flexes to fill space. This is correct.
+  2343→
+  2344→- **Dark mode** — The `<html className="dark">` is set in layout.tsx and the body has `bg-[#05070A]`. All components use dark-first styling. The dark theme is consistent (no light mode leak).
+  2345→
+  2346→- **TypeScript types** — Store is fully typed via `AppState` interface. Component props are typed. Very few `any` types (grep found 0 occurrences of `: any` in swift components). The `Record<string, unknown>` pattern is used in socket handlers for safety.
+  2347→
+  2348→- **Accessibility bright spots** — BottomNav has `aria-label` and `aria-current`. CartTab quantity buttons have `aria-label`. VideoCard action buttons have `aria-label`. AIChatWidget has Escape key handler. ToggleSwitch in ProfileTab has `role="switch"` and `aria-checked`.
+  2349→
+  2350→- **Framer Motion animations** are smooth and consistent: page transitions (`pageVariants`), modal slide-ups (`y: '100%'` → `y: 0`), stagger children in lists, layout animations for tab indicator (`layoutId`).
+  2351→
+  2352→Stage Summary:
+  2353→- The app is broadly functional with a rich feature set (60+ components, real-time sockets, PWA, 11+ API routes)
+  2354→- **1 critical bug** (VendorDashboard empty processing/dispatched arrays) breaks the vendor order management flow
+  2355→- **1 systemic issue** (522 occurrences of wrong accent color `#13ec13` across 37 files) makes the UI look inconsistent
+  2356→- **Several broken UX flows**: ProfileTab role switch skips onboarding, OrdersTab reorder generates random IDs, NotificationCenter markAllRead doesn't persist, OffersTab daily points can be spammed
+  2357→- **Accessibility is the weakest area**: no Escape key in modals, no focus traps, ~26 components missing aria-labels, custom dropdowns aren't keyboard-navigable, color contrast fails WCAG AA in many places
+  2358→- **Performance concerns**: OffersTab FlashSaleCard re-creates intervals every second, RiderDashboard polls forever even when tab hidden, VendorDashboard races on multiple accepts
+  2359→- **Dead inputs in OnboardingFlow**: storeDesc, sahurOrders, iftarRush, maxOrders, idType, idNumber, accountHolder are collected but never persisted
+  2360→- Recommended fix priority: (1) VendorDashboard processingOrders bug, (2) accent color unification, (3) OrdersTab reorder ID generation, (4) ProfileTab role-switch onboarding, (5) Escape key + focus trap in all modals, (6) aria-labels on all icon buttons
+  2361→
+  2362→---
+  2363→Task ID: AUDIT-BROWSER
+  2364→Agent: Browser Verification Auditor
+  2365→Task: End-to-end browser audit of SwiftRamadan app (login, all tabs, modals, role switching, console/network, mobile/desktop)
+  2366→
+  2367→Work Log:
+  2368→- Read worklog.md (1903 lines) for full context. Previous agents built 70 features across customer/vendor/rider experiences, PWA, real-time socket.io, uploads, analytics, etc. Final pre-production browser audit needed.
+
+[showing lines 2119-2368 of 4305; use offset=2369 with limit to continue reading]

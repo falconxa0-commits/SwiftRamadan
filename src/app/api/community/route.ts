@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { validateInput, communityPostSchema, communityCommentSchema, communityLikeSchema } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -68,7 +69,7 @@ export async function GET(request: NextRequest) {
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/community' },
     });
-    return NextResponse.json({ posts: [] }, { status: 200 });
+    return NextResponse.json({ success: false, message: 'Failed to load posts' }, { status: 500 });
   }
 }
 
@@ -86,8 +87,8 @@ export async function POST(request: NextRequest) {
     body = (await request.json()) as Record<string, unknown>;
   } catch {
     return NextResponse.json(
-      { post: null, comment: null, liked: false, error: 'Invalid JSON body' },
-      { status: 200 },
+      { success: false, message: 'Invalid JSON body' },
+      { status: 400 },
     );
   }
 
@@ -99,52 +100,47 @@ export async function POST(request: NextRequest) {
   try {
     // ── Action: comment ──
     if (action === 'comment') {
-      const postId = String(body.postId || '');
-      if (!postId) {
-        return NextResponse.json(
-          { comment: null, error: 'postId required' },
-          { status: 200 },
-        );
-      }
+      const v = validateInput(communityCommentSchema, { postId: body.postId, authorName: body.authorName, authorInitial: body.authorInitial, authorEmail: email, content: body.content });
+      if (!v.success) return v.response;
+
       const comment = await db.communityComment.create({
         data: {
-          postId,
-          authorName: sanitizeText(body.authorName || 'Anonymous'),
-          authorInitial: sanitizeText(body.authorInitial || 'U'),
-          authorEmail: email,
-          content: sanitizeText(body.content || ''),
+          postId: v.data.postId,
+          authorName: sanitizeText(v.data.authorName),
+          authorInitial: sanitizeText(v.data.authorInitial),
+          authorEmail: sanitizeText(v.data.authorEmail || email),
+          content: sanitizeText(v.data.content),
         },
       });
-      return NextResponse.json({ comment }, { status: 200 });
+      return NextResponse.json({ success: true, comment }, { status: 200 });
     }
 
     // ── Action: like (toggle) ──
     if (action === 'like') {
-      const postId = String(body.postId || '');
-      if (!postId) {
-        return NextResponse.json(
-          { post: null, liked: false, error: 'postId required' },
-          { status: 200 },
-        );
-      }
+      const v = validateInput(communityLikeSchema, { postId: body.postId, authorEmail: email });
+      if (!v.success) return v.response;
 
       const post = await db.communityPost.findUnique({
-        where: { id: postId },
+        where: { id: v.data.postId },
       });
 
       if (!post) {
-        return NextResponse.json({ post: null, liked: false }, { status: 200 });
+        return NextResponse.json(
+          { success: false, message: 'Post not found' },
+          { status: 404 },
+        );
       }
 
       const likedBy = safeParseLikedBy(post.likedBy);
-      const alreadyLiked = likedBy.includes(email);
+      const likerEmail = sanitizeText(v.data.authorEmail || email);
+      const alreadyLiked = likedBy.includes(likerEmail);
       const newLikedBy = alreadyLiked
-        ? likedBy.filter((e) => e !== email)
-        : [...likedBy, email];
+        ? likedBy.filter((e) => e !== likerEmail)
+        : [...likedBy, likerEmail];
       const liked = !alreadyLiked;
 
       const updated = await db.communityPost.update({
-        where: { id: postId },
+        where: { id: v.data.postId },
         data: {
           likes: newLikedBy.length,
           likedBy: JSON.stringify(newLikedBy),
@@ -154,36 +150,43 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return NextResponse.json({ post: updated, liked }, { status: 200 });
+      return NextResponse.json({ success: true, post: updated, liked }, { status: 200 });
     }
 
     // ── Default action: create post ──
+    const v = validateInput(communityPostSchema, {
+      authorName: body.authorName,
+      authorInitial: body.authorInitial,
+      authorEmail: email,
+      category: body.category,
+      content: body.content,
+      imageUrl: body.imageUrl,
+    });
+    if (!v.success) return v.response;
+
     const post = await db.communityPost.create({
       data: {
-        authorName: sanitizeText(body.authorName || 'Anonymous'),
-        authorInitial: sanitizeText(body.authorInitial || 'U'),
-        authorEmail: email,
-        category: sanitizeText(body.category || 'General'),
-        content: sanitizeText(body.content || ''),
-        imageUrl:
-          typeof body.imageUrl === 'string' && body.imageUrl.trim()
-            ? sanitizeText(body.imageUrl)
-            : null,
+        authorName: sanitizeText(v.data.authorName),
+        authorInitial: sanitizeText(v.data.authorInitial),
+        authorEmail: sanitizeText(v.data.authorEmail || email),
+        category: sanitizeText(v.data.category),
+        content: sanitizeText(v.data.content),
+        imageUrl: v.data.imageUrl ? sanitizeText(v.data.imageUrl) : null,
       },
       include: {
         comments: { orderBy: { createdAt: 'asc' } },
       },
     });
 
-    return NextResponse.json({ post }, { status: 200 });
+    return NextResponse.json({ success: true, post }, { status: 200 });
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Unknown error';
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/community' },
     });
     return NextResponse.json(
-      { post: null, comment: null, liked: false, error: msg },
-      { status: 200 },
+      { success: false, message: msg },
+      { status: 500 },
     );
   }
 }

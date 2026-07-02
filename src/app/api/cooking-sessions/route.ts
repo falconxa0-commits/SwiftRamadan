@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { validateInput, cookingSessionSchema } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -129,21 +130,24 @@ export async function POST(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
-    const body = await request.json();
-    const email = body?.email || 'guest';
+    const rawBody = await request.json();
+    const email = rawBody?.email || 'guest';
+
+    const v = validateInput(cookingSessionSchema, rawBody);
+    if (!v.success) return v.response;
 
     const session = await db.cookingSession.create({
       data: {
         ownerEmail: email,
-        recipeName: String(body?.recipeName || 'Untitled Recipe'),
-        difficulty: String(body?.difficulty || 'medium'),
-        durationSec: Number(body?.durationSec ?? 0) || 0,
-        completed: Boolean(body?.completed ?? false),
-        usedLiveAI: Boolean(body?.usedLiveAI ?? false),
+        recipeName: v.data.recipeName,
+        difficulty: v.data.difficulty,
+        durationSec: v.data.durationSec,
+        completed: v.data.completed,
+        usedLiveAI: v.data.usedLiveAI,
       },
     });
 
-    return NextResponse.json({ ok: true, session }, { status: 200 });
+    return NextResponse.json({ success: true, session }, { status: 200 });
   } catch (error) {
     const msg = error instanceof Error ? error.message : 'Failed to log session';
     console.error('API error:', error);
@@ -151,8 +155,8 @@ export async function POST(request: NextRequest) {
       tags: { route: '/api/cooking-sessions' },
     });
     return NextResponse.json(
-      { ok: true, session: null, error: msg },
-      { status: 200 },
+      { success: false, message: msg },
+      { status: 500 },
     );
   }
 }
@@ -258,6 +262,9 @@ export async function GET(request: NextRequest) {
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/cooking-sessions' },
     });
-    return NextResponse.json(emptyAnalytics(), { status: 200 });
+    return NextResponse.json(
+      { success: false, message: 'Failed to load analytics' },
+      { status: 500 },
+    );
   }
 }

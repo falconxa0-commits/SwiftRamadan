@@ -14,87 +14,13 @@ import {
 import { hashPassword, verifyPassword } from '@/lib/auth-utils';
 import { setSessionCookie, clearSessionCookie } from '@/lib/session';
 import { sendOTP } from '@/lib/communications';
+import { filterProfileFields, PROFILE_BLOCKED_FIELDS, publicUserFields } from '@/lib/profile-update';
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
 /* -------------------------------------------------------------------------- */
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Fields that update-profile is allowed to modify. `role`, `hasanatPoints`,
-// `swiftPoints`, and `loyaltyTier` are intentionally excluded — they are
-// server-authoritative (see S3 fix).
-const PROFILE_ALLOWED_FIELDS = [
-  'name', 'phone', 'area', 'avatar', 'onboardingComplete',
-  'storeName', 'businessCategory', 'businessAddress',
-  'bankName', 'accountNumber', 'openTime', 'closeTime',
-  'vehicleType', 'plateNumber', 'licenseNumber', 'vehicleColor',
-  'riderBankName', 'riderAccountNumber',
-  'dailyStreak', 'riderOnline', 'vendorOnline',
-] as const;
-
-const PROFILE_BLOCKED_FIELDS = ['role', 'hasanatPoints', 'swiftPoints', 'loyaltyTier'] as const;
-
-/** Shape of the user object returned to the client on login/signup/etc. */
-function publicUser(user: {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  area: string;
-  avatar: string;
-  onboardingComplete: boolean;
-  storeName: string | null;
-  businessCategory: string | null;
-  businessAddress: string | null;
-  bankName: string | null;
-  accountNumber: string | null;
-  openTime: string;
-  closeTime: string;
-  vehicleType: string | null;
-  plateNumber: string | null;
-  licenseNumber: string | null;
-  vehicleColor: string | null;
-  riderBankName: string | null;
-  riderAccountNumber: string | null;
-  hasanatPoints: number;
-  swiftPoints: number;
-  loyaltyTier: string;
-  dailyStreak: number;
-  riderOnline: boolean;
-  vendorOnline: boolean;
-}) {
-  return {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    role: user.role,
-    area: user.area,
-    avatar: user.avatar,
-    onboardingComplete: user.onboardingComplete,
-    storeName: user.storeName,
-    businessCategory: user.businessCategory,
-    businessAddress: user.businessAddress,
-    bankName: user.bankName,
-    accountNumber: user.accountNumber,
-    openTime: user.openTime,
-    closeTime: user.closeTime,
-    vehicleType: user.vehicleType,
-    plateNumber: user.plateNumber,
-    licenseNumber: user.licenseNumber,
-    vehicleColor: user.vehicleColor,
-    riderBankName: user.riderBankName,
-    riderAccountNumber: user.riderAccountNumber,
-    hasanatPoints: user.hasanatPoints,
-    swiftPoints: user.swiftPoints,
-    loyaltyTier: user.loyaltyTier,
-    dailyStreak: user.dailyStreak,
-    riderOnline: user.riderOnline,
-    vendorOnline: user.vendorOnline,
-  };
-}
 
 /* -------------------------------------------------------------------------- */
 /* Route handler                                                              */
@@ -178,7 +104,7 @@ export async function POST(request: NextRequest) {
         const response = NextResponse.json({
           success: true,
           message: 'Login successful',
-          user: publicUser(user),
+          user: publicUserFields(user),
           token,
         });
         await setSessionCookie(response, { userId: user.id, email: user.email, role: user.role });
@@ -261,7 +187,7 @@ export async function POST(request: NextRequest) {
           // Demo only: expose the code so the caller (test/dev tooling) can
           // complete verification. Remove this field in production.
           otp: otpCode,
-          user: publicUser(user),
+          user: publicUserFields(user),
           token,
         });
         await setSessionCookie(signupResponse, { userId: user.id, email: user.email, role: user.role });
@@ -398,7 +324,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
           success: true,
-          user: publicUser(user),
+          user: publicUserFields(user),
         });
       }
 
@@ -413,9 +339,7 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Require the caller to have verified this email via OTP in the last
-        // 10 minutes. There's no JWT/session system, so the verified-email
-        // flag is the closest thing to an auth token here.
+        // Require the caller to have verified this email via OTP
         if (!(await isEmailVerifiedAsync(email))) {
           return NextResponse.json(
             {
@@ -426,27 +350,17 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Reject any attempt to change server-authoritative fields. `role`
-        // is set only at signup/onboarding; the points/tier fields are
-        // managed by the server (orders, redemptions, etc.).
-        const attemptedBlocked = PROFILE_BLOCKED_FIELDS.filter(
-          (f) => body[f] !== undefined,
-        );
-        if (attemptedBlocked.length > 0) {
+        // Use shared profile update logic (M13 dedup)
+        const { updateData, blockedAttempts } = filterProfileFields(body);
+
+        if (blockedAttempts.length > 0) {
           return NextResponse.json(
             {
               success: false,
-              message: `Cannot modify protected field(s): ${attemptedBlocked.join(', ')}. These are server-authoritative.`,
+              message: `Cannot modify protected field(s): ${blockedAttempts.join(', ')}. These are server-authoritative.`,
             },
             { status: 400 },
           );
-        }
-
-        const updateData: Record<string, unknown> = {};
-        for (const field of PROFILE_ALLOWED_FIELDS) {
-          if (body[field] !== undefined) {
-            updateData[field] = body[field];
-          }
         }
 
         // If a new password is provided, hash it before storing
@@ -462,7 +376,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: 'Profile updated successfully',
-          user: publicUser(user),
+          user: publicUserFields(user),
         });
       }
 

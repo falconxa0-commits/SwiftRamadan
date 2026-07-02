@@ -1,7 +1,7 @@
 // Aladhan API — Accurate prayer times by location
 // Docs: https://aladhan.com/prayer-times-api
 
-const ALADHAN_BASE_URL = process.env.ALADHAN_API_BASE || 'http://api.aladhan.com/v1';
+const ALADHAN_BASE_URL = process.env.ALADHAN_API_BASE || 'https://api.aladhan.com/v1';
 
 export interface PrayerTime {
   fajr: string;

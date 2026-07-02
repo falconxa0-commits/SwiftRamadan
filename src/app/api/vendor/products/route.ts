@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
+import { validateInput, productCreateSchema } from '@/lib/validation';
 
 /* ──────────── helpers ──────────── */
 
@@ -97,21 +98,12 @@ export async function POST(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
-    const body = await request.json();
-    const { name, description, price, image, category, deliveryTime, vendorId, vendorEmail } = body;
+    const rawBody = await request.json();
+    const { vendorId, vendorEmail, ...productData } = rawBody;
 
-    if (!name || typeof name !== 'string' || !name.trim()) {
-      return NextResponse.json(
-        { success: false, error: 'name is required' },
-        { status: 400 }
-      );
-    }
-    if (typeof price !== 'number' || price < 0) {
-      return NextResponse.json(
-        { success: false, error: 'price must be a non-negative number' },
-        { status: 400 }
-      );
-    }
+    // Validate with Zod schema (consistent with /api/products)
+    const v = validateInput(productCreateSchema, productData);
+    if (!v.success) return v.response;
 
     const resolvedId = await resolveVendorId(vendorId, vendorEmail);
     if (!resolvedId) {
@@ -123,13 +115,15 @@ export async function POST(request: NextRequest) {
 
     const product = await db.product.create({
       data: {
-        name: name.trim(),
-        description: typeof description === 'string' ? description : '',
-        price,
-        image: typeof image === 'string' ? image : '',
-        images: JSON.stringify(typeof image === 'string' && image ? [image] : []),
-        category: typeof category === 'string' && category ? category : 'meals',
-        deliveryTime: typeof deliveryTime === 'string' && deliveryTime ? deliveryTime : '30 min',
+        name: v.data.name.trim(),
+        description: v.data.description || '',
+        price: v.data.price,
+        image: v.data.image || '',
+        images: JSON.stringify(v.data.image ? [v.data.image] : []),
+        category: v.data.category,
+        deliveryTime: v.data.deliveryTime,
+        salePrice: v.data.salePrice,
+        originalPrice: v.data.salePrice ? v.data.price : undefined,
         vendorId: resolvedId,
         inStock: true,
         rating: 0,

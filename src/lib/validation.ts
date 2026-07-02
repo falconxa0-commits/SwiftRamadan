@@ -131,6 +131,44 @@ export const cartItemSchema = z.object({
 
 /* ─────────────────────────── Helper ──────────────────────────── */
 
+export const communityPostSchema = z.object({
+  authorName: z.string().min(1).max(100).default('Anonymous'),
+  authorInitial: z.string().max(5).default('U'),
+  authorEmail: z.string().email().optional(),
+  category: z.string().max(50).default('General'),
+  content: z.string().min(1).max(2000),
+  imageUrl: z.string().url().optional().or(z.literal('')),
+});
+
+export const communityCommentSchema = z.object({
+  postId: z.string().min(1),
+  authorName: z.string().min(1).max(100).default('Anonymous'),
+  authorInitial: z.string().max(5).default('U'),
+  authorEmail: z.string().email().optional(),
+  content: z.string().min(1).max(1000),
+});
+
+export const communityLikeSchema = z.object({
+  postId: z.string().min(1),
+  authorEmail: z.string().email().optional(),
+});
+
+export const pantryItemSchema = z.object({
+  name: z.string().min(1).max(100),
+  category: z.string().max(50).default('other'),
+  quantity: z.union([z.string(), z.number()]).default('1'),
+  unit: z.string().max(20).default('pcs'),
+  expiresAt: z.string().optional(),
+});
+
+export const cookingSessionSchema = z.object({
+  recipeName: z.string().min(1).max(200).default('Untitled Recipe'),
+  difficulty: z.enum(['easy', 'medium', 'hard']).default('medium'),
+  durationSec: z.number().int().nonnegative().default(0),
+  completed: z.boolean().default(false),
+  usedLiveAI: z.boolean().default(false),
+});
+
 export type ValidationResult<T> =
   | { success: true; data: T }
   | { success: false; response: Response };
@@ -161,4 +199,68 @@ export function validateInput<T>(
     };
   }
   return { success: true, data: result.data };
+}
+
+/* ──────────────────── Body Size Limit ──────────────────── */
+
+const DEFAULT_MAX_BODY_BYTES = 1_000_000; // 1 MB
+
+/**
+ * Check that a request's body does not exceed a maximum size.
+ * Reads the body as text first (up to maxBytes + 1), then returns it
+ * for the caller to parse. Returns a 413 Response if the body is too large.
+ *
+ * Usage:
+ * ```ts
+ * const bodyResult = await checkBodySize(request);
+ * if (bodyResult.tooLarge) return bodyResult.response!;
+ * const data = JSON.parse(bodyResult.body!);
+ * ```
+ */
+export async function checkBodySize(
+  request: Request,
+  maxBytes: number = DEFAULT_MAX_BODY_BYTES,
+): Promise<{ tooLarge: false; body: string } | { tooLarge: true; response: Response }> {
+  try {
+    const reader = request.body?.getReader();
+    if (!reader) {
+      return { tooLarge: false, body: '' };
+    }
+
+    const chunks: Uint8Array[] = [];
+    let totalBytes = 0;
+
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      totalBytes += value.length;
+      if (totalBytes > maxBytes) {
+        // Cancel the stream and return 413
+        reader.cancel();
+        return {
+          tooLarge: true,
+          response: new Response(
+            JSON.stringify({
+              success: false,
+              message: `Request body too large. Maximum size is ${Math.round(maxBytes / 1000)}KB.`,
+            }),
+            { status: 413, headers: { 'Content-Type': 'application/json' } },
+          ),
+        };
+      }
+    }
+
+    // Reconstruct the body string
+    const combined = new Uint8Array(totalBytes);
+    let offset = 0;
+    for (const chunk of chunks) {
+      combined.set(chunk, offset);
+      offset += chunk.length;
+    }
+
+    return { tooLarge: false, body: new TextDecoder().decode(combined) };
+  } catch {
+    return { tooLarge: false, body: '' };
+  }
 }
