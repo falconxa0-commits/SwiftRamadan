@@ -358,6 +358,12 @@ export function verifyWebhookChallenge(
   token: string,
   challenge: string,
 ): string | null {
+  // Reject if verify token is not configured (empty string would match empty token param)
+  if (!WHATSAPP_BUSINESS_VERIFY_TOKEN) {
+    console.warn('[WhatsApp] Webhook challenge rejected — verify token not configured');
+    return null;
+  }
+
   if (mode === 'subscribe' && token === WHATSAPP_BUSINESS_VERIFY_TOKEN) {
     return challenge;
   }

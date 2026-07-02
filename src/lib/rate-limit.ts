@@ -82,15 +82,17 @@ export function rateLimit(
 /**
  * Helper for API routes: returns `null` if allowed, or a 429 `Response` if
  * rate-limited. Checks Redis first (when configured), then falls back to
- * in-memory. The IP is derived from the `x-forwarded-for` header (set by
- * the Caddy gateway), falling back to `'unknown'`.
+ * in-memory. The IP is derived from the rightmost entry in `x-forwarded-for`
+ * (set by the Caddy gateway — the rightmost value is the real client IP;
+ * earlier entries can be spoofed by the client).
  */
 export async function checkRateLimit(
   request: Request,
   options: RateLimitOptions = { limit: 100, windowMs: 60 * 1000 },
 ): Promise<Response | null> {
   const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded?.split(',')[0]?.trim() || 'unknown';
+  // Take the LAST IP in the chain — that's the one set by our trusted gateway
+  const ip = forwarded?.split(',').pop()?.trim() || 'unknown';
   const identifier = `ip:${ip}`;
 
   // Try Redis rate limiting first

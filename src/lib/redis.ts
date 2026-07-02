@@ -79,26 +79,30 @@ export async function checkRedisRateLimit(
 
   try {
     const key = `ratelimit:${identifier}`;
-    const now = Date.now();
+    const windowStartKey = `ratelimit:start:${identifier}`;
 
-    // Get current count
-    const current = await redisGet<{ count: number; windowStart: number }>(key);
+    // Atomic INCR — if key doesn't exist, Redis creates it with value 1
+    const count = await redis.incr(key);
 
-    if (!current || now - current.windowStart > windowSeconds * 1000) {
-      // New window
-      await redisSet(key, { count: 1, windowStart: now }, windowSeconds);
-      return { allowed: true, remaining: maxRequests - 1, resetAt: now + windowSeconds * 1000 };
+    // Set TTL only on first request in the window (count === 1 after incr)
+    if (count === 1) {
+      // Start a new window — set expiry and record the window start time
+      await redis.expire(key, windowSeconds);
+      await redisSet(windowStartKey, { windowStart: Date.now() }, windowSeconds);
     }
 
-    if (current.count >= maxRequests) {
-      return { allowed: false, remaining: 0, resetAt: current.windowStart + windowSeconds * 1000 };
+    // Retrieve the window start time for resetAt calculation
+    const windowInfo = await redisGet<{ windowStart: number }>(windowStartKey);
+    const windowStart = windowInfo?.windowStart || Date.now();
+
+    if (count > maxRequests) {
+      return { allowed: false, remaining: 0, resetAt: windowStart + windowSeconds * 1000 };
     }
 
-    // Increment
-    await redisSet(key, { count: current.count + 1, windowStart: current.windowStart }, windowSeconds);
-    return { allowed: true, remaining: maxRequests - current.count - 1, resetAt: current.windowStart + windowSeconds * 1000 };
+    return { allowed: true, remaining: maxRequests - count, resetAt: windowStart + windowSeconds * 1000 };
   } catch (error) {
     console.error('[Redis] Rate limit error:', error);
+    // Fail open — don't block requests on Redis errors
     return { allowed: true, remaining: maxRequests, resetAt: Date.now() + windowSeconds * 1000 };
   }
 }

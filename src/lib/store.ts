@@ -617,8 +617,7 @@ export const useAppStore = create<AppState>()(
         wishlist: state.wishlist,
         isLoggedIn: state.isLoggedIn,
         userName: state.userName,
-        userPhone: state.userPhone,
-        userEmail: state.userEmail,
+        // SECURITY: userEmail/userPhone removed — PII should not persist to localStorage
         userRole: state.userRole,
         userArea: state.userArea,
         onboardingComplete: state.onboardingComplete,
@@ -634,16 +633,12 @@ export const useAppStore = create<AppState>()(
         sahurAlarmTime: state.sahurAlarmTime,
         sahurAlarmEnabled: state.sahurAlarmEnabled,
         riderOnline: state.riderOnline,
-        riderEarnings: state.riderEarnings,
-        riderCompletedToday: state.riderCompletedToday,
-        riderRating: state.riderRating,
+        // SECURITY: riderEarnings/riderCompletedToday/riderRating removed — financial data
         vendorOnline: state.vendorOnline,
         vendorStoreName: state.vendorStoreName,
-        vendorBalance: state.vendorBalance,
-        vendorPendingSettlement: state.vendorPendingSettlement,
-        vendorTotalEarnings: state.vendorTotalEarnings,
+        // SECURITY: vendorBalance/vendorPendingSettlement/vendorTotalEarnings removed — financial data
         vendorBusinessCategory: state.vendorBusinessCategory,
-        vendorBusinessAddress: state.vendorBusinessAddress,
+        // SECURITY: vendorBusinessAddress removed — PII
         riderVehicleType: state.riderVehicleType,
         riderPlateNumber: state.riderPlateNumber,
         customerDietaryPrefs: state.customerDietaryPrefs,

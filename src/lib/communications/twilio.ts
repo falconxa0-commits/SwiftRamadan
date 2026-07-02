@@ -14,7 +14,7 @@ export async function sendSMS({
   body: string;
 }): Promise<{ success: boolean; messageId?: string; error?: string }> {
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
-    console.log('[Twilio] Not configured — SMS would have been sent to:', to, 'Body:', body);
+    console.log('[Twilio] Not configured — SMS would have been sent to:', to);
     return { success: true, messageId: `mock-sms-${Date.now()}` };
   }
 

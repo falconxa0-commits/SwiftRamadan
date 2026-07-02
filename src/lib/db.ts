@@ -12,7 +12,7 @@ const cacheKey = `prisma_${PRISMA_CACHE_VERSION}`
 export const db =
   globalForPrisma[cacheKey] ??
   new PrismaClient({
-    log: ['query'],
+    log: process.env.NODE_ENV === 'development' ? ['query'] : ['error'],
   })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma[cacheKey] = db

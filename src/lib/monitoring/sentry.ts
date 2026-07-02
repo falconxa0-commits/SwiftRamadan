@@ -81,8 +81,34 @@ export async function captureMessage(
     return { eventId: null };
   }
 
-  console.log(`[Sentry] Message captured: ${message}`);
-  return { eventId: `msg-${Date.now()}` };
+  try {
+    const eventId = crypto.randomUUID().replace(/-/g, '');
+    const response = await fetch(
+      'https://o4506961265258496.ingest.sentry.io/api/4506961270239232/envelope/',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-sentry-envelope',
+          'X-Sentry-Auth': `Sentry sentry_version=7, sentry_key=${SENTRY_DSN.split('//')[1]?.split('@')[0]}, sentry_client=swift-custom/1.0`,
+        },
+        body: JSON.stringify({
+          event_id: eventId,
+          timestamp: Date.now() / 1000,
+          platform: 'javascript',
+          level,
+          environment: SENTRY_ENVIRONMENT,
+          message,
+          tags: context?.tags || {},
+          extra: context?.extra || {},
+        }),
+      },
+    );
+
+    return { eventId: response.ok ? eventId : null };
+  } catch (sendError) {
+    console.error('[Sentry] Failed to send message:', sendError);
+    return { eventId: null };
+  }
 }
 
 export function setUserContext(user: {

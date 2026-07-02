@@ -70,7 +70,7 @@ export async function sendOTPEmail({
 
   const result = await sendEmail({
     to,
-    subject: `Your SwiftRamadan Code: ${code}`,
+    subject: 'Your SwiftRamadan Verification Code',
     html,
   });
 

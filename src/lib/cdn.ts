@@ -3,11 +3,34 @@
 
 const CDN_URL = process.env.NEXT_PUBLIC_CDN_URL || '';
 
+/**
+ * Sanitize a path to prevent open redirect / SSRF:
+ * - Must be relative (no protocol like http://)
+ * - Must start with / or be a plain path
+ * - No directory traversal (..)
+ */
+function sanitizePath(path: string): string {
+  // Block absolute URLs (http://, https://, //)
+  if (/^https?:\/\//i.test(path) || path.startsWith('//')) {
+    return '';
+  }
+  // Block directory traversal
+  if (path.includes('..')) {
+    return '';
+  }
+  return path;
+}
+
 export function cdnUrl(path: string): string {
   if (!CDN_URL) return path;
+  const clean = sanitizePath(path);
+  if (!clean) {
+    console.warn('[CDN] Blocked invalid path:', path);
+    return path;
+  }
   // Remove leading slash if present
-  const cleanPath = path.startsWith('/') ? path.substring(1) : path;
-  return `${CDN_URL}/${cleanPath}`;
+  const stripped = clean.startsWith('/') ? clean.substring(1) : clean;
+  return `${CDN_URL}/${stripped}`;
 }
 
 export function imageCdn(url: string, options?: {

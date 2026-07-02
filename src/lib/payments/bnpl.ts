@@ -224,7 +224,7 @@ function initiateMockBNPL({
     status: true,
     provider: 'mock',
     data: {
-      checkoutUrl: `http://localhost:3000/bnpl/checkout?ref=${reference}&plan=${installments}`,
+      checkoutUrl: `/bnpl/checkout?ref=${reference}&plan=${installments}`,
       planId: `bnpl-${reference}`,
     },
     message: `Pay ₦${perInstallment.toLocaleString()} x ${installments} installments`,
