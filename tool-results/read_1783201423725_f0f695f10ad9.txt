@@ -1999,4 +1999,4 @@
   1999→
   2000→### C10. `POST /api/vendor/products` ownership check is bypassable
 
-[showing lines 1-2000 of 4280; use offset=2001 with limit to continue reading]
+[showing lines 1-2000 of 4336; use offset=2001 with limit to continue reading]

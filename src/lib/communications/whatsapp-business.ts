@@ -17,7 +17,7 @@ const isConfigured = !!(WHATSAPP_BUSINESS_TOKEN && WHATSAPP_BUSINESS_PHONE_NUMBE
 
 export interface WhatsAppMessageResult {
   success: boolean;
-  messageId?: string;
+  messageId?: string | null;
   error?: string;
 }
 
@@ -28,7 +28,7 @@ export interface WhatsAppMessageResult {
 async function sendMessage(payload: Record<string, unknown>): Promise<WhatsAppMessageResult> {
   if (!isConfigured) {
     console.log('[WhatsApp] Not configured — message would have been sent:', JSON.stringify(payload).slice(0, 200));
-    return { success: true, messageId: `mock-wa-${Date.now()}` };
+    return { success: false, error: 'WhatsApp Business not configured', messageId: null };
   }
 
   try {

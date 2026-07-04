@@ -67,13 +67,12 @@ export interface OPayRefundResult {
 
 export async function initializeTransaction(params: OPayInitParams): Promise<OPayInitResult> {
   if (!isConfigured) {
-    console.log('[OPay] Not configured — returning mock response');
+    console.warn('[OPay] Not configured — cannot initialize transaction');
     return {
-      status: true,
+      status: false,
       provider: 'opay',
       reference: params.reference,
-      checkoutUrl: `${params.callbackUrl || 'http://localhost:3000'}?reference=${params.reference}&status=success`,
-      message: 'Mock: OPay not configured',
+      message: 'OPay not configured',
     };
   }
 
@@ -138,14 +137,11 @@ export async function initializeTransaction(params: OPayInitParams): Promise<OPa
 
 export async function verifyTransaction(reference: string): Promise<OPayVerifyResult> {
   if (!isConfigured) {
-    console.log('[OPay] Not configured — returning mock success');
+    console.warn('[OPay] Not configured — cannot verify transaction');
     return {
-      status: true,
-      verified: true,
-      amount: 0,
-      currency: 'NGN',
-      channel: 'opayWallet',
-      message: 'Mock: OPay not configured',
+      status: false,
+      verified: false,
+      message: 'OPay not configured',
     };
   }
 
@@ -204,11 +200,10 @@ export async function refundTransaction({
   reason?: string;
 }): Promise<OPayRefundResult> {
   if (!isConfigured) {
-    console.log('[OPay] Not configured — returning mock refund');
+    console.warn('[OPay] Not configured — cannot process refund');
     return {
-      status: true,
-      refundId: `mock-refund-${Date.now()}`,
-      message: 'Mock: OPay not configured',
+      status: false,
+      message: 'OPay not configured',
     };
   }
 

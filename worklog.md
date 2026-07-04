@@ -4333,3 +4333,108 @@ Stage Summary:
 - CORS support added for future external client integrations
 - Zod validation coverage increased from ~12% to ~25% of routes
 - App fully functional — 0 lint errors, browser verification passed
+
+---
+Task ID: fix-maps
+Agent: general-purpose
+Task: Fix Google Maps mock data — remove dangerous fake coordinates when API key is missing
+
+Work Log:
+- Identified 5 functions in /home/z/my-project/src/lib/maps/index.ts returning fake/mock data when GOOGLE_MAPS_API_KEY is missing
+- geocodeAddress(): was returning randomized Lagos coordinates (6.5244 ± random, 3.3792 ± random) → now returns null
+- reverseGeocode(): was returning fake formatted address "lat, lng" with "Lagos" area/city → now returns null
+- getDistanceMatrix(): was returning random distances (2-14 km) and derived durations → now returns null
+- getDirections(): was returning hardcoded fake direction steps (Awolowo Rd, Falomo Bridge) → now returns null
+- searchNearbyPlaces(): was returning 4 hardcoded fake places → now returns empty array []
+- All fallback blocks now log a console.warn identifying the missing key
+- Real API call code left completely untouched
+
+Changes:
+- 5 mock/fallback blocks replaced with safe null/[] returns + console.warn
+- No changes to real API integration code
+- No changes to function signatures or types
+
+Rationale:
+- Fake coordinates/directions could cause delivery miscalculations, wrong rider routing, and user misdirection
+- Returning null forces calling code to handle the unconfigured state explicitly
+- isMapsConfigured() helper already exists for pre-checking
+
+---
+Task ID: fix-comms
+Agent: General Purpose
+Task: Fix dangerous comms mocks — communication providers returning fake success when unconfigured
+
+Work Log:
+- Identified all 4 communication provider files with mock fallbacks returning `success: true`
+- **resend.ts**: Changed `sendEmail()` unconfigured fallback from `{ success: true, messageId: mock-email-... }` to `{ success: false, error: 'Resend not configured', messageId: null }`; updated return type `messageId?: string` → `messageId?: string | null`
+- **twilio.ts**: Changed `sendSMS()` unconfigured fallback from `{ success: true, messageId: mock-sms-... }` to `{ success: false, error: 'Twilio not configured', messageId: null }`; Changed `sendWhatsApp()` unconfigured fallback from `{ success: true, messageId: mock-wa-... }` to `{ success: false, error: 'Twilio not configured', messageId: null }`; updated return types `messageId?: string` → `messageId?: string | null` on both functions
+- **termii.ts**: Changed `sendTermiiSMS()` unconfigured fallback from `{ success: true, messageId: mock-termii-... }` to `{ success: false, error: 'Termii not configured', messageId: null }`; Changed `sendTermiiOTP()` unconfigured fallback from `{ success: true }` to `{ success: false, error: 'Termii not configured' }`; updated return type on sendTermiiSMS `messageId?: string` → `messageId?: string | null`
+- **whatsapp-business.ts**: Changed `sendMessage()` unconfigured fallback from `{ success: true, messageId: mock-wa-... }` to `{ success: false, error: 'WhatsApp Business not configured', messageId: null }`; updated `WhatsAppMessageResult` interface `messageId?: string` → `messageId?: string | null`
+- TypeScript compilation confirmed: no new errors introduced (all pre-existing errors unrelated to these files)
+- Real API call code left untouched — only mock/unconfigured fallback paths changed
+
+Stage Summary:
+- All 4 communication providers now return honest failures when their API keys are missing
+- App will no longer silently pretend emails/SMS/WhatsApp messages were sent
+- Callers can now properly detect and handle unconfigured providers
+
+---
+Task ID: fix-payments
+Agent: Payment Fix Sub-Agent
+Task: CRITICAL FIX — Payment providers returning success/verified:true when API keys are missing (phantom payments)
+
+Work Log:
+- Audited all 6 payment provider files for dangerous mock/unconfigured fallback code
+- Fixed all mock fallbacks to return honest failures instead of fake success
+
+Changes by file:
+
+**1. paystack.ts** (4 methods fixed):
+- `initializeTransaction()`: Changed `status: true` → `status: false`, removed fake `authorization_url` and `data`, message → 'Paystack not configured'
+- `verifyTransaction()`: Changed `status: true` → `status: false`, added `verified: false`, removed fake `status: 'success'` data, message → 'Paystack not configured'
+- `refundTransaction()`: Changed `status: true` → `status: false`, removed fake `status: 'processed'` data, message → 'Paystack not configured'
+- `verifyBankAccount()`: Changed `status: true` → `status: false`, removed fake account verification data, message → 'Paystack not configured'
+- Updated interfaces: made `data` optional on PaystackInitializeResponse, PaystackVerifyResponse, PaystackRefundResponse; added `verified?: boolean` to PaystackVerifyResponse
+- Changed all `console.log` → `console.warn` for unconfigured warnings
+
+**2. flutterwave.ts** (3 methods fixed):
+- `initializeFlutterwavePayment()`: Changed `status: 'success'` → `status: 'error'`, removed fake payment link `data`, message → 'Flutterwave not configured'
+- `verifyFlutterwavePayment()`: Changed `status: 'success'` → `status: 'error'`, added `verified: false`, removed fake `status: 'successful'` data, message → 'Flutterwave not configured'
+- `refundFlutterwaveTransaction()`: Changed `status: 'success'` → `status: 'error'`, removed fake refund data, message → 'Flutterwave not configured'
+- Updated interfaces: added `verified?: boolean` to FlwInitializeResponse and FlwVerifyResponse
+- Changed all `console.log` → `console.warn` for unconfigured warnings
+
+**3. monnify.ts** (3 methods fixed):
+- `initializeBankTransfer()`: Changed `status: true` → `status: false`, added `verified: false`, removed fake account number/bank name data, message → 'Monnify not configured'
+- `verifyTransaction()`: Changed `status: true` → `status: false`, added `verified: false`, changed `paymentStatus: 'PAID'` → `paymentStatus: 'PENDING'`, message → 'Monnify not configured'
+- `refundTransaction()`: Changed `status: true` → `status: false`, added `verified: false`, removed fake refund data, message → 'Monnify not configured'
+- Updated interfaces: added `verified?: boolean` to MonnifyInitResponse, MonnifyVerifyResponse, MonnifyRefundResponse
+- Changed all `console.log` → `console.warn` for unconfigured warnings
+
+**4. opay.ts** (3 methods fixed — MOST DANGEROUS):
+- `initializeTransaction()`: Changed `status: true` → `status: false`, removed fake checkoutUrl, message → 'OPay not configured'
+- `verifyTransaction()`: Changed `status: true, verified: true` → `status: false, verified: false` (was the single most dangerous line in the codebase — could create phantom verified payments), message → 'OPay not configured'
+- `refundTransaction()`: Changed `status: true` → `status: false`, removed fake refundId, message → 'OPay not configured'
+- Changed all `console.log` → `console.warn` for unconfigured warnings
+
+**5. moniepoint.ts** (3 methods fixed):
+- `initiatePOSPayment()`: Changed `status: true` → `status: false`, added `verified: false`, message → 'Moniepoint not configured'
+- `initiateBankTransfer()`: Changed `status: true` → `status: false`, added `verified: false`, removed fake account number/bank name, message → 'Moniepoint not configured'
+- `verifyTransaction()`: Changed `status: true, verified: true` → `status: false, verified: false` (second most dangerous — phantom verified payments), message → 'Moniepoint not configured'
+- Updated interface: added `verified?: boolean` to MoniepointInitResult
+- Changed all `console.log` → `console.warn` for unconfigured warnings
+
+**6. bnpl.ts** (1 mock fallback fixed):
+- `initiateMockBNPL()`: Changed `status: true` → `status: false`, removed fake checkout URL and planId data, message → 'BNPL not configured'
+- The fallback chain (Creddit → Carbon → Mock) still works, but now the final fallback returns an honest failure instead of a phantom checkout URL
+
+Verification:
+- TypeScript compilation confirmed: no new errors introduced (all pre-existing errors unrelated to payment files)
+- Real API call code left untouched — only mock/unconfigured fallback paths changed
+- Total: 17 mock fallback instances fixed across 6 files
+
+Stage Summary:
+- All 6 payment providers now return honest failures when their API keys are missing
+- App will no longer silently create phantom payments, phantom verifications, or phantom refunds
+- Callers can now properly detect and handle unconfigured payment providers
+- The two most dangerous lines (OPay verify returning verified:true and Moniepoint verify returning verified:true) are now fixed

@@ -90,6 +90,7 @@ function sleep(ms: number): Promise<void> {
 
 interface FlwInitializeResponse {
   status: string;
+  verified?: boolean;
   message: string;
   data?: {
     link: string;
@@ -98,6 +99,7 @@ interface FlwInitializeResponse {
 
 interface FlwVerifyResponse {
   status: string;
+  verified?: boolean;
   message: string;
   data?: {
     id: number;
@@ -164,11 +166,10 @@ export async function initializeFlutterwavePayment({
   redirect_url?: string;
 }): Promise<FlwInitializeResponse> {
   if (!FLUTTERWAVE_SECRET_KEY) {
-    console.log('[Flutterwave] Not configured — returning mock response');
+    console.warn('[Flutterwave] Not configured — cannot initialize payment');
     return {
-      status: 'success',
-      message: 'Mock: Flutterwave not configured',
-      data: { link: `${redirect_url || 'http://localhost:3000'}?tx_ref=${tx_ref}&status=successful` },
+      status: 'error',
+      message: 'Flutterwave not configured',
     };
   }
 
@@ -196,11 +197,11 @@ export async function verifyFlutterwavePayment(
   transactionId: string,
 ): Promise<FlwVerifyResponse> {
   if (!FLUTTERWAVE_SECRET_KEY) {
-    console.log('[Flutterwave] Not configured — returning mock success');
+    console.warn('[Flutterwave] Not configured — cannot verify payment');
     return {
-      status: 'success',
-      message: 'Mock: Flutterwave not configured',
-      data: { id: 0, status: 'successful', tx_ref: '', amount: 0, currency: 'NGN', charged_amount: 0 },
+      status: 'error',
+      verified: false,
+      message: 'Flutterwave not configured',
     };
   }
 
@@ -215,11 +216,10 @@ export async function refundFlutterwaveTransaction(
   amount?: number, // in naira — if omitted, full refund
 ): Promise<FlwRefundResponse> {
   if (!FLUTTERWAVE_SECRET_KEY) {
-    console.log('[Flutterwave] Not configured — returning mock refund');
+    console.warn('[Flutterwave] Not configured — cannot process refund');
     return {
-      status: 'success',
-      message: 'Mock: Refund processed',
-      data: { id: 0, amount: amount ?? 0, status: 'processed' },
+      status: 'error',
+      message: 'Flutterwave not configured',
     };
   }
 

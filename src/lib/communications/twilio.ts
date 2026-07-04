@@ -12,10 +12,10 @@ export async function sendSMS({
 }: {
   to: string; // E.164 format: +234XXXXXXXXXX
   body: string;
-}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+}): Promise<{ success: boolean; messageId?: string | null; error?: string }> {
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
     console.log('[Twilio] Not configured — SMS would have been sent to:', to);
-    return { success: true, messageId: `mock-sms-${Date.now()}` };
+    return { success: false, error: 'Twilio not configured', messageId: null };
   }
 
   try {
@@ -53,10 +53,10 @@ export async function sendWhatsApp({
   body?: string;
   templateSid?: string;
   templateParams?: Record<string, string>;
-}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+}): Promise<{ success: boolean; messageId?: string | null; error?: string }> {
   if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) {
     console.log('[Twilio] WhatsApp not configured — would send to:', to);
-    return { success: true, messageId: `mock-wa-${Date.now()}` };
+    return { success: false, error: 'Twilio not configured', messageId: null };
   }
 
   try {

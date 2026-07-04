@@ -78,6 +78,7 @@ export interface MoniepointTransferParams {
 
 export interface MoniepointInitResult {
   status: boolean;
+  verified?: boolean;
   provider: 'moniepoint';
   reference: string;
   checkoutUrl?: string;
@@ -100,12 +101,13 @@ export interface MoniepointVerifyResult {
 
 export async function initiatePOSPayment(params: MoniepointPOSParams): Promise<MoniepointInitResult> {
   if (!isConfigured) {
-    console.log('[Moniepoint] Not configured — returning mock POS response');
+    console.warn('[Moniepoint] Not configured — cannot initiate POS payment');
     return {
-      status: true,
+      status: false,
+      verified: false,
       provider: 'moniepoint',
       reference: params.reference,
-      message: 'Mock: Moniepoint POS not configured',
+      message: 'Moniepoint not configured',
     };
   }
 
@@ -161,14 +163,13 @@ export async function initiatePOSPayment(params: MoniepointPOSParams): Promise<M
 
 export async function initiateBankTransfer(params: MoniepointTransferParams): Promise<MoniepointInitResult> {
   if (!isConfigured) {
-    console.log('[Moniepoint] Not configured — returning mock bank transfer response');
+    console.warn('[Moniepoint] Not configured — cannot initiate bank transfer');
     return {
-      status: true,
+      status: false,
+      verified: false,
       provider: 'moniepoint',
       reference: params.reference,
-      accountNumber: '0000000000',
-      bankName: 'Moniepoint MFB',
-      message: 'Mock: Moniepoint not configured',
+      message: 'Moniepoint not configured',
     };
   }
 
@@ -227,13 +228,11 @@ export async function initiateBankTransfer(params: MoniepointTransferParams): Pr
 
 export async function verifyTransaction(reference: string): Promise<MoniepointVerifyResult> {
   if (!isConfigured) {
-    console.log('[Moniepoint] Not configured — returning mock success');
+    console.warn('[Moniepoint] Not configured — cannot verify transaction');
     return {
-      status: true,
-      verified: true,
-      amount: 0,
-      channel: 'transfer',
-      message: 'Mock: Moniepoint not configured',
+      status: false,
+      verified: false,
+      message: 'Moniepoint not configured',
     };
   }
 

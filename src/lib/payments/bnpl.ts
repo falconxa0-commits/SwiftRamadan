@@ -209,25 +209,18 @@ async function initiateCarbonBNPL({
 // ─── Mock BNPL fallback ─────────────────────────────────────────────────────
 
 function initiateMockBNPL({
-  amount,
   reference,
-  installments,
 }: {
   amount: number;
   reference: string;
   installments: number;
 }): BNPLResult {
-  const perInstallment = Math.ceil(amount / installments / 100);
-  console.log('[BNPL:Mock] Mock BNPL initiated — in production, integrate with Creddit/Carbon BNPL API');
+  console.warn('[BNPL:Mock] No BNPL provider configured — cannot initiate installment payment');
 
   return {
-    status: true,
+    status: false,
     provider: 'mock',
-    data: {
-      checkoutUrl: `/bnpl/checkout?ref=${reference}&plan=${installments}`,
-      planId: `bnpl-${reference}`,
-    },
-    message: `Pay ₦${perInstallment.toLocaleString()} x ${installments} installments`,
+    message: 'BNPL not configured',
   };
 }
 

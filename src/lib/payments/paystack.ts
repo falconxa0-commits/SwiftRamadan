@@ -94,7 +94,7 @@ function sleep(ms: number): Promise<void> {
 interface PaystackInitializeResponse {
   status: boolean;
   message: string;
-  data: {
+  data?: {
     authorization_url: string;
     access_code: string;
     reference: string;
@@ -103,8 +103,9 @@ interface PaystackInitializeResponse {
 
 interface PaystackVerifyResponse {
   status: boolean;
+  verified?: boolean;
   message: string;
-  data: {
+  data?: {
     id: number;
     domain: string;
     status: string;
@@ -121,7 +122,7 @@ interface PaystackVerifyResponse {
 interface PaystackRefundResponse {
   status: boolean;
   message: string;
-  data: {
+  data?: {
     id: number;
     refund_code: string;
     amount: number;
@@ -167,15 +168,10 @@ export async function initializeTransaction({
   callback_url?: string;
 }): Promise<PaystackInitializeResponse> {
   if (!PAYSTACK_SECRET_KEY) {
-    console.log('[Paystack] Not configured — returning mock response');
+    console.warn('[Paystack] Not configured — cannot initialize transaction');
     return {
-      status: true,
-      message: 'Mock: Paystack not configured',
-      data: {
-        authorization_url: `${callback_url || 'http://localhost:3000'}?reference=${reference}&status=success`,
-        access_code: 'mock_access_code',
-        reference,
-      },
+      status: false,
+      message: 'Paystack not configured',
     };
   }
 
@@ -200,22 +196,11 @@ export async function initializeTransaction({
 
 export async function verifyTransaction(reference: string): Promise<PaystackVerifyResponse> {
   if (!PAYSTACK_SECRET_KEY) {
-    console.log('[Paystack] Not configured — returning mock success');
+    console.warn('[Paystack] Not configured — cannot verify transaction');
     return {
-      status: true,
-      message: 'Mock: Paystack not configured',
-      data: {
-        id: 0,
-        domain: 'test',
-        status: 'success',
-        reference,
-        amount: 0,
-        gateway_response: 'Successful',
-        paid_at: new Date().toISOString(),
-        channel: 'card',
-        currency: 'NGN',
-        metadata: {},
-      },
+      status: false,
+      verified: false,
+      message: 'Paystack not configured',
     };
   }
 
@@ -234,18 +219,10 @@ export async function refundTransaction(
   amount?: number, // in kobo — if omitted, full refund
 ): Promise<PaystackRefundResponse> {
   if (!PAYSTACK_SECRET_KEY) {
-    console.log('[Paystack] Not configured — returning mock refund');
+    console.warn('[Paystack] Not configured — cannot process refund');
     return {
-      status: true,
-      message: 'Mock: Refund processed',
-      data: {
-        id: 0,
-        refund_code: `mock-refund-${reference}`,
-        amount: amount ?? 0,
-        status: 'processed',
-        transaction_id: 0,
-        reference,
-      },
+      status: false,
+      message: 'Paystack not configured',
     };
   }
 
@@ -273,7 +250,7 @@ export async function verifyBankAccount({
   bankCode: string;
 }): Promise<{ status: boolean; data?: { account_number: string; account_name: string }; message?: string }> {
   if (!PAYSTACK_SECRET_KEY) {
-    return { status: true, data: { account_number: accountNumber, account_name: 'Verified Account' } };
+    return { status: false, message: 'Paystack not configured' };
   }
 
   return paystackFetch<{

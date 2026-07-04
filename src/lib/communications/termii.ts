@@ -13,10 +13,10 @@ export async function sendTermiiSMS({
   to: string;
   message: string;
   type?: 'plain' | 'unicode';
-}): Promise<{ success: boolean; messageId?: string; error?: string }> {
+}): Promise<{ success: boolean; messageId?: string | null; error?: string }> {
   if (!TERMII_API_KEY) {
     console.log('[Termii] Not configured — SMS would send to:', to, 'Message:', message);
-    return { success: true, messageId: `mock-termii-${Date.now()}` };
+    return { success: false, error: 'Termii not configured', messageId: null };
   }
 
   try {
@@ -55,7 +55,7 @@ export async function sendTermiiOTP({
 }): Promise<{ success: boolean; error?: string }> {
   if (!TERMII_API_KEY) {
     console.log('[Termii] OTP not configured — code:', pin, 'for:', to);
-    return { success: true };
+    return { success: false, error: 'Termii not configured' };
   }
 
   try {

@@ -24,14 +24,8 @@ export interface GeocodingResult {
 
 export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
-    // Mock: return Lagos coordinates
-    return {
-      lat: 6.5244 + (Math.random() - 0.5) * 0.05,
-      lng: 3.3792 + (Math.random() - 0.5) * 0.05,
-      formattedAddress: address,
-      area: 'Lagos Island',
-      city: 'Lagos',
-    };
+    console.warn('[Maps] Geocoding skipped: GOOGLE_MAPS_API_KEY not configured');
+    return null;
   }
 
   try {
@@ -64,13 +58,8 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult |
 // ─── Reverse Geocoding ───
 export async function reverseGeocode(lat: number, lng: number): Promise<GeocodingResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
-    return {
-      lat,
-      lng,
-      formattedAddress: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
-      area: 'Lagos',
-      city: 'Lagos',
-    };
+    console.warn('[Maps] Reverse geocoding skipped: GOOGLE_MAPS_API_KEY not configured');
+    return null;
   }
 
   try {
@@ -111,13 +100,8 @@ export async function getDistanceMatrix(
   destinations: string, // "lat,lng" or address
 ): Promise<DistanceResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
-    // Mock: return random realistic Lagos distances
-    const distanceMeters = 2000 + Math.floor(Math.random() * 12000);
-    const durationSeconds = Math.round(distanceMeters / 5); // ~18 km/h average
-    return {
-      distance: { text: `${(distanceMeters / 1000).toFixed(1)} km`, value: distanceMeters },
-      duration: { text: `${Math.round(durationSeconds / 60)} mins`, value: durationSeconds },
-    };
+    console.warn('[Maps] Distance matrix skipped: GOOGLE_MAPS_API_KEY not configured');
+    return null;
   }
 
   try {
@@ -161,16 +145,8 @@ export async function getDirections(
   destination: string,
 ): Promise<DirectionsResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
-    return {
-      distance: '5.2 km',
-      duration: '18 mins',
-      steps: [
-        { instruction: 'Head north on Awolowo Rd', distance: '0.8 km', duration: '3 mins', startLocation: { lat: 6.44, lng: 3.42 }, endLocation: { lat: 6.45, lng: 3.42 } },
-        { instruction: 'Turn right onto Falomo Bridge', distance: '1.2 km', duration: '4 mins', startLocation: { lat: 6.45, lng: 3.42 }, endLocation: { lat: 6.44, lng: 3.41 } },
-        { instruction: 'Continue to destination', distance: '3.2 km', duration: '11 mins', startLocation: { lat: 6.44, lng: 3.41 }, endLocation: { lat: 6.45, lng: 3.39 } },
-      ],
-      polyline: '',
-    };
+    console.warn('[Maps] Directions skipped: GOOGLE_MAPS_API_KEY not configured');
+    return null;
   }
 
   try {
@@ -227,14 +203,8 @@ export async function searchNearbyPlaces({
   keyword?: string;
 }): Promise<NearbyPlace[]> {
   if (!GOOGLE_MAPS_API_KEY) {
-    // Mock: return Lagos restaurants/mosques
-    const mockPlaces: NearbyPlace[] = [
-      { name: 'Iftar Central Mosque', address: 'Lagos Island', lat: 6.4541, lng: 3.3947, rating: 4.8, types: ['mosque'], openNow: true },
-      { name: 'The Food Hub', address: 'Victoria Island', lat: 6.4281, lng: 3.4219, rating: 4.6, types: ['restaurant'], openNow: true },
-      { name: 'Suya Palace', address: 'Ikeja', lat: 6.6018, lng: 3.3515, rating: 4.7, types: ['restaurant'], openNow: true },
-      { name: 'Lagos Fresh Mart', address: 'Lekki', lat: 6.4393, lng: 3.4537, rating: 4.5, types: ['grocery_or_supermarket'], openNow: true },
-    ];
-    return mockPlaces;
+    console.warn('[Maps] Nearby search skipped: GOOGLE_MAPS_API_KEY not configured');
+    return [];
   }
 
   try {

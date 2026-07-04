@@ -171,6 +171,7 @@ function sleep(ms: number): Promise<void> {
 
 interface MonnifyInitResponse {
   status: boolean;
+  verified?: boolean;
   data?: {
     accountNumber: string;
     bankName: string;
@@ -181,6 +182,7 @@ interface MonnifyInitResponse {
 
 interface MonnifyVerifyResponse {
   status: boolean;
+  verified?: boolean;
   data?: {
     transactionReference: string;
     paymentReference: string;
@@ -194,6 +196,7 @@ interface MonnifyVerifyResponse {
 
 interface MonnifyRefundResponse {
   status: boolean;
+  verified?: boolean;
   data?: {
     refundReference: string;
     transactionReference: string;
@@ -248,14 +251,11 @@ export async function initializeBankTransfer({
   const token = await getAccessToken();
 
   if (!token) {
-    console.log('[Monnify] Not configured — returning mock response');
+    console.warn('[Monnify] Not configured — cannot initialize bank transfer');
     return {
-      status: true,
-      data: {
-        accountNumber: '0000000000',
-        bankName: 'Wema Bank',
-        reference,
-      },
+      status: false,
+      verified: false,
+      message: 'Monnify not configured',
     };
   }
 
@@ -301,17 +301,19 @@ export async function verifyTransaction(
   const token = await getAccessToken();
 
   if (!token) {
-    console.log('[Monnify] Not configured — returning mock success');
+    console.warn('[Monnify] Not configured — cannot verify transaction');
     return {
-      status: true,
+      status: false,
+      verified: false,
       data: {
         transactionReference: reference,
         paymentReference: reference,
         amountPaid: 0,
-        paymentStatus: 'PAID',
-        paymentDescription: 'Mock payment',
+        paymentStatus: 'PENDING',
+        paymentDescription: 'Monnify not configured',
         customerEmail: '',
       },
+      message: 'Monnify not configured',
     };
   }
 
@@ -352,15 +354,11 @@ export async function refundTransaction(
   const token = await getAccessToken();
 
   if (!token) {
-    console.log('[Monnify] Not configured — returning mock refund');
+    console.warn('[Monnify] Not configured — cannot process refund');
     return {
-      status: true,
-      data: {
-        refundReference: `mock-refund-${transactionReference}`,
-        transactionReference,
-        refundAmount: amount ?? 0,
-        status: 'IN_PROGRESS',
-      },
+      status: false,
+      verified: false,
+      message: 'Monnify not configured',
     };
   }
 
