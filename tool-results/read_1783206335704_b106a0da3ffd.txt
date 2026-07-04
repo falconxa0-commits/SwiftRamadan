@@ -1,0 +1,710 @@
+     1→'use client';
+     2→
+     3→import { useState, useRef, useEffect, useCallback } from 'react';
+     4→import { ChefHat, Mic, Sparkles, X, Send, User, Minus, Trash2, Moon, Sun } from 'lucide-react';
+     5→import { motion, AnimatePresence } from 'framer-motion';
+     6→import { useAppStore } from '@/lib/store';
+     7→import { track } from '@/lib/analytics';
+     8→
+     9→/* ──────────────────── Types ──────────────────── */
+    10→
+    11→interface Message {
+    12→  id: number;
+    13→  from: 'user' | 'bot';
+    14→  text: string;
+    15→  timestamp: number;
+    16→}
+    17→
+    18→interface ChatMessageAPI {
+    19→  role: 'user' | 'assistant';
+    20→  content: string;
+    21→}
+    22→
+    23→interface ChatContextAPI {
+    24→  userName?: string;
+    25→  cartItems?: { name: string; qty: number; price: number }[];
+    26→  recentOrders?: { id: string; item: string; status: string }[];
+    27→  loyaltyTier?: 'bronze' | 'silver' | 'gold' | 'platinum';
+    28→  swiftPoints?: number;
+    29→  dietaryPrefs?: string[];
+    30→}
+    31→
+    32→/* ──────────────────── Time-of-day helpers ──────────────────── */
+    33→
+    34→type TimeOfDay = 'sahur' | 'morning' | 'afternoon' | 'iftar' | 'evening' | 'night';
+    35→
+    36→function getTimeOfDay(): TimeOfDay {
+    37→  const hour = new Date().getHours();
+    38→  if (hour >= 3 && hour < 5) return 'sahur';
+    39→  if (hour >= 5 && hour < 12) return 'morning';
+    40→  if (hour >= 12 && hour < 15) return 'afternoon';
+    41→  if (hour >= 15 && hour < 19) return 'iftar';
+    42→  if (hour >= 19 && hour < 21) return 'evening';
+    43→  return 'night';
+    44→}
+    45→
+    46→function getGreeting(): string {
+    47→  const tod = getTimeOfDay();
+    48→  switch (tod) {
+    49→    case 'sahur':
+    50→      return "Salam! 🌙 It's Sahur time! Let me help you find a nourishing pre-dawn meal to keep you energized through tomorrow's fast.";
+    51→    case 'morning':
+    52→      return "Salam! ☀️ Good morning! How can I help your Ramadan today? I can suggest meals, track orders, or help you plan.";
+    53→    case 'afternoon':
+    54→      return "Salam! 🌤️ Good afternoon! Iftar is approaching — want me to suggest some meal options or check on your order?";
+    55→    case 'iftar':
+    56→      return "Salam! 🌙 Iftar time is near! Let me help you find the perfect meal to break your fast. We have hot deals ready!";
+    57→    case 'evening':
+    58→      return "Salam! 🌙 Good evening! How was your Iftar? I can help with Sahur prep, dessert ideas, or anything else.";
+    59→    case 'night':
+    60→      return "Salam! 🌙 Still up? Let me help you plan for Sahur or find a late-night snack before Fajr.";
+    61→  }
+    62→}
+    63→
+    64→/* ──────────────────── Context-aware Quick Chips ──────────────────── */
+    65→
+    66→const BASE_CHIPS = [
+    67→  { icon: '🍽️', label: 'Plan my Iftar' },
+    68→  { icon: '🔥', label: "Today's deals" },
+    69→  { icon: '📦', label: 'Track order' },
+    70→  { icon: '🥘', label: 'Recipe ideas' },
+    71→  { icon: '⏰', label: 'Prayer times' },
+    72→  { icon: '🛒', label: 'My cart' },
+    73→];
+    74→
+    75→function getTimeChips(): { icon: string; label: string }[] {
+    76→  const tod = getTimeOfDay();
+    77→  switch (tod) {
+    78→    case 'sahur':
+    79→    case 'night':
+    80→      return [
+    81→        { icon: '🌙', label: 'Sahur meal ideas' },
+    82→        { icon: '⚡', label: 'Quick Sahur picks' },
+    83→        { icon: '🥤', label: 'Hydrating drinks' },
+    84→      ];
+    85→    case 'iftar':
+    86→    case 'afternoon':
+    87→      return [
+    88→        { icon: '🌙', label: 'Iftar meal deals' },
+    89→        { icon: '🍯', label: 'Dates & starters' },
+    90→        { icon: '👨‍👩‍👧‍👦', label: 'Family Iftar bundle' },
+    91→      ];
+    92→    case 'morning':
+    93→      return [
+    94→        { icon: '☀️', label: 'Morning energizers' },
+    95→        { icon: '🥗', label: 'Light meal ideas' },
+    96→        { icon: '💧', label: 'Stay hydrated tips' },
+    97→      ];
+    98→    case 'evening':
+    99→      return [
+   100→        { icon: '🍮', label: 'Dessert ideas' },
+   101→        { icon: '🌙', label: 'Sahur prep tips' },
+   102→        { icon: '📖', label: 'Ramadan guidance' },
+   103→      ];
+   104→  }
+   105→}
+   106→
+   107→/* ──────────────────── Simple Markdown Renderer ──────────────────── */
+   108→
+   109→function renderBotText(text: string): React.ReactNode[] {
+   110→  const lines = text.split('\n');
+   111→  const result: React.ReactNode[] = [];
+   112→
+   113→  for (let i = 0; i < lines.length; i++) {
+   114→    const line = lines[i];
+   115→
+   116→    // Bullet points
+   117→    if (line.match(/^[-•]\s/)) {
+   118→      const content = line.replace(/^[-•]\s/, '');
+   119→      result.push(
+   120→        <div key={i} className="flex gap-2 ml-1">
+   121→          <span className="text-[#F5C451] shrink-0">•</span>
+   122→          <span>{renderInlineFormatting(content)}</span>
+   123→        </div>
+   124→      );
+   125→      continue;
+   126→    }
+   127→
+   128→    // Numbered lists
+   129→    if (line.match(/^\d+\.\s/)) {
+   130→      const content = line.replace(/^\d+\.\s/, '');
+   131→      const num = line.match(/^(\d+)/)?.[1];
+   132→      result.push(
+   133→        <div key={i} className="flex gap-2 ml-1">
+   134→          <span className="text-[#10E07A] shrink-0 font-semibold">{num}.</span>
+   135→          <span>{renderInlineFormatting(content)}</span>
+   136→        </div>
+   137→      );
+   138→      continue;
+   139→    }
+   140→
+   141→    // Empty lines
+   142→    if (line.trim() === '') {
+   143→      result.push(<div key={i} className="h-2" />);
+   144→      continue;
+   145→    }
+   146→
+   147→    // Regular lines
+   148→    result.push(<span key={i}>{renderInlineFormatting(line)}</span>);
+   149→  }
+   150→
+   151→  return result;
+   152→}
+   153→
+   154→function renderInlineFormatting(text: string): React.ReactNode[] {
+   155→  const parts: React.ReactNode[] = [];
+   156→  // Match **bold** and *italic*
+   157→  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*)/g;
+   158→  let lastIndex = 0;
+   159→  let match: RegExpExecArray | null;
+   160→  let key = 0;
+   161→
+   162→  while ((match = regex.exec(text)) !== null) {
+   163→    // Add text before match
+   164→    if (match.index > lastIndex) {
+   165→      parts.push(<span key={key++}>{text.slice(lastIndex, match.index)}</span>);
+   166→    }
+   167→
+   168→    if (match[2]) {
+   169→      // Bold
+   170→      parts.push(<strong key={key++} className="text-[#F5C451] font-semibold">{match[2]}</strong>);
+   171→    } else if (match[3]) {
+   172→      // Italic
+   173→      parts.push(<em key={key++}>{match[3]}</em>);
+   174→    }
+   175→
+   176→    lastIndex = match.index + match[0].length;
+   177→  }
+   178→
+   179→  // Add remaining text
+   180→  if (lastIndex < text.length) {
+   181→    parts.push(<span key={key++}>{text.slice(lastIndex)}</span>);
+   182→  }
+   183→
+   184→  return parts.length > 0 ? parts : [text];
+   185→}
+   186→
+   187→/* ──────────────────── LocalStorage Persistence ──────────────────── */
+   188→
+   189→const CHAT_STORAGE_KEY = 'safa-chat-history';
+   190→const MAX_STORED_MESSAGES = 50;
+   191→
+   192→function loadMessages(): Message[] {
+   193→  if (typeof window === 'undefined') return [];
+   194→  try {
+   195→    const stored = localStorage.getItem(CHAT_STORAGE_KEY);
+   196→    if (stored) {
+   197→      const parsed = JSON.parse(stored);
+   198→      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+   199→    }
+   200→  } catch { /* ignore */ }
+   201→  return [];
+   202→}
+   203→
+   204→function saveMessages(messages: Message[]) {
+   205→  if (typeof window === 'undefined') return;
+   206→  try {
+   207→    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages.slice(-MAX_STORED_MESSAGES)));
+   208→  } catch { /* ignore */ }
+   209→}
+   210→
+   211→/* ──────────────────── Format Time ──────────────────── */
+   212→
+   213→function formatTime(timestamp: number): string {
+   214→  const d = new Date(timestamp);
+   215→  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+   216→}
+   217→
+   218→/* ──────────────────── Component ──────────────────── */
+   219→
+   220→export default function SafaAIAssistant() {
+   221→  const [isOpen, setIsOpen] = useState(false);
+   222→  const [minimized, setMinimized] = useState(false);
+   223→  const [message, setMessage] = useState('');
+   224→  const [messages, setMessages] = useState<Message[]>([]);
+   225→  const [isLoading, setIsLoading] = useState(false);
+   226→  const [hasNew, setHasNew] = useState(true);
+   227→  const [isListening, setIsListening] = useState(false);
+   228→  const [initialLoad, setInitialLoad] = useState(true);
+   229→  const messagesEndRef = useRef<HTMLDivElement>(null);
+   230→  const inputRef = useRef<HTMLInputElement>(null);
+   231→  const recognitionRef = useRef<SpeechRecognition | null>(null);
+   232→
+   233→  // Store state
+   234→  const cartCount = useAppStore((s) => s.cartCount);
+   235→  const cartItems = useAppStore((s) => s.cartItems);
+   236→  const orders = useAppStore((s) => s.orders);
+   237→  const userName = useAppStore((s) => s.userName);
+   238→  const loyaltyTier = useAppStore((s) => s.loyaltyTier);
+   239→  const swiftPoints = useAppStore((s) => s.swiftPoints);
+   240→  const dietaryPrefs = useAppStore((s) => s.customerDietaryPrefs);
+   241→
+   242→  /* ──── Load persisted messages on mount ──── */
+   243→  useEffect(() => {
+   244→    const stored = loadMessages();
+   245→    if (stored.length > 0) {
+   246→      setMessages(stored);
+   247→    } else {
+   248→      setMessages([{ id: Date.now(), from: 'bot', text: getGreeting(), timestamp: Date.now() }]);
+   249→    }
+   250→    setInitialLoad(false);
+   251→  }, []);
+   252→
+   253→  /* ──── Persist messages on change ──── */
+   254→  useEffect(() => {
+   255→    if (!initialLoad && messages.length > 0) {
+   256→      saveMessages(messages);
+   257→    }
+   258→  }, [messages, initialLoad]);
+   259→
+   260→  /* ──── Auto-scroll ──── */
+   261→  const scrollToBottom = useCallback(() => {
+   262→    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   263→  }, []);
+   264→
+   265→  useEffect(() => {
+   266→    scrollToBottom();
+   267→  }, [messages, isLoading, minimized, scrollToBottom]);
+   268→
+   269→  /* ──── Focus input when opened ──── */
+   270→  useEffect(() => {
+   271→    if (isOpen && !minimized) {
+   272→      setTimeout(() => inputRef.current?.focus(), 300);
+   273→    }
+   274→  }, [isOpen, minimized]);
+   275→
+   276→  /* ──── Escape to close ──── */
+   277→  useEffect(() => {
+   278→    if (!isOpen) return;
+   279→    const onKey = (e: KeyboardEvent) => {
+   280→      if (e.key === 'Escape') {
+   281→        setIsOpen(false);
+   282→        setMinimized(false);
+   283→      }
+   284→    };
+   285→    window.addEventListener('keydown', onKey);
+   286→    return () => window.removeEventListener('keydown', onKey);
+   287→  }, [isOpen]);
+   288→
+   289→  /* ──── Cleanup speech recognition on unmount ──── */
+   290→  useEffect(() => {
+   291→    return () => {
+   292→      if (recognitionRef.current) {
+   293→        try { recognitionRef.current.abort(); } catch { /* ignore */ }
+   294→      }
+   295→    };
+   296→  }, []);
+   297→
+   298→  /* ──── Build context for API ──── */
+   299→  const buildContext = useCallback((): ChatContextAPI => {
+   300→    const ctx: ChatContextAPI = {};
+   301→    if (userName) ctx.userName = userName;
+   302→    if (loyaltyTier) ctx.loyaltyTier = loyaltyTier;
+   303→    if (swiftPoints) ctx.swiftPoints = swiftPoints;
+   304→    if (dietaryPrefs && dietaryPrefs.length > 0) ctx.dietaryPrefs = dietaryPrefs;
+   305→    if (cartItems.length > 0) {
+   306→      ctx.cartItems = cartItems.map(i => ({ name: i.name, qty: i.quantity, price: i.price }));
+   307→    }
+   308→    if (orders.length > 0) {
+   309→      ctx.recentOrders = orders.slice(0, 3).map(o => ({ id: o.id, item: o.item, status: o.status }));
+   310→    }
+   311→    return ctx;
+   312→  }, [userName, loyaltyTier, swiftPoints, dietaryPrefs, cartItems, orders]);
+   313→
+   314→  /* ──── Send message ──── */
+   315→  const handleSend = useCallback(async (text?: string) => {
+   316→    const userMessage = (text || message).trim();
+   317→    if (!userMessage || isLoading) return;
+   318→
+   319→    setHasNew(false);
+   320→    setMinimized(false);
+   321→
+   322→    const userMsg: Message = { id: Date.now(), from: 'user', text: userMessage, timestamp: Date.now() };
+   323→    setMessages((prev) => [...prev, userMsg]);
+   324→    setMessage('');
+   325→    setIsLoading(true);
+   326→
+   327→    track('ai_chat_message', { length: userMessage.length });
+   328→
+   329→    // Build conversation history for multi-turn
+   330→    const history: ChatMessageAPI[] = [...messages, userMsg]
+   331→      .filter(m => m.from === 'user' || m.from === 'bot')
+   332→      .map(m => ({
+   333→        role: m.from === 'user' ? 'user' as const : 'assistant' as const,
+   334→        content: m.text,
+   335→      }));
+   336→
+   337→    try {
+   338→      const res = await fetch('/api/chat', {
+   339→        method: 'POST',
+   340→        headers: { 'Content-Type': 'application/json' },
+   341→        body: JSON.stringify({
+   342→          message: userMessage,
+   343→          messages: history.slice(-10), // last 10 messages for context
+   344→          context: buildContext(),
+   345→        }),
+   346→      });
+   347→      const data = await res.json();
+   348→      const botText = data.reply || "I'm here to help! What would you like to know? 🌟";
+   349→      setMessages((prev) => [
+   350→        ...prev,
+   351→        { id: Date.now(), from: 'bot', text: botText, timestamp: Date.now() },
+   352→      ]);
+   353→    } catch {
+   354→      setMessages((prev) => [
+   355→        ...prev,
+   356→        { id: Date.now(), from: 'bot', text: "I'm having trouble connecting right now. Please try again. 🌙", timestamp: Date.now() },
+   357→      ]);
+   358→    } finally {
+   359→      setIsLoading(false);
+   360→    }
+   361→  }, [message, messages, isLoading, buildContext]);
+   362→
+   363→  /* ──── Clear chat ──── */
+   364→  const handleClearChat = useCallback(() => {
+   365→    const greeting: Message = { id: Date.now(), from: 'bot', text: getGreeting(), timestamp: Date.now() };
+   366→    setMessages([greeting]);
+   367→    saveMessages([greeting]);
+   368→  }, []);
+   369→
+   370→  /* ──── Voice Input (Web Speech API) ──── */
+   371→  const toggleVoiceInput = useCallback(() => {
+   372→    if (isListening && recognitionRef.current) {
+   373→      recognitionRef.current.stop();
+   374→      setIsListening(false);
+   375→      return;
+   376→    }
+   377→
+   378→    const SpeechRecognition = (window as unknown as { SpeechRecognition?: typeof window.SpeechRecognition; webkitSpeechRecognition?: typeof window.SpeechRecognition }).SpeechRecognition
+   379→      || (window as unknown as { webkitSpeechRecognition?: typeof window.SpeechRecognition }).webkitSpeechRecognition;
+   380→
+   381→    if (!SpeechRecognition) {
+   382→      setMessages((prev) => [
+   383→        ...prev,
+   384→        { id: Date.now(), from: 'bot', text: "Voice input isn't supported in your browser. Please type your message instead. 🎤", timestamp: Date.now() },
+   385→      ]);
+   386→      return;
+   387→    }
+   388→
+   389→    const recognition = new SpeechRecognition();
+   390→    recognition.continuous = false;
+   391→    recognition.interimResults = false;
+   392→    recognition.lang = 'en-NG';
+   393→
+   394→    recognition.onresult = (event: SpeechRecognitionEvent) => {
+   395→      const transcript = event.results[0][0].transcript;
+   396→      setMessage(transcript);
+   397→      setIsListening(false);
+   398→    };
+   399→
+   400→    recognition.onerror = () => {
+   401→      setIsListening(false);
+   402→    };
+   403→
+   404→    recognition.onend = () => {
+   405→      setIsListening(false);
+   406→    };
+   407→
+   408→    recognitionRef.current = recognition;
+   409→    recognition.start();
+   410→    setIsListening(true);
+   411→  }, [isListening]);
+   412→
+   413→  /* ──── Quick action chips ──── */
+   414→  const contextChips: { icon: string; label: string }[] = [];
+   415→  if (cartCount > 0) contextChips.push({ icon: '🛒', label: `I have ${cartCount} items in cart` });
+   416→  if (orders.length > 0) contextChips.push({ icon: '📦', label: "Where's my order?" });
+   417→  const allChips = [...contextChips, ...getTimeChips(), ...BASE_CHIPS];
+   418→
+   419→  const hasUserMessage = messages.some((m) => m.from === 'user');
+   420→  const showQuickReplies = messages.length <= 3 && !isLoading;
+   421→
+   422→  const openWidget = () => {
+   423→    setIsOpen(true);
+   424→    setMinimized(false);
+   425→    setHasNew(false);
+   426→  };
+   427→  const closeWidget = () => {
+   428→    setIsOpen(false);
+   429→    setMinimized(false);
+   430→  };
+   431→
+   432→  return (
+   433→    <>
+   434→      {/* ──── Chat Panel ──── */}
+   435→      <AnimatePresence>
+   436→        {isOpen && (
+   437→          <motion.div
+   438→            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+   439→            animate={{ opacity: 1, y: 0, scale: 1 }}
+   440→            exit={{ opacity: 0, y: 24, scale: 0.96 }}
+   441→            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
+   442→            style={{ height: minimized ? 'auto' : '70vh' }}
+   443→            className="fixed bottom-24 left-4 w-[calc(100%-2rem)] sm:w-[420px] z-[60] flex flex-col rounded-3xl overflow-hidden border border-white/10 bg-[#0F1117]/95 backdrop-blur-md shadow-2xl shadow-black/50"
+   444→          >
+   445→            {/* Gradient ring border — Aurora Luxe palette */}
+   446→            <div className="pointer-events-none absolute inset-0 rounded-3xl p-px bg-gradient-to-br from-[#10E07A]/50 via-transparent to-[#F5C451]/50 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude]" />
+   447→
+   448→            {/* ──── Header ──── */}
+   449→            <div className="relative shrink-0 bg-gradient-to-r from-[#10E07A]/15 via-[#1A1D26] to-[#F5C451]/15 border-b border-white/5 px-4 py-3">
+   450→              <div className="flex items-center justify-between">
+   451→                <div className="flex items-center gap-3">
+   452→                  <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[#F5C451] to-[#10E07A] flex items-center justify-center shadow-lg shadow-[#10E07A]/20">
+   453→                    <ChefHat className="w-5 h-5 text-[#0F1117]" />
+   454→                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#10E07A] rounded-full border-2 border-[#0F1117]" />
+   455→                  </div>
+   456→                  <div>
+   457→                    <div className="flex items-center gap-2">
+   458→                      <p className="text-white text-sm font-bold leading-tight">Safa AI</p>
+   459→                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#F5C451] to-[#10E07A] text-[#0F1117] flex items-center gap-0.5">
+   460→                        <Sparkles className="w-2.5 h-2.5" /> AI
+   461→                      </span>
+   462→                    </div>
+   463→                    <p className="text-white/50 text-[10px] leading-tight">Your Ramadan food &amp; lifestyle assistant</p>
+   464→                    <p className="text-[#10E07A] text-[10px] font-medium flex items-center gap-1 mt-0.5">
+   465→                      <span className="w-1.5 h-1.5 bg-[#10E07A] rounded-full animate-pulse" />
+   466→                      Online
+   467→                    </p>
+   468→                  </div>
+   469→                </div>
+   470→                <div className="flex items-center gap-1">
+   471→                  {/* Clear chat */}
+   472→                  <button
+   473→                    onClick={handleClearChat}
+   474→                    aria-label="Clear chat history"
+   475→                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-red-500/20 hover:text-red-400 transition-colors text-white/60"
+   476→                  >
+   477→                    <Trash2 className="w-3.5 h-3.5" />
+   478→                  </button>
+   479→                  <button
+   480→                    onClick={() => setMinimized((m) => !m)}
+   481→                    aria-label="Minimize chat"
+   482→                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   483→                  >
+   484→                    <Minus className="w-4 h-4 text-white/60" />
+   485→                  </button>
+   486→                  <button
+   487→                    onClick={closeWidget}
+   488→                    aria-label="Close chat"
+   489→                    className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   490→                  >
+   491→                    <X className="w-4 h-4 text-white/60" />
+   492→                  </button>
+   493→                </div>
+   494→              </div>
+   495→            </div>
+   496→
+   497→            {!minimized && (
+   498→              <>
+   499→                {/* ──── Messages ──── */}
+   500→                <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+   501→                  {messages.map((msg, idx) => (
+   502→                    <motion.div
+   503→                      key={msg.id}
+   504→                      initial={{ opacity: 0, y: 10, x: msg.from === 'user' ? 8 : -8 }}
+   505→                      animate={{ opacity: 1, y: 0, x: 0 }}
+   506→                      transition={{ duration: 0.3, delay: idx === messages.length - 1 ? 0.05 : 0 }}
+   507→                      className={`flex ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}
+   508→                    >
+   509→                      <div className={`max-w-[85%] flex gap-2 ${msg.from === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+   510→                        {/* Avatar */}
+   511→                        <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1 ${
+   512→                          msg.from === 'user'
+   513→                            ? 'bg-[#10E07A]/20'
+   514→                            : 'bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10'
+   515→                        }`}>
+   516→                          {msg.from === 'user' ? (
+   517→                            <User className="w-3.5 h-3.5 text-[#10E07A]" />
+   518→                          ) : (
+   519→                            <ChefHat className="w-3.5 h-3.5 text-[#F5C451]" />
+   520→                          )}
+   521→                        </div>
+   522→                        {/* Bubble */}
+   523→                        <div>
+   524→                          <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
+   525→                            msg.from === 'user'
+   526→                              ? 'bg-[#10E07A] text-[#04140C] font-semibold rounded-tr-sm'
+   527→                              : 'bg-[#1A1D26] text-white/85 border-l-2 border-[#F5C451]/60 rounded-tl-sm'
+   528→                          }`}>
+   529→                            {msg.from === 'bot' ? renderBotText(msg.text) : msg.text}
+   530→                          </div>
+   531→                          {/* Timestamp */}
+   532→                          <p className={`text-[9px] text-white/25 mt-1 ${msg.from === 'user' ? 'text-right mr-1' : 'ml-1'}`}>
+   533→                            {formatTime(msg.timestamp)}
+   534→                          </p>
+   535→                        </div>
+   536→                      </div>
+   537→                    </motion.div>
+   538→                  ))}
+   539→
+   540→                  {/* ──── Typing Indicator with Shimmer ──── */}
+   541→                  {isLoading && (
+   542→                    <motion.div
+   543→                      initial={{ opacity: 0, y: 8 }}
+   544→                      animate={{ opacity: 1, y: 0 }}
+   545→                      className="flex justify-start"
+   546→                    >
+   547→                      <div className="flex gap-2">
+   548→                        <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1 bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10">
+   549→                          <ChefHat className="w-3.5 h-3.5 text-[#F5C451]" />
+   550→                        </div>
+   551→                        <div className="bg-[#1A1D26] px-4 py-3 rounded-2xl border-l-2 border-[#F5C451]/60 rounded-tl-sm">
+   552→                          <div className="flex items-center gap-2">
+   553→                            <div className="flex gap-1.5">
+   554→                              <div className="w-2 h-2 bg-[#F5C451] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+   555→                              <div className="w-2 h-2 bg-[#F5C451] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+   556→                              <div className="w-2 h-2 bg-[#F5C451] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+   557→                            </div>
+   558→                            <span className="text-[10px] text-white/30 shimmer-text">Safa is thinking…</span>
+   559→                          </div>
+   560→                        </div>
+   561→                      </div>
+   562→                    </motion.div>
+   563→                  )}
+   564→                  <div ref={messagesEndRef} />
+   565→                </div>
+   566→
+   567→                {/* ──── Quick Replies (scrollable) ──── */}
+   568→                <AnimatePresence>
+   569→                  {showQuickReplies && (
+   570→                    <motion.div
+   571→                      initial={{ opacity: 0, height: 0 }}
+   572→                      animate={{ opacity: 1, height: 'auto' }}
+   573→                      exit={{ opacity: 0, height: 0 }}
+   574→                      className="overflow-hidden"
+   575→                    >
+   576→                      <div className="flex gap-2 px-4 pb-2 overflow-x-auto no-scrollbar">
+   577→                        {allChips.map((chip) => (
+   578→                          <button
+   579→                            key={chip.label}
+   580→                            onClick={() => handleSend(chip.label)}
+   581→                            className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-medium whitespace-nowrap hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+   582→                          >
+   583→                            <span>{chip.icon}</span>
+   584→                            {chip.label}
+   585→                          </button>
+   586→                        ))}
+   587→                      </div>
+   588→                    </motion.div>
+   589→                  )}
+   590→                </AnimatePresence>
+   591→
+   592→                {/* ──── Input Bar ──── */}
+   593→                <div className="p-3 border-t border-white/5 bg-[#0a0a0a]/60">
+   594→                  <div className="flex items-center gap-2">
+   595→                    {/* Voice Input Button */}
+   596→                    <button
+   597→                      onClick={toggleVoiceInput}
+   598→                      aria-label={isListening ? 'Stop voice input' : 'Start voice input'}
+   599→                      className={`w-9 h-9 flex items-center justify-center rounded-full shrink-0 transition-all ${
+   600→                        isListening
+   601→                          ? 'bg-red-500/20 text-red-400 animate-pulse border border-red-500/40'
+   602→                          : 'bg-white/5 hover:bg-white/10 text-white/60'
+   603→                      }`}
+   604→                    >
+   605→                      <Mic className="w-4 h-4" />
+   606→                    </button>
+   607→                    <input
+   608→                      ref={inputRef}
+   609→                      value={message}
+   610→                      onChange={(e) => setMessage(e.target.value)}
+   611→                      onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+   612→                      placeholder={isListening ? '🎤 Listening…' : 'Ask Safa anything…'}
+   613→                      className="flex-1 bg-[#1A1D26] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/30 transition-colors"
+   614→                    />
+   615→                    <button
+   616→                      onClick={() => handleSend()}
+   617→                      disabled={isLoading || !message.trim()}
+   618→                      aria-label="Send message"
+   619→                      className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 disabled:opacity-40 transition-opacity bg-gradient-to-br from-[#10E07A] to-[#F5C451] active:scale-95"
+   620→                    >
+   621→                      <Send className="w-4 h-4 text-[#04140C]" />
+   622→                    </button>
+   623→                  </div>
+   624→                  {/* Voice listening indicator */}
+   625→                  {isListening && (
+   626→                    <motion.div
+   627→                      initial={{ opacity: 0, height: 0 }}
+   628→                      animate={{ opacity: 1, height: 'auto' }}
+   629→                      exit={{ opacity: 0, height: 0 }}
+   630→                      className="flex items-center justify-center gap-2 mt-2"
+   631→                    >
+   632→                      <div className="flex gap-1">
+   633→                        {[...Array(5)].map((_, i) => (
+   634→                          <div
+   635→                            key={i}
+   636→                            className="w-1 bg-[#10E07A] rounded-full animate-pulse"
+   637→                            style={{
+   638→                              height: `${8 + Math.random() * 12}px`,
+   639→                              animationDelay: `${i * 100}ms`,
+   640→                            }}
+   641→                          />
+   642→                        ))}
+   643→                      </div>
+   644→                      <span className="text-[10px] text-[#10E07A]/60">Listening…</span>
+   645→                    </motion.div>
+   646→                  )}
+   647→                </div>
+   648→              </>
+   649→            )}
+   650→          </motion.div>
+   651→        )}
+   652→      </AnimatePresence>
+   653→
+   654→      {/* ──── Floating Button ──── */}
+   655→      <motion.button
+   656→        whileHover={{ scale: 1.05 }}
+   657→        whileTap={{ scale: 0.95 }}
+   658→        onClick={() => (isOpen ? closeWidget() : openWidget())}
+   659→        aria-label={isOpen ? 'Close Safa AI assistant' : 'Open Safa AI assistant'}
+   660→        className="fixed bottom-24 left-4 z-[60] group"
+   661→      >
+   662→        {/* Expanding ping ring */}
+   663→        {!isOpen && (
+   664→          <span className="absolute inset-0 rounded-full bg-[#10E07A] opacity-30 animate-ping" />
+   665→        )}
+   666→        {/* Soft pulsing glow */}
+   667→        <span className="absolute -inset-2 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] opacity-40 blur-xl group-hover:opacity-70 transition-opacity animate-[glow-pulse_3s_ease-in-out_infinite]" />
+   668→        {/* Gradient orb */}
+   669→        <span className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#10E07A] via-[#10E07A] to-[#F5C451] flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
+   670→          {isOpen ? <X className="w-6 h-6 text-[#04140C]" /> : <ChefHat className="w-6 h-6 text-[#04140C]" />}
+   671→          {/* Gold "new" notification dot */}
+   672→          {!isOpen && hasNew && (
+   673→            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#F5C451] rounded-full border-2 border-[#0F1117] flex items-center justify-center">
+   674→              <span className="w-1.5 h-1.5 bg-[#0F1117] rounded-full" />
+   675→            </span>
+   676→          )}
+   677→        </span>
+   678→        {/* Desktop hover label */}
+   679→        <span className="absolute left-16 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#1A1D26] border border-white/10 text-xs text-white font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+   680→          <Sparkles className="w-3 h-3 text-[#F5C451]" />
+   681→          Safa AI
+   682→        </span>
+   683→        {/* Mobile persistent AI badge */}
+   684→        <span className="absolute -top-1 -left-1 sm:hidden bg-[#F5C451] text-[#04140C] text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-[#0F1117]">
+   685→          AI
+   686→        </span>
+   687→      </motion.button>
+   688→
+   689→      {/* ──── Shimmer animation styles ──── */}
+   690→      <style jsx global>{`
+   691→        .shimmer-text {
+   692→          background: linear-gradient(90deg, rgba(245,196,81,0.3) 0%, rgba(16,224,122,0.6) 50%, rgba(245,196,81,0.3) 100%);
+   693→          background-size: 200% 100%;
+   694→          -webkit-background-clip: text;
+   695→          -webkit-text-fill-color: transparent;
+   696→          animation: shimmer 2s ease-in-out infinite;
+   697→        }
+   698→        @keyframes shimmer {
+   699→          0% { background-position: 200% 0; }
+   700→          100% { background-position: -200% 0; }
+   701→        }
+   702→        @keyframes glow-pulse {
+   703→          0%, 100% { opacity: 0.3; }
+   704→          50% { opacity: 0.6; }
+   705→        }
+   706→      `}</style>
+   707→    </>
+   708→  );
+   709→}
+   710→

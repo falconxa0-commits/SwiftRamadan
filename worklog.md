@@ -4438,3 +4438,129 @@ Stage Summary:
 - App will no longer silently create phantom payments, phantom verifications, or phantom refunds
 - Callers can now properly detect and handle unconfigured payment providers
 - The two most dangerous lines (OPay verify returning verified:true and Moniepoint verify returning verified:true) are now fixed
+
+---
+Task ID: a7
+Agent: General Purpose
+Task: Create AI Agent Orchestrator API route
+
+Work Log:
+- Read worklog.md and verified project structure
+- Checked for existing `/api/agent` directory — did not exist, created it
+- Verified dependency files (lib/ai/sdk, lib/ai/agents, lib/ai/tools, lib/session, lib/rate-limit, lib/ai/types) — not yet created (expected, other parallel tasks)
+- Created /home/z/my-project/src/app/api/agent/route.ts (238 lines)
+
+File Contents:
+- POST handler: Full agent conversation endpoint
+  - Auth check via requireAuth
+  - Rate limiting (RATE_LIMITS.ai)
+  - Agent validation + role-based access control
+  - Input sanitization via sanitizeInput
+  - AgentContext construction with userId, email, role, userName
+  - Conversation history (last 10 messages) for context
+  - Dynamic tool definitions based on agent's tool list
+  - AI SDK call with tool support (function calling)
+  - Tool execution loop with automatic userId/riderId/vendorId injection
+  - Follow-up AI call when tool calls return no text
+  - Fallback response if nothing generated
+  - Returns: message, toolCalls, toolResults, agentId
+- GET handler: List available agents for current user
+  - Filters agents by user role
+  - Returns agent metadata (id, name, description, icon, color, greeting, quickActions)
+- buildSystemMessage helper:
+  - Injects user context (name, email, role, swiftPoints, loyaltyTier, dietaryPrefs, cartItems)
+  - Adds Lagos timezone-aware time-of-day context (Sahur/Morning/Afternoon/Iftar/Evening)
+
+Stage Summary:
+- Agent Orchestrator API route created at /src/app/api/agent/route.ts
+- POST /api/agent — send messages to any AI agent with tool execution
+- GET /api/agent — list available agents for current user's role
+- Depends on: lib/ai/sdk, lib/ai/agents, lib/ai/tools, lib/session, lib/rate-limit, lib/ai/types (created by other tasks)
+
+---
+Task ID: a1
+Agent: Core AI Agent Framework Builder
+Task: Create the core AI Agent framework for SwiftRamadan
+
+Work Log:
+- Created directory structure: /src/lib/ai/ and /src/lib/ai/agents/
+- Created sdk.ts (56 lines): Shared AI SDK singleton with getAISDK(), extractJSON(), sanitizeInput(), getAgentRateLimitKey()
+- Created types.ts (69 lines): Full type system — AgentId, AgentDefinition, ToolDefinition, QuickAction, AgentMessage, ToolCall, AgentContext, AgentResponse
+- Created tools.ts (275 lines): 10 tool implementations across 4 domains (Support, Rider, Vendor, Analytics) + tool definitions for LLM + executeTool dispatcher
+- Created agents/index.ts (320 lines): All 6 agent definitions with personas, system prompts, tool lists, greetings, and quick actions
+
+Agents Created:
+1. Safa Support (🎧) — Customer support for all roles
+2. Safa Marketing (📣) — Campaigns, content, social media
+3. Safa Chef (👨🏾‍🍳) — Recipes, meal planning, cooking guidance
+4. Safa Rider (🏍️) — Route optimization, earnings coaching
+5. Safa Vendor (🏪) — Menu, stock, pricing, business insights
+6. Safa Analytics (📊) — BI, trend analysis, forecasting
+
+Tools Implemented:
+- lookup_order, lookup_user_orders, search_products, get_store_info
+- get_popular_products, get_active_coupons, get_rider_earnings
+- get_vendor_orders, get_vendor_products, get_low_stock_products
+- get_business_metrics
+
+Total: 720 lines across 4 files
+
+---
+Task ID: a8
+Agent: UI Component Builder
+Task: Create SafaAgentHub multi-agent chat component
+
+Work Log:
+- Read existing SafaAIAssistant.tsx (single-purpose chef AI modal) to understand UI patterns, styling, and store integration
+- Read store.ts to confirm `activeModal` / `setActiveModal` pattern (verified: `activeModal: string | null`, `setActiveModal: (modal: string | null) => void`)
+- Read /api/agent/route.ts to understand GET (list agents by role) and POST (send message with tool calling) API contract
+- Read /lib/ai/agents/index.ts to understand all 6 agent definitions, their roles, tools, greetings, and quick actions
+- Read /lib/ai/types.ts for AgentId, AgentDefinition, ToolCall, AgentMessage types
+
+Created /home/z/my-project/src/components/swift/SafaAgentHub.tsx (~676 lines):
+- Agent Selector: Collapsible horizontal list of agent chips with per-agent accent colors, active highlight, and unread badges
+- Chat Interface: Full message list with user/bot avatars, per-agent accent colors, line-break support, timestamps
+- Tool Call Badges: Colored pills showing tool name + key argument after assistant messages (e.g., "Lookup Order: #123")
+- Quick Action Chips: Per-agent quick actions shown when conversation is fresh (≤1 message), animated entry
+- Loading Animation: Agent-colored bouncing dots with "thinking" state
+- Role-Aware: Loads agents via GET /api/agent (role-filtered by backend); fallback to local role-based filtering if API unreachable
+- Per-Agent Messages: messagesByAgent state preserves each agent's conversation when switching
+- Greeting: Auto-inserts agent greeting message on first switch to an agent
+- Escape key: Closes modal
+- Aurora Luxe design: bg-[#0a0b10]/bg-[#0B0D14], glass morphism panels, backdrop-blur, per-agent accent gradients
+- Accent Color Map: Each agent has distinct colors — support=#38BDF8 (blue), marketing=#A78BFA (purple), chef=#FB923C (orange), rider=#22D3EE (cyan), vendor=#F5C451 (gold), analytics=#10E07A (green)
+- Store Integration: Uses `activeModal === 'agent-hub'` to show/hide; `useAppStore.getState().setActiveModal(null)` to close
+- Context sent to API: userName, swiftPoints, loyaltyTier, cartCount, cartItems, orders, dietaryPrefs
+- Fallback agents: Hardcoded list filtered by userRole when API is unreachable
+
+Notes:
+- Component is NOT yet wired into page.tsx (needs to be added to AllModals or replace SafaAIAssistant)
+- The floating AIChatWidget button could be updated to open 'agent-hub' modal instead of its own panel
+- No type errors introduced (verified with tsc --noEmit)
+
+---
+Task ID: AI-Agent-System
+Agent: Main Orchestrator
+Task: Build multi-agent AI system for SwiftRamadan — support, marketing, chef, rider, vendor, analytics
+
+Work Log:
+- Analyzed all 13 existing AI routes and 3 AI UI components
+- Identified gaps: no agent framework, no tool calling, no rider/vendor AI, single agent only
+- Created shared AI SDK singleton (src/lib/ai/sdk.ts) with extractJSON, sanitizeInput helpers
+- Created type system (src/lib/ai/types.ts) with AgentId, AgentDefinition, ToolDefinition, ToolCall, AgentContext
+- Created 10 tool implementations (src/lib/ai/tools.ts) — order lookup, product search, coupons, earnings, vendor ops, metrics
+- Created 6 agent definitions (src/lib/ai/agents/index.ts) — Support, Marketing, Chef, Rider, Vendor, Analytics
+- Created Agent Orchestrator API (src/app/api/agent/route.ts) — POST for conversations, GET for agent listing
+- Created SafaAgentHub UI component (src/components/swift/SafaAgentHub.tsx) — multi-agent chat with selector
+- Created AIAgentButton floating button (src/components/swift/AIAgentButton.tsx) — works for ALL roles
+- Integrated into page.tsx AllModals + floating button
+- Fixed lint error (loadAgents accessed before declaration → useCallback pattern)
+- Verified: lint 0 errors, page renders 200, agent hub opens with 3 agents for customer role
+
+Stage Summary:
+- 8 new files created (sdk, types, tools, agents/index, agent API route, agent hub UI, agent button)
+- 1 file modified (page.tsx — added agent hub to AllModals + floating AI button)
+- 6 AI agents: Support (all roles), Marketing (vendor/customer), Chef (customer), Rider (rider), Vendor (vendor), Analytics (vendor)
+- 10 tools: lookup_order, lookup_user_orders, search_products, get_popular_products, get_active_coupons, get_rider_earnings, get_vendor_orders, get_vendor_products, get_low_stock_products, get_business_metrics
+- Each agent has: persona system prompt, Nigerian/Ramadan context, tool access, greeting, quick actions
+- Agent Orchestrator: auth, rate limiting, role-based access, context injection, tool calling with follow-up

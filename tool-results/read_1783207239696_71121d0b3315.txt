@@ -1,0 +1,675 @@
+     1→'use client';
+     2→
+     3→import { useState, useRef, useEffect, useCallback } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { Send, X, Bot, User, Sparkles, ChevronRight, Wrench, Loader2, ArrowLeft, Zap } from 'lucide-react';
+     6→import { useAppStore } from '@/lib/store';
+     7→
+     8→/* ──────────────────── Types ──────────────────── */
+     9→
+    10→interface AgentInfo {
+    11→  id: string;
+    12→  name: string;
+    13→  description: string;
+    14→  icon: string;
+    15→  color: string;
+    16→  greeting: string;
+    17→  quickActions: { label: string; prompt: string; icon?: string }[];
+    18→}
+    19→
+    20→interface Message {
+    21→  id: string;
+    22→  role: 'user' | 'assistant' | 'system';
+    23→  content: string;
+    24→  agentId: string;
+    25→  toolCalls?: { name: string; arguments: Record<string, unknown> }[];
+    26→  timestamp: number;
+    27→}
+    28→
+    29→/* ──────────────────── Agent Color Map ──────────────────── */
+    30→// Maps agent IDs to their accent colors for visual distinction
+    31→const AGENT_ACCENTS: Record<string, { bg: string; text: string; border: string; glow: string; dot: string }> = {
+    32→  support:   { bg: 'bg-[#38BDF8]/20', text: 'text-[#38BDF8]', border: 'border-[#38BDF8]/30', glow: 'shadow-[#38BDF8]/20', dot: 'bg-[#38BDF8]' },
+    33→  marketing: { bg: 'bg-[#A78BFA]/20', text: 'text-[#A78BFA]', border: 'border-[#A78BFA]/30', glow: 'shadow-[#A78BFA]/20', dot: 'bg-[#A78BFA]' },
+    34→  chef:      { bg: 'bg-[#FB923C]/20', text: 'text-[#FB923C]', border: 'border-[#FB923C]/30', glow: 'shadow-[#FB923C]/20', dot: 'bg-[#FB923C]' },
+    35→  rider:     { bg: 'bg-[#22D3EE]/20', text: 'text-[#22D3EE]', border: 'border-[#22D3EE]/30', glow: 'shadow-[#22D3EE]/20', dot: 'bg-[#22D3EE]' },
+    36→  vendor:    { bg: 'bg-[#F5C451]/20', text: 'text-[#F5C451]', border: 'border-[#F5C451]/30', glow: 'shadow-[#F5C451]/20', dot: 'bg-[#F5C451]' },
+    37→  analytics: { bg: 'bg-[#10E07A]/20', text: 'text-[#10E07A]', border: 'border-[#10E07A]/30', glow: 'shadow-[#10E07A]/20', dot: 'bg-[#10E07A]' },
+    38→};
+    39→
+    40→const DEFAULT_ACCENT = AGENT_ACCENTS.support;
+    41→
+    42→/* ──────────────────── Fallback Agents ──────────────────── */
+    43→// Used when the API is unreachable so the UI still renders something useful
+    44→const FALLBACK_AGENTS: AgentInfo[] = [
+    45→  {
+    46→    id: 'support',
+    47→    name: 'Safa Support',
+    48→    description: 'Customer support & order help',
+    49→    icon: '🎧',
+    50→    color: 'text-blue-400',
+    51→    greeting: "Salam! 🎧 I'm Safa Support. How can I help you today?",
+    52→    quickActions: [
+    53→      { label: 'Track my order', prompt: 'Where is my latest order?' },
+    54→      { label: 'Request refund', prompt: 'I need a refund for my last order' },
+    55→      { label: 'Delivery issue', prompt: 'My delivery is late' },
+    56→      { label: 'Active promos', prompt: 'What promos are available?' },
+    57→    ],
+    58→  },
+    59→  {
+    60→    id: 'chef',
+    61→    name: 'Safa Chef',
+    62→    description: 'Recipes & meal planning',
+    63→    icon: '👨🏾‍🍳',
+    64→    color: 'text-orange-400',
+    65→    greeting: "Salam! 👨🏾‍🍳 Chef Safa here — what are we cooking today?",
+    66→    quickActions: [
+    67→      { label: 'Iftar recipe', prompt: 'Suggest an easy iftar meal' },
+    68→      { label: 'Sahur ideas', prompt: 'What should I eat for sahur?' },
+    69→      { label: 'Quick snacks', prompt: '5 quick Nigerian snacks' },
+    70→      { label: 'Meal plan', prompt: 'Create a 3-day iftar meal plan' },
+    71→    ],
+    72→  },
+    73→  {
+    74→    id: 'marketing',
+    75→    name: 'Safa Marketing',
+    76→    description: 'Campaigns & content creation',
+    77→    icon: '📣',
+    78→    color: 'text-purple-400',
+    79→    greeting: "Hey! 📣 Safa Marketing — your creative partner. What are we launching?",
+    80→    quickActions: [
+    81→      { label: 'Ramadan campaign', prompt: 'Create a Ramadan marketing campaign' },
+    82→      { label: 'Social media posts', prompt: 'Write 5 Instagram posts for iftar deals' },
+    83→      { label: 'Push notifications', prompt: 'Write push notification copy for a flash sale' },
+    84→      { label: 'Content calendar', prompt: 'Create a 7-day content calendar' },
+    85→    ],
+    86→  },
+    87→  {
+    88→    id: 'vendor',
+    89→    name: 'Safa Vendor',
+    90→    description: 'Menu & business insights',
+    91→    icon: '🏪',
+    92→    color: 'text-yellow-400',
+    93→    greeting: "Hello boss! 🏪 Safa Vendor — your business partner. What do you need?",
+    94→    quickActions: [
+    95→      { label: 'Menu tips', prompt: 'How can I optimize my menu for Ramadan?' },
+    96→      { label: 'Stock check', prompt: 'Check my stock levels' },
+    97→      { label: 'Pricing help', prompt: 'Help me set competitive prices' },
+    98→      { label: 'Growth tips', prompt: 'How can I get more orders?' },
+    99→    ],
+   100→  },
+   101→  {
+   102→    id: 'analytics',
+   103→    name: 'Safa Analytics',
+   104→    description: 'Business intelligence & trends',
+   105→    icon: '📊',
+   106→    color: 'text-green-400',
+   107→    greeting: "Salam! 📊 Safa Analytics — your numbers navigator. Let's look at the data.",
+   108→    quickActions: [
+   109→      { label: 'Performance summary', prompt: 'Give me my business performance summary' },
+   110→      { label: 'Revenue trends', prompt: 'How is my revenue trending?' },
+   111→      { label: 'Product analysis', prompt: 'Which products are performing best?' },
+   112→      { label: 'Demand forecast', prompt: 'What should I expect for demand next week?' },
+   113→    ],
+   114→  },
+   115→  {
+   116→    id: 'rider',
+   117→    name: 'Safa Rider',
+   118→    description: 'Route optimization & earnings',
+   119→    icon: '🏍️',
+   120→    color: 'text-cyan-400',
+   121→    greeting: "Hey rider! 🏍️ Safa Rider here — your partner on the road. How can I help?",
+   122→    quickActions: [
+   123→      { label: 'Earnings tips', prompt: 'How can I earn more during Ramadan?' },
+   124→      { label: 'Best areas', prompt: 'Which areas have the most deliveries?' },
+   125→      { label: 'Route help', prompt: 'How do I optimize my routes?' },
+   126→      { label: 'My earnings', prompt: 'Show me my earnings breakdown' },
+   127→    ],
+   128→  },
+   129→];
+   130→
+   131→/* ──────────────────── Component ──────────────────── */
+   132→
+   133→export default function SafaAgentHub() {
+   134→  const activeModal = useAppStore((s) => s.activeModal);
+   135→  const userName = useAppStore((s) => s.userName);
+   136→  const userRole = useAppStore((s) => s.userRole);
+   137→  const swiftPoints = useAppStore((s) => s.swiftPoints);
+   138→  const loyaltyTier = useAppStore((s) => s.loyaltyTier);
+   139→  const cartCount = useAppStore((s) => s.cartCount);
+   140→  const cartItems = useAppStore((s) => s.cartItems);
+   141→  const orders = useAppStore((s) => s.orders);
+   142→  const customerDietaryPrefs = useAppStore((s) => s.customerDietaryPrefs);
+   143→
+   144→  const isOpen = activeModal === 'agent-hub';
+   145→
+   146→  const [agents, setAgents] = useState<AgentInfo[]>([]);
+   147→  const [activeAgentId, setActiveAgentId] = useState<string>('support');
+   148→  const [messagesByAgent, setMessagesByAgent] = useState<Record<string, Message[]>>({});
+   149→  const [input, setInput] = useState('');
+   150→  const [isLoading, setIsLoading] = useState(false);
+   151→  const [showAgentList, setShowAgentList] = useState(true);
+   152→
+   153→  const messagesEndRef = useRef<HTMLDivElement>(null);
+   154→  const inputRef = useRef<HTMLInputElement>(null);
+   155→  const chatContainerRef = useRef<HTMLDivElement>(null);
+   156→
+   157→  /* ── Load agents from API ── */
+   158→  const loadAgents = useCallback(async () => {
+   159→    try {
+   160→      const res = await fetch('/api/agent');
+   161→      if (res.ok) {
+   162→        const data = await res.json();
+   163→        const loadedAgents = data.agents || [];
+   164→        if (loadedAgents.length > 0) {
+   165→          setAgents(loadedAgents);
+   166→          // Set default active agent to first available
+   167→          if (!loadedAgents.find((a: AgentInfo) => a.id === activeAgentId)) {
+   168→            setActiveAgentId(loadedAgents[0].id);
+   169→          }
+   170→          return;
+   171→        }
+   172→      }
+   173→    } catch {
+   174→      // Network error — use fallback
+   175→    }
+   176→    // Fallback: filter by role locally
+   177→    const roleFiltered = FALLBACK_AGENTS.filter(a => {
+   178→      if (userRole === 'customer') return ['support', 'chef', 'marketing'].includes(a.id);
+   179→      if (userRole === 'vendor') return ['support', 'marketing', 'vendor', 'analytics'].includes(a.id);
+   180→      if (userRole === 'rider') return ['support', 'rider'].includes(a.id);
+   181→      return true;
+   182→    });
+   183→    setAgents(roleFiltered);
+   184→    if (!roleFiltered.find(a => a.id === activeAgentId) && roleFiltered.length > 0) {
+   185→      setActiveAgentId(roleFiltered[0].id);
+   186→    }
+   187→  }, [userRole, activeAgentId]);
+   188→
+   189→  /* ── Load agents on open ── */
+   190→  useEffect(() => {
+   191→    if (isOpen) {
+   192→      loadAgents();
+   193→      const timer = setTimeout(() => inputRef.current?.focus(), 400);
+   194→      return () => clearTimeout(timer);
+   195→    }
+   196→  }, [isOpen, loadAgents]);
+   197→
+   198→  /* ── Auto-scroll to bottom ── */
+   199→  const scrollToBottom = useCallback(() => {
+   200→    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+   201→  }, []);
+   202→
+   203→  useEffect(() => {
+   204→    scrollToBottom();
+   205→  }, [messagesByAgent, activeAgentId, isLoading, scrollToBottom]);
+   206→
+   207→  /* ── Escape key to close ── */
+   208→  useEffect(() => {
+   209→    if (!isOpen) return;
+   210→    const onKey = (e: KeyboardEvent) => {
+   211→      if (e.key === 'Escape') {
+   212→        useAppStore.getState().setActiveModal(null);
+   213→      }
+   214→    };
+   215→    window.addEventListener('keydown', onKey);
+   216→    return () => window.removeEventListener('keydown', onKey);
+   217→  }, [isOpen]);
+   218→
+   219→  /* ── Derived state ── */
+   220→  const activeAgent = agents.find(a => a.id === activeAgentId);
+   221→  const currentMessages = messagesByAgent[activeAgentId] || [];
+   222→  const accent = activeAgentId ? (AGENT_ACCENTS[activeAgentId] || DEFAULT_ACCENT) : DEFAULT_ACCENT;
+   223→
+   224→  /* ── Send message ── */
+   225→  const sendMessage = async (text: string) => {
+   226→    if (!text.trim() || isLoading) return;
+   227→
+   228→    const userMsg: Message = {
+   229→      id: `${Date.now()}-user`,
+   230→      role: 'user',
+   231→      content: text.trim(),
+   232→      agentId: activeAgentId,
+   233→      timestamp: Date.now(),
+   234→    };
+   235→
+   236→    // Optimistically add user message
+   237→    setMessagesByAgent(prev => ({
+   238→      ...prev,
+   239→      [activeAgentId]: [...(prev[activeAgentId] || []), userMsg],
+   240→    }));
+   241→    setInput('');
+   242→    setIsLoading(true);
+   243→
+   244→    try {
+   245→      // Build conversation history for context (last 10 messages)
+   246→      const history = (messagesByAgent[activeAgentId] || [])
+   247→        .slice(-10)
+   248→        .filter(m => m.role !== 'system')
+   249→        .map(m => ({ role: m.role, content: m.content }));
+   250→
+   251→      const res = await fetch('/api/agent', {
+   252→        method: 'POST',
+   253→        headers: { 'Content-Type': 'application/json' },
+   254→        body: JSON.stringify({
+   255→          agentId: activeAgentId,
+   256→          message: text.trim(),
+   257→          messages: history,
+   258→          context: {
+   259→            userName,
+   260→            swiftPoints,
+   261→            loyaltyTier,
+   262→            cartCount,
+   263→            cartItems: cartItems.map(ci => ({ name: ci.name, qty: ci.quantity, price: ci.price })),
+   264→            orders: orders.slice(0, 5).map(o => ({ id: o.id, item: o.item, status: o.status })),
+   265→            dietaryPrefs: customerDietaryPrefs,
+   266→          },
+   267→        }),
+   268→      });
+   269→
+   270→      if (res.ok) {
+   271→        const data = await res.json();
+   272→        const assistantMsg: Message = {
+   273→          id: `${Date.now()}-assistant`,
+   274→          role: 'assistant',
+   275→          content: data.message || "I'm here to help! Could you tell me more?",
+   276→          agentId: activeAgentId,
+   277→          toolCalls: data.toolCalls,
+   278→          timestamp: Date.now(),
+   279→        };
+   280→        setMessagesByAgent(prev => ({
+   281→          ...prev,
+   282→          [activeAgentId]: [...(prev[activeAgentId] || []), assistantMsg],
+   283→        }));
+   284→      } else {
+   285→        const errorData = await res.json().catch(() => ({}));
+   286→        const errorMsg: Message = {
+   287→          id: `${Date.now()}-error`,
+   288→          role: 'assistant',
+   289→          content: errorData.error || 'Sorry, I encountered an error. Please try again.',
+   290→          agentId: activeAgentId,
+   291→          timestamp: Date.now(),
+   292→        };
+   293→        setMessagesByAgent(prev => ({
+   294→          ...prev,
+   295→          [activeAgentId]: [...(prev[activeAgentId] || []), errorMsg],
+   296→        }));
+   297→      }
+   298→    } catch {
+   299→      const errorMsg: Message = {
+   300→        id: `${Date.now()}-network`,
+   301→        role: 'assistant',
+   302→        content: 'Connection error. Please check your internet and try again.',
+   303→        agentId: activeAgentId,
+   304→        timestamp: Date.now(),
+   305→      };
+   306→      setMessagesByAgent(prev => ({
+   307→        ...prev,
+   308→        [activeAgentId]: [...(prev[activeAgentId] || []), errorMsg],
+   309→      }));
+   310→    }
+   311→
+   312→    setIsLoading(false);
+   313→    // Re-focus input
+   314→    setTimeout(() => inputRef.current?.focus(), 100);
+   315→  };
+   316→
+   317→  /* ── Switch agent ── */
+   318→  const switchAgent = (agentId: string) => {
+   319→    if (agentId === activeAgentId) {
+   320→      setShowAgentList(false);
+   321→      return;
+   322→    }
+   323→    setActiveAgentId(agentId);
+   324→    setShowAgentList(false);
+   325→    // Add greeting if first time switching to this agent
+   326→    if (!messagesByAgent[agentId]?.length) {
+   327→      const agent = agents.find(a => a.id === agentId);
+   328→      if (agent) {
+   329→        setMessagesByAgent(prev => ({
+   330→          ...prev,
+   331→          [agentId]: [{
+   332→            id: `greeting-${agentId}`,
+   333→            role: 'assistant',
+   334→            content: agent.greeting,
+   335→            agentId,
+   336→            timestamp: Date.now(),
+   337→          }],
+   338→        }));
+   339→      }
+   340→    }
+   341→    // Focus input after switch
+   342→    setTimeout(() => inputRef.current?.focus(), 300);
+   343→  };
+   344→
+   345→  /* ── Handle quick action ── */
+   346→  const handleQuickAction = (prompt: string) => {
+   347→    sendMessage(prompt);
+   348→  };
+   349→
+   350→  /* ── Close modal ── */
+   351→  const closeModal = () => {
+   352→    useAppStore.getState().setActiveModal(null);
+   353→  };
+   354→
+   355→  /* ── Format tool call name ── */
+   356→  const formatToolName = (name: string) => {
+   357→    return name
+   358→      .replace(/_/g, ' ')
+   359→      .replace(/\b\w/g, l => l.toUpperCase());
+   360→  };
+   361→
+   362→  /* ── Count unread messages per agent ── */
+   363→  const getAgentUnread = (agentId: string) => {
+   364→    const msgs = messagesByAgent[agentId] || [];
+   365→    if (msgs.length === 0) return 0;
+   366→    // Show badge if there are messages user hasn't seen (simple: if last message is from assistant)
+   367→    return msgs.length > 0 && msgs[msgs.length - 1].role === 'assistant' ? 1 : 0;
+   368→  };
+   369→
+   370→  /* ══════════════════════ RENDER ══════════════════════ */
+   371→
+   372→  if (!isOpen) return null;
+   373→
+   374→  return (
+   375→    <AnimatePresence>
+   376→      <motion.div
+   377→        initial={{ opacity: 0 }}
+   378→        animate={{ opacity: 1 }}
+   379→        exit={{ opacity: 0 }}
+   380→        className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+   381→      >
+   382→        {/* ─── Backdrop ─── */}
+   383→        <motion.div
+   384→          initial={{ opacity: 0 }}
+   385→          animate={{ opacity: 1 }}
+   386→          exit={{ opacity: 0 }}
+   387→          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+   388→          onClick={closeModal}
+   389→        />
+   390→
+   391→        {/* ─── Main Panel ─── */}
+   392→        <motion.div
+   393→          initial={{ y: 100, opacity: 0 }}
+   394→          animate={{ y: 0, opacity: 1 }}
+   395→          exit={{ y: 100, opacity: 0 }}
+   396→          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+   397→          className="relative w-full max-w-lg h-[90vh] sm:h-[80vh] bg-[#0a0b10] border border-white/10 rounded-t-2xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl"
+   398→        >
+   399→          {/* Gradient accent ring based on active agent */}
+   400→          <div className={`pointer-events-none absolute inset-0 rounded-t-2xl sm:rounded-2xl p-px bg-gradient-to-br from-[#10E07A]/30 via-transparent to-[${activeAgent?.icon === '🎧' ? '#38BDF8' : '#F5C451'}]/30 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] opacity-50`} />
+   401→
+   402→          {/* ═══════ Header ═══════ */}
+   403→          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-[#0B0D14]/90 backdrop-blur-md shrink-0">
+   404→            <button
+   405→              onClick={() => setShowAgentList(!showAgentList)}
+   406→              className="flex items-center gap-2.5 flex-1 min-w-0 group"
+   407→            >
+   408→              {/* Agent avatar */}
+   409→              <div className={`w-9 h-9 rounded-full ${accent.bg} flex items-center justify-center shrink-0 transition-all`}>
+   410→                <span className="text-lg">{activeAgent?.icon || '🤖'}</span>
+   411→              </div>
+   412→              <div className="min-w-0 text-left">
+   413→                <div className="flex items-center gap-1.5">
+   414→                  <h3 className="text-sm font-semibold text-white truncate">{activeAgent?.name || 'Safa AI'}</h3>
+   415→                  <span className="flex items-center gap-0.5 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#10E07A]/15 text-[#10E07A]">
+   416→                    <Sparkles className="w-2.5 h-2.5" /> AI
+   417→                  </span>
+   418→                </div>
+   419→                <p className="text-[10px] text-white/40 truncate">{activeAgent?.description}</p>
+   420→              </div>
+   421→              <ChevronRight className={`w-4 h-4 text-white/40 transition-transform shrink-0 ${showAgentList ? 'rotate-90' : ''}`} />
+   422→            </button>
+   423→
+   424→            {/* Online indicator */}
+   425→            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-[#10E07A]/10">
+   426→              <span className="w-1.5 h-1.5 bg-[#10E07A] rounded-full animate-pulse" />
+   427→              <span className="text-[9px] text-[#10E07A] font-medium">Online</span>
+   428→            </div>
+   429→
+   430→            {/* Close button */}
+   431→            <button
+   432→              onClick={closeModal}
+   433→              className="p-1.5 rounded-lg hover:bg-white/10 transition-colors shrink-0"
+   434→              aria-label="Close agent hub"
+   435→            >
+   436→              <X className="w-4 h-4 text-white/60" />
+   437→            </button>
+   438→          </div>
+   439→
+   440→          {/* ═══════ Agent Selector (collapsible) ═══════ */}
+   441→          <AnimatePresence>
+   442→            {showAgentList && (
+   443→              <motion.div
+   444→                initial={{ height: 0, opacity: 0 }}
+   445→                animate={{ height: 'auto', opacity: 1 }}
+   446→                exit={{ height: 0, opacity: 0 }}
+   447→                transition={{ duration: 0.2 }}
+   448→                className="overflow-hidden border-b border-white/10 shrink-0"
+   449→              >
+   450→                <div className="p-3 space-y-2">
+   451→                  <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold px-1">Choose an Agent</p>
+   452→                  <div className="flex flex-wrap gap-2">
+   453→                    {agents.map(agent => {
+   454→                      const isActive = activeAgentId === agent.id;
+   455→                      const agentAccent = AGENT_ACCENTS[agent.id] || DEFAULT_ACCENT;
+   456→                      const unread = getAgentUnread(agent.id);
+   457→                      return (
+   458→                        <button
+   459→                          key={agent.id}
+   460→                          onClick={() => switchAgent(agent.id)}
+   461→                          className={`relative flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200 ${
+   462→                            isActive
+   463→                              ? `${agentAccent.bg} ${agentAccent.text} border ${agentAccent.border} shadow-lg ${agentAccent.glow}`
+   464→                              : 'bg-white/5 text-white/60 border border-white/5 hover:bg-white/10 hover:text-white'
+   465→                          }`}
+   466→                        >
+   467→                          <span className="text-base">{agent.icon}</span>
+   468→                          <span>{agent.name}</span>
+   469→                          {/* Unread badge */}
+   470→                          {unread > 0 && !isActive && (
+   471→                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#10E07A] rounded-full border border-[#0a0b10]" />
+   472→                          )}
+   473→                        </button>
+   474→                      );
+   475→                    })}
+   476→                  </div>
+   477→                </div>
+   478→              </motion.div>
+   479→            )}
+   480→          </AnimatePresence>
+   481→
+   482→          {/* ═══════ Messages Area ═══════ */}
+   483→          <div
+   484→            ref={chatContainerRef}
+   485→            className="flex-1 overflow-y-auto px-4 py-3 space-y-3 scroll-smooth"
+   486→          >
+   487→            {/* Empty state — agent welcome */}
+   488→            {currentMessages.length === 0 && activeAgent && (
+   489→              <div className="text-center py-10">
+   490→                <motion.div
+   491→                  initial={{ scale: 0.8, opacity: 0 }}
+   492→                  animate={{ scale: 1, opacity: 1 }}
+   493→                  transition={{ delay: 0.1, type: 'spring', stiffness: 200 }}
+   494→                  className={`w-16 h-16 rounded-2xl ${accent.bg} flex items-center justify-center mx-auto mb-4`}
+   495→                >
+   496→                  <span className="text-3xl">{activeAgent.icon}</span>
+   497→                </motion.div>
+   498→                <h3 className="text-lg font-semibold text-white">{activeAgent.name}</h3>
+   499→                <p className="text-sm text-white/50 mt-1 max-w-[260px] mx-auto">{activeAgent.description}</p>
+   500→                <p className="text-xs text-white/30 mt-3">Send a message or try a quick action below</p>
+   501→              </div>
+   502→            )}
+   503→
+   504→            {/* Message list */}
+   505→            {currentMessages.map(msg => (
+   506→              <motion.div
+   507→                key={msg.id}
+   508→                initial={{ opacity: 0, y: 8 }}
+   509→                animate={{ opacity: 1, y: 0 }}
+   510→                transition={{ duration: 0.2 }}
+   511→                className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+   512→              >
+   513→                {/* Bot avatar */}
+   514→                {msg.role === 'assistant' && (
+   515→                  <div className={`w-7 h-7 rounded-full ${accent.bg} flex items-center justify-center shrink-0 mt-0.5`}>
+   516→                    <Bot className={`w-3.5 h-3.5 ${accent.text}`} />
+   517→                  </div>
+   518→                )}
+   519→
+   520→                <div className={`max-w-[80%] ${msg.role === 'user' ? 'order-first' : ''}`}>
+   521→                  {/* Message bubble */}
+   522→                  <div className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
+   523→                    msg.role === 'user'
+   524→                      ? 'bg-[#10E07A] text-black font-medium rounded-br-md'
+   525→                      : `bg-white/[0.06] text-white/90 rounded-bl-md border-l-2 ${accent.border}`
+   526→                  }`}>
+   527→                    {msg.content.split('\n').map((line, i) => (
+   528→                      <p key={i} className={i > 0 ? 'mt-1.5' : ''}>{line}</p>
+   529→                    ))}
+   530→                  </div>
+   531→
+   532→                  {/* Tool call badges */}
+   533→                  {msg.toolCalls && msg.toolCalls.length > 0 && (
+   534→                    <div className="flex flex-wrap gap-1 mt-1.5">
+   535→                      {msg.toolCalls.map((tc, i) => (
+   536→                        <motion.span
+   537→                          key={i}
+   538→                          initial={{ opacity: 0, scale: 0.9 }}
+   539→                          animate={{ opacity: 1, scale: 1 }}
+   540→                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${accent.bg} text-[10px] ${accent.text} font-medium`}
+   541→                        >
+   542→                          <Wrench className="w-2.5 h-2.5" />
+   543→                          {formatToolName(tc.name)}
+   544→                          {/* Show key argument if available */}
+   545→                          {tc.arguments && Object.keys(tc.arguments).length > 0 && (
+   546→                            <span className="opacity-60">
+   547→                              {(() => {
+   548→                                const firstKey = Object.keys(tc.arguments)[0];
+   549→                                const firstVal = tc.arguments[firstKey];
+   550→                                if (typeof firstVal === 'string' && firstVal.length < 20) return `: ${firstVal}`;
+   551→                                if (typeof firstVal === 'number') return `: ${firstVal}`;
+   552→                                return '';
+   553→                              })()}
+   554→                            </span>
+   555→                          )}
+   556→                        </motion.span>
+   557→                      ))}
+   558→                    </div>
+   559→                  )}
+   560→
+   561→                  {/* Timestamp */}
+   562→                  <span className="text-[9px] text-white/20 mt-0.5 block">
+   563→                    {new Date(msg.timestamp).toLocaleTimeString('en-NG', { hour: '2-digit', minute: '2-digit' })}
+   564→                  </span>
+   565→                </div>
+   566→
+   567→                {/* User avatar */}
+   568→                {msg.role === 'user' && (
+   569→                  <div className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center shrink-0 mt-0.5">
+   570→                    <User className="w-3.5 h-3.5 text-white/60" />
+   571→                  </div>
+   572→                )}
+   573→              </motion.div>
+   574→            ))}
+   575→
+   576→            {/* Loading / thinking indicator */}
+   577→            {isLoading && (
+   578→              <div className="flex gap-2 justify-start">
+   579→                <div className={`w-7 h-7 rounded-full ${accent.bg} flex items-center justify-center shrink-0`}>
+   580→                  <Bot className={`w-3.5 h-3.5 ${accent.text}`} />
+   581→                </div>
+   582→                <div className="bg-white/[0.06] rounded-2xl rounded-bl-md border-l-2 border-white/10 px-4 py-3">
+   583→                  <div className="flex gap-1.5 items-center">
+   584→                    <div className={`w-2 h-2 rounded-full ${accent.dot} animate-bounce`} style={{ animationDelay: '0ms' }} />
+   585→                    <div className={`w-2 h-2 rounded-full ${accent.dot} animate-bounce`} style={{ animationDelay: '150ms' }} />
+   586→                    <div className={`w-2 h-2 rounded-full ${accent.dot} animate-bounce`} style={{ animationDelay: '300ms' }} />
+   587→                  </div>
+   588→                </div>
+   589→              </div>
+   590→            )}
+   591→
+   592→            <div ref={messagesEndRef} />
+   593→          </div>
+   594→
+   595→          {/* ═══════ Quick Actions ═══════ */}
+   596→          <AnimatePresence>
+   597→            {activeAgent && !isLoading && currentMessages.length <= 1 && (
+   598→              <motion.div
+   599→                initial={{ opacity: 0, height: 0 }}
+   600→                animate={{ opacity: 1, height: 'auto' }}
+   601→                exit={{ opacity: 0, height: 0 }}
+   602→                className="px-4 pb-2 shrink-0 overflow-hidden"
+   603→              >
+   604→                <div className="flex flex-wrap gap-1.5">
+   605→                  {activeAgent.quickActions.slice(0, 4).map((action, i) => (
+   606→                    <motion.button
+   607→                      key={i}
+   608→                      initial={{ opacity: 0, y: 8 }}
+   609→                      animate={{ opacity: 1, y: 0 }}
+   610→                      transition={{ delay: i * 0.05 }}
+   611→                      onClick={() => handleQuickAction(action.prompt)}
+   612→                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-white/70 hover:bg-white/10 hover:text-white hover:border-white/20 transition-all duration-200"
+   613→                    >
+   614→                      <Zap className="w-3 h-3 opacity-50" />
+   615→                      {action.label}
+   616→                    </motion.button>
+   617→                  ))}
+   618→                </div>
+   619→              </motion.div>
+   620→            )}
+   621→          </AnimatePresence>
+   622→
+   623→          {/* ═══════ Input Bar ═══════ */}
+   624→          <div className="px-4 py-3 border-t border-white/10 bg-[#0B0D14]/90 backdrop-blur-md shrink-0">
+   625→            <div className="flex items-center gap-2">
+   626→              {/* Agent switcher shortcut */}
+   627→              {agents.length > 1 && (
+   628→                <button
+   629→                  onClick={() => setShowAgentList(true)}
+   630→                  className="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 transition-colors shrink-0"
+   631→                  aria-label="Switch agent"
+   632→                  title="Switch agent"
+   633→                >
+   634→                  <span className="text-sm">{activeAgent?.icon || '🤖'}</span>
+   635→                </button>
+   636→              )}
+   637→
+   638→              {/* Text input */}
+   639→              <input
+   640→                ref={inputRef}
+   641→                type="text"
+   642→                value={input}
+   643→                onChange={(e) => setInput(e.target.value)}
+   644→                onKeyDown={(e) => {
+   645→                  if (e.key === 'Enter' && !e.shiftKey) {
+   646→                    e.preventDefault();
+   647→                    sendMessage(input);
+   648→                  }
+   649→                }}
+   650→                placeholder={`Ask ${activeAgent?.name || 'Safa'}...`}
+   651→                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#10E07A]/50 focus:ring-1 focus:ring-[#10E07A]/20 transition-all"
+   652→                disabled={isLoading}
+   653→              />
+   654→
+   655→              {/* Send button */}
+   656→              <button
+   657→                onClick={() => sendMessage(input)}
+   658→                disabled={isLoading || !input.trim()}
+   659→                className="p-2.5 rounded-xl bg-[#10E07A] text-black disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#10E07A]/80 active:scale-95 transition-all shrink-0"
+   660→                aria-label="Send message"
+   661→              >
+   662→                {isLoading ? (
+   663→                  <Loader2 className="w-4 h-4 animate-spin" />
+   664→                ) : (
+   665→                  <Send className="w-4 h-4" />
+   666→                )}
+   667→              </button>
+   668→            </div>
+   669→          </div>
+   670→        </motion.div>
+   671→      </motion.div>
+   672→    </AnimatePresence>
+   673→  );
+   674→}
+   675→

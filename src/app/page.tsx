@@ -20,6 +20,8 @@ import OffersTab from '@/components/swift/OffersTab';
 import ProfileTab from '@/components/swift/ProfileTab';
 import ReelsTab from '@/components/swift/ReelsTab';
 import SafaAIAssistant from '@/components/swift/SafaAIAssistant';
+import SafaAgentHub from '@/components/swift/SafaAgentHub';
+import AIAgentButton from '@/components/swift/AIAgentButton';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
 import SearchOverlay from '@/components/swift/SearchOverlay';
@@ -555,14 +557,14 @@ export default function Home() {
       {/* ──── Floating Bottom Navigation ──── */}
       <BottomNav />
 
-      {/* ──── Safa AI Assistant (customers only) ──── */}
-      {isCustomer && <SafaAIAssistant />}
-
       {/* ──── Notification Center ──── */}
       <NotificationCenter isOpen={showNotifications} onClose={() => setShowNotifications(false)} />
 
       {/* ──── Search Overlay (customers only) ──── */}
       {isCustomer && <SearchOverlay />}
+
+      {/* ──── AI Agent Floating Button (all roles) ──── */}
+      <AIAgentButton />
 
       {/* ──── Product Detail Modal ──── */}
       <ProductDetailModal />
@@ -620,6 +622,7 @@ function AllModals() {
       <EditProfileModal />
       <HelpCenterModal />
       <LegalPagesModal />
+      <SafaAgentHub />
     </>
   );
 }

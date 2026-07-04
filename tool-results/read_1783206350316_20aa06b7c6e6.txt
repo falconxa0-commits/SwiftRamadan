@@ -1,0 +1,1913 @@
+     1→'use client';
+     2→
+     3→import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  X,
+     7→  ChefHat,
+     8→  Camera,
+     9→  ScanLine,
+    10→  Sparkles,
+    11→  Plus,
+    12→  Trash2,
+    13→  ArrowLeft,
+    14→  ArrowRight,
+    15→  CheckCircle2,
+    16→  AlertCircle,
+    17→  Lightbulb,
+    18→  Bot,
+    19→  Clock,
+    20→  Flame,
+    21→  Trophy,
+    22→  Target,
+    23→  Star,
+    24→  Crown,
+    25→  Medal,
+    26→  Zap,
+    27→  Brain,
+    28→  Users,
+    29→  Utensils,
+    30→  RefreshCw,
+    31→  Video,
+    32→  CookingPot,
+    33→  ShoppingCart,
+    34→} from 'lucide-react';
+    35→import { useAppStore } from '@/lib/store';
+    36→import { trendingMeals, formatNaira } from '@/lib/data';
+    37→import { useToast } from '@/hooks/use-toast';
+    38→
+    39→/* ───────────────────────── Types ───────────────────────── */
+    40→
+    41→type TabId = 'coach' | 'pantry' | 'insights' | 'badges';
+    42→type CoachPhase = 'select' | 'ready' | 'live' | 'scanner';
+    43→type Difficulty = 'easy' | 'medium' | 'hard';
+    44→type Mood = 'praise' | 'guide' | 'correct' | 'encourage';
+    45→
+    46→interface SelectedRecipe {
+    47→  name: string;
+    48→  image: string;
+    49→  difficulty: Difficulty;
+    50→  timeMins: number;
+    51→}
+    52→
+    53→interface Coaching {
+    54→  tip: string;
+    55→  mood: Mood;
+    56→  progress: number;
+    57→  done: boolean;
+    58→}
+    59→
+    60→interface PantryItem {
+    61→  id: string;
+    62→  name: string;
+    63→  category: string;
+    64→  quantity: string;
+    65→  unit: string;
+    66→  expiresAt?: string | null;
+    67→}
+    68→
+    69→interface RescueRecipe {
+    70→  recipeName: string;
+    71→  description: string;
+    72→  timeMins: number;
+    73→  difficulty: string;
+    74→  ingredients: { name: string; use: string }[];
+    75→  steps: string[];
+    76→  chefTip: string;
+    77→}
+    78→
+    79→interface VisualSearchResult {
+    80→  foodName: string;
+    81→  category: string;
+    82→  description: string;
+    83→  tags: string[];
+    84→  estimatedPriceNGN: number;
+    85→}
+    86→
+    87→interface Achievement {
+    88→  id: string;
+    89→  title: string;
+    90→  desc: string;
+    91→  unlocked: boolean;
+    92→  icon: string;
+    93→}
+    94→
+    95→interface Analytics {
+    96→  totalSessions: number;
+    97→  completedSessions: number;
+    98→  totalCookTimeMins: number;
+    99→  avgSessionMins: number;
+   100→  liveAIUses: number;
+   101→  lastCooked: string | null;
+   102→  difficultyBreakdown: { easy: number; medium: number; hard: number };
+   103→  weeklyData: { day: string; count: number; mins: number }[];
+   104→  achievements: Achievement[];
+   105→}
+   106→
+   107→const EMPTY_ANALYTICS: Analytics = {
+   108→  totalSessions: 0,
+   109→  completedSessions: 0,
+   110→  totalCookTimeMins: 0,
+   111→  avgSessionMins: 0,
+   112→  liveAIUses: 0,
+   113→  lastCooked: null,
+   114→  difficultyBreakdown: { easy: 0, medium: 0, hard: 0 },
+   115→  weeklyData: [
+   116→    { day: 'Mon', count: 0, mins: 0 },
+   117→    { day: 'Tue', count: 0, mins: 0 },
+   118→    { day: 'Wed', count: 0, mins: 0 },
+   119→    { day: 'Thu', count: 0, mins: 0 },
+   120→    { day: 'Fri', count: 0, mins: 0 },
+   121→    { day: 'Sat', count: 0, mins: 0 },
+   122→    { day: 'Sun', count: 0, mins: 0 },
+   123→  ],
+   124→  achievements: [],
+   125→};
+   126→
+   127→/* ───────────────────────── Helpers ───────────────────────── */
+   128→
+   129→const PANTRY_CATEGORIES = ['produce', 'dairy', 'grain', 'protein', 'spice', 'other'] as const;
+   130→
+   131→const CATEGORY_LABELS: Record<string, string> = {
+   132→  produce: '🥬 Produce',
+   133→  dairy: '🥛 Dairy',
+   134→  grain: '🌾 Grains',
+   135→  protein: '🍖 Protein',
+   136→  spice: '🌶️ Spices',
+   137→  other: '📦 Other',
+   138→};
+   139→
+   140→const MOOD_STYLES: Record<Mood, { border: string; bg: string; emoji: string; label: string }> = {
+   141→  praise: { border: 'border-[#13ec13]/60', bg: 'bg-[#13ec13]/8', emoji: '🎉', label: 'Praise' },
+   142→  guide: { border: 'border-[#FFD700]/60', bg: 'bg-[#FFD700]/8', emoji: '💡', label: 'Tip' },
+   143→  correct: { border: 'border-[#ef4444]/60', bg: 'bg-[#ef4444]/8', emoji: '⚠️', label: 'Heads up' },
+   144→  encourage: { border: 'border-[#8b5cf6]/60', bg: 'bg-[#8b5cf6]/8', emoji: '💪', label: 'Keep going' },
+   145→};
+   146→
+   147→const BADGE_ICONS: Record<string, typeof Trophy> = {
+   148→  '🏆': Trophy,
+   149→  '⭐': Star,
+   150→  '🔥': Flame,
+   151→  '🤖': Bot,
+   152→  '⚔️': Zap,
+   153→  '👨‍🍳': ChefHat,
+   154→  '🏃': Target,
+   155→  '🧭': Medal,
+   156→  '🍳': CookingPot,
+   157→  '👑': Crown,
+   158→};
+   159→
+   160→const GENERIC_STEPS = [
+   161→  'Prep ingredients: wash, chop, and measure everything before you start.',
+   162→  'Heat oil in a pan over medium heat until shimmering.',
+   163→  'Cook the base: sauté onions and aromatics until fragrant.',
+   164→  'Add main ingredients and season generously — stir to coat.',
+   165→  'Season & simmer: lower heat, cover, and let flavors develop.',
+   166→  'Final touches: taste, adjust salt, and garnish before serving.',
+   167→];
+   168→
+   169→function generateSteps(recipeName: string): string[] {
+   170→  const n = recipeName.toLowerCase();
+   171→  const steps = [...GENERIC_STEPS];
+   172→  if (n.includes('smoothie') || n.includes('drink') || n.includes('juice')) {
+   173→    return [
+   174→      'Prep ingredients: wash fruits and measure liquids.',
+   175→      'Add base liquids (milk/water/yogurt) to the blender first.',
+   176→      'Toss in fruits, dates, and nuts.',
+   177→      'Blend on high for 45–60 seconds until silky.',
+   178→      'Taste, sweeten if needed, and pour over ice.',
+   179→    ];
+   180→  }
+   181→  if (n.includes('suya') || n.includes('grill')) {
+   182→    return [
+   183→      'Prep & cut protein into thin strips; thread onto skewers.',
+   184→      'Mix suya spice (kuli-kuli, paprika, ginger, salt) on a plate.',
+   185→      'Coat skewers generously with the spice mix.',
+   186→      'Grill over high heat, 2–3 min per side, until charred.',
+   187→      'Rest 2 minutes, then serve with onions and tomatoes.',
+   188→    ];
+   189→  }
+   190→  // default 6-step generic flow
+   191→  return steps;
+   192→}
+   193→
+   194→function difficultyColor(d: string): string {
+   195→  if (d === 'easy') return '#13ec13';
+   196→  if (d === 'hard') return '#ef4444';
+   197→  return '#FFD700';
+   198→}
+   199→
+   200→/* ───────────────────────── Component ───────────────────────── */
+   201→
+   202→export default function SmartKitchenHub() {
+   203→  const { activeModal, setActiveModal, userEmail, userName, addToCart } = useAppStore();
+   204→  const { toast } = useToast();
+   205→  const isOpen = activeModal === 'smart-kitchen';
+   206→
+   207→  const email = userEmail || 'guest';
+   208→
+   209→  /* ── Tab + coach phase ── */
+   210→  const [activeTab, setActiveTab] = useState<TabId>('coach');
+   211→  const [coachPhase, setCoachPhase] = useState<CoachPhase>('select');
+   212→
+   213→  /* ── Recipe selection ── */
+   214→  const [selectedRecipe, setSelectedRecipe] = useState<SelectedRecipe | null>(null);
+   215→  const [customName, setCustomName] = useState('');
+   216→  const [customDifficulty, setCustomDifficulty] = useState<Difficulty>('medium');
+   217→
+   218→  /* ── Live session ── */
+   219→  const [stepIndex, setStepIndex] = useState(0);
+   220→  const [coaching, setCoaching] = useState<Coaching | null>(null);
+   221→  const [cameraError, setCameraError] = useState<string | null>(null);
+   222→  const [visionLoading, setVisionLoading] = useState(false);
+   223→  const [showConfetti, setShowConfetti] = useState(false);
+   224→
+   225→  /* ── Scanner ── */
+   226→  const [scanResult, setScanResult] = useState<VisualSearchResult | null>(null);
+   227→  const [scanLoading, setScanLoading] = useState(false);
+   228→
+   229→  /* ── Pantry ── */
+   230→  const [pantry, setPantry] = useState<PantryItem[]>([]);
+   231→  const [showAddPantry, setShowAddPantry] = useState(false);
+   232→  const [pantryForm, setPantryForm] = useState({
+   233→    name: '',
+   234→    category: 'produce' as string,
+   235→    quantity: '1',
+   236→    unit: 'pcs',
+   237→    expiresAt: '',
+   238→  });
+   239→  const [rescueRecipe, setRescueRecipe] = useState<RescueRecipe | null>(null);
+   240→  const [rescueLoading, setRescueLoading] = useState(false);
+   241→
+   242→  /* ── Insights ── */
+   243→  const [analytics, setAnalytics] = useState<Analytics>(EMPTY_ANALYTICS);
+   244→  const [insightsLoading, setInsightsLoading] = useState(true);
+   245→
+   246→  /* ── Refs (mirror state for interval callback — CRITICAL lint pattern) ── */
+   247→  const videoRef = useRef<HTMLVideoElement>(null);
+   248→  const streamRef = useRef<MediaStream | null>(null);
+   249→  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+   250→  const sessionStartRef = useRef<number>(0);
+   251→
+   252→  const stepIndexRef = useRef(stepIndex);
+   253→  const recipeRef = useRef<SelectedRecipe | null>(selectedRecipe);
+   254→  const stepsRef = useRef<string[]>([]);
+   255→  const emailRef = useRef(email);
+   256→  const coachPhaseRef = useRef<CoachPhase>(coachPhase);
+   257→
+   258→  // keep refs in sync with state — these effects only assign to refs, no setState
+   259→  useEffect(() => { stepIndexRef.current = stepIndex; }, [stepIndex]);
+   260→  useEffect(() => { recipeRef.current = selectedRecipe; }, [selectedRecipe]);
+   261→  useEffect(() => { emailRef.current = email; }, [email]);
+   262→  useEffect(() => { coachPhaseRef.current = coachPhase; }, [coachPhase]);
+   263→  useEffect(() => {
+   264→    if (selectedRecipe) stepsRef.current = generateSteps(selectedRecipe.name);
+   265→  }, [selectedRecipe]);
+   266→
+   267→  /* ── Camera lifecycle ── */
+   268→  useEffect(() => {
+   269→    if (!isOpen) return;
+   270→    if (activeTab !== 'coach') return;
+   271→    if (coachPhase !== 'live' && coachPhase !== 'scanner') return;
+   272→
+   273→    setCameraError(null);
+   274→    let cancelled = false;
+   275→
+   276→    const start = async () => {
+   277→      try {
+   278→        if (!navigator.mediaDevices?.getUserMedia) {
+   279→          if (!cancelled) setCameraError('unavailable');
+   280→          return;
+   281→        }
+   282→        const stream = await navigator.mediaDevices.getUserMedia({
+   283→          video: { facingMode: 'user' },
+   284→          audio: false,
+   285→        });
+   286→        if (cancelled) {
+   287→          stream.getTracks().forEach((t) => t.stop());
+   288→          return;
+   289→        }
+   290→        streamRef.current = stream;
+   291→        if (videoRef.current) {
+   292→          videoRef.current.srcObject = stream;
+   293→        }
+   294→      } catch (err: unknown) {
+   295→        if (cancelled) return;
+   296→        const name = (err as { name?: string })?.name;
+   297→        if (name === 'NotAllowedError' || name === 'SecurityError') {
+   298→          setCameraError('denied');
+   299→        } else if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+   300→          setCameraError('unavailable');
+   301→        } else {
+   302→          setCameraError('unavailable');
+   303→        }
+   304→      }
+   305→    };
+   306→
+   307→    start();
+   308→
+   309→    return () => {
+   310→      cancelled = true;
+   311→      const s = streamRef.current;
+   312→      if (s) {
+   313→        s.getTracks().forEach((t) => t.stop());
+   314→        streamRef.current = null;
+   315→      }
+   316→      if (videoRef.current) {
+   317→        try { videoRef.current.srcObject = null; } catch { /* noop */ }
+   318→      }
+   319→    };
+   320→  }, [isOpen, activeTab, coachPhase]);
+   321→
+   322→  /* ── Frame capture interval (5s) — reads from refs, never setState in body ── */
+   323→  useEffect(() => {
+   324→    if (!isOpen || coachPhase !== 'live') return;
+   325→
+   326→    const tick = async () => {
+   327→      const video = videoRef.current;
+   328→      const stream = streamRef.current;
+   329→      if (!video || !stream || video.readyState < 2) return;
+   330→      if (coachPhaseRef.current !== 'live') return;
+   331→
+   332→      const idx = stepIndexRef.current;
+   333→      const recipe = recipeRef.current;
+   334→      if (!recipe) return;
+   335→      const stepText = stepsRef.current[idx] || '';
+   336→      const mail = emailRef.current;
+   337→
+   338→      const canvas = document.createElement('canvas');
+   339→      const w = video.videoWidth || 640;
+   340→      const h = video.videoHeight || 480;
+   341→      canvas.width = w;
+   342→      canvas.height = h;
+   343→      const ctx = canvas.getContext('2d');
+   344→      if (!ctx) return;
+   345→      ctx.drawImage(video, 0, 0, w, h);
+   346→      let image = '';
+   347→      try {
+   348→        image = canvas.toDataURL('image/jpeg', 0.7);
+   349→      } catch {
+   350→        return;
+   351→      }
+   352→      if (!image) return;
+   353→
+   354→      try {
+   355→        setVisionLoading(true);
+   356→        const res = await fetch('/api/live-vision', {
+   357→          method: 'POST',
+   358→          headers: { 'Content-Type': 'application/json' },
+   359→          body: JSON.stringify({
+   360→            image,
+   361→            recipeName: recipe.name,
+   362→            currentStep: stepText,
+   363→            stepIndex: idx,
+   364→            email: mail,
+   365→          }),
+   366→        });
+   367→        const data = await res.json();
+   368→        if (data?.coaching) {
+   369→          setCoaching(data.coaching as Coaching);
+   370→        }
+   371→      } catch {
+   372→        /* silent — next tick will retry */
+   373→      } finally {
+   374→        setVisionLoading(false);
+   375→      }
+   376→    };
+   377→
+   378→    // fire one immediately so the user gets feedback fast, then every 5s
+   379→    tick();
+   380→    const id = setInterval(tick, 5000);
+   381→    intervalRef.current = id;
+   382→
+   383→    return () => {
+   384→      clearInterval(id);
+   385→      intervalRef.current = null;
+   386→    };
+   387→  }, [isOpen, coachPhase]);
+   388→
+   389→  /* ── Pantry fetch on tab open ── */
+   390→  const fetchPantry = useCallback(async () => {
+   391→    try {
+   392→      const res = await fetch(`/api/pantry?email=${encodeURIComponent(email)}`);
+   393→      const data = await res.json();
+   394→      if (Array.isArray(data?.items)) setPantry(data.items as PantryItem[]);
+   395→    } catch { /* silent */ }
+   396→  }, [email]);
+   397→
+   398→  useEffect(() => {
+   399→    if (isOpen && activeTab === 'pantry') fetchPantry();
+   400→  }, [isOpen, activeTab, fetchPantry]);
+   401→
+   402→  /* ── Analytics fetch on tab open ── */
+   403→  const fetchAnalytics = useCallback(async () => {
+   404→    setInsightsLoading(true);
+   405→    try {
+   406→      const res = await fetch(`/api/cooking-sessions?email=${encodeURIComponent(email)}`);
+   407→      const data = await res.json();
+   408→      if (data && typeof data === 'object') {
+   409→        setAnalytics({ ...EMPTY_ANALYTICS, ...data } as Analytics);
+   410→      }
+   411→    } catch { /* silent */ }
+   412→    setInsightsLoading(false);
+   413→  }, [email]);
+   414→
+   415→  useEffect(() => {
+   416→    if (isOpen && (activeTab === 'insights' || activeTab === 'badges')) {
+   417→      fetchAnalytics();
+   418→    }
+   419→  }, [isOpen, activeTab, fetchAnalytics]);
+   420→
+   421→  /* ── Reset coach state when modal closes ── */
+   422→  useEffect(() => {
+   423→    if (!isOpen) {
+   424→      // defer reset so exit animation is clean
+   425→      const t = setTimeout(() => {
+   426→        setCoachPhase('select');
+   427→        setSelectedRecipe(null);
+   428→        setStepIndex(0);
+   429→        setCoaching(null);
+   430→        setCameraError(null);
+   431→        setScanResult(null);
+   432→        setCustomName('');
+   433→        setCustomDifficulty('medium');
+   434→        setActiveTab('coach');
+   435→      }, 300);
+   436→      return () => clearTimeout(t);
+   437→    }
+   438→  }, [isOpen]);
+   439→
+   440→  /* ───────────────────────── Handlers ───────────────────────── */
+   441→
+   442→  const handleClose = useCallback(() => {
+   443→    setActiveModal(null);
+   444→  }, [setActiveModal]);
+   445→
+   446→  const handleSelectMeal = (meal: typeof trendingMeals[number]) => {
+   447→    setSelectedRecipe({
+   448→      name: meal.name,
+   449→      image: meal.image,
+   450→      difficulty: (meal.price > 4000 ? 'hard' : meal.price > 3000 ? 'medium' : 'easy') as Difficulty,
+   451→      timeMins: parseInt(meal.deliveryTime) || 25,
+   452→    });
+   453→    setStepIndex(0);
+   454→    setCoaching(null);
+   455→    setCoachPhase('ready');
+   456→  };
+   457→
+   458→  const handleStartCustom = () => {
+   459→    const name = customName.trim();
+   460→    if (!name) {
+   461→      toast({ title: 'Recipe name needed', description: 'Tell Chef Safa what you want to cook.', variant: 'destructive' });
+   462→      return;
+   463→    }
+   464→    setSelectedRecipe({
+   465→      name,
+   466→      image: '/images/categories/cat-groceries.png',
+   467→      difficulty: customDifficulty,
+   468→      timeMins: customDifficulty === 'easy' ? 20 : customDifficulty === 'hard' ? 45 : 30,
+   469→    });
+   470→    setStepIndex(0);
+   471→    setCoaching(null);
+   472→    setCoachPhase('ready');
+   473→  };
+   474→
+   475→  const handleStartLive = () => {
+   476→    sessionStartRef.current = Date.now();
+   477→    setStepIndex(0);
+   478→    stepIndexRef.current = 0;
+   479→    setCoaching(null);
+   480→    setCoachPhase('live');
+   481→  };
+   482→
+   483→  const handleNextStep = () => {
+   484→    if (!selectedRecipe) return;
+   485→    const steps = stepsRef.current;
+   486→    const next = Math.min(steps.length - 1, stepIndex + 1);
+   487→    stepIndexRef.current = next;
+   488→    setStepIndex(next);
+   489→  };
+   490→
+   491→  const handlePrevStep = () => {
+   492→    const prev = Math.max(0, stepIndex - 1);
+   493→    stepIndexRef.current = prev;
+   494→    setStepIndex(prev);
+   495→  };
+   496→
+   497→  const handleCompleteSession = async () => {
+   498→    if (!selectedRecipe) return;
+   499→    const durationSec = Math.max(5, Math.round((Date.now() - sessionStartRef.current) / 1000));
+   500→    try {
+   501→      await fetch('/api/cooking-sessions', {
+   502→        method: 'POST',
+   503→        headers: { 'Content-Type': 'application/json' },
+   504→        body: JSON.stringify({
+   505→          email,
+   506→          recipeName: selectedRecipe.name,
+   507→          difficulty: selectedRecipe.difficulty,
+   508→          durationSec,
+   509→          completed: true,
+   510→          usedLiveAI: true,
+   511→        }),
+   512→      });
+   513→    } catch { /* still celebrate */ }
+   514→
+   515→    // stop camera explicitly
+   516→    const s = streamRef.current;
+   517→    if (s) { s.getTracks().forEach((t) => t.stop()); streamRef.current = null; }
+   518→    if (intervalRef.current) { clearInterval(intervalRef.current); intervalRef.current = null; }
+   519→
+   520→    setShowConfetti(true);
+   521→    toast({
+   522→      title: '🎉 Session complete!',
+   523→      description: `${selectedRecipe.name} logged. Chef Safa is proud of you!`,
+   524→    });
+   525→    setTimeout(() => {
+   526→      setShowConfetti(false);
+   527→      setCoachPhase('select');
+   528→      setSelectedRecipe(null);
+   529→      setStepIndex(0);
+   530→      stepIndexRef.current = 0;
+   531→      setCoaching(null);
+   532→    }, 2400);
+   533→  };
+   534→
+   535→  const handleOpenScanner = () => {
+   536→    setScanResult(null);
+   537→    setCoachPhase('scanner');
+   538→  };
+   539→
+   540→  const handleSnapAndIdentify = async () => {
+   541→    const video = videoRef.current;
+   542→    const stream = streamRef.current;
+   543→    if (!video || !stream || video.readyState < 2) {
+   544→      toast({ title: 'Camera not ready', description: 'Give the camera a moment to start.', variant: 'destructive' });
+   545→      return;
+   546→    }
+   547→    const canvas = document.createElement('canvas');
+   548→    const w = video.videoWidth || 640;
+   549→    const h = video.videoHeight || 480;
+   550→    canvas.width = w;
+   551→    canvas.height = h;
+   552→    const ctx = canvas.getContext('2d');
+   553→    if (!ctx) return;
+   554→    ctx.drawImage(video, 0, 0, w, h);
+   555→    let image = '';
+   556→    try { image = canvas.toDataURL('image/jpeg', 0.8); } catch { return; }
+   557→    if (!image) return;
+   558→
+   559→    setScanLoading(true);
+   560→    try {
+   561→      const res = await fetch('/api/visual-search', {
+   562→        method: 'POST',
+   563→        headers: { 'Content-Type': 'application/json' },
+   564→        body: JSON.stringify({ image }),
+   565→      });
+   566→      const data = await res.json();
+   567→      if (data?.result) {
+   568→        setScanResult(data.result as VisualSearchResult);
+   569→        toast({ title: '🔍 Identified!', description: data.result.foodName });
+   570→      }
+   571→    } catch {
+   572→      toast({ title: 'Scan failed', description: 'Please try again.', variant: 'destructive' });
+   573→    } finally {
+   574→      setScanLoading(false);
+   575→    }
+   576→  };
+   577→
+   578→  const handleAddScanToCart = () => {
+   579→    if (!scanResult) return;
+   580→    addToCart({
+   581→      id: Math.floor(Math.random() * 100000),
+   582→      name: scanResult.foodName,
+   583→      price: scanResult.estimatedPriceNGN,
+   584→      image: '/images/categories/cat-groceries.png',
+   585→      quantity: 1,
+   586→    });
+   587→    toast({ title: '🛒 Added to cart', description: `${scanResult.foodName} — ${formatNaira(scanResult.estimatedPriceNGN)}` });
+   588→  };
+   589→
+   590→  /* ── Pantry handlers ── */
+   591→  const handleAddPantry = async () => {
+   592→    const name = pantryForm.name.trim();
+   593→    if (!name) {
+   594→      toast({ title: 'Name needed', variant: 'destructive' });
+   595→      return;
+   596→    }
+   597→    try {
+   598→      const res = await fetch('/api/pantry', {
+   599→        method: 'POST',
+   600→        headers: { 'Content-Type': 'application/json' },
+   601→        body: JSON.stringify({
+   602→          email,
+   603→          name,
+   604→          category: pantryForm.category,
+   605→          quantity: pantryForm.quantity,
+   606→          unit: pantryForm.unit,
+   607→          expiresAt: pantryForm.expiresAt || undefined,
+   608→        }),
+   609→      });
+   610→      const data = await res.json();
+   611→      if (data?.item) {
+   612→        setPantry((prev) => [data.item as PantryItem, ...prev]);
+   613→        setPantryForm({ name: '', category: 'produce', quantity: '1', unit: 'pcs', expiresAt: '' });
+   614→        setShowAddPantry(false);
+   615→        toast({ title: '✅ Added to pantry', description: name });
+   616→      }
+   617→    } catch { /* silent */ }
+   618→  };
+   619→
+   620→  const handleDeletePantry = async (id: string) => {
+   621→    setPantry((prev) => prev.filter((p) => p.id !== id));
+   622→    try {
+   623→      await fetch(`/api/pantry?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+   624→    } catch { /* silent */ }
+   625→  };
+   626→
+   627→  const handleRescue = async () => {
+   628→    if (pantry.length === 0) {
+   629→      toast({ title: 'Pantry empty', description: 'Add a few items first!', variant: 'destructive' });
+   630→      return;
+   631→    }
+   632→    setRescueLoading(true);
+   633→    setRescueRecipe(null);
+   634→    try {
+   635→      const res = await fetch('/api/pantry/rescue', {
+   636→        method: 'POST',
+   637→        headers: { 'Content-Type': 'application/json' },
+   638→        body: JSON.stringify({ items: pantry.map((p) => p.name), email }),
+   639→      });
+   640→      const data = await res.json();
+   641→      if (data?.recipe) setRescueRecipe(data.recipe as RescueRecipe);
+   642→    } catch { /* silent */ }
+   643→    setRescueLoading(false);
+   644→  };
+   645→
+   646→  const handleCookRescueNow = () => {
+   647→    if (!rescueRecipe) return;
+   648→    setSelectedRecipe({
+   649→      name: rescueRecipe.recipeName,
+   650→      image: '/images/categories/cat-groceries.png',
+   651→      difficulty: (rescueRecipe.difficulty === 'easy' || rescueRecipe.difficulty === 'hard' ? rescueRecipe.difficulty : 'medium') as Difficulty,
+   652→      timeMins: rescueRecipe.timeMins || 30,
+   653→    });
+   654→    setStepIndex(0);
+   655→    stepIndexRef.current = 0;
+   656→    setCoachPhase('ready');
+   657→    setActiveTab('coach');
+   658→    setRescueRecipe(null);
+   659→  };
+   660→
+   661→  // The <video> element is created here (so the ref lives in the parent) and passed
+   662→  // down as a ReactNode. Passing a ref object OR a ref-callback as a prop triggers the
+   663→  // react-hooks/refs rule on every props.* access in the child — ReactNode sidesteps it.
+   664→  const videoElement = (
+   665→    <video
+   666→      ref={videoRef}
+   667→      autoPlay
+   668→      playsInline
+   669→      muted
+   670→      className="w-full aspect-[3/4] sm:aspect-video object-cover"
+   671→    />
+   672→  );
+   673→
+   674→  /* ───────────────────────── Derived ───────────────────────── */
+   675→
+   676→  const steps = selectedRecipe ? stepsRef.current : [];
+   677→  const unlockedCount = analytics.achievements.filter((a) => a.unlocked).length;
+   678→
+   679→  // Precompute donut segments so we never mutate during render
+   680→  const donutSegments = useMemo(() => {
+   681→    const { easy, medium, hard } = analytics.difficultyBreakdown;
+   682→    const total = easy + medium + hard;
+   683→    const r = 40;
+   684→    const C = 2 * Math.PI * r;
+   685→    const segs = [
+   686→      { value: easy, color: '#13ec13' },
+   687→      { value: medium, color: '#FFD700' },
+   688→      { value: hard, color: '#8b5cf6' },
+   689→    ];
+   690→    if (total === 0) return { segments: segs.map((s) => ({ ...s, length: 0, offset: 0 })), total: 0, C };
+   691→    let acc = 0;
+   692→    const out = segs.map((s) => {
+   693→      const length = (s.value / total) * C;
+   694→      const offset = -acc;
+   695→      acc += length;
+   696→      return { ...s, length, offset };
+   697→    });
+   698→    return { segments: out, total, C };
+   699→  }, [analytics.difficultyBreakdown]);
+   700→
+   701→  const weeklyMax = useMemo(
+   702→    () => Math.max(1, ...analytics.weeklyData.map((d) => d.count)),
+   703→    [analytics.weeklyData],
+   704→  );
+   705→
+   706→  /* ───────────────────────── Render ───────────────────────── */
+   707→
+   708→  if (!isOpen) return null;
+   709→
+   710→  return (
+   711→    <AnimatePresence>
+   712→      {isOpen && (
+   713→        <motion.div
+   714→          className="fixed inset-0 z-[100] flex flex-col"
+   715→          initial={{ opacity: 0 }}
+   716→          animate={{ opacity: 1 }}
+   717→          exit={{ opacity: 0 }}
+   718→          transition={{ duration: 0.2 }}
+   719→        >
+   720→          {/* Backdrop */}
+   721→          <div
+   722→            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+   723→            onClick={handleClose}
+   724→          />
+   725→
+   726→          {/* Sheet */}
+   727→          <motion.div
+   728→            className="relative mt-auto h-[100dvh] w-full bg-[#05070A] flex flex-col overflow-hidden sk-aura"
+   729→            initial={{ y: '100%' }}
+   730→            animate={{ y: 0 }}
+   731→            exit={{ y: '100%' }}
+   732→            transition={{ type: 'spring', damping: 32, stiffness: 320 }}
+   733→          >
+   734→            {/* ── Header ── */}
+   735→            <div className="shrink-0 relative">
+   736→              <div className="h-[2px] w-full bg-gradient-to-r from-[#13ec13] via-[#FFD700] to-[#8b5cf6]" />
+   737→              <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+   738→                <div className="flex items-center gap-3 min-w-0">
+   739→                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[#13ec13] to-[#0a8a0a] flex items-center justify-center shrink-0">
+   740→                    <ChefHat className="w-5 h-5 text-[#05070A]" />
+   741→                    <span className="absolute -top-1 -right-1 size-2.5 bg-[#ef4444] rounded-full live-ring" />
+   742→                  </div>
+   743→                  <div className="min-w-0">
+   744→                    <div className="flex items-center gap-2">
+   745→                      <h2 className="text-white text-base font-black tracking-tight truncate">Smart Kitchen</h2>
+   746→                      <span className="beta-badge">Beta</span>
+   747→                    </div>
+   748→                    <p className="text-white/50 text-[11px] truncate">
+   749→                      Chef Safa {userName ? `· ${userName.split(' ')[0]}` : 'is live'}
+   750→                    </p>
+   751→                  </div>
+   752→                </div>
+   753→                <button
+   754→                  onClick={handleClose}
+   755→                  className="size-9 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:border-white/30 transition-colors"
+   756→                  aria-label="Close"
+   757→                >
+   758→                  <X className="w-4 h-4 text-white" />
+   759→                </button>
+   760→              </div>
+   761→            </div>
+   762→
+   763→            {/* ── Scrollable content ── */}
+   764→            <div className="flex-1 overflow-y-auto no-scrollbar pb-24">
+   765→              {activeTab === 'coach' && (
+   766→                <CoachTab
+   767→                  coachPhase={coachPhase}
+   768→                  selectedRecipe={selectedRecipe}
+   769→                  stepIndex={stepIndex}
+   770→                  steps={steps}
+   771→                  coaching={coaching}
+   772→                  cameraError={cameraError}
+   773→                  visionLoading={visionLoading}
+   774→                  scanResult={scanResult}
+   775→                  scanLoading={scanLoading}
+   776→                  videoElement={videoElement}
+   777→                  customName={customName}
+   778→                  setCustomName={setCustomName}
+   779→                  customDifficulty={customDifficulty}
+   780→                  setCustomDifficulty={setCustomDifficulty}
+   781→                  onSelectMeal={handleSelectMeal}
+   782→                  onStartCustom={handleStartCustom}
+   783→                  onStartLive={handleStartLive}
+   784→                  onNextStep={handleNextStep}
+   785→                  onPrevStep={handlePrevStep}
+   786→                  onComplete={handleCompleteSession}
+   787→                  onOpenScanner={handleOpenScanner}
+   788→                  onSnapAndIdentify={handleSnapAndIdentify}
+   789→                  onAddScanToCart={handleAddScanToCart}
+   790→                  onScanAnother={() => setScanResult(null)}
+   791→                  onBackToSelect={() => { setCoachPhase('select'); setSelectedRecipe(null); }}
+   792→                />
+   793→              )}
+   794→              {activeTab === 'pantry' && (
+   795→                <PantryTab
+   796→                  pantry={pantry}
+   797→                  showAddPantry={showAddPantry}
+   798→                  setShowAddPantry={setShowAddPantry}
+   799→                  pantryForm={pantryForm}
+   800→                  setPantryForm={setPantryForm}
+   801→                  onAdd={handleAddPantry}
+   802→                  onDelete={handleDeletePantry}
+   803→                  rescueRecipe={rescueRecipe}
+   804→                  rescueLoading={rescueLoading}
+   805→                  onRescue={handleRescue}
+   806→                  onCookNow={handleCookRescueNow}
+   807→                />
+   808→              )}
+   809→              {activeTab === 'insights' && (
+   810→                <InsightsTab
+   811→                  analytics={analytics}
+   812→                  loading={insightsLoading}
+   813→                  donutSegments={donutSegments}
+   814→                  weeklyMax={weeklyMax}
+   815→                />
+   816→              )}
+   817→              {activeTab === 'badges' && (
+   818→                <BadgesTab
+   819→                  analytics={analytics}
+   820→                  unlockedCount={unlockedCount}
+   821→                  loading={insightsLoading}
+   822→                />
+   823→              )}
+   824→            </div>
+   825→
+   826→            {/* ── Bottom tab bar ── */}
+   827→            <div className="absolute bottom-0 left-0 right-0 bg-[#0F1117]/95 backdrop-blur-lg border-t border-white/5 px-2 py-2 grid grid-cols-4 gap-1">
+   828→              <TabButton
+   829→                active={activeTab === 'coach'}
+   830→                onClick={() => setActiveTab('coach')}
+   831→                icon={<ChefHat className="w-5 h-5" />}
+   832→                label="Live Coach"
+   833→              />
+   834→              <TabButton
+   835→                active={activeTab === 'pantry'}
+   836→                onClick={() => setActiveTab('pantry')}
+   837→                icon={<Utensils className="w-5 h-5" />}
+   838→                label="Pantry"
+   839→              />
+   840→              <TabButton
+   841→                active={activeTab === 'insights'}
+   842→                onClick={() => setActiveTab('insights')}
+   843→                icon={<Brain className="w-5 h-5" />}
+   844→                label="Insights"
+   845→              />
+   846→              <TabButton
+   847→                active={activeTab === 'badges'}
+   848→                onClick={() => setActiveTab('badges')}
+   849→                icon={<Trophy className="w-5 h-5" />}
+   850→                label="Badges"
+   851→              />
+   852→            </div>
+   853→
+   854→            {/* ── Confetti ── */}
+   855→            <AnimatePresence>
+   856→              {showConfetti && <Confetti />}
+   857→            </AnimatePresence>
+   858→          </motion.div>
+   859→        </motion.div>
+   860→      )}
+   861→    </AnimatePresence>
+   862→  );
+   863→}
+   864→
+   865→/* ───────────────────────── Tab Button ───────────────────────── */
+   866→
+   867→function TabButton({
+   868→  active,
+   869→  onClick,
+   870→  icon,
+   871→  label,
+   872→}: {
+   873→  active: boolean;
+   874→  onClick: () => void;
+   875→  icon: React.ReactNode;
+   876→  label: string;
+   877→}) {
+   878→  return (
+   879→    <button
+   880→      onClick={onClick}
+   881→      className={`flex flex-col items-center gap-1 py-2 rounded-xl transition-colors ${
+   882→        active ? 'bg-[#13ec13]/12 text-[#13ec13]' : 'text-white/50 hover:text-white/80'
+   883→      }`}
+   884→    >
+   885→      {icon}
+   886→      <span className="text-[10px] font-bold tracking-tight">{label}</span>
+   887→    </button>
+   888→  );
+   889→}
+   890→
+   891→/* ───────────────────────── Coach Tab ───────────────────────── */
+   892→
+   893→interface CoachTabProps {
+   894→  coachPhase: CoachPhase;
+   895→  selectedRecipe: SelectedRecipe | null;
+   896→  stepIndex: number;
+   897→  steps: string[];
+   898→  coaching: Coaching | null;
+   899→  cameraError: string | null;
+   900→  visionLoading: boolean;
+   901→  scanResult: VisualSearchResult | null;
+   902→  scanLoading: boolean;
+   903→  videoElement: React.ReactNode;
+   904→  customName: string;
+   905→  setCustomName: (v: string) => void;
+   906→  customDifficulty: Difficulty;
+   907→  setCustomDifficulty: (d: Difficulty) => void;
+   908→  onSelectMeal: (m: typeof trendingMeals[number]) => void;
+   909→  onStartCustom: () => void;
+   910→  onStartLive: () => void;
+   911→  onNextStep: () => void;
+   912→  onPrevStep: () => void;
+   913→  onComplete: () => void;
+   914→  onOpenScanner: () => void;
+   915→  onSnapAndIdentify: () => void;
+   916→  onAddScanToCart: () => void;
+   917→  onScanAnother: () => void;
+   918→  onBackToSelect: () => void;
+   919→}
+   920→
+   921→function CoachTab(props: CoachTabProps) {
+   922→  /* ── Step A: Recipe selection ── */
+   923→  if (props.coachPhase === 'select') {
+   924→    return (
+   925→      <div className="p-4 space-y-5">
+   926→        {/* Scanner CTA */}
+   927→        <button
+   928→          onClick={props.onOpenScanner}
+   929→          className="gradient-border w-full p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
+   930→        >
+   931→          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#13ec13] flex items-center justify-center shrink-0">
+   932→            <ScanLine className="w-6 h-6 text-white" />
+   933→          </div>
+   934→          <div className="text-left flex-1 min-w-0">
+   935→            <div className="text-white font-black text-sm flex items-center gap-2">
+   936→              🍽️ Identify Any Food
+   937→            </div>
+   938→            <p className="text-white/60 text-xs mt-0.5">
+   939→              Point your camera at any dish — Safa AI names it, prices it, and adds it to cart.
+   940→            </p>
+   941→          </div>
+   942→          <ArrowRight className="w-4 h-4 text-white/40 shrink-0" />
+   943→        </button>
+   944→
+   945→        <div>
+   946→          <h3 className="text-white text-base font-black tracking-tight mb-3">Pick a recipe to cook</h3>
+   947→          <div className="grid grid-cols-2 gap-3">
+   948→            {trendingMeals.map((meal) => (
+   949→              <button
+   950→                key={meal.id}
+   951→                onClick={() => props.onSelectMeal(meal)}
+   952→                className="bg-[#0F1117] border border-white/5 hover:border-[#13ec13]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
+   953→              >
+   954→                <div className="aspect-square bg-[#1A1D26] overflow-hidden">
+   955→                  <img src={meal.image} alt={meal.name} className="w-full h-full object-cover" />
+   956→                </div>
+   957→                <div className="p-2.5">
+   958→                  <div className="text-white text-xs font-bold leading-tight line-clamp-2 min-h-[2rem]">{meal.name}</div>
+   959→                  <div className="flex items-center gap-1 mt-1 text-white/50 text-[10px]">
+   960→                    <Clock className="w-3 h-3" />
+   961→                    <span>{meal.deliveryTime}</span>
+   962→                  </div>
+   963→                </div>
+   964→              </button>
+   965→            ))}
+   966→
+   967→            {/* Custom Recipe card */}
+   968→            <CustomRecipeCard
+   969→              customName={props.customName}
+   970→              setCustomName={props.setCustomName}
+   971→              customDifficulty={props.customDifficulty}
+   972→              setCustomDifficulty={props.setCustomDifficulty}
+   973→              onStart={props.onStartCustom}
+   974→            />
+   975→          </div>
+   976→        </div>
+   977→      </div>
+   978→    );
+   979→  }
+   980→
+   981→  /* ── Step A.2: Ready to cook ── */
+   982→  if (props.coachPhase === 'ready' && props.selectedRecipe) {
+   983→    const r = props.selectedRecipe;
+   984→    return (
+   985→      <div className="p-4 space-y-5">
+   986→        <button
+   987→          onClick={props.onBackToSelect}
+   988→          className="flex items-center gap-1.5 text-white/60 text-sm hover:text-white"
+   989→        >
+   990→          <ArrowLeft className="w-4 h-4" /> Back
+   991→        </button>
+   992→
+   993→        <div className="bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5">
+   994→          <div className="aspect-[16/10] bg-[#1A1D26] overflow-hidden relative">
+   995→            <img src={r.image} alt={r.name} className="w-full h-full object-cover" />
+   996→            <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
+   997→            <div className="absolute bottom-0 left-0 right-0 p-4">
+   998→              <div className="flex items-center gap-2 mb-1">
+   999→                <span
+  1000→                  className="text-[10px] font-black px-2 py-0.5 rounded-full"
+  1001→                  style={{ background: `${difficultyColor(r.difficulty)}22`, color: difficultyColor(r.difficulty) }}
+  1002→                >
+  1003→                  {r.difficulty.toUpperCase()}
+  1004→                </span>
+  1005→                <span className="text-white/70 text-xs flex items-center gap-1">
+  1006→                  <Clock className="w-3 h-3" /> {r.timeMins} min
+  1007→                </span>
+  1008→              </div>
+  1009→              <h3 className="text-white text-xl font-black tracking-tight">{r.name}</h3>
+  1010→            </div>
+  1011→          </div>
+  1012→        </div>
+  1013→
+  1014→        <div>
+  1015→          <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+  1016→            <Utensils className="w-4 h-4 text-[#13ec13]" /> Cooking Plan
+  1017→          </h4>
+  1018→          <ol className="space-y-2">
+  1019→            {props.steps.map((step, i) => (
+  1020→              <li key={i} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
+  1021→                <span className="size-6 rounded-full bg-[#13ec13]/15 text-[#13ec13] text-xs font-black flex items-center justify-center shrink-0">
+  1022→                  {i + 1}
+  1023→                </span>
+  1024→                <span className="text-white/80 text-sm leading-snug">{step}</span>
+  1025→              </li>
+  1026→            ))}
+  1027→          </ol>
+  1028→        </div>
+  1029→
+  1030→        <button
+  1031→          onClick={props.onStartLive}
+  1032→          className="w-full bg-[#13ec13] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+  1033→        >
+  1034→          <Sparkles className="w-5 h-5" />
+  1035→          ▶ Start Live Cooking with Chef Safa
+  1036→        </button>
+  1037→        <p className="text-center text-white/40 text-xs -mt-2">
+  1038→          Safa AI will watch your webcam and guide you in real-time.
+  1039→        </p>
+  1040→      </div>
+  1041→    );
+  1042→  }
+  1043→
+  1044→  /* ── Step B: Live coaching session ── */
+  1045→  if (props.coachPhase === 'live' && props.selectedRecipe) {
+  1046→    const r = props.selectedRecipe;
+  1047→    const stepText = props.steps[props.stepIndex] || '';
+  1048→    const totalSteps = props.steps.length;
+  1049→    const isLast = props.stepIndex >= totalSteps - 1;
+  1050→    const mood = props.coaching?.mood ? MOOD_STYLES[props.coaching.mood] : MOOD_STYLES.encourage;
+  1051→    const progress = props.coaching?.progress ?? Math.min(95, 30 + props.stepIndex * 15);
+  1052→
+  1053→    return (
+  1054→      <div className="p-4 space-y-4">
+  1055→        {/* Current step card */}
+  1056→        <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+  1057→          <div className="flex items-center justify-between mb-2">
+  1058→            <span className="text-[#13ec13] text-xs font-black tracking-wider">
+  1059→              STEP {props.stepIndex + 1} OF {totalSteps}
+  1060→            </span>
+  1061→            <span className="text-white/40 text-xs flex items-center gap-1">
+  1062→              <Clock className="w-3 h-3" /> {r.timeMins}m
+  1063→            </span>
+  1064→          </div>
+  1065→          <p className="text-white text-sm font-medium leading-snug mb-3">{stepText}</p>
+  1066→          {/* Overall step progress */}
+  1067→          <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+  1068→            <div
+  1069→              className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-500"
+  1070→              style={{ width: `${((props.stepIndex + 1) / totalSteps) * 100}%` }}
+  1071→            />
+  1072→          </div>
+  1073→        </div>
+  1074→
+  1075→        {/* Camera denied fallback */}
+  1076→        {props.cameraError ? (
+  1077→          <CameraErrorCard error={props.cameraError} onRetry={() => { /* re-trigger effect by toggling phase */ props.onBackToSelect(); }} />
+  1078→        ) : (
+  1079→          <>
+  1080→            {/* Webcam */}
+  1081→            <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black">
+  1082→              {props.videoElement}
+  1083→              {/* LIVE badge */}
+  1084→              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
+  1085→                <span className="relative size-2 bg-[#ef4444] rounded-full live-ring" />
+  1086→                <span className="text-white text-[10px] font-black tracking-wider">LIVE</span>
+  1087→              </div>
+  1088→              {/* Loading pip */}
+  1089→              {props.visionLoading && (
+  1090→                <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full">
+  1091→                  <RefreshCw className="w-3 h-3 text-[#FFD700] animate-spin" />
+  1092→                  <span className="text-white text-[10px] font-bold">Safa analyzing…</span>
+  1093→                </div>
+  1094→              )}
+  1095→            </div>
+  1096→
+  1097→            {/* Chef Safa says… */}
+  1098→            <div className={`rounded-2xl border-2 ${mood.border} ${mood.bg} p-4`}>
+  1099→              <div className="flex items-center gap-2 mb-1.5">
+  1100→                <span className="text-lg">{mood.emoji}</span>
+  1101→                <span className="text-white font-black text-sm">Chef Safa says…</span>
+  1102→                <span
+  1103→                  className="ml-auto text-[9px] font-black px-2 py-0.5 rounded-full"
+  1104→                  style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.6)' }}
+  1105→                >
+  1106→                  {mood.label}
+  1107→                </span>
+  1108→              </div>
+  1109→              <p className="text-white text-sm leading-snug">
+  1110→                {props.coaching?.tip || 'Safa is getting ready… position your camera so she can see your pan.'}
+  1111→              </p>
+  1112→              {/* Live progress bar */}
+  1113→              <div className="mt-3">
+  1114→                <div className="flex items-center justify-between text-[10px] text-white/40 mb-1">
+  1115→                  <span>Cooking progress</span>
+  1116→                  <span>{Math.round(progress)}%</span>
+  1117→                </div>
+  1118→                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+  1119→                  <div
+  1120→                    className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-700"
+  1121→                    style={{ width: `${progress}%` }}
+  1122→                  />
+  1123→                </div>
+  1124→              </div>
+  1125→            </div>
+  1126→
+  1127→            {/* Step navigation */}
+  1128→            <div className="flex gap-2">
+  1129→              <button
+  1130→                onClick={props.onPrevStep}
+  1131→                disabled={props.stepIndex === 0}
+  1132→                className="flex-1 bg-[#1A1D26] border border-white/10 text-white/80 font-bold py-3 rounded-xl flex items-center justify-center gap-1.5 disabled:opacity-30 active:scale-[0.97] transition"
+  1133→              >
+  1134→                <ArrowLeft className="w-4 h-4" /> Prev
+  1135→              </button>
+  1136→              {isLast ? (
+  1137→                <button
+  1138→                  onClick={props.onComplete}
+  1139→                  className="flex-[2] bg-[#13ec13] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+  1140→                >
+  1141→                  <CheckCircle2 className="w-4 h-4" /> Mark Complete & Log
+  1142→                </button>
+  1143→              ) : (
+  1144→                <button
+  1145→                  onClick={props.onNextStep}
+  1146→                  className="flex-[2] bg-[#FFD700] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+  1147→                >
+  1148→                  Next <ArrowRight className="w-4 h-4" />
+  1149→                </button>
+  1150→              )}
+  1151→            </div>
+  1152→            <button
+  1153→              onClick={props.onBackToSelect}
+  1154→              className="w-full text-white/40 text-xs hover:text-white/70 py-1"
+  1155→            >
+  1156→              End session without logging
+  1157→            </button>
+  1158→          </>
+  1159→        )}
+  1160→      </div>
+  1161→    );
+  1162→  }
+  1163→
+  1164→  /* ── Step C: Food Scanner ── */
+  1165→  if (props.coachPhase === 'scanner') {
+  1166→    return (
+  1167→      <div className="p-4 space-y-4">
+  1168→        <div className="flex items-center justify-between">
+  1169→          <button
+  1170→            onClick={props.onBackToSelect}
+  1171→            className="flex items-center gap-1.5 text-white/60 text-sm hover:text-white"
+  1172→          >
+  1173→            <ArrowLeft className="w-4 h-4" /> Back
+  1174→          </button>
+  1175→          <span className="text-white/40 text-xs">Food Scanner</span>
+  1176→        </div>
+  1177→
+  1178→        {props.cameraError ? (
+  1179→          <CameraErrorCard error={props.cameraError} onRetry={props.onBackToSelect} />
+  1180→        ) : (
+  1181→          <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black">
+  1182→            {props.videoElement}
+  1183→            <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
+  1184→              <Camera className="w-3 h-3 text-[#FFD700]" />
+  1185→              <span className="text-white text-[10px] font-black tracking-wider">SCANNER</span>
+  1186→            </div>
+  1187→            {props.scanLoading && (
+  1188→              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
+  1189→                <RefreshCw className="w-6 h-6 text-[#FFD700] animate-spin" />
+  1190→                <span className="text-white text-xs font-bold">Identifying…</span>
+  1191→              </div>
+  1192→            )}
+  1193→          </div>
+  1194→        )}
+  1195→
+  1196→        <button
+  1197→          onClick={props.onSnapAndIdentify}
+  1198→          disabled={!!props.cameraError || props.scanLoading}
+  1199→          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[#13ec13] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
+  1200→        >
+  1201→          <Camera className="w-5 h-5" /> 📸 Snap & Identify
+  1202→        </button>
+  1203→
+  1204→        {/* Result */}
+  1205→        {props.scanResult && (
+  1206→          <motion.div
+  1207→            initial={{ opacity: 0, y: 12 }}
+  1208→            animate={{ opacity: 1, y: 0 }}
+  1209→            className="bg-[#0F1117] border-2 border-[#13ec13]/40 rounded-2xl p-4 space-y-3"
+  1210→          >
+  1211→            <div className="flex items-start justify-between gap-2">
+  1212→              <div className="min-w-0">
+  1213→                <div className="text-[#13ec13] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
+  1214→                <h3 className="text-white text-lg font-black leading-tight truncate">{props.scanResult.foodName}</h3>
+  1215→                <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD700]/15 text-[#FFD700]">
+  1216→                  {props.scanResult.category}
+  1217→                </span>
+  1218→              </div>
+  1219→              <div className="text-right shrink-0">
+  1220→                <div className="text-white/40 text-[10px]">Est. price</div>
+  1221→                <div className="text-[#FFD700] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
+  1222→              </div>
+  1223→            </div>
+  1224→            <p className="text-white/70 text-xs leading-snug">{props.scanResult.description}</p>
+  1225→            {props.scanResult.tags?.length > 0 && (
+  1226→              <div className="flex flex-wrap gap-1.5">
+  1227→                {props.scanResult.tags.slice(0, 5).map((t, i) => (
+  1228→                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">#{t}</span>
+  1229→                ))}
+  1230→              </div>
+  1231→            )}
+  1232→            <div className="flex gap-2 pt-1">
+  1233→              <button
+  1234→                onClick={props.onAddScanToCart}
+  1235→                className="flex-1 bg-[#13ec13] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+  1236→              >
+  1237→                <ShoppingCart className="w-4 h-4" /> Add to Cart
+  1238→              </button>
+  1239→              <button
+  1240→                onClick={props.onScanAnother}
+  1241→                className="flex-1 bg-[#1A1D26] border border-white/10 text-white/80 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+  1242→              >
+  1243→                <RefreshCw className="w-4 h-4" /> Scan Another
+  1244→              </button>
+  1245→            </div>
+  1246→          </motion.div>
+  1247→        )}
+  1248→      </div>
+  1249→    );
+  1250→  }
+  1251→
+  1252→  return null;
+  1253→}
+  1254→
+  1255→/* ── Custom Recipe Card ── */
+  1256→function CustomRecipeCard({
+  1257→  customName,
+  1258→  setCustomName,
+  1259→  customDifficulty,
+  1260→  setCustomDifficulty,
+  1261→  onStart,
+  1262→}: {
+  1263→  customName: string;
+  1264→  setCustomName: (v: string) => void;
+  1265→  customDifficulty: Difficulty;
+  1266→  setCustomDifficulty: (d: Difficulty) => void;
+  1267→  onStart: () => void;
+  1268→}) {
+  1269→  const [expanded, setExpanded] = useState(false);
+  1270→  const diffs: Difficulty[] = ['easy', 'medium', 'hard'];
+  1271→  return (
+  1272→    <div className="bg-[#0F1117] border border-dashed border-[#8b5cf6]/40 rounded-2xl overflow-hidden">
+  1273→      <button
+  1274→        onClick={() => setExpanded((v) => !v)}
+  1275→        className="w-full p-3 flex flex-col items-center justify-center min-h-[140px] text-center"
+  1276→      >
+  1277→        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#13ec13] flex items-center justify-center mb-2">
+  1278→          <Plus className="w-5 h-5 text-white" />
+  1279→        </div>
+  1280→        <div className="text-white text-xs font-bold">Custom Recipe</div>
+  1281→        <div className="text-white/40 text-[10px] mt-0.5">Cook anything with Safa</div>
+  1282→      </button>
+  1283→      {expanded && (
+  1284→        <div className="p-3 pt-0 space-y-2">
+  1285→          <input
+  1286→            value={customName}
+  1287→            onChange={(e) => setCustomName(e.target.value)}
+  1288→            placeholder="e.g. Egusi Soup"
+  1289→            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+  1290→          />
+  1291→          <div className="flex gap-1.5">
+  1292→            {diffs.map((d) => (
+  1293→              <button
+  1294→                key={d}
+  1295→                onClick={() => setCustomDifficulty(d)}
+  1296→                className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold capitalize transition ${
+  1297→                  customDifficulty === d
+  1298→                    ? 'text-[#05070A]'
+  1299→                    : 'bg-[#1A1D26] text-white/60 border border-white/10'
+  1300→                }`}
+  1301→                style={customDifficulty === d ? { background: difficultyColor(d) } : undefined}
+  1302→              >
+  1303→                {d}
+  1304→              </button>
+  1305→            ))}
+  1306→          </div>
+  1307→          <button
+  1308→            onClick={onStart}
+  1309→            className="w-full bg-[#13ec13] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
+  1310→          >
+  1311→            Start Cooking →
+  1312→          </button>
+  1313→        </div>
+  1314→      )}
+  1315→    </div>
+  1316→  );
+  1317→}
+  1318→
+  1319→/* ── Camera error fallback ── */
+  1320→function CameraErrorCard({ error, onRetry }: { error: string; onRetry: () => void }) {
+  1321→  const isDenied = error === 'denied';
+  1322→  return (
+  1323→    <div className="bg-[#0F1117] border-2 border-[#ef4444]/30 rounded-2xl p-6 text-center space-y-3">
+  1324→      <div className="size-14 rounded-full bg-[#ef4444]/15 flex items-center justify-center mx-auto">
+  1325→        <AlertCircle className="w-7 h-7 text-[#ef4444]" />
+  1326→      </div>
+  1327→      <div>
+  1328→        <h4 className="text-white font-black text-base">
+  1329→          {isDenied ? 'Camera access blocked' : 'Camera unavailable'}
+  1330→        </h4>
+  1331→        <p className="text-white/60 text-xs mt-1 leading-relaxed">
+  1332→          {isDenied
+  1333→            ? 'Chef Safa needs your camera to watch you cook and give real-time tips. Enable camera permission in your browser settings, then retry.'
+  1334→            : 'No camera was found on this device. Try a different device or check that your camera is connected.'}
+  1335→        </p>
+  1336→      </div>
+  1337→      <button
+  1338→        onClick={onRetry}
+  1339→        className="bg-[#13ec13] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
+  1340→      >
+  1341→        <RefreshCw className="w-4 h-4" /> Retry
+  1342→      </button>
+  1343→    </div>
+  1344→  );
+  1345→}
+  1346→
+  1347→/* ───────────────────────── Pantry Tab ───────────────────────── */
+  1348→
+  1349→function PantryTab({
+  1350→  pantry,
+  1351→  showAddPantry,
+  1352→  setShowAddPantry,
+  1353→  pantryForm,
+  1354→  setPantryForm,
+  1355→  onAdd,
+  1356→  onDelete,
+  1357→  rescueRecipe,
+  1358→  rescueLoading,
+  1359→  onRescue,
+  1360→  onCookNow,
+  1361→}: {
+  1362→  pantry: PantryItem[];
+  1363→  showAddPantry: boolean;
+  1364→  setShowAddPantry: (v: boolean) => void;
+  1365→  pantryForm: { name: string; category: string; quantity: string; unit: string; expiresAt: string };
+  1366→  setPantryForm: React.Dispatch<React.SetStateAction<{
+  1367→    name: string; category: string; quantity: string; unit: string; expiresAt: string;
+  1368→  }>>;
+  1369→  onAdd: () => void;
+  1370→  onDelete: (id: string) => void;
+  1371→  rescueRecipe: RescueRecipe | null;
+  1372→  rescueLoading: boolean;
+  1373→  onRescue: () => void;
+  1374→  onCookNow: () => void;
+  1375→}) {
+  1376→  const grouped = useMemo(() => {
+  1377→    const g: Record<string, PantryItem[]> = {};
+  1378→    for (const c of PANTRY_CATEGORIES) g[c] = [];
+  1379→    for (const item of pantry) {
+  1380→      const cat = PANTRY_CATEGORIES.includes(item.category as typeof PANTRY_CATEGORIES[number])
+  1381→        ? item.category
+  1382→        : 'other';
+  1383→      g[cat].push(item);
+  1384→    }
+  1385→    return g;
+  1386→  }, [pantry]);
+  1387→
+  1388→  return (
+  1389→    <div className="p-4 space-y-5">
+  1390→      <div className="flex items-center justify-between">
+  1391→        <div>
+  1392→          <h3 className="text-white text-lg font-black tracking-tight">My Pantry</h3>
+  1393→          <p className="text-white/50 text-xs">{pantry.length} item{pantry.length !== 1 ? 's' : ''} stocked</p>
+  1394→        </div>
+  1395→        <button
+  1396→          onClick={() => setShowAddPantry(!showAddPantry)}
+  1397→          className="bg-[#13ec13] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
+  1398→        >
+  1399→          <Plus className="w-4 h-4" /> Add Item
+  1400→        </button>
+  1401→      </div>
+  1402→
+  1403→      {/* Add form */}
+  1404→      <AnimatePresence>
+  1405→        {showAddPantry && (
+  1406→          <motion.div
+  1407→            initial={{ opacity: 0, height: 0 }}
+  1408→            animate={{ opacity: 1, height: 'auto' }}
+  1409→            exit={{ opacity: 0, height: 0 }}
+  1410→            className="overflow-hidden"
+  1411→          >
+  1412→            <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 space-y-3">
+  1413→              <input
+  1414→                value={pantryForm.name}
+  1415→                onChange={(e) => setPantryForm((f) => ({ ...f, name: e.target.value }))}
+  1416→                placeholder="Item name (e.g. Tomatoes)"
+  1417→                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+  1418→              />
+  1419→              <div className="grid grid-cols-2 gap-2">
+  1420→                <select
+  1421→                  value={pantryForm.category}
+  1422→                  onChange={(e) => setPantryForm((f) => ({ ...f, category: e.target.value }))}
+  1423→                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#13ec13]/40 outline-none"
+  1424→                >
+  1425→                  {PANTRY_CATEGORIES.map((c) => (
+  1426→                    <option key={c} value={c} className="bg-[#1A1D26]">{c}</option>
+  1427→                  ))}
+  1428→                </select>
+  1429→                <div className="flex gap-2">
+  1430→                  <input
+  1431→                    value={pantryForm.quantity}
+  1432→                    onChange={(e) => setPantryForm((f) => ({ ...f, quantity: e.target.value }))}
+  1433→                    placeholder="Qty"
+  1434→                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+  1435→                  />
+  1436→                  <input
+  1437→                    value={pantryForm.unit}
+  1438→                    onChange={(e) => setPantryForm((f) => ({ ...f, unit: e.target.value }))}
+  1439→                    placeholder="unit"
+  1440→                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+  1441→                  />
+  1442→                </div>
+  1443→              </div>
+  1444→              <input
+  1445→                type="date"
+  1446→                value={pantryForm.expiresAt}
+  1447→                onChange={(e) => setPantryForm((f) => ({ ...f, expiresAt: e.target.value }))}
+  1448→                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#13ec13]/40 outline-none"
+  1449→              />
+  1450→              <button
+  1451→                onClick={onAdd}
+  1452→                className="w-full bg-[#13ec13] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
+  1453→              >
+  1454→                Save to Pantry
+  1455→              </button>
+  1456→            </div>
+  1457→          </motion.div>
+  1458→        )}
+  1459→      </AnimatePresence>
+  1460→
+  1461→      {/* AI Fridge Rescue CTA */}
+  1462→      <button
+  1463→        onClick={onRescue}
+  1464→        disabled={rescueLoading}
+  1465→        className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#FFD700] via-[#f5b800] to-[#FFD700] text-[#05070A] font-black flex items-center gap-3 active:scale-[0.98] transition disabled:opacity-50 gold-glow"
+  1466→      >
+  1467→        {rescueLoading ? (
+  1468→          <RefreshCw className="w-6 h-6 animate-spin" />
+  1469→        ) : (
+  1470→          <Bot className="w-6 h-6" />
+  1471→        )}
+  1472→        <div className="text-left flex-1">
+  1473→          <div className="text-sm">🤖 What can I cook?</div>
+  1474→          <div className="text-[11px] opacity-80 font-bold">Chef Safa invents a recipe from your pantry</div>
+  1475→        </div>
+  1476→      </button>
+  1477→
+  1478→      {/* Rescue result */}
+  1479→      <AnimatePresence>
+  1480→        {rescueRecipe && (
+  1481→          <motion.div
+  1482→            initial={{ opacity: 0, y: 12 }}
+  1483→            animate={{ opacity: 1, y: 0 }}
+  1484→            className="bg-[#0F1117] border-2 border-[#FFD700]/40 rounded-2xl overflow-hidden"
+  1485→          >
+  1486→            <div className="bg-gradient-to-r from-[#FFD700]/15 to-transparent p-4 border-b border-white/5">
+  1487→              <div className="flex items-center gap-2 mb-1">
+  1488→                <Sparkles className="w-4 h-4 text-[#FFD700]" />
+  1489→                <span className="text-[#FFD700] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
+  1490→              </div>
+  1491→              <h4 className="text-white text-lg font-black leading-tight">{rescueRecipe.recipeName}</h4>
+  1492→              <p className="text-white/70 text-xs mt-1 leading-snug">{rescueRecipe.description}</p>
+  1493→              <div className="flex items-center gap-3 mt-2 text-[11px]">
+  1494→                <span className="text-white/60 flex items-center gap-1">
+  1495→                  <Clock className="w-3 h-3" /> {rescueRecipe.timeMins} min
+  1496→                </span>
+  1497→                <span
+  1498→                  className="font-bold px-2 py-0.5 rounded-full"
+  1499→                  style={{ background: `${difficultyColor(rescueRecipe.difficulty)}22`, color: difficultyColor(rescueRecipe.difficulty) }}
+  1500→                >
+  1501→                  {rescueRecipe.difficulty}
+  1502→                </span>
+  1503→              </div>
+  1504→            </div>
+  1505→            <div className="p-4 space-y-3">
+  1506→              <div>
+  1507→                <div className="text-white font-bold text-xs mb-2">Ingredients (from your pantry)</div>
+  1508→                <ul className="space-y-1.5">
+  1509→                  {rescueRecipe.ingredients?.map((ing, i) => (
+  1510→                    <li key={i} className="flex gap-2 text-xs">
+  1511→                      <span className="text-[#13ec13]">•</span>
+  1512→                      <span className="text-white/80">
+  1513→                        <span className="font-bold">{ing.name}</span>
+  1514→                        <span className="text-white/50"> — {ing.use}</span>
+  1515→                      </span>
+  1516→                    </li>
+  1517→                  ))}
+  1518→                </ul>
+  1519→              </div>
+  1520→              <div>
+  1521→                <div className="text-white font-bold text-xs mb-2">Steps</div>
+  1522→                <ol className="space-y-1.5">
+  1523→                  {rescueRecipe.steps?.map((s, i) => (
+  1524→                    <li key={i} className="flex gap-2 text-xs">
+  1525→                      <span className="size-5 rounded-full bg-[#13ec13]/15 text-[#13ec13] text-[10px] font-black flex items-center justify-center shrink-0">
+  1526→                        {i + 1}
+  1527→                      </span>
+  1528→                      <span className="text-white/80 leading-snug">{s}</span>
+  1529→                    </li>
+  1530→                  ))}
+  1531→                </ol>
+  1532→              </div>
+  1533→              {rescueRecipe.chefTip && (
+  1534→                <div className="bg-[#FFD700]/8 border border-[#FFD700]/30 rounded-xl p-3 flex gap-2">
+  1535→                  <Lightbulb className="w-4 h-4 text-[#FFD700] shrink-0 mt-0.5" />
+  1536→                  <div>
+  1537→                    <div className="text-[#FFD700] text-[10px] font-black tracking-wider mb-0.5">CHEF TIP</div>
+  1538→                    <p className="text-white/80 text-xs leading-snug">{rescueRecipe.chefTip}</p>
+  1539→                  </div>
+  1540→                </div>
+  1541→              )}
+  1542→              <button
+  1543→                onClick={onCookNow}
+  1544→                className="w-full bg-[#13ec13] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+  1545→              >
+  1546→                Cook This Now <ArrowRight className="w-4 h-4" />
+  1547→              </button>
+  1548→            </div>
+  1549→          </motion.div>
+  1550→        )}
+  1551→      </AnimatePresence>
+  1552→
+  1553→      {/* Items grouped by category */}
+  1554→      {pantry.length === 0 && !showAddPantry ? (
+  1555→        <div className="text-center py-10">
+  1556→          <CookingPot className="w-10 h-10 text-white/20 mx-auto mb-2" />
+  1557→          <p className="text-white/40 text-sm">Your pantry is empty.</p>
+  1558→          <p className="text-white/30 text-xs">Add items so Chef Safa can suggest recipes.</p>
+  1559→        </div>
+  1560→      ) : (
+  1561→        <div className="space-y-4">
+  1562→          {PANTRY_CATEGORIES.map((cat) => {
+  1563→            const items = grouped[cat] || [];
+  1564→            if (items.length === 0) return null;
+  1565→            return (
+  1566→              <div key={cat}>
+  1567→                <div className="text-white/60 text-xs font-black tracking-wider mb-2">
+  1568→                  {CATEGORY_LABELS[cat]} · {items.length}
+  1569→                </div>
+  1570→                <div className="space-y-1.5">
+  1571→                  {items.map((item) => (
+  1572→                    <div
+  1573→                      key={item.id}
+  1574→                      className="bg-[#0F1117] border border-white/5 rounded-xl p-3 flex items-center gap-3"
+  1575→                    >
+  1576→                      <div className="flex-1 min-w-0">
+  1577→                        <div className="text-white text-sm font-bold truncate">{item.name}</div>
+  1578→                        <div className="text-white/40 text-xs">
+  1579→                          {item.quantity} {item.unit}
+  1580→                          {item.expiresAt && ` · exp ${new Date(item.expiresAt).toLocaleDateString()}`}
+  1581→                        </div>
+  1582→                      </div>
+  1583→                      <button
+  1584→                        onClick={() => onDelete(item.id)}
+  1585→                        className="size-8 rounded-lg bg-[#ef4444]/10 text-[#ef4444] flex items-center justify-center hover:bg-[#ef4444]/20 transition"
+  1586→                        aria-label="Delete"
+  1587→                      >
+  1588→                        <Trash2 className="w-4 h-4" />
+  1589→                      </button>
+  1590→                    </div>
+  1591→                  ))}
+  1592→                </div>
+  1593→              </div>
+  1594→            );
+  1595→          })}
+  1596→        </div>
+  1597→      )}
+  1598→    </div>
+  1599→  );
+  1600→}
+  1601→
+  1602→/* ───────────────────────── Insights Tab ───────────────────────── */
+  1603→
+  1604→function InsightsTab({
+  1605→  analytics,
+  1606→  loading,
+  1607→  donutSegments,
+  1608→  weeklyMax,
+  1609→}: {
+  1610→  analytics: Analytics;
+  1611→  loading: boolean;
+  1612→  donutSegments: { segments: { value: number; color: string; length: number; offset: number }[]; total: number; C: number };
+  1613→  weeklyMax: number;
+  1614→}) {
+  1615→  if (loading) {
+  1616→    return (
+  1617→      <div className="p-4 space-y-4">
+  1618→        <div className="h-32 bg-[#0F1117] rounded-2xl animate-pulse" />
+  1619→        <div className="h-48 bg-[#0F1117] rounded-2xl animate-pulse" />
+  1620→        <div className="h-48 bg-[#0F1117] rounded-2xl animate-pulse" />
+  1621→      </div>
+  1622→    );
+  1623→  }
+  1624→
+  1625→  const stats = [
+  1626→    { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: '#13ec13' },
+  1627→    { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: '#FFD700' },
+  1628→    { label: 'Cook Time (min)', value: analytics.totalCookTimeMins, icon: <Clock className="w-4 h-4" />, color: '#8b5cf6' },
+  1629→    { label: 'Live AI Sessions', value: analytics.liveAIUses, icon: <Bot className="w-4 h-4" />, color: '#ef4444' },
+  1630→  ];
+  1631→
+  1632→  return (
+  1633→    <div className="p-4 space-y-5">
+  1634→      <h3 className="text-white text-lg font-black tracking-tight">Your Cooking Insights</h3>
+  1635→
+  1636→      {/* 2x2 stat cards */}
+  1637→      <div className="grid grid-cols-2 gap-3">
+  1638→        {stats.map((s) => (
+  1639→          <div key={s.label} className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+  1640→            <div
+  1641→              className="size-8 rounded-lg flex items-center justify-center mb-2"
+  1642→              style={{ background: `${s.color}22`, color: s.color }}
+  1643→            >
+  1644→              {s.icon}
+  1645→            </div>
+  1646→            <div className="text-white text-2xl font-black leading-none">{s.value}</div>
+  1647→            <div className="text-white/50 text-[11px] mt-1">{s.label}</div>
+  1648→          </div>
+  1649→        ))}
+  1650→      </div>
+  1651→
+  1652→      {/* Weekly bar chart */}
+  1653→      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+  1654→        <div className="flex items-center justify-between mb-3">
+  1655→          <h4 className="text-white font-black text-sm">Weekly Activity</h4>
+  1656→          <span className="text-white/40 text-[10px]">last 7 days</span>
+  1657→        </div>
+  1658→        <svg viewBox="0 0 320 140" className="w-full h-32">
+  1659→          {/* baseline */}
+  1660→          <line x1="10" y1="110" x2="310" y2="110" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
+  1661→          {analytics.weeklyData.map((d, i) => {
+  1662→            const barW = 28;
+  1663→            const gap = (300 - barW * 7) / 6;
+  1664→            const x = 10 + i * (barW + gap);
+  1665→            const h = d.count === 0 ? 2 : Math.max(4, (d.count / weeklyMax) * 90);
+  1666→            const y = 110 - h;
+  1667→            return (
+  1668→              <g key={i}>
+  1669→                <rect
+  1670→                  x={x}
+  1671→                  y={y}
+  1672→                  width={barW}
+  1673→                  height={h}
+  1674→                  rx={4}
+  1675→                  fill="url(#barGrad)"
+  1676→                  className="hover:opacity-80 transition-opacity"
+  1677→                />
+  1678→                {d.count > 0 && (
+  1679→                  <text x={x + barW / 2} y={y - 4} textAnchor="middle" className="fill-white text-[9px] font-bold">
+  1680→                    {d.count}
+  1681→                  </text>
+  1682→                )}
+  1683→                <text x={x + barW / 2} y={128} textAnchor="middle" className="fill-white/40 text-[9px]">
+  1684→                  {d.day}
+  1685→                </text>
+  1686→              </g>
+  1687→            );
+  1688→          })}
+  1689→          <defs>
+  1690→            <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+  1691→              <stop offset="0%" stopColor="#13ec13" />
+  1692→              <stop offset="100%" stopColor="#FFD700" />
+  1693→            </linearGradient>
+  1694→          </defs>
+  1695→        </svg>
+  1696→      </div>
+  1697→
+  1698→      {/* Difficulty donut */}
+  1699→      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+  1700→        <h4 className="text-white font-black text-sm mb-3">Difficulty Breakdown</h4>
+  1701→        <div className="flex items-center gap-4">
+  1702→          <svg viewBox="0 0 100 100" className="w-28 h-28 -rotate-90">
+  1703→            <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="14" />
+  1704→            {donutSegments.segments.map((s, i) => (
+  1705→              <circle
+  1706→                key={i}
+  1707→                cx="50"
+  1708→                cy="50"
+  1709→                r="40"
+  1710→                fill="none"
+  1711→                stroke={s.color}
+  1712→                strokeWidth="14"
+  1713→                strokeDasharray={`${s.length} ${donutSegments.C - s.length}`}
+  1714→                strokeDashoffset={s.offset}
+  1715→                strokeLinecap="butt"
+  1716→              />
+  1717→            ))}
+  1718→            <text x="50" y="50" textAnchor="middle" className="fill-white text-[14px] font-black" transform="rotate(90 50 50)">
+  1719→              {donutSegments.total}
+  1720→            </text>
+  1721→          </svg>
+  1722→          <div className="flex-1 space-y-2">
+  1723→            {[
+  1724→              { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: '#13ec13' },
+  1725→              { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: '#FFD700' },
+  1726→              { label: 'Hard', value: analytics.difficultyBreakdown.hard, color: '#8b5cf6' },
+  1727→            ].map((d) => (
+  1728→              <div key={d.label} className="flex items-center gap-2 text-xs">
+  1729→                <span className="size-3 rounded-sm" style={{ background: d.color }} />
+  1730→                <span className="text-white/70 flex-1">{d.label}</span>
+  1731→                <span className="text-white font-bold">{d.value}</span>
+  1732→              </div>
+  1733→            ))}
+  1734→          </div>
+  1735→        </div>
+  1736→      </div>
+  1737→
+  1738→      {/* Last cooked */}
+  1739→      {analytics.lastCooked && (
+  1740→        <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 flex items-center gap-3">
+  1741→          <div className="size-10 rounded-xl bg-[#13ec13]/15 flex items-center justify-center">
+  1742→            <CookingPot className="w-5 h-5 text-[#13ec13]" />
+  1743→          </div>
+  1744→          <div className="flex-1 min-w-0">
+  1745→            <div className="text-white/50 text-[10px] font-black tracking-wider">LAST COOKED</div>
+  1746→            <div className="text-white text-sm font-bold">
+  1747→              {new Date(analytics.lastCooked).toLocaleDateString(undefined, {
+  1748→                weekday: 'short', month: 'short', day: 'numeric',
+  1749→              })}{' · '}
+  1750→              {new Date(analytics.lastCooked).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+  1751→            </div>
+  1752→          </div>
+  1753→        </div>
+  1754→      )}
+  1755→    </div>
+  1756→  );
+  1757→}
+  1758→
+  1759→/* ───────────────────────── Badges Tab ───────────────────────── */
+  1760→
+  1761→function BadgesTab({
+  1762→  analytics,
+  1763→  unlockedCount,
+  1764→  loading,
+  1765→}: {
+  1766→  analytics: Analytics;
+  1767→  unlockedCount: number;
+  1768→  loading: boolean;
+  1769→}) {
+  1770→  if (loading) {
+  1771→    return (
+  1772→      <div className="p-4 space-y-3">
+  1773→        <div className="h-8 bg-[#0F1117] rounded-xl animate-pulse" />
+  1774→        {[...Array(8)].map((_, i) => (
+  1775→          <div key={i} className="h-20 bg-[#0F1117] rounded-2xl animate-pulse" />
+  1776→        ))}
+  1777→      </div>
+  1778→    );
+  1779→  }
+  1780→
+  1781→  const achievements = analytics.achievements.length > 0
+  1782→    ? analytics.achievements
+  1783→    : [
+  1784→        { id: 'first-dish', title: 'First Dish', desc: 'Cook your first meal', unlocked: false, icon: '🍳' },
+  1785→        { id: 'dedicated', title: 'Dedicated Cook', desc: 'Complete 5 sessions', unlocked: false, icon: '⭐' },
+  1786→        { id: 'marathon', title: 'Marathon Chef', desc: 'Cook 120+ minutes total', unlocked: false, icon: '🏃' },
+  1787→        { id: 'live-ai', title: 'Live AI Pioneer', desc: 'Use Live AI coaching once', unlocked: false, icon: '🤖' },
+  1788→        { id: 'week-warrior', title: 'Week Warrior', desc: 'Cook on 5+ distinct days', unlocked: false, icon: '⚔️' },
+  1789→        { id: 'master-chef', title: 'Master Chef', desc: 'Complete 20 sessions', unlocked: false, icon: '👨‍🍳' },
+  1790→        { id: 'quick-fire', title: 'Quick Fire', desc: 'Finish in under 10 min', unlocked: false, icon: '🔥' },
+  1791→        { id: 'explorer', title: 'Explorer', desc: 'Try 5+ different recipes', unlocked: false, icon: '🧭' },
+  1792→      ];
+  1793→
+  1794→  return (
+  1795→    <div className="p-4 space-y-4">
+  1796→      <div>
+  1797→        <h3 className="text-white text-lg font-black tracking-tight">Achievements</h3>
+  1798→        <p className="text-white/50 text-xs">Unlock badges by cooking with Chef Safa</p>
+  1799→      </div>
+  1800→
+  1801→      {/* Progress bar */}
+  1802→      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+  1803→        <div className="flex items-center justify-between mb-2">
+  1804→          <span className="text-white font-black text-sm">Progress</span>
+  1805→          <span className="text-[#13ec13] font-black text-sm">
+  1806→            {unlockedCount} / {achievements.length}
+  1807→          </span>
+  1808→        </div>
+  1809→        <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
+  1810→          <div
+  1811→            className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-500"
+  1812→            style={{ width: `${(unlockedCount / Math.max(1, achievements.length)) * 100}%` }}
+  1813→          />
+  1814→        </div>
+  1815→      </div>
+  1816→
+  1817→      {/* Badge grid */}
+  1818→      <div className="grid grid-cols-2 gap-3">
+  1819→        {achievements.map((a) => {
+  1820→          const IconComp = BADGE_ICONS[a.icon] || Trophy;
+  1821→          return (
+  1822→            <div
+  1823→              key={a.id}
+  1824→              className={`relative rounded-2xl p-4 border ${
+  1825→                a.unlocked
+  1826→                  ? 'border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/10 to-[#13ec13]/8 gold-glow'
+  1827→                  : 'border-white/5 bg-[#0F1117] opacity-50 grayscale'
+  1828→              }`}
+  1829→            >
+  1830→              <div
+  1831→                className={`size-12 rounded-xl flex items-center justify-center mb-2 ${
+  1832→                  a.unlocked ? 'bg-[#FFD700]/15' : 'bg-white/5'
+  1833→                }`}
+  1834→              >
+  1835→                {a.unlocked ? (
+  1836→                  <IconComp className="w-6 h-6 text-[#FFD700]" />
+  1837→                ) : (
+  1838→                  <IconComp className="w-6 h-6 text-white/30" />
+  1839→                )}
+  1840→              </div>
+  1841→              <div className="text-white font-black text-sm leading-tight">{a.title}</div>
+  1842→              <div className="text-white/50 text-[11px] mt-0.5 leading-snug">{a.desc}</div>
+  1843→              {a.unlocked && (
+  1844→                <div className="absolute top-2 right-2 size-5 rounded-full bg-[#13ec13] flex items-center justify-center">
+  1845→                  <CheckCircle2 className="w-3 h-3 text-[#05070A]" />
+  1846→                </div>
+  1847→              )}
+  1848→            </div>
+  1849→          );
+  1850→        })}
+  1851→      </div>
+  1852→    </div>
+  1853→  );
+  1854→}
+  1855→
+  1856→/* ───────────────────────── Confetti ───────────────────────── */
+  1857→
+  1858→function Confetti() {
+  1859→  const pieces = useMemo(
+  1860→    () =>
+  1861→      Array.from({ length: 28 }, (_, i) => ({
+  1862→        id: i,
+  1863→        x: 50 + (Math.random() - 0.5) * 60,
+  1864→        angle: Math.random() * 360,
+  1865→        color: ['#13ec13', '#FFD700', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
+  1866→        delay: Math.random() * 0.15,
+  1867→        size: 6 + Math.random() * 6,
+  1868→        rotate: Math.random() * 720 - 360,
+  1869→      })),
+  1870→    [],
+  1871→  );
+  1872→
+  1873→  return (
+  1874→    <motion.div
+  1875→      className="absolute inset-0 pointer-events-none z-50 flex items-center justify-center"
+  1876→      initial={{ opacity: 1 }}
+  1877→      exit={{ opacity: 0 }}
+  1878→    >
+  1879→      <div className="absolute inset-0 bg-black/30" />
+  1880→      {pieces.map((p) => (
+  1881→        <motion.div
+  1882→          key={p.id}
+  1883→          className="absolute rounded-sm"
+  1884→          style={{
+  1885→            width: p.size,
+  1886→            height: p.size * 0.4,
+  1887→            background: p.color,
+  1888→            left: `${p.x}%`,
+  1889→            top: '50%',
+  1890→          }}
+  1891→          initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+  1892→          animate={{
+  1893→            x: (p.x - 50) * 6,
+  1894→            y: -150 - Math.random() * 200,
+  1895→            opacity: 0,
+  1896→            rotate: p.rotate,
+  1897→          }}
+  1898→          transition={{ duration: 1.8 + p.delay, ease: 'easeOut' }}
+  1899→        />
+  1900→      ))}
+  1901→      <motion.div
+  1902→        initial={{ scale: 0.6, opacity: 0 }}
+  1903→        animate={{ scale: 1, opacity: 1 }}
+  1904→        className="relative z-10 text-center"
+  1905→      >
+  1906→        <div className="text-5xl mb-2">🎉</div>
+  1907→        <div className="text-white font-black text-xl">Session Logged!</div>
+  1908→        <div className="text-[#FFD700] text-sm font-bold">Keep cooking, keep leveling up.</div>
+  1909→      </motion.div>
+  1910→    </motion.div>
+  1911→  );
+  1912→}
+  1913→
