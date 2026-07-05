@@ -1,0 +1,773 @@
+     1→'use client';
+     2→
+     3→import { useEffect, useState, useCallback, useRef } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import {
+     6→  Bike, Star, Check, Clock,
+     7→  MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
+     8→  Package, Loader2, CheckCircle, Moon, BellRing,
+     9→} from 'lucide-react';
+    10→import { useAppStore } from '@/lib/store';
+    11→import { formatNaira } from '@/lib/data';
+    12→import { toast } from '@/hooks/use-toast';
+    13→import { RiderDashboardSkeleton } from './Skeletons';
+    14→import { useSocket } from '@/hooks/use-socket';
+    15→
+    16→/* ───────── Types ───────── */
+    17→
+    18→interface OrderItem {
+    19→  name: string;
+    20→  qty: number;
+    21→  price: number;
+    22→}
+    23→
+    24→interface RiderOrder {
+    25→  id: string;
+    26→  status: string;
+    27→  total: number;
+    28→  riderName: string | null;
+    29→  items: OrderItem[];
+    30→  progress: number;
+    31→  createdAt: string;
+    32→}
+    33→
+    34→interface WeeklyEarning {
+    35→  day: string;
+    36→  amount: number;
+    37→}
+    38→
+    39→interface RiderData {
+    40→  riderName: string;
+    41→  online: boolean;
+    42→  rating: number;
+    43→  completedToday: number;
+    44→  earningsToday: number;
+    45→  totalEarnings: number;
+    46→  activeDeliveries: RiderOrder[];
+    47→  availableDeliveries: RiderOrder[];
+    48→  recentDeliveries: RiderOrder[];
+    49→  weeklyEarnings: WeeklyEarning[];
+    50→  vehicleType: string;
+    51→  area: string;
+    52→}
+    53→
+    54→/* ───────── Animation variants ───────── */
+    55→
+    56→const staggerContainer = {
+    57→  hidden: { opacity: 0 },
+    58→  show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+    59→};
+    60→
+    61→const staggerItem = {
+    62→  hidden: { opacity: 0, y: 12 },
+    63→  show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+    64→};
+    65→
+    66→/* ───────── Helpers ───────── */
+    67→
+    68→function itemsSummary(items: OrderItem[]): string {
+    69→  if (!items || items.length === 0) return 'No items';
+    70→  return items.map((i) => `${i.qty}x ${i.name}`).join(', ');
+    71→}
+    72→
+    73→function shortId(id: string): string {
+    74→  return id.slice(-6).toUpperCase();
+    75→}
+    76→
+    77→function timeAgo(iso: string): string {
+    78→  const diff = Date.now() - new Date(iso).getTime();
+    79→  const mins = Math.floor(diff / 60000);
+    80→  if (mins < 1) return 'just now';
+    81→  if (mins < 60) return `${mins}m ago`;
+    82→  const hrs = Math.floor(mins / 60);
+    83→  if (hrs < 24) return `${hrs}h ago`;
+    84→  const days = Math.floor(hrs / 24);
+    85→  return `${days}d ago`;
+    86→}
+    87→
+    88→/* ───────── Component ───────── */
+    89→
+    90→export default function RiderDashboard() {
+    91→  const {
+    92→    riderOnline,
+    93→    setRiderOnline,
+    94→    userEmail,
+    95→    setActiveModal,
+    96→    setActiveTab,
+    97→  } = useAppStore();
+    98→
+    99→  const [data, setData] = useState<RiderData | null>(null);
+   100→  const [loading, setLoading] = useState(true);
+   101→  const [refreshing, setRefreshing] = useState(false);
+   102→  const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+   103→  const fetchingRef = useRef(false);
+   104→
+   105→  const email = userEmail || 'sani@swiftramadan.app';
+   106→
+   107→  // ─── Realtime: join the rider room so the backend can push
+   108→  // delivery requests directly to this rider. We use the email as a
+   109→  // stable identifier (the spec says `rider-{riderId}`).
+   110→  const riderRoomId = `rider-${email}`;
+   111→  const { socket, isConnected: socketConnected } = useSocket(riderRoomId);
+   112→
+   113→  /** Play a short delivery-request chime. */
+   114→  const playChime = useCallback(() => {
+   115→    try {
+   116→      const AudioCtx =
+   117→        (window as unknown as { AudioContext?: typeof AudioContext; webkitAudioContext?: typeof AudioContext })
+   118→          .AudioContext ||
+   119→        (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+   120→      if (!AudioCtx) return;
+   121→      const ctx = new AudioCtx();
+   122→      const osc = ctx.createOscillator();
+   123→      const gain = ctx.createGain();
+   124→      osc.type = 'triangle';
+   125→      osc.frequency.setValueAtTime(660, ctx.currentTime); // E5
+   126→      osc.frequency.exponentialRampToValueAtTime(990, ctx.currentTime + 0.18); // B5
+   127→      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+   128→      gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.02);
+   129→      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.5);
+   130→      osc.connect(gain);
+   131→      gain.connect(ctx.destination);
+   132→      osc.start();
+   133→      osc.stop(ctx.currentTime + 0.55);
+   134→      setTimeout(() => ctx.close().catch(() => {}), 800);
+   135→    } catch {
+   136→      /* Audio API not available */
+   137→    }
+   138→  }, []);
+   139→
+   140→  // Listen for delivery-request events
+   141→  useEffect(() => {
+   142→    if (!socket) return;
+   143→
+   144→    const onDeliveryRequest = (payload: {
+   145→      riderId?: string;
+   146→      orderData?: Record<string, unknown> & {
+   147→        id?: string;
+   148→        items?: { name: string; qty: number; price: number }[];
+   149→        total?: number;
+   150→        area?: string;
+   151→        customer?: string;
+   152→      };
+   153→      timestamp?: string;
+   154→    }) => {
+   155→      if (!payload) return;
+   156→      const od = payload.orderData || {};
+   157→
+   158→      // Prepend to available deliveries locally so the rider sees it
+   159→      setData((prev) => {
+   160→        if (!prev) return prev;
+   161→        const newOrder: RiderOrder = {
+   162→          id:
+   163→            (typeof od.id === 'string' && od.id) ||
+   164→            `SWR-${Date.now().toString(36).toUpperCase()}`,
+   165→          status: 'Ready',
+   166→          total: typeof od.total === 'number' ? od.total : 0,
+   167→          riderName: null,
+   168→          items: Array.isArray(od.items) ? od.items : [],
+   169→          progress: 0,
+   170→          createdAt: new Date().toISOString(),
+   171→        };
+   172→        if (prev.availableDeliveries.some((o) => o.id === newOrder.id)) {
+   173→          return prev;
+   174→        }
+   175→        return {
+   176→          ...prev,
+   177→          availableDeliveries: [newOrder, ...prev.availableDeliveries],
+   178→        };
+   179→      });
+   180→
+   181→      // Notify the rider
+   182→      toast({
+   183→        title: 'New delivery request! 🏍️',
+   184→        description: od.area
+   185→          ? `Pickup near ${od.area}`
+   186→          : 'Open the app to accept',
+   187→      });
+   188→      playChime();
+   189→
+   190→      // Auto-open the NewDeliveryRequestModal so the rider can act
+   191→      // quickly (only when online and not currently in another modal)
+   192→      try {
+   193→        const store = useAppStore.getState();
+   194→        if (store.riderOnline && !store.activeModal) {
+   195→          store.setActiveModal('new-delivery');
+   196→        }
+   197→      } catch {
+   198→        /* store not ready */
+   199→      }
+   200→    };
+   201→
+   202→    socket.on('delivery-request', onDeliveryRequest);
+   203→    return () => {
+   204→      socket.off('delivery-request', onDeliveryRequest);
+   205→    };
+   206→  }, [socket, toast, playChime]);
+   207→
+   208→  const fetchRider = useCallback(
+   209→    async (silent = false) => {
+   210→      if (fetchingRef.current) return;
+   211→      fetchingRef.current = true;
+   212→      if (!silent) setLoading(true);
+   213→      try {
+   214→        const res = await fetch(`/api/rider?email=${encodeURIComponent(email)}`);
+   215→        if (!res.ok) throw new Error('Failed to fetch rider data');
+   216→        const json = await res.json();
+   217→        if (json.success) {
+   218→          setData(json);
+   219→          // Sync online state with backend
+   220→          if (typeof json.online === 'boolean') {
+   221→            setRiderOnline(json.online);
+   222→          }
+   223→        }
+   224→      } catch (err) {
+   225→        console.error('RiderDashboard fetch error:', err);
+   226→        if (!silent) {
+   227→          toast({
+   228→            title: 'Failed to load',
+   229→            description: 'Could not reach rider service. Pull to retry.',
+   230→          });
+   231→        }
+   232→      } finally {
+   233→        if (!silent) setLoading(false);
+   234→        setRefreshing(false);
+   235→        fetchingRef.current = false;
+   236→      }
+   237→    },
+   238→    [email, setRiderOnline]
+   239→  );
+   240→
+   241→  useEffect(() => {
+   242→    fetchRider();
+   243→    // Poll every 15s for fresh data
+   244→    const interval = setInterval(() => fetchRider(true), 15000);
+   245→    return () => clearInterval(interval);
+   246→  }, [fetchRider]);
+   247→
+   248→  const handleToggleOnline = async () => {
+   249→    const next = !riderOnline;
+   250→    setRiderOnline(next);
+   251→    toast({
+   252→      title: next ? "You're Online! 🟢" : "You're Offline",
+   253→      description: next
+   254→        ? 'You will now receive delivery requests'
+   255→        : "You won't receive new requests",
+   256→    });
+   257→    try {
+   258→      await fetch('/api/rider', {
+   259→        method: 'POST',
+   260→        headers: { 'Content-Type': 'application/json' },
+   261→        body: JSON.stringify({ email, online: next }),
+   262→      });
+   263→    } catch (err) {
+   264→      console.error('Toggle online failed:', err);
+   265→    }
+   266→  };
+   267→
+   268→  const handleAccept = async (orderId: string) => {
+   269→    setActionLoadingId(orderId);
+   270→    try {
+   271→      const res = await fetch('/api/rider/assign', {
+   272→        method: 'POST',
+   273→        headers: { 'Content-Type': 'application/json' },
+   274→        body: JSON.stringify({
+   275→          orderId,
+   276→          riderEmail: email,
+   277→          action: 'accept',
+   278→        }),
+   279→      });
+   280→      const json = await res.json();
+   281→      if (json.success) {
+   282→        toast({
+   283→          title: 'Delivery Accepted! 🎉',
+   284→          description: 'Head to the pickup location.',
+   285→        });
+   286→        await fetchRider(true);
+   287→      } else {
+   288→        toast({
+   289→          title: 'Accept failed',
+   290→          description: json.message || 'Could not accept delivery',
+   291→        });
+   292→      }
+   293→    } catch (err) {
+   294→      console.error('Accept failed:', err);
+   295→      toast({
+   296→        title: 'Accept failed',
+   297→        description: 'Network error — please retry',
+   298→      });
+   299→    } finally {
+   300→      setActionLoadingId(null);
+   301→    }
+   302→  };
+   303→
+   304→  const handleComplete = async (orderId: string) => {
+   305→    setActionLoadingId(orderId);
+   306→    try {
+   307→      const res = await fetch('/api/rider/assign', {
+   308→        method: 'POST',
+   309→        headers: { 'Content-Type': 'application/json' },
+   310→        body: JSON.stringify({
+   311→          orderId,
+   312→          riderEmail: email,
+   313→          action: 'complete',
+   314→        }),
+   315→      });
+   316→      const json = await res.json();
+   317→      if (json.success) {
+   318→        toast({
+   319→          title: 'Delivery Completed! 🎉',
+   320→          description: `You earned ${formatNaira(json.earnings || 0)}.`,
+   321→        });
+   322→        await fetchRider(true);
+   323→      } else {
+   324→        toast({
+   325→          title: 'Complete failed',
+   326→          description: json.message || 'Could not complete delivery',
+   327→        });
+   328→      }
+   329→    } catch (err) {
+   330→      console.error('Complete failed:', err);
+   331→      toast({
+   332→        title: 'Complete failed',
+   333→        description: 'Network error — please retry',
+   334→      });
+   335→    } finally {
+   336→      setActionLoadingId(null);
+   337→    }
+   338→  };
+   339→
+   340→  /* ───────── Loading skeleton ───────── */
+   341→  if (loading) {
+   342→    return (
+   343→      <main className="flex-1 overflow-y-auto pb-32 px-4 pt-4">
+   344→        <RiderDashboardSkeleton />
+   345→      </main>
+   346→    );
+   347→  }
+   348→
+   349→  const activeDelivery = data?.activeDeliveries?.[0] ?? null;
+   350→  const availableDeliveries = data?.availableDeliveries ?? [];
+   351→  const weeklyEarnings = data?.weeklyEarnings ?? [];
+   352→  const maxWeekly = Math.max(1, ...weeklyEarnings.map((w) => w.amount));
+   353→
+   354→  return (
+   355→    <motion.main
+   356→      variants={staggerContainer}
+   357→      initial="hidden"
+   358→      animate="show"
+   359→      className="flex-1 overflow-y-auto pb-32 px-4 pt-4"
+   360→    >
+   361→      {/* Online/Offline Toggle */}
+   362→      <motion.div
+   363→        variants={staggerItem}
+   364→        className="flex items-center justify-between mb-5"
+   365→      >
+   366→        <div className="flex items-center gap-3">
+   367→          <button onClick={handleToggleOnline} className="relative" aria-label="Toggle online">
+   368→            {riderOnline ? (
+   369→              <ToggleRight className="w-12 h-12 text-[#38BDF8]" />
+   370→            ) : (
+   371→              <ToggleLeft className="w-12 h-12 text-white/30" />
+   372→            )}
+   373→          </button>
+   374→          <div>
+   375→            <p
+   376→              className={`text-sm font-bold ${
+   377→                riderOnline ? 'text-[#38BDF8]' : 'text-white/40'
+   378→              }`}
+   379→            >
+   380→              {riderOnline ? 'Online' : 'Offline'}
+   381→            </p>
+   382→            <p className="text-white/30 text-[10px] flex items-center gap-1">
+   383→              {socketConnected ? (
+   384→                <>
+   385→                  <BellRing className="w-3 h-3 text-[#10E07A]" />
+   386→                  <span className="text-[#10E07A]">Live</span>
+   387→                  <span>· listening for requests</span>
+   388→                </>
+   389→              ) : (
+   390→                'Toggle to receive deliveries'
+   391→              )}
+   392→            </p>
+   393→          </div>
+   394→        </div>
+   395→        <div
+   396→          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${
+   397→            riderOnline
+   398→              ? 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20'
+   399→              : 'bg-white/5 text-white/30 border border-white/5'
+   400→          }`}
+   401→        >
+   402→          <span
+   403→            className={`size-2 rounded-full ${
+   404→              riderOnline ? 'bg-[#38BDF8] animate-pulse' : 'bg-white/20'
+   405→            }`}
+   406→          />
+   407→          {riderOnline ? 'Accepting Orders' : 'Not Available'}
+   408→        </div>
+   409→      </motion.div>
+   410→
+   411→      {/* Profile Header */}
+   412→      <motion.div variants={staggerItem} className="flex items-center gap-4 mb-6">
+   413→        <div className="relative">
+   414→          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[#38BDF8]/20">
+   415→            <Bike className="w-7 h-7 text-[#38BDF8]" />
+   416→          </div>
+   417→          {riderOnline && (
+   418→            <span className="absolute -bottom-1 -right-1 size-4 bg-[#38BDF8] rounded-full border-2 border-[#0B0D14] animate-pulse" />
+   419→          )}
+   420→        </div>
+   421→        <div className="flex-1">
+   422→          <div className="flex items-center gap-2">
+   423→            <h2 className="text-white text-lg font-extrabold">
+   424→              {data?.riderName ?? 'Rider'}
+   425→            </h2>
+   426→            <span className="material-symbols-outlined text-[#38BDF8] text-lg">verified</span>
+   427→          </div>
+   428→          <div className="flex items-center gap-2 mt-1">
+   429→            <span className="material-symbols-outlined text-[#F5C451] text-sm">workspace_premium</span>
+   430→            <span className="text-[#F5C451] text-xs font-bold">Elite Rider</span>
+   431→            <span className="text-white/20 text-xs">•</span>
+   432→            <span className="text-white/40 text-xs">{data?.area ?? 'Lagos'}</span>
+   433→          </div>
+   434→        </div>
+   435→        <ChevronRight className="w-5 h-5 text-white/20" />
+   436→      </motion.div>
+   437→
+   438→      {/* Stats Grid */}
+   439→      <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3 mb-6">
+   440→        <div className="glass-card rounded-2xl p-4 text-center">
+   441→          <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   442→            <Check className="w-5 h-5 text-[#38BDF8]" />
+   443→          </div>
+   444→          <p className="text-white text-xl font-extrabold">
+   445→            {data?.completedToday ?? 0}
+   446→          </p>
+   447→          <p className="text-white/40 text-[10px] mt-0.5">Completed Today</p>
+   448→        </div>
+   449→        <div className="glass-card rounded-2xl p-4 text-center">
+   450→          <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   451→            <Star className="w-5 h-5 text-[#F5C451]" />
+   452→          </div>
+   453→          <p className="text-white text-xl font-extrabold">
+   454→            {data?.rating?.toFixed(1) ?? '4.8'}
+   455→          </p>
+   456→          <p className="text-white/40 text-[10px] mt-0.5">Rating</p>
+   457→        </div>
+   458→        <div className="glass-card rounded-2xl p-4 text-center">
+   459→          <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+   460→            <span className="material-symbols-outlined text-[#10E07A] text-base">payments</span>
+   461→          </div>
+   462→          <p className="text-white text-base font-extrabold leading-tight">
+   463→            {formatNaira(data?.earningsToday ?? 0)}
+   464→          </p>
+   465→          <p className="text-white/40 text-[10px] mt-0.5">Earned Today</p>
+   466→        </div>
+   467→      </motion.div>
+   468→
+   469→      {/* Iftar Rush Legend Badge */}
+   470→      <motion.div variants={staggerItem} className="mb-6">
+   471→        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[#F5C451]/20 p-4">
+   472→          <div className="absolute top-0 right-0 w-40 h-40 bg-[#F5C451]/5 blur-[80px]" />
+   473→          <div className="relative z-10 flex items-center gap-3">
+   474→            <div className="w-12 h-12 bg-[#F5C451]/20 rounded-2xl flex items-center justify-center shrink-0">
+   475→              <Moon className="w-5 h-5 text-[#F5C451]" />
+   476→            </div>
+   477→            <div className="flex-1">
+   478→              <div className="flex items-center gap-2">
+   479→                <h3 className="text-[#F5C451] font-extrabold text-sm">Iftar Rush Active</h3>
+   480→                <span className="px-2 py-0.5 bg-[#F5C451]/20 rounded-full text-[#F5C451] text-[8px] font-black uppercase tracking-wider">
+   481→                  Ramadan Exclusive
+   482→                </span>
+   483→              </div>
+   484→              <p className="text-white/40 text-xs mt-1">
+   485→                2x bonus on all Iftar deliveries until Maghrib
+   486→              </p>
+   487→            </div>
+   488→          </div>
+   489→        </div>
+   490→      </motion.div>
+   491→
+   492→      {/* Active Delivery Card */}
+   493→      {activeDelivery && (
+   494→        <motion.div variants={staggerItem} className="mb-6">
+   495→          <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   496→            <Navigation className="w-4 h-4 text-[#38BDF8]" />
+   497→            Active Delivery
+   498→          </h3>
+   499→          <div className="relative overflow-hidden rounded-2xl bg-[#0F1118] border border-[#38BDF8]/20 p-4">
+   500→            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/5 blur-[50px]" />
+   501→            <div className="relative z-10">
+   502→              <div className="flex items-center justify-between mb-3">
+   503→                <div className="flex items-center gap-2">
+   504→                  <span className="flex size-2 bg-[#38BDF8] rounded-full animate-pulse" />
+   505→                  <span className="text-[#38BDF8] text-xs font-bold uppercase tracking-widest">
+   506→                    In Progress
+   507→                  </span>
+   508→                </div>
+   509→                <span className="text-white/30 text-[10px] font-mono">
+   510→                  #{shortId(activeDelivery.id)}
+   511→                </span>
+   512→              </div>
+   513→
+   514→              {/* Progress Bar */}
+   515→              <div className="w-full bg-white/5 rounded-full h-2 mb-3">
+   516→                <motion.div
+   517→                  className="bg-[#38BDF8] h-2 rounded-full"
+   518→                  initial={{ width: 0 }}
+   519→                  animate={{ width: `${activeDelivery.progress}%` }}
+   520→                  transition={{ duration: 1.2, ease: 'easeOut' }}
+   521→                />
+   522→              </div>
+   523→
+   524→              <div className="flex items-center justify-between mb-3">
+   525→                <div>
+   526→                  <p className="text-white font-bold text-sm">
+   527→                    {itemsSummary(activeDelivery.items)}
+   528→                  </p>
+   529→                  <div className="flex items-center gap-1 mt-0.5">
+   530→                    <MapPin className="w-3 h-3 text-white/30" />
+   531→                    <p className="text-white/40 text-xs">
+   532→                      {data?.area ?? 'Lagos Island'}
+   533→                    </p>
+   534→                  </div>
+   535→                </div>
+   536→                <div className="text-right">
+   537→                  <p className="text-[#10E07A] text-sm font-bold">
+   538→                    +{formatNaira(Math.round(activeDelivery.total * 0.15))}
+   539→                  </p>
+   540→                  <p className="text-white/40 text-xs">your earnings</p>
+   541→                </div>
+   542→              </div>
+   543→
+   544→              <div className="flex items-center gap-2">
+   545→                <button
+   546→                  onClick={() =>
+   547→                    toast({
+   548→                      title: 'Calling Customer 📞',
+   549→                      description: 'Connecting to customer...',
+   550→                    })
+   551→                  }
+   552→                  className="flex-1 flex items-center justify-center gap-2 bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/20 transition-colors"
+   553→                >
+   554→                  <Phone className="w-3.5 h-3.5" />
+   555→                  Call
+   556→                </button>
+   557→                <button
+   558→                  onClick={() => handleComplete(activeDelivery.id)}
+   559→                  disabled={actionLoadingId === activeDelivery.id}
+   560→                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors disabled:opacity-60"
+   561→                >
+   562→                  {actionLoadingId === activeDelivery.id ? (
+   563→                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+   564→                  ) : (
+   565→                    <Check className="w-3.5 h-3.5" />
+   566→                  )}
+   567→                  Complete Delivery
+   568→                </button>
+   569→              </div>
+   570→            </div>
+   571→          </div>
+   572→        </motion.div>
+   573→      )}
+   574→
+   575→      {/* New Delivery Request CTA */}
+   576→      {riderOnline && !activeDelivery && (
+   577→        <motion.div variants={staggerItem} className="mb-6">
+   578→          <button
+   579→            onClick={() => setActiveModal('new-delivery')}
+   580→            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[#38BDF8]/30 p-4 flex items-center gap-4 hover:border-[#38BDF8]/50 transition-all active:scale-[0.98]"
+   581→          >
+   582→            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/10 blur-[50px]" />
+   583→            <div className="w-12 h-12 bg-[#38BDF8]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+   584→              <Package className="w-6 h-6 text-[#38BDF8]" />
+   585→            </div>
+   586→            <div className="flex-1 text-left relative z-10">
+   587→              <h3 className="text-white font-extrabold text-sm">New Delivery Request</h3>
+   588→              <p className="text-white/40 text-xs mt-0.5">
+   589→                {availableDeliveries.length} deliveries waiting for you
+   590→              </p>
+   591→            </div>
+   592→            <ChevronRight className="w-5 h-5 text-[#38BDF8] shrink-0 relative z-10" />
+   593→          </button>
+   594→        </motion.div>
+   595→      )}
+   596→
+   597→      {/* Available Deliveries */}
+   598→      <motion.div variants={staggerItem} className="mb-6">
+   599→        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   600→          <Clock className="w-4 h-4 text-[#F5C451]" />
+   601→          Available Deliveries
+   602→          <span className="ml-auto px-2 py-0.5 bg-[#F5C451]/10 rounded-full text-[#F5C451] text-[10px] font-bold">
+   603→            {availableDeliveries.length} new
+   604→          </span>
+   605→        </h3>
+   606→
+   607→        {availableDeliveries.length === 0 ? (
+   608→          <div className="glass-card rounded-2xl p-8 text-center">
+   609→            <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/5 flex items-center justify-center">
+   610→              <Package className="w-6 h-6 text-white/30" />
+   611→            </div>
+   612→            <p className="text-white font-bold text-sm">No deliveries available</p>
+   613→            <p className="text-white/40 text-xs mt-1">
+   614→              New orders will appear here as vendors mark them ready.
+   615→            </p>
+   616→          </div>
+   617→        ) : (
+   618→          <div className="space-y-3">
+   619→            {availableDeliveries.map((req) => (
+   620→              <motion.div
+   621→                key={req.id}
+   622→                variants={staggerItem}
+   623→                className="glass-card rounded-2xl p-4"
+   624→              >
+   625→                <div className="flex items-start justify-between mb-2">
+   626→                  <div>
+   627→                    <div className="flex items-center gap-2">
+   628→                      <p className="text-white font-bold text-sm">
+   629→                        #{shortId(req.id)}
+   630→                      </p>
+   631→                      <span className="px-1.5 py-0.5 bg-[#A78BFA]/15 text-[#A78BFA] text-[8px] font-black rounded uppercase">
+   632→                        Ready
+   633→                      </span>
+   634→                    </div>
+   635→                    <div className="flex items-center gap-1 mt-0.5">
+   636→                      <MapPin className="w-3 h-3 text-white/30" />
+   637→                      <p className="text-white/40 text-xs">{data?.area ?? 'Lagos Island'}</p>
+   638→                    </div>
+   639→                  </div>
+   640→                  <div className="text-right shrink-0">
+   641→                    <p className="text-white font-bold text-sm">{formatNaira(req.total)}</p>
+   642→                    <p className="text-[#10E07A] text-[10px] font-bold">
+   643→                      +{formatNaira(Math.round(req.total * 0.15))} earn
+   644→                    </p>
+   645→                  </div>
+   646→                </div>
+   647→
+   648→                <div className="flex items-center gap-3 mb-3 text-[10px] text-white/30">
+   649→                  <Package className="w-3 h-3" />
+   650→                  <span className="truncate">{itemsSummary(req.items)}</span>
+   651→                  <span>•</span>
+   652→                  <span>{timeAgo(req.createdAt)}</span>
+   653→                </div>
+   654→
+   655→                <div className="flex items-center gap-2">
+   656→                  <button
+   657→                    onClick={() => handleAccept(req.id)}
+   658→                    disabled={actionLoadingId === req.id}
+   659→                    className="flex-1 bg-[#38BDF8] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+   660→                  >
+   661→                    {actionLoadingId === req.id ? (
+   662→                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+   663→                    ) : (
+   664→                      <Check className="w-3.5 h-3.5" />
+   665→                    )}
+   666→                    Accept
+   667→                  </button>
+   668→                  <button
+   669→                    onClick={() => setActiveModal('new-delivery')}
+   670→                    className="flex-1 bg-white/5 border border-white/10 text-white/60 py-2.5 rounded-xl font-bold text-xs hover:bg-white/10 transition-colors"
+   671→                  >
+   672→                    Details
+   673→                  </button>
+   674→                </div>
+   675→              </motion.div>
+   676→            ))}
+   677→          </div>
+   678→        )}
+   679→      </motion.div>
+   680→
+   681→      {/* Weekly Earnings Chart */}
+   682→      <motion.div variants={staggerItem} className="mb-6">
+   683→        <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   684→          <span className="material-symbols-outlined text-[#10E07A] text-base">bar_chart</span>
+   685→          Weekly Earnings
+   686→          <span className="ml-auto text-white/40 text-[10px] font-bold">
+   687→            Total: {formatNaira(weeklyEarnings.reduce((s, w) => s + w.amount, 0))}
+   688→          </span>
+   689→        </h3>
+   690→        <div className="glass-card rounded-2xl p-4">
+   691→          <div className="flex items-end justify-between gap-2 h-32">
+   692→            {weeklyEarnings.map((w, i) => {
+   693→              const pct = Math.max(4, Math.round((w.amount / maxWeekly) * 100));
+   694→              const isToday = i === weeklyEarnings.length - 1;
+   695→              return (
+   696→                <div
+   697→                  key={`${w.day}-${i}`}
+   698→                  className="flex-1 flex flex-col items-center gap-1.5"
+   699→                >
+   700→                  <span className="text-[9px] text-white/60 font-bold">
+   701→                    {w.amount > 0 ? `${(w.amount / 1000).toFixed(1)}k` : ''}
+   702→                  </span>
+   703→                  <motion.div
+   704→                    initial={{ height: 0 }}
+   705→                    animate={{ height: `${pct}%` }}
+   706→                    transition={{ duration: 0.6, delay: i * 0.05 }}
+   707→                    className={`w-full rounded-t-md ${
+   708→                      isToday
+   709→                        ? 'bg-gradient-to-t from-[#38BDF8] to-[#38BDF8]/60'
+   710→                        : 'bg-gradient-to-t from-[#38BDF8]/40 to-[#38BDF8]/20'
+   711→                    }`}
+   712→                  />
+   713→                  <span
+   714→                    className={`text-[10px] font-bold ${
+   715→                      isToday ? 'text-[#38BDF8]' : 'text-white/40'
+   716→                    }`}
+   717→                  >
+   718→                    {w.day}
+   719→                  </span>
+   720→                </div>
+   721→              );
+   722→            })}
+   723→          </div>
+   724→        </div>
+   725→      </motion.div>
+   726→
+   727→      {/* Recent Deliveries */}
+   728→      {(data?.recentDeliveries?.length ?? 0) > 0 && (
+   729→        <motion.div variants={staggerItem} className="mb-6">
+   730→          <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
+   731→            <CheckCircle className="w-4 h-4 text-[#10E07A]" />
+   732→            Recent Deliveries
+   733→          </h3>
+   734→          <div className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
+   735→            {data!.recentDeliveries.slice(0, 8).map((o) => (
+   736→              <div
+   737→                key={o.id}
+   738→                className="glass-card rounded-2xl p-3 flex items-center gap-3"
+   739→              >
+   740→                <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 flex items-center justify-center shrink-0">
+   741→                  <Check className="w-4 h-4 text-[#10E07A]" />
+   742→                </div>
+   743→                <div className="flex-1 min-w-0">
+   744→                  <p className="text-white text-xs font-bold truncate">
+   745→                    {itemsSummary(o.items)}
+   746→                  </p>
+   747→                  <p className="text-white/30 text-[10px]">{timeAgo(o.createdAt)}</p>
+   748→                </div>
+   749→                <div className="text-right shrink-0">
+   750→                  <p className="text-[#10E07A] text-xs font-bold">
+   751→                    +{formatNaira(Math.round(o.total * 0.15))}
+   752→                  </p>
+   753→                  <p className="text-white/30 text-[10px]">{formatNaira(o.total)}</p>
+   754→                </div>
+   755→              </div>
+   756→            ))}
+   757→          </div>
+   758→        </motion.div>
+   759→      )}
+   760→
+   761→      {/* Go to deliveries tab button */}
+   762→      <motion.div variants={staggerItem}>
+   763→        <button
+   764→          onClick={() => setActiveTab('rider-deliveries')}
+   765→          className="w-full text-center text-[#38BDF8] text-xs font-bold py-3 hover:underline"
+   766→        >
+   767→          View delivery map →
+   768→        </button>
+   769→      </motion.div>
+   770→    </motion.main>
+   771→  );
+   772→}
+   773→

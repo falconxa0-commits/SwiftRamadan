@@ -1,0 +1,1267 @@
+     1→'use client';
+     2→
+     3→import { useState, useMemo, useEffect } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper, Loader2, Tag, Home, Briefcase, Plus as PlusIcon } from 'lucide-react';
+     6→import { useAppStore, OrderItem } from '@/lib/store';
+     7→import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
+     8→import { useToast } from '@/hooks/use-toast';
+     9→import { track } from '@/lib/analytics';
+    10→import { triggerOrderCelebration } from './OrderCelebration';
+    11→
+    12→interface SavedAddress {
+    13→  id: string;
+    14→  label: string;
+    15→  address: string;
+    16→  area: string;
+    17→  city: string;
+    18→  instructions: string;
+    19→  isDefault: boolean;
+    20→}
+    21→
+    22→type CouponState = 'idle' | 'applying' | 'applied' | 'error';
+    23→
+    24→const timeSlots = [
+    25→  { id: 'morning', label: 'Morning', time: '8:00 - 11:00 AM', icon: Sun },
+    26→  { id: 'afternoon', label: 'Afternoon', time: '12:00 - 3:00 PM', icon: Sun },
+    27→  { id: 'evening', label: 'Evening', time: '4:00 - 7:00 PM', icon: Moon },
+    28→  { id: 'night', label: 'Night', time: '8:00 - 10:00 PM', icon: Moon },
+    29→];
+    30→
+    31→const stepLabels = ['Cart', 'Location', 'Schedule', 'Payment', 'Done'];
+    32→
+    33→/* ─────────────── Confetti Particle ─────────────── */
+    34→
+    35→function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
+    36→  const randomX = Math.random() * 300 - 150;
+    37→  const randomY = Math.random() * 400 + 100;
+    38→  const randomRotate = Math.random() * 720 - 360;
+    39→  const size = Math.random() * 8 + 4;
+    40→
+    41→  return (
+    42→    <motion.div
+    43→      initial={{ opacity: 1, x: 0, y: 0, rotate: 0, scale: 1 }}
+    44→      animate={{ opacity: 0, x: randomX, y: randomY, rotate: randomRotate, scale: 0.3 }}
+    45→      transition={{ duration: 1.8, delay, ease: 'easeOut' }}
+    46→      className="absolute rounded-sm pointer-events-none"
+    47→      style={{
+    48→        width: size,
+    49→        height: size,
+    50→        backgroundColor: color,
+    51→        left: '50%',
+    52→        top: '30%',
+    53→      }}
+    54→    />
+    55→  );
+    56→}
+    57→
+    58→export default function CheckoutModal() {
+    59→  const {
+    60→    activeModal, setActiveModal,
+    61→    cartItems, removeFromCart, updateQuantity, clearCart,
+    62→    checkoutStep, setCheckoutStep,
+    63→    deliveryAddress, setDeliveryAddress,
+    64→    deliveryInstructions, setDeliveryInstructions,
+    65→    iftarPrecision, setIftarPrecision,
+    66→    sahurAlarm, setSahurAlarm,
+    67→    paymentMethod, setPaymentMethod,
+    68→    setActiveTab,
+    69→    addOrder,
+    70→  } = useAppStore();
+    71→  const { toast } = useToast();
+    72→  const isOpen = activeModal === 'checkout';
+    73→
+    74→  const [selectedTimeSlot, setSelectedTimeSlot] = useState('evening');
+    75→  const [selectedBnplPlan, setSelectedBnplPlan] = useState(2);
+    76→  const [isEditingAddress, setIsEditingAddress] = useState(false);
+    77→  const [editAddressValue, setEditAddressValue] = useState(deliveryAddress);
+    78→  const [selectedLocation, setSelectedLocation] = useState(deliveryLocations[0]);
+    79→  const [orderId, setOrderId] = useState(() => `SWR-${Math.floor(1000 + Math.random() * 9000)}`);
+    80→  const [placing, setPlacing] = useState(false);
+    81→
+    82→  // Snapshot cart items for success step (before clearCart wipes them)
+    83→  const [placedCartItems, setPlacedCartItems] = useState<typeof cartItems>([]);
+    84→  const [placedTotal, setPlacedTotal] = useState(0);
+    85→
+    86→  // Saved addresses state
+    87→  const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
+    88→  const [fetchingAddresses, setFetchingAddresses] = useState(false);
+    89→  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
+    90→  const [showAddAddressForm, setShowAddAddressForm] = useState(false);
+    91→  const [newAddrLabel, setNewAddrLabel] = useState('Home');
+    92→  const [newAddrText, setNewAddrText] = useState('');
+    93→  const [newAddrArea, setNewAddrArea] = useState('');
+    94→  const [newAddrInstructions, setNewAddrInstructions] = useState('');
+    95→  const [savingAddress, setSavingAddress] = useState(false);
+    96→
+    97→  // Coupon state
+    98→  const [couponCode, setCouponCode] = useState('');
+    99→  const [couponState, setCouponState] = useState<CouponState>('idle');
+   100→  const [couponDiscount, setCouponDiscount] = useState(0);
+   101→  const [couponMessage, setCouponMessage] = useState('');
+   102→  const [appliedCouponCode, setAppliedCouponCode] = useState('');
+   103→
+   104→  // Payment reference (created after /api/payments POST)
+   105→  const [paymentReference, setPaymentReference] = useState<string | null>(null);
+   106→
+   107→  const currentUserEmail = useAppStore.getState().userEmail || 'guest';
+   108→
+   109→  // Fetch saved addresses when modal opens
+   110→  useEffect(() => {
+   111→    if (!isOpen) return;
+   112→    let cancelled = false;
+   113→    // Analytics: track checkout initiation
+   114→    track('checkout_start', { itemCount: cartItems.length, total: total || grossTotal });
+   115→    const fetchAddresses = async () => {
+   116→      setFetchingAddresses(true);
+   117→      try {
+   118→        const res = await fetch(`/api/addresses?userId=${encodeURIComponent(currentUserEmail)}`);
+   119→        const data = await res.json();
+   120→        if (cancelled) return;
+   121→        const addrs: SavedAddress[] = Array.isArray(data.addresses) ? data.addresses : [];
+   122→        setSavedAddresses(addrs);
+   123→        // Auto-select the default address (or the first one)
+   124→        const def = addrs.find(a => a.isDefault) || addrs[0];
+   125→        if (def) {
+   126→          setSelectedAddressId(def.id);
+   127→          setDeliveryAddress(def.address);
+   128→        }
+   129→      } catch {
+   130→        if (!cancelled) setSavedAddresses([]);
+   131→      } finally {
+   132→        if (!cancelled) setFetchingAddresses(false);
+   133→      }
+   134→    };
+   135→    fetchAddresses();
+   136→    return () => { cancelled = true; };
+   137→  }, [isOpen, currentUserEmail]);
+   138→
+   139→  // Use deliveryAddress with fallback to first saved location
+   140→  const effectiveAddress = deliveryAddress || selectedLocation.address || deliveryLocations[0].address;
+   141→
+   142→  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+   143→  const deliveryFee = subtotal >= 5000 ? 0 : 500;
+   144→  const serviceFee = Math.round(subtotal * 0.02);
+   145→  const grossTotal = subtotal + deliveryFee + serviceFee;
+   146→  const discount = couponState === 'applied' ? couponDiscount : 0;
+   147→  const total = Math.max(0, grossTotal - discount);
+   148→
+   149→  const currentStep = checkoutStep;
+   150→
+   151→  const handleClose = () => {
+   152→    setActiveModal(null);
+   153→    setCheckoutStep(0);
+   154→  };
+   155→
+   156→  const handleNext = () => {
+   157→    if (currentStep < 4) {
+   158→      setCheckoutStep(currentStep + 1);
+   159→    }
+   160→  };
+   161→
+   162→  const handleBack = () => {
+   163→    if (currentStep > 0) {
+   164→      setCheckoutStep(currentStep - 1);
+   165→    }
+   166→  };
+   167→
+   168→  const handleApplyCoupon = async () => {
+   169→    if (!couponCode.trim() || couponState === 'applying') return;
+   170→    setCouponState('applying');
+   171→    setCouponMessage('');
+   172→    try {
+   173→      const res = await fetch('/api/coupons/validate', {
+   174→        method: 'POST',
+   175→        headers: { 'Content-Type': 'application/json' },
+   176→        body: JSON.stringify({ code: couponCode.trim(), cartTotal: grossTotal }),
+   177→      });
+   178→      const data = await res.json();
+   179→      if (data.valid) {
+   180→        setCouponState('applied');
+   181→        setCouponDiscount(data.discount || 0);
+   182→        setCouponMessage(data.message || `Coupon applied — you saved ${formatNaira(data.discount || 0)}`);
+   183→        setAppliedCouponCode(data.code || couponCode.trim().toUpperCase());
+   184→        track('coupon_apply', { code: data.code || couponCode.trim().toUpperCase(), discount: data.discount || 0 });
+   185→        toast({ title: 'Coupon Applied! 🎉', description: data.message });
+   186→      } else {
+   187→        setCouponState('error');
+   188→        setCouponMessage(data.message || 'Invalid coupon code');
+   189→        setCouponDiscount(0);
+   190→        setAppliedCouponCode('');
+   191→      }
+   192→    } catch {
+   193→      setCouponState('error');
+   194→      setCouponMessage('Failed to validate coupon — try again');
+   195→      setCouponDiscount(0);
+   196→      setAppliedCouponCode('');
+   197→    }
+   198→  };
+   199→
+   200→  const handleRemoveCoupon = () => {
+   201→    setCouponState('idle');
+   202→    setCouponCode('');
+   203→    setCouponDiscount(0);
+   204→    setCouponMessage('');
+   205→    setAppliedCouponCode('');
+   206→  };
+   207→
+   208→  const handleSaveNewAddress = async () => {
+   209→    if (!newAddrText.trim() || savingAddress) return;
+   210→    setSavingAddress(true);
+   211→    try {
+   212→      const res = await fetch('/api/addresses', {
+   213→        method: 'POST',
+   214→        headers: { 'Content-Type': 'application/json' },
+   215→        body: JSON.stringify({
+   216→          userId: currentUserEmail,
+   217→          label: newAddrLabel || 'Home',
+   218→          address: newAddrText,
+   219→          area: newAddrArea,
+   220→          city: 'Lagos',
+   221→          instructions: newAddrInstructions,
+   222→          isDefault: savedAddresses.length === 0,
+   223→        }),
+   224→      });
+   225→      const data = await res.json();
+   226→      if (data.success) {
+   227→        // Refetch addresses
+   228→        const refetch = await fetch(`/api/addresses?userId=${encodeURIComponent(currentUserEmail)}`);
+   229→        const refetchData = await refetch.json();
+   230→        const addrs: SavedAddress[] = Array.isArray(refetchData.addresses) ? refetchData.addresses : [];
+   231→        setSavedAddresses(addrs);
+   232→        const newAddr = addrs.find(a => a.address === newAddrText);
+   233→        if (newAddr) {
+   234→          setSelectedAddressId(newAddr.id);
+   235→          setDeliveryAddress(newAddr.address);
+   236→        }
+   237→        setShowAddAddressForm(false);
+   238→        setNewAddrText('');
+   239→        setNewAddrArea('');
+   240→        setNewAddrInstructions('');
+   241→        setNewAddrLabel('Home');
+   242→        toast({ title: 'Address Saved 📍', description: 'New delivery address added' });
+   243→      } else {
+   244→        toast({ title: 'Could not save address', description: data.message || 'Please log in to save addresses', variant: 'destructive' });
+   245→      }
+   246→    } catch {
+   247→      toast({ title: 'Could not save address', description: 'Network error — please try again', variant: 'destructive' });
+   248→    } finally {
+   249→      setSavingAddress(false);
+   250→    }
+   251→  };
+   252→
+   253→  const handleSelectAddress = (addr: SavedAddress) => {
+   254→    setSelectedAddressId(addr.id);
+   255→    setDeliveryAddress(addr.address);
+   256→    if (addr.instructions) setDeliveryInstructions(addr.instructions);
+   257→  };
+   258→
+   259→  const handlePlaceOrder = async () => {
+   260→    if (placing) return;
+   261→    setPlacing(true);
+   262→    // Snapshot cart before clearing
+   263→    const snapshotItems = [...cartItems];
+   264→    const snapshotTotal = total;
+   265→    const snapshotDiscount = discount;
+   266→
+   267→    // Create the order object
+   268→    const order: OrderItem = {
+   269→      id: orderId,
+   270→      item: snapshotItems.length === 1 ? snapshotItems[0].name : `${snapshotItems[0].name} + ${snapshotItems.length - 1} more`,
+   271→      status: 'Preparing',
+   272→      eta: selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
+   273→           selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
+   274→           selectedTimeSlot === 'evening' ? '4:00 - 7:00 PM' : '8:00 - 10:00 PM',
+   275→      total: snapshotTotal,
+   276→      rider: null,
+   277→      items: snapshotItems.map(ci => ({ name: ci.name, qty: ci.quantity, price: ci.price })),
+   278→      progress: 15,
+   279→    };
+   280→
+   281→    // Save snapshot for the success step display
+   282→    setPlacedCartItems(snapshotItems);
+   283→    setPlacedTotal(snapshotTotal);
+   284→
+   285→    let dbOrderId: string | null = null;
+   286→
+   287→    // Persist to database via API (so it survives refresh)
+   288→    try {
+   289→      const res = await fetch('/api/orders', {
+   290→        method: 'POST',
+   291→        headers: { 'Content-Type': 'application/json' },
+   292→        body: JSON.stringify({
+   293→          status: order.status,
+   294→          total: order.total,
+   295→          riderName: order.rider,
+   296→          progress: order.progress,
+   297→          items: order.items,
+   298→          userId: currentUserEmail,
+   299→        }),
+   300→      });
+   301→      if (res.ok) {
+   302→        const data = await res.json();
+   303→        // Use the DB-generated order id if available (format to SWR-XXXXXX)
+   304→        if (data.order?.id) {
+   305→          dbOrderId = data.order.id;
+   306→          const shortId = `SWR-${data.order.id.replace(/[^a-z0-9]/gi, '').slice(-6).toUpperCase()}`;
+   307→          order.id = shortId;
+   308→          setOrderId(shortId);
+   309→        }
+   310→      }
+   311→    } catch (e) {
+   312→      // Non-blocking: order still added to local store
+   313→      console.error('Failed to persist order to DB', e);
+   314→    }
+   315→
+   316→    // Create a payment record via /api/payments
+   317→    try {
+   318→      const payRes = await fetch('/api/payments', {
+   319→        method: 'POST',
+   320→        headers: { 'Content-Type': 'application/json' },
+   321→        body: JSON.stringify({
+   322→          orderId: dbOrderId || undefined,
+   323→          userId: currentUserEmail,
+   324→          amount: snapshotTotal,
+   325→          method: paymentMethod || 'card',
+   326→          reference: `SWR-PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+   327→        }),
+   328→      });
+   329→      if (payRes.ok) {
+   330→        const payData = await payRes.json();
+   331→        if (payData.payment?.reference) {
+   332→          setPaymentReference(payData.payment.reference);
+   333→        }
+   334→      }
+   335→    } catch (e) {
+   336→      console.error('Failed to create payment record', e);
+   337→    }
+   338→
+   339→    addOrder(order);
+   340→    clearCart();
+   341→    setCheckoutStep(4);
+   342→    setPlacing(false);
+   343→
+   344→    // Trigger premium canvas-confetti celebration
+   345→    setTimeout(() => triggerOrderCelebration(), 300);
+   346→
+   347→    track('order_placed', { orderId: order.id, total: snapshotTotal, items: snapshotItems.length, paymentMethod });
+   348→    track('checkout_complete', { orderId: order.id, total: snapshotTotal, paymentMethod });
+   349→
+   350→    toast({
+   351→      title: 'Order Placed! 🎉',
+   352→      description: `Your order ${order.id} is being prepared.${snapshotDiscount > 0 ? ` You saved ${formatNaira(snapshotDiscount)}!` : ''}`,
+   353→    });
+   354→  };
+   355→
+   356→  const handleTrackOrder = () => {
+   357→    handleClose();
+   358→    setActiveTab('orders');
+   359→    toast({ title: 'Tracking Order 📦', description: 'Switching to your orders tab' });
+   360→  };
+   361→
+   362→  const handleSaveAddress = () => {
+   363→    setDeliveryAddress(editAddressValue);
+   364→    setIsEditingAddress(false);
+   365→    toast({ title: 'Address Updated 📍', description: 'Delivery address saved' });
+   366→  };
+   367→
+   368→  if (!isOpen) return null;
+   369→
+   370→  return (
+   371→    <>
+   372→      <motion.div
+   373→        initial={{ opacity: 0 }}
+   374→        animate={{ opacity: 1 }}
+   375→        exit={{ opacity: 0 }}
+   376→        className="fixed inset-0 bg-black/70 z-[90]"
+   377→        onClick={handleClose}
+   378→      />
+   379→      <motion.div
+   380→        initial={{ y: '100%' }}
+   381→        animate={{ y: 0 }}
+   382→        exit={{ y: '100%' }}
+   383→        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+   384→        className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+   385→      >
+   386→        {/* Header with Progress Stepper */}
+   387→        <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
+   388→          <div className="flex items-center justify-between p-4">
+   389→            <h2 className="text-white font-bold text-lg">Checkout</h2>
+   390→            <button
+   391→              onClick={handleClose}
+   392→              className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+   393→            >
+   394→              <X className="w-5 h-5 text-white/60" />
+   395→            </button>
+   396→          </div>
+   397→
+   398→          {/* Progress Stepper */}
+   399→          <div className="px-4 pb-4">
+   400→            <div className="flex items-center justify-between">
+   401→              {stepLabels.map((label, i) => (
+   402→                <div key={label} className="flex items-center flex-1">
+   403→                  <div className="flex flex-col items-center">
+   404→                    <div
+   405→                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+   406→                        i < currentStep
+   407→                          ? 'bg-[#13ec13] text-[#05070A]'
+   408→                          : i === currentStep
+   409→                            ? 'bg-[#13ec13]/20 border border-[#13ec13]/50 text-[#13ec13]'
+   410→                            : 'bg-white/5 text-white/20 border border-white/10'
+   411→                      }`}
+   412→                    >
+   413→                      {i < currentStep ? <Check className="w-4 h-4" /> : i + 1}
+   414→                    </div>
+   415→                    <span className={`text-[10px] mt-1 font-bold ${
+   416→                      i <= currentStep ? 'text-white/70' : 'text-white/20'
+   417→                    }`}>
+   418→                      {label}
+   419→                    </span>
+   420→                  </div>
+   421→                  {i < stepLabels.length - 1 && (
+   422→                    <div className={`flex-1 h-0.5 mx-2 rounded-full ${
+   423→                      i < currentStep ? 'bg-[#13ec13]' : 'bg-white/5'
+   424→                    }`} />
+   425→                  )}
+   426→                </div>
+   427→              ))}
+   428→            </div>
+   429→          </div>
+   430→        </div>
+   431→
+   432→        {/* Step Content */}
+   433→        <div className="px-4 py-6 pb-40">
+   434→          <AnimatePresence mode="wait">
+   435→
+   436→            {/* ─────────── Step 0: Cart Summary ─────────── */}
+   437→            {currentStep === 0 && (
+   438→              <motion.div
+   439→                key="cart"
+   440→                initial={{ opacity: 0, x: 20 }}
+   441→                animate={{ opacity: 1, x: 0 }}
+   442→                exit={{ opacity: 0, x: -20 }}
+   443→                transition={{ duration: 0.2 }}
+   444→                className="space-y-4"
+   445→              >
+   446→                <h3 className="text-white font-bold text-base flex items-center gap-2">
+   447→                  <ShoppingBag className="w-5 h-5 text-[#13ec13]" />
+   448→                  Your Cart
+   449→                  <span className="text-white/40 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
+   450→                </h3>
+   451→
+   452→                {cartItems.length === 0 ? (
+   453→                  <div className="flex flex-col items-center py-12 text-center">
+   454→                    <ShoppingBag className="w-16 h-16 text-white/10 mb-4" />
+   455→                    <p className="text-white/40 text-sm">Your cart is empty</p>
+   456→                    <button
+   457→                      onClick={handleClose}
+   458→                      className="mt-4 px-6 py-2.5 bg-[#13ec13] text-[#05070A] font-bold text-sm rounded-xl"
+   459→                    >
+   460→                      Browse Menu
+   461→                    </button>
+   462→                  </div>
+   463→                ) : (
+   464→                  <div className="space-y-3">
+   465→                    {cartItems.map(item => (
+   466→                      <motion.div
+   467→                        key={item.id}
+   468→                        layout
+   469→                        initial={{ opacity: 0, y: 10 }}
+   470→                        animate={{ opacity: 1, y: 0 }}
+   471→                        exit={{ opacity: 0, x: -100 }}
+   472→                        className="flex items-center gap-3 p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
+   473→                      >
+   474→                        {/* Item image */}
+   475→                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-white/5">
+   476→                          {item.image ? (
+   477→                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+   478→                          ) : (
+   479→                            <div className="w-full h-full flex items-center justify-center">
+   480→                              <Package className="w-6 h-6 text-white/20" />
+   481→                            </div>
+   482→                          )}
+   483→                        </div>
+   484→
+   485→                        {/* Item info */}
+   486→                        <div className="flex-1 min-w-0">
+   487→                          <p className="text-white font-bold text-sm truncate">{item.name}</p>
+   488→                          <p className="text-[#13ec13] font-bold text-sm">{formatNaira(item.price)}</p>
+   489→                        </div>
+   490→
+   491→                        {/* Quantity controls */}
+   492→                        <div className="flex items-center gap-2">
+   493→                          <button
+   494→                            onClick={() => {
+   495→                              if (item.quantity <= 1) {
+   496→                                removeFromCart(item.id);
+   497→                              } else {
+   498→                                updateQuantity(item.id, item.quantity - 1);
+   499→                              }
+   500→                            }}
+   501→                            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+   502→                          >
+   503→                            {item.quantity <= 1 ? (
+   504→                              <Trash2 className="w-3.5 h-3.5 text-red-400" />
+   505→                            ) : (
+   506→                              <Minus className="w-3.5 h-3.5 text-white/60" />
+   507→                            )}
+   508→                          </button>
+   509→                          <span className="text-white font-bold text-sm w-6 text-center">{item.quantity}</span>
+   510→                          <button
+   511→                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+   512→                            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+   513→                          >
+   514→                            <Plus className="w-3.5 h-3.5 text-white/60" />
+   515→                          </button>
+   516→                        </div>
+   517→
+   518→                        {/* Line total */}
+   519→                        <div className="text-right shrink-0 ml-1">
+   520→                          <p className="text-white font-bold text-sm">{formatNaira(item.price * item.quantity)}</p>
+   521→                        </div>
+   522→                      </motion.div>
+   523→                    ))}
+   524→                  </div>
+   525→                )}
+   526→
+   527→                {/* Cart Summary */}
+   528→                {cartItems.length > 0 && (
+   529→                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 space-y-3 mt-4">
+   530→                    <div className="flex justify-between text-sm">
+   531→                      <span className="text-white/40">Subtotal</span>
+   532→                      <span className="text-white font-bold">{formatNaira(subtotal)}</span>
+   533→                    </div>
+   534→                    <div className="flex justify-between text-sm">
+   535→                      <span className="text-white/40">Delivery Fee</span>
+   536→                      <span className={deliveryFee === 0 ? 'text-[#13ec13] font-bold' : 'text-white font-bold'}>
+   537→                        {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
+   538→                      </span>
+   539→                    </div>
+   540→                    <div className="flex justify-between text-sm">
+   541→                      <span className="text-white/40">Service Fee</span>
+   542→                      <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
+   543→                    </div>
+   544→                    {deliveryFee > 0 && (
+   545→                      <p className="text-[#13ec13]/60 text-[10px]">Free delivery on orders above ₦5,000</p>
+   546→                    )}
+   547→                    <div className="h-px bg-white/5" />
+   548→                    <div className="flex justify-between">
+   549→                      <span className="text-white font-bold text-sm">Total</span>
+   550→                      <span className="text-[#13ec13] font-black text-lg">{formatNaira(total)}</span>
+   551→                    </div>
+   552→                  </div>
+   553→                )}
+   554→              </motion.div>
+   555→            )}
+   556→
+   557→            {/* ─────────── Step 1: Delivery Location ─────────── */}
+   558→            {currentStep === 1 && (
+   559→              <motion.div
+   560→                key="location"
+   561→                initial={{ opacity: 0, x: 20 }}
+   562→                animate={{ opacity: 1, x: 0 }}
+   563→                exit={{ opacity: 0, x: -20 }}
+   564→                transition={{ duration: 0.2 }}
+   565→                className="space-y-6"
+   566→              >
+   567→                <div>
+   568→                  <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
+   569→                    <MapPin className="w-5 h-5 text-[#10E07A]" />
+   570→                    Delivery Address
+   571→                  </h3>
+   572→
+   573→                  {/* Saved Addresses (from /api/addresses) */}
+   574→                  <div className="space-y-2 mb-3">
+   575→                    <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
+   576→                    {fetchingAddresses ? (
+   577→                      <div className="flex items-center gap-2 p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+   578→                        <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
+   579→                        <span className="text-white/40 text-sm">Loading saved addresses…</span>
+   580→                      </div>
+   581→                    ) : savedAddresses.length === 0 ? (
+   582→                      <div className="p-4 bg-[#1A1D26] rounded-2xl border border-white/5 text-center">
+   583→                        <p className="text-white/40 text-sm">No saved addresses yet</p>
+   584→                        <p className="text-white/30 text-xs mt-1">Add one below or pick a default location</p>
+   585→                      </div>
+   586→                    ) : (
+   587→                      savedAddresses.map(addr => {
+   588→                        const isSelected = selectedAddressId === addr.id;
+   589→                        const Icon = addr.label?.toLowerCase().includes('office') ? Briefcase : Home;
+   590→                        return (
+   591→                          <button
+   592→                            key={addr.id}
+   593→                            onClick={() => handleSelectAddress(addr)}
+   594→                            className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+   595→                              isSelected
+   596→                                ? 'bg-[#10E07A]/5 border-[#10E07A]/40'
+   597→                                : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   598→                            }`}
+   599→                          >
+   600→                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+   601→                              isSelected ? 'bg-[#10E07A]/20' : 'bg-white/5'
+   602→                            }`}>
+   603→                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/30'}`} />
+   604→                            </div>
+   605→                            <div className="flex-1 min-w-0">
+   606→                              <div className="flex items-center gap-2">
+   607→                                <p className="text-white font-bold text-sm">{addr.label}</p>
+   608→                                {addr.isDefault && (
+   609→                                  <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#F5C451]/20 uppercase">Default</span>
+   610→                                )}
+   611→                              </div>
+   612→                              <p className="text-white/40 text-xs truncate">{addr.address}{addr.area ? `, ${addr.area}` : ''}</p>
+   613→                            </div>
+   614→                            {isSelected && <Check className="w-5 h-5 text-[#10E07A] shrink-0" />}
+   615→                          </button>
+   616→                        );
+   617→                      })
+   618→                    )}
+   619→                  </div>
+   620→
+   621→                  {/* Add new address form */}
+   622→                  {showAddAddressForm ? (
+   623→                    <motion.div
+   624→                      initial={{ opacity: 0, height: 0 }}
+   625→                      animate={{ opacity: 1, height: 'auto' }}
+   626→                      className="bg-[#1A1D26] rounded-2xl p-4 border border-[#10E07A]/20 space-y-3"
+   627→                    >
+   628→                      <div className="grid grid-cols-2 gap-2">
+   629→                        {['Home', 'Office', 'Partner', 'Other'].map(lbl => (
+   630→                          <button
+   631→                            key={lbl}
+   632→                            onClick={() => setNewAddrLabel(lbl)}
+   633→                            className={`py-2 rounded-lg text-xs font-bold transition-colors ${
+   634→                              newAddrLabel === lbl
+   635→                                ? 'bg-[#10E07A] text-[#06070B]'
+   636→                                : 'bg-white/5 text-white/60 hover:bg-white/10'
+   637→                            }`}
+   638→                          >
+   639→                            {lbl}
+   640→                          </button>
+   641→                        ))}
+   642→                      </div>
+   643→                      <input
+   644→                        value={newAddrText}
+   645→                        onChange={e => setNewAddrText(e.target.value)}
+   646→                        placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
+   647→                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+   648→                      />
+   649→                      <input
+   650→                        value={newAddrArea}
+   651→                        onChange={e => setNewAddrArea(e.target.value)}
+   652→                        placeholder="Area (e.g. Lekki)"
+   653→                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+   654→                      />
+   655→                      <input
+   656→                        value={newAddrInstructions}
+   657→                        onChange={e => setNewAddrInstructions(e.target.value)}
+   658→                        placeholder="Delivery instructions (optional)"
+   659→                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+   660→                      />
+   661→                      <div className="flex gap-2">
+   662→                        <button
+   663→                          onClick={handleSaveNewAddress}
+   664→                          disabled={!newAddrText.trim() || savingAddress}
+   665→                          className="flex-1 bg-[#10E07A] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+   666→                        >
+   667→                          {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+   668→                          Save Address
+   669→                        </button>
+   670→                        <button
+   671→                          onClick={() => setShowAddAddressForm(false)}
+   672→                          className="px-4 bg-white/5 text-white/60 font-bold py-2.5 rounded-xl text-sm"
+   673→                        >
+   674→                          Cancel
+   675→                        </button>
+   676→                      </div>
+   677→                    </motion.div>
+   678→                  ) : (
+   679→                    <button
+   680→                      onClick={() => setShowAddAddressForm(true)}
+   681→                      className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-white/15 text-white/60 hover:text-white hover:border-[#10E07A]/40 transition-colors text-sm font-bold"
+   682→                    >
+   683→                      <PlusIcon className="w-4 h-4" />
+   684→                      Add New Address
+   685→                    </button>
+   686→                  )}
+   687→
+   688→                  <div className="h-px bg-white/5 my-4" />
+   689→
+   690→                  <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold mb-2">Default Locations</p>
+   691→                  {/* Saved Locations */}
+   692→                  <div className="space-y-2">
+   693→                    {deliveryLocations.map(loc => (
+   694→                      <button
+   695→                        key={loc.id}
+   696→                        onClick={() => { setSelectedLocation(loc); setDeliveryAddress(loc.address); }}
+   697→                        className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+   698→                          selectedLocation.id === loc.id
+   699→                            ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+   700→                            : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   701→                        }`}
+   702→                      >
+   703→                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+   704→                          selectedLocation.id === loc.id ? 'bg-[#13ec13]/20' : 'bg-white/5'
+   705→                        }`}>
+   706→                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#13ec13]' : 'text-white/30'}`} />
+   707→                        </div>
+   708→                        <div className="flex-1 min-w-0">
+   709→                          <p className="text-white font-bold text-sm">{loc.name}</p>
+   710→                          <p className="text-white/40 text-xs truncate">{loc.address}</p>
+   711→                        </div>
+   712→                        {selectedLocation.id === loc.id && (
+   713→                          <Check className="w-5 h-5 text-[#13ec13] shrink-0" />
+   714→                        )}
+   715→                      </button>
+   716→                    ))}
+   717→                  </div>
+   718→
+   719→                  {/* Edit Address */}
+   720→                  <div className="mt-3 flex items-center gap-4">
+   721→                    {isEditingAddress ? (
+   722→                      <div className="flex-1 bg-[#1A1D26] rounded-2xl p-4 border border-white/5 space-y-3">
+   723→                        <input
+   724→                          value={editAddressValue}
+   725→                          onChange={e => setEditAddressValue(e.target.value)}
+   726→                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#13ec13]/30 focus:outline-none"
+   727→                          placeholder="Enter delivery address"
+   728→                        />
+   729→                        <div className="flex gap-2">
+   730→                          <button
+   731→                            onClick={handleSaveAddress}
+   732→                            className="flex-1 bg-[#13ec13] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
+   733→                          >
+   734→                            Save
+   735→                          </button>
+   736→                          <button
+   737→                            onClick={() => setIsEditingAddress(false)}
+   738→                            className="px-4 bg-white/5 text-white/60 font-bold py-2.5 rounded-xl text-sm"
+   739→                          >
+   740→                            Cancel
+   741→                          </button>
+   742→                        </div>
+   743→                      </div>
+   744→                    ) : (
+   745→                      <>
+   746→                        <button
+   747→                          onClick={() => { setEditAddressValue(effectiveAddress); setIsEditingAddress(true); }}
+   748→                          className="flex items-center gap-2 text-[#13ec13] text-xs font-bold hover:text-[#13ec13]/80 transition-colors"
+   749→                        >
+   750→                          <Edit3 className="w-3.5 h-3.5" />
+   751→                          Edit address
+   752→                        </button>
+   753→                        <button
+   754→                          onClick={() => setActiveModal('delivery-location')}
+   755→                          className="flex items-center gap-2 text-[#FFD700] text-xs font-bold hover:text-[#FFD700]/80 transition-colors"
+   756→                        >
+   757→                          <MapPin className="w-3.5 h-3.5" />
+   758→                          Set on map
+   759→                        </button>
+   760→                      </>
+   761→                    )}
+   762→                  </div>
+   763→                </div>
+   764→
+   765→                {/* Delivery Instructions */}
+   766→                <div>
+   767→                  <h4 className="text-white font-bold text-sm mb-2">Delivery Instructions</h4>
+   768→                  <input
+   769→                    value={deliveryInstructions}
+   770→                    onChange={e => setDeliveryInstructions(e.target.value)}
+   771→                    placeholder="e.g., Gate code, landmark, leave at door..."
+   772→                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#13ec13]/30 focus:outline-none placeholder:text-white/20"
+   773→                  />
+   774→                </div>
+   775→              </motion.div>
+   776→            )}
+   777→
+   778→            {/* ─────────── Step 2: Schedule (iftarPrecision, sahurAlarm) ─────────── */}
+   779→            {currentStep === 2 && (
+   780→              <motion.div
+   781→                key="schedule"
+   782→                initial={{ opacity: 0, x: 20 }}
+   783→                animate={{ opacity: 1, x: 0 }}
+   784→                exit={{ opacity: 0, x: -20 }}
+   785→                transition={{ duration: 0.2 }}
+   786→                className="space-y-6"
+   787→              >
+   788→                {/* Iftar Precision Toggle */}
+   789→                <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+   790→                  <div className="flex items-center gap-3">
+   791→                    <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center">
+   792→                      <Sun className="w-5 h-5 text-[#FFD700]" />
+   793→                    </div>
+   794→                    <div>
+   795→                      <p className="text-white font-bold text-sm">Iftar Precision</p>
+   796→                      <p className="text-white/40 text-xs">Deliver 15 min before Maghrib</p>
+   797→                    </div>
+   798→                  </div>
+   799→                  <button
+   800→                    onClick={() => setIftarPrecision(!iftarPrecision)}
+   801→                    className={`w-12 h-7 rounded-full transition-all relative ${
+   802→                      iftarPrecision ? 'bg-[#13ec13]' : 'bg-white/10'
+   803→                    }`}
+   804→                  >
+   805→                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
+   806→                      iftarPrecision ? 'left-6' : 'left-1'
+   807→                    }`} />
+   808→                  </button>
+   809→                </div>
+   810→
+   811→                {/* Sahur Alarm Toggle */}
+   812→                <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+   813→                  <div className="flex items-center gap-3">
+   814→                    <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center">
+   815→                      <Bell className="w-5 h-5 text-[#13ec13]" />
+   816→                    </div>
+   817→                    <div>
+   818→                      <p className="text-white font-bold text-sm">Sahur Alarm</p>
+   819→                      <p className="text-white/40 text-xs">Wake-up reminder before Fajr</p>
+   820→                    </div>
+   821→                  </div>
+   822→                  <button
+   823→                    onClick={() => setSahurAlarm(!sahurAlarm)}
+   824→                    className={`w-12 h-7 rounded-full transition-all relative ${
+   825→                      sahurAlarm ? 'bg-[#13ec13]' : 'bg-white/10'
+   826→                    }`}
+   827→                  >
+   828→                    <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
+   829→                      sahurAlarm ? 'left-6' : 'left-1'
+   830→                    }`} />
+   831→                  </button>
+   832→                </div>
+   833→
+   834→                {/* Time Slot Selection */}
+   835→                <div>
+   836→                  <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
+   837→                    <Clock className="w-5 h-5 text-[#13ec13]" />
+   838→                    Delivery Time Slot
+   839→                  </h3>
+   840→                  <div className="grid grid-cols-2 gap-3">
+   841→                    {timeSlots.map(slot => {
+   842→                      const Icon = slot.icon;
+   843→                      return (
+   844→                        <button
+   845→                          key={slot.id}
+   846→                          onClick={() => setSelectedTimeSlot(slot.id)}
+   847→                          className={`p-4 rounded-2xl border text-left transition-all relative ${
+   848→                            selectedTimeSlot === slot.id
+   849→                              ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+   850→                              : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   851→                          }`}
+   852→                        >
+   853→                          <div className="flex items-center gap-2 mb-2">
+   854→                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#13ec13]' : 'text-white/30'}`} />
+   855→                            <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[#13ec13]' : 'text-white'}`}>
+   856→                              {slot.label}
+   857→                            </span>
+   858→                          </div>
+   859→                          <p className="text-white/40 text-xs">{slot.time}</p>
+   860→                          {selectedTimeSlot === slot.id && (
+   861→                            <Check className="w-4 h-4 text-[#13ec13] absolute top-3 right-3" />
+   862→                          )}
+   863→                        </button>
+   864→                      );
+   865→                    })}
+   866→                  </div>
+   867→                </div>
+   868→
+   869→                {/* Iftar Timing Option */}
+   870→                {iftarPrecision && (
+   871→                  <div className="bg-[#FFD700]/5 rounded-2xl border border-[#FFD700]/20 p-4">
+   872→                    <div className="flex items-center gap-3 mb-2">
+   873→                      <Sun className="w-5 h-5 text-[#FFD700]" />
+   874→                      <span className="text-[#FFD700] font-bold text-sm">Iftar Delivery</span>
+   875→                    </div>
+   876→                    <p className="text-white/50 text-xs">
+   877→                      Your order will arrive 15 minutes before Maghrib (6:30 PM) so it&apos;s fresh for Iftar.
+   878→                    </p>
+   879→                  </div>
+   880→                )}
+   881→
+   882→                {/* Sahur Timing Option */}
+   883→                {sahurAlarm && (
+   884→                  <div className="bg-[#13ec13]/5 rounded-2xl border border-[#13ec13]/20 p-4">
+   885→                    <div className="flex items-center gap-3 mb-2">
+   886→                      <Moon className="w-5 h-5 text-[#13ec13]" />
+   887→                      <span className="text-[#13ec13] font-bold text-sm">Sahur Delivery</span>
+   888→                    </div>
+   889→                    <p className="text-white/50 text-xs">
+   890→                      Pre-dawn delivery between 3:00 - 4:30 AM so your Sahur meal is ready.
+   891→                    </p>
+   892→                  </div>
+   893→                )}
+   894→
+   895→                {/* Address Summary */}
+   896→                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
+   897→                  <p className="text-white/40 text-xs mb-1">Delivering to</p>
+   898→                  <p className="text-white font-bold text-sm">{effectiveAddress}</p>
+   899→                </div>
+   900→              </motion.div>
+   901→            )}
+   902→
+   903→            {/* ─────────── Step 3: Payment ─────────── */}
+   904→            {currentStep === 3 && (
+   905→              <motion.div
+   906→                key="payment"
+   907→                initial={{ opacity: 0, x: 20 }}
+   908→                animate={{ opacity: 1, x: 0 }}
+   909→                exit={{ opacity: 0, x: -20 }}
+   910→                transition={{ duration: 0.2 }}
+   911→                className="space-y-6"
+   912→              >
+   913→                <div>
+   914→                  <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
+   915→                    <CreditCard className="w-5 h-5 text-[#13ec13]" />
+   916→                    Payment Method
+   917→                  </h3>
+   918→                  <div className="space-y-2">
+   919→                    {paymentMethods.map(pm => (
+   920→                      <button
+   921→                        key={pm.id}
+   922→                        onClick={() => setPaymentMethod(pm.id)}
+   923→                        className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+   924→                          paymentMethod === pm.id
+   925→                            ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+   926→                            : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   927→                        }`}
+   928→                      >
+   929→                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+   930→                          paymentMethod === pm.id ? 'bg-[#13ec13]/20' : 'bg-white/5'
+   931→                        }`}>
+   932→                          <span className={`material-symbols-outlined text-lg ${
+   933→                            paymentMethod === pm.id ? 'text-[#13ec13]' : 'text-white/30'
+   934→                          }`}>{pm.icon}</span>
+   935→                        </div>
+   936→                        <div className="flex-1">
+   937→                          <p className="text-white font-bold text-sm">{pm.name}</p>
+   938→                          {pm.providers.length > 0 && (
+   939→                            <p className="text-white/40 text-xs">{pm.providers.join(', ')}</p>
+   940→                          )}
+   941→                        </div>
+   942→                        {paymentMethod === pm.id && (
+   943→                          <Check className="w-5 h-5 text-[#13ec13] shrink-0" />
+   944→                        )}
+   945→                      </button>
+   946→                    ))}
+   947→                  </div>
+   948→                </div>
+   949→
+   950→                {/* BNPL Options */}
+   951→                {paymentMethod === 'bnpl' && (
+   952→                  <motion.div
+   953→                    initial={{ opacity: 0, height: 0 }}
+   954→                    animate={{ opacity: 1, height: 'auto' }}
+   955→                    exit={{ opacity: 0, height: 0 }}
+   956→                  >
+   957→                    <h4 className="text-white font-bold text-sm mb-3">Choose Plan</h4>
+   958→                    <div className="space-y-2">
+   959→                      {bnplPlans.map(plan => (
+   960→                        <button
+   961→                          key={plan.months}
+   962→                          onClick={() => setSelectedBnplPlan(plan.months)}
+   963→                          className={`w-full flex items-center justify-between p-4 rounded-2xl border text-left transition-all ${
+   964→                            selectedBnplPlan === plan.months
+   965→                              ? 'bg-[#FFD700]/5 border-[#FFD700]/30'
+   966→                              : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   967→                          }`}
+   968→                        >
+   969→                          <div>
+   970→                            <div className="flex items-center gap-2">
+   971→                              <p className="text-white font-bold text-sm">{plan.label}</p>
+   972→                              {plan.ramadanOffer && (
+   973→                                <span className="bg-[#13ec13]/10 text-[#13ec13] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#13ec13]/20">
+   974→                                  0% RAMADAN
+   975→                                </span>
+   976→                              )}
+   977→                            </div>
+   978→                            <p className="text-white/40 text-xs">
+   979→                              {plan.interestRate}% interest &bull; {formatNaira(Math.round(total / plan.months))}/mo
+   980→                            </p>
+   981→                          </div>
+   982→                          {selectedBnplPlan === plan.months && (
+   983→                            <Check className="w-5 h-5 text-[#FFD700] shrink-0" />
+   984→                          )}
+   985→                        </button>
+   986→                      ))}
+   987→                    </div>
+   988→                  </motion.div>
+   989→                )}
+   990→
+   991→                {/* Coupon Code */}
+   992→                <div>
+   993→                  <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+   994→                    <Tag className="w-4 h-4 text-[#A78BFA]" />
+   995→                    Promo Code
+   996→                  </h4>
+   997→                  {couponState === 'applied' ? (
+   998→                    <div className="bg-[#10E07A]/5 border border-[#10E07A]/30 rounded-2xl p-4 flex items-center gap-3">
+   999→                      <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center">
+  1000→                        <Check className="w-5 h-5 text-[#10E07A]" />
+  1001→                      </div>
+  1002→                      <div className="flex-1 min-w-0">
+  1003→                        <p className="text-white font-bold text-sm font-mono">{appliedCouponCode}</p>
+  1004→                        <p className="text-[#10E07A] text-xs">{couponMessage}</p>
+  1005→                      </div>
+  1006→                      <button
+  1007→                        onClick={handleRemoveCoupon}
+  1008→                        className="px-3 py-1.5 bg-white/5 border border-white/10 rounded-lg text-xs font-bold text-white/60 hover:text-white hover:bg-white/10"
+  1009→                      >
+  1010→                        Remove
+  1011→                      </button>
+  1012→                    </div>
+  1013→                  ) : (
+  1014→                    <div className="flex gap-2">
+  1015→                      <input
+  1016→                        value={couponCode}
+  1017→                        onChange={e => {
+  1018→                          setCouponCode(e.target.value.toUpperCase());
+  1019→                          if (couponState === 'error') setCouponState('idle');
+  1020→                        }}
+  1021→                        placeholder="Enter code (e.g. RAMADAN)"
+  1022→                        className="flex-1 bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
+  1023→                      />
+  1024→                      <button
+  1025→                        onClick={handleApplyCoupon}
+  1026→                        disabled={!couponCode.trim() || couponState === 'applying'}
+  1027→                        className="px-5 bg-[#10E07A] text-[#06070B] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+  1028→                      >
+  1029→                        {couponState === 'applying' ? (
+  1030→                          <Loader2 className="w-4 h-4 animate-spin" />
+  1031→                        ) : (
+  1032→                          'Apply'
+  1033→                        )}
+  1034→                      </button>
+  1035→                    </div>
+  1036→                  )}
+  1037→                  {couponState === 'error' && couponMessage && (
+  1038→                    <p className="text-[#FB7185] text-xs mt-2 flex items-center gap-1">
+  1039→                      <X className="w-3 h-3" />
+  1040→                      {couponMessage}
+  1041→                    </p>
+  1042→                  )}
+  1043→                </div>
+  1044→
+  1045→                {/* Order Summary */}
+  1046→                <div>
+  1047→                  <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+  1048→                    <Package className="w-4 h-4 text-[#F5C451]" />
+  1049→                    Order Summary
+  1050→                  </h4>
+  1051→                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 space-y-3">
+  1052→                    {cartItems.map(item => (
+  1053→                      <div key={item.id} className="flex justify-between items-center">
+  1054→                        <div className="flex-1 min-w-0">
+  1055→                          <p className="text-white text-xs font-medium truncate pr-2">{item.name} x{item.quantity}</p>
+  1056→                        </div>
+  1057→                        <span className="text-white/50 text-xs font-bold">{formatNaira(item.price * item.quantity)}</span>
+  1058→                      </div>
+  1059→                    ))}
+  1060→                    <div className="h-px bg-white/5" />
+  1061→                    <div className="flex justify-between text-xs">
+  1062→                      <span className="text-white/40">Subtotal</span>
+  1063→                      <span className="text-white font-bold">{formatNaira(subtotal)}</span>
+  1064→                    </div>
+  1065→                    <div className="flex justify-between text-xs">
+  1066→                      <span className="text-white/40">Delivery Fee</span>
+  1067→                      <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
+  1068→                        {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
+  1069→                      </span>
+  1070→                    </div>
+  1071→                    <div className="flex justify-between text-xs">
+  1072→                      <span className="text-white/40">Service Fee</span>
+  1073→                      <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
+  1074→                    </div>
+  1075→                    {discount > 0 && (
+  1076→                      <div className="flex justify-between text-xs">
+  1077→                        <span className="text-[#10E07A]">Discount ({appliedCouponCode})</span>
+  1078→                        <span className="text-[#10E07A] font-bold">-{formatNaira(discount)}</span>
+  1079→                      </div>
+  1080→                    )}
+  1081→                    <div className="h-px bg-white/5" />
+  1082→                    <div className="flex justify-between">
+  1083→                      <span className="text-white font-bold text-sm">Total</span>
+  1084→                      <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
+  1085→                    </div>
+  1086→                  </div>
+  1087→                </div>
+  1088→              </motion.div>
+  1089→            )}
+  1090→
+  1091→            {/* ─────────── Step 4: Success ─────────── */}
+  1092→            {currentStep === 4 && (
+  1093→              <motion.div
+  1094→                key="success"
+  1095→                initial={{ opacity: 0, scale: 0.95 }}
+  1096→                animate={{ opacity: 1, scale: 1 }}
+  1097→                exit={{ opacity: 0, scale: 0.95 }}
+  1098→                className="relative flex flex-col items-center text-center py-8 space-y-6 overflow-hidden"
+  1099→              >
+  1100→                {/* Confetti is handled by canvas-confetti via triggerOrderCelebration() */}
+  1101→
+  1102→                {/* Success Animation */}
+  1103→                <motion.div
+  1104→                  initial={{ scale: 0 }}
+  1105→                  animate={{ scale: 1 }}
+  1106→                  transition={{ type: 'spring', damping: 10, stiffness: 100, delay: 0.2 }}
+  1107→                  className="w-24 h-24 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
+  1108→                >
+  1109→                  <motion.div
+  1110→                    initial={{ scale: 0 }}
+  1111→                    animate={{ scale: 1 }}
+  1112→                    transition={{ delay: 0.5, type: 'spring', damping: 10 }}
+  1113→                  >
+  1114→                    <PartyPopper className="w-12 h-12 text-[#10E07A]" />
+  1115→                  </motion.div>
+  1116→                </motion.div>
+  1117→
+  1118→                <div>
+  1119→                  <motion.h3
+  1120→                    initial={{ opacity: 0, y: 10 }}
+  1121→                    animate={{ opacity: 1, y: 0 }}
+  1122→                    transition={{ delay: 0.6 }}
+  1123→                    className="text-white text-2xl font-black mb-2"
+  1124→                  >
+  1125→                    Order Placed! 🎉
+  1126→                  </motion.h3>
+  1127→                  <motion.p
+  1128→                    initial={{ opacity: 0, y: 10 }}
+  1129→                    animate={{ opacity: 1, y: 0 }}
+  1130→                    transition={{ delay: 0.7 }}
+  1131→                    className="text-white/50 text-sm"
+  1132→                  >
+  1133→                    Your Ramadan order is being prepared
+  1134→                  </motion.p>
+  1135→                </div>
+  1136→
+  1137→                {/* Order Details */}
+  1138→                <motion.div
+  1139→                  initial={{ opacity: 0, y: 10 }}
+  1140→                  animate={{ opacity: 1, y: 0 }}
+  1141→                  transition={{ delay: 0.8 }}
+  1142→                  className="w-full bg-[#1A1D26] rounded-2xl border border-white/5 p-5 space-y-3 text-left"
+  1143→                >
+  1144→                  <div className="flex justify-between">
+  1145→                    <span className="text-white/40 text-xs">Order Number</span>
+  1146→                    <span className="text-white font-bold text-xs font-mono">{orderId}</span>
+  1147→                  </div>
+  1148→                  <div className="flex justify-between">
+  1149→                    <span className="text-white/40 text-xs">Estimated Delivery</span>
+  1150→                    <span className="text-[#10E07A] font-bold text-xs">
+  1151→                      {selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
+  1152→                       selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
+  1153→                       selectedTimeSlot === 'evening' ? '4:00 - 7:00 PM' : '8:00 - 10:00 PM'}
+  1154→                    </span>
+  1155→                  </div>
+  1156→                  <div className="flex justify-between">
+  1157→                    <span className="text-white/40 text-xs">Items</span>
+  1158→                    <span className="text-white font-bold text-xs">{placedCartItems.length} item{placedCartItems.length !== 1 ? 's' : ''}</span>
+  1159→                  </div>
+  1160→                  <div className="flex justify-between">
+  1161→                    <span className="text-white/40 text-xs">Total</span>
+  1162→                    <span className="text-[#10E07A] font-black text-sm">{formatNaira(placedTotal)}</span>
+  1163→                  </div>
+  1164→                  {appliedCouponCode && (
+  1165→                    <div className="flex justify-between">
+  1166→                      <span className="text-white/40 text-xs">Promo Code</span>
+  1167→                      <span className="text-[#10E07A] font-bold text-xs font-mono">{appliedCouponCode}</span>
+  1168→                    </div>
+  1169→                  )}
+  1170→                  {paymentReference && (
+  1171→                    <div className="flex justify-between">
+  1172→                      <span className="text-white/40 text-xs">Payment Ref</span>
+  1173→                      <span className="text-white/60 font-mono text-[10px] truncate max-w-[60%] text-right">{paymentReference}</span>
+  1174→                    </div>
+  1175→                  )}
+  1176→                  {iftarPrecision && (
+  1177→                    <div className="flex items-center gap-2 bg-[#FFD700]/5 rounded-lg px-3 py-2 border border-[#FFD700]/10">
+  1178→                      <Sun className="w-3.5 h-3.5 text-[#FFD700]" />
+  1179→                      <span className="text-[#FFD700] text-[10px] font-bold">Iftar Precision enabled - delivery before Maghrib</span>
+  1180→                    </div>
+  1181→                  )}
+  1182→                  {sahurAlarm && (
+  1183→                    <div className="flex items-center gap-2 bg-[#10E07A]/5 rounded-lg px-3 py-2 border border-[#10E07A]/10">
+  1184→                      <Bell className="w-3.5 h-3.5 text-[#10E07A]" />
+  1185→                      <span className="text-[#10E07A] text-[10px] font-bold">Sahur alarm set - you&apos;ll be reminded before Fajr</span>
+  1186→                    </div>
+  1187→                  )}
+  1188→                </motion.div>
+  1189→
+  1190→                {/* Track Order Button */}
+  1191→                <motion.button
+  1192→                  initial={{ opacity: 0, y: 10 }}
+  1193→                  animate={{ opacity: 1, y: 0 }}
+  1194→                  transition={{ delay: 1 }}
+  1195→                  onClick={handleTrackOrder}
+  1196→                  className="w-full bg-[#10E07A] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
+  1197→                >
+  1198→                  <Truck className="w-5 h-5" />
+  1199→                  Track Order
+  1200→                  <ChevronRight className="w-4 h-4" />
+  1201→                </motion.button>
+  1202→
+  1203→                <button
+  1204→                  onClick={handleClose}
+  1205→                  className="text-white/40 text-sm font-bold hover:text-white/60 transition-colors"
+  1206→                >
+  1207→                  Continue Shopping
+  1208→                </button>
+  1209→              </motion.div>
+  1210→            )}
+  1211→          </AnimatePresence>
+  1212→        </div>
+  1213→
+  1214→        {/* Bottom Navigation Buttons */}
+  1215→        {currentStep < 4 && (
+  1216→          <div className="fixed bottom-0 left-0 right-0 z-20 bg-[#05070A] border-t border-white/5 px-4 py-4 space-y-3">
+  1217→            {/* Order Total Bar */}
+  1218→            <div className="flex items-center justify-between">
+  1219→              <div>
+  1220→                <p className="text-white/40 text-[10px] uppercase">Total</p>
+  1221→                <p className="text-[#13ec13] font-black text-lg">{formatNaira(total)}</p>
+  1222→              </div>
+  1223→              <div className="flex gap-2">
+  1224→                {currentStep > 0 && (
+  1225→                  <button
+  1226→                    onClick={handleBack}
+  1227→                    className="px-6 py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition-colors"
+  1228→                  >
+  1229→                    Back
+  1230→                  </button>
+  1231→                )}
+  1232→                {currentStep < 3 ? (
+  1233→                  <button
+  1234→                    onClick={handleNext}
+  1235→                    disabled={currentStep === 0 && cartItems.length === 0}
+  1236→                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
+  1237→                  >
+  1238→                    Continue
+  1239→                  </button>
+  1240→                ) : (
+  1241→                  <button
+  1242→                    onClick={handlePlaceOrder}
+  1243→                    disabled={placing}
+  1244→                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#10E07A]/30 disabled:opacity-60 disabled:pointer-events-none"
+  1245→                  >
+  1246→                    {placing ? (
+  1247→                      <>
+  1248→                        <Loader2 className="w-4 h-4 animate-spin" />
+  1249→                        Placing...
+  1250→                      </>
+  1251→                    ) : (
+  1252→                      <>
+  1253→                        Place Order
+  1254→                        <ChevronRight className="w-4 h-4" />
+  1255→                      </>
+  1256→                    )}
+  1257→                  </button>
+  1258→                )}
+  1259→              </div>
+  1260→            </div>
+  1261→          </div>
+  1262→        )}
+  1263→      </motion.div>
+  1264→    </>
+  1265→  );
+  1266→}
+  1267→
