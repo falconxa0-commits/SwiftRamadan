@@ -17,6 +17,13 @@ export const authOptions: NextAuthOptions = {
       console.warn('[Auth] WARNING: Using development-only secret. Set NEXTAUTH_SECRET for production.');
       return 'swift-ramadan-dev-secret-for-development-only';
     }
+    // During Next.js build (next build), NODE_ENV is 'production' but the app
+    // isn't actually running — it's just collecting page data. Allow build to
+    // proceed with a placeholder; the real check happens at runtime via the
+    // startup validation in scripts/start-production.sh
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      return 'build-time-placeholder-do-not-use-in-runtime';
+    }
     throw new Error('NEXTAUTH_SECRET environment variable is required in production');
   })(),
 

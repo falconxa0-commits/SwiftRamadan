@@ -4564,3 +4564,54 @@ Stage Summary:
 - 10 tools: lookup_order, lookup_user_orders, search_products, get_popular_products, get_active_coupons, get_rider_earnings, get_vendor_orders, get_vendor_products, get_low_stock_products, get_business_metrics
 - Each agent has: persona system prompt, Nigerian/Ramadan context, tool access, greeting, quick actions
 - Agent Orchestrator: auth, rate limiting, role-based access, context injection, tool calling with follow-up
+
+---
+Task ID: p2-p4
+Agent: Production Scripts
+Task: Create production startup and migration scripts
+
+Work Log:
+- Created /home/z/my-project/scripts/start-production.sh (chmod +x)
+  - 6-step production startup: env validation, DB connection check, Prisma migrate deploy (with db push fallback), Prisma generate, port 3000 check, exec node server.js
+  - Validates DATABASE_URL, NEXTAUTH_SECRET, AUTH_JWT_SECRET
+- Created /home/z/my-project/scripts/migrate-sqlite-to-pg.sh (chmod +x)
+  - Exports 20 SQLite tables as JSON to /tmp/swiftramadan-migration/
+  - Validates sqlite3 CLI and DB file existence
+  - Reports row counts per table
+- Created /home/z/my-project/scripts/import-migration-data.ts
+  - TypeScript script using Prisma db client from src/lib/db
+  - Reads JSON exports, converts date strings, uses createMany with skipDuplicates
+  - Imports in dependency order (User first)
+- Created /home/z/my-project/scripts/generate-secrets.sh (chmod +x)
+  - Generates NEXTAUTH_SECRET and AUTH_JWT_SECRET via openssl rand -base64 32
+
+Stage Summary:
+- 4 scripts created in /home/z/my-project/scripts/
+- 3 shell scripts made executable (start-production.sh, migrate-sqlite-to-pg.sh, generate-secrets.sh)
+- 1 TypeScript import script (import-migration-data.ts)
+- Complete production deployment workflow: generate secrets → migrate SQLite → import to PG → start production
+
+---
+Task ID: Production-Deployment
+Agent: Main Orchestrator
+Task: Move SwiftRamadan to production — build, scripts, migration, bootstrap
+
+Work Log:
+- Ran `next build` — first attempt failed due to NEXTAUTH_SECRET throwing in production
+- Fixed auth-config.ts to allow build phase with NEXT_PHASE=phase-production-build check
+- Rebuilt successfully: all 67+ API routes compiled, standalone output generated
+- Updated next.config.ts with standalone output, image optimization, compression, cache headers
+- Created scripts/start-production.sh — 6-step startup (env validation, DB check, migrations, port check, start)
+- Created scripts/migrate-sqlite-to-pg.sh — exports 20 SQLite tables as JSON
+- Created scripts/import-migration-data.ts — imports JSON data into PostgreSQL via Prisma
+- Created scripts/generate-secrets.sh — generates NEXTAUTH_SECRET and AUTH_JWT_SECRET
+- Created scripts/bootstrap-production.sh — one-click Ubuntu server setup (Docker, secrets, .env, SSL)
+- Verified: lint 0 errors, production build compiles, standalone server.js generated
+- Health check confirmed: { status: "ok", database: { status: "ok" } }
+
+Stage Summary:
+- Production build compiles successfully with standalone output
+- 5 new scripts created for deployment workflow
+- 1 fix: auth-config.ts build-phase safety (NEXT_PHASE check)
+- 1 fix: next.config.ts updated with standalone + optimizations
+- Dev server has memory pressure in sandbox but production build is clean
