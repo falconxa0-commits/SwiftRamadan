@@ -72,6 +72,10 @@ import SettingsModal from '@/components/swift/SettingsModal';
 import EditProfileModal from '@/components/swift/EditProfileModal';
 import HelpCenterModal from '@/components/swift/HelpCenterModal';
 import LegalPagesModal from '@/components/swift/LegalPagesModal';
+import WalletModal from '@/components/swift/WalletModal';
+import PayoutModal from '@/components/swift/PayoutModal';
+import KYCModal from '@/components/swift/KYCModal';
+import SupportModal from '@/components/swift/SupportModal';
 import {
   Search,
   ShoppingBag,
@@ -623,6 +627,10 @@ function AllModals() {
       <HelpCenterModal />
       <LegalPagesModal />
       <SafaAgentHub />
+      <WalletModal />
+      <PayoutModal />
+      <KYCModal />
+      <SupportModal />
     </>
   );
 }

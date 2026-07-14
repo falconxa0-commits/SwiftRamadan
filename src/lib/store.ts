@@ -243,6 +243,12 @@ interface AppState {
   vendorTotalEarnings: number;
   setVendorTotalEarnings: (val: number) => void;
 
+  // Wallet & KYC
+  walletBalance: number;
+  setWalletBalance: (val: number) => void;
+  kycStatus: string;
+  setKycStatus: (status: string) => void;
+
   // Logout
   logout: () => void;
 }
@@ -534,6 +540,12 @@ export const useAppStore = create<AppState>()(
       vendorTotalEarnings: 0,
       setVendorTotalEarnings: (val) => set({ vendorTotalEarnings: val }),
 
+      // Wallet & KYC
+      walletBalance: 0,
+      setWalletBalance: (val) => set({ walletBalance: val }),
+      kycStatus: 'none',
+      setKycStatus: (status) => set({ kycStatus: status }),
+
       // Logout
       logout: () => {
         set({
@@ -575,6 +587,8 @@ export const useAppStore = create<AppState>()(
           riderEarnings: 0,
           riderCompletedToday: 0,
           riderRating: 0,
+          walletBalance: 0,
+          kycStatus: 'none',
           customerDietaryPrefs: [],
           customerFavoriteCategories: [],
           deliveryAddress: '',

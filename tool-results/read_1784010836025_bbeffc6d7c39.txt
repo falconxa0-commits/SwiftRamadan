@@ -1,0 +1,599 @@
+     1→'use client';
+     2→
+     3→import { useState } from 'react';
+     4→import { motion, AnimatePresence } from 'framer-motion';
+     5→import {
+     6→  X, ChevronLeft, ChevronRight, Gift, Heart, Send,
+     7→  Check, Sparkles, MessageSquare, User, CreditCard
+     8→} from 'lucide-react';
+     9→import { useAppStore } from '@/lib/store';
+    10→import {
+    11→  giftCardTemplates,
+    12→  giftCardMoods,
+    13→  giftCardBlessings,
+    14→  giftCardAmountPresets,
+    15→  paymentMethods,
+    16→  formatNaira,
+    17→} from '@/lib/data';
+    18→
+    19→const themeMap: Record<string, string> = {
+    20→  'Crescent Grace': 'crescent-grace',
+    21→  'Midnight over Abuja': 'midnight-abuja',
+    22→  'Traditional Lanterns': 'traditional-lanterns',
+    23→  'Royal Gold': 'royal-gold',
+    24→  'Emerald Heritage': 'emerald-heritage',
+    25→  'Marble Elegance': 'marble-elegance',
+    26→};
+    27→
+    28→const reverseThemeMap: Record<string, string> = Object.fromEntries(
+    29→  Object.entries(themeMap).map(([k, v]) => [v, k])
+    30→);
+    31→
+    32→export default function GiftCardModal() {
+    33→  const {
+    34→    activeModal, setActiveModal,
+    35→    giftCardStep, setGiftCardStep,
+    36→    giftCardTheme, setGiftCardTheme,
+    37→    giftCardAmount, setGiftCardAmount,
+    38→    giftCardRecipient, setGiftCardRecipient,
+    39→    giftCardMessage, setGiftCardMessage,
+    40→    giftCardDeliveryMethod, setGiftCardDeliveryMethod,
+    41→    giftCardMood, setGiftCardMood,
+    42→    resetGiftCard,
+    43→    userName,
+    44→    addOrder,
+    45→  } = useAppStore();
+    46→
+    47→  const isOpen = activeModal === 'giftcard';
+    48→  const [customAmount, setCustomAmount] = useState('');
+    49→  const [charityOptIn, setCharityOptIn] = useState(false);
+    50→  const [selectedPayment, setSelectedPayment] = useState('card');
+    51→  const [selectedBlessing, setSelectedBlessing] = useState(0);
+    52→  const [showSuccess, setShowSuccess] = useState(false);
+    53→
+    54→  const handleClose = () => {
+    55→    setActiveModal(null);
+    56→    resetGiftCard();
+    57→    setShowSuccess(false);
+    58→    setCustomAmount('');
+    59→    setCharityOptIn(false);
+    60→    setSelectedPayment('card');
+    61→    setSelectedBlessing(0);
+    62→  };
+    63→
+    64→  const handleNext = () => {
+    65→    if (giftCardStep < 2) setGiftCardStep(giftCardStep + 1);
+    66→  };
+    67→
+    68→  const handleBack = () => {
+    69→    if (giftCardStep > 0) setGiftCardStep(giftCardStep - 1);
+    70→  };
+    71→
+    72→  const handleSelectTheme = (templateName: string) => {
+    73→    setGiftCardTheme(themeMap[templateName] || templateName.toLowerCase().replace(/\s+/g, '-'));
+    74→  };
+    75→
+    76→  const handleAmountPreset = (amount: number) => {
+    77→    setGiftCardAmount(amount);
+    78→    setCustomAmount('');
+    79→  };
+    80→
+    81→  const handleCustomAmount = () => {
+    82→    const val = parseInt(customAmount);
+    83→    if (val > 0) {
+    84→      setGiftCardAmount(val);
+    85→    }
+    86→  };
+    87→
+    88→  const handleBlessing = (idx: number) => {
+    89→    setSelectedBlessing(idx);
+    90→    setGiftCardMessage(giftCardBlessings[idx]);
+    91→  };
+    92→
+    93→  const handleConfirm = () => {
+    94→    setShowSuccess(true);
+    95→    const orderId = `SWR-${Math.floor(1000 + Math.random() * 9000)}`;
+    96→    addOrder({
+    97→      id: orderId,
+    98→      item: `Gift Card - ${formatNaira(giftCardAmount)}`,
+    99→      status: 'Sent',
+   100→      eta: `To ${giftCardRecipient}`,
+   101→      total: giftCardAmount + 500,
+   102→      rider: null,
+   103→      items: [{ name: `Gift Card (${reverseThemeMap[giftCardTheme] || giftCardTheme})`, qty: 1, price: giftCardAmount }],
+   104→      progress: 100,
+   105→    });
+   106→    setTimeout(() => {
+   107→      handleClose();
+   108→    }, 2500);
+   109→  };
+   110→
+   111→  const deliveryFee = 500;
+   112→  const charityAmount = charityOptIn ? Math.round(giftCardAmount * 0.1) : 0;
+   113→  const totalAmount = giftCardAmount + deliveryFee + charityAmount;
+   114→
+   115→  const currentThemeTemplate = giftCardTemplates.find(
+   116→    (t) => themeMap[t.name] === giftCardTheme
+   117→  ) || giftCardTemplates[0];
+   118→
+   119→  if (!isOpen) return null;
+   120→
+   121→  return (
+   122→    <AnimatePresence>
+   123→      <motion.div
+   124→        initial={{ opacity: 0 }}
+   125→        animate={{ opacity: 1 }}
+   126→        exit={{ opacity: 0 }}
+   127→        className="fixed inset-0 z-[60] bg-[#05070A]"
+   128→      >
+   129→        {/* Header */}
+   130→        <div className="flex items-center justify-between px-4 pt-4 pb-2">
+   131→          <button
+   132→            onClick={giftCardStep > 0 && !showSuccess ? handleBack : handleClose}
+   133→            className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10"
+   134→          >
+   135→            {giftCardStep > 0 && !showSuccess ? (
+   136→              <ChevronLeft className="w-5 h-5 text-white" />
+   137→            ) : (
+   138→              <X className="w-5 h-5 text-white" />
+   139→            )}
+   140→          </button>
+   141→          <div className="flex items-center gap-2">
+   142→            <Gift className="w-5 h-5 text-[#FFD700]" />
+   143→            <h2 className="text-white font-bold text-lg">Gift Card</h2>
+   144→          </div>
+   145→          <div className="w-10" />
+   146→        </div>
+   147→
+   148→        {/* Step Indicators */}
+   149→        {!showSuccess && (
+   150→          <div className="flex items-center justify-center gap-3 py-3">
+   151→            {[0, 1, 2].map((step) => (
+   152→              <div key={step} className="flex items-center gap-2">
+   153→                <div
+   154→                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+   155→                    step === giftCardStep
+   156→                      ? 'bg-[#13ec13] text-[#05070A]'
+   157→                      : step < giftCardStep
+   158→                      ? 'bg-[#13ec13]/30 text-[#13ec13]'
+   159→                      : 'bg-white/5 text-white/30 border border-white/10'
+   160→                  }`}
+   161→                >
+   162→                  {step < giftCardStep ? <Check className="w-4 h-4" /> : step + 1}
+   163→                </div>
+   164→                {step < 2 && (
+   165→                  <div className={`w-8 h-0.5 rounded ${step < giftCardStep ? 'bg-[#13ec13]' : 'bg-white/10'}`} />
+   166→                )}
+   167→              </div>
+   168→            ))}
+   169→          </div>
+   170→        )}
+   171→
+   172→        {/* Content */}
+   173→        <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-24" style={{ height: 'calc(100vh - 120px)' }}>
+   174→          <AnimatePresence mode="wait">
+   175→            {showSuccess ? (
+   176→              <motion.div
+   177→                key="success"
+   178→                initial={{ opacity: 0, scale: 0.8 }}
+   179→                animate={{ opacity: 1, scale: 1 }}
+   180→                className="flex flex-col items-center justify-center py-20"
+   181→              >
+   182→                <motion.div
+   183→                  initial={{ scale: 0 }}
+   184→                  animate={{ scale: 1 }}
+   185→                  transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
+   186→                  className="w-24 h-24 rounded-full bg-[#13ec13]/20 flex items-center justify-center mb-6"
+   187→                >
+   188→                  <motion.div
+   189→                    initial={{ scale: 0 }}
+   190→                    animate={{ scale: 1 }}
+   191→                    transition={{ type: 'spring', stiffness: 300, delay: 0.3 }}
+   192→                  >
+   193→                    <Check className="w-12 h-12 text-[#13ec13]" />
+   194→                  </motion.div>
+   195→                </motion.div>
+   196→                <motion.h2
+   197→                  initial={{ opacity: 0, y: 10 }}
+   198→                  animate={{ opacity: 1, y: 0 }}
+   199→                  transition={{ delay: 0.4 }}
+   200→                  className="text-white text-2xl font-black mb-2"
+   201→                >
+   202→                  Gift Card Sent! 🎁
+   203→                </motion.h2>
+   204→                <motion.p
+   205→                  initial={{ opacity: 0, y: 10 }}
+   206→                  animate={{ opacity: 1, y: 0 }}
+   207→                  transition={{ delay: 0.5 }}
+   208→                  className="text-white/50 text-sm text-center"
+   209→                >
+   210→                  Your {formatNaira(giftCardAmount)} gift card has been sent to {giftCardRecipient} via {giftCardDeliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}
+   211→                </motion.p>
+   212→                {charityOptIn && (
+   213→                  <motion.p
+   214→                    initial={{ opacity: 0 }}
+   215→                    animate={{ opacity: 1 }}
+   216→                    transition={{ delay: 0.6 }}
+   217→                    className="text-[#FFD700] text-sm mt-2"
+   218→                  >
+   219→                    🤲 {formatNaira(charityAmount)} donated to charity
+   220→                  </motion.p>
+   221→                )}
+   222→              </motion.div>
+   223→            ) : giftCardStep === 0 ? (
+   224→              <motion.div
+   225→                key="design"
+   226→                initial={{ opacity: 0, x: 20 }}
+   227→                animate={{ opacity: 1, x: 0 }}
+   228→                exit={{ opacity: 0, x: -20 }}
+   229→                transition={{ duration: 0.2 }}
+   230→              >
+   231→                {/* Theme Selection */}
+   232→                <h3 className="text-white font-bold text-sm mb-3 mt-2">Choose a Theme</h3>
+   233→                <div className="grid grid-cols-2 gap-3">
+   234→                  {giftCardTemplates.map((template) => {
+   235→                    const isSelected = themeMap[template.name] === giftCardTheme;
+   236→                    return (
+   237→                      <button
+   238→                        key={template.id}
+   239→                        onClick={() => handleSelectTheme(template.name)}
+   240→                        className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-200 ${
+   241→                          isSelected ? 'border-[#13ec13] shadow-lg shadow-[#13ec13]/20' : 'border-white/5 hover:border-white/20'
+   242→                        }`}
+   243→                      >
+   244→                        <div
+   245→                          className={`bg-gradient-to-br ${template.color} h-28 flex items-center justify-center`}
+   246→                        >
+   247→                          <span className="material-symbols-outlined text-4xl text-white/40">
+   248→                            {template.icon}
+   249→                          </span>
+   250→                        </div>
+   251→                        <div className="px-3 py-2 bg-[#1A1D26]">
+   252→                          <p className="text-white text-xs font-bold truncate">{template.name}</p>
+   253→                        </div>
+   254→                        {isSelected && (
+   255→                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#13ec13] flex items-center justify-center">
+   256→                            <Check className="w-3 h-3 text-[#05070A]" />
+   257→                          </div>
+   258→                        )}
+   259→                      </button>
+   260→                    );
+   261→                  })}
+   262→                </div>
+   263→
+   264→                {/* Amount Presets */}
+   265→                <h3 className="text-white font-bold text-sm mb-3 mt-6">Select Amount</h3>
+   266→                <div className="flex flex-wrap gap-2">
+   267→                  {giftCardAmountPresets.map((amount) => (
+   268→                    <button
+   269→                      key={amount}
+   270→                      onClick={() => handleAmountPreset(amount)}
+   271→                      className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
+   272→                        giftCardAmount === amount && !customAmount
+   273→                          ? 'bg-[#13ec13] text-[#05070A]'
+   274→                          : 'bg-white/5 text-white border border-white/10 hover:border-[#13ec13]/30'
+   275→                      }`}
+   276→                    >
+   277→                      {formatNaira(amount)}
+   278→                    </button>
+   279→                  ))}
+   280→                </div>
+   281→
+   282→                {/* Custom Amount */}
+   283→                <div className="mt-4 flex gap-2">
+   284→                  <div className="flex-1 flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+   285→                    <span className="text-white/30 text-sm">₦</span>
+   286→                    <input
+   287→                      type="number"
+   288→                      value={customAmount}
+   289→                      onChange={(e) => {
+   290→                        setCustomAmount(e.target.value);
+   291→                        const val = parseInt(e.target.value);
+   292→                        if (val > 0) setGiftCardAmount(val);
+   293→                      }}
+   294→                      placeholder="Custom amount"
+   295→                      className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+   296→                    />
+   297→                  </div>
+   298→                  <button
+   299→                    onClick={handleCustomAmount}
+   300→                    className="bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] px-4 rounded-xl font-bold text-sm hover:bg-[#13ec13]/20 transition-colors"
+   301→                  >
+   302→                    Set
+   303→                  </button>
+   304→                </div>
+   305→
+   306→                {/* Blessing Selection */}
+   307→                <h3 className="text-white font-bold text-sm mb-3 mt-6">Choose a Blessing</h3>
+   308→                <div className="space-y-2">
+   309→                  {giftCardBlessings.map((blessing, idx) => (
+   310→                    <button
+   311→                      key={idx}
+   312→                      onClick={() => handleBlessing(idx)}
+   313→                      className={`w-full text-left p-3 rounded-xl border transition-all duration-200 ${
+   314→                        selectedBlessing === idx
+   315→                          ? 'bg-[#13ec13]/10 border-[#13ec13]/30 text-white'
+   316→                          : 'bg-[#1A1D26] border-white/5 text-white/70 hover:border-white/10'
+   317→                      }`}
+   318→                    >
+   319→                      <p className="text-xs leading-relaxed">{blessing}</p>
+   320→                    </button>
+   321→                  ))}
+   322→                </div>
+   323→
+   324→                {/* Next Button */}
+   325→                <button
+   326→                  onClick={handleNext}
+   327→                  className="w-full mt-6 bg-[#13ec13] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+   328→                >
+   329→                  Next
+   330→                  <ChevronRight className="w-4 h-4" />
+   331→                </button>
+   332→              </motion.div>
+   333→            ) : giftCardStep === 1 ? (
+   334→              <motion.div
+   335→                key="personalize"
+   336→                initial={{ opacity: 0, x: 20 }}
+   337→                animate={{ opacity: 1, x: 0 }}
+   338→                exit={{ opacity: 0, x: -20 }}
+   339→                transition={{ duration: 0.2 }}
+   340→              >
+   341→                {/* Recipient Name */}
+   342→                <h3 className="text-white font-bold text-sm mb-3 mt-2">Recipient Name</h3>
+   343→                <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+   344→                  <User className="w-4 h-4 text-white/30 shrink-0" />
+   345→                  <input
+   346→                    type="text"
+   347→                    value={giftCardRecipient}
+   348→                    onChange={(e) => setGiftCardRecipient(e.target.value)}
+   349→                    placeholder="Who is this gift for?"
+   350→                    className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+   351→                  />
+   352→                </div>
+   353→
+   354→                {/* From Field */}
+   355→                <h3 className="text-white font-bold text-sm mb-3 mt-5">From</h3>
+   356→                <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+   357→                  <User className="w-4 h-4 text-white/30 shrink-0" />
+   358→                  <input
+   359→                    type="text"
+   360→                    value={userName}
+   361→                    readOnly
+   362→                    className="flex-1 bg-transparent text-white/50 text-sm py-3 px-2 focus:outline-none"
+   363→                  />
+   364→                </div>
+   365→
+   366→                {/* Message */}
+   367→                <h3 className="text-white font-bold text-sm mb-3 mt-5">
+   368→                  Message{' '}
+   369→                  <span className="text-white/30 font-normal">
+   370→                    ({giftCardMessage.length}/200)
+   371→                  </span>
+   372→                </h3>
+   373→                <div className="bg-[#1A1D26] rounded-xl border border-white/10 p-3">
+   374→                  <textarea
+   375→                    value={giftCardMessage}
+   376→                    onChange={(e) => {
+   377→                      if (e.target.value.length <= 200) setGiftCardMessage(e.target.value);
+   378→                    }}
+   379→                    placeholder="Write a heartfelt message..."
+   380→                    rows={3}
+   381→                    className="w-full bg-transparent text-white text-sm focus:outline-none placeholder:text-white/30 resize-none"
+   382→                  />
+   383→                </div>
+   384→
+   385→                {/* Mood Selector */}
+   386→                <h3 className="text-white font-bold text-sm mb-3 mt-5">Mood</h3>
+   387→                <div className="flex gap-2">
+   388→                  {giftCardMoods.map((mood) => (
+   389→                    <button
+   390→                      key={mood.id}
+   391→                      onClick={() => setGiftCardMood(mood.id)}
+   392→                      className={`flex-1 flex flex-col items-center gap-2 p-3 rounded-xl border transition-all duration-200 ${
+   393→                        giftCardMood === mood.id
+   394→                          ? 'bg-[#13ec13]/10 border-[#13ec13]/30'
+   395→                          : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   396→                      }`}
+   397→                    >
+   398→                      <span className="material-symbols-outlined text-xl text-white/60">
+   399→                        {mood.icon}
+   400→                      </span>
+   401→                      <span className={`text-xs font-bold ${giftCardMood === mood.id ? 'text-[#13ec13]' : 'text-white/50'}`}>
+   402→                        {mood.name}
+   403→                      </span>
+   404→                    </button>
+   405→                  ))}
+   406→                </div>
+   407→
+   408→                {/* Delivery Method */}
+   409→                <h3 className="text-white font-bold text-sm mb-3 mt-5">Delivery Method</h3>
+   410→                <div className="flex gap-2">
+   411→                  <button
+   412→                    onClick={() => setGiftCardDeliveryMethod('whatsapp')}
+   413→                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200 ${
+   414→                      giftCardDeliveryMethod === 'whatsapp'
+   415→                        ? 'bg-[#25D366]/10 border-[#25D366]/30 text-[#25D366]'
+   416→                        : 'bg-[#1A1D26] border-white/5 text-white/50 hover:border-white/10'
+   417→                    }`}
+   418→                  >
+   419→                    <MessageSquare className="w-4 h-4" />
+   420→                    <span className="text-sm font-bold">WhatsApp</span>
+   421→                  </button>
+   422→                  <button
+   423→                    onClick={() => setGiftCardDeliveryMethod('email')}
+   424→                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200 ${
+   425→                      giftCardDeliveryMethod === 'email'
+   426→                        ? 'bg-[#13ec13]/10 border-[#13ec13]/30 text-[#13ec13]'
+   427→                        : 'bg-[#1A1D26] border-white/5 text-white/50 hover:border-white/10'
+   428→                    }`}
+   429→                  >
+   430→                    <Send className="w-4 h-4" />
+   431→                    <span className="text-sm font-bold">Email</span>
+   432→                  </button>
+   433→                </div>
+   434→
+   435→                {/* Live Preview Card */}
+   436→                <h3 className="text-white font-bold text-sm mb-3 mt-6">Preview</h3>
+   437→                <div className="rounded-2xl overflow-hidden border border-white/10">
+   438→                  <div className={`bg-gradient-to-br ${currentThemeTemplate.color} p-6 relative`}>
+   439→                    <div className="absolute top-3 right-3">
+   440→                      <Gift className="w-6 h-6 text-white/20" />
+   441→                    </div>
+   442→                    <p className="text-white/50 text-xs uppercase tracking-wider mb-1">SwiftRamadan Gift Card</p>
+   443→                    <p className="text-white text-3xl font-black">{formatNaira(giftCardAmount)}</p>
+   444→                    {giftCardRecipient && (
+   445→                      <p className="text-white/80 text-sm mt-2">To: {giftCardRecipient}</p>
+   446→                    )}
+   447→                    <p className="text-white/40 text-xs mt-1">From: {userName}</p>
+   448→                  </div>
+   449→                  <div className="bg-[#1A1D26] p-4">
+   450→                    {giftCardMessage && (
+   451→                      <p className="text-white/60 text-xs italic leading-relaxed">&ldquo;{giftCardMessage}&rdquo;</p>
+   452→                    )}
+   453→                  </div>
+   454→                </div>
+   455→
+   456→                {/* Proceed Button */}
+   457→                <button
+   458→                  onClick={handleNext}
+   459→                  disabled={!giftCardRecipient.trim()}
+   460→                  className="w-full mt-6 bg-[#13ec13] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
+   461→                >
+   462→                  Proceed to Review
+   463→                  <ChevronRight className="w-4 h-4" />
+   464→                </button>
+   465→              </motion.div>
+   466→            ) : (
+   467→              <motion.div
+   468→                key="review"
+   469→                initial={{ opacity: 0, x: 20 }}
+   470→                animate={{ opacity: 1, x: 0 }}
+   471→                exit={{ opacity: 0, x: -20 }}
+   472→                transition={{ duration: 0.2 }}
+   473→              >
+   474→                {/* Full Card Preview */}
+   475→                <div className="rounded-2xl overflow-hidden border border-white/10 mt-2">
+   476→                  <div className={`bg-gradient-to-br ${currentThemeTemplate.color} p-8 relative`}>
+   477→                    <div className="absolute top-4 right-4">
+   478→                      <Gift className="w-8 h-8 text-white/20" />
+   479→                    </div>
+   480→                    <div className="flex items-center gap-2 mb-4">
+   481→                      <Sparkles className="w-4 h-4 text-[#FFD700]" />
+   482→                      <span className="text-white/50 text-xs uppercase tracking-widest">SwiftRamadan Gift Card</span>
+   483→                    </div>
+   484→                    <p className="text-white text-4xl font-black">{formatNaira(giftCardAmount)}</p>
+   485→                    <div className="mt-4 space-y-1">
+   486→                      <p className="text-white/80 text-sm">
+   487→                        <span className="text-white/40">To:</span> {giftCardRecipient || 'Recipient'}
+   488→                      </p>
+   489→                      <p className="text-white/60 text-xs">
+   490→                        <span className="text-white/40">From:</span> {userName}
+   491→                      </p>
+   492→                    </div>
+   493→                  </div>
+   494→                  <div className="bg-[#1A1D26] p-5 space-y-3">
+   495→                    {giftCardMessage && (
+   496→                      <div className="flex gap-2">
+   497→                        <MessageSquare className="w-4 h-4 text-white/20 shrink-0 mt-0.5" />
+   498→                        <p className="text-white/60 text-xs italic leading-relaxed">&ldquo;{giftCardMessage}&rdquo;</p>
+   499→                      </div>
+   500→                    )}
+   501→                    <div className="flex items-center gap-2 text-white/40 text-xs">
+   502→                      <Send className="w-3 h-3" />
+   503→                      <span>Via {giftCardDeliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}</span>
+   504→                      <span className="mx-1">•</span>
+   505→                      <Heart className="w-3 h-3" />
+   506→                      <span>{giftCardMoods.find((m) => m.id === giftCardMood)?.name || 'Formal'} mood</span>
+   507→                    </div>
+   508→                  </div>
+   509→                </div>
+   510→
+   511→                {/* Order Summary */}
+   512→                <div className="bg-[#1A1D26] rounded-2xl p-5 border border-white/5 mt-4 space-y-3">
+   513→                  <h3 className="text-white font-bold text-sm mb-2">Order Summary</h3>
+   514→                  <div className="flex justify-between text-sm">
+   515→                    <span className="text-white/50">Gift Card Amount</span>
+   516→                    <span className="text-white font-bold">{formatNaira(giftCardAmount)}</span>
+   517→                  </div>
+   518→                  <div className="flex justify-between text-sm">
+   519→                    <span className="text-white/50">Delivery Fee</span>
+   520→                    <span className="text-white font-bold">{formatNaira(deliveryFee)}</span>
+   521→                  </div>
+   522→                  {charityOptIn && (
+   523→                    <div className="flex justify-between text-sm">
+   524→                      <span className="text-[#FFD700]">Charity Donation (10%)</span>
+   525→                      <span className="text-[#FFD700] font-bold">{formatNaira(charityAmount)}</span>
+   526→                    </div>
+   527→                  )}
+   528→                  <div className="h-px bg-white/5 my-1" />
+   529→                  <div className="flex justify-between">
+   530→                    <span className="text-white font-bold">Total</span>
+   531→                    <span className="text-[#13ec13] font-black text-lg">{formatNaira(totalAmount)}</span>
+   532→                  </div>
+   533→                </div>
+   534→
+   535→                {/* Charity Opt-in */}
+   536→                <button
+   537→                  onClick={() => setCharityOptIn(!charityOptIn)}
+   538→                  className="w-full mt-4 p-4 rounded-xl border transition-all duration-200 flex items-center gap-3 text-left"
+   539→                  style={{
+   540→                    borderColor: charityOptIn ? 'rgba(255,215,0,0.3)' : 'rgba(255,255,255,0.05)',
+   541→                    background: charityOptIn ? 'rgba(255,215,0,0.05)' : '#1A1D26',
+   542→                  }}
+   543→                >
+   544→                  <div
+   545→                    className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+   546→                      charityOptIn ? 'bg-[#FFD700] border-[#FFD700]' : 'border-white/20'
+   547→                    }`}
+   548→                  >
+   549→                    {charityOptIn && <Check className="w-3 h-3 text-[#05070A]" />}
+   550→                  </div>
+   551→                  <div>
+   552→                    <p className="text-white text-sm font-bold">Donate 10% to Charity 🤲</p>
+   553→                    <p className="text-white/40 text-xs">{formatNaira(charityOptIn ? charityAmount : Math.round(giftCardAmount * 0.1))} will feed the fasting</p>
+   554→                  </div>
+   555→                </button>
+   556→
+   557→                {/* Payment Method */}
+   558→                <h3 className="text-white font-bold text-sm mb-3 mt-5">Payment Method</h3>
+   559→                <div className="space-y-2">
+   560→                  {paymentMethods.filter(m => m.id !== 'bnpl').map((method) => (
+   561→                    <button
+   562→                      key={method.id}
+   563→                      onClick={() => setSelectedPayment(method.id)}
+   564→                      className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
+   565→                        selectedPayment === method.id
+   566→                          ? 'bg-[#13ec13]/10 border-[#13ec13]/30'
+   567→                          : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+   568→                      }`}
+   569→                    >
+   570→                      <span className="material-symbols-outlined text-lg text-white/50">
+   571→                        {method.icon}
+   572→                      </span>
+   573→                      <span className={`text-sm font-bold ${selectedPayment === method.id ? 'text-[#13ec13]' : 'text-white/70'}`}>
+   574→                        {method.name}
+   575→                      </span>
+   576→                      {selectedPayment === method.id && (
+   577→                        <Check className="w-4 h-4 text-[#13ec13] ml-auto" />
+   578→                      )}
+   579→                    </button>
+   580→                  ))}
+   581→                </div>
+   582→
+   583→                {/* Confirm Button */}
+   584→                <button
+   585→                  onClick={handleConfirm}
+   586→                  className="w-full mt-6 mb-4 bg-[#13ec13] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#13ec13]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+   587→                >
+   588→                  <Send className="w-4 h-4" />
+   589→                  Confirm & Send &bull; {formatNaira(totalAmount)}
+   590→                </button>
+   591→              </motion.div>
+   592→            )}
+   593→          </AnimatePresence>
+   594→        </div>
+   595→      </motion.div>
+   596→    </AnimatePresence>
+   597→  );
+   598→}
+   599→

@@ -4615,3 +4615,238 @@ Stage Summary:
 - 1 fix: auth-config.ts build-phase safety (NEXT_PHASE check)
 - 1 fix: next.config.ts updated with standalone + optimizations
 - Dev server has memory pressure in sandbox but production build is clean
+
+---
+Task ID: 3d
+Agent: Support Ticket API Builder
+Task: Create two API route files for the support ticket system
+
+Work Log:
+- Read worklog.md to understand project history and conventions
+- Reviewed prisma/schema.prisma — confirmed SupportTicket and TicketMessage models exist with correct fields
+- Reviewed existing API routes (orders, addresses) for patterns: NextRequest/NextResponse, db imports, error handling style
+- Created /src/app/api/support/route.ts — POST handler with 5 actions:
+  - `create`: validates userId, subject, category (7 valid values), priority (defaults to 'medium'), creates SupportTicket + first TicketMessage in one create with nested relation
+  - `list`: returns user's tickets with messages, sorted by createdAt desc
+  - `get`: returns single ticket with messages (ordered asc), verifies userId ownership (403 if mismatch)
+  - `message`: validates and creates TicketMessage (isAdmin: false), updates ticket updatedAt
+  - `close`: verifies ownership, updates ticket status to 'closed'
+- Created /src/app/api/support/admin/route.ts — POST handler with 3 actions:
+  - `list-all`: supports filtering by status/category/priority, pagination (default page=1, limit=20, cap 100), includes user relation (select id/name/email/role) and messages
+  - `reply`: creates TicketMessage (isAdmin: true), uses $transaction to atomically update ticket status to 'in_progress' and updatedAt
+  - `update-status`: validates status (open/in_progress/resolved/closed), optionally updates priority, returns updated ticket
+- Ran lint: 0 errors, 4 warnings (all pre-existing, none from new files)
+
+Stage Summary:
+- 2 new API route files created for support ticket system
+- Proper validation, error handling, and ownership checks throughout
+- Admin route uses $transaction for atomic reply+status-update
+- All responses follow existing project conventions (NextResponse.json with success/message pattern)
+- Lint clean: 0 new errors
+
+---
+Task ID: 3b
+Agent: Payouts API Builder
+Task: Create payouts API routes for vendor/rider withdrawal system
+
+Work Log:
+- Read worklog.md and project structure to understand existing codebase
+- Reviewed Prisma schema: Payout and WalletTransaction models already exist
+- Reviewed existing API route patterns (payments, orders) for code style consistency
+- Created /src/app/api/payouts/route.ts with POST handler supporting 3 actions:
+  - `request`: Validates amount > 0, bankName, accountNumber; checks walletBalance >= amount; generates unique reference (PO_{timestamp}_{random}); deducts from wallet; creates WalletTransaction (type: 'payout', amount: -amount); creates Payout (status: 'pending'); returns payout + newBalance
+  - `list`: Fetches user's payouts sorted by createdAt desc
+  - `get`: Fetches single payout by ID with userId verification
+- Created /src/app/api/payouts/admin/route.ts with POST handler supporting 4 actions:
+  - `list-all`: Paginated list with optional status filter (default page=1, limit=20); returns payouts, total, page, totalPages
+  - `process`: Updates payout status to 'processing', sets adminNote
+  - `complete`: Updates payout status to 'completed', sets processedAt to now(), sets adminNote
+  - `reject`: Updates payout status to 'rejected', sets adminNote; credits amount back to user wallet; creates WalletTransaction (type: 'refund', amount: payoutAmount, description: 'Payout rejected - refunded to wallet'); returns payout + newBalance
+- All monetary amounts handled in kobo (Int type) matching Prisma schema
+- Proper error handling with try/catch, validation, and 404 checks
+- Lint: 0 errors, 4 warnings (all pre-existing)
+
+Stage Summary:
+- 2 new API route files created for payouts system
+- /api/payouts - User-facing payout operations (request, list, get)
+- /api/payouts/admin - Admin payout management (list-all, process, complete, reject)
+- All actions use POST with action field pattern consistent with project style
+- Wallet balance deduction/refund with WalletTransaction audit trail
+
+---
+Task ID: 3a
+Agent: Wallet API Builder
+Task: Create wallet system API routes (POST /api/wallet + GET /api/wallet/history)
+
+Work Log:
+- Read worklog.md to understand project state and prior work
+- Reviewed Prisma schema: User.walletBalance (Int/kobo), WalletTransaction model (type, amount, balance, description, reference)
+- Reviewed existing payments library: initiatePayment (takes naira, converts to kobo internally), verifyPayment (returns kobo amount), koboToNaira helper
+- Reviewed existing /api/payments/route.ts for code style and pattern reference
+- Created /src/app/api/wallet/route.ts with POST handler supporting 4 actions:
+  - `balance`: Finds user by id, returns walletBalance in kobo + formatted naira string
+  - `topup`: Generates WT_ reference, calls initiatePayment with provider 'paystack', returns reference + checkoutUrl
+  - `confirm`: Calls verifyPayment, increments walletBalance by verified amount (kobo), creates WalletTransaction (type: topup)
+  - `pay`: Checks sufficient balance, decrements walletBalance, creates WalletTransaction (type: payment, negative amount)
+- Created /src/app/api/wallet/history/route.ts with GET handler:
+  - Query params: userId (required), page (default 1), limit (default 20, max 100)
+  - Returns paginated WalletTransaction records sorted by createdAt desc
+  - Response includes transactions, total, page, totalPages
+- All monetary amounts handled in kobo as required
+- Proper error handling with try/catch, validation, and 404/400 status codes
+- Lint: 0 errors (only pre-existing warnings)
+- Dev server: running successfully on port 3000
+
+Stage Summary:
+- Two wallet API routes created and functional
+- /api/wallet POST: balance, topup, confirm, pay actions all implemented
+- /api/wallet/history GET: paginated transaction history implemented
+- All amounts in kobo, formatted naira output for balance display
+- Consistent with existing project patterns and code style
+
+---
+Task ID: 3c
+Agent: Refunds & KYC API Builder
+Task: Create refunds and KYC API route files
+
+Work Log:
+- Read worklog.md and project structure to understand existing codebase and prior work
+- Reviewed Prisma schema: Refund model (id, orderId, userId, amount, reason, status, refundMethod, reference, adminNote, processedAt), KYCDocument model (id, userId, documentType, documentNumber, status, documentImage, rejectionReason, verifiedBy, verifiedAt)
+- Reviewed existing API route patterns (payments, payouts) for code style consistency
+- Reviewed payments library: paystackRefund available from @/lib/payments for original payment method refunds
+- Created /src/app/api/refunds/route.ts with POST handler supporting 5 actions:
+  - `request`: Validates required fields (userId, orderId, amount, reason); validates refundMethod ('original'|'wallet'); generates reference (RF_{timestamp}_{random}); creates Refund record (status: 'requested'); returns refund
+  - `list`: Fetches user's refunds sorted by createdAt desc
+  - `approve`: Updates refund status to 'approved', sets adminNote
+  - `process`: Checks status is 'approved'; for wallet method: credits user.walletBalance, creates WalletTransaction (type: 'refund'); for original method: attempts paystackRefund via dynamic import (graceful fallback); updates status to 'completed', sets processedAt; returns refund + newBalance (if wallet)
+  - `reject`: Updates refund status to 'rejected', sets adminNote
+- Created /src/app/api/kyc/route.ts with POST handler supporting 5 actions:
+  - `submit`: Validates documentType against allowed values (national_id, voters_card, drivers_license, international_passport, nin); checks for existing verified doc (returns error "Document already verified"); checks for existing pending doc (updates instead of creating new); creates/updates KYCDocument (status: 'pending')
+  - `status`: Fetches all KYCDocuments for user; returns documents + isVerified (true if at least one verified)
+  - `verify`: Updates KYCDocument status to 'verified', sets verifiedBy and verifiedAt
+  - `reject`: Updates KYCDocument status to 'rejected', sets rejectionReason
+  - `list-all`: Paginated list with optional status filter (default page=1, limit=20); includes user relation (id, name, email); returns documents, total, page, totalPages
+- All monetary amounts handled in kobo (Int type) matching Prisma schema
+- Proper error handling with try/catch, validation, and 404 checks throughout
+- Lint: 0 errors (only pre-existing warnings)
+
+Stage Summary:
+- 2 new API route files created for refunds and KYC systems
+- /api/refunds - Refund lifecycle management (request, list, approve, process, reject)
+- /api/kyc - KYC document management (submit, status, verify, reject, list-all)
+- Wallet refund processing with WalletTransaction audit trail
+- Paystack refund integration for original payment method (graceful fallback)
+- KYC deduplication: prevents duplicate verified docs, updates pending instead of creating duplicates
+- All actions use POST with action field pattern consistent with project style
+
+---
+Task ID: 4b
+Agent: PayoutModal Builder
+Task: Create vendor/rider-facing PayoutModal component
+
+Work Log:
+- Created /home/z/my-project/src/components/swift/PayoutModal.tsx
+- Followed exact styling pattern: 'use client', framer-motion slide-up modal, dark theme (bg-[#05070A], glass-effect, border-white/5)
+- Implemented two-tab layout: Request tab and History tab
+- Request tab: Amount input (naira), Bank name, Account number (10-digit validation), Account name, Submit button with nairaToKobo conversion
+- History tab: Fetched via POST /api/payouts with action 'list', displays reference, amount (formatted naira via koboToNaira), bank + masked account, status badge, date
+- Status badges with color coding: pending (yellow), processing (blue), completed (green), failed/rejected (red)
+- Uses wallet balance from store (vendorBalance for vendors, riderEarnings for riders)
+- Uses userEmail as userId for API calls per spec
+- Sticky header with close button, wallet balance card, and tab switcher
+- AnimatePresence for smooth tab transitions
+- Lint: 0 errors, 4 warnings (all pre-existing)
+
+Stage Summary:
+- PayoutModal component fully built and lint-clean
+- Integrates with existing /api/payouts API route (request and list actions)
+- Supports both vendor and rider roles via store state
+
+---
+Task ID: 4d
+Agent: Support Modal Builder
+Task: Create SupportModal.tsx - support ticket modal for all users
+
+Work Log:
+- Created /home/z/my-project/src/components/swift/SupportModal.tsx
+- Followed project dark theme pattern: bg-[#05070A], glass-effect, border-white/5, text-white
+- Modal uses backdrop (bg-black/70, z-[90]) + slide-up content (y: '100%' → 0, z-[100])
+- Sticky header with gradient accent bar and close button
+- Implemented three views with AnimatePresence transitions:
+  - List View: "Create Ticket" button, ticket cards with subject/category badge/status badge/date/last message preview
+  - Create View: Category dropdown (7 categories), priority selector (4 levels), subject input, message textarea, submit button
+  - Detail View: Ticket info header, scrollable messages (user left-aligned darker bg, admin right-aligned green accent bg), message input with Send button, Close Ticket button
+- Status badges: open=green, in_progress=yellow, resolved=blue, closed=gray
+- Category badges with distinct colors for each category type
+- API integration via POST /api/support:
+  - action: 'list' with userId — fetches all tickets on mount
+  - action: 'create' with userId, category, subject, message, priority — creates new ticket
+  - action: 'get' with userId, ticketId — fetches single ticket for detail view
+  - action: 'message' with userId, ticketId, message — sends reply message
+  - action: 'close' with userId, ticketId — closes ticket
+- Optimistic message append with rollback on error
+- Auto-scroll to bottom on new messages
+- Toast notifications for success/error feedback
+- Lint: 0 errors, 4 warnings (all pre-existing)
+
+Stage Summary:
+- SupportModal component fully built and lint-clean
+- Complete ticket lifecycle: create, view, reply, close
+- Three-view navigation with smooth animations
+- API integration ready for backend /api/support route
+
+---
+Task ID: 4a
+Agent: Wallet Modal Builder
+Task: Create customer-facing WalletModal component
+
+Work Log:
+- Created /home/z/my-project/src/components/swift/WalletModal.tsx
+- Followed exact styling pattern from BNPLModal: dark theme (bg-[#05070A]), glass-effect header, slide-up animation, backdrop z-[90] + content z-[100]
+- Implemented three-tab layout: Balance, Top Up, History
+- Balance tab: Large wallet balance display (kobo→naira via koboToNaira helper), wallet icon with green accent glow, quick action buttons (Top Up, History), recent transactions preview (top 3)
+- Top Up tab: Amount input field with ₦ prefix, preset buttons (₦1,000 / ₦2,000 / ₦5,000 / ₦10,000), live preview of new balance, "Top Up Wallet" button with processing spinner, "Powered by Paystack" notice with ShieldCheck icon
+- History tab: Paginated transaction list from /api/wallet/history, each transaction shows: type icon (topup→ArrowDownLeft green, payment→ArrowUpRight red, refund→RotateCcw green, payout→ArrowUpRight red, cashback→Gift green), description, amount (green credit / red debit), date, balance after, reference; pagination controls for multi-page results
+- API integration: POST /api/wallet (action: balance) on mount, POST /api/wallet (action: topup) on submit, GET /api/wallet/history on mount and tab switch
+- Uses userEmail from store as userId for all API calls
+- Toast notifications for success/error on top-up
+- Loading skeleton state, empty states with appropriate icons
+- Lint: 0 errors, 4 warnings (all pre-existing)
+
+Stage Summary:
+- WalletModal component fully built and lint-clean
+- Integrates with existing /api/wallet and /api/wallet/history API routes
+- Complete customer-facing wallet experience with balance view, top-up flow, and transaction history
+
+---
+Task ID: 4c
+Agent: KYC Modal Builder
+Task: Create KYCModal.tsx - KYC verification modal for vendors and riders
+
+Work Log:
+- Created /home/z/my-project/src/components/swift/KYCModal.tsx with full KYC verification modal
+- Follows exact styling pattern: 'use client', framer-motion animations, dark theme (bg-[#05070A], glass-effect, border-white/5)
+- Modal pattern: backdrop (bg-black/70, z-[90]) + slide-up content (y: '100%' → 0, z-[100])
+- Sticky header with Shield icon, role-aware subtitle, and close button
+- Two tabs: Status and Submit Document with animated tab switcher
+- Status tab features:
+  - Verification status banner: Verified (green), Pending (yellow), No Documents (gray)
+  - Document list with masked document numbers, status badges (pending/verified/rejected)
+  - Rejected documents show rejection reason with AlertCircle icon
+  - Loading skeleton state, empty state with link to submit tab
+- Submit tab features:
+  - Document type select dropdown (National ID, Voter's Card, Driver's License, International Passport, NIN)
+  - Document number text input
+  - Image upload area with hidden file input, styled upload zone, 5MB size validation
+  - File preview with image thumbnail after upload, clear button to remove
+  - "Submit for Verification" button with loading state (Loader2 spinner)
+  - POSTs to /api/kyc with { action: 'submit', userId, documentType, documentNumber, documentImage }
+- API integration: POST /api/kyc with { action: 'status', userId: userEmail } on mount
+- Toast notifications for all success/error states
+- Uses useAppStore (activeModal, setActiveModal, userEmail, userRole) and useToast
+- Lint: 0 errors, 4 warnings (all pre-existing)
+
+Stage Summary:
+- KYCModal component fully built and lint-clean
+- Complete KYC verification experience with status tracking and document submission
+- Consistent with project's dark theme and modal animation patterns

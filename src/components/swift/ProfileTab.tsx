@@ -7,6 +7,7 @@ import {
   Navigation, DollarSign, Star, Fingerprint,
   Lock, Globe, Eye, Map, ChefHat, CalendarDays, Flame, Trophy,
   HelpCircle, FileText, Sparkles, Loader2, Tag,
+  Wallet, Banknote, Headphones,
 } from 'lucide-react';
 import { charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
 import { useAppStore, type TabId } from '@/lib/store';
@@ -52,6 +53,7 @@ const customerMenu = [
   { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#10E07A]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
   { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
   { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#10E07A]', action: 'bnpl', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
   { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#F5C451]', action: 'rewards', section: 'REWARDS & GIVING' },
   { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-[#38BDF8]', action: 'refer', section: 'REWARDS & GIVING' },
   { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-[#FB7185]', action: 'charity', section: 'REWARDS & GIVING' },
@@ -61,6 +63,7 @@ const customerMenu = [
   { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-[#A78BFA]', action: 'delivery-location', section: 'ACCOUNT' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#10E07A]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
@@ -75,11 +78,15 @@ const vendorMenu = [
   { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#F5C451]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
   { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-[#10E07A]', action: 'vendor-stock', section: 'REWARDS & GIVING' },
   { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-[#38BDF8]', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
+  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[#F5C451]', action: 'payout', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
+  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[#38BDF8]', action: 'kyc', section: 'REWARDS & GIVING' },
   { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#F5C451]', action: 'rewards', section: 'REWARDS & GIVING' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[#10E07A]', action: 'eco-impact', section: 'REWARDS & GIVING' },
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-[#A78BFA]', action: 'community', section: 'REWARDS & GIVING' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#F5C451]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
@@ -94,10 +101,14 @@ const riderMenu = [
   { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#38BDF8]', action: 'rider-performance', section: 'REWARDS & GIVING' },
   { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-[#38BDF8]', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
   { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#F5C451]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
+  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[#38BDF8]', action: 'payout', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
+  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[#38BDF8]', action: 'kyc', section: 'REWARDS & GIVING' },
   { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-[#38BDF8]', action: 'refer', section: 'REWARDS & GIVING' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[#10E07A]', action: 'eco-impact', section: 'REWARDS & GIVING' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
   { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#38BDF8]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
@@ -304,6 +315,18 @@ export default function ProfileTab() {
         break;
       case 'rider-power-finder':
         useAppStore.getState().setActiveModal('rider-power-finder');
+        break;
+      case 'wallet':
+        useAppStore.getState().setActiveModal('wallet');
+        break;
+      case 'payout':
+        useAppStore.getState().setActiveModal('payout');
+        break;
+      case 'kyc':
+        useAppStore.getState().setActiveModal('kyc');
+        break;
+      case 'support':
+        useAppStore.getState().setActiveModal('support');
         break;
       case 'switch-role':
         setShowSwitchRole(true);
