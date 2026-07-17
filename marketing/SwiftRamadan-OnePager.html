@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftRamadan — Product One-Pager</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#05070A;
+  --bg-card:#1A1D26;
+  --bg-card-hover:#1E2230;
+  --green:#10E07A;
+  --gold:#F5C451;
+  --green-dim:rgba(16,224,122,.12);
+  --gold-dim:rgba(245,196,81,.12);
+  --text:#F0F2F5;
+  --text-secondary:#9CA3AF;
+  --text-muted:#6B7280;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --radius:16px;
+  --radius-sm:10px;
+}
+html{font-size:16px;-webkit-font-smoothing:antialiased}
+body{
+  font-family:var(--font-body);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  min-height:100vh;
+}
+.container{
+  max-width:960px;
+  margin:0 auto;
+  padding:48px 40px 40px;
+}
+
+/* ========== HEADER ========== */
+.header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:40px;
+  padding-bottom:32px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.logo-group{display:flex;align-items:center;gap:16px}
+.logo-icon{
+  width:52px;height:52px;
+  background:linear-gradient(135deg,var(--green),#0BA858);
+  border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;color:var(--bg);font-weight:900;
+  font-family:var(--font-display);
+}
+.logo-text h1{
+  font-family:var(--font-display);
+  font-size:28px;font-weight:800;
+  letter-spacing:-.5px;
+  background:linear-gradient(135deg,var(--green),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.logo-text .tagline{
+  font-size:13px;color:var(--text-secondary);
+  font-weight:500;letter-spacing:.5px;
+  margin-top:2px;
+}
+.header-badge{
+  padding:8px 18px;
+  border-radius:100px;
+  background:var(--green-dim);
+  color:var(--green);
+  font-size:12px;font-weight:600;
+  letter-spacing:.5px;text-transform:uppercase;
+  border:1px solid rgba(16,224,122,.2);
+  white-space:nowrap;
+}
+
+/* ========== SECTION TITLES ========== */
+.section-title{
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  color:var(--green);
+  margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.section-title .material-symbols-rounded{font-size:18px}
+
+/* ========== WHAT IS ========== */
+.what-is{
+  margin-bottom:36px;
+}
+.what-is p{
+  font-size:16px;
+  line-height:1.75;
+  color:var(--text-secondary);
+}
+.what-is p strong{color:var(--text)}
+
+/* ========== METRICS ROW ========== */
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:36px;
+}
+.metric-card{
+  background:var(--bg-card);
+  border-radius:var(--radius-sm);
+  padding:24px 20px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.06);
+  transition:border-color .2s;
+}
+.metric-card:hover{border-color:rgba(16,224,122,.3)}
+.metric-value{
+  font-size:32px;
+  font-weight:800;
+  background:linear-gradient(135deg,var(--green),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  line-height:1.1;
+}
+.metric-label{
+  font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+  color:var(--text-muted);
+  margin-top:8px;
+}
+
+/* ========== CORE FEATURES ========== */
+.core-features{
+  margin-bottom:36px;
+}
+.features-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.feature-col{
+  background:var(--bg-card);
+  border-radius:var(--radius-sm);
+  padding:24px;
+  border:1px solid rgba(255,255,255,.06);
+}
+.feature-col h3{
+  font-size:14px;font-weight:700;
+  color:var(--gold);
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:8px;
+}
+.feature-col h3 .material-symbols-rounded{font-size:20px}
+.feature-list{
+  list-style:none;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px 12px;
+}
+.feature-list li{
+  font-size:13px;
+  color:var(--text-secondary);
+  display:flex;align-items:center;gap:8px;
+  line-height:1.4;
+}
+.feature-list li .material-symbols-rounded{
+  font-size:16px;
+  color:var(--green);
+  flex-shrink:0;
+}
+
+/* ========== AI CAPABILITIES ========== */
+.ai-section{margin-bottom:36px}
+.ai-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:10px;
+}
+.ai-card{
+  background:var(--bg-card);
+  border-radius:var(--radius-sm);
+  padding:20px 10px;
+  text-align:center;
+  border:1px solid rgba(255,255,255,.06);
+  transition:border-color .2s,transform .2s;
+}
+.ai-card:hover{border-color:rgba(16,224,122,.3);transform:translateY(-2px)}
+.ai-card .material-symbols-rounded{
+  font-size:28px;
+  color:var(--green);
+  margin-bottom:10px;
+  display:block;
+}
+.ai-card span{
+  font-size:11px;
+  font-weight:600;
+  color:var(--text-secondary);
+  line-height:1.3;
+  display:block;
+}
+
+/* ========== TECH STACK ========== */
+.tech-stack{
+  margin-bottom:36px;
+  text-align:center;
+}
+.tech-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--bg-card);
+  border-radius:100px;
+  padding:14px 28px;
+  border:1px solid rgba(255,255,255,.06);
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-secondary);
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.tech-pill .sep{color:var(--text-muted);font-weight:300}
+
+/* ========== BUSINESS MODEL ========== */
+.business-model{margin-bottom:40px}
+.business-row{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.business-item{
+  flex:1;
+  min-width:140px;
+  background:var(--bg-card);
+  border-radius:var(--radius-sm);
+  padding:16px 18px;
+  border:1px solid rgba(255,255,255,.06);
+  display:flex;
+  align-items:center;
+  gap:12px;
+  transition:border-color .2s;
+}
+.business-item:hover{border-color:rgba(245,196,81,.3)}
+.business-item .material-symbols-rounded{
+  font-size:22px;
+  color:var(--gold);
+  flex-shrink:0;
+}
+.business-item span{
+  font-size:13px;
+  font-weight:600;
+  color:var(--text-secondary);
+}
+
+/* ========== FOOTER ========== */
+.footer{
+  text-align:center;
+  padding-top:28px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.footer p{
+  font-size:15px;
+  color:var(--text-secondary);
+  font-weight:500;
+}
+.footer .emoji{font-size:18px}
+
+/* ========== PRINT STYLES ========== */
+@media print{
+  @page{size:A4;margin:18mm 16mm}
+  body{background:#fff;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .container{padding:0;max-width:100%}
+  .header{border-bottom:2px solid #e0e0e0}
+  .logo-icon{background:linear-gradient(135deg,#0BA858,#10E07A);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .logo-text h1{background:linear-gradient(135deg,#0BA858,#10E07A);-webkit-background-clip:text;background-clip:text}
+  .header-badge{background:#e8faf0;color:#0BA858;border-color:#0BA858}
+  .metric-card,.feature-col,.ai-card,.business-item,.tech-pill{
+    background:#f8f9fa;border-color:#e0e0e0;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+  }
+  .metric-value{background:linear-gradient(135deg,#0BA858,#d4a843);-webkit-background-clip:text;background-clip:text}
+  .ai-card:hover,.business-item:hover,.metric-card:hover{transform:none;border-color:#e0e0e0}
+  .section-title{color:#0BA858}
+  .feature-col h3{color:#d4a843}
+  .feature-list li .material-symbols-rounded{color:#0BA858}
+  .ai-card .material-symbols-rounded{color:#0BA858}
+  .business-item .material-symbols-rounded{color:#d4a843}
+  .what-is p{color:#444}
+  .footer{border-top:2px solid #e0e0e0}
+  .footer p{color:#666}
+  *{transition:none!important;animation:none!important}
+}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:768px){
+  .container{padding:28px 20px 24px}
+  .header{flex-direction:column;align-items:flex-start;gap:12px}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .features-grid{grid-template-columns:1fr}
+  .feature-list{grid-template-columns:1fr}
+  .ai-grid{grid-template-columns:repeat(4,1fr)}
+  .business-row{flex-direction:column}
+  .logo-text h1{font-size:22px}
+  .metric-value{font-size:26px}
+}
+@media(max-width:480px){
+  .ai-grid{grid-template-columns:repeat(3,1fr);gap:8px}
+  .ai-card{padding:14px 6px}
+  .ai-card .material-symbols-rounded{font-size:22px;margin-bottom:6px}
+  .ai-card span{font-size:10px}
+  .tech-pill{padding:10px 16px;font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-group">
+      <div class="logo-icon">SR</div>
+      <div class="logo-text">
+        <h1>SwiftRamadan</h1>
+        <div class="tagline">Smart Kitchen &amp; Halal Delivery</div>
+      </div>
+    </div>
+    <div class="header-badge">Product One-Pager</div>
+  </header>
+
+  <!-- WHAT IS SWIFTRAMADAN? -->
+  <section class="what-is">
+    <div class="section-title">
+      <span class="material-symbols-rounded">info</span>
+      What is SwiftRamadan?
+    </div>
+    <p>
+      <strong>SwiftRamadan</strong> is an AI-powered halal food delivery platform purpose-built for Ramadan — guaranteeing delivery before Maghrib so no one breaks fast alone. Powered by <strong>Smart Kitchen AI</strong> for intelligent meal planning and cooking assistance, <strong>Community Group Buying</strong> for collective savings, and <strong>7 AI skills</strong> spanning vision, speech, and generative capabilities, SwiftRamadan transforms the Ramadan dining experience from stressful to seamless. It's a three-sided marketplace connecting Muslim customers, halal vendors, and delivery riders — all unified by faith, food, and technology.
+    </p>
+  </section>
+
+  <!-- KEY METRICS -->
+  <section class="metrics-section">
+    <div class="section-title">
+      <span class="material-symbols-rounded">analytics</span>
+      Key Metrics
+    </div>
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-value">81</div>
+        <div class="metric-label">UI Components</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">79</div>
+        <div class="metric-label">API Endpoints</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">6</div>
+        <div class="metric-label">Payment Providers</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">7</div>
+        <div class="metric-label">AI Skills</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE FEATURES -->
+  <section class="core-features">
+    <div class="section-title">
+      <span class="material-symbols-rounded">star</span>
+      Core Features
+    </div>
+    <div class="features-grid">
+      <div class="feature-col">
+        <h3>
+          <span class="material-symbols-rounded">person</span>
+          Customer Features
+        </h3>
+        <ul class="feature-list">
+          <li><span class="material-symbols-rounded">smart_toy</span>AI Agent Hub</li>
+          <li><span class="material-symbols-rounded">kitchen</span>Smart Kitchen</li>
+          <li><span class="material-symbols-rounded">groups</span>Group Buy</li>
+          <li><span class="material-symbols-rounded">mic</span>Voice Shopping</li>
+          <li><span class="material-symbols-rounded">play_circle</span>SwiftReels</li>
+          <li><span class="material-symbols-rounded">mosque</span>Prayer Times</li>
+          <li><span class="material-symbols-rounded">photo_camera</span>Fridge Scanner</li>
+          <li><span class="material-symbols-rounded">fingerprint</span>Taste DNA</li>
+          <li><span class="material-symbols-rounded">mood</span>Mood Feed</li>
+          <li><span class="material-symbols-rounded">restaurant</span>Recipe Remix</li>
+        </ul>
+      </div>
+      <div class="feature-col">
+        <h3>
+          <span class="material-symbols-rounded">domain</span>
+          Platform Features
+        </h3>
+        <ul class="feature-list">
+          <li><span class="material-symbols-rounded">hub</span>3-Sided Marketplace</li>
+          <li><span class="material-symbols-rounded">my_location</span>Real-time Tracking</li>
+          <li><span class="material-symbols-rounded">payments</span>Multi-payment</li>
+          <li><span class="material-symbols-rounded">emoji_events</span>Loyalty &amp; Gamification</li>
+          <li><span class="material-symbols-rounded">forum</span>Community Forum</li>
+          <li><span class="material-symbols-rounded">storefront</span>Vendor Dashboard</li>
+          <li><span class="material-symbols-rounded">delivery_truck</span>Rider Hub</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI CAPABILITIES -->
+  <section class="ai-section">
+    <div class="section-title">
+      <span class="material-symbols-rounded">psychology</span>
+      AI Capabilities
+    </div>
+    <div class="ai-grid">
+      <div class="ai-card">
+        <span class="material-symbols-rounded">chat</span>
+        <span>LLM Chat</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">visibility</span>
+        <span>VLM Vision</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">mic</span>
+        <span>ASR Speech-to-Text</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">record_voice_over</span>
+        <span>TTS Text-to-Speech</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">image</span>
+        <span>Image Generation</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">travel_explore</span>
+        <span>Web Search</span>
+      </div>
+      <div class="ai-card">
+        <span class="material-symbols-rounded">auto_stories</span>
+        <span>Web Reader</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section class="tech-stack">
+    <div class="section-title" style="justify-content:center">
+      <span class="material-symbols-rounded">code</span>
+      Tech Stack
+    </div>
+    <div class="tech-pill">
+      Next.js 16 <span class="sep">&#8226;</span> TypeScript <span class="sep">&#8226;</span> Tailwind CSS <span class="sep">&#8226;</span> Prisma <span class="sep">&#8226;</span> Socket.io <span class="sep">&#8226;</span> z-ai-web-dev-sdk
+    </div>
+  </section>
+
+  <!-- BUSINESS MODEL -->
+  <section class="business-model">
+    <div class="section-title">
+      <span class="material-symbols-rounded">monetization_on</span>
+      Business Model
+    </div>
+    <div class="business-row">
+      <div class="business-item">
+        <span class="material-symbols-rounded">percent</span>
+        <span>Commission (15–20%)</span>
+      </div>
+      <div class="business-item">
+        <span class="material-symbols-rounded">local_shipping</span>
+        <span>Delivery Fees</span>
+      </div>
+      <div class="business-item">
+        <span class="material-symbols-rounded">workspace_premium</span>
+        <span>Premium Subscriptions</span>
+      </div>
+      <div class="business-item">
+        <span class="material-symbols-rounded">shopping_cart</span>
+        <span>Group Buy Margins</span>
+      </div>
+      <div class="business-item">
+        <span class="material-symbols-rounded">campaign</span>
+        <span>Vendor Advertising</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>SwiftRamadan — Breaking fast together, delivered before Maghrib <span class="emoji">&#127769;</span></p>
+  </footer>
+
+</div>
+</body>
+</html>

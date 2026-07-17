@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwiftRamadan — Smart Kitchen &amp; Halal Delivery</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+<style>
+/* ========== RESET & BASE ========== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-primary:#05070A;
+  --bg-secondary:#1A1D26;
+  --bg-card:#1E2230;
+  --green:#10E07A;
+  --gold:#F5C451;
+  --green-dim:rgba(16,224,122,.12);
+  --gold-dim:rgba(245,196,81,.12);
+  --text-primary:#F0F2F5;
+  --text-secondary:#9CA3AF;
+  --text-muted:#6B7280;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:8px;
+}
+html,body{height:100%;font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);overflow:hidden;-webkit-font-smoothing:antialiased}
+
+/* ========== SLIDE CONTAINER ========== */
+.deck{position:relative;width:100%;height:100%;overflow:hidden}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 72px;opacity:0;transform:translateX(40px);transition:opacity .5s ease,transform .5s ease;pointer-events:none;will-change:opacity,transform}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:auto}
+.slide.exit-left{opacity:0;transform:translateX(-40px)}
+
+/* ========== NAVIGATION ========== */
+.nav-bar{position:fixed;bottom:32px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:20px;z-index:100;background:rgba(26,29,38,.85);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:12px 28px}
+.nav-btn{width:44px;height:44px;border-radius:50%;border:none;background:var(--bg-card);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.nav-btn:hover{background:var(--green);color:var(--bg-primary)}
+.nav-btn:disabled{opacity:.3;cursor:default;background:var(--bg-card);color:var(--text-muted)}
+.nav-btn:disabled:hover{background:var(--bg-card);color:var(--text-muted)}
+.slide-counter{font-size:15px;font-weight:600;color:var(--text-secondary);min-width:52px;text-align:center;letter-spacing:.5px}
+.slide-counter span{color:var(--green)}
+
+/* ========== DECORATIVE ELEMENTS ========== */
+.glow-green{position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(16,224,122,.15) 0%,transparent 70%);border-radius:50%;pointer-events:none;data-decor:true}
+.glow-gold{position:absolute;width:350px;height:350px;background:radial-gradient(circle,rgba(245,196,81,.1) 0%,transparent 70%);border-radius:50%;pointer-events:none}
+.grid-pattern{position:absolute;inset:0;background-image:
+  linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);
+background-size:60px 60px;pointer-events:none}
+
+/* ========== TYPOGRAPHY ========== */
+h1{font-family:var(--font-display);font-weight:900;line-height:1.1}
+h2{font-family:var(--font-display);font-weight:800;line-height:1.15}
+h3{font-weight:700;line-height:1.3}
+.body-text{font-size:18px;line-height:1.7;color:var(--text-secondary)}
+.body-text-sm{font-size:16px;line-height:1.6;color:var(--text-secondary)}
+.label{font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase}
+
+/* ========== COMPONENTS ========== */
+.card{background:var(--bg-card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-lg);padding:32px;transition:transform .2s,box-shadow .2s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;border-radius:50px;font-size:14px;font-weight:600}
+.pill-green{background:var(--green-dim);color:var(--green)}
+.pill-gold{background:var(--gold-dim);color:var(--gold)}
+.icon-box{width:56px;height:56px;border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;font-size:28px}
+.icon-box-green{background:var(--green-dim);color:var(--green)}
+.icon-box-gold{background:var(--gold-dim);color:var(--gold)}
+.stat-number{font-size:56px;font-weight:900;font-family:var(--font-display);line-height:1}
+.divider{width:60px;height:4px;border-radius:2px;background:var(--green)}
+
+/* ========== SLIDE 1: TITLE ========== */
+.slide-1 .title-main{font-size:84px;background:linear-gradient(135deg,var(--green),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px;text-align:center}
+.slide-1 .subtitle{font-size:26px;font-weight:300;color:var(--text-secondary);margin-bottom:28px;letter-spacing:.5px}
+.slide-1 .tagline{font-size:20px;color:var(--gold);font-weight:500;text-align:center;max-width:600px;line-height:1.5}
+.slide-1 .crescent{font-size:120px;opacity:.08;position:absolute;top:10%;right:10%}
+
+/* ========== SLIDE 2: PROBLEM ========== */
+.slide-2{align-items:flex-start;padding-top:72px}
+.slide-2 h2{font-size:48px;margin-bottom:12px}
+.slide-2 .problem-intro{font-size:20px;color:var(--text-secondary);margin-bottom:48px;max-width:700px;line-height:1.6}
+.problem-item{display:flex;align-items:flex-start;gap:24px;margin-bottom:36px}
+.problem-item .icon-box{flex-shrink:0}
+.problem-item h3{font-size:20px;margin-bottom:6px;color:var(--text-primary)}
+.problem-item p{font-size:16px;color:var(--text-secondary);line-height:1.5}
+.problem-stat{position:absolute;right:72px;top:50%;transform:translateY(-50%);text-align:center}
+.problem-stat .stat-number{font-size:72px;color:var(--green)}
+.problem-stat .stat-label{font-size:16px;color:var(--text-secondary);margin-top:8px}
+
+/* ========== SLIDE 3: SOLUTION ========== */
+.slide-3{align-items:flex-start;padding-top:72px}
+.slide-3 h2{font-size:48px;margin-bottom:12px}
+.slide-3 .solution-intro{font-size:20px;color:var(--text-secondary);margin-bottom:48px;max-width:700px;line-height:1.6}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;width:100%}
+.pillar-card{text-align:center;padding:36px 28px}
+.pillar-card .icon-box{margin:0 auto 20px}
+.pillar-card h3{font-size:22px;margin-bottom:10px}
+.pillar-card p{font-size:15px;color:var(--text-secondary);line-height:1.5}
+.pillar-badge{margin-top:16px;display:inline-block;padding:4px 14px;border-radius:50px;font-size:13px;font-weight:600}
+
+/* ========== SLIDE 4: FEATURES ========== */
+.slide-4{align-items:flex-start;padding-top:72px}
+.slide-4 h2{font-size:44px;margin-bottom:40px}
+.features-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;width:100%}
+.feature-card{padding:24px 20px;text-align:center;min-height:170px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.feature-card .feature-icon{font-size:36px;margin-bottom:12px}
+.feature-card .feature-name{font-size:15px;font-weight:600;line-height:1.3}
+.feature-card .feature-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* ========== SLIDE 5: MARKETPLACE ========== */
+.slide-5{align-items:flex-start;padding-top:72px}
+.slide-5 h2{font-size:44px;margin-bottom:40px}
+.marketplace-diagram{position:relative;width:100%;max-width:900px;height:420px;margin:0 auto}
+.mp-node{position:absolute;width:240px;padding:28px;border-radius:var(--radius-lg);background:var(--bg-card);border:1px solid rgba(255,255,255,.08);text-align:center}
+.mp-node h3{font-size:20px;margin-bottom:8px}
+.mp-node p{font-size:14px;color:var(--text-secondary);line-height:1.4}
+.mp-node-customer{top:0;left:50%;transform:translateX(-50%)}
+.mp-node-vendor{bottom:0;left:5%}
+.mp-node-rider{bottom:0;right:5%}
+.mp-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--gold));display:flex;align-items:center;justify-content:center;z-index:2}
+.mp-center span{font-family:var(--font-display);font-size:18px;font-weight:800;color:var(--bg-primary);text-align:center;line-height:1.2}
+.mp-line{position:absolute;z-index:1}
+.mp-line svg{width:100%;height:100%}
+
+/* ========== SLIDE 6: TECH STACK ========== */
+.slide-6{align-items:flex-start;padding-top:72px}
+.slide-6 h2{font-size:44px;margin-bottom:36px}
+.tech-container{display:grid;grid-template-columns:1fr 1fr;gap:32px;width:100%}
+.tech-section h3{font-size:18px;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.tech-tags{display:flex;flex-wrap:wrap;gap:10px}
+.tech-tag{padding:10px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;border:1px solid rgba(255,255,255,.08);background:var(--bg-card)}
+.tech-tag-green{border-color:rgba(16,224,122,.25);color:var(--green)}
+.tech-tag-gold{border-color:rgba(245,196,81,.25);color:var(--gold)}
+.tech-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+.tech-stat{padding:20px;border-radius:var(--radius-md);background:var(--bg-card);text-align:center}
+.tech-stat .stat-val{font-size:36px;font-weight:800;font-family:var(--font-display);color:var(--green)}
+.tech-stat .stat-lbl{font-size:13px;color:var(--text-secondary);margin-top:4px}
+
+/* ========== SLIDE 7: MARKET ========== */
+.slide-7{align-items:flex-start;padding-top:72px}
+.slide-7 h2{font-size:44px;margin-bottom:36px}
+.market-visual{display:flex;align-items:center;gap:60px;width:100%}
+.concentric{position:relative;width:380px;height:380px;flex-shrink:0}
+.circle{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid}
+.circle-tam{width:380px;height:380px;top:0;left:0;border-color:rgba(16,224,122,.2);background:rgba(16,224,122,.04)}
+.circle-sam{width:260px;height:260px;top:60px;left:60px;border-color:rgba(16,224,122,.4);background:rgba(16,224,122,.06)}
+.circle-som{width:140px;height:140px;top:120px;left:120px;border-color:var(--green);background:rgba(16,224,122,.1)}
+.circle-label{position:absolute;font-size:14px;font-weight:700;text-align:center}
+.market-details{flex:1}
+.market-item{margin-bottom:32px}
+.market-item .label{margin-bottom:8px}
+.market-item .market-val{font-size:42px;font-weight:800;font-family:var(--font-display);line-height:1}
+.market-item .market-desc{font-size:15px;color:var(--text-secondary);margin-top:6px}
+.ramadan-callout{margin-top:32px;padding:24px 28px;border-radius:var(--radius-md);border:1px solid rgba(245,196,81,.3);background:var(--gold-dim)}
+.ramadan-callout h3{font-size:18px;color:var(--gold);margin-bottom:6px}
+.ramadan-callout p{font-size:15px;color:var(--text-secondary)}
+
+/* ========== SLIDE 8: BUSINESS MODEL ========== */
+.slide-8{align-items:flex-start;padding-top:72px}
+.slide-8 h2{font-size:44px;margin-bottom:36px}
+.revenue-streams{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%}
+.revenue-card{padding:32px 24px}
+.revenue-card .icon-box{margin-bottom:20px}
+.revenue-card h3{font-size:20px;margin-bottom:8px}
+.revenue-card .rev-detail{font-size:15px;color:var(--text-secondary);line-height:1.5}
+
+/* ========== SLIDE 9: TRACTION ========== */
+.slide-9{align-items:flex-start;padding-top:72px}
+.slide-9 h2{font-size:44px;margin-bottom:48px}
+.timeline{position:relative;width:100%;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:15px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--green),var(--gold));border-radius:2px}
+.timeline-item{position:relative;margin-bottom:36px;padding-left:32px}
+.timeline-dot{position:absolute;left:-33px;top:4px;width:14px;height:14px;border-radius:50%;border:3px solid var(--green);background:var(--bg-primary);z-index:1}
+.timeline-item:nth-child(even) .timeline-dot{border-color:var(--gold)}
+.timeline-item h3{font-size:20px;margin-bottom:4px}
+.timeline-item p{font-size:15px;color:var(--text-secondary)}
+.traction-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.traction-stat{padding:24px;text-align:center;border-radius:var(--radius-md);background:var(--bg-card);border:1px solid rgba(255,255,255,.06)}
+.traction-stat .ts-num{font-size:40px;font-weight:800;font-family:var(--font-display);color:var(--green)}
+.traction-stat .ts-label{font-size:13px;color:var(--text-secondary);margin-top:4px}
+
+/* ========== SLIDE 10: TEAM & ASK ========== */
+.slide-10{text-align:center}
+.slide-10 h2{font-size:44px;margin-bottom:12px}
+.slide-10 .ask-subtitle{font-size:20px;color:var(--text-secondary);margin-bottom:48px}
+.ask-amount{font-size:72px;font-weight:900;font-family:var(--font-display);background:linear-gradient(135deg,var(--green),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.ask-label{font-size:16px;color:var(--text-secondary);margin-bottom:40px}
+.funds-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%;max-width:800px;margin:0 auto 40px}
+.fund-item{padding:20px 16px;border-radius:var(--radius-md);background:var(--bg-card);border:1px solid rgba(255,255,255,.06);text-align:center}
+.fund-item .fund-pct{font-size:32px;font-weight:800;font-family:var(--font-display);color:var(--green)}
+.fund-item .fund-cat{font-size:14px;color:var(--text-secondary);margin-top:4px}
+.contact-row{display:flex;justify-content:center;gap:32px;margin-bottom:32px}
+.contact-item{display:flex;align-items:center;gap:8px;color:var(--text-secondary);font-size:15px}
+.closing{font-size:28px;font-weight:700;color:var(--gold)}
+
+/* ========== RESPONSIVE ========== */
+@media(max-width:1100px){
+  .slide{padding:40px 48px}
+  .slide-1 .title-main{font-size:64px}
+  .features-grid{grid-template-columns:repeat(3,1fr)}
+  .pillars{grid-template-columns:1fr;gap:20px}
+  .market-visual{flex-direction:column;gap:32px}
+  .concentric{width:300px;height:300px;margin:0 auto}
+  .circle-tam{width:300px;height:300px}
+  .circle-sam{width:200px;height:200px;top:50px;left:50px}
+  .circle-som{width:110px;height:110px;top:95px;left:95px}
+}
+@media(max-width:768px){
+  .slide{padding:32px 28px}
+  .slide-1 .title-main{font-size:48px}
+  .slide-1 .subtitle{font-size:20px}
+  h2{font-size:36px!important}
+  .features-grid{grid-template-columns:repeat(2,1fr)}
+  .revenue-streams{grid-template-columns:1fr 1fr}
+  .funds-grid{grid-template-columns:1fr 1fr}
+  .tech-container{grid-template-columns:1fr}
+  .nav-bar{bottom:16px;padding:8px 20px}
+  .problem-stat{position:static;transform:none;margin-bottom:32px}
+  .marketplace-diagram{height:500px}
+  .mp-node{width:180px;padding:20px}
+  .mp-node h3{font-size:16px}
+  .mp-center{width:100px;height:100px}
+  .mp-center span{font-size:14px}
+}
+@media(max-width:480px){
+  .features-grid{grid-template-columns:1fr}
+  .revenue-streams{grid-template-columns:1fr}
+  .funds-grid{grid-template-columns:1fr}
+  .traction-stats{grid-template-columns:1fr}
+  .market-details .market-val{font-size:32px}
+  .ask-amount{font-size:48px}
+}
+
+/* ========== PRINT ========== */
+@media print{
+  .nav-bar{display:none}
+  .slide{position:relative!important;opacity:1!important;transform:none!important;pointer-events:auto!important;page-break-after:always;min-height:100vh}
+  .deck{overflow:visible;height:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ===== SLIDE 1: TITLE ===== -->
+  <div class="slide slide-1 active" data-slide="1">
+    <div class="glow-green" style="top:-100px;left:-100px" data-decor aria-hidden="true"></div>
+    <div class="glow-gold" style="bottom:-80px;right:-80px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div class="crescent" data-decor aria-hidden="true">🌙</div>
+    <div style="position:relative;z-index:1;text-align:center;display:flex;flex-direction:column;align-items:center">
+      <div style="margin-bottom:24px">
+        <span class="material-symbols-rounded" style="font-size:64px;color:var(--green)">restaurant</span>
+      </div>
+      <h1 class="title-main">SwiftRamadan</h1>
+      <p class="subtitle">Smart Kitchen &amp; Halal Delivery</p>
+      <div class="divider" style="margin:24px auto"></div>
+      <p class="tagline">"Breaking fast together, delivered before Maghrib"</p>
+      <div style="margin-top:40px;display:flex;gap:16px">
+        <span class="pill pill-green"><span class="material-symbols-rounded" style="font-size:18px">bolt</span> AI-Powered</span>
+        <span class="pill pill-gold"><span class="material-symbols-rounded" style="font-size:18px">mosque</span> Ramadan-First</span>
+      </div>
+    </div>
+    <aside data-notes>Welcome to SwiftRamadan — the world's first Ramadan-first food delivery platform. We combine AI, smart kitchen technology, and deep cultural understanding to ensure every Muslim in Lagos can break their fast on time, every time.</aside>
+  </div>
+
+  <!-- ===== SLIDE 2: THE PROBLEM ===== -->
+  <div class="slide slide-2" data-slide="2">
+    <div class="glow-green" style="top:-50px;right:-80px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-gold" style="margin-bottom:16px">The Problem</span>
+      <h2>Muslims in Lagos Can't Get<br>Iftar Meals Delivered On Time</h2>
+      <p class="problem-intro">During Ramadan, timing is everything — but existing delivery platforms are built for everyday schedules, not prayer times.</p>
+      <div style="display:flex;gap:60px;align-items:flex-start">
+        <div style="flex:1">
+          <div class="problem-item">
+            <div class="icon-box icon-box-gold">
+              <span class="material-symbols-rounded">schedule</span>
+            </div>
+            <div>
+              <h3>No Ramadan-Aware Timing</h3>
+              <p>Current delivery apps don't understand Maghrib or Sahur — meals arrive late or not at all during the most critical moments.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="icon-box icon-box-gold">
+              <span class="material-symbols-rounded">block</span>
+            </div>
+            <div>
+              <h3>Zero Halal-Specific Features</h3>
+              <p>No prayer time integrations, no dua reminders, no iftar tracking — the spiritual dimension of Ramadan dining is completely ignored.</p>
+            </div>
+          </div>
+          <div class="problem-item">
+            <div class="icon-box icon-box-gold">
+              <span class="material-symbols-rounded">groups</span>
+            </div>
+            <div>
+              <h3>Massive Unserved Demand</h3>
+              <p>10M+ Muslims in Lagos, most ordering food daily during Ramadan — yet no platform is purpose-built for this concentrated 30-day window.</p>
+            </div>
+          </div>
+        </div>
+        <div class="problem-stat">
+          <div class="stat-number">10M+</div>
+          <div class="stat-label">Muslims in Lagos</div>
+          <div style="margin-top:24px;padding:16px 24px;background:var(--gold-dim);border-radius:var(--radius-md)">
+            <div style="font-size:14px;font-weight:600;color:var(--gold)">Most order food daily</div>
+            <div style="font-size:13px;color:var(--text-secondary)">during Ramadan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>The core problem is threefold: timing, cultural relevance, and scale. Lagos has over 10 million Muslims who need iftar meals delivered precisely at Maghrib time, yet no existing platform accounts for prayer schedules or halal-specific needs. This isn't a niche — it's a massive, concentrated demand window that goes completely unserved every year.</aside>
+  </div>
+
+  <!-- ===== SLIDE 3: OUR SOLUTION ===== -->
+  <div class="slide slide-3" data-slide="3">
+    <div class="glow-green" style="bottom:-80px;left:-80px" data-decor aria-hidden="true"></div>
+    <div class="glow-gold" style="top:-60px;right:-60px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-green" style="margin-bottom:16px">Our Solution</span>
+      <h2>SwiftRamadan: A Ramadan-First<br>Food Delivery Platform</h2>
+      <p class="solution-intro">We've rebuilt food delivery from the ground up — AI-powered, prayer-time aware, and guaranteed to deliver before Maghrib.</p>
+      <div class="pillars">
+        <div class="card pillar-card">
+          <div class="icon-box icon-box-green" style="width:72px;height:72px">
+            <span class="material-symbols-rounded" style="font-size:36px">psychology</span>
+          </div>
+          <h3>Smart Kitchen AI</h3>
+          <p>AI-powered meal planning with a live cooking coach that adapts to your preferences, pantry, and prayer schedule.</p>
+          <span class="pillar-badge pill-green">Core Engine</span>
+        </div>
+        <div class="card pillar-card">
+          <div class="icon-box icon-box-gold" style="width:72px;height:72px">
+            <span class="material-symbols-rounded" style="font-size:36px">rocket_launch</span>
+          </div>
+          <h3>Ramadan-First Delivery</h3>
+          <p>Guaranteed delivery before Maghrib prayer time. Our routing and dispatch are built around Islamic schedules, not business hours.</p>
+          <span class="pillar-badge pill-gold">Key Promise</span>
+        </div>
+        <div class="card pillar-card">
+          <div class="icon-box icon-box-green" style="width:72px;height:72px">
+            <span class="material-symbols-rounded" style="font-size:36px">diversity_3</span>
+          </div>
+          <h3>Community-Driven</h3>
+          <p>Group Buy with neighbors, community iftar tracking, and shared experiences that bring the Ramadan spirit to every delivery.</p>
+          <span class="pillar-badge pill-green">Differentiator</span>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>SwiftRamadan stands on three pillars. First, our Smart Kitchen AI uses machine learning to plan meals, coach users through cooking, and adapt to their unique preferences. Second, our delivery system is Ramadan-first — we guarantee food arrives before Maghrib by building our entire logistics around prayer times. Third, we're community-driven, enabling group purchases with neighbors, community iftar tracking, and shared experiences that make Ramadan feel like Ramadan.</aside>
+  </div>
+
+  <!-- ===== SLIDE 4: KEY FEATURES ===== -->
+  <div class="slide slide-4" data-slide="4">
+    <div class="glow-gold" style="top:-60px;left:50%;transform:translateX(-50%)" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-green" style="margin-bottom:16px">Key Features</span>
+      <h2>10 Features That Set Us Apart</h2>
+      <div class="features-grid">
+        <div class="card feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-name">AI Agent Hub</div>
+          <div class="feature-sub">Safa AI assistant</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🍳</div>
+          <div class="feature-name">Smart Kitchen</div>
+          <div class="feature-sub">Live cooking coach</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">📦</div>
+          <div class="feature-name">Group Buy</div>
+          <div class="feature-sub">Split &amp; save with neighbors</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🕌</div>
+          <div class="feature-name">Prayer Times &amp; Dua</div>
+          <div class="feature-sub">Reminders integrated</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🎬</div>
+          <div class="feature-name">SwiftReels</div>
+          <div class="feature-sub">Food short videos</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🧬</div>
+          <div class="feature-name">Taste DNA</div>
+          <div class="feature-sub">Personalized recs</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">📸</div>
+          <div class="feature-name">Fridge Scanner</div>
+          <div class="feature-sub">AI ingredient detection</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🎰</div>
+          <div class="feature-name">Loyalty Spin Wheel</div>
+          <div class="feature-sub">Rewards &amp; discounts</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">🎤</div>
+          <div class="feature-name">Voice Shopping</div>
+          <div class="feature-sub">Order by speaking</div>
+        </div>
+        <div class="card feature-card">
+          <div class="feature-icon">💰</div>
+          <div class="feature-name">Multi-Payment</div>
+          <div class="feature-sub">Paystack, Flutterwave, OPay, Moniepoint, BNPL, COD</div>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>We've packed SwiftRamadan with 10 powerful features. Our AI Agent Hub features Safa, your personal assistant. Smart Kitchen provides a live cooking coach. Group Buy lets neighbors split orders and save. Prayer Times and Dua reminders keep you spiritually connected. SwiftReels offers food short videos for inspiration. Taste DNA personalizes recommendations. Fridge Scanner uses AI to detect ingredients. Loyalty Spin Wheel rewards users. Voice Shopping enables hands-free ordering. And Multi-Payment supports Paystack, Flutterwave, OPay, Moniepoint, BNPL, and cash on delivery.</aside>
+  </div>
+
+  <!-- ===== SLIDE 5: THREE-SIDED MARKETPLACE ===== -->
+  <div class="slide slide-5" data-slide="5">
+    <div class="glow-green" style="bottom:-80px;right:-80px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-gold" style="margin-bottom:16px">Platform Model</span>
+      <h2>Three-Sided Marketplace</h2>
+      <div class="marketplace-diagram">
+        <!-- Connection lines -->
+        <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:0" aria-hidden="true">
+          <line x1="50%" y1="160" x2="22%" y2="300" stroke="rgba(16,224,122,.25)" stroke-width="2" stroke-dasharray="6,6"/>
+          <line x1="50%" y1="160" x2="78%" y2="300" stroke="rgba(245,196,81,.25)" stroke-width="2" stroke-dasharray="6,6"/>
+          <line x1="30%" y1="350" x2="70%" y2="350" stroke="rgba(255,255,255,.1)" stroke-width="2" stroke-dasharray="6,6"/>
+        </svg>
+        <!-- Customer Node -->
+        <div class="mp-node mp-node-customer" style="border-color:rgba(16,224,122,.3)">
+          <span class="material-symbols-rounded" style="font-size:32px;color:var(--green);margin-bottom:8px">person</span>
+          <h3 style="color:var(--green)">Customer</h3>
+          <p>Browse menus, order meals, track delivery, join community</p>
+        </div>
+        <!-- Vendor Node -->
+        <div class="mp-node mp-node-vendor" style="border-color:rgba(245,196,81,.3)">
+          <span class="material-symbols-rounded" style="font-size:32px;color:var(--gold);margin-bottom:8px">store</span>
+          <h3 style="color:var(--gold)">Vendor</h3>
+          <p>Dashboard, menu management, analytics, Ramadan scheduling</p>
+        </div>
+        <!-- Rider Node -->
+        <div class="mp-node mp-node-rider" style="border-color:rgba(16,224,122,.3)">
+          <span class="material-symbols-rounded" style="font-size:32px;color:var(--green);margin-bottom:8px">delivery_truck_speed</span>
+          <h3 style="color:var(--green)">Rider</h3>
+          <p>Smart routing, earnings hub, delivery tools, prayer-time aware</p>
+        </div>
+        <!-- Center Hub -->
+        <div class="mp-center">
+          <span>Swift<br>Ramadan</span>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>SwiftRamadan operates as a three-sided marketplace connecting customers, vendors, and riders. Customers browse menus, order meals, and track deliveries while participating in community features. Vendors get a full dashboard with menu management and analytics tailored to Ramadan scheduling. Riders benefit from smart routing, an earnings hub, and delivery tools built around prayer-time awareness. The platform sits at the center, orchestrating all three sides.</aside>
+  </div>
+
+  <!-- ===== SLIDE 6: AI & TECH STACK ===== -->
+  <div class="slide slide-6" data-slide="6">
+    <div class="glow-gold" style="top:-60px;left:-60px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-green" style="margin-bottom:16px">Technology</span>
+      <h2>AI &amp; Tech Stack</h2>
+      <div class="tech-container">
+        <div class="tech-section">
+          <h3><span class="material-symbols-rounded" style="color:var(--green)">smart_toy</span> AI Capabilities</h3>
+          <div class="tech-tags">
+            <span class="tech-tag tech-tag-green">LLM (Chat)</span>
+            <span class="tech-tag tech-tag-green">VLM (Vision)</span>
+            <span class="tech-tag tech-tag-green">ASR (Voice)</span>
+            <span class="tech-tag tech-tag-green">TTS (Speech)</span>
+            <span class="tech-tag tech-tag-gold">Image Generation</span>
+            <span class="tech-tag tech-tag-gold">Web Search</span>
+            <span class="tech-tag tech-tag-gold">Web Reader</span>
+          </div>
+        </div>
+        <div class="tech-section">
+          <h3><span class="material-symbols-rounded" style="color:var(--gold)">code</span> Development Stack</h3>
+          <div class="tech-tags">
+            <span class="tech-tag tech-tag-gold">Next.js 16</span>
+            <span class="tech-tag tech-tag-gold">TypeScript</span>
+            <span class="tech-tag tech-tag-gold">Tailwind CSS</span>
+            <span class="tech-tag tech-tag-green">Prisma ORM</span>
+            <span class="tech-tag tech-tag-green">SQLite</span>
+            <span class="tech-tag tech-tag-green">Socket.io</span>
+          </div>
+          <div class="tech-stats">
+            <div class="tech-stat">
+              <div class="stat-val">79</div>
+              <div class="stat-lbl">API Endpoints</div>
+            </div>
+            <div class="tech-stat">
+              <div class="stat-val">81</div>
+              <div class="stat-lbl">React Components</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:28px;display:flex;align-items:center;gap:12px">
+        <span class="material-symbols-rounded" style="color:var(--green);font-size:24px">wifi_tethering</span>
+        <span style="font-size:16px;color:var(--text-secondary)">Real-time WebSocket tracking for live delivery updates</span>
+      </div>
+    </div>
+    <aside data-notes>Our tech stack is cutting-edge. On the AI side, we leverage LLM for chat, VLM for vision tasks, ASR for voice recognition, TTS for speech output, plus image generation, web search, and web reader capabilities. The development stack uses Next.js 16 with TypeScript and Tailwind CSS for the frontend, Prisma ORM with SQLite for data, and Socket.io for real-time communication. We've built 79 API endpoints and 81 React components, with real-time WebSocket tracking for live delivery updates.</aside>
+  </div>
+
+  <!-- ===== SLIDE 7: MARKET OPPORTUNITY ===== -->
+  <div class="slide slide-7" data-slide="7">
+    <div class="glow-green" style="top:-80px;right:-80px" data-decor aria-hidden="true"></div>
+    <div class="glow-gold" style="bottom:-60px;left:-60px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-gold" style="margin-bottom:16px">Market Opportunity</span>
+      <h2>A Massive, Concentrated Market</h2>
+      <div class="market-visual">
+        <div class="concentric">
+          <div class="circle circle-tam">
+            <span class="circle-label" style="top:16px;left:50%;transform:translateX(-50%);color:rgba(16,224,122,.5)">TAM</span>
+          </div>
+          <div class="circle circle-sam">
+            <span class="circle-label" style="top:14px;left:50%;transform:translateX(-50%);color:rgba(16,224,122,.7)">SAM</span>
+          </div>
+          <div class="circle circle-som">
+            <span class="circle-label" style="top:50%;left:50%;transform:translate(-50%,-50%);color:var(--green);font-weight:800">SOM</span>
+          </div>
+        </div>
+        <div class="market-details">
+          <div class="market-item">
+            <div class="label" style="color:rgba(16,224,122,.5)">Total Addressable Market</div>
+            <div class="market-val" style="color:rgba(16,224,122,.6)">$12B</div>
+            <div class="market-desc">African food delivery market</div>
+          </div>
+          <div class="market-item">
+            <div class="label" style="color:rgba(16,224,122,.7)">Serviceable Addressable Market</div>
+            <div class="market-val" style="color:rgba(16,224,122,.8)">$2B</div>
+            <div class="market-desc">Nigerian food delivery</div>
+          </div>
+          <div class="market-item">
+            <div class="label" style="color:var(--green)">Serviceable Obtainable Market</div>
+            <div class="market-val" style="color:var(--green)">$200M</div>
+            <div class="market-desc">Lagos Ramadan market</div>
+          </div>
+          <div class="ramadan-callout">
+            <h3><span class="material-symbols-rounded" style="font-size:20px;vertical-align:middle">nights_stay</span> 30-Day Ramadan Window</h3>
+            <p>Massive concentrated demand compressed into one month — the highest-intensity food delivery period of the year.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>The market opportunity is enormous. The total addressable market for African food delivery is $12 billion. Narrowing to Nigeria, the serviceable addressable market is $2 billion. Our serviceable obtainable market — Lagos during Ramadan — is $200 million. What makes this especially powerful is the 30-day Ramadan window, which compresses massive demand into the highest-intensity food delivery period of the year.</aside>
+  </div>
+
+  <!-- ===== SLIDE 8: BUSINESS MODEL ===== -->
+  <div class="slide slide-8" data-slide="8">
+    <div class="glow-gold" style="top:-60px;left:-60px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-green" style="margin-bottom:16px">Business Model</span>
+      <h2>Diversified Revenue Streams</h2>
+      <div class="revenue-streams">
+        <div class="card revenue-card">
+          <div class="icon-box icon-box-green">
+            <span class="material-symbols-rounded" style="font-size:28px">percent</span>
+          </div>
+          <h3>Commission</h3>
+          <p class="rev-detail">15–20% per order from vendor partners. Scales directly with transaction volume.</p>
+        </div>
+        <div class="card revenue-card">
+          <div class="icon-box icon-box-gold">
+            <span class="material-symbols-rounded" style="font-size:28px">local_shipping</span>
+          </div>
+          <h3>Delivery Fees</h3>
+          <p class="rev-detail">₦200–500 per delivery based on distance and time. Premium during peak Ramadan hours.</p>
+        </div>
+        <div class="card revenue-card">
+          <div class="icon-box icon-box-green">
+            <span class="material-symbols-rounded" style="font-size:28px">workspace_premium</span>
+          </div>
+          <h3>SwiftRamadan Gold</h3>
+          <p class="rev-detail">Premium subscription with free delivery, priority support, and exclusive deals.</p>
+        </div>
+        <div class="card revenue-card">
+          <div class="icon-box icon-box-gold">
+            <span class="material-symbols-rounded" style="font-size:28px">group</span>
+          </div>
+          <h3>Group Buy Margins</h3>
+          <p class="rev-detail">Bulk purchasing discounts with margin on aggregated vendor orders.</p>
+        </div>
+        <div class="card revenue-card">
+          <div class="icon-box icon-box-green">
+            <span class="material-symbols-rounded" style="font-size:28px">campaign</span>
+          </div>
+          <h3>Advertising</h3>
+          <p class="rev-detail">Vendor promotions &amp; featured placements. Sponsored listings and banner ads.</p>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>Our business model is diversified across five revenue streams. Commission at 15-20% per order scales with transaction volume. Delivery fees of ₦200-500 vary by distance and time, with premium pricing during peak Ramadan hours. SwiftRamadan Gold is our subscription tier offering free delivery and exclusive perks. Group Buy margins come from bulk purchasing discounts. And advertising revenue comes from vendor promotions and featured placements.</aside>
+  </div>
+
+  <!-- ===== SLIDE 9: TRACTION & MILESTONES ===== -->
+  <div class="slide slide-9" data-slide="9">
+    <div class="glow-green" style="bottom:-80px;left:-80px" data-decor aria-hidden="true"></div>
+    <div class="glow-gold" style="top:-60px;right:-60px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%">
+      <span class="pill pill-gold" style="margin-bottom:16px">Traction</span>
+      <h2>Progress &amp; Milestones</h2>
+      <div style="display:flex;gap:48px;align-items:flex-start">
+        <div style="flex:1">
+          <div class="timeline">
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>Frontend Built</h3>
+              <p>81 React components with full UI/UX implementation</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>Backend Complete</h3>
+              <p>79 API endpoints powering all platform functionality</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>Payments Integrated</h3>
+              <p>6 payment providers: Paystack, Flutterwave, OPay, Moniepoint, BNPL, COD</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>AI Skills Live</h3>
+              <p>7 AI skills integrated including chat, vision, voice, and recommendations</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>Real-Time Tracking</h3>
+              <p>WebSocket-powered live delivery tracking system</p>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-dot"></div>
+              <h3>3-Sided Marketplace</h3>
+              <p>Complete Customer, Vendor, and Rider platforms operational</p>
+            </div>
+          </div>
+        </div>
+        <div style="flex-shrink:0;width:300px">
+          <div class="traction-stats">
+            <div class="traction-stat">
+              <div class="ts-num">81</div>
+              <div class="ts-label">Components</div>
+            </div>
+            <div class="traction-stat">
+              <div class="ts-num">79</div>
+              <div class="ts-label">API Endpoints</div>
+            </div>
+            <div class="traction-stat">
+              <div class="ts-num">6</div>
+              <div class="ts-label">Payment Providers</div>
+            </div>
+            <div class="traction-stat">
+              <div class="ts-num">7</div>
+              <div class="ts-label">AI Skills</div>
+            </div>
+            <div class="traction-stat">
+              <div class="ts-num" style="color:var(--gold)">3</div>
+              <div class="ts-label">Marketplace Sides</div>
+            </div>
+            <div class="traction-stat">
+              <div class="ts-num" style="color:var(--gold)">1</div>
+              <div class="ts-label">Live Tracking</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <aside data-notes>We've made significant progress. 81 React components form our complete frontend. 79 API endpoints power all backend functionality. We've integrated 6 payment providers. 7 AI skills are live, including chat, vision, voice, and recommendations. Real-time WebSocket tracking is operational. And we have a complete three-sided marketplace with Customer, Vendor, and Rider platforms all working.</aside>
+  </div>
+
+  <!-- ===== SLIDE 10: TEAM & ASK ===== -->
+  <div class="slide slide-10" data-slide="10">
+    <div class="glow-green" style="top:-100px;left:50%;transform:translateX(-50%)" data-decor aria-hidden="true"></div>
+    <div class="glow-gold" style="bottom:-80px;right:-80px" data-decor aria-hidden="true"></div>
+    <div class="grid-pattern" data-decor aria-hidden="true"></div>
+    <div style="position:relative;z-index:1;width:100%;display:flex;flex-direction:column;align-items:center">
+      <span class="pill pill-gold" style="margin-bottom:16px">The Ask</span>
+      <h2>Building the Future of Ramadan Dining</h2>
+      <p class="ask-subtitle">Seeking seed investment to scale across Nigeria and beyond</p>
+      <div class="ask-amount">$500K</div>
+      <div class="ask-label">Seed Round</div>
+      <div class="funds-grid">
+        <div class="fund-item">
+          <div class="fund-pct">40%</div>
+          <div class="fund-cat">Engineering</div>
+          <div style="margin-top:8px;height:4px;background:var(--bg-secondary);border-radius:2px;overflow:hidden">
+            <div style="width:40%;height:100%;background:var(--green);border-radius:2px"></div>
+          </div>
+        </div>
+        <div class="fund-item">
+          <div class="fund-pct" style="color:var(--gold)">30%</div>
+          <div class="fund-cat">Marketing</div>
+          <div style="margin-top:8px;height:4px;background:var(--bg-secondary);border-radius:2px;overflow:hidden">
+            <div style="width:30%;height:100%;background:var(--gold);border-radius:2px"></div>
+          </div>
+        </div>
+        <div class="fund-item">
+          <div class="fund-pct">20%</div>
+          <div class="fund-cat">Operations</div>
+          <div style="margin-top:8px;height:4px;background:var(--bg-secondary);border-radius:2px;overflow:hidden">
+            <div style="width:20%;height:100%;background:var(--green);border-radius:2px"></div>
+          </div>
+        </div>
+        <div class="fund-item">
+          <div class="fund-pct" style="color:var(--gold)">10%</div>
+          <div class="fund-cat">Legal</div>
+          <div style="margin-top:8px;height:4px;background:var(--bg-secondary);border-radius:2px;overflow:hidden">
+            <div style="width:10%;height:100%;background:var(--gold);border-radius:2px"></div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-item">
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--green)">email</span>
+          <span>hello@swiftramadan.com</span>
+        </div>
+        <div class="contact-item">
+          <span class="material-symbols-rounded" style="font-size:20px;color:var(--gold)">language</span>
+          <span>swiftramadan.com</span>
+        </div>
+      </div>
+      <div class="closing">Ramadan Mubarak 🌙</div>
+    </div>
+    <aside data-notes>We're seeking a $500K seed round to scale SwiftRamadan across Nigeria and beyond. 40% goes to engineering to continue building our AI and platform capabilities. 30% is allocated to marketing to acquire customers and vendors ahead of Ramadan. 20% supports operations including logistics and customer support. And 10% covers legal and compliance. Reach us at hello@swiftramadan.com or visit swiftramadan.com. Ramadan Mubarak!</aside>
+  </div>
+
+</div>
+
+<!-- Navigation Bar -->
+<div class="nav-bar" id="navBar">
+  <button class="nav-btn" id="prevBtn" disabled aria-label="Previous slide">
+    <span class="material-symbols-rounded">arrow_back</span>
+  </button>
+  <div class="slide-counter" id="slideCounter"><span>1</span>/10</div>
+  <button class="nav-btn" id="nextBtn" aria-label="Next slide">
+    <span class="material-symbols-rounded">arrow_forward</span>
+  </button>
+</div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const counter = document.getElementById('slideCounter');
+  let current = 0;
+  let isAnimating = false;
+
+  function updateSlide(newIndex, direction){
+    if(isAnimating || newIndex < 0 || newIndex >= total || newIndex === current) return;
+    isAnimating = true;
+
+    const oldSlide = slides[current];
+    const newSlide = slides[newIndex];
+
+    // Exit old slide
+    oldSlide.classList.remove('active');
+    oldSlide.classList.add(direction > 0 ? 'exit-left' : '');
+    
+    // Enter new slide
+    newSlide.style.transform = direction > 0 ? 'translateX(40px)' : 'translateX(-40px)';
+    newSlide.classList.add('active');
+
+    // Force reflow
+    void newSlide.offsetWidth;
+
+    requestAnimationFrame(()=>{
+      newSlide.style.transform = '';
+    });
+
+    current = newIndex;
+    updateControls();
+
+    setTimeout(()=>{
+      oldSlide.classList.remove('exit-left');
+      isAnimating = false;
+    }, 500);
+  }
+
+  function updateControls(){
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    counter.innerHTML = '<span>' + (current + 1) + '</span>/' + total;
+  }
+
+  // Button navigation
+  prevBtn.addEventListener('click', ()=> updateSlide(current - 1, -1));
+  nextBtn.addEventListener('click', ()=> updateSlide(current + 1, 1));
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' '){
+      e.preventDefault();
+      updateSlide(current + 1, 1);
+    } else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      updateSlide(current - 1, -1);
+    } else if(e.key === 'Home'){
+      e.preventDefault();
+      updateSlide(0, -1);
+    } else if(e.key === 'End'){
+      e.preventDefault();
+      updateSlide(total - 1, 1);
+    }
+  });
+
+  // Touch/swipe navigation
+  let touchStartX = 0;
+  let touchStartY = 0;
+  const deck = document.getElementById('deck');
+
+  deck.addEventListener('touchstart', (e)=>{
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, {passive: true});
+
+  deck.addEventListener('touchend', (e)=>{
+    const touchEndX = e.changedTouches[0].screenX;
+    const touchEndY = e.changedTouches[0].screenY;
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
+
+    // Only trigger if horizontal swipe is dominant
+    if(Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50){
+      if(diffX > 0){
+        updateSlide(current + 1, 1); // Swipe left = next
+      } else {
+        updateSlide(current - 1, -1); // Swipe right = prev
+      }
+    }
+  }, {passive: true});
+
+  // Click navigation on sides
+  deck.addEventListener('click', (e)=>{
+    // Don't trigger if clicking nav or interactive elements
+    if(e.target.closest('.nav-bar') || e.target.closest('a') || e.target.closest('button')) return;
+    
+    const rect = deck.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const third = rect.width / 3;
+    
+    if(clickX < third){
+      updateSlide(current - 1, -1);
+    } else if(clickX > third * 2){
+      updateSlide(current + 1, 1);
+    }
+  });
+
+  // Initialize
+  updateControls();
+})();
+</script>
+</body>
+</html>
