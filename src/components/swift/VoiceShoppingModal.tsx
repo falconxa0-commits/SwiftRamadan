@@ -14,12 +14,10 @@ const quickCommands = [
   'Track my order',
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SpeechRecognitionEvent {
   results: SpeechRecognitionResultList;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface SpeechRecognitionErrorEvent {
   error: string;
 }
@@ -34,8 +32,7 @@ export default function VoiceShoppingModal() {
   const [waveformBars] = useState(() => Array.from({ length: 24 }, () => Math.random()));
   const [animBars, setAnimBars] = useState<number[]>(Array(24).fill(0.2));
   const [speechSupported, setSpeechSupported] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<InstanceType<SpeechRecognitionClass> | null>(null);
   const animFrameRef = useRef<number>(0);
 
   const isOpen = activeModal === 'voice';

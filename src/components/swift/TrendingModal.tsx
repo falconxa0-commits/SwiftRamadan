@@ -120,7 +120,6 @@ export default function TrendingModal() {
         setSource((data.source as 'live' | 'fallback') ?? 'unknown');
         setLastUpdated(new Date());
       } catch (err) {
-        console.warn('[trending] fetch failed:', err);
         setError('Could not load live feed. Pull to retry.');
       } finally {
         setLoading(false);

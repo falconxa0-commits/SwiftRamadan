@@ -67,7 +67,6 @@ export default function ReelsTab() {
         setVideos(data.videos || []);
       }
     } catch (e) {
-      console.error('Failed to load reels', e);
       setVideos([]);
     } finally {
       setLoading(false);

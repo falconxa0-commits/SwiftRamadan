@@ -60,7 +60,6 @@ async function getAccessToken(forceRefresh = false): Promise<string> {
         token: data.responseBody.accessToken,
         expiresAt: Date.now() + expiresIn - TOKEN_REFRESH_BUFFER_MS,
       };
-      console.log('[Monnify] Access token refreshed — expires in', Math.round(expiresIn / 1000), 's');
       return cachedToken.token;
     }
 
@@ -402,7 +401,6 @@ export async function refundTransaction(
 
 export async function isMonnifyHealthy(): Promise<boolean> {
   if (!MONNIFY_API_KEY || !MONNIFY_SECRET_KEY) {
-    console.log('[Monnify] Health check — not configured, returning false');
     return false;
   }
 

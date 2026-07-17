@@ -67,7 +67,6 @@ const SMILE_IDENTITY_BASE_URL = 'https://smileidentity.com/api/v2';
 
 async function verifyWithYouVerify(request: VerificationRequest): Promise<VerificationResult> {
   if (!YOUVERIFY_API_KEY) {
-    console.log('[YouVerify] Not configured — falling back to next provider');
     throw new Error('YouVerify not configured');
   }
 
@@ -106,7 +105,6 @@ async function verifyWithYouVerify(request: VerificationRequest): Promise<Verifi
 
 async function verifyWithPrembly(request: VerificationRequest): Promise<VerificationResult> {
   if (!PREMBLY_API_KEY) {
-    console.log('[Prembly] Not configured — falling back to next provider');
     throw new Error('Prembly not configured');
   }
 
@@ -145,7 +143,6 @@ async function verifyWithPrembly(request: VerificationRequest): Promise<Verifica
 
 async function verifyWithSmileIdentity(request: VerificationRequest): Promise<VerificationResult> {
   if (!SMILE_IDENTITY_API_KEY) {
-    console.log('[SmileIdentity] Not configured — falling back to built-in BVN/NIN');
     throw new Error('Smile Identity not configured');
   }
 
@@ -238,7 +235,6 @@ export async function verifyIdentity(request: VerificationRequest): Promise<Veri
   }
 
   // All external providers failed — fall back to built-in BVN/NIN verification
-  console.log('[Verification] All external providers failed — using built-in verification');
 
   try {
     if (request.type === 'bvn') {

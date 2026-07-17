@@ -77,7 +77,6 @@ export async function captureMessage(
   },
 ): Promise<{ eventId: string | null }> {
   if (!SENTRY_DSN) {
-    console.log(`[Sentry] Not configured — message (${level}):`, message);
     return { eventId: null };
   }
 

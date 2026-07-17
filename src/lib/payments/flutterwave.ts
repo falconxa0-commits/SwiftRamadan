@@ -243,7 +243,6 @@ export async function refundFlutterwaveTransaction(
 
 export async function isFlutterwaveHealthy(): Promise<boolean> {
   if (!FLUTTERWAVE_SECRET_KEY) {
-    console.log('[Flutterwave] Health check — not configured, returning false');
     return false;
   }
 

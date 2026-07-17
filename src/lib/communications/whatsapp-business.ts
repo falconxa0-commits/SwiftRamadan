@@ -27,7 +27,6 @@ export interface WhatsAppMessageResult {
 
 async function sendMessage(payload: Record<string, unknown>): Promise<WhatsAppMessageResult> {
   if (!isConfigured) {
-    console.log('[WhatsApp] Not configured — message would have been sent:', JSON.stringify(payload).slice(0, 200));
     return { success: false, error: 'WhatsApp Business not configured', messageId: null };
   }
 

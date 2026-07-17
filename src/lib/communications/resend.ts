@@ -16,7 +16,6 @@ export async function sendEmail({
   from?: string;
 }): Promise<{ success: boolean; messageId?: string | null; error?: string }> {
   if (!RESEND_API_KEY) {
-    console.log('[Resend] Not configured — email would send to:', to, 'Subject:', subject);
     return { success: false, error: 'Resend not configured', messageId: null };
   }
 

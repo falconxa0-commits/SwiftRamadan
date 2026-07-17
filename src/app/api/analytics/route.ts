@@ -27,10 +27,6 @@ export async function POST(request: NextRequest) {
     }
 
     // In production, store in DB or send to analytics provider
-    // For now, just log a summary
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[Analytics] Received ${events.length} events`);
-    }
 
     return NextResponse.json({ success: true, received: events.length });
   } catch (error) {

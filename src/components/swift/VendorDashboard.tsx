@@ -373,7 +373,6 @@ export default function VendorDashboard() {
         setVendorTotalEarnings(json.data.totalEarnings);
       }
     } catch (err) {
-      console.error('[VendorDashboard] fetch error:', err);
       toast({
         title: 'Failed to load dashboard',
         description: 'Please check your connection and try again.',
@@ -399,7 +398,7 @@ export default function VendorDashboard() {
         setAllOrders(json.orders);
       }
     } catch (err) {
-      console.error('[VendorDashboard] fetch orders error:', err);
+      // silently handle
     }
   }, [userEmail]);
 
@@ -434,7 +433,6 @@ export default function VendorDashboard() {
         throw new Error(json.error || 'Failed to accept order');
       }
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Accept failed',
         description: 'Could not accept order. Please try again.',
@@ -476,7 +474,6 @@ export default function VendorDashboard() {
         throw new Error(json.error || 'Failed to reject order');
       }
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Reject failed',
         description: 'Could not reject order. Please try again.',
@@ -516,7 +513,6 @@ export default function VendorDashboard() {
         throw new Error(json.error || 'Failed to mark order ready');
       }
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Action failed',
         description: 'Could not mark order as ready.',
@@ -548,7 +544,7 @@ export default function VendorDashboard() {
         body: JSON.stringify({ action: 'toggle-online', email: userEmail, online: next }),
       });
     } catch (err) {
-      console.error('Toggle online failed:', err);
+      // silently handle
     }
   };
 

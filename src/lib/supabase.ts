@@ -30,9 +30,6 @@ export async function sendPushNotification({
   data?: Record<string, string>;
 }) {
   if (!supabaseAdmin) {
-    console.log(
-      '[Supabase] Push notification not sent — no service key configured',
-    );
     return { success: false, reason: 'no_supabase' };
   }
 
@@ -50,9 +47,6 @@ export async function sendPushNotification({
     if (error) throw error;
 
     // In production, also trigger push via Supabase Edge Functions or FCM
-    console.log(
-      `[Supabase] Notification stored for user ${userId}: ${title}`,
-    );
     return { success: true };
   } catch (err) {
     console.error('[Supabase] Push notification error:', err);

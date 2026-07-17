@@ -222,7 +222,6 @@ export default function RiderDashboard() {
           }
         }
       } catch (err) {
-        console.error('RiderDashboard fetch error:', err);
         if (!silent) {
           toast({
             title: 'Failed to load',
@@ -261,7 +260,7 @@ export default function RiderDashboard() {
         body: JSON.stringify({ email, online: next }),
       });
     } catch (err) {
-      console.error('Toggle online failed:', err);
+      // silently handle
     }
   };
 
@@ -291,7 +290,6 @@ export default function RiderDashboard() {
         });
       }
     } catch (err) {
-      console.error('Accept failed:', err);
       toast({
         title: 'Accept failed',
         description: 'Network error — please retry',
@@ -327,7 +325,6 @@ export default function RiderDashboard() {
         });
       }
     } catch (err) {
-      console.error('Complete failed:', err);
       toast({
         title: 'Complete failed',
         description: 'Network error — please retry',

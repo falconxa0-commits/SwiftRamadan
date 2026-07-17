@@ -73,7 +73,6 @@ export default function VendorStoreTab() {
         setProducts([]);
       }
     } catch (err) {
-      console.error('[VendorStoreTab] fetch error:', err);
       toast({
         title: 'Failed to load products',
         description: 'Please try again later.',
@@ -132,7 +131,6 @@ export default function VendorStoreTab() {
         description: `${product.name} is now ${nextStock ? 'visible to customers' : 'hidden from customers'}`,
       });
     } catch (err) {
-      console.error(err);
       // Revert
       setProducts((prev) =>
         prev.map((p) => (p.id === product.id ? { ...p, inStock: !nextStock } : p))
@@ -196,7 +194,6 @@ export default function VendorStoreTab() {
       });
       cancelEdit();
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Update failed',
         description: 'Could not save changes.',
@@ -225,7 +222,6 @@ export default function VendorStoreTab() {
         variant: 'destructive',
       });
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Delete failed',
         description: 'Could not delete product.',

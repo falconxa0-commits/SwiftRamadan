@@ -87,7 +87,6 @@ async function initiateCredditBNPL({
   installments: number;
 }): Promise<BNPLResult> {
   if (!CREDDIT_API_KEY) {
-    console.log('[BNPL:Creddit] Not configured — skipping to next provider');
     return { status: false, provider: 'creddit', message: 'Creddit not configured' };
   }
 
@@ -157,7 +156,6 @@ async function initiateCarbonBNPL({
   installments: number;
 }): Promise<BNPLResult> {
   if (!CARBON_API_KEY) {
-    console.log('[BNPL:Carbon] Not configured — skipping to mock');
     return { status: false, provider: 'carbon', message: 'Carbon not configured' };
   }
 

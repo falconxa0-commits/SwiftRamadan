@@ -89,11 +89,6 @@ export function track(
     sessionId: SESSION_ID,
   };
 
-  // Log in development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('[Analytics]', event, properties || '');
-  }
-
   // Queue for later sending
   if (typeof window !== 'undefined') {
     try {

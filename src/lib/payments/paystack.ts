@@ -295,7 +295,6 @@ export async function listBanks(): Promise<{
 
 export async function isPaystackHealthy(): Promise<boolean> {
   if (!PAYSTACK_SECRET_KEY) {
-    console.log('[Paystack] Health check — not configured, returning false');
     return false;
   }
 

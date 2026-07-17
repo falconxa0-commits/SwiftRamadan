@@ -60,7 +60,7 @@ export default function VideoCommentsSheet({
         const data = await res.json();
         if (!cancelled) setComments(data.comments || []);
       } catch (e) {
-        console.error('Failed to load comments', e);
+        // silently handle
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -91,7 +91,7 @@ export default function VideoCommentsSheet({
         onCommentAdded();
       }
     } catch (e) {
-      console.error('Failed to post comment', e);
+      // silently handle
     } finally {
       setSubmitting(false);
     }

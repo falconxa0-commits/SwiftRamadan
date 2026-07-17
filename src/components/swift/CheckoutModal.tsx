@@ -310,7 +310,6 @@ export default function CheckoutModal() {
       }
     } catch (e) {
       // Non-blocking: order still added to local store
-      console.error('Failed to persist order to DB', e);
     }
 
     // Create a payment record via /api/payments
@@ -333,7 +332,7 @@ export default function CheckoutModal() {
         }
       }
     } catch (e) {
-      console.error('Failed to create payment record', e);
+      // Non-blocking: payment record not critical for checkout flow
     }
 
     addOrder(order);

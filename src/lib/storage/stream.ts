@@ -23,7 +23,6 @@ export async function uploadVideo({
   meta?: Record<string, string>;
 }): Promise<VideoUploadResult> {
   if (!CF_ACCOUNT_ID || !CF_API_TOKEN) {
-    console.log('[CF Stream] Not configured — returning mock video');
     return {
       success: true,
       uid: `mock-${Date.now()}`,

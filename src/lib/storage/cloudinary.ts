@@ -26,7 +26,6 @@ export async function uploadImage({
   transformation?: string;
 }): Promise<UploadResult> {
   if (!CLOUDINARY_CLOUD_NAME || !CLOUDINARY_API_KEY || !CLOUDINARY_API_SECRET) {
-    console.log('[Cloudinary] Not configured — returning placeholder');
     return {
       success: true,
       url: `https://placehold.co/400x400/0B0D14/10E07A?text=SwiftRamadan`,

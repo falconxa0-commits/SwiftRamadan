@@ -63,7 +63,6 @@ export default function NewDeliveryRequestModal() {
         setDelivery(null);
       }
     } catch (err) {
-      console.error('Failed to fetch latest delivery:', err);
       setDelivery(null);
     } finally {
       setLoading(false);
@@ -157,7 +156,6 @@ export default function NewDeliveryRequestModal() {
         setSubmitting(null);
       }
     } catch (err) {
-      console.error('Accept failed:', err);
       toast({
         title: 'Accept failed',
         description: 'Network error — please retry',
@@ -184,7 +182,7 @@ export default function NewDeliveryRequestModal() {
         }),
       });
     } catch (err) {
-      console.error('Decline request failed (non-blocking):', err);
+      // silently handle
     }
     toast({
       title: 'Delivery declined',

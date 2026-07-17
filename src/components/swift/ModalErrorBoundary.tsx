@@ -30,7 +30,6 @@ export class ModalErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error(`[ModalErrorBoundary:${this.props.name}]`, error, errorInfo);
     captureException(error, {
       tags: { component: `Modal:${this.props.name}`, boundary: 'modal' },
       extra: { componentStack: errorInfo.componentStack },

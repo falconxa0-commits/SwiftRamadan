@@ -52,3 +52,18 @@ prompt
 server.log
 # Skills directory
 /skills/
+
+# Dev artifacts
+tool-results/
+agent-ctx/
+audit-screenshots/
+*.png
+!public/images/*.png
+public/uploads/
+
+# Uploads
+upload/
+
+# Dev database
+db/*.db
+db/*.db-journal

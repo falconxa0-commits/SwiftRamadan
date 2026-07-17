@@ -424,7 +424,7 @@ export default function RealTimeTrackingModal() {
         setDelivered(true);
       }
     } catch (err) {
-      console.error('Polling error:', err);
+      // silently handle
     }
   }, []);
 
@@ -479,7 +479,7 @@ export default function RealTimeTrackingModal() {
         })
       );
     } catch (e) {
-      console.error('Failed to stash rate order info:', e);
+      // silently handle
     }
     setActiveModal('rate-delivery');
   }, [delivery, userEmail, setActiveModal]);

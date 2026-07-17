@@ -145,7 +145,6 @@ export default function VendorAddProductModal() {
         window.dispatchEvent(new CustomEvent('vendor-products-changed'));
       }
     } catch (err) {
-      console.error('[VendorAddProductModal] submit error:', err);
       toast({
         title: 'Failed to add product',
         description: err instanceof Error ? err.message : 'Please try again.',

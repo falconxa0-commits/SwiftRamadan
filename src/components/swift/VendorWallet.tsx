@@ -89,7 +89,7 @@ export default function VendorWallet() {
         setVendorTotalEarnings(data.totalEarnings);
       }
     } catch (err) {
-      console.error('[VendorWallet] fetch error:', err);
+      // silently handle
     } finally {
       setLoading(false);
     }
@@ -187,7 +187,6 @@ export default function VendorWallet() {
         throw new Error(json.message || 'Payout failed');
       }
     } catch (err) {
-      console.error(err);
       toast({
         title: 'Payout Failed',
         description: 'Could not submit payout request. Please try again.',
