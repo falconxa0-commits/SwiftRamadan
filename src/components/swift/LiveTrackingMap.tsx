@@ -10,7 +10,7 @@ export default function LiveTrackingMap() {
   const { activeModal, setActiveModal, setActiveTab } = useAppStore();
   const { toast } = useToast();
 
-  const isOpen = activeModal === 'live-tracking';
+  const isOpen = activeModal === 'live-tracking-map';
   const [countdown, setCountdown] = useState('12:40');
 
   // Maghrib countdown timer

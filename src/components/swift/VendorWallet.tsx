@@ -11,7 +11,6 @@ import {
   TrendingUp,
   BarChart3,
   Loader2,
-  AlertCircle,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira } from '@/lib/data';
@@ -412,10 +411,12 @@ export default function VendorWallet() {
             </div>
           ) : filteredTransactions.length === 0 ? (
             <div className="flex flex-col items-center py-10">
-              <AlertCircle className="w-8 h-8 text-white/20 mb-2" />
-              <p className="text-white/20 text-sm">No transactions found</p>
-              <p className="text-white/10 text-xs mt-1">
-                Orders you accept will appear here as credits
+              <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-3">
+                <History className="w-7 h-7 text-white/20" />
+              </div>
+              <p className="text-white/30 text-sm font-semibold">No transactions yet</p>
+              <p className="text-white/15 text-xs mt-1">
+                Your transaction history will appear here
               </p>
             </div>
           ) : (

@@ -237,6 +237,9 @@ function LoginScreen() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotLoading, setForgotLoading] = useState(false);
 
   const config = ROLE_CONFIG[loginRole];
 
@@ -384,29 +387,93 @@ function LoginScreen() {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+            aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
           </button>
         </div>
 
-        {/* Forgot Password */}
-        <div className="flex justify-end">
-          <button
-            onClick={() => toast({ title: 'Coming soon', description: 'Password reset will be available soon.' })}
-            className="text-xs font-semibold hover:underline"
-            style={{ color: config.accent }}
-          >
-            Forgot Password?
-          </button>
-        </div>
+        {/* Forgot Password / Login Form Toggle */}
+        <AnimatePresence mode="wait">
+          {showForgotPassword ? (
+            <motion.div
+              key="forgot-form"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="flex flex-col gap-4"
+            >
+              <p className="text-white/50 text-xs">Enter your email and we&apos;ll send you a password reset link.</p>
+              <InputField
+                icon={Mail}
+                placeholder="Email address"
+                value={forgotEmail}
+                onChange={setForgotEmail}
+                accentColor={config.accent}
+                inputMode="email"
+              />
+              <ActionButton
+                label="Send Reset Link"
+                onClick={async () => {
+                  if (!forgotEmail.trim()) {
+                    toast({ title: 'Missing email', description: 'Please enter your email address.', variant: 'destructive' });
+                    return;
+                  }
+                  setForgotLoading(true);
+                  try {
+                    await fetch('/api/auth', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ action: 'forgot-password', email: forgotEmail }),
+                    });
+                  } catch {
+                    // silently handle — we show the same toast regardless
+                  } finally {
+                    setForgotLoading(false);
+                  }
+                  toast({ title: 'Reset link sent', description: 'Password reset link sent to your email' });
+                  setShowForgotPassword(false);
+                  setForgotEmail('');
+                }}
+                loading={forgotLoading}
+                accentColor={config.accent}
+              />
+              <button
+                onClick={() => { setShowForgotPassword(false); setForgotEmail(''); }}
+                className="text-white/40 text-xs font-semibold flex items-center gap-1 justify-center hover:text-white/60 transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Back to Login
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="login-form"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              className="flex flex-col gap-4"
+            >
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-xs font-semibold hover:underline"
+                  style={{ color: config.accent }}
+                >
+                  Forgot Password?
+                </button>
+              </div>
 
-        {/* Login Button */}
-        <ActionButton
-          label="Login"
-          onClick={handleLogin}
-          loading={loading}
-          accentColor={config.accent}
-        />
+              {/* Login Button */}
+              <ActionButton
+                label="Login"
+                onClick={handleLogin}
+                loading={loading}
+                accentColor={config.accent}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Divider */}
         <div className="flex items-center gap-4 my-2">
@@ -675,7 +742,7 @@ function SignupScreen() {
                 inputMode="numeric"
                 placeholder="Phone number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 15))}
                 className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20 transition-colors"
                 style={{ borderColor: phone ? `${config.accent}50` : undefined }}
               />
@@ -1066,11 +1133,20 @@ function OTPScreen() {
     }
   };
 
-  const handleResend = () => {
+  const handleResend = async () => {
     setCanResend(false);
     setCountdown(60);
     setOtp(Array(6).fill(''));
-    toast({ title: 'Code resent', description: 'A new verification code has been sent.' });
+    try {
+      await fetch('/api/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'send-otp', email: userEmail, phone: userPhone }),
+      });
+      toast({ title: 'Code resent', description: 'A new verification code has been sent.' });
+    } catch {
+      toast({ title: 'Code resent', description: 'A new verification code has been sent.' });
+    }
   };
 
   const formatCountdown = (s: number) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;

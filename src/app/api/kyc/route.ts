@@ -43,196 +43,236 @@ async function handleSubmit(body: {
   documentNumber: string;
   documentImage: string;
 }) {
-  const { userId, documentType, documentNumber, documentImage } = body;
+  try {
+    const { userId, documentType, documentNumber, documentImage } = body;
 
-  if (!userId || !documentType || !documentNumber || !documentImage) {
-    return NextResponse.json(
-      { success: false, message: 'userId, documentType, documentNumber, and documentImage are required' },
-      { status: 400 },
-    );
-  }
+    if (!userId || !documentType || !documentNumber || !documentImage) {
+      return NextResponse.json(
+        { success: false, message: 'userId, documentType, documentNumber, and documentImage are required' },
+        { status: 400 },
+      );
+    }
 
-  if (!VALID_DOCUMENT_TYPES.includes(documentType)) {
-    return NextResponse.json(
-      { success: false, message: `documentType must be one of: ${VALID_DOCUMENT_TYPES.join(', ')}` },
-      { status: 400 },
-    );
-  }
+    if (!VALID_DOCUMENT_TYPES.includes(documentType)) {
+      return NextResponse.json(
+        { success: false, message: `documentType must be one of: ${VALID_DOCUMENT_TYPES.join(', ')}` },
+        { status: 400 },
+      );
+    }
 
-  // Check if user already has a verified KYC for this documentType
-  const verifiedDoc = await db.kYCDocument.findFirst({
-    where: {
-      userId,
-      documentType,
-      status: 'verified',
-    },
-  });
-
-  if (verifiedDoc) {
-    return NextResponse.json(
-      { success: false, message: 'Document already verified' },
-      { status: 400 },
-    );
-  }
-
-  // Check if user has a pending KYC for this documentType — update it instead
-  const pendingDoc = await db.kYCDocument.findFirst({
-    where: {
-      userId,
-      documentType,
-      status: 'pending',
-    },
-  });
-
-  let document;
-
-  if (pendingDoc) {
-    // Update existing pending document
-    document = await db.kYCDocument.update({
-      where: { id: pendingDoc.id },
-      data: {
-        documentNumber,
-        documentImage,
-        status: 'pending',
-        rejectionReason: '', // clear any previous rejection reason
-      },
-    });
-  } else {
-    // Create new document
-    document = await db.kYCDocument.create({
-      data: {
+    // Check if user already has a verified KYC for this documentType
+    const verifiedDoc = await db.kYCDocument.findFirst({
+      where: {
         userId,
         documentType,
-        documentNumber,
-        documentImage,
+        status: 'verified',
+      },
+    });
+
+    if (verifiedDoc) {
+      return NextResponse.json(
+        { success: false, message: 'Document already verified' },
+        { status: 400 },
+      );
+    }
+
+    // Check if user has a pending KYC for this documentType — update it instead
+    const pendingDoc = await db.kYCDocument.findFirst({
+      where: {
+        userId,
+        documentType,
         status: 'pending',
       },
     });
-  }
 
-  return NextResponse.json({ success: true, document }, { status: pendingDoc ? 200 : 201 });
+    let document;
+
+    if (pendingDoc) {
+      // Update existing pending document
+      document = await db.kYCDocument.update({
+        where: { id: pendingDoc.id },
+        data: {
+          documentNumber,
+          documentImage,
+          status: 'pending',
+          rejectionReason: '', // clear any previous rejection reason
+        },
+      });
+    } else {
+      // Create new document
+      document = await db.kYCDocument.create({
+        data: {
+          userId,
+          documentType,
+          documentNumber,
+          documentImage,
+          status: 'pending',
+        },
+      });
+    }
+
+    return NextResponse.json({ success: true, document }, { status: pendingDoc ? 200 : 201 });
+  } catch (error) {
+    console.error('KYC submit error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to submit KYC document' },
+      { status: 500 },
+    );
+  }
 }
 
 /** Get user's KYC status */
 async function handleStatus(body: { userId: string }) {
-  const { userId } = body;
+  try {
+    const { userId } = body;
 
-  if (!userId) {
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, message: 'userId is required' },
+        { status: 400 },
+      );
+    }
+
+    const documents = await db.kYCDocument.findMany({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const isVerified = documents.some((doc) => doc.status === 'verified');
+
+    return NextResponse.json({ success: true, documents, isVerified });
+  } catch (error) {
+    console.error('KYC status error:', error);
     return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 },
+      { success: false, message: 'Failed to retrieve KYC status' },
+      { status: 500 },
     );
   }
-
-  const documents = await db.kYCDocument.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-  });
-
-  const isVerified = documents.some((doc) => doc.status === 'verified');
-
-  return NextResponse.json({ success: true, documents, isVerified });
 }
 
 /** Admin verifies a KYC document */
 async function handleVerify(body: { documentId: string; verifiedBy: string }) {
-  const { documentId, verifiedBy } = body;
+  try {
+    const { documentId, verifiedBy } = body;
 
-  if (!documentId || !verifiedBy) {
+    if (!documentId || !verifiedBy) {
+      return NextResponse.json(
+        { success: false, message: 'documentId and verifiedBy are required' },
+        { status: 400 },
+      );
+    }
+
+    const existing = await db.kYCDocument.findUnique({ where: { id: documentId } });
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, message: 'KYC document not found' },
+        { status: 404 },
+      );
+    }
+
+    const document = await db.kYCDocument.update({
+      where: { id: documentId },
+      data: {
+        status: 'verified',
+        verifiedBy,
+        verifiedAt: new Date(),
+      },
+    });
+
+    return NextResponse.json({ success: true, document });
+  } catch (error) {
+    console.error('KYC verify error:', error);
     return NextResponse.json(
-      { success: false, message: 'documentId and verifiedBy are required' },
-      { status: 400 },
+      { success: false, message: 'Failed to verify KYC document' },
+      { status: 500 },
     );
   }
-
-  const existing = await db.kYCDocument.findUnique({ where: { id: documentId } });
-  if (!existing) {
-    return NextResponse.json(
-      { success: false, message: 'KYC document not found' },
-      { status: 404 },
-    );
-  }
-
-  const document = await db.kYCDocument.update({
-    where: { id: documentId },
-    data: {
-      status: 'verified',
-      verifiedBy,
-      verifiedAt: new Date(),
-    },
-  });
-
-  return NextResponse.json({ success: true, document });
 }
 
 /** Admin rejects a KYC document */
 async function handleReject(body: { documentId: string; rejectionReason: string }) {
-  const { documentId, rejectionReason } = body;
+  try {
+    const { documentId, rejectionReason } = body;
 
-  if (!documentId || !rejectionReason) {
+    if (!documentId || !rejectionReason) {
+      return NextResponse.json(
+        { success: false, message: 'documentId and rejectionReason are required' },
+        { status: 400 },
+      );
+    }
+
+    const existing = await db.kYCDocument.findUnique({ where: { id: documentId } });
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, message: 'KYC document not found' },
+        { status: 404 },
+      );
+    }
+
+    const document = await db.kYCDocument.update({
+      where: { id: documentId },
+      data: {
+        status: 'rejected',
+        rejectionReason,
+      },
+    });
+
+    return NextResponse.json({ success: true, document });
+  } catch (error) {
+    console.error('KYC reject error:', error);
     return NextResponse.json(
-      { success: false, message: 'documentId and rejectionReason are required' },
-      { status: 400 },
+      { success: false, message: 'Failed to reject KYC document' },
+      { status: 500 },
     );
   }
-
-  const existing = await db.kYCDocument.findUnique({ where: { id: documentId } });
-  if (!existing) {
-    return NextResponse.json(
-      { success: false, message: 'KYC document not found' },
-      { status: 404 },
-    );
-  }
-
-  const document = await db.kYCDocument.update({
-    where: { id: documentId },
-    data: {
-      status: 'rejected',
-      rejectionReason,
-    },
-  });
-
-  return NextResponse.json({ success: true, document });
 }
 
 /** Admin lists all KYC submissions with pagination */
 async function handleListAll(body: { status?: string; page?: number; limit?: number }) {
-  const { status, page = 1, limit = 20 } = body;
+  try {
+    const { status, page = 1, limit = 20 } = body;
 
-  const where: { status?: string } = {};
-  if (status) {
-    where.status = status;
-  }
+    const where: { status?: string } = {};
+    if (status) {
+      where.status = status;
+    }
 
-  const skip = (page - 1) * limit;
-  const take = limit;
+    const skip = (page - 1) * limit;
+    const take = limit;
 
-  const [documents, total] = await Promise.all([
-    db.kYCDocument.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      skip,
-      take,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
+    const [documents, total] = await Promise.all([
+      db.kYCDocument.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+            },
           },
         },
-      },
-    }),
-    db.kYCDocument.count({ where }),
-  ]);
+      }),
+      db.kYCDocument.count({ where }),
+    ]);
 
-  const totalPages = Math.ceil(total / limit);
+    const totalPages = Math.ceil(total / limit);
 
-  return NextResponse.json({
-    success: true,
-    documents,
-    total,
-    page,
-    totalPages,
-  });
+    return NextResponse.json({
+      success: true,
+      documents,
+      total,
+      page,
+      totalPages,
+    });
+  } catch (error) {
+    console.error('KYC list-all error:', error);
+    return NextResponse.json(
+      { success: false, message: 'Failed to list KYC documents' },
+      { status: 500 },
+    );
+  }
 }

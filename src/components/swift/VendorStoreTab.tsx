@@ -344,19 +344,19 @@ export default function VendorStoreTab() {
         ) : filteredItems.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center py-16 text-center">
-            <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-              <Package className="w-8 h-8 text-white/20" />
+            <div className="w-16 h-16 rounded-2xl bg-[#F5C451]/10 flex items-center justify-center mb-4 border border-[#F5C451]/20">
+              <ShoppingBag className="w-8 h-8 text-[#F5C451]/50" />
             </div>
-            <p className="text-white/40 text-sm font-semibold">No items yet</p>
-            <p className="text-white/20 text-xs mt-1">
+            <p className="text-white/50 text-sm font-bold">No products yet</p>
+            <p className="text-white/25 text-xs mt-1">
               Add your first product to start selling this Ramadan
             </p>
             <button
               onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-              className="mt-4 px-5 py-2.5 rounded-xl bg-[#F5C451]/20 text-[#F5C451] text-xs font-bold border border-[#F5C451]/30 hover:bg-[#F5C451]/30 transition-all flex items-center gap-1.5"
+              className="mt-4 px-5 py-2.5 rounded-xl bg-[#F5C451] text-[#06070B] text-xs font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" strokeWidth={3} />
-              Add Product
+              Add your first product
             </button>
           </div>
         ) : (

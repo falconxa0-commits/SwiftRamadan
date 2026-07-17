@@ -135,6 +135,7 @@ export default function PrayerTimesModal() {
               <button
                 onClick={handleClose}
                 className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                aria-label="Close"
               >
                 <X className="w-4 h-4 text-white/60" />
               </button>
@@ -230,6 +231,7 @@ export default function PrayerTimesModal() {
                       });
                     }}
                     className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#13ec13]/20 transition-colors"
+                    aria-label={athanEnabled ? 'Disable Athan alerts' : 'Enable Athan alerts'}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                       athanEnabled ? 'border-[#13ec13] bg-[#13ec13]' : 'border-white/20'
@@ -273,6 +275,7 @@ export default function PrayerTimesModal() {
                     <button
                       onClick={handleShareDua}
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                      aria-label="Share dua"
                     >
                       <Share2 className="w-4 h-4 text-white/40" />
                     </button>

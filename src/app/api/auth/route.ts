@@ -184,9 +184,6 @@ export async function POST(request: NextRequest) {
         const signupResponse = NextResponse.json({
           success: true,
           message: 'Account created. Please verify your phone number.',
-          // Demo only: expose the code so the caller (test/dev tooling) can
-          // complete verification. Remove this field in production.
-          otp: otpCode,
           user: publicUserFields(user),
           token,
         });
@@ -234,9 +231,6 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({
           success: true,
           message: 'OTP sent',
-          // Demo only: return the code so the caller can read it. In
-          // production this would be delivered out-of-band (SMS).
-          code,
           expiresIn: 300, // seconds (5 min)
         });
       }

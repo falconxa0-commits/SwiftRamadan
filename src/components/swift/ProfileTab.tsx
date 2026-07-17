@@ -782,13 +782,7 @@ export default function ProfileTab() {
                 <ChefHat className="w-7 h-7 text-[#10E07A] relative z-10" />
               </div>
               <p className="text-white/70 text-sm font-bold">No cooking sessions yet</p>
-              <p className="text-white/40 text-xs mt-1 mb-3">Cook with Chef Safa to unlock achievements</p>
-              <button
-                onClick={() => useAppStore.getState().setActiveModal('smart-kitchen')}
-                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#10E07A] to-[#F5C451] text-[#06070B] text-xs font-extrabold hover:opacity-90 transition-opacity active:scale-95"
-              >
-                Start your cooking journey →
-              </button>
+              <p className="text-white/40 text-xs mt-1">Cook with Chef Safa to unlock achievements</p>
             </div>
           )}
         </div>

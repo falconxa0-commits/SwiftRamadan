@@ -131,6 +131,7 @@ export default function GiftCardModal() {
           <button
             onClick={giftCardStep > 0 && !showSuccess ? handleBack : handleClose}
             className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10"
+            aria-label={giftCardStep > 0 && !showSuccess ? 'Go back' : 'Close'}
           >
             {giftCardStep > 0 && !showSuccess ? (
               <ChevronLeft className="w-5 h-5 text-white" />

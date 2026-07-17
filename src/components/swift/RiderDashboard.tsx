@@ -4,8 +4,8 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { motion } from 'framer-motion';
 import {
   Bike, Star, Check, Clock,
-  MapPin, Phone, Navigation, ToggleLeft, ToggleRight, ChevronRight,
-  Package, Loader2, CheckCircle, Moon, BellRing,
+  MapPin, Phone, Navigation, ChevronRight,
+  Package, Loader2, CheckCircle, Moon,
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { formatNaira } from '@/lib/data';
@@ -244,26 +244,6 @@ export default function RiderDashboard() {
     return () => clearInterval(interval);
   }, [fetchRider]);
 
-  const handleToggleOnline = async () => {
-    const next = !riderOnline;
-    setRiderOnline(next);
-    toast({
-      title: next ? "You're Online! 🟢" : "You're Offline",
-      description: next
-        ? 'You will now receive delivery requests'
-        : "You won't receive new requests",
-    });
-    try {
-      await fetch('/api/rider', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, online: next }),
-      });
-    } catch (err) {
-      // silently handle
-    }
-  };
-
   const handleAccept = async (orderId: string) => {
     setActionLoadingId(orderId);
     try {
@@ -355,56 +335,6 @@ export default function RiderDashboard() {
       animate="show"
       className="flex-1 overflow-y-auto pb-32 px-4 pt-4"
     >
-      {/* Online/Offline Toggle */}
-      <motion.div
-        variants={staggerItem}
-        className="flex items-center justify-between mb-5"
-      >
-        <div className="flex items-center gap-3">
-          <button onClick={handleToggleOnline} className="relative" aria-label="Toggle online">
-            {riderOnline ? (
-              <ToggleRight className="w-12 h-12 text-[#38BDF8]" />
-            ) : (
-              <ToggleLeft className="w-12 h-12 text-white/30" />
-            )}
-          </button>
-          <div>
-            <p
-              className={`text-sm font-bold ${
-                riderOnline ? 'text-[#38BDF8]' : 'text-white/40'
-              }`}
-            >
-              {riderOnline ? 'Online' : 'Offline'}
-            </p>
-            <p className="text-white/30 text-[10px] flex items-center gap-1">
-              {socketConnected ? (
-                <>
-                  <BellRing className="w-3 h-3 text-[#10E07A]" />
-                  <span className="text-[#10E07A]">Live</span>
-                  <span>· listening for requests</span>
-                </>
-              ) : (
-                'Toggle to receive deliveries'
-              )}
-            </p>
-          </div>
-        </div>
-        <div
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold ${
-            riderOnline
-              ? 'bg-[#38BDF8]/10 text-[#38BDF8] border border-[#38BDF8]/20'
-              : 'bg-white/5 text-white/30 border border-white/5'
-          }`}
-        >
-          <span
-            className={`size-2 rounded-full ${
-              riderOnline ? 'bg-[#38BDF8] animate-pulse' : 'bg-white/20'
-            }`}
-          />
-          {riderOnline ? 'Accepting Orders' : 'Not Available'}
-        </div>
-      </motion.div>
-
       {/* Profile Header */}
       <motion.div variants={staggerItem} className="flex items-center gap-4 mb-6">
         <div className="relative">
@@ -431,6 +361,36 @@ export default function RiderDashboard() {
         </div>
         <ChevronRight className="w-5 h-5 text-white/20" />
       </motion.div>
+
+      {/* Onboarding Welcome — shown when rider has 0 earnings and 0 deliveries */}
+      {(data?.completedToday ?? 0) === 0 && (data?.earningsToday ?? 0) === 0 && (data?.totalEarnings ?? 0) === 0 && (
+        <motion.div variants={staggerItem} className="mb-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#38BDF8]/15 to-[#38BDF8]/5 border border-[#38BDF8]/20 p-5">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#38BDF8]/5 blur-[60px]" />
+            <div className="relative z-10">
+              <h3 className="text-white text-lg font-extrabold mb-1">Welcome, Rider! 🏍️</h3>
+              <p className="text-white/50 text-xs mb-4">Go online to start receiving delivery requests</p>
+              <div className="space-y-2.5">
+                {[
+                  { step: 1, label: 'Toggle online', desc: 'Go online to appear available' },
+                  { step: 2, label: 'Accept deliveries', desc: 'Pick up orders near you' },
+                  { step: 3, label: 'Earn money', desc: 'Get paid for every delivery' },
+                ].map((tip) => (
+                  <div key={tip.step} className="flex items-center gap-3">
+                    <div className="w-7 h-7 rounded-lg bg-[#38BDF8]/20 flex items-center justify-center shrink-0">
+                      <span className="text-[#38BDF8] text-xs font-black">{tip.step}</span>
+                    </div>
+                    <div>
+                      <p className="text-white text-xs font-bold">{tip.label}</p>
+                      <p className="text-white/30 text-[10px]">{tip.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Stats Grid */}
       <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3 mb-6">

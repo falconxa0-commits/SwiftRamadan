@@ -29,7 +29,7 @@ const riderTabs: NavTab[] = [
 ];
 
 const vendorTabs: NavTab[] = [
-  { id: 'vendor-dashboard', label: 'Orders', icon: ClipboardList },
+  { id: 'vendor-dashboard', label: 'Home', icon: Home },
   { id: 'vendor-store', label: 'Menu', icon: Store },
   { id: 'vendor-earnings', label: 'Wallet', icon: Wallet },
   { id: 'vendor-profile', label: 'Profile', icon: Settings },

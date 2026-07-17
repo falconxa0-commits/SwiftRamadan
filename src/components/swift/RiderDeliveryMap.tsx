@@ -12,10 +12,10 @@ export default function RiderDeliveryMap() {
   const [zoom, setZoom] = useState(1);
   const { setActiveTab } = useAppStore();
 
-  // Resolve active delivery from store or fallback to first active delivery
+  // Only show active delivery when rider has accepted one (riderCurrentDelivery is set in store)
   const activeDelivery = riderCurrentDelivery
-    ? riderActiveDeliveries.find(d => d.id === riderCurrentDelivery) || riderActiveDeliveries[0]
-    : riderActiveDeliveries[0];
+    ? riderActiveDeliveries.find(d => d.id === riderCurrentDelivery) || null
+    : null;
 
   // Find the pickup info for current delivery if from a request
   const currentRequest = riderCurrentDelivery
@@ -53,7 +53,7 @@ export default function RiderDeliveryMap() {
       </div>
 
       {/* No Active Delivery State */}
-      {!riderCurrentDelivery && !activeDelivery && (
+      {!activeDelivery && (
         <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-8">
           <motion.div
             initial={{ scale: 0, opacity: 0 }}
@@ -72,7 +72,8 @@ export default function RiderDeliveryMap() {
         </div>
       )}
 
-      {/* Simulated Map Background */}
+      {/* Simulated Map Background - only show when there's an active delivery */}
+      {activeDelivery && (
       <div
         className="absolute inset-0 transition-transform duration-300"
         style={{ transform: `scale(${zoom})` }}
@@ -202,8 +203,10 @@ export default function RiderDeliveryMap() {
           </motion.div>
         </div>
       </div>
+      )}
 
       {/* Ramadan Badge */}
+      {activeDelivery && (
       <div className="absolute top-20 right-4 z-30">
         <motion.div
           initial={{ opacity: 0, x: 20 }}
@@ -215,8 +218,10 @@ export default function RiderDeliveryMap() {
           <span className="text-[#FFD700] text-[10px] font-black">Deliver before Iftar</span>
         </motion.div>
       </div>
+      )}
 
       {/* Floating Map Controls */}
+      {activeDelivery && (
       <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-2">
         <button
           onClick={() => setZoom(Math.min(zoom + 0.2, 2))}
@@ -237,6 +242,7 @@ export default function RiderDeliveryMap() {
           <Navigation className="w-4 h-4 text-[#13ec13]" />
         </button>
       </div>
+      )}
 
       {/* Bottom Sheet Card - Active Delivery Info */}
       {activeDelivery && (
@@ -333,7 +339,7 @@ export default function RiderDeliveryMap() {
       )}
 
       {/* No Delivery Bottom Prompt */}
-      {!activeDelivery && riderOnline && (
+      {!activeDelivery && (
         <motion.div
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -342,13 +348,19 @@ export default function RiderDeliveryMap() {
         >
           <div className="mx-4 mb-4">
             <div className="glass-effect rounded-2xl border border-white/10 p-5 text-center">
-              <p className="text-white/40 text-sm">Waiting for delivery requests...</p>
-              <button
-                onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
-                className="mt-3 px-6 py-2.5 bg-[#13ec13] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#13ec13]/90 transition-colors"
-              >
-                View Available Deliveries
-              </button>
+              {riderOnline ? (
+                <>
+                  <p className="text-white/40 text-sm">Waiting for delivery requests...</p>
+                  <button
+                    onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
+                    className="mt-3 px-6 py-2.5 bg-[#13ec13] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#13ec13]/90 transition-colors"
+                  >
+                    View Available Deliveries
+                  </button>
+                </>
+              ) : (
+                <p className="text-white/40 text-sm">No active deliveries. Go online to start receiving requests.</p>
+              )}
             </div>
           </div>
         </motion.div>

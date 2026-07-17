@@ -18,6 +18,7 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
+import { useState, useRef, useEffect } from 'react';
 
 const staggerContainer = {
   hidden: { opacity: 0 },
@@ -52,6 +53,22 @@ export default function RiderEarningsHub() {
   const { riderEarnings } = useAppStore();
   const data = riderEarningsBreakdown;
   const perf = riderPerformanceMetrics;
+
+  const chartContainerRef = useRef<HTMLDivElement>(null);
+  const [chartReady, setChartReady] = useState(false);
+
+  useEffect(() => {
+    const el = chartContainerRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const { width, height } = entry.contentRect;
+        setChartReady(width > 0 && height > 0);
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const chartData = data.hourlyData.map(h => ({
     hour: h.hour,
@@ -106,32 +123,38 @@ export default function RiderEarningsHub() {
           Hourly Performance
         </h3>
         <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
-          <div style={{ width: '100%', height: 200 }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
-                <XAxis
-                  dataKey="hour"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }}
-                  tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}K`}
-                />
-                <Tooltip content={<HourlyTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
-                <Bar dataKey="amount" radius={[6, 6, 0, 0]} maxBarSize={48}>
-                  {chartData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={entry.isIftar ? '#FFD700' : 'rgba(19,236,19,0.5)'}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div ref={chartContainerRef} style={{ width: '100%', height: 200 }}>
+            {chartReady ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 5, right: 5, left: -20, bottom: 5 }}>
+                  <XAxis
+                    dataKey="hour"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
+                  />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: 'rgba(255,255,255,0.2)', fontSize: 9 }}
+                    tickFormatter={(v: number) => `₦${(v / 1000).toFixed(0)}K`}
+                  />
+                  <Tooltip content={<HourlyTooltip />} cursor={{ fill: 'rgba(255,255,255,0.03)' }} />
+                  <Bar dataKey="amount" radius={[6, 6, 0, 0]} maxBarSize={48}>
+                    {chartData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.isIftar ? '#FFD700' : 'rgba(19,236,19,0.5)'}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                <span className="text-white/20 text-xs">Loading chart...</span>
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">

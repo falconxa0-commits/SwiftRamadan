@@ -65,6 +65,7 @@ export default function GroupBuyModal() {
               <button
                 onClick={handleClose}
                 className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                aria-label="Close"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -226,6 +227,7 @@ export default function GroupBuyModal() {
                         <button
                           onClick={() => handleShareWhatsApp(deal.name)}
                           className="px-4 py-3 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 text-[#25D366] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#25D366]/20 transition-colors"
+                          aria-label="Share on WhatsApp"
                         >
                           <Share2 className="w-4 h-4" />
                           <span className="hidden sm:inline">WhatsApp</span>

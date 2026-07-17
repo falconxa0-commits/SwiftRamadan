@@ -99,6 +99,7 @@ export default function SahurWakeUpModal() {
                 <button
                   onClick={handleClose}
                   className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+                  aria-label="Close"
                 >
                   <X className="w-5 h-5 text-white/60" />
                 </button>
@@ -121,6 +122,7 @@ export default function SahurWakeUpModal() {
                   <button
                     onClick={() => setSahurAlarmEnabled(!sahurAlarmEnabled)}
                     className={`relative w-14 h-7 rounded-full transition-colors ${sahurAlarmEnabled ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+                    aria-label={sahurAlarmEnabled ? 'Disable alarm' : 'Enable alarm'}
                   >
                     <motion.div
                       className="absolute top-0.5 w-6 h-6 rounded-full bg-white shadow-lg"
@@ -136,6 +138,7 @@ export default function SahurWakeUpModal() {
                     <button
                       onClick={() => adjustTime('hour', 1)}
                       className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                      aria-label="Increase hour"
                     >
                       <Plus className="w-4 h-4 text-white/60" />
                     </button>
@@ -145,6 +148,7 @@ export default function SahurWakeUpModal() {
                     <button
                       onClick={() => adjustTime('hour', -1)}
                       className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                      aria-label="Decrease hour"
                     >
                       <Minus className="w-4 h-4 text-white/60" />
                     </button>
@@ -154,6 +158,7 @@ export default function SahurWakeUpModal() {
                     <button
                       onClick={() => adjustTime('minute', 5)}
                       className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                      aria-label="Increase minute"
                     >
                       <Plus className="w-4 h-4 text-white/60" />
                     </button>
@@ -163,6 +168,7 @@ export default function SahurWakeUpModal() {
                     <button
                       onClick={() => adjustTime('minute', -5)}
                       className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                      aria-label="Decrease minute"
                     >
                       <Minus className="w-4 h-4 text-white/60" />
                     </button>

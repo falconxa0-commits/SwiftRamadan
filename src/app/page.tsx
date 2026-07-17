@@ -45,6 +45,7 @@ import RewardsModal from '@/components/swift/RewardsModal';
 import BNPLModal from '@/components/swift/BNPLModal';
 import DeliveryLocationMap from '@/components/swift/DeliveryLocationMap';
 import RealTimeTrackingModal from '@/components/swift/RealTimeTrackingModal';
+import LiveTrackingMap from '@/components/swift/LiveTrackingMap';
 import SmartKitchenHub from '@/components/swift/SmartKitchenHub';
 import CommunityForum from '@/components/swift/CommunityForum';
 import MealPlannerModal from '@/components/swift/MealPlannerModal';
@@ -86,7 +87,6 @@ import {
   Store,
   BarChart3,
   Package,
-  ChevronDown,
   ArrowLeftRight,
 } from 'lucide-react';
 
@@ -552,7 +552,6 @@ export default function Home() {
           exit="exit"
           transition={springConfig}
           className={`flex-1 flex flex-col ${activeTab === 'reels' ? 'overflow-hidden' : 'overflow-y-auto'}`}
-          style={{ willChange: 'transform, opacity' }}
         >
           <ActiveTabComponent />
         </motion.div>
@@ -607,6 +606,7 @@ function AllModals() {
       <BNPLModal />
       <DeliveryLocationMap />
       <RealTimeTrackingModal />
+      <LiveTrackingMap />
       <SmartKitchenHub />
       <CommunityForum />
       <MealPlannerModal />

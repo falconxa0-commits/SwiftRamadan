@@ -1,6 +1,6 @@
 'use client';
 
-import { Star, Clock, ChevronRight, Zap, BadgeCheck, Search, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ScanLine, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays, Clapperboard, Play } from 'lucide-react';
+import { Star, Clock, ChevronRight, Zap, BadgeCheck, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays, Clapperboard, Play } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
@@ -19,11 +19,37 @@ const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?
 };
 
 export default function HomeTab() {
-  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, setShowSearch, activeCategory, lastSpinDate } = useAppStore();
+  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, activeCategory, lastSpinDate } = useAppStore();
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Helper for Next-Gen Features: maps some to existing modals, shows Coming Soon for others
+  const handleNextGenFeature = (feature: { emoji: string; label: string; modal: string }) => {
+    const modalMap: Record<string, string> = {
+      'iftar-radar': 'live-tracking',
+      'mosque-partnership': 'mosque',
+      'recipe-remix': 'recipes',
+    };
+    const targetModal = modalMap[feature.modal] || feature.modal;
+
+    // Show coming soon for features without proper modals
+    const comingSoonKeys = ['taste-dna', 'fridge-scanner', 'mood-ordering', 'predictive-reorder',
+      'challenge-board', 'gift-meal', 'chef-battles', 'streak-shrine',
+      'rider-eta-party', 'iftar-stories', 'ramadan-diary', 'neighbor-alerts',
+      'flashAuction', 'subscriptionBoxes', 'vendorStorefront', 'tippingKiosk',
+      'adhan-sync', 'haptic-countdown', 'theme-transition', 'dua-of-the-day', 'post-ramadan'];
+
+    if (comingSoonKeys.includes(feature.modal)) {
+      toast({
+        title: `${feature.emoji} ${feature.label}`,
+        description: 'Coming soon! This feature is being built for Ramadan 2026.',
+      });
+    } else {
+      setActiveModal(targetModal);
+    }
+  };
 
   // Filtered meals based on active category
   const filteredMeals = activeCategory
@@ -152,30 +178,6 @@ export default function HomeTab() {
           </motion.button>
         </div>
       )}
-
-      {/* ── Search Bar + Visual Search ── */}
-      <div className="px-5 flex items-center gap-2.5">
-        <button
-          onClick={() => setShowSearch(true)}
-          className="glass-card flex-1 flex items-center gap-3 rounded-2xl px-4 py-3.5 hover:border-white/15 transition-colors group"
-        >
-          <Search className="w-4 h-4 text-white/40 group-hover:text-[#10E07A] transition-colors" />
-          <span className="text-white/40 text-sm">Search meals, groceries, restaurants...</span>
-          <span className="ml-auto text-[10px] text-white/30 font-mono bg-white/5 px-2 py-0.5 rounded-md border border-white/5">⌘K</span>
-        </button>
-        <button
-          onClick={() => setActiveModal('visual-search')}
-          aria-label="Snap to Shop - visual search"
-          className="shrink-0 w-12 h-12 flex items-center justify-center rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 hover:bg-[#10E07A]/20 active:scale-95 transition-all relative"
-        >
-          <ScanLine className="w-5 h-5 text-[#10E07A]" />
-          <motion.span
-            className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F5C451]"
-            animate={{ scale: [1, 1.3, 1], opacity: [1, 0.6, 1] }}
-            transition={{ duration: 1.6, repeat: Infinity }}
-          />
-        </button>
-      </div>
 
       {/* ── Smart Kitchen Hero Card (FLAGSHIP) ── */}
       <div className="px-5">
@@ -708,7 +710,7 @@ export default function HomeTab() {
             { emoji: '😊', label: 'Mood Order', modal: 'mood-ordering' },
             { emoji: '🔮', label: 'Smart Reorder', modal: 'predictive-reorder' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -724,7 +726,7 @@ export default function HomeTab() {
             { emoji: '👨‍🍳', label: 'Chef Battles', modal: 'chef-battles' },
             { emoji: '🔥', label: 'Streak Shrine', modal: 'streak-shrine' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -739,7 +741,7 @@ export default function HomeTab() {
             { emoji: '🎉', label: 'ETA Party', modal: 'rider-eta-party' },
             { emoji: '🕌', label: 'Mosque Hub', modal: 'mosque-partnership' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#38BDF8]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#38BDF8]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -755,7 +757,7 @@ export default function HomeTab() {
             { emoji: '📓', label: 'Ramadan Diary', modal: 'ramadan-diary' },
             { emoji: '🏘️', label: 'Neighbor Alerts', modal: 'neighbor-alerts' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#10E07A]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#10E07A]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -771,7 +773,7 @@ export default function HomeTab() {
             { emoji: '🏪', label: 'Storefront', modal: 'vendorStorefront' },
             { emoji: '💰', label: 'Tip Kiosk', modal: 'tippingKiosk' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -788,7 +790,7 @@ export default function HomeTab() {
             { emoji: '🤲', label: "Du'a of Day", modal: 'dua-of-the-day' },
             { emoji: '🎊', label: 'Post-Ramadan', modal: 'post-ramadan' },
           ].map(f => (
-            <button key={f.modal} onClick={() => setActiveModal(f.modal)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[#0F1118] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>

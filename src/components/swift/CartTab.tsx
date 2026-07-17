@@ -238,7 +238,8 @@ export default function CartTab() {
             </div>
             <button
               onClick={handleApplyCoupon}
-              className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-4 rounded-xl font-bold text-sm hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+              disabled={!coupon.trim()}
+              className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-4 rounded-xl font-bold text-sm hover:bg-[#10E07A]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#10E07A]/10"
             >
               Apply
             </button>
