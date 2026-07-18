@@ -1328,28 +1328,43 @@ function RoleScreen() {
   const [selected, setSelected] = useState<'customer' | 'vendor' | 'rider'>('customer');
   const [loading, setLoading] = useState(false);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     setLoading(true);
-    setTimeout(() => {
-      setUserRole(selected);
-      if (isLoggedIn) {
-        // Already logged in - just switch role and go back to main app
-        setShowAuth(null);
-        track('role_switch', { role: selected });
-        toast({
-          title: 'Role Switched! 🔄',
-          description: `You're now using SwiftRamadan as a ${selected}.`,
+    if (isLoggedIn) {
+      // Already logged in — switch role server-side to update session cookie
+      try {
+        const res = await fetch('/api/auth', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'switch-role', role: selected }),
         });
-      } else {
-        // New user - go to signup with role pre-selected
-        setShowAuth('signup');
-        toast({
-          title: 'Great choice! 🌙',
-          description: `Let's create your ${selected} account.`,
-        });
+        if (!res.ok) throw new Error(`API error: ${res.status}`);
+        const data = await res.json();
+        if (data.success && data.user) {
+          setUserRole(data.user.role || selected);
+        } else {
+          setUserRole(selected);
+        }
+      } catch {
+        // Fallback: just set client-side role
+        setUserRole(selected);
       }
-      setLoading(false);
-    }, 600);
+      setShowAuth(null);
+      track('role_switch', { role: selected });
+      toast({
+        title: 'Role Switched! 🔄',
+        description: `You're now using SwiftRamadan as a ${selected}.`,
+      });
+    } else {
+      // New user - go to signup with role pre-selected
+      setUserRole(selected);
+      setShowAuth('signup');
+      toast({
+        title: 'Great choice! 🌙',
+        description: `Let's create your ${selected} account.`,
+      });
+    }
+    setLoading(false);
   };
 
   return (

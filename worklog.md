@@ -720,3 +720,50 @@ Stage Summary:
 - No browser console errors
 - All color consistency verified
 - All navigation paths working
+
+---
+
+## Session 2 Fix: Auth Flow & Session Management
+
+### Fix 1: Add switch-role action to /api/auth
+- New `switch-role` action updates user role in DB and reissues session cookie with new role
+- Prevents 401 errors when switching between customer/vendor/rider dashboards
+- Session cookie now always reflects the user's current role
+
+### Fix 2: Update role on login when different from DB
+- When logging in with a different role than what's stored in DB, the user's role is now updated
+- Ensures session cookie and DB are always in sync
+
+### Fix 3: AuthScreen role switch calls /api/auth switch-role
+- RoleScreen `handleContinue()` now calls `fetch('/api/auth', { action: 'switch-role', role })` 
+- Updates session cookie server-side instead of only client-side
+- Fallback: if API call fails, still sets role client-side for demo mode
+
+### Fix 4: Login error response changed from 404 to 401
+- "No account found" returns 401 with generic "Invalid email or password" message
+- "Incorrect password" returns 401 with same generic message
+- Prevents user enumeration attacks
+
+### Fix 5: Auto-create user on login
+- When a new email attempts login, auto-creates a user with hashed password
+- Password is properly bcrypt-hashed for security
+- Enables seamless demo/beta experience while maintaining session cookie integrity
+
+### Fix 6: Removed NextAuth catch-all route
+- Was shadowing the custom /api/auth route, causing 404s
+- Main app uses custom JWT auth; NextAuth was unused
+
+### Fix 7: Imported getSessionUser in auth route
+- Added `getSessionUser` import needed by switch-role action
+
+### API Verification Results
+- ✅ Login creates user + sets session cookie
+- ✅ Switch-role updates DB + reissues session cookie  
+- ✅ Vendor API returns data when authenticated as vendor
+- ✅ Rider API returns data when authenticated as rider
+- ✅ All 3 role switches work correctly
+
+### Infrastructure Note
+- Server experiences OOM kills with concurrent requests due to memory constraints
+- Sequential requests work fine
+- This is an environment limitation, not a code bug

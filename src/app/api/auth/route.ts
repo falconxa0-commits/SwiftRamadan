@@ -12,7 +12,7 @@ import {
   clearVerifiedAsync,
 } from '@/lib/otp-store';
 import { hashPassword, verifyPassword } from '@/lib/auth-utils';
-import { setSessionCookie, clearSessionCookie } from '@/lib/session';
+import { setSessionCookie, clearSessionCookie, getSessionUser } from '@/lib/session';
 import { sendOTP } from '@/lib/communications';
 import { filterProfileFields, PROFILE_BLOCKED_FIELDS, publicUserFields } from '@/lib/profile-update';
 
@@ -75,6 +75,12 @@ export async function POST(request: NextRequest) {
               onboardingComplete: true,
               referralCode: `SWIFT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
             },
+          });
+        } else if (role && role !== user.role && ['customer', 'vendor', 'rider'].includes(role)) {
+          // Update role if user is logging in with a different role
+          user = await db.user.update({
+            where: { id: user.id },
+            data: { role },
           });
         }
 
@@ -419,6 +425,45 @@ export async function POST(request: NextRequest) {
         const logoutResponse = NextResponse.json({ success: true, message: 'Logged out' });
         clearSessionCookie(logoutResponse);
         return logoutResponse;
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* switch-role — update session with new role                          */
+      /* ------------------------------------------------------------------- */
+      case 'switch-role': {
+        if (!role || !['customer', 'vendor', 'rider'].includes(role)) {
+          return NextResponse.json(
+            { success: false, message: 'Valid role is required (customer, vendor, rider)' },
+            { status: 400 },
+          );
+        }
+
+        const authUser = await getSessionUser(request);
+        if (!authUser) {
+          return NextResponse.json(
+            { success: false, message: 'Authentication required' },
+            { status: 401 },
+          );
+        }
+
+        // Update user role in DB
+        const updatedUser = await db.user.update({
+          where: { id: authUser.userId },
+          data: { role },
+        });
+
+        // Issue new session cookie with updated role
+        const switchResponse = NextResponse.json({
+          success: true,
+          message: 'Role switched',
+          user: publicUserFields(updatedUser),
+        });
+        await setSessionCookie(switchResponse, {
+          userId: updatedUser.id,
+          email: updatedUser.email,
+          role: updatedUser.role,
+        });
+        return switchResponse;
       }
 
       default:
