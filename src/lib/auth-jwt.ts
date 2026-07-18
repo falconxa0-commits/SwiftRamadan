@@ -2,8 +2,51 @@
 // This file MUST NOT import any Node.js-only modules (bcrypt, crypto, etc.)
 // because it's imported by middleware which runs in the Edge Runtime.
 
+/**
+ * Resolve the JWT signing secret from environment variables.
+ *
+ * Resolution order:
+ *   1. APP_SECRET          — the canonical name going forward
+ *   2. NEXTAUTH_SECRET     — legacy compatibility (existing deployments)
+ *
+ * In production (NODE_ENV === 'production'): if neither is set, the function
+ * throws immediately — the server MUST NOT start without a configured secret.
+ *
+ * In development: if neither is set, a fixed development-only fallback is
+ * used. A prominent warning is logged once so the developer knows. The
+ * fallback is deterministic so that sessions survive HMR reloads.
+ */
+
+const DEV_ONLY_FALLBACK_SECRET = 'swift-ramadan-dev-only-do-not-use-in-production';
+
+let _devSecretWarned = false;
+
 function getJwtSecret(): string {
-  return process.env.APP_SECRET || process.env.NEXTAUTH_SECRET || 'swift-ramadan-dev-secret-for-development-only';
+  const secret = process.env.APP_SECRET || process.env.NEXTAUTH_SECRET;
+
+  if (secret) return secret;
+
+  // ── Production: fail fast ──
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error(
+      '[FATAL] APP_SECRET (or NEXTAUTH_SECRET) environment variable is required in production. ' +
+      'Refusing to start with an insecure fallback. ' +
+      'Generate one with: openssl rand -base64 48',
+    );
+  }
+
+  // ── Development: use fallback with warning ──
+  if (!_devSecretWarned) {
+    _devSecretWarned = true;
+    console.warn(
+      '\n' +
+      '⚠️  [AUTH] APP_SECRET is not set. Using development-only fallback.\n' +
+      '   This is INSECURE and must never happen in production.\n' +
+      '   Add to your .env: APP_SECRET=$(openssl rand -base64 48)\n',
+    );
+  }
+
+  return DEV_ONLY_FALLBACK_SECRET;
 }
 
 /** Encode a string to base64url (Unicode-safe, no Buffer dependency). */
@@ -72,9 +115,24 @@ export async function createSessionToken(payload: {
 }
 
 /**
+ * Constant-time string comparison to prevent timing attacks.
+ * Compares every character regardless of where the first difference occurs.
+ * Both strings must be the same length — call only on same-length inputs.
+ */
+function constantTimeEquals(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
+}
+
+/**
  * Verify a signed JWT session token.
  * Returns the payload if valid, null if invalid/expired.
  * Uses Web Crypto API (Edge Runtime compatible).
+ * Uses constant-time signature comparison to prevent timing attacks.
  */
 export async function verifySessionToken(token: string): Promise<{ userId: string; email: string; role: string; iat: number; exp: number } | null> {
   try {
@@ -85,7 +143,8 @@ export async function verifySessionToken(token: string): Promise<{ userId: strin
     const secret = getJwtSecret();
     const expectedSig = await hmacSha256(`${header}.${body}`, secret);
 
-    if (signature !== expectedSig) return null;
+    // Constant-time comparison prevents timing-based signature forgery
+    if (!constantTimeEquals(signature, expectedSig)) return null;
 
     const payload = JSON.parse(fromBase64Url(body));
     if (payload.exp < Math.floor(Date.now() / 1000)) return null;

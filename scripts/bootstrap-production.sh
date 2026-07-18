@@ -58,8 +58,7 @@ echo "  ✅ App directory: $APP_DIR"
 # ── Step 5: Generate Secrets ──
 echo ""
 echo "🔐 Step 5/8: Generating production secrets..."
-NEXTAUTH_SECRET=$(openssl rand -base64 32)
-AUTH_JWT_SECRET=$(openssl rand -base64 32)
+APP_SECRET=$(openssl rand -base64 48)
 DB_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
 echo "  ✅ Secrets generated"
 
@@ -74,9 +73,8 @@ cat > "$APP_DIR/.env" << ENVEOF
 
 # ── Required ──
 NODE_ENV=production
-NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
-AUTH_JWT_SECRET=${AUTH_JWT_SECRET}
-NEXTAUTH_URL=https://swiftramadan.com
+APP_SECRET=${APP_SECRET}
+NEXT_PUBLIC_APP_URL=https://swiftramadan.com
 DATABASE_URL=postgresql://swiftramadan:${DB_PASSWORD}@postgres:5432/swiftramadan?schema=public
 
 # ── Docker Compose ──
@@ -155,8 +153,7 @@ echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "🔑 Your generated secrets (SAVE THESE!):"
-echo "  NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
-echo "  AUTH_JWT_SECRET=$AUTH_JWT_SECRET"
+echo "  APP_SECRET=$APP_SECRET"
 echo "  DB_PASSWORD=$DB_PASSWORD"
 echo ""
 echo "✅ Bootstrap complete!"

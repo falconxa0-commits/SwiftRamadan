@@ -15,8 +15,7 @@ echo "📋 Step 1: Validating environment variables..."
 
 REQUIRED_VARS=(
   "DATABASE_URL"
-  "NEXTAUTH_SECRET"
-  "AUTH_JWT_SECRET"
+  "APP_SECRET"
 )
 
 MISSING=0
