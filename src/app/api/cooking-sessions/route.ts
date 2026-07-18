@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { validateInput, cookingSessionSchema } from '@/lib/validation';
@@ -124,14 +125,17 @@ function emptyAnalytics() {
   };
 }
 
-// POST /api/cooking-sessions  body: { email, recipeName, difficulty, durationSec, completed, usedLiveAI }
+// POST /api/cooking-sessions  body: { recipeName, difficulty, durationSec, completed, usedLiveAI }
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const rawBody = await request.json();
-    const email = rawBody?.email || 'guest';
+    const email = auth.email;
 
     const v = validateInput(cookingSessionSchema, rawBody);
     if (!v.success) return v.response;
@@ -161,13 +165,15 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET /api/cooking-sessions?email=foo@bar.com
-// Returns full analytics + gamified achievements. Always 200.
+// GET /api/cooking-sessions — Returns full analytics + gamified achievements for authenticated user
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
-  const email = request.nextUrl.searchParams.get('email') || 'guest';
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  const email = auth.email;
   try {
     const sessions = await db.cookingSession.findMany({
       where: { ownerEmail: email },
@@ -229,9 +235,9 @@ export async function GET(request: NextRequest) {
     }
 
     const distinctRecipes = new Set(sessions.map((s) => s.recipeName)).size;
-    const anyQuick = sessions.some(
+    const anyQuick = Boolean(sessions.some(
       (s) => (s.durationSec || 0) > 0 && (s.durationSec || 0) < 600,
-    );
+    ));
 
     const achievements = buildAchievements({
       totalSessions,

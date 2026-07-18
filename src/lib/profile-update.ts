@@ -47,12 +47,28 @@ export function filterProfileFields(
   return { updateData, blockedAttempts };
 }
 
+// Fields that are financial/loyalty data and should only be visible to the owner
+const FINANCIAL_FIELDS = [
+  'hasanatPoints',
+  'swiftPoints',
+  'loyaltyTier',
+] as const;
+
 /**
  * Strip a user object down to safe public fields (no password).
  * Used by both auth and user routes for consistent response shape.
+ *
+ * If `requesterId` is provided and does NOT match `user.id`, financial/loyalty
+ * fields (hasanatPoints, swiftPoints, loyaltyTier) are omitted from the
+ * response to prevent leaking sensitive data to non-owners.
  */
-export function publicUserFields(user: Record<string, unknown>) {
-  return {
+export function publicUserFields(
+  user: Record<string, unknown>,
+  requesterId?: string,
+) {
+  const isOwner = requesterId !== undefined && requesterId === user.id;
+
+  const base = {
     id: user.id,
     name: user.name,
     email: user.email,
@@ -74,12 +90,21 @@ export function publicUserFields(user: Record<string, unknown>) {
     vehicleColor: user.vehicleColor,
     riderBankName: user.riderBankName,
     riderAccountNumber: user.riderAccountNumber,
-    hasanatPoints: user.hasanatPoints,
-    swiftPoints: user.swiftPoints,
-    loyaltyTier: user.loyaltyTier,
     dailyStreak: user.dailyStreak,
     riderOnline: user.riderOnline,
     vendorOnline: user.vendorOnline,
     referralCode: user.referralCode,
   };
+
+  // Only include financial/loyalty fields for the owner
+  if (isOwner) {
+    return {
+      ...base,
+      hasanatPoints: user.hasanatPoints,
+      swiftPoints: user.swiftPoints,
+      loyaltyTier: user.loyaltyTier,
+    };
+  }
+
+  return base;
 }

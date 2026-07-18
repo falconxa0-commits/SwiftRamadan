@@ -6,6 +6,7 @@ import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Mo
 import { useAppStore, OrderItem } from '@/lib/store';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 import { track } from '@/lib/analytics';
 import { triggerOrderCelebration } from './OrderCelebration';
 
@@ -472,9 +473,9 @@ export default function CheckoutModal() {
                         className="flex items-center gap-3 p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
                       >
                         {/* Item image */}
-                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-white/5">
+                        <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-white/5 relative">
                           {item.image ? (
-                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                            <Image src={item.image} alt={item.name} fill className="object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
                               <Package className="w-6 h-6 text-white/20" />
@@ -640,19 +641,25 @@ export default function CheckoutModal() {
                           </button>
                         ))}
                       </div>
+                      <label htmlFor="checkout-addr-street" className="sr-only">Street address</label>
                       <input
+                        id="checkout-addr-street"
                         value={newAddrText}
                         onChange={e => setNewAddrText(e.target.value)}
                         placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
                         className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
                       />
+                      <label htmlFor="checkout-addr-area" className="sr-only">Area</label>
                       <input
+                        id="checkout-addr-area"
                         value={newAddrArea}
                         onChange={e => setNewAddrArea(e.target.value)}
                         placeholder="Area (e.g. Lekki)"
                         className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
                       />
+                      <label htmlFor="checkout-addr-instructions" className="sr-only">Delivery instructions</label>
                       <input
+                        id="checkout-addr-instructions"
                         value={newAddrInstructions}
                         onChange={e => setNewAddrInstructions(e.target.value)}
                         placeholder="Delivery instructions (optional)"
@@ -720,7 +727,9 @@ export default function CheckoutModal() {
                   <div className="mt-3 flex items-center gap-4">
                     {isEditingAddress ? (
                       <div className="flex-1 bg-[#1A1D26] rounded-2xl p-4 border border-white/5 space-y-3">
+                        <label htmlFor="checkout-edit-address" className="sr-only">Edit delivery address</label>
                         <input
+                          id="checkout-edit-address"
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
                           className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none"
@@ -765,7 +774,9 @@ export default function CheckoutModal() {
                 {/* Delivery Instructions */}
                 <div>
                   <h4 className="text-white font-bold text-sm mb-2">Delivery Instructions</h4>
+                  <label htmlFor="checkout-delivery-instructions" className="sr-only">Delivery instructions</label>
                   <input
+                    id="checkout-delivery-instructions"
                     value={deliveryInstructions}
                     onChange={e => setDeliveryInstructions(e.target.value)}
                     placeholder="e.g., Gate code, landmark, leave at door..."
@@ -1012,7 +1023,9 @@ export default function CheckoutModal() {
                     </div>
                   ) : (
                     <div className="flex gap-2">
+                      <label htmlFor="checkout-coupon-code" className="sr-only">Coupon code</label>
                       <input
+                        id="checkout-coupon-code"
                         value={couponCode}
                         onChange={e => {
                           setCouponCode(e.target.value.toUpperCase());

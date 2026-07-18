@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, couponValidateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
+import { formatNaira } from '@/lib/format';
 
 export const runtime = 'nodejs';
 
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           valid: false,
-          message: `Minimum order of ₦${coupon.minOrder.toLocaleString()} required for this coupon`,
+          message: `Minimum order of ${formatNaira(coupon.minOrder)} required for this coupon`,
         },
         { status: 200 },
       );
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
       value: coupon.value,
       discount,
       newTotal,
-      message: `Coupon applied — you saved ₦${discount.toLocaleString()}`,
+      message: `Coupon applied — you saved ${formatNaira(discount)}`,
     });
   } catch (error) {
     console.error('Coupons validate API error:', error);

@@ -22,6 +22,18 @@ export interface GeocodingResult {
   city: string;
 }
 
+interface AddressComponent {
+  long_name: string;
+  short_name: string;
+  types: string[];
+}
+
+function extractAreaCity(components: AddressComponent[]): { area: string; city: string } {
+  const area = components.find((c) => c.types.includes('sublocality') || c.types.includes('neighborhood'));
+  const city = components.find((c) => c.types.includes('locality'));
+  return { area: area?.long_name || '', city: city?.long_name || 'Lagos' };
+}
+
 export async function geocodeAddress(address: string): Promise<GeocodingResult | null> {
   if (!GOOGLE_MAPS_API_KEY) {
     console.warn('[Maps] Geocoding skipped: GOOGLE_MAPS_API_KEY not configured');
@@ -36,16 +48,15 @@ export async function geocodeAddress(address: string): Promise<GeocodingResult |
 
     if (data.results && data.results.length > 0) {
       const result = data.results[0];
-      const components: any[] = result.address_components || [];
-      const area = components.find((c: any) => c.types.includes('sublocality') || c.types.includes('neighborhood'));
-      const city = components.find((c: any) => c.types.includes('locality'));
+      const components: AddressComponent[] = result.address_components || [];
+      const { area, city } = extractAreaCity(components);
 
       return {
         lat: result.geometry.location.lat,
         lng: result.geometry.location.lng,
         formattedAddress: result.formatted_address,
-        area: area?.long_name || '',
-        city: city?.long_name || 'Lagos',
+        area,
+        city,
       };
     }
     return null;
@@ -70,16 +81,15 @@ export async function reverseGeocode(lat: number, lng: number): Promise<Geocodin
 
     if (data.results && data.results.length > 0) {
       const result = data.results[0];
-      const components: any[] = result.address_components || [];
-      const area = components.find((c: any) => c.types.includes('sublocality'));
-      const city = components.find((c: any) => c.types.includes('locality'));
+      const components: AddressComponent[] = result.address_components || [];
+      const { area, city } = extractAreaCity(components);
 
       return {
         lat,
         lng,
         formattedAddress: result.formatted_address,
-        area: area?.long_name || '',
-        city: city?.long_name || 'Lagos',
+        area,
+        city,
       };
     }
     return null;
@@ -161,12 +171,12 @@ export async function getDirections(
       return {
         distance: leg.distance.text,
         duration: leg.duration.text,
-        steps: leg.steps.map((step: any) => ({
-          instruction: step.html_instructions?.replace(/<[^>]*>/g, '') || '',
-          distance: step.distance.text,
-          duration: step.duration.text,
-          startLocation: step.start_location,
-          endLocation: step.end_location,
+        steps: leg.steps.map((step: Record<string, unknown>) => ({
+          instruction: (step.html_instructions as string)?.replace(/<[^>]*>/g, '') || '',
+          distance: (step.distance as Record<string, string>).text,
+          duration: (step.duration as Record<string, string>).text,
+          startLocation: step.start_location as { lat: number; lng: number },
+          endLocation: step.end_location as { lat: number; lng: number },
         })),
         polyline: route.overview_polyline?.points || '',
       };
@@ -215,14 +225,14 @@ export async function searchNearbyPlaces({
     const data = await response.json();
 
     if (data.results) {
-      return data.results.slice(0, 10).map((place: any) => ({
-        name: place.name,
-        address: place.vicinity,
-        lat: place.geometry.location.lat,
-        lng: place.geometry.location.lng,
-        rating: place.rating || 0,
-        types: place.types || [],
-        openNow: place.opening_hours?.open_now || false,
+      return data.results.slice(0, 10).map((place: Record<string, unknown>) => ({
+        name: place.name as string,
+        address: place.vicinity as string,
+        lat: (place.geometry as Record<string, Record<string, number>>).location.lat,
+        lng: (place.geometry as Record<string, Record<string, number>>).location.lng,
+        rating: (place.rating as number) || 0,
+        types: (place.types as string[]) || [],
+        openNow: ((place.opening_hours as Record<string, boolean>)?.open_now) || false,
       }));
     }
     return [];

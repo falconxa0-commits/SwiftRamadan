@@ -1,5 +1,7 @@
 // Gift Card Email Template — Aurora Luxe branded
 
+import { formatNaira } from '@/lib/format';
+
 const BG = '#0B0D14';
 const GREEN = '#10E07A';
 const GOLD = '#F5C451';
@@ -13,7 +15,7 @@ export function giftCardTemplate(data: {
   message?: string;
   expiresAt?: string;
 }): { subject: string; html: string; text: string } {
-  const formattedAmount = `₦${data.amount.toLocaleString()}`;
+  const formattedAmount = formatNaira(data.amount);
 
   const html = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:520px;margin:0 auto;background:${BG};border-radius:16px;overflow:hidden;">

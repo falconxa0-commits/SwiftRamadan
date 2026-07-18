@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { allProducts, formatNaira } from '@/lib/data';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 import { track } from '@/lib/analytics';
 
 interface Review {
@@ -490,9 +491,9 @@ export default function ProductDetailModal() {
                       {reviews.map(review => (
                         <div key={review.id} className="bg-[#1A1D26] rounded-xl border border-white/5 p-3">
                           <div className="flex items-start gap-3">
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-[#06070B] font-black text-sm shrink-0 overflow-hidden">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-[#06070B] font-black text-sm shrink-0 overflow-hidden relative">
                               {review.authorAvatar ? (
-                                <img src={review.authorAvatar} alt={review.authorName} className="w-full h-full object-cover" />
+                                <Image src={review.authorAvatar} alt={review.authorName} fill unoptimized className="object-cover" />
                               ) : (
                                 review.authorName.charAt(0).toUpperCase()
                               )}

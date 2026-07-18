@@ -80,7 +80,7 @@ export default function VendorWallet() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/vendor?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`);
+      const res = await fetch(`/api/vendor?email=${encodeURIComponent(userEmail || '')}`);
       const json = await res.json();
       if (json.success && json.data) {
         const data = json.data as VendorData;

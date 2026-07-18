@@ -155,6 +155,7 @@ function InputField({
   inputMode,
   maxLength,
   onKeyDown,
+  id,
 }: {
   icon: React.ElementType;
   placeholder: string;
@@ -166,11 +167,14 @@ function InputField({
   inputMode?: 'text' | 'numeric' | 'tel' | 'email';
   maxLength?: number;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  id?: string;
 }) {
   return (
     <div className="relative">
+      {id && <label htmlFor={id} className="sr-only">{placeholder}</label>}
       <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
       <input
+        id={id}
         type={type}
         inputMode={inputMode}
         maxLength={maxLength}
@@ -375,12 +379,15 @@ function LoginScreen() {
           onChange={setEmail}
           accentColor={config.accent}
           inputMode="email"
+          id="auth-login-email"
         />
 
         {/* Password */}
         <div className="relative">
+          <label htmlFor="auth-login-password" className="sr-only">Password</label>
           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
           <input
+            id="auth-login-password"
             type={showPassword ? 'text' : 'password'}
             placeholder="Password"
             value={password}
@@ -417,6 +424,7 @@ function LoginScreen() {
                 onChange={setForgotEmail}
                 accentColor={config.accent}
                 inputMode="email"
+                id="auth-forgot-email"
               />
               <ActionButton
                 label="Send Reset Link"
@@ -750,15 +758,18 @@ function SignupScreen() {
               value={fullName}
               onChange={setFullName}
               accentColor={config.accent}
+              id="auth-signup-name"
             />
 
             {/* Phone */}
             <div className="relative">
+              <label htmlFor="auth-signup-phone" className="sr-only">Phone number</label>
               <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
               <div className="absolute left-12 top-1/2 -translate-y-1/2 flex items-center pr-2 border-r border-white/10">
                 <span className="text-white/50 text-sm font-medium">+234</span>
               </div>
               <input
+                id="auth-signup-phone"
                 type="tel"
                 inputMode="numeric"
                 placeholder="Phone number"
@@ -777,6 +788,7 @@ function SignupScreen() {
               onChange={setEmail}
               accentColor={config.accent}
               inputMode="email"
+              id="auth-signup-email"
             />
 
             {/* Residential Area */}
@@ -820,8 +832,10 @@ function SignupScreen() {
 
             {/* Password */}
             <div className="relative">
+              <label htmlFor="auth-signup-password" className="sr-only">Create password</label>
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
               <input
+                id="auth-signup-password"
                 type={showSignupPassword ? 'text' : 'password'}
                 placeholder="Create password (min 6 chars)"
                 value={signupPassword}
@@ -915,6 +929,7 @@ function SignupScreen() {
                   value={businessName}
                   onChange={setBusinessName}
                   accentColor={config.accent}
+                  id="auth-signup-business-name"
                 />
 
                 {/* Business Category */}
@@ -977,6 +992,7 @@ function SignupScreen() {
                   value={businessAddress}
                   onChange={setBusinessAddress}
                   accentColor={config.accent}
+                  id="auth-signup-business-address"
                 />
               </>
             )}
@@ -1030,6 +1046,7 @@ function SignupScreen() {
                   value={plateNumber}
                   onChange={(v) => setPlateNumber(v.toUpperCase())}
                   accentColor={config.accent}
+                  id="auth-signup-plate-number"
                 />
 
                 {/* License Number */}
@@ -1039,6 +1056,7 @@ function SignupScreen() {
                   value={licenseNumber}
                   onChange={setLicenseNumber}
                   accentColor={config.accent}
+                  id="auth-signup-license-number"
                 />
               </>
             )}

@@ -7,6 +7,7 @@ import { getAgent, agents } from '@/lib/ai/agents';
 import { executeTool, toolDefinitions } from '@/lib/ai/tools';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkBodySize } from '@/lib/validation';
 import type { AgentId, AgentMessage, AgentContext, ToolCall } from '@/lib/ai/types';
 
 // ── POST: Send a message to an agent ──
@@ -19,8 +20,12 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Body size check
+  const bodyResult = await checkBodySize(request);
+  if (bodyResult.tooLarge) return bodyResult.response;
+
   try {
-    const body = await request.json();
+    const body = JSON.parse(bodyResult.body);
     const { agentId, message, messages = [], context = {} } = body as {
       agentId: AgentId;
       message: string;

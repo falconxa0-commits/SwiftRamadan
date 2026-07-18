@@ -440,11 +440,12 @@ export default function KYCModal() {
                     transition={{ delay: 0.2 }}
                     className="mt-5"
                   >
-                    <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-type" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Type
                     </label>
                     <div className="relative">
                       <select
+                        id="kyc-document-type"
                         value={documentType}
                         onChange={e => setDocumentType(e.target.value)}
                         className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#10E07A]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
@@ -469,10 +470,11 @@ export default function KYCModal() {
                     transition={{ delay: 0.25 }}
                     className="mt-4"
                   >
-                    <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-number" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Number
                     </label>
                     <input
+                      id="kyc-document-number"
                       type="text"
                       value={documentNumber}
                       onChange={e => setDocumentNumber(e.target.value)}
@@ -488,7 +490,7 @@ export default function KYCModal() {
                     transition={{ delay: 0.3 }}
                     className="mt-4"
                   >
-                    <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-upload" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Image
                     </label>
 

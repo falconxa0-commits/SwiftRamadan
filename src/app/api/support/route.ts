@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkBodySize } from '@/lib/validation';
 
 const VALID_CATEGORIES = ['general', 'order', 'payment', 'delivery', 'account', 'vendor', 'rider'];
 const VALID_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
@@ -14,20 +15,23 @@ export async function POST(request: NextRequest) {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
 
-    const body = await request.json();
+    const bodyResult = await checkBodySize(request);
+    if (bodyResult.tooLarge) return bodyResult.response;
+
+    const body = JSON.parse(bodyResult.body);
     const { action } = body;
 
     switch (action) {
       case 'create':
-        return await handleCreate(body);
+        return await handleCreate(body, auth.userId);
       case 'list':
-        return await handleList(body);
+        return await handleList(auth.userId);
       case 'get':
-        return await handleGet(body);
+        return await handleGet(body, auth.userId);
       case 'message':
-        return await handleMessage(body);
+        return await handleMessage(body, auth.userId);
       case 'close':
-        return await handleClose(body);
+        return await handleClose(body, auth.userId);
       default:
         return NextResponse.json(
           { success: false, message: `Unknown action: ${action}` },
@@ -44,22 +48,16 @@ export async function POST(request: NextRequest) {
 }
 
 // ── Create a support ticket ──
-async function handleCreate(body: {
-  userId: string;
-  category: string;
-  subject: string;
-  message: string;
-  priority?: string;
-}) {
-  const { userId, category, subject, message, priority } = body;
-
-  // Validate required fields
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 }
-    );
-  }
+async function handleCreate(
+  body: {
+    category: string;
+    subject: string;
+    message: string;
+    priority?: string;
+  },
+  userId: string,
+) {
+  const { category, subject, message, priority } = body;
 
   if (!subject || !subject.trim()) {
     return NextResponse.json(
@@ -116,16 +114,7 @@ async function handleCreate(body: {
 }
 
 // ── List user's tickets ──
-async function handleList(body: { userId: string }) {
-  const { userId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 }
-    );
-  }
-
+async function handleList(userId: string) {
   const tickets = await db.supportTicket.findMany({
     where: { userId },
     include: { messages: true },
@@ -136,15 +125,8 @@ async function handleList(body: { userId: string }) {
 }
 
 // ── Get single ticket with messages ──
-async function handleGet(body: { userId: string; ticketId: string }) {
-  const { userId, ticketId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 }
-    );
-  }
+async function handleGet(body: { ticketId: string }, userId: string) {
+  const { ticketId } = body;
 
   if (!ticketId) {
     return NextResponse.json(
@@ -177,15 +159,8 @@ async function handleGet(body: { userId: string; ticketId: string }) {
 }
 
 // ── Add message to ticket ──
-async function handleMessage(body: { userId: string; ticketId: string; message: string }) {
-  const { userId, ticketId, message } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 }
-    );
-  }
+async function handleMessage(body: { ticketId: string; message: string }, userId: string) {
+  const { ticketId, message } = body;
 
   if (!ticketId) {
     return NextResponse.json(
@@ -240,15 +215,8 @@ async function handleMessage(body: { userId: string; ticketId: string; message: 
 }
 
 // ── Close a ticket ──
-async function handleClose(body: { userId: string; ticketId: string }) {
-  const { userId, ticketId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 }
-    );
-  }
+async function handleClose(body: { ticketId: string }, userId: string) {
+  const { ticketId } = body;
 
   if (!ticketId) {
     return NextResponse.json(

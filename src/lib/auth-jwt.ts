@@ -3,7 +3,7 @@
 // because it's imported by middleware which runs in the Edge Runtime.
 
 function getJwtSecret(): string {
-  return process.env.NEXTAUTH_SECRET || 'swift-ramadan-dev-secret-for-development-only';
+  return process.env.APP_SECRET || process.env.NEXTAUTH_SECRET || 'swift-ramadan-dev-secret-for-development-only';
 }
 
 /** Encode a string to base64url (Unicode-safe, no Buffer dependency). */

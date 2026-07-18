@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
@@ -56,14 +57,16 @@ function extractJsonArray(text: string): unknown | null {
   return null;
 }
 
-// GET /api/predictive-reorder — Get AI-predicted reorder suggestions
+// GET /api/predictive-reorder — Get AI-predicted reorder suggestions (requires auth)
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const userId = auth.userId;
 
     try {
       const ZAI = (await import('z-ai-web-dev-sdk')).default;

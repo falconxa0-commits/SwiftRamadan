@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
-import { validateInput, productCreateSchema } from '@/lib/validation';
+import { validateInput, productCreateSchema, checkBodySize } from '@/lib/validation';
 import { requireAuth } from '@/lib/session';
 
 /* ──────────── helpers ──────────── */
@@ -108,8 +108,11 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const bodyResult = await checkBodySize(request);
+  if (bodyResult.tooLarge) return bodyResult.response;
+
   try {
-    const rawBody = await request.json();
+    const rawBody = JSON.parse(bodyResult.body);
     const { vendorId, vendorEmail, ...productData } = rawBody;
 
     // Validate with Zod schema (consistent with /api/products)
@@ -184,6 +187,9 @@ export async function PUT(request: NextRequest) {
     );
   }
 
+  const bodyResult = await checkBodySize(request);
+  if (bodyResult.tooLarge) return bodyResult.response;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -197,7 +203,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    const body = JSON.parse(bodyResult.body);
 
     if (!vendorIdQ && !vendorEmail) {
       return NextResponse.json(

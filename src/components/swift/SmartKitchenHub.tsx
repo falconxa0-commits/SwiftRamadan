@@ -35,6 +35,7 @@ import {
 import { useAppStore } from '@/lib/store';
 import { trendingMeals, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
 
 /* ───────────────────────── Types ───────────────────────── */
 
@@ -975,8 +976,8 @@ function CoachTab(props: CoachTabProps) {
                 onClick={() => props.onSelectMeal(meal)}
                 className="bg-[#0F1117] border border-white/5 hover:border-[#10E07A]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
               >
-                <div className="aspect-square bg-[#1A1D26] overflow-hidden">
-                  <img src={meal.image} alt={meal.name} className="w-full h-full object-cover" />
+                <div className="aspect-square bg-[#1A1D26] overflow-hidden relative">
+                  <Image src={meal.image} alt={meal.name} fill className="object-cover" />
                 </div>
                 <div className="p-2.5">
                   <div className="text-white text-xs font-bold leading-tight line-clamp-2 min-h-[2rem]">{meal.name}</div>
@@ -1016,7 +1017,7 @@ function CoachTab(props: CoachTabProps) {
 
         <div className="bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5">
           <div className="aspect-[16/10] bg-[#1A1D26] overflow-hidden relative">
-            <img src={r.image} alt={r.name} className="w-full h-full object-cover" />
+            <Image src={r.image} alt={r.name} fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
               <div className="flex items-center gap-2 mb-1">

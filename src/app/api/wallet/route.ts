@@ -3,13 +3,14 @@ import { db } from '@/lib/db';
 import { initiatePayment, verifyPayment, koboToNaira } from '@/lib/payments';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { formatNaira } from '@/lib/format';
 
 export const runtime = 'nodejs';
 
 /** Format kobo amount to naira string e.g. "₦1,250.00" */
-function formatNaira(kobo: number): string {
+function formatNairaFromKobo(kobo: number): string {
   const naira = koboToNaira(kobo);
-  return `₦${naira.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return formatNaira(naira);
 }
 
 // POST /api/wallet
@@ -22,14 +23,8 @@ export async function POST(request: NextRequest) {
     if (auth instanceof NextResponse) return auth;
 
     const body = await request.json();
-    const { action, userId } = body;
-
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'userId is required' },
-        { status: 400 },
-      );
-    }
+    const { action } = body;
+    const userId = auth.userId;
 
     // ── balance ────────────────────────────────────────────────────────────
     if (action === 'balance') {
@@ -48,13 +43,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         balance: user.walletBalance,
-        walletBalance: formatNaira(user.walletBalance),
+        walletBalance: formatNairaFromKobo(user.walletBalance),
       });
     }
 
     // ── topup ──────────────────────────────────────────────────────────────
     if (action === 'topup') {
-      const { amount } = body as { action: string; userId: string; amount: number };
+      const { amount } = body as { action: string; amount: number };
 
       if (!amount || amount <= 0) {
         return NextResponse.json(
@@ -84,7 +79,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         name: user.name,
         metadata: { type: 'wallet_topup', userId },
-        callbackUrl: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/payments/callback`,
+        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/api/payments/callback`,
       });
 
       if (!result.success) {
@@ -103,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     // ── confirm ────────────────────────────────────────────────────────────
     if (action === 'confirm') {
-      const { reference } = body as { action: string; userId: string; reference: string };
+      const { reference } = body as { action: string; reference: string };
 
       if (!reference) {
         return NextResponse.json(
@@ -172,7 +167,6 @@ export async function POST(request: NextRequest) {
     if (action === 'pay') {
       const { orderId, amount } = body as {
         action: string;
-        userId: string;
         orderId: string;
         amount: number;
       };

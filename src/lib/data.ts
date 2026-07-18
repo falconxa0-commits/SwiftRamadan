@@ -1,8 +1,7 @@
 // Mock data for SwiftRamadan app
 
-export function formatNaira(amount: number): string {
-  return `₦${amount.toLocaleString()}`;
-}
+// Re-export shared formatNaira from the central utility
+export { formatNaira } from '@/lib/format';
 
 // Hero Slides
 export const heroSlides = [

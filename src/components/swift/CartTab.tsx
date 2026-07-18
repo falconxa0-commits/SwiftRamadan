@@ -7,12 +7,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
-const VALID_COUPONS: Record<string, { discount: number; label: string }> = {
-  ramadan: { discount: 0.10, label: '10% off - Ramadan Special' },
-  iftar: { discount: 0.10, label: '10% off - Iftar Deal' },
-  swift25: { discount: 0.25, label: '25% off - Swift25 Bonus' },
-  sahur: { discount: 0.15, label: '15% off - Sahur Special' },
-};
+interface AppliedCouponData {
+  discount: number;
+  type: string;
+  value: number;
+  message: string;
+}
 
 export default function CartTab() {
   const { cartItems, updateQuantity, removeFromCart, clearCart } = useAppStore();
@@ -20,30 +20,54 @@ export default function CartTab() {
   const [coupon, setCoupon] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);
   const [appliedCouponCode, setAppliedCouponCode] = useState('');
+  const [appliedCouponData, setAppliedCouponData] = useState<AppliedCouponData | null>(null);
+  const [couponLoading, setCouponLoading] = useState(false);
 
   const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const serviceFee = Math.round(subtotal * 0.02);
   const deliveryFee = subtotal >= 5000 ? 0 : 500;
   // Effective coupon state - coupon is void if cart is empty
-  const effectiveCouponApplied = couponApplied && cartItems.length > 0;
-  const discountPercent = effectiveCouponApplied ? (VALID_COUPONS[appliedCouponCode]?.discount || 0.10) : 0;
-  const discount = effectiveCouponApplied ? Math.round(subtotal * discountPercent) : 0;
+  const effectiveCouponApplied = couponApplied && cartItems.length > 0 && appliedCouponData !== null;
+  const discount = effectiveCouponApplied ? appliedCouponData!.discount : 0;
   const total = subtotal + deliveryFee + serviceFee - discount;
 
-  const handleApplyCoupon = () => {
-    const code = coupon.toLowerCase().trim();
-    if (VALID_COUPONS[code]) {
-      setCouponApplied(true);
-      setAppliedCouponCode(code);
-      toast({ title: 'Coupon Applied! 🎉', description: VALID_COUPONS[code].label });
-    } else if (coupon.trim()) {
-      toast({ title: 'Invalid Coupon', description: 'Try "RAMADAN", "IFTAR", "SWIFT25", or "SAHUR" for discounts' });
+  const handleApplyCoupon = async () => {
+    const code = coupon.trim();
+    if (!code) return;
+
+    setCouponLoading(true);
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, cartTotal: subtotal }),
+      });
+      const data = await res.json();
+
+      if (data.valid) {
+        setCouponApplied(true);
+        setAppliedCouponCode(code.toUpperCase());
+        setAppliedCouponData({
+          discount: data.discount,
+          type: data.type,
+          value: data.value,
+          message: data.message,
+        });
+        toast({ title: 'Coupon Applied! 🎉', description: data.message });
+      } else {
+        toast({ title: 'Invalid Coupon', description: data.message || 'This coupon code is not valid' });
+      }
+    } catch {
+      toast({ title: 'Validation Failed', description: 'Could not validate coupon. Please try again.' });
+    } finally {
+      setCouponLoading(false);
     }
   };
 
   const handleRemoveCoupon = () => {
     setCouponApplied(false);
     setAppliedCouponCode('');
+    setAppliedCouponData(null);
     setCoupon('');
     toast({ title: 'Coupon Removed', description: 'Discount has been removed' });
   };
@@ -119,6 +143,7 @@ export default function CartTab() {
             clearCart();
             setCouponApplied(false);
             setAppliedCouponCode('');
+            setAppliedCouponData(null);
             toast({ title: 'Cart Cleared', description: 'All items removed from cart' });
           }}
           className="text-[#FB7185] text-xs font-bold uppercase tracking-wider hover:text-[#FB7185]/80 transition-colors"
@@ -214,7 +239,7 @@ export default function CartTab() {
             </div>
             <div className="flex-1">
               <p className="text-[#10E07A] text-sm font-bold uppercase font-mono">{appliedCouponCode}</p>
-              <p className="text-[#10E07A]/60 text-[10px]">{VALID_COUPONS[appliedCouponCode]?.label || 'Discount applied'}</p>
+              <p className="text-[#10E07A]/60 text-[10px]">{appliedCouponData?.message || 'Discount applied'}</p>
             </div>
             <button
               onClick={handleRemoveCoupon}
@@ -230,7 +255,7 @@ export default function CartTab() {
               <input
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') handleApplyCoupon(); }}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !couponLoading) handleApplyCoupon(); }}
                 placeholder="Enter coupon code"
                 className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
                 aria-label="Coupon code input"
@@ -238,17 +263,21 @@ export default function CartTab() {
             </div>
             <button
               onClick={handleApplyCoupon}
-              disabled={!coupon.trim()}
-              className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-4 rounded-xl font-bold text-sm hover:bg-[#10E07A]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#10E07A]/10"
+              disabled={!coupon.trim() || couponLoading}
+              className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-4 rounded-xl font-bold text-sm hover:bg-[#10E07A]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#10E07A]/10 flex items-center gap-1.5"
             >
-              Apply
+              {couponLoading ? (
+                <span className="w-4 h-4 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+              ) : (
+                'Apply'
+              )}
             </button>
           </div>
         )}
         {!couponApplied && (
           <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-[#F5C451]" />
-            Try &quot;RAMADAN&quot;, &quot;IFTAR&quot;, &quot;SWIFT25&quot;, or &quot;SAHUR&quot;
+            Have a coupon? Enter it above for a discount
           </p>
         )}
       </div>
@@ -273,7 +302,9 @@ export default function CartTab() {
           </div>
           {effectiveCouponApplied && (
             <div className="flex justify-between text-sm">
-              <span className="text-[#10E07A]">Discount ({Math.round(discountPercent * 100)}%)</span>
+              <span className="text-[#10E07A]">
+                Discount{appliedCouponData?.type === 'percent' ? ` (${appliedCouponData.value}%)` : ''}
+              </span>
               <span className="text-[#10E07A] font-bold">-{formatNaira(discount)}</span>
             </div>
           )}

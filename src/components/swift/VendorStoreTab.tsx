@@ -64,7 +64,7 @@ export default function VendorStoreTab() {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/vendor/products?vendorEmail=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`
+        `/api/vendor/products?vendorEmail=${encodeURIComponent(userEmail || '')}`
       );
       const json = await res.json();
       if (json.success && Array.isArray(json.products)) {

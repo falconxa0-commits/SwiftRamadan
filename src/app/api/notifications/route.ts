@@ -1,20 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
 /* ──────────── helpers ──────────── */
-
-// Resolve an identifier (id OR email) to a real User.id. Returns null if not found.
-// Used to (a) prevent FK-violation crashes on bad IDs (audit C1) and
-// (b) normalise email-based lookups to a stable user id for `where` clauses.
-async function resolveUserId(identifier: string | null | undefined): Promise<string | null> {
-  if (!identifier) return null;
-  const byId = await db.user.findUnique({ where: { id: identifier }, select: { id: true } });
-  if (byId) return byId.id;
-  const byEmail = await db.user.findUnique({ where: { email: identifier }, select: { id: true } });
-  return byEmail ? byEmail.id : null;
-}
 
 function timeAgo(date: Date): string {
   const diffMs = Date.now() - new Date(date).getTime();
@@ -35,30 +25,14 @@ export async function GET(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
-    const { searchParams } = new URL(request.url);
-    const userIdRaw = searchParams.get('userId');
+    const auth = await requireAuth(request);
+    if (auth instanceof NextResponse) return auth;
 
-    if (!userIdRaw) {
-      return NextResponse.json({
-        notifications: [],
-        unreadCount: 0,
-        deprecated: true,
-        warning:
-          'userId query param is required; returning an empty list to prevent a global data leak. Update the caller to pass ?userId=...',
-      });
-    }
-
-    const resolvedId = await resolveUserId(userIdRaw);
-    if (!resolvedId) {
-      return NextResponse.json({
-        notifications: [],
-        unreadCount: 0,
-        warning: 'User not found; returning an empty list.',
-      });
-    }
+    // Use authenticated user's userId — no longer accepts query param to prevent IDOR
+    const userId = auth.userId;
 
     const dbNotifications = await db.notification.findMany({
-      where: { userId: resolvedId },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
       take: 50,
     });
@@ -81,7 +55,6 @@ export async function GET(request: NextRequest) {
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/notifications' },
     });
-    // On DB failure, return empty list (NOT the legacy global demo array — that was a leak too).
     return NextResponse.json({
       notifications: [],
       unreadCount: 0,
@@ -96,27 +69,18 @@ export async function POST(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
+    const auth = await requireAuth(request);
+    if (auth instanceof NextResponse) return auth;
+
     const body = await request.json();
-    const { title, message, type = 'info', userId } = body;
+    const { title, message, type = 'info' } = body;
+    // Use authenticated user's userId — admin can override via body if needed
+    const userId = auth.role === 'admin' && body.userId ? body.userId : auth.userId;
 
     if (!title || !message) {
       return NextResponse.json(
         { success: false, message: 'title and message are required' },
         { status: 400 }
-      );
-    }
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'userId is required' },
-        { status: 400 }
-      );
-    }
-
-    const resolvedId = await resolveUserId(String(userId));
-    if (!resolvedId) {
-      return NextResponse.json(
-        { success: false, message: 'User not found' },
-        { status: 404 }
       );
     }
 
@@ -125,7 +89,7 @@ export async function POST(request: NextRequest) {
         title,
         message,
         type,
-        userId: resolvedId,
+        userId,
         read: false,
       },
     });
@@ -149,28 +113,18 @@ export async function PUT(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
+    const auth = await requireAuth(request);
+    if (auth instanceof NextResponse) return auth;
+
     const body = await request.json();
-    const { id, userId, all } = body;
-
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'userId is required' },
-        { status: 400 }
-      );
-    }
-
-    const resolvedId = await resolveUserId(String(userId));
-    if (!resolvedId) {
-      return NextResponse.json(
-        { success: false, message: 'User not found' },
-        { status: 404 }
-      );
-    }
+    const { id, all } = body;
+    // Use authenticated user's userId
+    const userId = auth.userId;
 
     // Bulk: mark all of THIS user's unread notifications as read
     if (all === true) {
       const result = await db.notification.updateMany({
-        where: { userId: resolvedId, read: false },
+        where: { userId, read: false },
         data: { read: true },
       });
       return NextResponse.json({
@@ -189,7 +143,7 @@ export async function PUT(request: NextRequest) {
           { status: 404 }
         );
       }
-      if (existing.userId !== resolvedId) {
+      if (existing.userId !== userId) {
         return NextResponse.json(
           { success: false, message: 'You do not own this notification' },
           { status: 403 }
@@ -209,7 +163,7 @@ export async function PUT(request: NextRequest) {
     }
 
     return NextResponse.json(
-      { success: false, message: 'Provide { id } or { userId, all: true }' },
+      { success: false, message: 'Provide { id } or { all: true }' },
       { status: 400 }
     );
   } catch (error) {

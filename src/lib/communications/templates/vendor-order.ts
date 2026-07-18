@@ -1,5 +1,7 @@
 // Vendor Order Notification Email Template — Aurora Luxe branded
 
+import { formatNaira } from '@/lib/format';
+
 const BG = '#0B0D14';
 const GREEN = '#10E07A';
 const GOLD = '#F5C451';
@@ -15,14 +17,14 @@ export function vendorOrderTemplate(data: {
   customerPhone?: string;
   notes?: string;
 }): { subject: string; html: string; text: string } {
-  const formattedTotal = `₦${data.total.toLocaleString()}`;
+  const formattedTotal = formatNaira(data.total);
   const itemsHtml = data.items
     .map(
       (item) => `
       <tr>
         <td style="padding:10px 12px;color:rgba(255,255,255,0.9);font-size:14px;border-bottom:1px solid rgba(255,255,255,0.06);">${item.name}</td>
         <td style="padding:10px 12px;color:rgba(255,255,255,0.6);font-size:14px;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06);">x${item.qty}</td>
-        <td style="padding:10px 12px;color:${GOLD};font-size:14px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">₦${item.price.toLocaleString()}</td>
+        <td style="padding:10px 12px;color:${GOLD};font-size:14px;text-align:right;border-bottom:1px solid rgba(255,255,255,0.06);">${formatNaira(item.price)}</td>
       </tr>`,
     )
     .join('');
@@ -110,7 +112,7 @@ Customer: ${data.customerName}
 ${data.customerPhone ? `Phone: ${data.customerPhone}` : ''}
 
 Items:
-${data.items.map((item) => `- ${item.name} x${item.qty} — ₦${item.price.toLocaleString()}`).join('\n')}
+${data.items.map((item) => `- ${item.name} x${item.qty} — ${formatNaira(item.price)}`).join('\n')}
 
 Total: ${formattedTotal}
 Delivery: ${data.deliveryAddress}

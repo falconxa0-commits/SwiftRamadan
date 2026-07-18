@@ -1,37 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
 
-/**
- * Resolve a userId param (which may be an email or a real cuid) to an actual User.id.
- * Returns null when no user is found.
- */
-async function resolveUserId(raw: string | null): Promise<string | null> {
-  if (!raw || raw === 'guest') return null;
-  // First, try direct id lookup
-  const byId = await db.user.findUnique({ where: { id: raw } });
-  if (byId) return byId.id;
-  // Then try email lookup
-  const byEmail = await db.user.findUnique({ where: { email: raw } });
-  return byEmail?.id ?? null;
-}
-
-// GET /api/wishlist?userId=xxx → returns the user's wishlist items (newest first)
+// GET /api/wishlist → returns the authenticated user's wishlist items (newest first)
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
-  try {
-    const { searchParams } = new URL(request.url);
-    const rawUserId = searchParams.get('userId');
-    const userId = await resolveUserId(rawUserId);
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
-    if (!userId) {
-      return NextResponse.json({ items: [] });
-    }
+  try {
+    const userId = auth.userId;
 
     const items = await db.wishlistItem.findMany({
       where: { userId },
@@ -51,28 +35,24 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/wishlist { userId, productId, name, price, image }
+// POST /api/wishlist { productId, name, price, image }
 // Toggle behavior: if the item already exists, remove it; otherwise create it.
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { userId: rawUserId, productId, name, price, image } = body;
+    const { productId, name, price, image } = body;
+    const userId = auth.userId;
 
-    if (!rawUserId || !productId || !name) {
+    if (!productId || !name) {
       return NextResponse.json(
-        { success: false, message: 'userId, productId and name are required' },
+        { success: false, message: 'productId and name are required' },
         { status: 400 },
-      );
-    }
-
-    const userId = await resolveUserId(rawUserId);
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'User not found — please log in to save wishlist items' },
-        { status: 404 },
       );
     }
 
@@ -113,28 +93,23 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/wishlist?userId=xxx&productId=xxx → removes item
+// DELETE /api/wishlist?productId=xxx → removes item for authenticated user
 export async function DELETE(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const rawUserId = searchParams.get('userId');
     const productId = searchParams.get('productId');
+    const userId = auth.userId;
 
-    if (!rawUserId || !productId) {
+    if (!productId) {
       return NextResponse.json(
-        { success: false, message: 'userId and productId are required' },
+        { success: false, message: 'productId is required' },
         { status: 400 },
-      );
-    }
-
-    const userId = await resolveUserId(rawUserId);
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'User not found' },
-        { status: 404 },
       );
     }
 

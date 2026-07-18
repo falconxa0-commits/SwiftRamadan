@@ -7,15 +7,6 @@ import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
-/** Resolve email-or-id to real User.id; returns null if not found. */
-async function resolveUserId(raw: string | null | undefined): Promise<string | null> {
-  if (!raw || raw === 'guest') return null;
-  const byId = await db.user.findUnique({ where: { id: raw } });
-  if (byId) return byId.id;
-  const byEmail = await db.user.findUnique({ where: { email: raw } });
-  return byEmail?.id ?? null;
-}
-
 /** Generate a unique-ish payment reference. */
 function generateReference(): string {
   return `SWR-PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -29,17 +20,26 @@ const methodToProvider: Record<string, PaymentProvider> = {
   cash: 'swift-pay',
 };
 
-// GET /api/payments?userId=xxx  or  /api/payments?orderId=xxx
+// GET /api/payments — Get payments for the authenticated user (or by orderId)
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const rawUserId = searchParams.get('userId');
     const orderId = searchParams.get('orderId');
 
     if (orderId) {
+      // Verify the order belongs to the user (or user is admin) before showing payments
+      if (auth.role !== 'admin') {
+        const order = await db.order.findUnique({ where: { id: orderId } });
+        if (!order || order.userId !== auth.userId) {
+          return NextResponse.json({ payments: [] });
+        }
+      }
       const payments = await db.payment.findMany({
         where: { orderId },
         orderBy: { createdAt: 'desc' },
@@ -47,10 +47,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ payments });
     }
 
-    const userId = await resolveUserId(rawUserId);
-    if (!userId) {
-      return NextResponse.json({ payments: [] });
-    }
+    const userId = auth.userId;
 
     const payments = await db.payment.findMany({
       where: { userId },
@@ -81,7 +78,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { orderId, amount, method, reference } = body;
-    const rawUserId = auth.userId || body.userId;
+    const userId = auth.userId;
 
     if (!amount || amount <= 0) {
       return NextResponse.json(
@@ -106,8 +103,7 @@ export async function POST(request: NextRequest) {
       if (order) validOrderId = order.id;
     }
 
-    // Optionally link to user
-    const userId = await resolveUserId(rawUserId);
+    // User is already authenticated — use auth.userId directly
 
     // Ensure reference is unique (if collision, append random suffix and retry once)
     const existing = await db.payment.findUnique({ where: { reference: finalReference } });
@@ -124,9 +120,9 @@ export async function POST(request: NextRequest) {
         provider,
         amount: Number(amount),
         reference: finalReference,
-        email: rawUserId || 'customer@swiftramadan.com',
+        email: auth.email || 'customer@swiftramadan.com',
         name: 'SwiftRamadan Customer',
-        callbackUrl: `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/api/payments/callback`,
+        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/api/payments/callback`,
       });
 
       paymentInitResult = {

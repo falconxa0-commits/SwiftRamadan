@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkBodySize } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
+import { formatNaira } from '@/lib/format';
 
 /* ──────────────────── Types ──────────────────── */
 
@@ -96,10 +98,10 @@ Guidelines:
   }
 
   if (context.cartItems && context.cartItems.length > 0) {
-    const cartSummary = context.cartItems.map(i => `${i.name} x${i.qty} (₦${i.price.toLocaleString()})`).join(', ');
+    const cartSummary = context.cartItems.map(i => `${i.name} x${i.qty} (${formatNaira(i.price)})`).join(', ');
     const cartTotal = context.cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
     contextParts.push(`Current cart items: ${cartSummary}`);
-    contextParts.push(`Cart total: ₦${cartTotal.toLocaleString()}`);
+    contextParts.push(`Cart total: ${formatNaira(cartTotal)}`);
     contextParts.push('The user has items in their cart — you can reference these when making recommendations.');
   }
 
@@ -122,8 +124,11 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  const bodyResult = await checkBodySize(request);
+  if (bodyResult.tooLarge) return bodyResult.response;
+
   try {
-    const body = await request.json();
+    const body = JSON.parse(bodyResult.body);
     const message = body.message as string;
     const messages = body.messages as ChatMessage[] | undefined;
     const context = body.context as ChatContext | undefined;

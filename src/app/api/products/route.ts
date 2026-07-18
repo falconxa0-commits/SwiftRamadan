@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
@@ -218,13 +219,26 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Only vendors and admins can create products
+  if (auth.role !== 'vendor' && auth.role !== 'admin') {
+    return NextResponse.json(
+      { success: false, error: 'Only vendors and admins can create products' },
+      { status: 403 },
+    );
+  }
+
   try {
     const body = await request.json();
 
     // Validate payload — schema strips unknown fields silently
     const v = validateInput(productCreateSchema, body);
     if (!v.success) return v.response;
-    const { name, description, price, image, category, vendorId, deliveryTime } = v.data;
+    const { name, description, price, image, category, deliveryTime } = v.data;
+    // Vendor creates product under their own account; admin can specify vendorId
+    const vendorId = auth.role === 'admin' && v.data.vendorId ? v.data.vendorId : auth.userId;
 
     if (!name || typeof name !== 'string' || !name.trim()) {
       return NextResponse.json(
@@ -291,6 +305,17 @@ export async function PUT(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Only vendors and admins can update products
+  if (auth.role !== 'vendor' && auth.role !== 'admin') {
+    return NextResponse.json(
+      { success: false, error: 'Only vendors and admins can update products' },
+      { status: 403 },
+    );
+  }
+
   try {
     const body = await request.json();
     const { id, ...fields } = body;
@@ -355,6 +380,17 @@ export async function DELETE(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Only vendors and admins can delete products
+  if (auth.role !== 'vendor' && auth.role !== 'admin') {
+    return NextResponse.json(
+      { success: false, error: 'Only vendors and admins can delete products' },
+      { status: 403 },
+    );
+  }
 
   try {
     const { searchParams } = new URL(request.url);

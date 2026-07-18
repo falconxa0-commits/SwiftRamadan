@@ -19,11 +19,11 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'request':
-        return await requestPayout(body);
+        return await requestPayout(body, auth.userId);
       case 'list':
-        return await listPayouts(body);
+        return await listPayouts(auth.userId);
       case 'get':
-        return await getPayout(body);
+        return await getPayout(body, auth.userId);
       default:
         return NextResponse.json(
           { success: false, message: 'Invalid action. Use: request, list, get' },
@@ -40,22 +40,16 @@ export async function POST(request: NextRequest) {
 }
 
 /** request - Vendor/Rider requests a payout */
-async function requestPayout(body: {
-  userId: string;
-  amount: number;
-  bankName: string;
-  accountNumber: string;
-  accountName: string;
-}) {
-  const { userId, amount, bankName, accountNumber, accountName } = body;
-
-  // Validate required fields
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 },
-    );
-  }
+async function requestPayout(
+  body: {
+    amount: number;
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+  },
+  userId: string,
+) {
+  const { amount, bankName, accountNumber, accountName } = body;
 
   if (!amount || amount <= 0) {
     return NextResponse.json(
@@ -159,16 +153,7 @@ async function requestPayout(body: {
 }
 
 /** list - Get user's payouts */
-async function listPayouts(body: { userId: string }) {
-  const { userId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 },
-    );
-  }
-
+async function listPayouts(userId: string) {
   const payouts = await db.payout.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
@@ -181,15 +166,8 @@ async function listPayouts(body: { userId: string }) {
 }
 
 /** get - Get single payout */
-async function getPayout(body: { userId: string; payoutId: string }) {
-  const { userId, payoutId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 },
-    );
-  }
+async function getPayout(body: { payoutId: string }, userId: string) {
+  const { payoutId } = body;
 
   if (!payoutId) {
     return NextResponse.json(

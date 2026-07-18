@@ -100,7 +100,8 @@ interface ChatMessageRow {
 // ────────────────────────────────────────────────────────────────
 
 const app = express();
-app.use(cors({ origin: '*' }));
+// In production, restrict CORS origin to the deployed app URL only
+app.use(cors({ origin: ['http://localhost:3000', process.env.APP_URL].filter(Boolean) }));
 app.use(express.json());
 
 // Health-check endpoint (GET /) — gateway + curl can hit this to
@@ -128,8 +129,9 @@ const io = new Server(httpServer, {
   // any path is fine — the frontend just needs to connect with
   //   io("/?XTransformPort=3003")
   // (socket.io-client appends the /socket.io/ path automatically).
+  // In production, restrict CORS origin to the deployed app URL only
   cors: {
-    origin: '*',
+    origin: ['http://localhost:3000', process.env.APP_URL].filter(Boolean),
     methods: ['GET', 'POST'],
   },
   pingTimeout: 60000,

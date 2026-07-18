@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { formatNaira } from '@/lib/format';
 
 export const runtime = 'nodejs';
 
@@ -69,7 +70,7 @@ export async function GET(request: NextRequest) {
     // Format coupons as offer objects (so OffersTab can render them uniformly)
     const couponOffers = coupons.map(c => {
       const discountLabel =
-        c.type === 'percent' ? `${c.value}% off` : `₦${c.value.toLocaleString()} off`;
+        c.type === 'percent' ? `${c.value}% off` : `${formatNaira(c.value)} off`;
       const color = c.type === 'percent'
         ? (c.value >= 20 ? '#A78BFA' : '#10E07A')
         : '#F5C451';
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
         type: 'coupon',
         code: c.code,
         title: c.code,
-        description: `${discountLabel} — min ₦${c.minOrder.toLocaleString()}`,
+        description: `${discountLabel} — min ${formatNaira(c.minOrder)}`,
         discountLabel,
         color,
         minOrder: c.minOrder,

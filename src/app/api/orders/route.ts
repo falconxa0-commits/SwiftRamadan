@@ -14,7 +14,7 @@ async function assertUserExists(userId: string | undefined): Promise<boolean> {
   return !!u;
 }
 
-// GET /api/orders — Get all orders, optionally filter by userId
+// GET /api/orders — Get orders for the authenticated user (or all for admin)
 export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
@@ -25,12 +25,23 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    // Prefer authenticated user's email to look up userId, fall back to query param
-    const userEmail = auth.email || searchParams.get('email');
-    let userId = searchParams.get('userId');
-    if (!userId && userEmail) {
-      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
-      userId = user?.id || null;
+
+    // Use authenticated user's userId; admin can specify a different userId via query param
+    let userId: string | null = auth.userId;
+
+    if (auth.role === 'admin') {
+      // Admin can optionally filter by a specific userId or email
+      const adminUserId = searchParams.get('userId');
+      const adminEmail = searchParams.get('email');
+      if (adminUserId) {
+        userId = adminUserId;
+      } else if (adminEmail) {
+        const user = await db.user.findUnique({ where: { email: adminEmail }, select: { id: true } });
+        userId = user?.id || null;
+      } else {
+        // Admin with no filter sees all orders
+        userId = null;
+      }
     }
 
     const orders = await db.order.findMany({
@@ -71,8 +82,8 @@ export async function POST(request: NextRequest) {
     const v = validateInput(orderCreateSchema, body);
     if (!v.success) return v.response;
     const { status, total, riderName, items, progress } = v.data;
-    // Prefer authenticated user's userId
-    const userId = auth.userId || v.data.userId;
+    // Always use authenticated user's userId
+    const userId = auth.userId;
 
     if (!total) {
       return NextResponse.json(
@@ -124,6 +135,9 @@ export async function PUT(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
 
@@ -131,6 +145,23 @@ export async function PUT(request: NextRequest) {
     const v = validateInput(orderUpdateSchema, body);
     if (!v.success) return v.response;
     const { id, status, progress, riderName } = v.data;
+
+    // Verify the order belongs to the authenticated user (or user is admin)
+    if (id) {
+      const existingOrder = await db.order.findUnique({ where: { id } });
+      if (!existingOrder) {
+        return NextResponse.json(
+          { success: false, message: 'Order not found' },
+          { status: 404 },
+        );
+      }
+      if (auth.role !== 'admin' && existingOrder.userId !== auth.userId) {
+        return NextResponse.json(
+          { success: false, message: 'You do not have permission to update this order' },
+          { status: 403 },
+        );
+      }
+    }
 
     if (!id) {
       return NextResponse.json(

@@ -456,8 +456,9 @@ export default function SupportModal() {
                 >
                   {/* Category */}
                   <div>
-                    <label className="text-white/50 text-xs font-bold mb-1.5 block">Category</label>
+                    <label htmlFor="support-category" className="text-white/50 text-xs font-bold mb-1.5 block">Category</label>
                     <select
+                      id="support-category"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 transition-colors appearance-none cursor-pointer"
@@ -491,8 +492,9 @@ export default function SupportModal() {
 
                   {/* Subject */}
                   <div>
-                    <label className="text-white/50 text-xs font-bold mb-1.5 block">Subject</label>
+                    <label htmlFor="support-subject" className="text-white/50 text-xs font-bold mb-1.5 block">Subject</label>
                     <input
+                      id="support-subject"
                       type="text"
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
@@ -503,8 +505,9 @@ export default function SupportModal() {
 
                   {/* Message */}
                   <div>
-                    <label className="text-white/50 text-xs font-bold mb-1.5 block">Message</label>
+                    <label htmlFor="support-message" className="text-white/50 text-xs font-bold mb-1.5 block">Message</label>
                     <textarea
+                      id="support-message"
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Describe your issue in detail…"
@@ -628,7 +631,9 @@ export default function SupportModal() {
                     <div className="glass-effect border-t border-white/5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 flex items-center rounded-2xl bg-[#0F1118] border border-white/8 focus-within:border-[#10E07A]/30 transition-all">
+                          <label htmlFor="support-chat-message" className="sr-only">Type a message</label>
                           <input
+                            id="support-chat-message"
                             ref={messageInputRef}
                             type="text"
                             value={message}

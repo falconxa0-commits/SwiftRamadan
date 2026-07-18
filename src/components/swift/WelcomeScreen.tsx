@@ -36,6 +36,7 @@ import {
   formatNaira,
   heroSlides,
 } from '@/lib/data';
+import Image from 'next/image';
 
 /* ══════════════════════════════════════════════════════════════════
    WELCOME SCREEN — AURORA LUXE MARKETPLACE LANDING
@@ -474,13 +475,13 @@ export default function WelcomeScreen() {
         <div className="flex items-center justify-between px-5 py-3">
           {/* Logo + Brand */}
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center"
+            <div className="w-9 h-9 rounded-xl overflow-hidden flex items-center justify-center relative"
               style={{
                 background: `linear-gradient(135deg, ${AURORA.gold}20, ${AURORA.emerald}10)`,
                 border: `1px solid ${AURORA.gold}33`,
               }}
             >
-              <img src="/swiftramadan-logo.png" alt="SwiftRamadan" className="w-full h-full object-cover" />
+              <Image src="/swiftramadan-logo.png" alt="SwiftRamadan" fill className="object-cover" />
             </div>
             <div className="flex flex-col leading-tight">
               <span className="text-[11px] font-extrabold tracking-[0.18em] uppercase text-gradient-aurora">SwiftRamadan</span>

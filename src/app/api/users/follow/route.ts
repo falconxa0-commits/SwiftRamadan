@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
@@ -21,24 +22,21 @@ export async function POST(req: NextRequest) {
   const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await req.json().catch(() => ({}));
-    const followerRaw = String(body.followerId || '');
     const followeeRaw = String(body.followeeId || '');
+    const followerId = auth.userId;
 
-    if (!followerRaw || !followeeRaw) {
-      return NextResponse.json({ error: 'followerId and followeeId are required' }, { status: 400 });
+    if (!followeeRaw) {
+      return NextResponse.json({ error: 'followeeId is required' }, { status: 400 });
     }
 
-    // Resolve both to real User IDs
-    const [followerId, followeeId] = await Promise.all([
-      resolveUserId(followerRaw),
-      resolveUserId(followeeRaw),
-    ]);
+    // Resolve followee to real User ID
+    const followeeId = await resolveUserId(followeeRaw);
 
-    if (!followerId) {
-      return NextResponse.json({ error: 'Follower not registered' }, { status: 404 });
-    }
     if (!followeeId) {
       return NextResponse.json({ error: 'User to follow is not registered' }, { status: 404 });
     }

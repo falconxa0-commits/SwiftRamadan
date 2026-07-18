@@ -1,5 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+// Public API routes that don't require authentication
+const PUBLIC_API_ROUTES = [
+  '/api/auth',
+  '/api/health',
+  '/api/offers',
+  '/api/analytics',
+];
+
+// API routes that are public for GET requests only
+const PUBLIC_GET_ROUTES = [
+  '/api/products',
+  '/api/group-buy',
+];
+
+function isPublicApiRoute(pathname: string, method: string): boolean {
+  // Exact matches for always-public routes
+  if (PUBLIC_API_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+    return true;
+  }
+  // GET-only public routes
+  if (method === 'GET' && PUBLIC_GET_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
+    return true;
+  }
+  return false;
+}
+
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
@@ -40,6 +66,19 @@ export function middleware(request: NextRequest) {
     const sessionCookie = request.cookies.get('swiftramadan-session')?.value;
     if (sessionCookie) {
       response.headers.set('x-session-token', sessionCookie);
+    }
+
+    // Protected API route check — reject unauthenticated requests
+    if (!isPublicApiRoute(request.nextUrl.pathname, request.method)) {
+      if (!sessionCookie) {
+        return new NextResponse(
+          JSON.stringify({ success: false, message: 'Authentication required' }),
+          {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          },
+        );
+      }
     }
   }
 

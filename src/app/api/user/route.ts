@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import { publicUserFields } from '@/lib/profile-update';
 
 // GET /api/user?email=... — Get user by email
 export async function GET(request: NextRequest) {
@@ -32,36 +33,15 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Use publicUserFields to strip financial data for non-owners
+    const safeUser = publicUserFields(user, auth.userId);
+
     return NextResponse.json({
       success: true,
       user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        area: user.area,
-        avatar: user.avatar,
-        onboardingComplete: user.onboardingComplete,
-        storeName: user.storeName,
-        businessCategory: user.businessCategory,
-        businessAddress: user.businessAddress,
-        bankName: user.bankName,
+        ...safeUser,
+        // Mask account number for security
         accountNumber: user.accountNumber ? '****' + user.accountNumber.slice(-4) : null,
-        openTime: user.openTime,
-        closeTime: user.closeTime,
-        vehicleType: user.vehicleType,
-        plateNumber: user.plateNumber,
-        licenseNumber: user.licenseNumber,
-        vehicleColor: user.vehicleColor,
-        riderBankName: user.riderBankName,
-        riderAccountNumber: user.riderAccountNumber,
-        hasanatPoints: user.hasanatPoints,
-        swiftPoints: user.swiftPoints,
-        loyaltyTier: user.loyaltyTier,
-        dailyStreak: user.dailyStreak,
-        riderOnline: user.riderOnline,
-        vendorOnline: user.vendorOnline,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
@@ -157,38 +137,13 @@ export async function PUT(request: NextRequest) {
       data: updateData,
     });
 
+    // Owner is updating their own profile — include financial fields
+    const safeUser = publicUserFields(user, auth.userId);
+
     return NextResponse.json({
       success: true,
       message: 'Profile updated successfully',
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        phone: user.phone,
-        role: user.role,
-        area: user.area,
-        avatar: user.avatar,
-        onboardingComplete: user.onboardingComplete,
-        storeName: user.storeName,
-        businessCategory: user.businessCategory,
-        businessAddress: user.businessAddress,
-        bankName: user.bankName,
-        accountNumber: user.accountNumber,
-        openTime: user.openTime,
-        closeTime: user.closeTime,
-        vehicleType: user.vehicleType,
-        plateNumber: user.plateNumber,
-        licenseNumber: user.licenseNumber,
-        vehicleColor: user.vehicleColor,
-        riderBankName: user.riderBankName,
-        riderAccountNumber: user.riderAccountNumber,
-        hasanatPoints: user.hasanatPoints,
-        swiftPoints: user.swiftPoints,
-        loyaltyTier: user.loyaltyTier,
-        dailyStreak: user.dailyStreak,
-        riderOnline: user.riderOnline,
-        vendorOnline: user.vendorOnline,
-      },
+      user: safeUser,
     });
   } catch (error) {
     console.error('User API PUT error:', error);

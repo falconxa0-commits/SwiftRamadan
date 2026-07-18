@@ -14,7 +14,7 @@ async function assertUserExists(userId: string | undefined): Promise<boolean> {
   return !!u;
 }
 
-// GET /api/cart?sessionId=...&userId=... — Get cart items
+// GET /api/cart?sessionId=... — Get cart items (uses auth.userId, not query param userId)
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
@@ -25,16 +25,11 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get('sessionId') || 'default';
-    // Prefer authenticated user's email to resolve userId
-    const userEmail = auth.email;
-    let userId = searchParams.get('userId') || undefined;
-    if (!userId && userEmail) {
-      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
-      userId = user?.id || undefined;
-    }
+    // Always use authenticated user's userId
+    const userId = auth.userId;
 
     const cartItems = await db.cartItem.findMany({
-      where: userId ? { userId } : { sessionId },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -87,8 +82,8 @@ export async function POST(request: NextRequest) {
     const v = validateInput(cartItemSchema, body);
     if (!v.success) return v.response;
     const { productId, name, price, image, quantity, sessionId: bodySessionId } = v.data;
-    // Prefer authenticated user's userId over body-supplied value
-    const userId = auth.userId || v.data.userId;
+    // Always use authenticated user's userId
+    const userId = auth.userId;
     const sessionId = bodySessionId;
 
     // FK guard: verify the referenced user exists before writing the cart item,
@@ -103,11 +98,11 @@ export async function POST(request: NextRequest) {
     // Coerce productId to string for DB storage
     const productIdStr = String(productId);
 
-    // Check for existing item by productId + session/user
+    // Check for existing item by productId + user
     const existing = await db.cartItem.findFirst({
       where: {
         productId: productIdStr,
-        ...(userId ? { userId } : { sessionId }),
+        userId,
       },
     });
 
@@ -125,13 +120,13 @@ export async function POST(request: NextRequest) {
           image: image || '',
           quantity,
           sessionId,
-          userId: userId || null,
+          userId,
         },
       });
     }
 
     const cartItems = await db.cartItem.findMany({
-      where: userId ? { userId } : { sessionId },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -157,7 +152,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// DELETE /api/cart?id=...&sessionId=...&userId=... — Remove item or clear cart
+// DELETE /api/cart?id=...&sessionId=... — Remove item or clear cart (uses auth.userId)
 export async function DELETE(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
@@ -169,26 +164,21 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     const sessionId = searchParams.get('sessionId') || 'default';
-    // Prefer authenticated user's userId over query param
-    const userEmail = auth.email;
-    let userId = searchParams.get('userId') || undefined;
-    if (!userId && userEmail) {
-      const user = await db.user.findUnique({ where: { email: userEmail }, select: { id: true } });
-      userId = user?.id || undefined;
-    }
+    // Always use authenticated user's userId
+    const userId = auth.userId;
 
     if (id) {
       // Delete specific item by its database id
       await db.cartItem.delete({ where: { id } });
     } else {
-      // Clear all items for this session/user
+      // Clear all items for this user
       await db.cartItem.deleteMany({
-        where: userId ? { userId } : { sessionId },
+        where: { userId },
       });
     }
 
     const cartItems = await db.cartItem.findMany({
-      where: userId ? { userId } : { sessionId },
+      where: { userId },
       orderBy: { createdAt: 'desc' },
     });
 

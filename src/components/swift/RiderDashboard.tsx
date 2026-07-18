@@ -102,7 +102,7 @@ export default function RiderDashboard() {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const fetchingRef = useRef(false);
 
-  const email = userEmail || 'sani@swiftramadan.app';
+  const email = userEmail || '';
 
   // ─── Realtime: join the rider room so the backend can push
   // delivery requests directly to this rider. We use the email as a

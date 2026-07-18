@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import { formatNaira } from '@/lib/format';
 
 /**
  * GET /api/rider/assign?email=xxx
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        message: `Order ${orderId} delivered. You earned ₦${earnings.toLocaleString()}.`,
+        message: `Order ${orderId} delivered. You earned ${formatNaira(earnings)}.`,
         order: { ...updated, items: parsedItems },
         earnings,
       });

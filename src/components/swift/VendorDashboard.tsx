@@ -363,7 +363,8 @@ export default function VendorDashboard() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/vendor?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`);
+      if (!userEmail) return;
+      const res = await fetch(`/api/vendor?email=${encodeURIComponent(userEmail)}`);
       if (!res.ok) {
         throw new Error(`API error: ${res.status}`);
       }
@@ -394,7 +395,7 @@ export default function VendorDashboard() {
   const fetchVendorOrders = useCallback(async () => {
     try {
       const res = await fetch(
-        `/api/vendor/orders?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`,
+        `/api/vendor/orders?email=${encodeURIComponent(userEmail || '')}`,
       );
       if (!res.ok) {
         throw new Error(`API error: ${res.status}`);

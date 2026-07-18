@@ -1,5 +1,7 @@
 // Rider Payout Email Template — Aurora Luxe branded
 
+import { formatNaira } from '@/lib/format';
+
 const BG = '#0B0D14';
 const GREEN = '#10E07A';
 const GOLD = '#F5C451';
@@ -15,8 +17,8 @@ export function riderPayoutTemplate(data: {
   accountNumber: string;
   payoutId: string;
 }): { subject: string; html: string; text: string } {
-  const formattedAmount = `₦${data.amount.toLocaleString()}`;
-  const formattedBonus = data.bonusAmount ? `₦${data.bonusAmount.toLocaleString()}` : null;
+  const formattedAmount = formatNaira(data.amount);
+  const formattedBonus = data.bonusAmount ? formatNaira(data.bonusAmount) : null;
 
   const html = `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:520px;margin:0 auto;background:${BG};border-radius:16px;overflow:hidden;">

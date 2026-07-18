@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkBodySize } from '@/lib/validation';
 
 export const runtime = 'nodejs';
 
@@ -15,14 +16,17 @@ export async function POST(request: NextRequest) {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
 
-    const body = await request.json();
+    const bodyResult = await checkBodySize(request);
+    if (bodyResult.tooLarge) return bodyResult.response;
+
+    const body = JSON.parse(bodyResult.body);
     const { action } = body;
 
     switch (action) {
       case 'submit':
-        return await handleSubmit(body);
+        return await handleSubmit(body, auth.userId);
       case 'status':
-        return await handleStatus(body);
+        return await handleStatus(auth.userId);
       case 'verify':
         if (auth.role !== 'admin') {
           return NextResponse.json(
@@ -63,18 +67,20 @@ export async function POST(request: NextRequest) {
 }
 
 /** Submit a KYC document */
-async function handleSubmit(body: {
-  userId: string;
-  documentType: string;
-  documentNumber: string;
-  documentImage: string;
-}) {
+async function handleSubmit(
+  body: {
+    documentType: string;
+    documentNumber: string;
+    documentImage: string;
+  },
+  userId: string,
+) {
   try {
-    const { userId, documentType, documentNumber, documentImage } = body;
+    const { documentType, documentNumber, documentImage } = body;
 
-    if (!userId || !documentType || !documentNumber || !documentImage) {
+    if (!documentType || !documentNumber || !documentImage) {
       return NextResponse.json(
-        { success: false, message: 'userId, documentType, documentNumber, and documentImage are required' },
+        { success: false, message: 'documentType, documentNumber, and documentImage are required' },
         { status: 400 },
       );
     }
@@ -148,17 +154,8 @@ async function handleSubmit(body: {
 }
 
 /** Get user's KYC status */
-async function handleStatus(body: { userId: string }) {
+async function handleStatus(userId: string) {
   try {
-    const { userId } = body;
-
-    if (!userId) {
-      return NextResponse.json(
-        { success: false, message: 'userId is required' },
-        { status: 400 },
-      );
-    }
-
     const documents = await db.kYCDocument.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },

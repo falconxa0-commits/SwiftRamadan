@@ -18,9 +18,9 @@ export async function POST(request: NextRequest) {
 
     switch (action) {
       case 'request':
-        return await handleRequest(body);
+        return await handleRequest(body, auth.userId);
       case 'list':
-        return await handleList(body);
+        return await handleList(auth.userId);
       case 'approve':
         if (auth.role !== 'admin') {
           return NextResponse.json(
@@ -61,18 +61,20 @@ export async function POST(request: NextRequest) {
 }
 
 /** Customer requests a refund */
-async function handleRequest(body: {
-  userId: string;
-  orderId: string;
-  amount: number;
-  reason: string;
-  refundMethod: string;
-}) {
-  const { userId, orderId, amount, reason, refundMethod } = body;
+async function handleRequest(
+  body: {
+    orderId: string;
+    amount: number;
+    reason: string;
+    refundMethod: string;
+  },
+  userId: string,
+) {
+  const { orderId, amount, reason, refundMethod } = body;
 
-  if (!userId || !orderId || !amount || !reason) {
+  if (!orderId || !amount || !reason) {
     return NextResponse.json(
-      { success: false, message: 'userId, orderId, amount, and reason are required' },
+      { success: false, message: 'orderId, amount, and reason are required' },
       { status: 400 },
     );
   }
@@ -110,16 +112,7 @@ async function handleRequest(body: {
 }
 
 /** Get user's refunds sorted by createdAt desc */
-async function handleList(body: { userId: string }) {
-  const { userId } = body;
-
-  if (!userId) {
-    return NextResponse.json(
-      { success: false, message: 'userId is required' },
-      { status: 400 },
-    );
-  }
-
+async function handleList(userId: string) {
   const refunds = await db.refund.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },

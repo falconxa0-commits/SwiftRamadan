@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
 import { useToast } from '@/hooks/use-toast';
+import { formatNaira } from '@/lib/format';
 
 interface AIIngredient {
   name: string;
@@ -55,8 +56,6 @@ const getDifficultyColor = (difficulty: string) => {
       return 'text-white/50 bg-white/5 border-white/10';
   }
 };
-
-const formatNaira = (amount: number) => `₦${amount.toLocaleString()}`;
 
 export default function AIRecipeGeneratorModal() {
   const { activeModal, setActiveModal, addToCart } = useAppStore();

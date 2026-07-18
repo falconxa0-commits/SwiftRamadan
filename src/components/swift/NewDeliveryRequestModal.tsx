@@ -48,7 +48,7 @@ export default function NewDeliveryRequestModal() {
   const [submitting, setSubmitting] = useState<'accept' | 'decline' | null>(null);
   const [countdown, setCountdown] = useState(COUNTDOWN_SECONDS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const email = userEmail || 'sani@swiftramadan.app';
+  const email = userEmail || '';
 
   /* Fetch latest available delivery when modal opens */
   const fetchLatest = useCallback(async () => {

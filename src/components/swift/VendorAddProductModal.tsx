@@ -127,7 +127,7 @@ export default function VendorAddProductModal() {
           category,
           image,
           deliveryTime,
-          vendorEmail: userEmail || 'sani@swiftramadan.app',
+          vendorEmail: userEmail || '',
         }),
       });
       const json = await res.json();

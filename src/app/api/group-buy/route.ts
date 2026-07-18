@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
@@ -132,14 +133,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/group-buy { userId, groupBuyId } → joins a group buy
+// POST /api/group-buy { groupBuyId } → joins a group buy (requires auth)
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { userId: rawUserId, groupBuyId } = body;
+    const { groupBuyId } = body;
+    const userId = auth.userId;
 
     if (!groupBuyId) {
       return NextResponse.json(
@@ -165,10 +170,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const userKey = (typeof rawUserId === 'string' && rawUserId) || 'guest';
-
-    // Already joined?
-    if (slot.joinedUserIds.includes(userKey)) {
+    if (slot.joinedUserIds.includes(userId)) {
       return NextResponse.json({
         success: true,
         alreadyJoined: true,
@@ -192,9 +194,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Join
     slot.filled += 1;
-    slot.joinedUserIds.push(userKey);
+    slot.joinedUserIds.push(userId);
 
     return NextResponse.json({
       success: true,
