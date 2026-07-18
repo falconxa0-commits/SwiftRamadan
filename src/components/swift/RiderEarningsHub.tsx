@@ -41,10 +41,10 @@ function HourlyTooltip({ active, payload }: HourlyTooltipProps) {
   return (
     <div className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 shadow-xl">
       <p className="text-white text-xs font-bold">{d.hour}</p>
-      <p className={d.isIftar ? 'text-[#FFD700] text-sm font-black' : 'text-[#10E07A] text-sm font-black'}>
+      <p className={d.isIftar ? 'text-[#F5C451] text-sm font-black' : 'text-[#10E07A] text-sm font-black'}>
         {formatNaira(d.amount)}
       </p>
-      {d.isIftar && <p className="text-[#FFD700]/60 text-[9px] font-bold">2x Iftar Bonus</p>}
+      {d.isIftar && <p className="text-[#F5C451]/60 text-[9px] font-bold">2x Iftar Bonus</p>}
     </div>
   );
 }
@@ -130,13 +130,13 @@ export default function RiderEarningsHub() {
 
       {/* Hero Stats Card */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FFD700]/20 via-[#FFD700]/5 to-[#1A1D26] border border-[#FFD700]/20 p-5 gold-glow">
-          <div className="absolute top-0 right-0 w-48 h-48 bg-[#FFD700]/10 blur-[80px]" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#FFD700]/5 blur-[60px]" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#F5C451]/20 via-[#F5C451]/5 to-[#1A1D26] border border-[#F5C451]/20 p-5 gold-glow">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-[#F5C451]/10 blur-[80px]" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-[#F5C451]/5 blur-[60px]" />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-1">
-              <DollarSign className="w-5 h-5 text-[#FFD700]" />
-              <span className="text-[#FFD700] text-xs font-bold uppercase tracking-widest">Today&apos;s Earnings</span>
+              <DollarSign className="w-5 h-5 text-[#F5C451]" />
+              <span className="text-[#F5C451] text-xs font-bold uppercase tracking-widest">Today&apos;s Earnings</span>
             </div>
             <p className="text-white text-4xl font-black mt-2">{formatNaira(data.today)}</p>
             <div className="flex items-center gap-2 mt-2">
@@ -177,7 +177,7 @@ export default function RiderEarningsHub() {
                     {chartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.isIftar ? '#FFD700' : 'rgba(19,236,19,0.5)'}
+                        fill={entry.isIftar ? '#F5C451' : 'rgba(16,224,122,0.5)'}
                       />
                     ))}
                   </Bar>
@@ -195,8 +195,8 @@ export default function RiderEarningsHub() {
               <span className="text-white/30 text-[9px]">Regular</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#FFD700]" />
-              <span className="text-[#FFD700] text-[9px] font-bold">Iftar Peak (2x Bonus)</span>
+              <span className="w-2 h-2 rounded-full bg-[#F5C451]" />
+              <span className="text-[#F5C451] text-[9px] font-bold">Iftar Peak (2x Bonus)</span>
             </div>
           </div>
         </div>
@@ -221,23 +221,23 @@ export default function RiderEarningsHub() {
           </div>
 
           {/* Iftar Bonuses - highlighted */}
-          <div className="bg-[#1A1D26] rounded-xl p-4 border border-[#FFD700]/20 flex items-center justify-between relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-20 h-20 bg-[#FFD700]/5 blur-[40px]" />
+          <div className="bg-[#1A1D26] rounded-xl p-4 border border-[#F5C451]/20 flex items-center justify-between relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-20 h-20 bg-[#F5C451]/5 blur-[40px]" />
             <div className="flex items-center gap-3 relative z-10">
-              <div className="w-10 h-10 bg-[#FFD700]/15 rounded-xl flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#FFD700] text-xl">bedtime</span>
+              <div className="w-10 h-10 bg-[#F5C451]/15 rounded-xl flex items-center justify-center">
+                <span className="material-symbols-outlined text-[#F5C451] text-xl">bedtime</span>
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <p className="text-white text-sm font-bold">Iftar Bonuses</p>
-                  <span className="px-1.5 py-0.5 bg-[#FFD700]/15 text-[#FFD700] text-[8px] font-black rounded uppercase">
+                  <span className="px-1.5 py-0.5 bg-[#F5C451]/15 text-[#F5C451] text-[8px] font-black rounded uppercase">
                     Active
                   </span>
                 </div>
                 <p className="text-white/30 text-[10px]">2x multiplier on Iftar deliveries</p>
               </div>
             </div>
-            <p className="text-[#FFD700] font-extrabold relative z-10">{formatNaira(data.iftarBonuses)}</p>
+            <p className="text-[#F5C451] font-extrabold relative z-10">{formatNaira(data.iftarBonuses)}</p>
           </div>
 
           {/* Customer Tips */}
@@ -296,8 +296,8 @@ export default function RiderEarningsHub() {
 
           {/* Average Rating */}
           <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 flex flex-col items-center justify-center">
-            <div className="w-14 h-14 bg-[#FFD700]/10 rounded-2xl flex items-center justify-center mb-2">
-              <Star className="w-7 h-7 text-[#FFD700]" />
+            <div className="w-14 h-14 bg-[#F5C451]/10 rounded-2xl flex items-center justify-center mb-2">
+              <Star className="w-7 h-7 text-[#F5C451]" />
             </div>
             <p className="text-white text-2xl font-black">{perf.rating}</p>
             <p className="text-white/40 text-[10px] font-bold mt-0.5">Avg Rating</p>
@@ -308,17 +308,17 @@ export default function RiderEarningsHub() {
 
       {/* Incentive Progress */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="bg-[#1A1D26] rounded-2xl border border-[#FFD700]/10 p-4">
+        <div className="bg-[#1A1D26] rounded-2xl border border-[#F5C451]/10 p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#FFD700]" />
+              <Zap className="w-4 h-4 text-[#F5C451]" />
               <span className="text-white text-sm font-bold">Ramadan Bonus</span>
             </div>
-            <span className="text-[#FFD700] text-xs font-bold">{perf.incentiveProgress}%</span>
+            <span className="text-[#F5C451] text-xs font-bold">{perf.incentiveProgress}%</span>
           </div>
           <div className="w-full bg-white/5 rounded-full h-3 mb-2">
             <motion.div
-              className="bg-gradient-to-r from-[#FFD700] to-[#f4c025] h-3 rounded-full"
+              className="bg-gradient-to-r from-[#F5C451] to-[#f4c025] h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${perf.incentiveProgress}%` }}
               transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -326,7 +326,7 @@ export default function RiderEarningsHub() {
           </div>
           <div className="flex items-center justify-between">
             <p className="text-white/40 text-[10px]">{perf.incentiveRemaining}</p>
-            <p className="text-[#FFD700] text-[10px] font-bold">{perf.incentiveGoal}</p>
+            <p className="text-[#F5C451] text-[10px] font-bold">{perf.incentiveGoal}</p>
           </div>
         </div>
       </motion.div>
@@ -337,9 +337,9 @@ export default function RiderEarningsHub() {
           Customer Compliments ({perf.compliments})
         </h3>
         <div className="space-y-2">
-          {perf.topCompliments.map((comp, i) => (
+          {perf.topCompliments.map((comp) => (
             <motion.div
-              key={i}
+              key={comp.title}
               variants={staggerItem}
               className="bg-[#1A1D26] rounded-xl p-3 border border-white/5 flex items-start gap-3"
             >

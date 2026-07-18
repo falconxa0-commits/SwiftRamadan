@@ -1,3 +1,15 @@
+/**
+ * Supabase Client — Push Notifications & Real-time
+ * ────────────────────────────────────────────────
+ * This module is ONLY used for push notifications and real-time features.
+ * It requires the following environment variables to be set:
+ *   - NEXT_PUBLIC_SUPABASE_URL
+ *   - NEXT_PUBLIC_SUPABASE_ANON_KEY
+ *   - SUPABASE_SERVICE_ROLE_KEY
+ *
+ * If these are not configured, all Supabase clients will be null and
+ * push notification / real-time features will be silently disabled.
+ */
 import { createClient } from '@supabase/supabase-js';
 
 // Supabase configuration — replaces Firebase for push notifications + real-time

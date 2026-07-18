@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
@@ -18,10 +22,28 @@ export async function POST(request: NextRequest) {
       case 'list':
         return await handleList(body);
       case 'approve':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleApprove(body);
       case 'process':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleProcess(body);
       case 'reject':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleReject(body);
       default:
         return NextResponse.json(

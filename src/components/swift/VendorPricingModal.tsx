@@ -90,8 +90,8 @@ export default function VendorPricingModal() {
             <div className="px-5 pt-4">
               <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-[#FFD700]" />
+                  <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-[#F5C451]" />
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm">Peak Hours Mode</p>
@@ -101,7 +101,7 @@ export default function VendorPricingModal() {
                 <button
                   onClick={() => setPeakHoursEnabled(!peakHoursEnabled)}
                   className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
-                    peakHoursEnabled ? 'bg-[#FFD700]' : 'bg-white/10'
+                    peakHoursEnabled ? 'bg-[#F5C451]' : 'bg-white/10'
                   }`}
                 >
                   <motion.div
@@ -122,10 +122,10 @@ export default function VendorPricingModal() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 bg-[#FFD700]/5 border border-[#FFD700]/10 rounded-xl p-4">
+                    <div className="mt-3 bg-[#F5C451]/5 border border-[#F5C451]/10 rounded-xl p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white/50 text-xs font-bold uppercase">Peak Markup</span>
-                        <span className="text-[#FFD700] text-sm font-black">+{peakAdjustment}%</span>
+                        <span className="text-[#F5C451] text-sm font-black">+{peakAdjustment}%</span>
                       </div>
                       <input
                         type="range"
@@ -134,7 +134,7 @@ export default function VendorPricingModal() {
                         step={5}
                         value={peakAdjustment}
                         onChange={e => setPeakAdjustment(Number(e.target.value))}
-                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#FFD700]"
+                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#F5C451]"
                       />
                       <div className="flex justify-between mt-1">
                         <span className="text-white/20 text-[10px]">+5%</span>
@@ -171,11 +171,11 @@ export default function VendorPricingModal() {
                           </div>
                         </div>
                         <div className="text-right shrink-0 ml-3">
-                          <p className={`font-black text-sm ${item.adjustment > 0 ? 'text-[#FFD700]' : item.adjustment < 0 ? 'text-cyan-400' : 'text-white/60'}`}>
+                          <p className={`font-black text-sm ${item.adjustment > 0 ? 'text-[#F5C451]' : item.adjustment < 0 ? 'text-cyan-400' : 'text-white/60'}`}>
                             {formatNaira(adjustedPrice)}
                           </p>
                           {peakPrice && (
-                            <p className="text-[#FFD700]/50 text-[10px]">
+                            <p className="text-[#F5C451]/50 text-[10px]">
                               Peak: {formatNaira(peakPrice)}
                             </p>
                           )}
@@ -192,7 +192,7 @@ export default function VendorPricingModal() {
                           step={5}
                           value={item.adjustment}
                           onChange={e => handleAdjustmentChange(item.id, Number(e.target.value))}
-                          className="flex-1 h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#FFD700]"
+                          className="flex-1 h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#F5C451]"
                         />
                         <span className="text-white/20 text-[10px] font-bold w-8 text-right">+30%</span>
                       </div>
@@ -201,7 +201,7 @@ export default function VendorPricingModal() {
                       <div className="flex items-center justify-center mt-2">
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           item.adjustment > 0
-                            ? 'bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/20'
+                            ? 'bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20'
                             : item.adjustment < 0
                               ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                               : 'bg-white/5 text-white/30 border border-white/10'
@@ -225,7 +225,7 @@ export default function VendorPricingModal() {
               {/* Apply Button */}
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full mt-4 bg-[#FFD700] py-3.5 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#FFD700]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full mt-4 bg-[#F5C451] py-3.5 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#F5C451]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <DollarSign className="w-4 h-4" />
                 Apply Pricing

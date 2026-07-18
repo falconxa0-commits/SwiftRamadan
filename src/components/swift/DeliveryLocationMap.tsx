@@ -84,8 +84,8 @@ export default function DeliveryLocationMap() {
                 className="absolute inset-0 opacity-[0.06]"
                 style={{
                   backgroundImage: `
-                    repeating-linear-gradient(0deg, rgba(19,236,19,0.5) 0px, transparent 1px, transparent 60px),
-                    repeating-linear-gradient(90deg, rgba(19,236,19,0.5) 0px, transparent 1px, transparent 60px)
+                    repeating-linear-gradient(0deg, rgba(16,224,122,0.5) 0px, transparent 1px, transparent 60px),
+                    repeating-linear-gradient(90deg, rgba(16,224,122,0.5) 0px, transparent 1px, transparent 60px)
                   `,
                 }}
               />
@@ -104,7 +104,7 @@ export default function DeliveryLocationMap() {
               {/* Gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/80 via-transparent to-[#05070A]" />
               <div className="absolute top-0 left-0 w-64 h-64 bg-[#10E07A]/5 blur-[100px] rounded-full" />
-              <div className="absolute bottom-40 right-0 w-48 h-48 bg-[#FFD700]/5 blur-[80px] rounded-full" />
+              <div className="absolute bottom-40 right-0 w-48 h-48 bg-[#F5C451]/5 blur-[80px] rounded-full" />
 
               {/* Block shapes */}
               <div className="absolute top-[25%] left-[15%] w-20 h-16 border border-white/[0.03] bg-white/[0.01] rounded-sm" />
@@ -193,12 +193,12 @@ export default function DeliveryLocationMap() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-[#1A1D26]/90 border border-[#FFD700]/20 rounded-xl px-3 py-2 glass-effect"
+                  className="bg-[#1A1D26]/90 border border-[#F5C451]/20 rounded-xl px-3 py-2 glass-effect"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🌙</span>
                     <div>
-                      <p className="text-[#FFD700] text-xs font-bold">Deliver before Iftar</p>
+                      <p className="text-[#F5C451] text-xs font-bold">Deliver before Iftar</p>
                       <p className="text-white/40 text-[10px]">Maghrib 6:45 PM</p>
                     </div>
                   </div>

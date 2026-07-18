@@ -6,6 +6,7 @@ import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface CountdownTime {
   hours: number;
@@ -183,6 +184,13 @@ export default function OffersTab() {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
   const [apiCoupons, setApiCoupons] = useState<ApiCoupon[] | null>(null);
   const [apiOffers, setApiOffers] = useState<ApiOffer[] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Brief loading skeleton while data initializes
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch coupons + curated offers from /api/offers
   useEffect(() => {
@@ -277,6 +285,44 @@ export default function OffersTab() {
 
   return (
     <main className="flex-1 overflow-y-auto pb-32">
+      {isLoading ? (
+        <div className="space-y-6 p-5" aria-label="Loading offers page" role="status">
+          {/* Header skeleton */}
+          <div className="space-y-2">
+            <Skeleton className="h-7 w-44 rounded-md" />
+            <Skeleton className="h-4 w-56 rounded-md" />
+          </div>
+          {/* Flash sales skeleton */}
+          <Skeleton className="h-6 w-32 rounded-md" />
+          <div className="flex gap-3 overflow-hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="min-w-[220px] glass-card rounded-2xl p-3 space-y-2">
+                <Skeleton className="aspect-square w-full rounded-xl" />
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-2 w-full rounded-full" />
+                <Skeleton className="h-7 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+          {/* Coupons skeleton */}
+          <Skeleton className="h-6 w-40 rounded-md" />
+          <div className="grid grid-cols-2 gap-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="glass-card rounded-2xl p-4 space-y-2">
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-6 w-16" />
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-7 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+          {/* Loyalty tier skeleton */}
+          <Skeleton className="h-6 w-36 rounded-md" />
+          <Skeleton className="h-40 w-full rounded-2xl" />
+        </div>
+      ) : (
+      <>
       {/* Header */}
       <div className="px-5 pt-6 pb-2">
         <h1 className="text-2xl font-bold tracking-tight heading-accent">Offers &amp; Rewards</h1>
@@ -670,6 +716,8 @@ export default function OffersTab() {
           </div>
         </button>
       </div>
+      </>
+      )}
     </main>
   );
 }

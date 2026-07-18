@@ -81,13 +81,13 @@ export default function GroupBuyModal() {
               transition={{ duration: 0.5 }}
               className="relative text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-[#FFD700]/10 border border-[#FFD700]/20 rounded-full px-4 py-1.5 mb-4">
-                <Sparkles className="w-4 h-4 text-[#FFD700]" />
-                <span className="text-[#FFD700] text-xs font-bold">Save up to 40%</span>
+              <div className="inline-flex items-center gap-2 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-full px-4 py-1.5 mb-4">
+                <Sparkles className="w-4 h-4 text-[#F5C451]" />
+                <span className="text-[#F5C451] text-xs font-bold">Save up to 40%</span>
               </div>
               <h1 className="text-3xl font-black text-white mb-2">
                 Split & Save with{' '}
-                <span className="text-[#FFD700]">Your Neighbors</span>
+                <span className="text-[#F5C451]">Your Neighbors</span>
               </h1>
               <p className="text-white/50 text-sm max-w-md mx-auto">
                 Join community bulk orders and get wholesale prices on groceries, livestock, and Ramadan essentials.
@@ -123,7 +123,7 @@ export default function GroupBuyModal() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
-                        <span className="bg-[#FFD700]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                        <span className="bg-[#F5C451]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {deal.category}
                         </span>
                       </div>
@@ -174,10 +174,10 @@ export default function GroupBuyModal() {
                         <div className="flex -space-x-2">
                           {Array.from({ length: Math.min(slots.filled, 6) }).map((_, i) => (
                             <div
-                              key={i}
+                              key={`avatar-${i}`}
                               className="w-7 h-7 rounded-full border-2 border-[#1A1D26] flex items-center justify-center text-[9px] font-bold"
                               style={{
-                                backgroundColor: ['#10E07A', '#FFD700', '#3b82f6', '#f59e0b', '#8b5cf6', '#ec4899'][i % 6],
+                                backgroundColor: ['#10E07A', '#F5C451', '#38BDF8', '#f59e0b', '#8b5cf6', '#ec4899'][i % 6],
                                 color: '#05070A',
                               }}
                             >

@@ -191,53 +191,51 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: { id: true, walletBalance: true },
-      });
+      // Use transaction with atomic decrement to prevent TOCTOU race condition
+      const result = await db.$transaction(async (tx) => {
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: { id: true, walletBalance: true },
+        });
 
-      if (!user) {
-        return NextResponse.json(
-          { success: false, message: 'User not found' },
-          { status: 404 },
-        );
-      }
+        if (!user) {
+          throw new Error('USER_NOT_FOUND');
+        }
 
-      // Check sufficient balance
-      if (user.walletBalance < amount) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Insufficient wallet balance',
-            balance: user.walletBalance,
-            required: amount,
-            shortfall: amount - user.walletBalance,
+        // Check sufficient balance
+        if (user.walletBalance < amount) {
+          throw new Error('INSUFFICIENT_BALANCE');
+        }
+
+        // Atomic decrement — deduct from wallet
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: { walletBalance: { decrement: amount } },
+        });
+
+        // If balance went negative, rollback (defends against concurrent payments)
+        if (updatedUser.walletBalance < 0) {
+          throw new Error('INSUFFICIENT_BALANCE');
+        }
+
+        // Create wallet transaction record
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            userId,
+            type: 'payment',
+            amount: -amount, // negative for debit
+            balance: updatedUser.walletBalance,
+            description: `Payment for order ${orderId}`,
           },
-          { status: 400 },
-        );
-      }
+        });
 
-      // Deduct from wallet
-      const updatedUser = await db.user.update({
-        where: { id: userId },
-        data: { walletBalance: { decrement: amount } },
-      });
-
-      // Create wallet transaction record
-      const transaction = await db.walletTransaction.create({
-        data: {
-          userId,
-          type: 'payment',
-          amount: -amount, // negative for debit
-          balance: updatedUser.walletBalance,
-          description: `Payment for order ${orderId}`,
-        },
+        return { updatedUser, transaction };
       });
 
       return NextResponse.json({
         success: true,
-        newBalance: updatedUser.walletBalance,
-        transaction,
+        newBalance: result.updatedUser.walletBalance,
+        transaction: result.transaction,
       });
     }
 
@@ -247,6 +245,18 @@ export async function POST(request: NextRequest) {
       { status: 400 },
     );
   } catch (error) {
+    if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
+      );
+    }
+    if (error instanceof Error && error.message === 'INSUFFICIENT_BALANCE') {
+      return NextResponse.json(
+        { success: false, message: 'Insufficient wallet balance' },
+        { status: 400 },
+      );
+    }
     console.error('[Wallet API] POST error:', error);
     return NextResponse.json(
       { success: false, message: 'Internal server error' },

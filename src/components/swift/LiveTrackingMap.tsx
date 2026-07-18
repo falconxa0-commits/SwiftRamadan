@@ -125,7 +125,7 @@ export default function LiveTrackingMap() {
 
               {/* Gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/60 via-transparent to-[#05070A]" />
-              <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[#FFD700]/5 blur-[80px] rounded-full" />
+              <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[#F5C451]/5 blur-[80px] rounded-full" />
               <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[#10E07A]/5 blur-[70px] rounded-full" />
             </div>
 
@@ -136,7 +136,7 @@ export default function LiveTrackingMap() {
                 <path
                   d="M 100 180 C 120 250, 180 300, 200 350 S 280 420, 300 500 S 280 580, 260 620"
                   fill="none"
-                  stroke="#FFD700"
+                  stroke="#F5C451"
                   strokeWidth="3"
                   strokeDasharray="8 6"
                   opacity="0.8"
@@ -154,7 +154,7 @@ export default function LiveTrackingMap() {
                 <path
                   d="M 100 180 C 120 250, 180 300, 200 350 S 280 420, 300 500 S 280 580, 260 620"
                   fill="none"
-                  stroke="#FFD700"
+                  stroke="#F5C451"
                   strokeWidth="8"
                   strokeDasharray="8 6"
                   opacity="0.15"
@@ -170,12 +170,12 @@ export default function LiveTrackingMap() {
                 </path>
 
                 {/* Restaurant marker (start) */}
-                <circle cx="100" cy="180" r="8" fill="#1A1D26" stroke="#FFD700" strokeWidth="2.5" />
-                <circle cx="100" cy="180" r="3" fill="#FFD700" />
+                <circle cx="100" cy="180" r="8" fill="#1A1D26" stroke="#F5C451" strokeWidth="2.5" />
+                <circle cx="100" cy="180" r="3" fill="#F5C451" />
 
                 {/* Rider marker (along route) */}
                 <g>
-                  <circle cx="200" cy="350" r="18" fill="#FFD700" opacity="0.1">
+                  <circle cx="200" cy="350" r="18" fill="#F5C451" opacity="0.1">
                     <animate
                       attributeName="r"
                       values="18;28;18"
@@ -189,8 +189,8 @@ export default function LiveTrackingMap() {
                       repeatCount="indefinite"
                     />
                   </circle>
-                  <circle cx="200" cy="350" r="14" fill="#1A1D26" stroke="#FFD700" strokeWidth="2.5" />
-                  <circle cx="200" cy="350" r="6" fill="#FFD700" />
+                  <circle cx="200" cy="350" r="14" fill="#1A1D26" stroke="#F5C451" strokeWidth="2.5" />
+                  <circle cx="200" cy="350" r="6" fill="#F5C451" />
                   {/* Bike icon indicator */}
                   <circle cx="200" cy="350" r="2" fill="#05070A" />
                 </g>
@@ -218,7 +218,7 @@ export default function LiveTrackingMap() {
                 </g>
 
                 {/* Labels */}
-                <text x="100" y="165" textAnchor="middle" fill="#FFD700" fontSize="10" fontWeight="bold" opacity="0.8">Suya Central</text>
+                <text x="100" y="165" textAnchor="middle" fill="#F5C451" fontSize="10" fontWeight="bold" opacity="0.8">Suya Central</text>
                 <text x="260" y="650" textAnchor="middle" fill="#10E07A" fontSize="10" fontWeight="bold" opacity="0.8">Your Location</text>
               </svg>
             </div>
@@ -238,9 +238,9 @@ export default function LiveTrackingMap() {
                     <h2 className="text-white text-sm font-bold">Live Iftar Tracking</h2>
                     <p className="text-white/40 text-[10px]">Real-time delivery updates</p>
                   </div>
-                  <div className="bg-[#1A1D26] border border-[#FFD700]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-[#FFD700]" />
-                    <span className="text-[#FFD700] text-xs font-bold">Maghrib in {countdown}</span>
+                  <div className="bg-[#1A1D26] border border-[#F5C451]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-[#F5C451]" />
+                    <span className="text-[#F5C451] text-xs font-bold">Maghrib in {countdown}</span>
                   </div>
                 </div>
               </div>
@@ -271,7 +271,7 @@ export default function LiveTrackingMap() {
               <div className="absolute left-4 top-[20%] z-20">
                 <div className="bg-[#1A1D26]/80 rounded-xl border border-white/5 p-2.5 glass-effect space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#FFD700]" />
+                    <div className="w-3 h-3 rounded-full bg-[#F5C451]" />
                     <span className="text-white/50 text-[10px]">Rider</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -279,7 +279,7 @@ export default function LiveTrackingMap() {
                     <span className="text-white/50 text-[10px]">Your Home</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-1 bg-[#FFD700] rounded-full" />
+                    <div className="w-3 h-1 bg-[#F5C451] rounded-full" />
                     <span className="text-white/50 text-[10px]">Route</span>
                   </div>
                 </div>
@@ -320,8 +320,8 @@ export default function LiveTrackingMap() {
                   {/* Rider Details */}
                   <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FFD700]/30 to-[#FFD700]/10 flex items-center justify-center border border-[#FFD700]/20 shrink-0">
-                        <Bike className="w-5 h-5 text-[#FFD700]" />
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 shrink-0">
+                        <Bike className="w-5 h-5 text-[#F5C451]" />
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-bold text-sm">Musa</p>
@@ -330,9 +330,9 @@ export default function LiveTrackingMap() {
                       <div className="flex gap-2">
                         <button
                           onClick={handleCallRider}
-                          className="w-11 h-11 rounded-xl bg-[#FFD700]/10 border border-[#FFD700]/20 flex items-center justify-center hover:bg-[#FFD700]/20 transition-colors"
+                          className="w-11 h-11 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/20 flex items-center justify-center hover:bg-[#F5C451]/20 transition-colors"
                         >
-                          <Phone className="w-4.5 h-4.5 text-[#FFD700]" />
+                          <Phone className="w-4.5 h-4.5 text-[#F5C451]" />
                         </button>
                         <button
                           onClick={handleChatRider}
@@ -350,7 +350,7 @@ export default function LiveTrackingMap() {
                       <motion.span
                         animate={{ opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="shrink-0 w-1.5 h-1.5 bg-[#FFD700] rounded-full"
+                        className="shrink-0 w-1.5 h-1.5 bg-[#F5C451] rounded-full"
                       />
                       <AnimatePresence mode="wait">
                         <motion.p

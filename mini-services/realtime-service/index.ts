@@ -26,7 +26,7 @@ import { PrismaClient } from '@prisma/client';
 // ────────────────────────────────────────────────────────────────
 
 const databaseUrl =
-  process.env.DATABASE_URL || 'file:/home/z/my-project/db/custom.db';
+  process.env.DATABASE_URL || 'file:./db/custom.db';
 
 const prisma = new PrismaClient({
   datasources: { db: { url: databaseUrl } },

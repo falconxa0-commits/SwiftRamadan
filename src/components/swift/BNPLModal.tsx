@@ -105,7 +105,7 @@ export default function BNPLModal() {
                     </div>
                     <div>
                       <p className="text-white/40 text-[10px] uppercase tracking-widest">Next Payment</p>
-                      <p className="text-[#FFD700] font-bold text-lg mt-0.5">{formatNaira(15000)}</p>
+                      <p className="text-[#F5C451] font-bold text-lg mt-0.5">{formatNaira(15000)}</p>
                       <p className="text-white/30 text-[10px]">Due Apr 1</p>
                     </div>
                   </div>
@@ -117,15 +117,15 @@ export default function BNPLModal() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4a1d6e]/40 to-[#05070A] border border-[#FFD700]/30 p-5"
+                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4a1d6e]/40 to-[#05070A] border border-[#F5C451]/30 p-5"
               >
-                <div className="absolute top-0 right-0 w-24 h-24 bg-[#FFD700]/15 blur-[40px]" />
+                <div className="absolute top-0 right-0 w-24 h-24 bg-[#F5C451]/15 blur-[40px]" />
                 <div className="relative z-10 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-[#FFD700]/20 flex items-center justify-center border border-[#FFD700]/30 shrink-0">
-                    <Sparkles className="w-6 h-6 text-[#FFD700]" />
+                  <div className="w-12 h-12 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30 shrink-0">
+                    <Sparkles className="w-6 h-6 text-[#F5C451]" />
                   </div>
                   <div>
-                    <h3 className="text-[#FFD700] font-bold text-sm">Ramadan 0% Interest!</h3>
+                    <h3 className="text-[#F5C451] font-bold text-sm">Ramadan 0% Interest!</h3>
                     <p className="text-white/50 text-xs mt-0.5">Split payments for 2 months at absolutely zero interest this Ramadan</p>
                   </div>
                 </div>
@@ -166,7 +166,7 @@ export default function BNPLModal() {
                           <div className="flex items-center gap-2">
                             <p className={`font-bold text-sm ${isSelected ? 'text-white' : 'text-white/60'}`}>{plan.label}</p>
                             {plan.ramadanOffer && (
-                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#FFD700]/20 text-[#FFD700] border border-[#FFD700]/20">
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F5C451]/20 text-[#F5C451] border border-[#F5C451]/20">
                                 Ramadan Deal
                               </span>
                             )}
@@ -245,7 +245,7 @@ export default function BNPLModal() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-white/40 text-xs">Interest ({currentPlan.interestRate}%)</span>
-                        <span className={`font-bold text-sm ${currentPlan.interestRate === 0 ? 'text-[#10E07A]' : 'text-[#FFD700]'}`}>
+                        <span className={`font-bold text-sm ${currentPlan.interestRate === 0 ? 'text-[#10E07A]' : 'text-[#F5C451]'}`}>
                           {currentPlan.interestRate === 0 ? 'FREE' : formatNaira(Math.ceil(calculation.totalInterest))}
                         </span>
                       </div>

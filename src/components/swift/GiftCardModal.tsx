@@ -140,7 +140,7 @@ export default function GiftCardModal() {
             )}
           </button>
           <div className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-[#FFD700]" />
+            <Gift className="w-5 h-5 text-[#F5C451]" />
             <h2 className="text-white font-bold text-lg">Gift Card</h2>
           </div>
           <div className="w-10" />
@@ -215,7 +215,7 @@ export default function GiftCardModal() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.6 }}
-                    className="text-[#FFD700] text-sm mt-2"
+                    className="text-[#F5C451] text-sm mt-2"
                   >
                     🤲 {formatNaira(charityAmount)} donated to charity
                   </motion.p>
@@ -479,7 +479,7 @@ export default function GiftCardModal() {
                       <Gift className="w-8 h-8 text-white/20" />
                     </div>
                     <div className="flex items-center gap-2 mb-4">
-                      <Sparkles className="w-4 h-4 text-[#FFD700]" />
+                      <Sparkles className="w-4 h-4 text-[#F5C451]" />
                       <span className="text-white/50 text-xs uppercase tracking-widest">SwiftRamadan Gift Card</span>
                     </div>
                     <p className="text-white text-4xl font-black">{formatNaira(giftCardAmount)}</p>
@@ -522,8 +522,8 @@ export default function GiftCardModal() {
                   </div>
                   {charityOptIn && (
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#FFD700]">Charity Donation (10%)</span>
-                      <span className="text-[#FFD700] font-bold">{formatNaira(charityAmount)}</span>
+                      <span className="text-[#F5C451]">Charity Donation (10%)</span>
+                      <span className="text-[#F5C451] font-bold">{formatNaira(charityAmount)}</span>
                     </div>
                   )}
                   <div className="h-px bg-white/5 my-1" />
@@ -538,13 +538,13 @@ export default function GiftCardModal() {
                   onClick={() => setCharityOptIn(!charityOptIn)}
                   className="w-full mt-4 p-4 rounded-xl border transition-all duration-200 flex items-center gap-3 text-left"
                   style={{
-                    borderColor: charityOptIn ? 'rgba(255,215,0,0.3)' : 'rgba(255,255,255,0.05)',
-                    background: charityOptIn ? 'rgba(255,215,0,0.05)' : '#1A1D26',
+                    borderColor: charityOptIn ? 'rgba(245,196,81,0.3)' : 'rgba(255,255,255,0.05)',
+                    background: charityOptIn ? 'rgba(245,196,81,0.05)' : '#1A1D26',
                   }}
                 >
                   <div
                     className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
-                      charityOptIn ? 'bg-[#FFD700] border-[#FFD700]' : 'border-white/20'
+                      charityOptIn ? 'bg-[#F5C451] border-[#F5C451]' : 'border-white/20'
                     }`}
                   >
                     {charityOptIn && <Check className="w-3 h-3 text-[#05070A]" />}

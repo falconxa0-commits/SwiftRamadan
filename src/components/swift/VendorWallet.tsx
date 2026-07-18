@@ -65,6 +65,8 @@ export default function VendorWallet() {
     setVendorBalance,
     setVendorPendingSettlement,
     setVendorTotalEarnings,
+    vendorBankName,
+    vendorAccountNumber,
   } = useAppStore();
   const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState<TxFilter>('all');
@@ -139,7 +141,11 @@ export default function VendorWallet() {
     );
   };
 
-  /* ── Request payout (mock) ── */
+  const bankDisplay = vendorBankName
+    ? `${vendorBankName} ****${vendorAccountNumber.slice(-4) || '0000'}`
+    : 'your bank account';
+
+  /* ── Request payout ── */
   const handleWithdraw = async () => {
     const amount = withdrawAmount
       ? parseInt(withdrawAmount.replace(/[^0-9]/g, ''), 10)
@@ -154,7 +160,7 @@ export default function VendorWallet() {
     }
     setSubmittingPayout(true);
     try {
-      // Mock payout request — backend just returns success
+      // Submit payout request to backend
       const res = await fetch('/api/vendor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -164,7 +170,7 @@ export default function VendorWallet() {
       if (json.success) {
         toast({
           title: 'Payout Requested 💰',
-          description: `${formatNaira(amount)} will arrive in your GTBank ****8291 within 24h (Ref: ${json.data?.reference})`,
+          description: `${formatNaira(amount)} will arrive in ${bankDisplay} within 24h (Ref: ${json.data?.reference})`,
         });
         setShowWithdrawConfirm(false);
         setWithdrawAmount('');
@@ -174,7 +180,7 @@ export default function VendorWallet() {
         setTransactions((prev) => [
           {
             id: `TXN-PAYOUT-${Date.now()}`,
-            reference: `Payout to GT Bank`,
+            reference: `Payout to ${vendorBankName || 'Bank'}`,
             type: 'debit',
             amount,
             status: 'processing',
@@ -300,7 +306,7 @@ export default function VendorWallet() {
               <div className="flex items-center gap-3 mb-3">
                 <Building2 className="w-4 h-4 text-[#38BDF8] shrink-0" />
                 <div className="flex-1">
-                  <p className="text-white text-sm font-semibold">GT Bank **** 8291</p>
+                  <p className="text-white text-sm font-semibold">{bankDisplay}</p>
                   <p className="text-white/30 text-[10px]">Primary account</p>
                 </div>
               </div>
@@ -477,7 +483,7 @@ export default function VendorWallet() {
               <Building2 className="w-5 h-5 text-[#38BDF8]" />
             </div>
             <div>
-              <p className="text-white text-sm font-bold">GT Bank **** 8291</p>
+              <p className="text-white text-sm font-bold">{bankDisplay}</p>
               <p className="text-white/30 text-xs">Primary account</p>
             </div>
           </div>

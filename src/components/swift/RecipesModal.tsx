@@ -62,7 +62,7 @@ export default function RecipesModal() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'Easy': return 'text-[#10E07A] bg-[#10E07A]/10 border-[#10E07A]/20';
-      case 'Medium': return 'text-[#FFD700] bg-[#FFD700]/10 border-[#FFD700]/20';
+      case 'Medium': return 'text-[#F5C451] bg-[#F5C451]/10 border-[#F5C451]/20';
       case 'Hard': return 'text-red-400 bg-red-400/10 border-red-400/20';
       default: return 'text-white/50 bg-white/5 border-white/10';
     }
@@ -89,8 +89,8 @@ export default function RecipesModal() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center border border-[#FFD700]/20">
-                  <ChefHat className="w-5 h-5 text-[#FFD700]" />
+                <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center border border-[#F5C451]/20">
+                  <ChefHat className="w-5 h-5 text-[#F5C451]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Ramadan Kitchen</h2>
@@ -126,16 +126,16 @@ export default function RecipesModal() {
             <div className="px-4 pt-4 shrink-0">
               <button
                 onClick={() => setActiveModal('ai-recipe')}
-                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#FFD700]/10 border border-[#10E07A]/25 hover:border-[#10E07A]/50 transition-all text-left"
+                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#F5C451]/10 border border-[#10E07A]/25 hover:border-[#10E07A]/50 transition-all text-left"
               >
-                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#FFD700]/20 rounded-xl flex items-center justify-center border border-[#10E07A]/30 shrink-0">
-                  <ChefHat className="w-5 h-5 text-[#FFD700]" />
+                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-xl flex items-center justify-center border border-[#10E07A]/30 shrink-0">
+                  <ChefHat className="w-5 h-5 text-[#F5C451]" />
                   <Sparkles className="w-2.5 h-2.5 text-[#10E07A] absolute -top-0.5 -right-0.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-bold text-sm flex items-center gap-1.5">
                     Try AI Chef Safa
-                    <span className="text-[10px] font-black bg-[#FFD700]/15 text-[#FFD700] px-1.5 py-0.5 rounded-full border border-[#FFD700]/20">NEW</span>
+                    <span className="text-[10px] font-black bg-[#F5C451]/15 text-[#F5C451] px-1.5 py-0.5 rounded-full border border-[#F5C451]/20">NEW</span>
                   </p>
                   <p className="text-white/50 text-xs">Describe your craving & get a custom AI recipe ✨</p>
                 </div>
@@ -171,7 +171,7 @@ export default function RecipesModal() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                           <div className="absolute top-3 left-3">
-                            <span className="bg-[#FFD700]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                            <span className="bg-[#F5C451]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                               {recipe.category}
                             </span>
                           </div>
@@ -218,7 +218,7 @@ export default function RecipesModal() {
                                 <div className="space-y-2">
                                   {recipe.ingredients.map((ing, i) => (
                                     <div
-                                      key={i}
+                                      key={`${recipe.id}-ing-${i}`}
                                       className="flex items-center justify-between p-2.5 bg-[#0F1117] rounded-xl border border-white/5"
                                     >
                                       <div className="flex items-center gap-2">
@@ -264,16 +264,16 @@ export default function RecipesModal() {
                               {/* Steps */}
                               <div>
                                 <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
-                                  <ChefHat className="w-4 h-4 text-[#FFD700]" />
+                                  <ChefHat className="w-4 h-4 text-[#F5C451]" />
                                   Steps
                                 </h4>
                                 <div className="space-y-2">
                                   {recipe.steps.map((step, i) => (
                                     <div
-                                      key={i}
+                                      key={`${recipe.id}-step-${i}`}
                                       className="flex gap-3 p-2.5 bg-[#0F1117] rounded-xl border border-white/5"
                                     >
-                                      <span className="w-6 h-6 shrink-0 rounded-full bg-[#FFD700]/10 border border-[#FFD700]/20 flex items-center justify-center text-[#FFD700] text-[10px] font-black">
+                                      <span className="w-6 h-6 shrink-0 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20 flex items-center justify-center text-[#F5C451] text-[10px] font-black">
                                         {i + 1}
                                       </span>
                                       <p className="text-white/70 text-xs leading-relaxed pt-0.5">{step}</p>

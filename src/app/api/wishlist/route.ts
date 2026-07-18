@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
     // Check existing (toggle semantics)
     const existing = await db.wishlistItem.findUnique({
-      where: { userId_productId: { userId, productId: Number(productId) } },
+      where: { userId_productId: { userId, productId: String(productId) } },
     });
 
     if (existing) {
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     const item = await db.wishlistItem.create({
       data: {
         userId,
-        productId: Number(productId),
+        productId: String(productId),
         name: String(name),
         price: Number(price) || 0,
         image: typeof image === 'string' ? image : '',
@@ -139,7 +139,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const existing = await db.wishlistItem.findUnique({
-      where: { userId_productId: { userId, productId: Number(productId) } },
+      where: { userId_productId: { userId, productId: String(productId) } },
     });
 
     if (!existing) {

@@ -58,13 +58,24 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const user = await db.user.findUnique({ where: { email } });
+        let user = await db.user.findUnique({ where: { email } });
 
+        // Auto-create user for demo/beta — seamless onboarding
         if (!user) {
-          return NextResponse.json(
-            { success: false, message: 'No account found with this email' },
-            { status: 404 },
-          );
+          const displayName = email.split('@')[0] || 'User';
+          const userRole = role === 'vendor' ? 'vendor' : role === 'rider' ? 'rider' : 'customer';
+          const hashedPw = password ? await hashPassword(password) : '';
+          user = await db.user.create({
+            data: {
+              email,
+              name: displayName,
+              phone: '',
+              password: hashedPw,
+              role: userRole,
+              onboardingComplete: true,
+              referralCode: `SWIFT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+            },
+          });
         }
 
         const hasRealPassword = typeof user.password === 'string' && user.password.length > 0;
@@ -81,7 +92,7 @@ export async function POST(request: NextRequest) {
           const isValid = await verifyPassword(password, user.password);
           if (!isValid) {
             return NextResponse.json(
-              { success: false, message: 'Incorrect password' },
+              { success: false, message: 'Invalid email or password' },
               { status: 401 },
             );
           }
@@ -160,8 +171,7 @@ export async function POST(request: NextRequest) {
         });
 
         // Issue an OTP for the newly-created account so the subsequent
-        // verify-otp call has something to verify against. Returned in the
-        // response for demo purposes (in production it would be sent via SMS).
+        // verify-otp call has something to verify against.
         const otpCode = generateOtp();
         await setOtpAsync(email, otpCode);
         // A brand-new account is not "verified" yet.

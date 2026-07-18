@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 /* ──────────── helpers ──────────── */
 
@@ -41,6 +42,16 @@ export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  if (auth.role !== 'vendor') {
+    return NextResponse.json(
+      { success: false, error: 'Vendor access required' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const vendorId = searchParams.get('vendorId');
@@ -51,6 +62,14 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Vendor not found', orders: [] },
         { status: 404 }
+      );
+    }
+
+    // Verify the authenticated vendor matches the resolved vendor
+    if (resolvedId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'You can only view your own orders' },
+        { status: 403 }
       );
     }
 
@@ -107,6 +126,16 @@ export async function PUT(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  if (auth.role !== 'vendor') {
+    return NextResponse.json(
+      { success: false, error: 'Vendor access required' },
+      { status: 403 }
+    );
+  }
+
   try {
     const body = await request.json();
     const { orderId, action } = body;
@@ -129,6 +158,23 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Order not found' },
         { status: 404 }
+      );
+    }
+
+    // Verify the order belongs to the authenticated vendor
+    const vendorProducts = await db.product.findMany({
+      where: { vendorId: auth.userId },
+      select: { name: true },
+    });
+    const vendorProductNames = vendorProducts.map((p) => p.name.toLowerCase());
+    const orderItems = parseItems(existing.items);
+    const orderBelongsToVendor = orderItems.some(
+      (i: { name?: string }) => i.name && vendorProductNames.includes(i.name.toLowerCase())
+    );
+    if (!orderBelongsToVendor) {
+      return NextResponse.json(
+        { success: false, error: 'You can only modify orders containing your products' },
+        { status: 403 }
       );
     }
 

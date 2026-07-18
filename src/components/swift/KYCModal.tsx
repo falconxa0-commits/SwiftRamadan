@@ -174,13 +174,13 @@ export default function KYCModal() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-5 rounded-2xl bg-[#FFD700]/5 border border-[#FFD700]/20"
+          className="flex items-center gap-4 p-5 rounded-2xl bg-[#F5C451]/5 border border-[#F5C451]/20"
         >
-          <div className="w-12 h-12 rounded-full bg-[#FFD700]/20 flex items-center justify-center border border-[#FFD700]/30 shrink-0">
-            <Clock className="w-6 h-6 text-[#FFD700]" />
+          <div className="w-12 h-12 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30 shrink-0">
+            <Clock className="w-6 h-6 text-[#F5C451]" />
           </div>
           <div>
-            <h3 className="text-[#FFD700] font-bold text-sm">Verification In Progress</h3>
+            <h3 className="text-[#F5C451] font-bold text-sm">Verification In Progress</h3>
             <p className="text-white/40 text-xs mt-0.5">Your documents are being reviewed. This usually takes 24-48 hours.</p>
           </div>
         </motion.div>
@@ -215,7 +215,7 @@ export default function KYCModal() {
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/20">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20">
             <Clock className="w-3 h-3" />
             Pending
           </span>
@@ -365,14 +365,14 @@ export default function KYCModal() {
                                   doc.status === 'verified'
                                     ? 'bg-[#10E07A]/10 border-[#10E07A]/20'
                                     : doc.status === 'pending'
-                                    ? 'bg-[#FFD700]/10 border-[#FFD700]/20'
+                                    ? 'bg-[#F5C451]/10 border-[#F5C451]/20'
                                     : 'bg-red-500/10 border-red-500/20'
                                 }`}>
                                   <FileText className={`w-5 h-5 ${
                                     doc.status === 'verified'
                                       ? 'text-[#10E07A]'
                                       : doc.status === 'pending'
-                                      ? 'text-[#FFD700]'
+                                      ? 'text-[#F5C451]'
                                       : 'text-red-400'
                                   }`} />
                                 </div>
@@ -424,7 +424,7 @@ export default function KYCModal() {
                     transition={{ delay: 0.15 }}
                     className="mt-4 flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5"
                   >
-                    <AlertCircle className="w-5 h-5 text-[#FFD700] shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-[#F5C451] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white/60 text-xs font-bold">Requirements</p>
                       <p className="text-white/30 text-xs mt-1 leading-relaxed">

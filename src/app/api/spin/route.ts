@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { db } from '@/lib/db';
 import { captureException } from '@/lib/monitoring/sentry';
 
 // Prize definitions with probabilities
@@ -12,10 +13,6 @@ const PRIZES = [
   { id: 7, type: 'discount', value: 2500, label: '₦2,500 Off', probability: 0.05, rare: true },
   { id: 8, type: 'jackpot', value: 500, label: '500pts + ₦500 Off', probability: 0.05, jackpot: true },
 ];
-
-// Server-side spin state store keyed by user email
-// This prevents clients from tampering with lastSpinDate or spinStreak
-const spinStateStore = new Map<string, { lastSpinDate: string; spinStreak: number }>();
 
 // In-memory rate limiting (per IP, resets on server restart)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -53,7 +50,20 @@ function spinWheel(): (typeof PRIZES)[number] {
   return PRIZES[0];
 }
 
-// GET: Returns spin status — reads from server-side store
+/**
+ * Resolve an email or userId to an actual User record.
+ * Returns null when no user is found.
+ */
+async function resolveUser(raw: string): Promise<{ id: string; lastSpinDate: string; spinStreak: string } | null> {
+  // Try by id first
+  const byId = await db.user.findUnique({ where: { id: raw }, select: { id: true, lastSpinDate: true, spinStreak: true } });
+  if (byId) return byId;
+  // Then try by email
+  const byEmail = await db.user.findUnique({ where: { email: raw }, select: { id: true, lastSpinDate: true, spinStreak: true } });
+  return byEmail ?? null;
+}
+
+// GET: Returns spin status — reads from database
 export async function GET(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
@@ -67,19 +77,28 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const email = searchParams.get('email') || '';
 
-  // Look up spin state from server-side store
-  const spinState = email ? (spinStateStore.get(email) || { lastSpinDate: '', spinStreak: 0 }) : { lastSpinDate: '', spinStreak: 0 };
+  // Default state for unauthenticated / no user
+  let lastSpinDate = '';
+  let spinStreakNum = 0;
+
+  if (email) {
+    const user = await resolveUser(email);
+    if (user) {
+      lastSpinDate = user.lastSpinDate;
+      spinStreakNum = parseInt(user.spinStreak || '0', 10);
+    }
+  }
 
   const today = new Date().toISOString().split('T')[0];
-  const canSpin = spinState.lastSpinDate !== today;
+  const canSpin = lastSpinDate !== today;
 
   // Calculate if streak bonus applies (3+ consecutive days)
-  const hasStreakBonus = spinState.spinStreak >= 3;
+  const hasStreakBonus = spinStreakNum >= 3;
 
   return NextResponse.json({
     canSpin,
-    lastSpinDate: spinState.lastSpinDate,
-    streak: spinState.spinStreak,
+    lastSpinDate,
+    streak: spinStreakNum,
     hasStreakBonus,
     prizes: PRIZES.map(p => ({
       id: p.id,
@@ -92,7 +111,7 @@ export async function GET(request: NextRequest) {
   });
 }
 
-// POST: Perform a spin — validates against server-side store, not client body
+// POST: Perform a spin — validates against database, not client body
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
@@ -114,29 +133,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const user = await resolveUser(email);
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 },
+      );
+    }
+
     const today = new Date().toISOString().split('T')[0];
+    const lastSpinDate = user.lastSpinDate;
+    const currentStreak = parseInt(user.spinStreak || '0', 10);
 
-    // Look up spin state from server-side store
-    const spinState = spinStateStore.get(email) || { lastSpinDate: '', spinStreak: 0 };
-
-    // Validate: can only spin once per day (server-side check, not client-supplied)
-    if (spinState.lastSpinDate === today) {
+    // Validate: can only spin once per day (server-side check from DB)
+    if (lastSpinDate === today) {
       return NextResponse.json(
         { error: 'Already spun today. Come back tomorrow!', canSpin: false },
         { status: 400 },
       );
     }
 
-    // Calculate streak based on server-side lastSpinDate
+    // Calculate streak based on DB lastSpinDate
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
     const yesterdayStr = yesterday.toISOString().split('T')[0];
 
     let newStreak: number;
-    if (spinState.lastSpinDate === yesterdayStr) {
+    if (lastSpinDate === yesterdayStr) {
       // Consecutive day
-      newStreak = spinState.spinStreak + 1;
-    } else if (spinState.lastSpinDate === '') {
+      newStreak = currentStreak + 1;
+    } else if (lastSpinDate === '') {
       // First spin ever
       newStreak = 1;
     } else {
@@ -157,8 +183,14 @@ export async function POST(request: NextRequest) {
       };
     }
 
-    // Update server-side store after successful spin
-    spinStateStore.set(email, { lastSpinDate: today, spinStreak: newStreak });
+    // Update database after successful spin
+    await db.user.update({
+      where: { id: user.id },
+      data: {
+        lastSpinDate: today,
+        spinStreak: String(newStreak),
+      },
+    });
 
     return NextResponse.json({
       prize: {

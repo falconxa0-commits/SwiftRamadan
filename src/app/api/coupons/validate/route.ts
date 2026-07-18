@@ -8,7 +8,8 @@ export const runtime = 'nodejs';
 
 // POST /api/coupons/validate { code, cartTotal }
 // Validates a coupon code against the cart total and returns the discount amount
-// and new total. Increments `uses` on successful validation.
+// and new total.
+// uses incremented when order is placed via /api/orders
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP (coupon validation mutates DB)
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
@@ -84,11 +85,7 @@ export async function POST(request: NextRequest) {
 
     const newTotal = total - discount;
 
-    // Increment uses
-    await db.coupon.update({
-      where: { id: coupon.id },
-      data: { uses: { increment: 1 } },
-    });
+    // uses incremented when order is placed via /api/orders
 
     return NextResponse.json({
       valid: true,

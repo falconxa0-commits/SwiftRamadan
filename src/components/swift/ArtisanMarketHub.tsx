@@ -10,7 +10,7 @@ const artisanCategories = [
   { id: 2, name: 'Local Spices', icon: '🌶️', color: 'from-red-600/20 to-red-800/10' },
   { id: 3, name: 'Traditional Fabrics', icon: '🧵', color: 'from-purple-600/20 to-purple-800/10' },
   { id: 4, name: 'Pottery', icon: '🫖', color: 'from-orange-600/20 to-orange-800/10' },
-  { id: 5, name: 'Jewelry', icon: '💍', color: 'from-[#FFD700]/20 to-[#FFD700]/5' },
+  { id: 5, name: 'Jewelry', icon: '💍', color: 'from-[#F5C451]/20 to-[#F5C451]/5' },
   { id: 6, name: 'Woodwork', icon: '🪵', color: 'from-yellow-800/20 to-yellow-900/10' },
 ];
 
@@ -154,9 +154,9 @@ export default function ArtisanMarketHub() {
                             <h4 className="text-white font-bold text-sm">{artisan.name}</h4>
                             <p className="text-white/40 text-xs mt-0.5">{artisan.specialty}</p>
                           </div>
-                          <div className="flex items-center gap-1 bg-[#FFD700]/10 border border-[#FFD700]/20 rounded-lg px-2 py-1">
-                            <Star className="w-3 h-3 text-[#FFD700]" fill="#FFD700" />
-                            <span className="text-[#FFD700] text-xs font-bold">{artisan.rating}</span>
+                          <div className="flex items-center gap-1 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-lg px-2 py-1">
+                            <Star className="w-3 h-3 text-[#F5C451]" fill="#F5C451" />
+                            <span className="text-[#F5C451] text-xs font-bold">{artisan.rating}</span>
                             <span className="text-white/30 text-[10px]">({artisan.reviews})</span>
                           </div>
                         </div>
@@ -179,19 +179,19 @@ export default function ArtisanMarketHub() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 bg-gradient-to-r from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[#FFD700]/10 p-4"
+                className="mt-6 bg-gradient-to-r from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[#F5C451]/10 p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#FFD700]/10 flex items-center justify-center border border-[#FFD700]/20 shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 shrink-0">
                     <span className="text-2xl">🌙</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-[#FFD700] text-sm font-bold">Ramadan Artisan Fair</p>
+                    <p className="text-[#F5C451] text-sm font-bold">Ramadan Artisan Fair</p>
                     <p className="text-white/40 text-xs mt-0.5">Special collections for the holy month</p>
                   </div>
                   <button
                     onClick={() => toast({ title: 'Ramadan Fair 🎪', description: 'Exploring Ramadan artisan collections' })}
-                    className="px-3 py-1.5 rounded-lg bg-[#FFD700]/10 border border-[#FFD700]/20 text-[#FFD700] text-xs font-bold"
+                    className="px-3 py-1.5 rounded-lg bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] text-xs font-bold"
                   >
                     Explore
                   </button>

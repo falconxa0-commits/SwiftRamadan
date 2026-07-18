@@ -41,8 +41,8 @@ export default function VendorSalesInsights() {
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#FFD700]/20 flex items-center justify-center border border-[#FFD700]/30">
-                    <TrendingUp className="w-5 h-5 text-[#FFD700]" />
+                  <div className="w-10 h-10 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30">
+                    <TrendingUp className="w-5 h-5 text-[#F5C451]" />
                   </div>
                   <h2 className="text-white text-lg font-bold">Sales Insights</h2>
                 </div>
@@ -63,10 +63,10 @@ export default function VendorSalesInsights() {
                 transition={{ delay: 0.1 }}
                 className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-white/5 p-6 mt-4"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700]/5 blur-[60px]" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/5 blur-[60px]" />
                 <div className="relative z-10">
                   <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Today&apos;s Revenue</p>
-                  <p className="text-[#FFD700] text-4xl font-black mt-1">{formatNaira(vendorSalesInsights.todayRevenue)}</p>
+                  <p className="text-[#F5C451] text-4xl font-black mt-1">{formatNaira(vendorSalesInsights.todayRevenue)}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#10E07A]/20">
                       <ShoppingBag className="w-3 h-3 text-[#10E07A]" />
@@ -117,7 +117,7 @@ export default function VendorSalesInsights() {
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.5 + i * 0.06 }}
                               className={`text-[9px] font-bold whitespace-nowrap ${
-                                isFriday ? 'text-[#FFD700]' : 'text-white/40'
+                                isFriday ? 'text-[#F5C451]' : 'text-white/40'
                               }`}
                             >
                               {formatNaira(day.revenue).replace('₦', '₦')}
@@ -130,7 +130,7 @@ export default function VendorSalesInsights() {
                               transition={{ duration: 0.6, delay: 0.3 + i * 0.06, ease: 'easeOut' }}
                               className={`w-full rounded-t-lg transition-colors ${
                                 isFriday
-                                  ? 'bg-gradient-to-t from-[#FFD700] to-[#FFD700]/60'
+                                  ? 'bg-gradient-to-t from-[#F5C451] to-[#F5C451]/60'
                                   : isToday
                                     ? 'bg-gradient-to-t from-[#10E07A] to-[#10E07A]/40'
                                     : 'bg-gradient-to-t from-white/20 to-white/5'
@@ -139,12 +139,12 @@ export default function VendorSalesInsights() {
                             />
                           </div>
                           <span className={`text-[10px] font-bold ${
-                            isFriday ? 'text-[#FFD700]' : isToday ? 'text-[#10E07A]' : 'text-white/30'
+                            isFriday ? 'text-[#F5C451]' : isToday ? 'text-[#10E07A]' : 'text-white/30'
                           }`}>
                             {day.day}
                           </span>
                           {isFriday && (
-                            <span className="text-[8px] text-[#FFD700]/60 font-bold">Peak</span>
+                            <span className="text-[8px] text-[#F5C451]/60 font-bold">Peak</span>
                           )}
                         </div>
                       );
@@ -161,8 +161,8 @@ export default function VendorSalesInsights() {
                 className="mt-6 grid grid-cols-3 gap-3"
               >
                 <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 text-center">
-                  <div className="w-10 h-10 rounded-xl bg-[#FFD700]/20 flex items-center justify-center mx-auto mb-2 border border-[#FFD700]/20">
-                    <Star className="w-5 h-5 text-[#FFD700]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#F5C451]/20 flex items-center justify-center mx-auto mb-2 border border-[#F5C451]/20">
+                    <Star className="w-5 h-5 text-[#F5C451]" />
                   </div>
                   <p className="text-white/30 text-[9px] uppercase tracking-widest font-bold">Top Seller</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.topSellingItem}</p>
@@ -188,14 +188,14 @@ export default function VendorSalesInsights() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-[#FFD700]/20 p-6"
+                className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-[#F5C451]/20 p-6"
               >
-                <div className="absolute top-0 right-0 w-40 h-40 bg-[#FFD700]/5 blur-[60px]" />
+                <div className="absolute top-0 right-0 w-40 h-40 bg-[#F5C451]/5 blur-[60px]" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#10E07A]/5 blur-[40px]" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-4">
-                    <span className="material-symbols-outlined text-[#FFD700] text-lg">mosque</span>
-                    <h4 className="text-[#FFD700] font-bold text-sm">Ramadan Totals</h4>
+                    <span className="material-symbols-outlined text-[#F5C451] text-lg">mosque</span>
+                    <h4 className="text-[#F5C451] font-bold text-sm">Ramadan Totals</h4>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>

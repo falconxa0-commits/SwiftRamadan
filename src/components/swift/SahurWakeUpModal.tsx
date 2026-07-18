@@ -93,7 +93,7 @@ export default function SahurWakeUpModal() {
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
               <div className="flex items-center justify-between p-4">
                 <h2 className="text-white text-lg font-bold flex items-center gap-2">
-                  <Moon className="w-5 h-5 text-[#FFD700]" />
+                  <Moon className="w-5 h-5 text-[#F5C451]" />
                   Sahur Wake-Up Call
                 </h2>
                 <button
@@ -116,7 +116,7 @@ export default function SahurWakeUpModal() {
               >
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
-                    <AlarmClock className="w-5 h-5 text-[#FFD700]" />
+                    <AlarmClock className="w-5 h-5 text-[#F5C451]" />
                     <span className="text-white font-bold text-sm">Sahur Alarm</span>
                   </div>
                   <button
@@ -180,9 +180,9 @@ export default function SahurWakeUpModal() {
                 {/* Preview Button */}
                 <button
                   onClick={handlePreview}
-                  className="mt-4 flex items-center gap-2 mx-auto px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-xs font-medium hover:border-[#FFD700]/30 hover:text-[#FFD700] transition-colors"
+                  className="mt-4 flex items-center gap-2 mx-auto px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/60 text-xs font-medium hover:border-[#F5C451]/30 hover:text-[#F5C451] transition-colors"
                 >
-                  <Play className={`w-3.5 h-3.5 ${previewing ? 'text-[#FFD700]' : ''}`} />
+                  <Play className={`w-3.5 h-3.5 ${previewing ? 'text-[#F5C451]' : ''}`} />
                   {previewing ? 'Playing...' : 'Preview Alarm'}
                 </button>
               </motion.div>
@@ -286,12 +286,12 @@ export default function SahurWakeUpModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Dua for Sahur</h4>
-                <div className="relative overflow-hidden bg-gradient-to-br from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[#FFD700]/20 p-5">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#FFD700]/5 blur-[40px]" />
+                <div className="relative overflow-hidden bg-gradient-to-br from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[#F5C451]/20 p-5">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#F5C451]/5 blur-[40px]" />
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="material-symbols-outlined text-[#FFD700] text-lg">auto_stories</span>
-                      <span className="text-[#FFD700] text-xs font-bold uppercase tracking-widest">Sahur Dua</span>
+                      <span className="material-symbols-outlined text-[#F5C451] text-lg">auto_stories</span>
+                      <span className="text-[#F5C451] text-xs font-bold uppercase tracking-widest">Sahur Dua</span>
                     </div>
                     <p className="text-white/80 text-sm leading-relaxed italic">{todayDua}</p>
                   </div>

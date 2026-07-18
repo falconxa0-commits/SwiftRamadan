@@ -590,7 +590,7 @@ export const loyaltyRewards = [
 export const loyaltyTiers = [
   { id: 'bronze', name: 'Bronze', minPoints: 0, maxPoints: 2000, color: '#CD7F32', benefits: ['Standard delivery', 'Basic rewards access', 'Birthday bonus 100 points'] },
   { id: 'silver', name: 'Silver', minPoints: 2000, maxPoints: 5000, color: '#C0C0C0', benefits: ['Free delivery ₦3K+', '5% cashback group buy', 'Early flash sale access', 'Birthday bonus 250 points'] },
-  { id: 'gold', name: 'Gold', minPoints: 5000, maxPoints: 10000, color: '#FFD700', benefits: ['Free delivery ₦5K+', 'Priority iftar slots', '5% cashback group buy', 'Early flash sale access', 'Birthday bonus 500 points', 'Exclusive gold deals'] },
+  { id: 'gold', name: 'Gold', minPoints: 5000, maxPoints: 10000, color: '#F5C451', benefits: ['Free delivery ₦5K+', 'Priority iftar slots', '5% cashback group buy', 'Early flash sale access', 'Birthday bonus 500 points', 'Exclusive gold deals'] },
   { id: 'platinum', name: 'Platinum', minPoints: 10000, maxPoints: 999999, color: '#E5E4E2', benefits: ['Unlimited free delivery', '24/7 priority support', 'Bulk order concierge', 'First access to flash sales', '15% logistics discount', 'Birthday bonus 1000 points', 'Platinum-only deals', 'Personal account manager'] },
 ];
 

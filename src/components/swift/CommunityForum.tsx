@@ -62,7 +62,7 @@ const COMPOSER_CATEGORIES = ['Reviews', 'Recipes', 'Tips', 'Questions', 'General
 // (A→green, B→gold, C→purple, D→cyan, E→red, F→green, …).
 const PALETTE = [
   'from-[#10E07A]/40 to-[#10E07A]/10',
-  'from-[#FFD700]/40 to-[#FFD700]/10',
+  'from-[#F5C451]/40 to-[#F5C451]/10',
   'from-[#8b5cf6]/40 to-[#8b5cf6]/10',
   'from-[#06b6d4]/40 to-[#06b6d4]/10',
   'from-[#FF6B6B]/40 to-[#FF6B6B]/10',
@@ -76,10 +76,10 @@ function gradientFor(initial: string): string {
 const CATEGORY_BADGES: Record<string, string> = {
   Reviews: 'bg-[#10E07A]/10 text-[#10E07A] border-[#10E07A]/20',
   Recipes: 'bg-[#06b6d4]/10 text-[#06b6d4] border-[#06b6d4]/20',
-  Tips: 'bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/20',
+  Tips: 'bg-[#F5C451]/10 text-[#F5C451] border-[#F5C451]/20',
   Questions: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
   General: 'bg-white/5 text-white/60 border-white/10',
-  'Group Buy': 'bg-[#FFD700]/10 text-[#FFD700] border-[#FFD700]/20',
+  'Group Buy': 'bg-[#F5C451]/10 text-[#F5C451] border-[#F5C451]/20',
   Charity: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
 };
 
@@ -507,7 +507,7 @@ export default function CommunityForum() {
             {/* ──── Sticky Header ──── */}
             <div className="sticky top-0 z-20 glass-effect border-b border-white/5">
               {/* Accent bar */}
-              <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#FFD700] to-[#8b5cf6]" />
+              <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
 
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -575,7 +575,7 @@ export default function CommunityForum() {
                   onClick={() => setSortMode('trending')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     sortMode === 'trending'
-                      ? 'bg-[#FFD700]/20 text-[#FFD700]'
+                      ? 'bg-[#F5C451]/20 text-[#F5C451]'
                       : 'text-white/40 hover:text-white/70'
                   }`}
                 >
@@ -596,7 +596,7 @@ export default function CommunityForum() {
                 <div className="space-y-3">
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
-                      key={i}
+                      key={`skeleton-${i}`}
                       className="bg-[#0F1117] rounded-2xl border border-white/5 p-4 animate-pulse"
                     >
                       <div className="flex items-center gap-3 mb-3">
@@ -779,7 +779,7 @@ export default function CommunityForum() {
                           <button
                             onClick={() => handleShare(post)}
                             aria-label="Share"
-                            className="flex items-center gap-1.5 text-white/40 hover:text-[#FFD700] transition-all active:scale-90"
+                            className="flex items-center gap-1.5 text-white/40 hover:text-[#F5C451] transition-all active:scale-90"
                           >
                             <Share2 className="w-4 h-4" />
                             <span className="text-xs font-semibold">Share</span>

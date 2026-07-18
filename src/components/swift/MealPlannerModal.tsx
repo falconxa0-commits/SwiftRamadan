@@ -282,7 +282,7 @@ export default function MealPlannerModal() {
           >
             {/* ── Sticky header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#FFD700] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#05070A]/95 backdrop-blur">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
@@ -325,7 +325,7 @@ export default function MealPlannerModal() {
                         onClick={() => handleSelectDay(d.key)}
                         className={`relative shrink-0 w-[68px] py-3 rounded-2xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'bg-[#1A1D26] border-[#10E07A]/60 shadow-[0_0_0_1px_rgba(19,236,19,0.25)]'
+                            ? 'bg-[#1A1D26] border-[#10E07A]/60 shadow-[0_0_0_1px_rgba(16,224,122,0.25)]'
                             : 'bg-[#0F1117] border-white/5 hover:border-white/15'
                         }`}
                         aria-pressed={isSelected}
@@ -349,7 +349,7 @@ export default function MealPlannerModal() {
                             hasMeals
                               ? d.isToday
                                 ? 'bg-[#10E07A]'
-                                : 'bg-[#FFD700]'
+                                : 'bg-[#F5C451]'
                               : 'bg-transparent'
                           }`}
                         />
@@ -388,7 +388,7 @@ export default function MealPlannerModal() {
                   slot="iftar"
                   meal={selectedDayPlan.iftar}
                   accentColor="#10E07A"
-                  accentSoft="rgba(19,236,19,0.12)"
+                  accentSoft="rgba(16,224,122,0.12)"
                   icon={<Moon className="w-4 h-4" />}
                   label="Iftar"
                   sublabel="Sunset meal · Maghrib"
@@ -399,8 +399,8 @@ export default function MealPlannerModal() {
                 <MealSection
                   slot="sahur"
                   meal={selectedDayPlan.sahur}
-                  accentColor="#FFD700"
-                  accentSoft="rgba(255,215,0,0.12)"
+                  accentColor="#F5C451"
+                  accentSoft="rgba(245,196,81,0.12)"
                   icon={<Sun className="w-4 h-4" />}
                   label="Sahur"
                   sublabel="Pre-dawn meal · Fajr"
@@ -438,7 +438,7 @@ export default function MealPlannerModal() {
                   <div className="rounded-3xl border border-white/5 bg-gradient-to-br from-[#1A1D26] to-[#0F1117] p-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4 text-[#FFD700]" />
+                        <CalendarDays className="w-4 h-4 text-[#F5C451]" />
                         <h4 className="text-white font-black text-sm">This Week</h4>
                       </div>
                       <span className="text-white/40 text-[11px] font-bold">7 days</span>
@@ -446,7 +446,7 @@ export default function MealPlannerModal() {
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <SummaryStat label="Meals" value={summary.total} color="#FFFFFF" />
                       <SummaryStat label="Iftar" value={summary.iftar} color="#10E07A" />
-                      <SummaryStat label="Sahur" value={summary.sahur} color="#FFD700" />
+                      <SummaryStat label="Sahur" value={summary.sahur} color="#F5C451" />
                     </div>
                     <button
                       onClick={handleAddAllToCart}
@@ -682,8 +682,8 @@ function AddMealSheet({
   onClose,
   onAdd,
 }: AddMealSheetProps) {
-  const accentColor = slot === 'iftar' ? '#10E07A' : '#FFD700';
-  const accentSoft = slot === 'iftar' ? 'rgba(19,236,19,0.12)' : 'rgba(255,215,0,0.12)';
+  const accentColor = slot === 'iftar' ? '#10E07A' : '#F5C451';
+  const accentSoft = slot === 'iftar' ? 'rgba(16,224,122,0.12)' : 'rgba(245,196,81,0.12)';
 
   const adjustServings = (delta: number) => {
     const next = Math.min(10, Math.max(1, servings + delta));

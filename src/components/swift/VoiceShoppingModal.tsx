@@ -263,7 +263,7 @@ export default function VoiceShoppingModal() {
               <div className="flex items-center justify-center gap-[3px] h-16 mb-6">
                 {animBars.map((height, i) => (
                   <motion.div
-                    key={i}
+                    key={`bar-${i}`}
                     className={`w-[3px] rounded-full ${isListening ? 'bg-[#10E07A]' : 'bg-white/10'}`}
                     animate={{ height: `${Math.max(4, height * 56)}px` }}
                     transition={{ duration: 0.1 }}

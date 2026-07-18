@@ -38,8 +38,8 @@ export default function RiderPerformanceHub() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 flex items-center justify-center border border-[#3b82f6]/20">
-                  <BarChart3 className="w-5 h-5 text-[#3b82f6]" />
+                <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 flex items-center justify-center border border-[#38BDF8]/20">
+                  <BarChart3 className="w-5 h-5 text-[#38BDF8]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Performance Hub</h2>
@@ -48,6 +48,7 @@ export default function RiderPerformanceHub() {
               </div>
               <button
                 onClick={handleClose}
+                aria-label="Close"
                 className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
               >
                 <X className="w-4 h-4 text-white/60" />
@@ -84,13 +85,13 @@ export default function RiderPerformanceHub() {
                   className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 text-[#FFD700]" />
+                    <Star className="w-4 h-4 text-[#F5C451]" />
                     <span className="text-white/40 text-[10px] font-bold uppercase">Rating</span>
                   </div>
-                  <p className="text-[#FFD700] text-2xl font-black">{m.rating}</p>
+                  <p className="text-[#F5C451] text-2xl font-black">{m.rating}</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3 text-[#FFD700]" />
-                    <span className="text-[#FFD700] text-[10px] font-bold">{m.ratingTrend}</span>
+                    <TrendingUp className="w-3 h-3 text-[#F5C451]" />
+                    <span className="text-[#F5C451] text-[10px] font-bold">{m.ratingTrend}</span>
                   </div>
                 </motion.div>
 
@@ -120,10 +121,10 @@ export default function RiderPerformanceHub() {
                   className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Trophy className="w-4 h-4 text-[#3b82f6]" />
+                    <Trophy className="w-4 h-4 text-[#38BDF8]" />
                     <span className="text-white/40 text-[10px] font-bold uppercase">Incentive</span>
                   </div>
-                  <p className="text-[#3b82f6] text-2xl font-black">{m.incentiveProgress}%</p>
+                  <p className="text-[#38BDF8] text-2xl font-black">{m.incentiveProgress}%</p>
                   <p className="text-white/30 text-[10px] mt-1">{m.incentiveRemaining}</p>
                 </motion.div>
               </div>
@@ -137,17 +138,17 @@ export default function RiderPerformanceHub() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-[#FFD700]" />
+                    <Trophy className="w-5 h-5 text-[#F5C451]" />
                     <span className="text-white font-bold text-sm">{m.incentiveGoal}</span>
                   </div>
-                  <span className="text-[#3b82f6] text-xs font-bold">{m.incentiveProgress}%</span>
+                  <span className="text-[#38BDF8] text-xs font-bold">{m.incentiveProgress}%</span>
                 </div>
                 <div className="w-full bg-white/5 rounded-full h-3 overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${m.incentiveProgress}%` }}
                     transition={{ duration: 1, delay: 0.5 }}
-                    className="h-3 rounded-full bg-gradient-to-r from-[#3b82f6] to-[#FFD700]"
+                    className="h-3 rounded-full bg-gradient-to-r from-[#38BDF8] to-[#F5C451]"
                   />
                 </div>
                 <p className="text-white/30 text-xs mt-2 text-center">{m.incentiveRemaining} to unlock bonus</p>
@@ -167,15 +168,15 @@ export default function RiderPerformanceHub() {
                 <div className="space-y-2">
                   {m.topCompliments.map((compliment, i) => (
                     <motion.div
-                      key={i}
+                      key={compliment.title}
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.35 + i * 0.08 }}
                       className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 flex items-center justify-center border border-[#3b82f6]/20 shrink-0">
-                          <span className="material-symbols-outlined text-[#3b82f6] text-lg">{compliment.icon}</span>
+                        <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 flex items-center justify-center border border-[#38BDF8]/20 shrink-0">
+                          <span className="material-symbols-outlined text-[#38BDF8] text-lg">{compliment.icon}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{compliment.title}</p>

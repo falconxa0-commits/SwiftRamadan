@@ -5,12 +5,20 @@ import { useAppStore } from '@/lib/store';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { X, SlidersHorizontal, Star, CheckCircle, Search, Camera, Sparkles, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ExploreTab() {
   const { activeCategory, setActiveCategory, setSelectedProduct, setActiveModal, addToCart, setActiveTab, setShowSearch } = useAppStore();
   const { toast } = useToast();
   const [selectedRetailer, setSelectedRetailer] = useState<typeof popularRetailers[0] | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Simulate brief loading state for skeleton
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Filter products by active category
   const categoryProductMap: Record<string, string[]> = {
@@ -91,6 +99,47 @@ export default function ExploreTab() {
 
   return (
     <main className="flex-1 overflow-y-auto pb-32">
+      {isLoading ? (
+        <div className="space-y-6 p-5" aria-label="Loading explore page" role="status">
+          {/* Search bar skeleton */}
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-24 rounded-md" />
+            <Skeleton className="h-7 w-48 rounded-md" />
+          </div>
+          <Skeleton className="h-12 w-full rounded-2xl" />
+          <Skeleton className="h-12 w-full rounded-2xl" />
+          {/* Category grid skeleton */}
+          <Skeleton className="h-6 w-40 rounded-md" />
+          <div className="grid grid-cols-2 gap-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <Skeleton key={i} className="aspect-square w-full rounded-2xl" />
+            ))}
+          </div>
+          {/* Seasonal specials skeleton */}
+          <Skeleton className="h-6 w-36 rounded-md" />
+          <Skeleton className="h-56 w-full rounded-2xl" />
+          {/* Retailers skeleton */}
+          <Skeleton className="h-6 w-40 rounded-md" />
+          <div className="flex gap-4 overflow-hidden">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="min-w-[160px] h-48 rounded-2xl" />
+            ))}
+          </div>
+          {/* Products skeleton */}
+          <Skeleton className="h-6 w-32 rounded-md" />
+          <div className="grid grid-cols-2 gap-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass-card rounded-2xl p-3 space-y-2">
+                <Skeleton className="aspect-square w-full rounded-xl" />
+                <Skeleton className="h-3 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-7 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+      <>
       {/* Welcome + Search */}
       <div className="px-5 pt-6 pb-3">
         <p className="text-[#10E07A] text-[11px] font-bold uppercase tracking-[0.18em] mb-1">Welcome back</p>
@@ -134,6 +183,7 @@ export default function ExploreTab() {
             <button
               onClick={() => setActiveCategory(null)}
               className="ml-auto p-0.5 hover:bg-[#10E07A]/10 rounded-full transition-colors"
+              aria-label="Clear category filter"
             >
               <X className="w-3.5 h-3.5 text-[#10E07A]/60" />
             </button>
@@ -273,6 +323,7 @@ export default function ExploreTab() {
               <button
                 onClick={() => setSelectedRetailer(null)}
                 className="p-1 hover:bg-white/5 rounded-lg transition-colors"
+                aria-label="Close retailer detail"
               >
                 <X className="w-4 h-4 text-white/30" />
               </button>
@@ -391,6 +442,8 @@ export default function ExploreTab() {
           </div>
         )}
       </div>
+      </>
+      )}
     </main>
   );
 }

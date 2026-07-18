@@ -136,8 +136,8 @@ export default function PartyBulkModal() {
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center border border-[#FFD700]/20">
-                  <PartyPopper className="w-5 h-5 text-[#FFD700]" />
+                <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center border border-[#F5C451]/20">
+                  <PartyPopper className="w-5 h-5 text-[#F5C451]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Party & Bulk</h2>
@@ -191,7 +191,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('livestock') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#FFD700] text-xl">pets</span>
+                <span className="material-symbols-outlined text-[#F5C451] text-xl">pets</span>
                 <h3 className="text-white font-bold text-lg">Premium Livestock</h3>
               </div>
               <div className="space-y-4">
@@ -212,7 +212,7 @@ export default function PartyBulkModal() {
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="text-white font-bold text-sm">{item.name}</h4>
                           {item.badge && (
-                            <span className="bg-[#FFD700]/10 text-[#FFD700] text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full">
                               {item.badge}
                             </span>
                           )}
@@ -279,7 +279,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('drinks') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#3b82f6] text-xl">local_drink</span>
+                <span className="material-symbols-outlined text-[#38BDF8] text-xl">local_drink</span>
                 <h3 className="text-white font-bold text-lg">Drinks & Beverages</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -318,7 +318,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('party-packs') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#FFD700] text-xl">celebration</span>
+                <span className="material-symbols-outlined text-[#F5C451] text-xl">celebration</span>
                 <h3 className="text-white font-bold text-lg">Party Packs</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -334,7 +334,7 @@ export default function PartyBulkModal() {
                       className="w-full h-24 bg-center bg-no-repeat bg-cover relative"
                       style={{ backgroundImage: `url("${item.image}")` }}
                     >
-                      <div className="absolute top-2 right-2 bg-[#FFD700]/90 text-[#05070A] text-[8px] font-black px-2 py-0.5 rounded-full">
+                      <div className="absolute top-2 right-2 bg-[#F5C451]/90 text-[#05070A] text-[8px] font-black px-2 py-0.5 rounded-full">
                         {item.serves}
                       </div>
                     </div>
@@ -446,7 +446,7 @@ export default function PartyBulkModal() {
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
             onClick={() => setShowPartyForm(true)}
-            className="fixed bottom-8 right-4 z-20 bg-[#FFD700] text-[#05070A] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#FFD700]/20 hover:shadow-[#FFD700]/30 transition-shadow active:scale-[0.98]"
+            className="fixed bottom-8 right-4 z-20 bg-[#F5C451] text-[#05070A] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#F5C451]/20 hover:shadow-[#F5C451]/30 transition-shadow active:scale-[0.98]"
           >
             <PartyPopper className="w-5 h-5" />
             Start a Party Order
@@ -487,7 +487,7 @@ export default function PartyBulkModal() {
                           value={partyForm.eventName}
                           onChange={(e) => setPartyForm(p => ({ ...p, eventName: e.target.value }))}
                           placeholder="e.g., Amina's Iftar Party"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#FFD700]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -500,7 +500,7 @@ export default function PartyBulkModal() {
                           type="date"
                           value={partyForm.date}
                           onChange={(e) => setPartyForm(p => ({ ...p, date: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#FFD700]/30 focus:outline-none transition-colors [color-scheme:dark]"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#F5C451]/30 focus:outline-none transition-colors [color-scheme:dark]"
                         />
                       </div>
                     </div>
@@ -514,7 +514,7 @@ export default function PartyBulkModal() {
                           value={partyForm.guestCount}
                           onChange={(e) => setPartyForm(p => ({ ...p, guestCount: e.target.value }))}
                           placeholder="e.g., 50"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#FFD700]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -526,7 +526,7 @@ export default function PartyBulkModal() {
                         <select
                           value={partyForm.budgetRange}
                           onChange={(e) => setPartyForm(p => ({ ...p, budgetRange: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#FFD700]/30 focus:outline-none transition-colors appearance-none"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#F5C451]/30 focus:outline-none transition-colors appearance-none"
                         >
                           <option value="" className="bg-[#1A1D26]">Select budget range</option>
                           <option value="50k-100k" className="bg-[#1A1D26]">₦50,000 - ₦100,000</option>
@@ -543,7 +543,7 @@ export default function PartyBulkModal() {
                       disabled={!partyForm.eventName || !partyForm.guestCount}
                       className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                         partyForm.eventName && partyForm.guestCount
-                          ? 'bg-[#FFD700] text-[#05070A] hover:bg-[#FFD700]/90 active:scale-[0.98]'
+                          ? 'bg-[#F5C451] text-[#05070A] hover:bg-[#F5C451]/90 active:scale-[0.98]'
                           : 'bg-white/5 text-white/30 cursor-not-allowed border border-white/10'
                       }`}
                     >

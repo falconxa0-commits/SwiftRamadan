@@ -139,7 +139,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const MOOD_STYLES: Record<Mood, { border: string; bg: string; emoji: string; label: string }> = {
   praise: { border: 'border-[#10E07A]/60', bg: 'bg-[#10E07A]/8', emoji: '🎉', label: 'Praise' },
-  guide: { border: 'border-[#FFD700]/60', bg: 'bg-[#FFD700]/8', emoji: '💡', label: 'Tip' },
+  guide: { border: 'border-[#F5C451]/60', bg: 'bg-[#F5C451]/8', emoji: '💡', label: 'Tip' },
   correct: { border: 'border-[#ef4444]/60', bg: 'bg-[#ef4444]/8', emoji: '⚠️', label: 'Heads up' },
   encourage: { border: 'border-[#8b5cf6]/60', bg: 'bg-[#8b5cf6]/8', emoji: '💪', label: 'Keep going' },
 };
@@ -194,7 +194,7 @@ function generateSteps(recipeName: string): string[] {
 function difficultyColor(d: string): string {
   if (d === 'easy') return '#10E07A';
   if (d === 'hard') return '#ef4444';
-  return '#FFD700';
+  return '#F5C451';
 }
 
 /* ───────────────────────── Component ───────────────────────── */
@@ -708,7 +708,7 @@ export default function SmartKitchenHub() {
     const C = 2 * Math.PI * r;
     const segs = [
       { value: easy, color: '#10E07A' },
-      { value: medium, color: '#FFD700' },
+      { value: medium, color: '#F5C451' },
       { value: hard, color: '#8b5cf6' },
     ];
     if (total === 0) return { segments: segs.map((s) => ({ ...s, length: 0, offset: 0 })), total: 0, C };
@@ -757,7 +757,7 @@ export default function SmartKitchenHub() {
           >
             {/* ── Header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#FFD700] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
@@ -1041,7 +1041,7 @@ function CoachTab(props: CoachTabProps) {
           </h4>
           <ol className="space-y-2">
             {props.steps.map((step, i) => (
-              <li key={i} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
+              <li key={`step-${i}`} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
                 <span className="size-6 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-xs font-black flex items-center justify-center shrink-0">
                   {i + 1}
                 </span>
@@ -1090,7 +1090,7 @@ function CoachTab(props: CoachTabProps) {
           {/* Overall step progress */}
           <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-500"
               style={{ width: `${((props.stepIndex + 1) / totalSteps) * 100}%` }}
             />
           </div>
@@ -1112,7 +1112,7 @@ function CoachTab(props: CoachTabProps) {
               {/* Loading pip */}
               {props.visionLoading && (
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full">
-                  <RefreshCw className="w-3 h-3 text-[#FFD700] animate-spin" />
+                  <RefreshCw className="w-3 h-3 text-[#F5C451] animate-spin" />
                   <span className="text-white text-[10px] font-bold">Safa analyzing…</span>
                 </div>
               )}
@@ -1141,7 +1141,7 @@ function CoachTab(props: CoachTabProps) {
                 </div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-700"
+                    className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-700"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -1167,7 +1167,7 @@ function CoachTab(props: CoachTabProps) {
               ) : (
                 <button
                   onClick={props.onNextStep}
-                  className="flex-[2] bg-[#FFD700] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                  className="flex-[2] bg-[#F5C451] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -1205,12 +1205,12 @@ function CoachTab(props: CoachTabProps) {
           <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black">
             {props.videoElement}
             <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
-              <Camera className="w-3 h-3 text-[#FFD700]" />
+              <Camera className="w-3 h-3 text-[#F5C451]" />
               <span className="text-white text-[10px] font-black tracking-wider">SCANNER</span>
             </div>
             {props.scanLoading && (
               <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
-                <RefreshCw className="w-6 h-6 text-[#FFD700] animate-spin" />
+                <RefreshCw className="w-6 h-6 text-[#F5C451] animate-spin" />
                 <span className="text-white text-xs font-bold">Identifying…</span>
               </div>
             )}
@@ -1236,20 +1236,20 @@ function CoachTab(props: CoachTabProps) {
               <div className="min-w-0">
                 <div className="text-[#10E07A] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
                 <h3 className="text-white text-lg font-black leading-tight truncate">{props.scanResult.foodName}</h3>
-                <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD700]/15 text-[#FFD700]">
+                <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F5C451]/15 text-[#F5C451]">
                   {props.scanResult.category}
                 </span>
               </div>
               <div className="text-right shrink-0">
                 <div className="text-white/40 text-[10px]">Est. price</div>
-                <div className="text-[#FFD700] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
+                <div className="text-[#F5C451] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
               </div>
             </div>
             <p className="text-white/70 text-xs leading-snug">{props.scanResult.description}</p>
             {props.scanResult.tags?.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {props.scanResult.tags.slice(0, 5).map((t, i) => (
-                  <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">#{t}</span>
+                {props.scanResult.tags.slice(0, 5).map((t) => (
+                  <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">#{t}</span>
                 ))}
               </div>
             )}
@@ -1486,7 +1486,7 @@ function PantryTab({
       <button
         onClick={onRescue}
         disabled={rescueLoading}
-        className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#FFD700] via-[#f5b800] to-[#FFD700] text-[#05070A] font-black flex items-center gap-3 active:scale-[0.98] transition disabled:opacity-50 gold-glow"
+        className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#F5C451] via-[#f5b800] to-[#F5C451] text-[#05070A] font-black flex items-center gap-3 active:scale-[0.98] transition disabled:opacity-50 gold-glow"
       >
         {rescueLoading ? (
           <RefreshCw className="w-6 h-6 animate-spin" />
@@ -1505,12 +1505,12 @@ function PantryTab({
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[#FFD700]/40 rounded-2xl overflow-hidden"
+            className="bg-[#0F1117] border-2 border-[#F5C451]/40 rounded-2xl overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-[#FFD700]/15 to-transparent p-4 border-b border-white/5">
+            <div className="bg-gradient-to-r from-[#F5C451]/15 to-transparent p-4 border-b border-white/5">
               <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4 text-[#FFD700]" />
-                <span className="text-[#FFD700] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
+                <Sparkles className="w-4 h-4 text-[#F5C451]" />
+                <span className="text-[#F5C451] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
               </div>
               <h4 className="text-white text-lg font-black leading-tight">{rescueRecipe.recipeName}</h4>
               <p className="text-white/70 text-xs mt-1 leading-snug">{rescueRecipe.description}</p>
@@ -1531,7 +1531,7 @@ function PantryTab({
                 <div className="text-white font-bold text-xs mb-2">Ingredients (from your pantry)</div>
                 <ul className="space-y-1.5">
                   {rescueRecipe.ingredients?.map((ing, i) => (
-                    <li key={i} className="flex gap-2 text-xs">
+                    <li key={`rescue-ing-${i}`} className="flex gap-2 text-xs">
                       <span className="text-[#10E07A]">•</span>
                       <span className="text-white/80">
                         <span className="font-bold">{ing.name}</span>
@@ -1545,7 +1545,7 @@ function PantryTab({
                 <div className="text-white font-bold text-xs mb-2">Steps</div>
                 <ol className="space-y-1.5">
                   {rescueRecipe.steps?.map((s, i) => (
-                    <li key={i} className="flex gap-2 text-xs">
+                    <li key={`rescue-step-${i}`} className="flex gap-2 text-xs">
                       <span className="size-5 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-[10px] font-black flex items-center justify-center shrink-0">
                         {i + 1}
                       </span>
@@ -1555,10 +1555,10 @@ function PantryTab({
                 </ol>
               </div>
               {rescueRecipe.chefTip && (
-                <div className="bg-[#FFD700]/8 border border-[#FFD700]/30 rounded-xl p-3 flex gap-2">
-                  <Lightbulb className="w-4 h-4 text-[#FFD700] shrink-0 mt-0.5" />
+                <div className="bg-[#F5C451]/8 border border-[#F5C451]/30 rounded-xl p-3 flex gap-2">
+                  <Lightbulb className="w-4 h-4 text-[#F5C451] shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-[#FFD700] text-[10px] font-black tracking-wider mb-0.5">CHEF TIP</div>
+                    <div className="text-[#F5C451] text-[10px] font-black tracking-wider mb-0.5">CHEF TIP</div>
                     <p className="text-white/80 text-xs leading-snug">{rescueRecipe.chefTip}</p>
                   </div>
                 </div>
@@ -1648,7 +1648,7 @@ function InsightsTab({
 
   const stats = [
     { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: '#10E07A' },
-    { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: '#FFD700' },
+    { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: '#F5C451' },
     { label: 'Cook Time (min)', value: analytics.totalCookTimeMins, icon: <Clock className="w-4 h-4" />, color: '#8b5cf6' },
     { label: 'Live AI Sessions', value: analytics.liveAIUses, icon: <Bot className="w-4 h-4" />, color: '#ef4444' },
   ];
@@ -1689,7 +1689,7 @@ function InsightsTab({
             const h = d.count === 0 ? 2 : Math.max(4, (d.count / weeklyMax) * 90);
             const y = 110 - h;
             return (
-              <g key={i}>
+              <g key={`bar-${i}`}>
                 <rect
                   x={x}
                   y={y}
@@ -1713,7 +1713,7 @@ function InsightsTab({
           <defs>
             <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#10E07A" />
-              <stop offset="100%" stopColor="#FFD700" />
+              <stop offset="100%" stopColor="#F5C451" />
             </linearGradient>
           </defs>
         </svg>
@@ -1727,7 +1727,7 @@ function InsightsTab({
             <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="14" />
             {donutSegments.segments.map((s, i) => (
               <circle
-                key={i}
+                key={`donut-${i}`}
                 cx="50"
                 cy="50"
                 r="40"
@@ -1746,7 +1746,7 @@ function InsightsTab({
           <div className="flex-1 space-y-2">
             {[
               { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: '#10E07A' },
-              { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: '#FFD700' },
+              { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: '#F5C451' },
               { label: 'Hard', value: analytics.difficultyBreakdown.hard, color: '#8b5cf6' },
             ].map((d) => (
               <div key={d.label} className="flex items-center gap-2 text-xs">
@@ -1796,7 +1796,7 @@ function BadgesTab({
       <div className="p-4 space-y-3">
         <div className="h-8 bg-[#0F1117] rounded-xl animate-pulse" />
         {[...Array(8)].map((_, i) => (
-          <div key={i} className="h-20 bg-[#0F1117] rounded-2xl animate-pulse" />
+          <div key={`skel-${i}`} className="h-20 bg-[#0F1117] rounded-2xl animate-pulse" />
         ))}
       </div>
     );
@@ -1832,7 +1832,7 @@ function BadgesTab({
         </div>
         <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-500"
+            className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-500"
             style={{ width: `${(unlockedCount / Math.max(1, achievements.length)) * 100}%` }}
           />
         </div>
@@ -1847,17 +1847,17 @@ function BadgesTab({
               key={a.id}
               className={`relative rounded-2xl p-4 border ${
                 a.unlocked
-                  ? 'border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/10 to-[#10E07A]/8 gold-glow'
+                  ? 'border-[#F5C451]/50 bg-gradient-to-br from-[#F5C451]/10 to-[#10E07A]/8 gold-glow'
                   : 'border-white/5 bg-[#0F1117] opacity-50 grayscale'
               }`}
             >
               <div
                 className={`size-12 rounded-xl flex items-center justify-center mb-2 ${
-                  a.unlocked ? 'bg-[#FFD700]/15' : 'bg-white/5'
+                  a.unlocked ? 'bg-[#F5C451]/15' : 'bg-white/5'
                 }`}
               >
                 {a.unlocked ? (
-                  <IconComp className="w-6 h-6 text-[#FFD700]" />
+                  <IconComp className="w-6 h-6 text-[#F5C451]" />
                 ) : (
                   <IconComp className="w-6 h-6 text-white/30" />
                 )}
@@ -1886,7 +1886,7 @@ function Confetti() {
         id: i,
         x: 50 + (Math.random() - 0.5) * 60,
         angle: Math.random() * 360,
-        color: ['#10E07A', '#FFD700', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
+        color: ['#10E07A', '#F5C451', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
         delay: Math.random() * 0.15,
         size: 6 + Math.random() * 6,
         rotate: Math.random() * 720 - 360,
@@ -1929,7 +1929,7 @@ function Confetti() {
       >
         <div className="text-5xl mb-2">🎉</div>
         <div className="text-white font-black text-xl">Session Logged!</div>
-        <div className="text-[#FFD700] text-sm font-bold">Keep cooking, keep leveling up.</div>
+        <div className="text-[#F5C451] text-sm font-bold">Keep cooking, keep leveling up.</div>
       </motion.div>
     </motion.div>
   );

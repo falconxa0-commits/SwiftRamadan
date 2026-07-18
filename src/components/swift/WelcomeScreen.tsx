@@ -230,7 +230,7 @@ function HeroBanner({ onTap }: { onTap: () => void }) {
       <div className="flex justify-center gap-1.5 mt-3">
         {heroSlides.map((_, i) => (
           <button
-            key={i}
+            key={`slide-${i}`}
             onClick={() => setCurrentSlide(i)}
             aria-label={`Slide ${i + 1}`}
             className="h-1.5 rounded-full transition-all duration-300"

@@ -276,7 +276,7 @@ export default function VisualSearchModal() {
                 <div>
                   <h2 className="text-white font-bold text-lg flex items-center gap-1.5">
                     Snap to Shop
-                    <Sparkles className="w-4 h-4 text-[#FFD700]" />
+                    <Sparkles className="w-4 h-4 text-[#F5C451]" />
                   </h2>
                   <p className="text-white/40 text-xs">
                     AI-powered visual food search
@@ -305,9 +305,9 @@ export default function VisualSearchModal() {
                     <motion.div
                       animate={{
                         boxShadow: [
-                          '0 0 0 0 rgba(19,236,19,0.0)',
-                          '0 0 0 12px rgba(19,236,19,0.08)',
-                          '0 0 0 0 rgba(19,236,19,0.0)',
+                          '0 0 0 0 rgba(16,224,122,0.0)',
+                          '0 0 0 12px rgba(16,224,122,0.08)',
+                          '0 0 0 0 rgba(16,224,122,0.0)',
                         ],
                       }}
                       transition={{ duration: 2.4, repeat: Infinity }}
@@ -351,7 +351,7 @@ export default function VisualSearchModal() {
                   {/* Tips */}
                   <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4">
                     <h4 className="text-white font-bold text-xs mb-2 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#FFD700]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
                       Tips for best results
                     </h4>
                     <ul className="space-y-1.5 text-white/50 text-xs">
@@ -390,7 +390,7 @@ export default function VisualSearchModal() {
 
                     {/* Animated scanner line */}
                     <motion.div
-                      className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#10E07A] to-transparent shadow-[0_0_18px_rgba(19,236,19,0.8)]"
+                      className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#10E07A] to-transparent shadow-[0_0_18px_rgba(16,224,122,0.8)]"
                       initial={{ top: '5%' }}
                       animate={{ top: ['5%', '92%', '5%'] }}
                       transition={{
@@ -472,7 +472,7 @@ export default function VisualSearchModal() {
                           <Check className="w-3 h-3" />
                           Identified
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFD700]/15 text-[#FFD700] text-[10px] font-bold border border-[#FFD700]/30">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F5C451]/15 text-[#F5C451] text-[10px] font-bold border border-[#F5C451]/30">
                           {result.category}
                         </span>
                       </div>
@@ -486,7 +486,7 @@ export default function VisualSearchModal() {
                   <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 space-y-3">
                     <div>
                       <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#FFD700]" />
+                        <Sparkles className="w-3 h-3 text-[#F5C451]" />
                         AI Description
                       </h4>
                       <p className="text-white/80 text-sm leading-relaxed">

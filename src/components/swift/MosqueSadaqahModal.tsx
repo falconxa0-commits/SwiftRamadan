@@ -99,7 +99,7 @@ export default function MosqueSadaqahModal() {
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#FFD700]">mosque</span>
+                <span className="material-symbols-outlined text-[#F5C451]">mosque</span>
                 <h2 className="text-white font-bold text-lg">Mosque & Sadaqah Hub</h2>
               </div>
               <button
@@ -280,8 +280,8 @@ export default function MosqueSadaqahModal() {
                   ))}
                   {/* Current location marker */}
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
-                    <div className="w-4 h-4 bg-[#FFD700] rounded-full border-2 border-[#05070A] gold-glow" />
-                    <div className="w-8 h-8 bg-[#FFD700]/10 rounded-full absolute -top-2 -left-2 animate-ping" />
+                    <div className="w-4 h-4 bg-[#F5C451] rounded-full border-2 border-[#05070A] gold-glow" />
+                    <div className="w-8 h-8 bg-[#F5C451]/10 rounded-full absolute -top-2 -left-2 animate-ping" />
                   </div>
                 </div>
                 <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 border border-white/10">
@@ -357,7 +357,7 @@ export default function MosqueSadaqahModal() {
                         </span>
                       )}
                       {mosque.jummah && (
-                        <span className="px-2 py-0.5 bg-[#FFD700]/10 text-[#FFD700] text-[10px] font-bold rounded-full border border-[#FFD700]/20">
+                        <span className="px-2 py-0.5 bg-[#F5C451]/10 text-[#F5C451] text-[10px] font-bold rounded-full border border-[#F5C451]/20">
                           Jummah
                         </span>
                       )}
@@ -469,10 +469,10 @@ export default function MosqueSadaqahModal() {
               <div className="px-4 mt-4 mb-6">
                 <button
                   onClick={handleQiblaFinder}
-                  className="w-full bg-[#1A1D26] rounded-2xl p-4 border border-white/5 flex items-center gap-4 hover:border-[#FFD700]/20 transition-colors"
+                  className="w-full bg-[#1A1D26] rounded-2xl p-4 border border-white/5 flex items-center gap-4 hover:border-[#F5C451]/20 transition-colors"
                 >
-                  <div className="w-12 h-12 bg-[#FFD700]/10 rounded-full flex items-center justify-center border border-[#FFD700]/20">
-                    <Compass className="w-6 h-6 text-[#FFD700]" />
+                  <div className="w-12 h-12 bg-[#F5C451]/10 rounded-full flex items-center justify-center border border-[#F5C451]/20">
+                    <Compass className="w-6 h-6 text-[#F5C451]" />
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-white font-bold text-sm">Qibla Finder</p>

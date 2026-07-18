@@ -289,7 +289,7 @@ export default function ProductDetailModal() {
                   <div className="flex gap-2 mt-3 overflow-x-auto no-scrollbar">
                     {images.map((img, i) => (
                       <button
-                        key={i}
+                        key={`thumb-${i}`}
                         onClick={() => setActiveImageIdx(i)}
                         className={`shrink-0 w-16 h-16 rounded-xl bg-center bg-cover border-2 transition-all ${
                           i === activeImageIdx

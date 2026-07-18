@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         businessCategory: user.businessCategory,
         businessAddress: user.businessAddress,
         bankName: user.bankName,
-        accountNumber: user.accountNumber,
+        accountNumber: user.accountNumber ? '****' + user.accountNumber.slice(-4) : null,
         openTime: user.openTime,
         closeTime: user.closeTime,
         vehicleType: user.vehicleType,
@@ -135,8 +135,8 @@ export async function PUT(request: NextRequest) {
       'bankName', 'accountNumber', 'openTime', 'closeTime',
       'vehicleType', 'plateNumber', 'licenseNumber', 'vehicleColor',
       'riderBankName', 'riderAccountNumber',
-      'hasanatPoints', 'swiftPoints', 'loyaltyTier', 'dailyStreak',
-      'riderOnline', 'vendorOnline', 'role',
+      'dailyStreak',
+      'riderOnline', 'vendorOnline',
     ];
 
     for (const field of allowedFields) {

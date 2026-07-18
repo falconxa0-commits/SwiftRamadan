@@ -863,7 +863,7 @@ export default function VendorDashboard() {
                     {/* Items */}
                     <div className="space-y-1 mb-3 max-h-32 overflow-y-auto custom-scrollbar">
                       {order.items.map((item, idx) => (
-                        <div key={`${item.name}-${idx}`} className="flex items-center justify-between">
+                        <div key={`${item.name}-${item.qty}-${item.price}-${idx}`} className="flex items-center justify-between">
                           <span className="text-white/50 text-xs">
                             {item.qty}x {item.name}
                           </span>

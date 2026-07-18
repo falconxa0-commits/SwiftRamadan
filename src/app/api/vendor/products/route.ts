@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
 import { validateInput, productCreateSchema } from '@/lib/validation';
+import { requireAuth } from '@/lib/session';
 
 /* ──────────── helpers ──────────── */
 
@@ -97,6 +98,16 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  if (auth.role !== 'vendor') {
+    return NextResponse.json(
+      { success: false, error: 'Vendor access required' },
+      { status: 403 }
+    );
+  }
+
   try {
     const rawBody = await request.json();
     const { vendorId, vendorEmail, ...productData } = rawBody;
@@ -110,6 +121,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Vendor not found — pass vendorId or vendorEmail' },
         { status: 400 }
+      );
+    }
+
+    // Verify the authenticated vendor matches the resolved vendor
+    if (resolvedId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'You can only create products for your own store' },
+        { status: 403 }
       );
     }
 
@@ -155,6 +174,16 @@ export async function PUT(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  if (auth.role !== 'vendor') {
+    return NextResponse.json(
+      { success: false, error: 'Vendor access required' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -194,6 +223,14 @@ export async function PUT(request: NextRequest) {
     if (!existing.vendorId || existing.vendorId !== resolvedVendorId) {
       return NextResponse.json(
         { success: false, error: "You don't own this product" },
+        { status: 403 }
+      );
+    }
+
+    // Verify the authenticated vendor owns this product
+    if (existing.vendorId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'You can only update your own products' },
         { status: 403 }
       );
     }
@@ -240,6 +277,16 @@ export async function DELETE(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  if (auth.role !== 'vendor') {
+    return NextResponse.json(
+      { success: false, error: 'Vendor access required' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
@@ -277,6 +324,14 @@ export async function DELETE(request: NextRequest) {
     if (!existing.vendorId || existing.vendorId !== resolvedVendorId) {
       return NextResponse.json(
         { success: false, error: "You don't own this product" },
+        { status: 403 }
+      );
+    }
+
+    // Verify the authenticated vendor owns this product
+    if (existing.vendorId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'You can only delete your own products' },
         { status: 403 }
       );
     }

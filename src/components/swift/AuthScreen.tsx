@@ -1309,7 +1309,7 @@ const ROLES = [
     description: 'Sell your products on SwiftRamadan',
     icon: Store,
     gradient: 'from-[#4a3d00] to-[#2d2100]',
-    accent: '#FFD700',
+    accent: '#F5C451',
     image: '/images/categories/hub-groceries.png',
   },
   {
@@ -1318,7 +1318,7 @@ const ROLES = [
     description: 'Deliver and earn with SwiftLogistics',
     icon: Bike,
     gradient: 'from-[#1e3a5f] to-[#0c1929]',
-    accent: '#3b82f6',
+    accent: '#38BDF8',
     image: '/images/categories/hub-pharmacy.png',
   },
 ];

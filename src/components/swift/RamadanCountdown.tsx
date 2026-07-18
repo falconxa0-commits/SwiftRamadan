@@ -94,7 +94,7 @@ export default function RamadanCountdown() {
   }, []);
 
   const isIftar = countdown.meal === 'iftar';
-  const accent = isIftar ? '#10E07A' : '#FFD700';
+  const accent = isIftar ? '#10E07A' : '#F5C451';
   const Icon = isIftar ? Moon : Sun;
 
   const hh = pad(countdown.hours);
@@ -109,8 +109,8 @@ export default function RamadanCountdown() {
       className="relative overflow-hidden rounded-2xl border border-white/10"
       style={{
         background: isIftar
-          ? 'linear-gradient(135deg, rgba(19,236,19,0.10) 0%, rgba(15,17,23,0.9) 60%)'
-          : 'linear-gradient(135deg, rgba(255,215,0,0.10) 0%, rgba(15,17,23,0.9) 60%)',
+          ? 'linear-gradient(135deg, rgba(16,224,122,0.10) 0%, rgba(15,17,23,0.9) 60%)'
+          : 'linear-gradient(135deg, rgba(245,196,81,0.10) 0%, rgba(15,17,23,0.9) 60%)',
       }}
     >
       {/* Decorative glow */}

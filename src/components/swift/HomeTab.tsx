@@ -383,7 +383,7 @@ export default function HomeTab() {
         <div className="flex justify-center gap-1.5 mt-1">
           {heroSlides.map((_, i) => (
             <button
-              key={i}
+              key={`slide-${i}`}
               onClick={() => setCurrentSlide(i)}
               aria-label={`Go to slide ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-300 ${

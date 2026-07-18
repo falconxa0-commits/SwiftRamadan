@@ -16,7 +16,7 @@ interface Notification {
 
 const typeIcons: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string }> = {
   order: { icon: Truck, color: 'text-[#10E07A]' },
-  promo: { icon: ShoppingBag, color: 'text-[#FFD700]' },
+  promo: { icon: ShoppingBag, color: 'text-[#F5C451]' },
   reminder: { icon: Clock, color: 'text-cyan-400' },
   reward: { icon: Gift, color: 'text-amber-400' },
   social: { icon: Users, color: 'text-purple-400' },

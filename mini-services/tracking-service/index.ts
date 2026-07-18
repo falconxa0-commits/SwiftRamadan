@@ -1,6 +1,5 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import cors from 'cors';
 
 // ────────────────────────────────────────────────────────────────
 // Types
@@ -67,7 +66,7 @@ const RIDER_POOL: Rider[] = [
     photo: 'IM',
     rating: 4.9,
     vehicle: 'Electric Bike',
-    color: '#13ec13',
+    color: '#10E07A',
   },
   {
     name: 'Aisha B.',
@@ -75,7 +74,7 @@ const RIDER_POOL: Rider[] = [
     photo: 'AB',
     rating: 4.8,
     vehicle: 'Scooter',
-    color: '#FFD700',
+    color: '#F5C451',
   },
   {
     name: 'Tunde O.',
@@ -83,7 +82,7 @@ const RIDER_POOL: Rider[] = [
     photo: 'TO',
     rating: 4.95,
     vehicle: 'Motorcycle',
-    color: '#3b82f6',
+    color: '#38BDF8',
   },
   {
     name: 'Fatima K.',
@@ -472,7 +471,7 @@ setInterval(() => {
 // Boot
 // ────────────────────────────────────────────────────────────────
 
-const PORT = 3003;
+const PORT = 3004;
 seedSampleDeliveries();
 
 httpServer.listen(PORT, () => {

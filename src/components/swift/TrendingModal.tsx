@@ -257,7 +257,7 @@ export default function TrendingModal() {
                       onClick={() => setActiveCategory(cat.id)}
                       className={`shrink-0 px-3.5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
                         isActive
-                          ? 'bg-[#10E07A] text-[#05070A] shadow-[0_0_16px_rgba(19,236,19,0.4)]'
+                          ? 'bg-[#10E07A] text-[#05070A] shadow-[0_0_16px_rgba(16,224,122,0.4)]'
                           : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#10E07A]/20 hover:text-white/80'
                       }`}
                     >

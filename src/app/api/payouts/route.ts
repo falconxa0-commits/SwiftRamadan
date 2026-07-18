@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
 // POST /api/payouts
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
@@ -74,62 +78,84 @@ async function requestPayout(body: {
     );
   }
 
-  // Check user exists and has sufficient wallet balance
-  const user = await db.user.findUnique({ where: { id: userId } });
-  if (!user) {
-    return NextResponse.json(
-      { success: false, message: 'User not found' },
-      { status: 404 },
-    );
+  // Use transaction with atomic decrement to prevent double-spend race condition
+  try {
+    const result = await db.$transaction(async (tx) => {
+      // Check user exists
+      const user = await tx.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new Error('USER_NOT_FOUND');
+      }
+
+      if (user.walletBalance < amount) {
+        throw new Error('INSUFFICIENT_BALANCE');
+      }
+
+      // Generate unique reference
+      const reference = `PO_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+
+      // Atomic decrement — deduct from wallet
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: { walletBalance: { decrement: amount } },
+      });
+
+      // If balance went negative, rollback (shouldn't happen after the check above,
+      // but defends against concurrent transactions that passed the check simultaneously)
+      if (updatedUser.walletBalance < 0) {
+        throw new Error('INSUFFICIENT_BALANCE');
+      }
+
+      const newBalance = updatedUser.walletBalance;
+
+      // Create wallet transaction
+      await tx.walletTransaction.create({
+        data: {
+          userId,
+          type: 'payout',
+          amount: -amount,
+          balance: newBalance,
+          description: `Payout to ${bankName} ****${accountNumber.slice(-4)}`,
+          reference,
+        },
+      });
+
+      // Create payout record
+      const payout = await tx.payout.create({
+        data: {
+          userId,
+          amount,
+          status: 'pending',
+          bankName,
+          accountNumber,
+          accountName: accountName || '',
+          reference,
+        },
+      });
+
+      return { payout, newBalance };
+    });
+
+    return NextResponse.json({
+      success: true,
+      payout: result.payout,
+      newBalance: result.newBalance,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
+      );
+    }
+    if (error instanceof Error && error.message === 'INSUFFICIENT_BALANCE') {
+      return NextResponse.json(
+        { success: false, message: 'Insufficient wallet balance' },
+        { status: 400 },
+      );
+    }
+    throw error; // re-throw unexpected errors for outer catch
   }
-
-  if (user.walletBalance < amount) {
-    return NextResponse.json(
-      { success: false, message: 'Insufficient wallet balance' },
-      { status: 400 },
-    );
-  }
-
-  // Generate unique reference
-  const reference = `PO_${Date.now()}_${Math.random().toString(36).slice(2)}`;
-
-  // Deduct from wallet
-  const newBalance = user.walletBalance - amount;
-  await db.user.update({
-    where: { id: userId },
-    data: { walletBalance: newBalance },
-  });
-
-  // Create wallet transaction
-  await db.walletTransaction.create({
-    data: {
-      userId,
-      type: 'payout',
-      amount: -amount,
-      balance: newBalance,
-      description: `Payout to ${bankName} ****${accountNumber.slice(-4)}`,
-      reference,
-    },
-  });
-
-  // Create payout record
-  const payout = await db.payout.create({
-    data: {
-      userId,
-      amount,
-      status: 'pending',
-      bankName,
-      accountNumber,
-      accountName: accountName || '',
-      reference,
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    payout,
-    newBalance,
-  });
 }
 
 /** list - Get user's payouts */

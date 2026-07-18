@@ -16,10 +16,8 @@ export async function POST(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   // Rate limit
-  const rateLimitOk = await checkRateLimit(request, RATE_LIMITS.ai);
-  if (!rateLimitOk) {
-    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
-  }
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
 
   try {
     const body = await request.json();

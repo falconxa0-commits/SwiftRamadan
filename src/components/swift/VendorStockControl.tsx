@@ -52,8 +52,8 @@ export default function VendorStockControl() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center border border-[#FFD700]/20">
-                  <Package className="w-5 h-5 text-[#FFD700]" />
+                <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20">
+                  <Package className="w-5 h-5 text-[#F5C451]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Stock Control</h2>
@@ -100,7 +100,7 @@ export default function VendorStockControl() {
                     {/* Item Image Placeholder */}
                     <div className="w-12 h-12 rounded-xl bg-[#0F1117] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
                       {item.available ? (
-                        <Package className="w-5 h-5 text-[#FFD700]" />
+                        <Package className="w-5 h-5 text-[#F5C451]" />
                       ) : (
                         <EyeOff className="w-5 h-5 text-white/20" />
                       )}
@@ -112,7 +112,7 @@ export default function VendorStockControl() {
                         {item.name}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`text-xs font-bold ${item.available ? 'text-[#FFD700]' : 'text-white/20'}`}>
+                        <span className={`text-xs font-bold ${item.available ? 'text-[#F5C451]' : 'text-white/20'}`}>
                           {formatNaira(item.price)}
                         </span>
                         <span className="text-white/10 text-xs">•</span>
@@ -158,8 +158,8 @@ export default function VendorStockControl() {
               </div>
 
               {/* Tip */}
-              <div className="mt-4 flex items-start gap-2 bg-[#FFD700]/5 border border-[#FFD700]/10 rounded-xl p-3">
-                <AlertCircle className="w-4 h-4 text-[#FFD700] shrink-0 mt-0.5" />
+              <div className="mt-4 flex items-start gap-2 bg-[#F5C451]/5 border border-[#F5C451]/10 rounded-xl p-3">
+                <AlertCircle className="w-4 h-4 text-[#F5C451] shrink-0 mt-0.5" />
                 <p className="text-white/40 text-xs leading-relaxed">
                   Unavailable items won&apos;t show to customers. Toggle them back on when stock is replenished.
                 </p>

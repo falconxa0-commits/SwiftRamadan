@@ -107,8 +107,8 @@ export default function RiderPowerFinderModal() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center border border-[#FFD700]/20">
-                  <Zap className="w-5 h-5 text-[#FFD700]" />
+                <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20">
+                  <Zap className="w-5 h-5 text-[#F5C451]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Power Finder</h2>
@@ -117,6 +117,7 @@ export default function RiderPowerFinderModal() {
               </div>
               <button
                 onClick={handleClose}
+                aria-label="Close"
                 className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
               >
                 <X className="w-4 h-4 text-white/60" />
@@ -131,8 +132,8 @@ export default function RiderPowerFinderModal() {
                   <p className="text-[#10E07A] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
                   <p className="text-white/40 text-[10px] font-bold uppercase">EV Available</p>
                 </div>
-                <div className="bg-[#FFD700]/5 border border-[#FFD700]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#FFD700] text-xl font-black">{fuelStations.filter(s => s.isOpen).length}</p>
+                <div className="bg-[#F5C451]/5 border border-[#F5C451]/20 rounded-xl p-3 text-center">
+                  <p className="text-[#F5C451] text-xl font-black">{fuelStations.filter(s => s.isOpen).length}</p>
                   <p className="text-white/40 text-[10px] font-bold uppercase">Fuel Open</p>
                 </div>
               </div>
@@ -221,10 +222,10 @@ export default function RiderPowerFinderModal() {
                         {/* Navigate Button */}
                         {station.isOpen && (station.availability ?? 0) > 0 && (
                           <button
-                            className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 flex items-center justify-center shrink-0 hover:bg-[#3b82f6]/20 transition-colors"
-                            title="Navigate"
+                            className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center shrink-0 hover:bg-[#38BDF8]/20 transition-colors"
+                            aria-label={`Navigate to ${station.name}`}
                           >
-                            <Navigation className="w-4 h-4 text-[#3b82f6]" />
+                            <Navigation className="w-4 h-4 text-[#38BDF8]" />
                           </button>
                         )}
                       </div>
@@ -236,7 +237,7 @@ export default function RiderPowerFinderModal() {
               {/* Fuel Stations */}
               <div className="mt-5">
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Fuel className="w-4 h-4 text-[#FFD700]" />
+                  <Fuel className="w-4 h-4 text-[#F5C451]" />
                   Fuel Stations
                 </h4>
                 <div className="space-y-2">
@@ -248,7 +249,7 @@ export default function RiderPowerFinderModal() {
                       transition={{ delay: 0.3 + i * 0.06 }}
                       className={`bg-[#1A1D26] rounded-2xl p-4 border transition-all ${
                         station.isOpen
-                          ? 'border-[#FFD700]/20'
+                          ? 'border-[#F5C451]/20'
                           : 'border-white/5 opacity-50'
                       }`}
                     >
@@ -256,10 +257,10 @@ export default function RiderPowerFinderModal() {
                         {/* Station Icon */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                           station.isOpen
-                            ? 'bg-[#FFD700]/10 border border-[#FFD700]/20'
+                            ? 'bg-[#F5C451]/10 border border-[#F5C451]/20'
                             : 'bg-white/5 border border-white/10'
                         }`}>
-                          <Fuel className={`w-5 h-5 ${station.isOpen ? 'text-[#FFD700]' : 'text-white/20'}`} />
+                          <Fuel className={`w-5 h-5 ${station.isOpen ? 'text-[#F5C451]' : 'text-white/20'}`} />
                         </div>
 
                         {/* Station Info */}
@@ -281,7 +282,7 @@ export default function RiderPowerFinderModal() {
                           </div>
                           <div className="flex items-center gap-1 mt-2">
                             {station.connectorTypes.map(ct => (
-                              <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#FFD700]/5 text-[#FFD700]/50 border border-[#FFD700]/10">
+                              <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#F5C451]/5 text-[#F5C451]/50 border border-[#F5C451]/10">
                                 {ct}
                               </span>
                             ))}
@@ -291,10 +292,10 @@ export default function RiderPowerFinderModal() {
                         {/* Navigate Button */}
                         {station.isOpen && (
                           <button
-                            className="w-10 h-10 rounded-xl bg-[#3b82f6]/10 border border-[#3b82f6]/20 flex items-center justify-center shrink-0 hover:bg-[#3b82f6]/20 transition-colors"
-                            title="Navigate"
+                            className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center shrink-0 hover:bg-[#38BDF8]/20 transition-colors"
+                            aria-label={`Navigate to ${station.name}`}
                           >
-                            <Navigation className="w-4 h-4 text-[#3b82f6]" />
+                            <Navigation className="w-4 h-4 text-[#38BDF8]" />
                           </button>
                         )}
                       </div>

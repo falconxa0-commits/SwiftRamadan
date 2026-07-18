@@ -6,7 +6,7 @@ export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile
   | 'vendor-dashboard' | 'vendor-earnings' | 'vendor-store' | 'vendor-profile';
 
 export interface CartItem {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   image: string;
@@ -59,8 +59,8 @@ interface AppState {
   // Modals & Overlays
   activeModal: string | null;
   setActiveModal: (modal: string | null) => void;
-  selectedProduct: number | null;
-  setSelectedProduct: (id: number | null) => void;
+  selectedProduct: string | number | null;
+  setSelectedProduct: (id: string | number | null) => void;
 
   // Search
   searchQuery: string;

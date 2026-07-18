@@ -752,7 +752,7 @@ export default function CheckoutModal() {
                         </button>
                         <button
                           onClick={() => setActiveModal('delivery-location')}
-                          className="flex items-center gap-2 text-[#FFD700] text-xs font-bold hover:text-[#FFD700]/80 transition-colors"
+                          className="flex items-center gap-2 text-[#F5C451] text-xs font-bold hover:text-[#F5C451]/80 transition-colors"
                         >
                           <MapPin className="w-3.5 h-3.5" />
                           Set on map
@@ -788,8 +788,8 @@ export default function CheckoutModal() {
                 {/* Iftar Precision Toggle */}
                 <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#FFD700]/10 rounded-xl flex items-center justify-center">
-                      <Sun className="w-5 h-5 text-[#FFD700]" />
+                    <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center">
+                      <Sun className="w-5 h-5 text-[#F5C451]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Iftar Precision</p>
@@ -868,10 +868,10 @@ export default function CheckoutModal() {
 
                 {/* Iftar Timing Option */}
                 {iftarPrecision && (
-                  <div className="bg-[#FFD700]/5 rounded-2xl border border-[#FFD700]/20 p-4">
+                  <div className="bg-[#F5C451]/5 rounded-2xl border border-[#F5C451]/20 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <Sun className="w-5 h-5 text-[#FFD700]" />
-                      <span className="text-[#FFD700] font-bold text-sm">Iftar Delivery</span>
+                      <Sun className="w-5 h-5 text-[#F5C451]" />
+                      <span className="text-[#F5C451] font-bold text-sm">Iftar Delivery</span>
                     </div>
                     <p className="text-white/50 text-xs">
                       Your order will arrive 15 minutes before Maghrib (6:30 PM) so it&apos;s fresh for Iftar.
@@ -962,7 +962,7 @@ export default function CheckoutModal() {
                           onClick={() => setSelectedBnplPlan(plan.months)}
                           className={`w-full flex items-center justify-between p-4 rounded-2xl border text-left transition-all ${
                             selectedBnplPlan === plan.months
-                              ? 'bg-[#FFD700]/5 border-[#FFD700]/30'
+                              ? 'bg-[#F5C451]/5 border-[#F5C451]/30'
                               : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                           }`}
                         >
@@ -980,7 +980,7 @@ export default function CheckoutModal() {
                             </p>
                           </div>
                           {selectedBnplPlan === plan.months && (
-                            <Check className="w-5 h-5 text-[#FFD700] shrink-0" />
+                            <Check className="w-5 h-5 text-[#F5C451] shrink-0" />
                           )}
                         </button>
                       ))}
@@ -1174,9 +1174,9 @@ export default function CheckoutModal() {
                     </div>
                   )}
                   {iftarPrecision && (
-                    <div className="flex items-center gap-2 bg-[#FFD700]/5 rounded-lg px-3 py-2 border border-[#FFD700]/10">
-                      <Sun className="w-3.5 h-3.5 text-[#FFD700]" />
-                      <span className="text-[#FFD700] text-[10px] font-bold">Iftar Precision enabled - delivery before Maghrib</span>
+                    <div className="flex items-center gap-2 bg-[#F5C451]/5 rounded-lg px-3 py-2 border border-[#F5C451]/10">
+                      <Sun className="w-3.5 h-3.5 text-[#F5C451]" />
+                      <span className="text-[#F5C451] text-[10px] font-bold">Iftar Precision enabled - delivery before Maghrib</span>
                     </div>
                   )}
                   {sahurAlarm && (

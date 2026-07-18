@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 
 const statsGrid = [
   { label: 'Eco Orders', value: ecoImpactData.ecoOrders.toString(), icon: Recycle, color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', borderColor: 'border-[#10E07A]/20' },
-  { label: 'Amount Donated', value: formatNaira(ecoImpactData.amountDonated), icon: TrendingUp, color: 'text-[#FFD700]', bgColor: 'bg-[#FFD700]/10', borderColor: 'border-[#FFD700]/20' },
+  { label: 'Amount Donated', value: formatNaira(ecoImpactData.amountDonated), icon: TrendingUp, color: 'text-[#F5C451]', bgColor: 'bg-[#F5C451]/10', borderColor: 'border-[#F5C451]/20' },
   { label: 'Trees Equivalent', value: ecoImpactData.treesEquivalent.toString(), icon: TreePine, color: 'text-green-400', bgColor: 'bg-green-400/10', borderColor: 'border-green-400/20' },
   { label: 'Plastic Avoided', value: ecoImpactData.plasticAvoided, icon: Recycle, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10', borderColor: 'border-cyan-400/20' },
   { label: 'Water Saved', value: ecoImpactData.waterSaved, icon: Droplets, color: 'text-blue-400', bgColor: 'bg-blue-400/10', borderColor: 'border-blue-400/20' },
@@ -16,7 +16,7 @@ const statsGrid = [
 
 const comparisonBars = [
   { label: 'CO₂ Saved', yours: 8.2, average: 3.5, unit: 'kg', color: 'bg-[#10E07A]' },
-  { label: 'Eco Orders', yours: 15, average: 6, unit: '', color: 'bg-[#FFD700]' },
+  { label: 'Eco Orders', yours: 15, average: 6, unit: '', color: 'bg-[#F5C451]' },
   { label: 'Trees Equivalent', yours: 2, average: 0.8, unit: '', color: 'bg-green-400' },
 ];
 

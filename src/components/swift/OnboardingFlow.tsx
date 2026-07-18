@@ -39,14 +39,14 @@ import {
 
 const ROLE_ACCENT = {
   customer: '#10E07A',
-  vendor: '#FFD700',
-  rider: '#3b82f6',
+  vendor: '#F5C451',
+  rider: '#38BDF8',
 } as const;
 
 const ROLE_BTN_CLASS = {
   customer: 'bg-[#10E07A] text-[#05070A] shadow-[#10E07A]/20',
-  vendor: 'bg-[#FFD700] text-[#05070A] shadow-[#FFD700]/20',
-  rider: 'bg-[#3b82f6] text-white shadow-[#3b82f6]/20',
+  vendor: 'bg-[#F5C451] text-[#05070A] shadow-[#F5C451]/20',
+  rider: 'bg-[#38BDF8] text-white shadow-[#38BDF8]/20',
 } as const;
 
 const ROLE_CTA = {
@@ -208,7 +208,7 @@ function CustomerStep1() {
       >
         {[
           { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: '#10E07A' },
-          { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: '#FFD700' },
+          { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: '#F5C451' },
           { icon: Heart, title: 'Charity & Zakat', desc: 'Give back this blessed month', color: '#f472b6' },
         ].map((feature, i) => (
           <motion.div
@@ -456,7 +456,7 @@ function VendorStep1() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => toast({ title: 'Coming soon', description: 'Logo upload will be available soon.' })}
-            className="w-24 h-24 rounded-2xl bg-[#1A1D26] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[#FFD700]/40 transition-colors"
+            className="w-24 h-24 rounded-2xl bg-[#1A1D26] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[#F5C451]/40 transition-colors"
           >
             <Camera className="w-6 h-6 text-white/30" />
             <span className="text-white/30 text-[10px] font-medium">Store Logo</span>
@@ -465,13 +465,13 @@ function VendorStep1() {
 
         {/* Store Name */}
         <div className="relative">
-          <Store className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+          <Store className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#F5C451]/60" />
           <input
             type="text"
             placeholder="Store name"
             value={vendorStoreName}
             onChange={(e) => setVendorStoreName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -481,7 +481,7 @@ function VendorStep1() {
             onClick={() => setCatOpen(!catOpen)}
             className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/30'}`}
           >
-            <ShoppingBag className="w-4 h-4 mr-2 text-[#FFD700]/60" />
+            <ShoppingBag className="w-4 h-4 mr-2 text-[#F5C451]/60" />
             {vendorBusinessCategory || 'Business category'}
           </button>
           <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
@@ -498,7 +498,7 @@ function VendorStep1() {
                   <button
                     key={cat}
                     onClick={() => { setVendorBusinessCategory(cat); setCatOpen(false); }}
-                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${vendorBusinessCategory === cat ? 'text-[#FFD700]' : 'text-white/70'}`}
+                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${vendorBusinessCategory === cat ? 'text-[#F5C451]' : 'text-white/70'}`}
                   >
                     {cat}
                     {vendorBusinessCategory === cat && <Check className="w-4 h-4" />}
@@ -511,13 +511,13 @@ function VendorStep1() {
 
         {/* Business Address */}
         <div className="relative">
-          <MapPin className="absolute left-4 top-4 w-5 h-5 text-[#FFD700]/60" />
+          <MapPin className="absolute left-4 top-4 w-5 h-5 text-[#F5C451]/60" />
           <input
             type="text"
             placeholder="Business address"
             value={vendorBusinessAddress}
             onChange={(e) => setVendorBusinessAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -527,7 +527,7 @@ function VendorStep1() {
           value={storeDesc}
           onChange={(e) => setStoreDesc(e.target.value)}
           rows={3}
-          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors resize-none"
+          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors resize-none"
         />
       </div>
     </motion.div>
@@ -560,24 +560,24 @@ function VendorStep2() {
           <div className="flex-1">
             <label className="text-white/50 text-xs font-semibold mb-2 block">Opening Time</label>
             <div className="relative">
-              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F5C451]/60" />
               <input
                 type="time"
                 value={vendorOpenTime}
                 onChange={(e) => setVendorOpenTime(e.target.value)}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
               />
             </div>
           </div>
           <div className="flex-1">
             <label className="text-white/50 text-xs font-semibold mb-2 block">Closing Time</label>
             <div className="relative">
-              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+              <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F5C451]/60" />
               <input
                 type="time"
                 value={vendorCloseTime}
                 onChange={(e) => setVendorCloseTime(e.target.value)}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
               />
             </div>
           </div>
@@ -586,8 +586,8 @@ function VendorStep2() {
         {/* Sahur Orders Toggle */}
         <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center">
-              <Moon className="w-5 h-5 text-[#FFD700]" />
+            <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center">
+              <Moon className="w-5 h-5 text-[#F5C451]" />
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Open for Sahur orders</p>
@@ -596,7 +596,7 @@ function VendorStep2() {
           </div>
           <button
             onClick={() => setSahurOrders(!sahurOrders)}
-            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${sahurOrders ? 'bg-[#FFD700]' : 'bg-white/10'}`}
+            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${sahurOrders ? 'bg-[#F5C451]' : 'bg-white/10'}`}
           >
             <motion.div
               animate={{ x: sahurOrders ? 20 : 0 }}
@@ -609,8 +609,8 @@ function VendorStep2() {
         {/* Iftar Rush Toggle */}
         <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#FFD700]/10 flex items-center justify-center">
-              <Zap className="w-5 h-5 text-[#FFD700]" />
+            <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center">
+              <Zap className="w-5 h-5 text-[#F5C451]" />
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Accept Iftar rush orders</p>
@@ -619,7 +619,7 @@ function VendorStep2() {
           </div>
           <button
             onClick={() => setIftarRush(!iftarRush)}
-            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${iftarRush ? 'bg-[#FFD700]' : 'bg-white/10'}`}
+            className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${iftarRush ? 'bg-[#F5C451]' : 'bg-white/10'}`}
           >
             <motion.div
               animate={{ x: iftarRush ? 20 : 0 }}
@@ -633,13 +633,13 @@ function VendorStep2() {
         <div>
           <label className="text-white/50 text-xs font-semibold mb-2 block">Maximum Daily Orders</label>
           <div className="relative">
-            <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FFD700]/60" />
+            <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#F5C451]/60" />
             <input
               type="number"
               placeholder="e.g., 50"
               value={maxOrders}
               onChange={(e) => setMaxOrders(e.target.value)}
-              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
             />
           </div>
         </div>
@@ -671,51 +671,51 @@ function VendorStep3() {
         <div className="flex justify-center mb-2">
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ backgroundColor: '#FFD70010', border: '1px solid #FFD70030' }}
+            style={{ backgroundColor: '#F5C45110', border: '1px solid #F5C45130' }}
           >
-            <CreditCard className="w-10 h-10 text-[#FFD700]" />
+            <CreditCard className="w-10 h-10 text-[#F5C451]" />
           </div>
         </div>
 
         {/* Bank Name */}
         <div className="relative">
-          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#F5C451]/60" />
           <input
             type="text"
             placeholder="Bank name"
             value={vendorBankName}
             onChange={(e) => setVendorBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
         {/* Account Number */}
         <div className="relative">
-          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#F5C451]/60" />
           <input
             type="text"
             placeholder="Account number"
             value={vendorAccountNumber}
             onChange={(e) => setVendorAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
         {/* Account Holder Name */}
         <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#FFD700]/60" />
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#F5C451]/60" />
           <input
             type="text"
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#FFD700]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#FFD700]/10 rounded-xl">
-          <ShieldCheck className="w-5 h-5 text-[#FFD700] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#F5C451]/10 rounded-xl">
+          <ShieldCheck className="w-5 h-5 text-[#F5C451] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your banking details are encrypted and secure. SwiftRamadan never stores raw account numbers.
           </p>
@@ -764,13 +764,13 @@ function RiderStep1() {
                 whileTap={{ scale: 0.97 }}
                 className={`flex flex-col items-center gap-2 p-5 rounded-xl transition-all ${
                   isSelected
-                    ? 'bg-[#3b82f6]/10 border-2 border-[#3b82f6]/50'
+                    ? 'bg-[#38BDF8]/10 border-2 border-[#38BDF8]/50'
                     : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
                 }`}
-                style={{ boxShadow: isSelected ? '0 0 15px #3b82f620' : 'none' }}
+                style={{ boxShadow: isSelected ? '0 0 15px #38BDF820' : 'none' }}
               >
-                <Icon className={`w-8 h-8 ${isSelected ? 'text-[#3b82f6]' : 'text-white/40'}`} />
-                <span className={`text-sm font-bold ${isSelected ? 'text-[#3b82f6]' : 'text-white/70'}`}>
+                <Icon className={`w-8 h-8 ${isSelected ? 'text-[#38BDF8]' : 'text-white/40'}`} />
+                <span className={`text-sm font-bold ${isSelected ? 'text-[#38BDF8]' : 'text-white/70'}`}>
                   {vehicle.label}
                 </span>
                 <span className="text-white/30 text-[10px] text-center">{vehicle.description}</span>
@@ -778,7 +778,7 @@ function RiderStep1() {
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-5 h-5 rounded-full bg-[#3b82f6] flex items-center justify-center mt-1"
+                    className="w-5 h-5 rounded-full bg-[#38BDF8] flex items-center justify-center mt-1"
                   >
                     <Check className="w-3 h-3 text-white" />
                   </motion.div>
@@ -796,19 +796,19 @@ function RiderStep1() {
             placeholder="Vehicle color"
             value={riderVehicleColor}
             onChange={(e) => setRiderVehicleColor(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
         {/* Plate Number */}
         <div className="relative">
-          <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <Award className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="Plate number (e.g., LSR 123 AB)"
             value={riderPlateNumber}
             onChange={(e) => setRiderPlateNumber(e.target.value.toUpperCase())}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors uppercase tracking-wider font-mono"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors uppercase tracking-wider font-mono"
           />
         </div>
       </div>
@@ -836,13 +836,13 @@ function RiderStep2() {
       <div className="flex flex-col gap-5">
         {/* License Number */}
         <div className="relative">
-          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="License number"
             value={riderLicenseNumber}
             onChange={(e) => setRiderLicenseNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -852,7 +852,7 @@ function RiderStep2() {
             onClick={() => setIdOpen(!idOpen)}
             className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/30'}`}
           >
-            <User className="w-4 h-4 mr-2 text-[#3b82f6]/60" />
+            <User className="w-4 h-4 mr-2 text-[#38BDF8]/60" />
             {idType || 'ID type'}
           </button>
           <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${idOpen ? 'rotate-180' : ''}`} />
@@ -869,7 +869,7 @@ function RiderStep2() {
                   <button
                     key={type}
                     onClick={() => { setIdType(type); setIdOpen(false); }}
-                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${idType === type ? 'text-[#3b82f6]' : 'text-white/70'}`}
+                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${idType === type ? 'text-[#38BDF8]' : 'text-white/70'}`}
                   >
                     {type}
                     {idType === type && <Check className="w-4 h-4" />}
@@ -882,13 +882,13 @@ function RiderStep2() {
 
         {/* ID Number */}
         <div className="relative">
-          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="ID number"
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -901,7 +901,7 @@ function RiderStep2() {
                 key={doc}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => toast({ title: 'Coming soon', description: `${doc} upload will be available soon.` })}
-                className="flex flex-col items-center gap-2 p-5 bg-[#1A1D26] border border-dashed border-white/20 rounded-xl hover:border-[#3b82f6]/30 transition-colors"
+                className="flex flex-col items-center gap-2 p-5 bg-[#1A1D26] border border-dashed border-white/20 rounded-xl hover:border-[#38BDF8]/30 transition-colors"
               >
                 <Camera className="w-6 h-6 text-white/25" />
                 <span className="text-white/40 text-[11px] font-medium text-center">{doc}</span>
@@ -911,8 +911,8 @@ function RiderStep2() {
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#3b82f6]/10 rounded-xl">
-          <ShieldCheck className="w-5 h-5 text-[#3b82f6] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#38BDF8]/10 rounded-xl">
+          <ShieldCheck className="w-5 h-5 text-[#38BDF8] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your documents are encrypted and used only for verification. Processing takes 24-48 hours.
           </p>
@@ -945,51 +945,51 @@ function RiderStep3() {
         <div className="flex justify-center mb-2">
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ backgroundColor: '#3b82f610', border: '1px solid #3b82f630' }}
+            style={{ backgroundColor: '#38BDF810', border: '1px solid #38BDF830' }}
           >
-            <Star className="w-10 h-10 text-[#3b82f6]" />
+            <Star className="w-10 h-10 text-[#38BDF8]" />
           </div>
         </div>
 
         {/* Bank Name */}
         <div className="relative">
-          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="Bank name"
             value={riderBankName}
             onChange={(e) => setRiderBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
         {/* Account Number */}
         <div className="relative">
-          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="Account number"
             value={riderAccountNumber}
             onChange={(e) => setRiderAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
         {/* Account Holder Name */}
         <div className="relative">
-          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#3b82f6]/60" />
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#38BDF8]/60" />
           <input
             type="text"
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#3b82f6]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#3b82f6]/10 rounded-xl">
-          <ShieldCheck className="w-5 h-5 text-[#3b82f6] shrink-0 mt-0.5" />
+        <div className="flex items-start gap-3 p-4 bg-[#1A1D26] border border-[#38BDF8]/10 rounded-xl">
+          <ShieldCheck className="w-5 h-5 text-[#38BDF8] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your banking details are encrypted and secure. Payments are settled daily.
           </p>
@@ -1006,7 +1006,7 @@ function RiderStep3() {
 function CelebrationScreen({ role, onDone }: { role: 'customer' | 'vendor' | 'rider'; onDone: () => void }) {
   const accent = ROLE_ACCENT[role];
   const confettiColors = useMemo(() => {
-    const base = [accent, '#FFD700', '#ffffff', '#f472b6', '#06b6d4', '#a78bfa'];
+    const base = [accent, '#F5C451', '#ffffff', '#f472b6', '#06b6d4', '#a78bfa'];
     return base;
   }, [accent]);
 

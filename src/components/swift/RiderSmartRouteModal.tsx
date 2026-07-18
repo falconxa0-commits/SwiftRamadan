@@ -98,6 +98,7 @@ export default function RiderSmartRouteModal() {
               </div>
               <button
                 onClick={handleClose}
+                aria-label="Close"
                 className="w-9 h-9 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
               >
                 <X className="w-4 h-4 text-white/60" />
@@ -156,15 +157,15 @@ export default function RiderSmartRouteModal() {
                       {/* Delivery Card */}
                       <div className={`relative flex gap-3 p-4 rounded-2xl border transition-all ${
                         delivery.priority === 'iftar'
-                          ? 'bg-[#FFD700]/5 border-[#FFD700]/20'
+                          ? 'bg-[#F5C451]/5 border-[#F5C451]/20'
                           : 'bg-[#1A1D26] border-white/5'
                       }`}>
                         {/* Order Number Badge */}
                         <div className="shrink-0">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${
                             delivery.priority === 'iftar'
-                              ? 'bg-[#FFD700]/20 text-[#FFD700] border border-[#FFD700]/30'
-                              : 'bg-[#3b82f6]/20 text-[#3b82f6] border border-[#3b82f6]/30'
+                              ? 'bg-[#F5C451]/20 text-[#F5C451] border border-[#F5C451]/30'
+                              : 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30'
                           }`}>
                             {delivery.order}
                           </div>
@@ -175,7 +176,7 @@ export default function RiderSmartRouteModal() {
                           <div className="flex items-center gap-2">
                             <p className="text-white font-bold text-sm truncate">{delivery.customer}</p>
                             {delivery.priority === 'iftar' && (
-                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/20 shrink-0">
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20 shrink-0">
                                 IFTAR
                               </span>
                             )}
@@ -202,7 +203,7 @@ export default function RiderSmartRouteModal() {
 
                         {/* ETA */}
                         <div className="text-right shrink-0">
-                          <p className={`text-sm font-black ${delivery.priority === 'iftar' ? 'text-[#FFD700]' : 'text-white/60'}`}>
+                          <p className={`text-sm font-black ${delivery.priority === 'iftar' ? 'text-[#F5C451]' : 'text-white/60'}`}>
                             {delivery.eta}
                           </p>
                           <p className="text-white/20 text-[9px]">ETA</p>
@@ -216,7 +217,8 @@ export default function RiderSmartRouteModal() {
               {/* Start Route Button */}
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full mt-5 bg-[#3b82f6] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[#3b82f6]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                aria-label="Start Optimized Route"
+                className="w-full mt-5 bg-[#38BDF8] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <Navigation className="w-4 h-4" />
                 Start Optimized Route

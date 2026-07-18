@@ -49,6 +49,10 @@ model User {
   // Referral
   referralCode     String   @default("")  // e.g. SWIFT-A3X9K2
 
+  // Spin wheel state
+  lastSpinDate      String   @default("")
+  spinStreak        String   @default("")
+
   // State
   riderOnline       Boolean  @default(false)
   vendorOnline      Boolean  @default(false)
@@ -110,6 +114,9 @@ model Order {
   createdAt DateTime @default(now())
   payments  Payment[]
   orderReviews Review[]
+
+  @@index([userId])
+  @@index([status])
 }
 
 model CartItem {
@@ -123,6 +130,8 @@ model CartItem {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Notification {
@@ -134,6 +143,8 @@ model Notification {
   userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ── Smart Kitchen: Pantry Items (owner-scoped) ──
@@ -227,7 +238,7 @@ model WishlistItem {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  productId Int
+  productId String
   name      String
   price     Int
   image     String   @default("")
@@ -336,6 +347,8 @@ model ChatMessage {
   content    String
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
+
+  @@index([roomId])
 }
 
 // ── User settings ──
@@ -366,6 +379,8 @@ model WalletTransaction {
   description String   @default("")
   reference   String   @default("")  // external reference (paystack ref, etc.)
   createdAt   DateTime @default(now())
+
+  @@index([userId])
 }
 
 // ── Payouts (vendor/rider withdrawals) ──
@@ -383,6 +398,8 @@ model Payout {
   processedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // ── Refunds ──
@@ -430,6 +447,8 @@ model SupportTicket {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   messages  TicketMessage[]
+
+  @@index([userId])
 }
 
 // ── Ticket Messages ──

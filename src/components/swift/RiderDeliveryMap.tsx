@@ -104,7 +104,7 @@ export default function RiderDeliveryMap() {
         <div
           className="absolute bottom-0 left-0 right-0 h-[15%]"
           style={{
-            background: 'linear-gradient(to top, rgba(19, 236, 19, 0.03), transparent)',
+            background: 'linear-gradient(to top, rgba(16, 224, 122, 0.03), transparent)',
           }}
         />
 
@@ -121,7 +121,7 @@ export default function RiderDeliveryMap() {
           <path
             d="M 130 580 C 130 520, 160 480, 200 440 C 240 400, 220 350, 250 300 C 280 250, 260 200, 240 160"
             fill="none"
-            stroke="#FFD700"
+            stroke="#F5C451"
             strokeWidth="8"
             strokeDasharray="8 6"
             opacity="0.1"
@@ -130,7 +130,7 @@ export default function RiderDeliveryMap() {
           <path
             d="M 130 580 C 130 520, 160 480, 200 440 C 240 400, 220 350, 250 300 C 280 250, 260 200, 240 160"
             fill="none"
-            stroke="#FFD700"
+            stroke="#F5C451"
             strokeWidth="3"
             strokeDasharray="8 6"
             opacity="0.7"
@@ -148,10 +148,10 @@ export default function RiderDeliveryMap() {
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.5 }}
             className="relative"
           >
-            <div className="w-8 h-8 bg-[#FFD700] rounded-full flex items-center justify-center shadow-lg shadow-[#FFD700]/30">
+            <div className="w-8 h-8 bg-[#F5C451] rounded-full flex items-center justify-center shadow-lg shadow-[#F5C451]/30">
               <MapPin className="w-4 h-4 text-[#05070A]" />
             </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#FFD700]" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#F5C451]" />
             {/* Destination label */}
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[#1A1D26] border border-white/10 rounded-lg">
               <span className="text-white text-[8px] font-bold">Drop-off</span>
@@ -212,10 +212,10 @@ export default function RiderDeliveryMap() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-[#FFD700]/10 border border-[#FFD700]/20 rounded-xl px-3 py-1.5 flex items-center gap-1.5 gold-glow"
+          className="bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-xl px-3 py-1.5 flex items-center gap-1.5 gold-glow"
         >
-          <span className="material-symbols-outlined text-[#FFD700] text-sm">bedtime</span>
-          <span className="text-[#FFD700] text-[10px] font-black">Deliver before Iftar</span>
+          <span className="material-symbols-outlined text-[#F5C451] text-sm">bedtime</span>
+          <span className="text-[#F5C451] text-[10px] font-black">Deliver before Iftar</span>
         </motion.div>
       </div>
       )}
@@ -296,7 +296,7 @@ export default function RiderDeliveryMap() {
 
               {/* Quick Status Ticker */}
               <div className="flex items-center gap-2 mb-4">
-                <Clock className="w-3.5 h-3.5 text-[#FFD700] shrink-0" />
+                <Clock className="w-3.5 h-3.5 text-[#F5C451] shrink-0" />
                 <div className="flex-1 overflow-hidden">
                   <motion.div
                     className="flex gap-4 whitespace-nowrap"
@@ -304,13 +304,13 @@ export default function RiderDeliveryMap() {
                     transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                   >
                     <span className="text-white/50 text-[10px]">{activeDelivery.items}</span>
-                    <span className="text-[#FFD700] text-[10px]">•</span>
+                    <span className="text-[#F5C451] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Handle with care</span>
-                    <span className="text-[#FFD700] text-[10px]">•</span>
+                    <span className="text-[#F5C451] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Iftar delivery</span>
-                    <span className="text-[#FFD700] text-[10px]">•</span>
+                    <span className="text-[#F5C451] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Customer waiting</span>
-                    <span className="text-[#FFD700] text-[10px]">•</span>
+                    <span className="text-[#F5C451] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">{activeDelivery.items}</span>
                   </motion.div>
                 </div>

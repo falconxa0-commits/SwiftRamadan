@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
 const VALID_DOCUMENT_TYPES = ['national_id', 'voters_card', 'drivers_license', 'international_passport', 'nin'];
 
 export async function POST(request: NextRequest) {
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
+  if (rateLimited) return rateLimited;
+
   try {
     const auth = await requireAuth(request);
     if (auth instanceof NextResponse) return auth;
@@ -20,10 +24,28 @@ export async function POST(request: NextRequest) {
       case 'status':
         return await handleStatus(body);
       case 'verify':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleVerify(body);
       case 'reject':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleReject(body);
       case 'list-all':
+        if (auth.role !== 'admin') {
+          return NextResponse.json(
+            { success: false, message: 'Admin access required' },
+            { status: 403 },
+          );
+        }
         return await handleListAll(body);
       default:
         return NextResponse.json(
