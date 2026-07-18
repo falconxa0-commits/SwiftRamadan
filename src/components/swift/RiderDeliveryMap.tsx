@@ -45,7 +45,7 @@ export default function RiderDeliveryMap() {
       <div className="absolute top-4 left-4 right-4 z-30">
         <div className="glass-effect rounded-2xl border border-white/10 p-1">
           <div className="flex items-center gap-3 px-3 py-2">
-            <Search className="w-4 h-4 text-[#13ec13] shrink-0" />
+            <Search className="w-4 h-4 text-[#10E07A] shrink-0" />
             <span className="text-white/30 text-sm flex-1 truncate">{destAddress}</span>
             <MapPin className="w-4 h-4 text-white/20 shrink-0" />
           </div>
@@ -136,8 +136,8 @@ export default function RiderDeliveryMap() {
             opacity="0.7"
           />
           {/* Pickup marker dot */}
-          <circle cx="130" cy="580" r="6" fill="#13ec13" opacity="0.8" />
-          <circle cx="130" cy="580" r="12" fill="none" stroke="#13ec13" strokeWidth="1.5" opacity="0.3" />
+          <circle cx="130" cy="580" r="6" fill="#10E07A" opacity="0.8" />
+          <circle cx="130" cy="580" r="12" fill="none" stroke="#10E07A" strokeWidth="1.5" opacity="0.3" />
         </svg>
 
         {/* Destination Marker (Gold Pin) - top area */}
@@ -167,12 +167,12 @@ export default function RiderDeliveryMap() {
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.3 }}
             className="relative"
           >
-            <div className="w-8 h-8 bg-[#13ec13] rounded-full flex items-center justify-center shadow-lg shadow-[#13ec13]/30">
+            <div className="w-8 h-8 bg-[#10E07A] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
               <Package className="w-4 h-4 text-[#05070A]" />
             </div>
             {/* Pickup label */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[#1A1D26] border border-[#13ec13]/20 rounded-lg">
-              <span className="text-[#13ec13] text-[8px] font-bold">Pickup</span>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[#1A1D26] border border-[#10E07A]/20 rounded-lg">
+              <span className="text-[#10E07A] text-[8px] font-bold">Pickup</span>
             </div>
           </motion.div>
         </div>
@@ -187,17 +187,17 @@ export default function RiderDeliveryMap() {
           >
             {/* Pulse rings */}
             <motion.div
-              className="absolute -inset-4 bg-[#13ec13]/10 rounded-full"
+              className="absolute -inset-4 bg-[#10E07A]/10 rounded-full"
               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
-              className="absolute -inset-2 bg-[#13ec13]/15 rounded-full"
+              className="absolute -inset-2 bg-[#10E07A]/15 rounded-full"
               animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
             />
             {/* Main dot */}
-            <div className="w-10 h-10 bg-[#13ec13] rounded-full flex items-center justify-center shadow-lg shadow-[#13ec13]/40 relative z-10">
+            <div className="w-10 h-10 bg-[#10E07A] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/40 relative z-10">
               <span className="material-symbols-outlined text-[#05070A] text-lg">moped</span>
             </div>
           </motion.div>
@@ -239,7 +239,7 @@ export default function RiderDeliveryMap() {
           onClick={() => setZoom(1)}
           className="w-10 h-10 glass-effect rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
         >
-          <Navigation className="w-4 h-4 text-[#13ec13]" />
+          <Navigation className="w-4 h-4 text-[#10E07A]" />
         </button>
       </div>
       )}
@@ -259,9 +259,9 @@ export default function RiderDeliveryMap() {
                 <h3 className="text-white text-lg font-extrabold">
                   Arriving in {activeDelivery.eta}
                 </h3>
-                <div className="flex items-center gap-1.5 bg-[#13ec13]/10 px-2.5 py-1 rounded-full">
-                  <span className="size-2 bg-[#13ec13] rounded-full animate-pulse" />
-                  <span className="text-[#13ec13] text-[10px] font-bold">
+                <div className="flex items-center gap-1.5 bg-[#10E07A]/10 px-2.5 py-1 rounded-full">
+                  <span className="size-2 bg-[#10E07A] rounded-full animate-pulse" />
+                  <span className="text-[#10E07A] text-[10px] font-bold">
                     {activeDelivery.status === 'picked_up' ? 'Picked Up' : 'In Transit'}
                   </span>
                 </div>
@@ -270,7 +270,7 @@ export default function RiderDeliveryMap() {
               {/* Progress Bar */}
               <div className="w-full bg-white/5 rounded-full h-2 mb-3">
                 <motion.div
-                  className="bg-[#13ec13] h-2 rounded-full"
+                  className="bg-[#10E07A] h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${activeDelivery.progress}%` }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -279,8 +279,8 @@ export default function RiderDeliveryMap() {
 
               {/* Delivery Info */}
               <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/5">
-                <div className="w-12 h-12 bg-[#13ec13]/15 rounded-full flex items-center justify-center border border-[#13ec13]/20">
-                  <span className="material-symbols-outlined text-[#13ec13] text-xl">person</span>
+                <div className="w-12 h-12 bg-[#10E07A]/15 rounded-full flex items-center justify-center border border-[#10E07A]/20">
+                  <span className="material-symbols-outlined text-[#10E07A] text-xl">person</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-white text-sm font-bold">{activeDelivery.customer}</p>
@@ -289,7 +289,7 @@ export default function RiderDeliveryMap() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[#13ec13] text-xs font-bold">{activeDelivery.id}</p>
+                  <p className="text-[#10E07A] text-xs font-bold">{activeDelivery.id}</p>
                   <p className="text-white/30 text-[10px]">{activeDelivery.progress}% complete</p>
                 </div>
               </div>
@@ -320,7 +320,7 @@ export default function RiderDeliveryMap() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleCall}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#13ec13] text-[#05070A] py-3 rounded-xl font-bold text-xs hover:bg-[#13ec13]/90 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#05070A] py-3 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   Call Customer
@@ -353,13 +353,22 @@ export default function RiderDeliveryMap() {
                   <p className="text-white/40 text-sm">Waiting for delivery requests...</p>
                   <button
                     onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
-                    className="mt-3 px-6 py-2.5 bg-[#13ec13] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#13ec13]/90 transition-colors"
+                    className="mt-3 px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors"
                   >
                     View Available Deliveries
                   </button>
                 </>
               ) : (
-                <p className="text-white/40 text-sm">No active deliveries. Go online to start receiving requests.</p>
+                <div className="flex flex-col items-center gap-3">
+                  <p className="text-white/40 text-sm">Go online to start receiving delivery requests</p>
+                  <button
+                    onClick={() => useAppStore.getState().setRiderOnline(true)}
+                    className="px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors flex items-center gap-2"
+                  >
+                    <span className="size-2 bg-[#05070A] rounded-full animate-pulse" />
+                    Go Online
+                  </button>
+                </div>
               )}
             </div>
           </div>

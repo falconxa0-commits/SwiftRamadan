@@ -366,7 +366,7 @@ export default function OffersTab() {
             )}
             <div className="space-y-2">
               {currentTierInfo.benefits.slice(0, 3).map((benefit, i) => (
-                <div key={i} className="flex items-center gap-2">
+                <div key={benefit} className="flex items-center gap-2">
                   <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
                   <p className="text-white/60 text-xs">{benefit}</p>
                 </div>

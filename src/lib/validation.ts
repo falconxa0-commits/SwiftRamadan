@@ -120,7 +120,7 @@ export const videoCreateSchema = z.object({
 /* ─────────────────────────── Cart ────────────────────────────── */
 
 export const cartItemSchema = z.object({
-  productId: z.union([z.string(), z.number()]),
+  productId: z.union([z.string(), z.number()]).transform(String),
   name: z.string().min(1),
   price: z.number().int().nonnegative(),
   image: z.string().optional().default(''),

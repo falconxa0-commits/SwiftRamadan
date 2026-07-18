@@ -350,7 +350,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
           </div>
           <button
             onClick={handleFollow}
-            disabled={followPending || (statusChecked && !authorId)}
+            disabled={followPending}
             className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 size-5 rounded-full flex items-center justify-center text-white text-[10px] font-black leading-none active:scale-90 transition-transform disabled:opacity-50"
             style={{
               backgroundColor: following ? '#10E07A' : authorId ? '#FB7185' : '#6b7280',
@@ -435,7 +435,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
           <span className="text-white/40 text-xs">•</span>
           <button
             onClick={handleFollow}
-            disabled={followPending || (statusChecked && !authorId)}
+            disabled={followPending}
             className={`text-[11px] font-bold border px-2.5 h-6 rounded-full flex items-center gap-1 active:scale-95 transition-transform disabled:opacity-50 ${
               following
                 ? 'bg-[#10E07A]/15 text-[#10E07A] border-[#10E07A]/40'

@@ -94,7 +94,7 @@ export default function RamadanCountdown() {
   }, []);
 
   const isIftar = countdown.meal === 'iftar';
-  const accent = isIftar ? '#13ec13' : '#FFD700';
+  const accent = isIftar ? '#10E07A' : '#FFD700';
   const Icon = isIftar ? Moon : Sun;
 
   const hh = pad(countdown.hours);
@@ -196,12 +196,12 @@ export default function RamadanCountdown() {
           onClick={() => setActiveModal('smart-kitchen')}
           className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-colors group"
         >
-          <ChefHat className="w-4 h-4 text-[#13ec13]" />
+          <ChefHat className="w-4 h-4 text-[#10E07A]" />
           <span className="text-white/80 text-xs font-bold">
             {isIftar ? 'Plan your Iftar with Chef Safa' : 'Prep Sahur with Chef Safa'}
           </span>
           <motion.span
-            className="text-[#13ec13] text-xs"
+            className="text-[#10E07A] text-xs"
             animate={{ x: [0, 3, 0] }}
             transition={{ duration: 1.5, repeat: Infinity }}
           >

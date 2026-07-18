@@ -151,9 +151,9 @@ export default function CharityZakatModal() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', delay: 0.2 }}
-                      className="w-24 h-24 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow mb-6"
+                      className="w-24 h-24 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 green-glow mb-6"
                     >
-                      <Check className="w-12 h-12 text-[#13ec13]" />
+                      <Check className="w-12 h-12 text-[#10E07A]" />
                     </motion.div>
                     <motion.h3
                       initial={{ opacity: 0, y: 10 }}
@@ -177,7 +177,7 @@ export default function CharityZakatModal() {
                       transition={{ delay: 0.6 }}
                       className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 mb-4 w-full max-w-xs"
                     >
-                      <p className="text-[#13ec13] text-3xl font-black">{confirmedMeals}</p>
+                      <p className="text-[#10E07A] text-3xl font-black">{confirmedMeals}</p>
                       <p className="text-white/40 text-xs">Meal{confirmedMeals > 1 ? 's' : ''} Sponsored</p>
                     </motion.div>
                     <motion.div
@@ -201,7 +201,7 @@ export default function CharityZakatModal() {
                         onClick={() => {
                           setShowConfirmed(false);
                         }}
-                        className="flex-1 bg-[#13ec13] text-[#05070A] font-bold py-3 rounded-xl text-sm"
+                        className="flex-1 bg-[#10E07A] text-[#05070A] font-bold py-3 rounded-xl text-sm"
                       >
                         Done
                       </button>
@@ -216,14 +216,14 @@ export default function CharityZakatModal() {
                   >
                     {/* Impact Ticker */}
                     <div className="px-4 pt-4">
-                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#13ec13]/20 p-4">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#13ec13]/10 blur-[40px]" />
+                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#10E07A]/20 p-4">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#10E07A]/10 blur-[40px]" />
                         <div className="relative flex items-center gap-3">
                           <div className="flex items-center gap-1">
-                            <span className="flex size-2 bg-[#13ec13] rounded-full animate-pulse" />
+                            <span className="flex size-2 bg-[#10E07A] rounded-full animate-pulse" />
                           </div>
                           <div>
-                            <p className="text-[#13ec13] text-2xl font-black">{impactCount.toLocaleString()}</p>
+                            <p className="text-[#10E07A] text-2xl font-black">{impactCount.toLocaleString()}</p>
                             <p className="text-white/50 text-xs">meals donated this hour</p>
                           </div>
                         </div>
@@ -239,7 +239,7 @@ export default function CharityZakatModal() {
                             onClick={() => setDonationTab(tab)}
                             className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                               donationTab === tab
-                                ? 'bg-[#13ec13] text-[#05070A]'
+                                ? 'bg-[#10E07A] text-[#05070A]'
                                 : 'text-white/50 hover:text-white'
                             }`}
                           >
@@ -275,7 +275,7 @@ export default function CharityZakatModal() {
                               </div>
                               <div className="w-full bg-white/5 rounded-full h-2">
                                 <motion.div
-                                  className="bg-[#13ec13] h-2 rounded-full"
+                                  className="bg-[#10E07A] h-2 rounded-full"
                                   initial={{ width: 0 }}
                                   animate={{ width: `${orphanage.progress}%` }}
                                   transition={{ duration: 1, ease: 'easeOut' }}
@@ -284,7 +284,7 @@ export default function CharityZakatModal() {
                             </div>
                             <button
                               onClick={() => handleDonateOrphanage(orphanage.id)}
-                              className="w-full bg-[#13ec13]/10 text-[#13ec13] font-bold py-2.5 rounded-xl text-sm border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                              className="w-full bg-[#10E07A]/10 text-[#10E07A] font-bold py-2.5 rounded-xl text-sm border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
                             >
                               Donate
                             </button>
@@ -311,7 +311,7 @@ export default function CharityZakatModal() {
                                   onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }}
                                   className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                                     selectedAmount === amt && !customAmount
-                                      ? 'bg-[#13ec13] text-[#05070A]'
+                                      ? 'bg-[#10E07A] text-[#05070A]'
                                       : 'bg-white/5 text-white border border-white/10'
                                   }`}
                                 >
@@ -324,11 +324,11 @@ export default function CharityZakatModal() {
                               placeholder="Custom amount"
                               value={customAmount}
                               onChange={e => { setCustomAmount(e.target.value); }}
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/30 focus:outline-none mb-3"
+                              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/30 focus:outline-none mb-3"
                             />
                             <button
                               onClick={handleConfirmDonation}
-                              className="w-full bg-[#13ec13] text-[#05070A] font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                              className="w-full bg-[#10E07A] text-[#05070A] font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                             >
                               Confirm Donation
                               <ChevronRight className="w-4 h-4" />
@@ -418,13 +418,13 @@ export default function CharityZakatModal() {
                             key={item.id}
                             onClick={() => handleQuickCharity(item)}
                             whileTap={{ scale: 0.97 }}
-                            className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-left hover:border-[#13ec13]/20 transition-colors"
+                            className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-left hover:border-[#10E07A]/20 transition-colors"
                           >
                             <span className="material-symbols-outlined text-[#FFD700] text-2xl mb-2">{item.icon}</span>
                             <p className="text-white font-bold text-sm">{item.name}</p>
                             <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
                             {item.amount > 0 && (
-                              <p className="text-[#13ec13] text-xs font-bold mt-2">{formatNaira(item.amount)}</p>
+                              <p className="text-[#10E07A] text-xs font-bold mt-2">{formatNaira(item.amount)}</p>
                             )}
                           </motion.button>
                         ))}

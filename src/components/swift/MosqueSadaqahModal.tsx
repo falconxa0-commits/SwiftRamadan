@@ -125,9 +125,9 @@ export default function MosqueSadaqahModal() {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', damping: 12, stiffness: 150, delay: 0.1 }}
-                      className="w-20 h-20 rounded-full bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/30 green-glow mb-6"
+                      className="w-20 h-20 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30 green-glow mb-6"
                     >
-                      <span className="material-symbols-outlined text-[#13ec13] text-4xl">check_circle</span>
+                      <span className="material-symbols-outlined text-[#10E07A] text-4xl">check_circle</span>
                     </motion.div>
                     <motion.h3
                       initial={{ opacity: 0, y: 10 }}
@@ -151,17 +151,17 @@ export default function MosqueSadaqahModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
-                      className="bg-[#1A1D26] rounded-2xl p-4 border border-[#13ec13]/20 mb-6 text-center"
+                      className="bg-[#1A1D26] rounded-2xl p-4 border border-[#10E07A]/20 mb-6 text-center"
                     >
                       <p className="text-white/40 text-[10px] uppercase tracking-widest">Hasanat Points Earned</p>
-                      <p className="text-[#13ec13] text-2xl font-black">+{donationPoints}</p>
+                      <p className="text-[#10E07A] text-2xl font-black">+{donationPoints}</p>
                     </motion.div>
                     <motion.button
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
                       onClick={() => { setDonationConfirmed(null); setDonationPoints(0); }}
-                      className="bg-[#13ec13] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform"
+                      className="bg-[#10E07A] text-[#05070A] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform"
                     >
                       Continue
                     </motion.button>
@@ -228,16 +228,16 @@ export default function MosqueSadaqahModal() {
                         transition={{ type: 'spring', damping: 15, stiffness: 100 }}
                       >
                         <div className="relative">
-                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[60px] border-l-transparent border-r-transparent border-b-[#13ec13] -mt-16" />
+                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[60px] border-l-transparent border-r-transparent border-b-[#10E07A] -mt-16" />
                           <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[40px] border-l-transparent border-r-transparent border-t-white/20 -mt-0 mx-auto" />
                         </div>
                       </motion.div>
                       {/* Center dot */}
-                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#13ec13] rounded-full green-glow" />
+                      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-[#10E07A] rounded-full green-glow" />
                     </div>
 
                     <div className="mt-8 bg-[#1A1D26] rounded-xl p-4 border border-white/5 text-center">
-                      <p className="text-[#13ec13] text-lg font-black">56° NE</p>
+                      <p className="text-[#10E07A] text-lg font-black">56° NE</p>
                       <p className="text-white/40 text-xs">Qibla direction from Lagos</p>
                     </div>
                   </motion.div>
@@ -271,10 +271,10 @@ export default function MosqueSadaqahModal() {
                       onClick={() => setSelectedMosque(m.id)}
                     >
                       <div className="flex flex-col items-center">
-                        <div className="w-8 h-8 bg-[#13ec13]/20 rounded-full flex items-center justify-center border border-[#13ec13]/30 green-glow">
-                          <span className="material-symbols-outlined text-[#13ec13] text-sm">mosque</span>
+                        <div className="w-8 h-8 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 green-glow">
+                          <span className="material-symbols-outlined text-[#10E07A] text-sm">mosque</span>
                         </div>
-                        <div className="w-0.5 h-1 bg-[#13ec13]/50" />
+                        <div className="w-0.5 h-1 bg-[#10E07A]/50" />
                       </div>
                     </motion.div>
                   ))}
@@ -291,7 +291,7 @@ export default function MosqueSadaqahModal() {
 
               {/* Search Bar */}
               <div className="px-4 mt-4">
-                <div className="flex items-center rounded-xl h-11 bg-[#1A1D26] border border-white/5 focus-within:border-[#13ec13]/30 transition-all">
+                <div className="flex items-center rounded-xl h-11 bg-[#1A1D26] border border-white/5 focus-within:border-[#10E07A]/30 transition-all">
                   <Search className="w-4 h-4 text-white/30 ml-3 shrink-0" />
                   <input
                     type="text"
@@ -309,7 +309,7 @@ export default function MosqueSadaqahModal() {
                   onClick={() => setActiveChip(null)}
                   className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
                     activeChip === null
-                      ? 'bg-[#13ec13] text-[#05070A]'
+                      ? 'bg-[#10E07A] text-[#05070A]'
                       : 'bg-white/5 text-white/50 border border-white/10'
                   }`}
                 >
@@ -321,7 +321,7 @@ export default function MosqueSadaqahModal() {
                     onClick={() => setActiveChip(activeChip === chip.id ? null : chip.id)}
                     className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
                       activeChip === chip.id
-                        ? 'bg-[#13ec13] text-[#05070A]'
+                        ? 'bg-[#10E07A] text-[#05070A]'
                         : 'bg-white/5 text-white/50 border border-white/10'
                     }`}
                   >
@@ -346,13 +346,13 @@ export default function MosqueSadaqahModal() {
                           <MapPin className="w-3 h-3 text-white/30" />
                           <p className="text-white/40 text-xs">{mosque.address}</p>
                         </div>
-                        <p className="text-[#13ec13] text-xs font-bold mt-1">{mosque.distance}</p>
+                        <p className="text-[#10E07A] text-xs font-bold mt-1">{mosque.distance}</p>
                       </div>
                     </div>
                     {/* Feature Badges */}
                     <div className="flex flex-wrap gap-2 mt-3 mb-3">
                       {mosque.iftarAvailable && (
-                        <span className="px-2 py-0.5 bg-[#13ec13]/10 text-[#13ec13] text-[10px] font-bold rounded-full border border-[#13ec13]/20">
+                        <span className="px-2 py-0.5 bg-[#10E07A]/10 text-[#10E07A] text-[10px] font-bold rounded-full border border-[#10E07A]/20">
                           Iftar Available
                         </span>
                       )}
@@ -380,7 +380,7 @@ export default function MosqueSadaqahModal() {
                       </button>
                       <button
                         onClick={() => handleSponsorMeals(mosque.name)}
-                        className="flex-1 bg-[#13ec13]/10 text-[#13ec13] font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-[#13ec13]/20 hover:bg-[#13ec13]/20 transition-colors"
+                        className="flex-1 bg-[#10E07A]/10 text-[#10E07A] font-bold py-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors"
                       >
                         <Heart className="w-3 h-3" />
                         Sponsor Meals
@@ -428,13 +428,13 @@ export default function MosqueSadaqahModal() {
                               <div className="flex-1 bg-black/30 p-3 rounded-xl border border-white/5">
                                 <p className="text-white/40 text-[10px]">Funding Goal</p>
                                 <div className="w-full bg-white/5 rounded-full h-1.5 mt-2">
-                                  <div className="bg-[#13ec13] h-1.5 rounded-full" style={{ width: `${mosque.sadaqah ? 65 : 40}%` }} />
+                                  <div className="bg-[#10E07A] h-1.5 rounded-full" style={{ width: `${mosque.sadaqah ? 65 : 40}%` }} />
                                 </div>
                               </div>
                             </div>
                             <button
                               onClick={() => handleSponsorMeals(mosque.name)}
-                              className="w-full bg-[#13ec13] text-[#05070A] font-bold py-3 rounded-xl text-sm active:scale-[0.98] transition-transform"
+                              className="w-full bg-[#10E07A] text-[#05070A] font-bold py-3 rounded-xl text-sm active:scale-[0.98] transition-transform"
                             >
                               Sponsor 50 Meals &bull; {formatNaira(50000)}
                             </button>
@@ -448,16 +448,16 @@ export default function MosqueSadaqahModal() {
 
               {/* Quick Sadaqah Banner */}
               <div className="px-4 mt-6">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#13ec13]/20 p-4">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#13ec13]/10 blur-[40px]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#10E07A]/20 p-4">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#10E07A]/10 blur-[40px]" />
                   <div className="relative flex items-center justify-between">
                     <div>
-                      <p className="text-[#13ec13] text-sm font-bold">Quick Sadaqah</p>
+                      <p className="text-[#10E07A] text-sm font-bold">Quick Sadaqah</p>
                       <p className="text-white/50 text-xs mt-0.5">{formatNaira(1000)} feeds 1 person</p>
                     </div>
                     <button
                       onClick={handleQuickSadaqah}
-                      className="bg-[#13ec13] text-[#05070A] font-bold py-2.5 px-5 rounded-xl text-sm active:scale-[0.98] transition-transform"
+                      className="bg-[#10E07A] text-[#05070A] font-bold py-2.5 px-5 rounded-xl text-sm active:scale-[0.98] transition-transform"
                     >
                       Donate Now
                     </button>

@@ -156,13 +156,13 @@ export default function KYCModal() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-5 rounded-2xl bg-[#13ec13]/5 border border-[#13ec13]/20"
+          className="flex items-center gap-4 p-5 rounded-2xl bg-[#10E07A]/5 border border-[#10E07A]/20"
         >
-          <div className="w-12 h-12 rounded-full bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/30 shrink-0">
-            <CheckCircle className="w-6 h-6 text-[#13ec13]" />
+          <div className="w-12 h-12 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30 shrink-0">
+            <CheckCircle className="w-6 h-6 text-[#10E07A]" />
           </div>
           <div>
-            <h3 className="text-[#13ec13] font-bold text-sm">Identity Verified</h3>
+            <h3 className="text-[#10E07A] font-bold text-sm">Identity Verified</h3>
             <p className="text-white/40 text-xs mt-0.5">Your identity has been successfully verified</p>
           </div>
         </motion.div>
@@ -208,7 +208,7 @@ export default function KYCModal() {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20">
             <CheckCircle className="w-3 h-3" />
             Verified
           </span>
@@ -257,8 +257,8 @@ export default function KYCModal() {
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/30">
-                    <Shield className="w-5 h-5 text-[#13ec13]" />
+                  <div className="w-10 h-10 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30">
+                    <Shield className="w-5 h-5 text-[#10E07A]" />
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">KYC Verification</h2>
@@ -288,7 +288,7 @@ export default function KYCModal() {
                   onClick={() => setActiveTab('status')}
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'status'
-                      ? 'bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20'
+                      ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
                       : 'text-white/40 hover:text-white/60'
                   }`}
                 >
@@ -298,7 +298,7 @@ export default function KYCModal() {
                   onClick={() => setActiveTab('submit')}
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'submit'
-                      ? 'bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20'
+                      ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
                       : 'text-white/40 hover:text-white/60'
                   }`}
                 >
@@ -317,7 +317,7 @@ export default function KYCModal() {
                   <div className="mt-4">
                     {loading ? (
                       <div className="flex items-center justify-center p-8 rounded-2xl bg-white/5 border border-white/5">
-                        <Loader2 className="w-6 h-6 text-[#13ec13] animate-spin" />
+                        <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
                         <span className="text-white/40 text-sm ml-3">Loading verification status...</span>
                       </div>
                     ) : (
@@ -328,7 +328,7 @@ export default function KYCModal() {
                   {/* Document List */}
                   <div className="mt-6">
                     <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-[#13ec13]" />
+                      <FileText className="w-4 h-4 text-[#10E07A]" />
                       Submitted Documents
                     </h4>
 
@@ -344,7 +344,7 @@ export default function KYCModal() {
                         <p className="text-white/30 text-sm">No documents submitted yet</p>
                         <button
                           onClick={() => setActiveTab('submit')}
-                          className="mt-3 text-[#13ec13] text-xs font-bold hover:underline"
+                          className="mt-3 text-[#10E07A] text-xs font-bold hover:underline"
                         >
                           Submit your first document →
                         </button>
@@ -363,14 +363,14 @@ export default function KYCModal() {
                               <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
                                   doc.status === 'verified'
-                                    ? 'bg-[#13ec13]/10 border-[#13ec13]/20'
+                                    ? 'bg-[#10E07A]/10 border-[#10E07A]/20'
                                     : doc.status === 'pending'
                                     ? 'bg-[#FFD700]/10 border-[#FFD700]/20'
                                     : 'bg-red-500/10 border-red-500/20'
                                 }`}>
                                   <FileText className={`w-5 h-5 ${
                                     doc.status === 'verified'
-                                      ? 'text-[#13ec13]'
+                                      ? 'text-[#10E07A]'
                                       : doc.status === 'pending'
                                       ? 'text-[#FFD700]'
                                       : 'text-red-400'
@@ -447,7 +447,7 @@ export default function KYCModal() {
                       <select
                         value={documentType}
                         onChange={e => setDocumentType(e.target.value)}
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#13ec13]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#10E07A]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
                       >
                         <option value="" disabled className="bg-[#0F1117]">
                           Select document type
@@ -477,7 +477,7 @@ export default function KYCModal() {
                       value={documentNumber}
                       onChange={e => setDocumentNumber(e.target.value)}
                       placeholder="Enter your document number"
-                      className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#13ec13]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
+                      className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#10E07A]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
                     />
                   </motion.div>
 
@@ -501,14 +501,14 @@ export default function KYCModal() {
                     />
 
                     {documentImage ? (
-                      <div className="relative p-4 rounded-2xl bg-[#1A1D26] border border-[#13ec13]/20">
+                      <div className="relative p-4 rounded-2xl bg-[#1A1D26] border border-[#10E07A]/20">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center border border-[#13ec13]/20 shrink-0">
-                            <CheckCircle className="w-5 h-5 text-[#13ec13]" />
+                          <div className="w-10 h-10 rounded-xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
+                            <CheckCircle className="w-5 h-5 text-[#10E07A]" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-white font-bold text-sm truncate">{imageFileName}</p>
-                            <p className="text-[#13ec13] text-xs mt-0.5">File selected</p>
+                            <p className="text-[#10E07A] text-xs mt-0.5">File selected</p>
                           </div>
                           <button
                             onClick={() => {
@@ -532,7 +532,7 @@ export default function KYCModal() {
                     ) : (
                       <label
                         htmlFor="kyc-document-upload"
-                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[#13ec13]/30 transition-all cursor-pointer"
+                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[#10E07A]/30 transition-all cursor-pointer"
                       >
                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
                           <Upload className="w-6 h-6 text-white/30" />
@@ -558,8 +558,8 @@ export default function KYCModal() {
                       disabled={submitting}
                       className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
                         submitting
-                          ? 'bg-[#13ec13]/20 text-[#13ec13] border border-[#13ec13]/20 cursor-wait'
-                          : 'bg-[#13ec13] text-[#05070A] hover:bg-[#13ec13]/90'
+                          ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/20 cursor-wait'
+                          : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
                       }`}
                     >
                       {submitting ? (

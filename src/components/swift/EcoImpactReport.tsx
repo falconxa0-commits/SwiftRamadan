@@ -7,7 +7,7 @@ import { ecoImpactData, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 const statsGrid = [
-  { label: 'Eco Orders', value: ecoImpactData.ecoOrders.toString(), icon: Recycle, color: 'text-[#13ec13]', bgColor: 'bg-[#13ec13]/10', borderColor: 'border-[#13ec13]/20' },
+  { label: 'Eco Orders', value: ecoImpactData.ecoOrders.toString(), icon: Recycle, color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', borderColor: 'border-[#10E07A]/20' },
   { label: 'Amount Donated', value: formatNaira(ecoImpactData.amountDonated), icon: TrendingUp, color: 'text-[#FFD700]', bgColor: 'bg-[#FFD700]/10', borderColor: 'border-[#FFD700]/20' },
   { label: 'Trees Equivalent', value: ecoImpactData.treesEquivalent.toString(), icon: TreePine, color: 'text-green-400', bgColor: 'bg-green-400/10', borderColor: 'border-green-400/20' },
   { label: 'Plastic Avoided', value: ecoImpactData.plasticAvoided, icon: Recycle, color: 'text-cyan-400', bgColor: 'bg-cyan-400/10', borderColor: 'border-cyan-400/20' },
@@ -15,7 +15,7 @@ const statsGrid = [
 ];
 
 const comparisonBars = [
-  { label: 'CO₂ Saved', yours: 8.2, average: 3.5, unit: 'kg', color: 'bg-[#13ec13]' },
+  { label: 'CO₂ Saved', yours: 8.2, average: 3.5, unit: 'kg', color: 'bg-[#10E07A]' },
   { label: 'Eco Orders', yours: 15, average: 6, unit: '', color: 'bg-[#FFD700]' },
   { label: 'Trees Equivalent', yours: 2, average: 0.8, unit: '', color: 'bg-green-400' },
 ];
@@ -61,8 +61,8 @@ export default function EcoImpactReport() {
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#13ec13]/10 flex items-center justify-center border border-[#13ec13]/20">
-                    <Leaf className="w-4 h-4 text-[#13ec13]" />
+                  <div className="w-8 h-8 rounded-lg bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20">
+                    <Leaf className="w-4 h-4 text-[#10E07A]" />
                   </div>
                   <h2 className="text-white text-lg font-bold">Your Eco Impact</h2>
                 </div>
@@ -83,14 +83,14 @@ export default function EcoImpactReport() {
                 transition={{ delay: 0.1 }}
                 className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 text-center"
               >
-                <div className="absolute top-0 right-0 w-40 h-40 bg-[#13ec13]/10 blur-[80px]" />
+                <div className="absolute top-0 right-0 w-40 h-40 bg-[#10E07A]/10 blur-[80px]" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-green-600/5 blur-[60px]" />
                 <div className="relative z-10">
-                  <div className="w-16 h-16 mx-auto rounded-2xl bg-[#13ec13]/10 flex items-center justify-center border border-[#13ec13]/20 mb-4 green-glow">
-                    <TreePine className="w-8 h-8 text-[#13ec13]" />
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 mb-4 green-glow">
+                    <TreePine className="w-8 h-8 text-[#10E07A]" />
                   </div>
                   <p className="text-white/40 text-xs mb-1">Total CO₂ Saved This Ramadan</p>
-                  <h3 className="text-[#13ec13] text-4xl font-black">{ecoImpactData.co2Saved}</h3>
+                  <h3 className="text-[#10E07A] text-4xl font-black">{ecoImpactData.co2Saved}</h3>
                   <p className="text-white/30 text-xs mt-2">That&apos;s equivalent to charging 1,000 smartphones! 📱</p>
                 </div>
               </motion.div>
@@ -138,7 +138,7 @@ export default function EcoImpactReport() {
                         <div className="flex items-center justify-between mb-2">
                           <span className="text-white/60 text-xs font-semibold">{bar.label}</span>
                           <div className="flex items-center gap-3 text-[10px]">
-                            <span className="text-[#13ec13] font-bold">You: {bar.yours}{bar.unit}</span>
+                            <span className="text-[#10E07A] font-bold">You: {bar.yours}{bar.unit}</span>
                             <span className="text-white/30">Avg: {bar.average}{bar.unit}</span>
                           </div>
                         </div>
@@ -165,7 +165,7 @@ export default function EcoImpactReport() {
                   })}
                   <div className="flex items-center gap-4 pt-1 border-t border-white/5">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-3 h-2 bg-[#13ec13] rounded-full" />
+                      <div className="w-3 h-2 bg-[#10E07A] rounded-full" />
                       <span className="text-white/30 text-[10px]">You</span>
                     </div>
                     <div className="flex items-center gap-1.5">
@@ -193,8 +193,8 @@ export default function EcoImpactReport() {
                       transition={{ delay: 0.55 + i * 0.08 }}
                       className="bg-[#1A1D26] rounded-xl border border-white/5 p-4 flex items-start gap-3"
                     >
-                      <div className="w-8 h-8 rounded-lg bg-[#13ec13]/10 flex items-center justify-center border border-[#13ec13]/20 shrink-0 mt-0.5">
-                        <Lightbulb className="w-4 h-4 text-[#13ec13]" />
+                      <div className="w-8 h-8 rounded-lg bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0 mt-0.5">
+                        <Lightbulb className="w-4 h-4 text-[#10E07A]" />
                       </div>
                       <div>
                         <p className="text-white text-sm font-bold">{tip.title}</p>
@@ -214,7 +214,7 @@ export default function EcoImpactReport() {
               >
                 <button
                   onClick={handleShare}
-                  className="w-full py-4 rounded-2xl bg-[#13ec13] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow flex items-center justify-center gap-2 active:scale-[0.98]"
+                  className="w-full py-4 rounded-2xl bg-[#10E07A] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
                   <Share2 className="w-5 h-5" />
                   Share Your Impact

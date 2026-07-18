@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -7,6 +8,9 @@ const VALID_DOCUMENT_TYPES = ['national_id', 'voters_card', 'drivers_license', '
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAuth(request);
+    if (auth instanceof NextResponse) return auth;
+
     const body = await request.json();
     const { action } = body;
 

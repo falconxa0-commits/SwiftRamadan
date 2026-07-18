@@ -124,7 +124,7 @@ export default function VendorProfileTab() {
               <h2 className="text-white text-xl font-bold">{storeName}</h2>
               <span
                 className={`w-2.5 h-2.5 rounded-full ${
-                  vendorOnline ? 'bg-[#13ec13] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'
+                  vendorOnline ? 'bg-[#10E07A] shadow-[0_0_8px_rgba(19,236,19,0.5)]' : 'bg-white/30'
                 }`}
               />
             </div>
@@ -147,7 +147,7 @@ export default function VendorProfileTab() {
             transition={{ delay: 0.1 }}
             className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5"
           >
-            <p className="text-[#13ec13] text-lg font-black">{formatNaira(vendorBalance)}</p>
+            <p className="text-[#10E07A] text-lg font-black">{formatNaira(vendorBalance)}</p>
             <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Available</p>
           </motion.div>
           <motion.div

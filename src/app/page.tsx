@@ -24,6 +24,7 @@ import SafaAgentHub from '@/components/swift/SafaAgentHub';
 import AIAgentButton from '@/components/swift/AIAgentButton';
 import NotificationCenter from '@/components/swift/NotificationCenter';
 import ProductDetailModal from '@/components/swift/ProductDetailModal';
+import ModalErrorBoundary from '@/components/swift/ModalErrorBoundary';
 import SearchOverlay from '@/components/swift/SearchOverlay';
 import AuthScreen from '@/components/swift/AuthScreen';
 import OnboardingFlow from '@/components/swift/OnboardingFlow';
@@ -282,7 +283,9 @@ export default function Home() {
         <AuthScreen />
 
         {/* All modals still rendered underneath for smooth return */}
-        <AllModals />
+        <ModalErrorBoundary name="AllModals">
+          <AllModals />
+        </ModalErrorBoundary>
       </div>
     );
   }
@@ -569,11 +572,10 @@ export default function Home() {
       {/* ──── AI Agent Floating Button (all roles) ──── */}
       <AIAgentButton />
 
-      {/* ──── Product Detail Modal ──── */}
-      <ProductDetailModal />
-
       {/* ──── All App Modals ──── */}
-      <AllModals />
+      <ModalErrorBoundary name="AllModals">
+        <AllModals />
+      </ModalErrorBoundary>
 
       {/* ──── Bottom gradient fade ──── */}
       <div className="fixed bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-[#06070B] to-transparent pointer-events-none z-40" />
@@ -588,6 +590,7 @@ export default function Home() {
 function AllModals() {
   return (
     <>
+      <ProductDetailModal />
       <PrayerTimesModal />
       <SahurWakeUpModal />
       <GroupBuyModal />

@@ -41,7 +41,7 @@ function HourlyTooltip({ active, payload }: HourlyTooltipProps) {
   return (
     <div className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 shadow-xl">
       <p className="text-white text-xs font-bold">{d.hour}</p>
-      <p className={d.isIftar ? 'text-[#FFD700] text-sm font-black' : 'text-[#13ec13] text-sm font-black'}>
+      <p className={d.isIftar ? 'text-[#FFD700] text-sm font-black' : 'text-[#10E07A] text-sm font-black'}>
         {formatNaira(d.amount)}
       </p>
       {d.isIftar && <p className="text-[#FFD700]/60 text-[9px] font-bold">2x Iftar Bonus</p>}
@@ -95,6 +95,39 @@ export default function RiderEarningsHub() {
       animate="show"
       className="flex-1 overflow-y-auto pb-32 px-4 pt-4"
     >
+      {/* Onboarding Guidance — only when no earnings */}
+      {riderEarnings === 0 && data.today === 0 && (
+        <motion.div variants={staggerItem} className="mb-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#10E07A]/15 via-[#10E07A]/5 to-[#1A1D26] border border-[#10E07A]/20 p-5">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-[#10E07A]/5 blur-[60px]" />
+            <div className="relative z-10">
+              <h3 className="text-white text-lg font-black mb-1">Start Earning 🏍️</h3>
+              <p className="text-white/50 text-sm mb-4">Complete deliveries to earn money</p>
+              <div className="space-y-2.5">
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-[#10E07A]/20 flex items-center justify-center shrink-0">
+                    <span className="text-[#10E07A] text-xs font-black">1</span>
+                  </div>
+                  <span className="text-white/70 text-sm">Go online to receive delivery requests</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-[#10E07A]/20 flex items-center justify-center shrink-0">
+                    <span className="text-[#10E07A] text-xs font-black">2</span>
+                  </div>
+                  <span className="text-white/70 text-sm">Accept and complete deliveries</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-[#10E07A]/20 flex items-center justify-center shrink-0">
+                    <span className="text-[#10E07A] text-xs font-black">3</span>
+                  </div>
+                  <span className="text-white/70 text-sm">Get paid — earnings show up here</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* Hero Stats Card */}
       <motion.div variants={staggerItem} className="mb-6">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#FFD700]/20 via-[#FFD700]/5 to-[#1A1D26] border border-[#FFD700]/20 p-5 gold-glow">
@@ -107,8 +140,8 @@ export default function RiderEarningsHub() {
             </div>
             <p className="text-white text-4xl font-black mt-2">{formatNaira(data.today)}</p>
             <div className="flex items-center gap-2 mt-2">
-              <TrendingUp className="w-3.5 h-3.5 text-[#13ec13]" />
-              <span className="text-[#13ec13] text-xs font-bold">+18% from yesterday</span>
+              <TrendingUp className="w-3.5 h-3.5 text-[#10E07A]" />
+              <span className="text-[#10E07A] text-xs font-bold">+18% from yesterday</span>
               <span className="text-white/20 text-xs">•</span>
               <span className="text-white/40 text-xs">{data.completedDeliveries} deliveries</span>
             </div>
@@ -158,7 +191,7 @@ export default function RiderEarningsHub() {
           </div>
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#13ec13]/40" />
+              <span className="w-2 h-2 rounded-full bg-[#10E07A]/40" />
               <span className="text-white/30 text-[9px]">Regular</span>
             </div>
             <div className="flex items-center gap-1.5">
@@ -176,8 +209,8 @@ export default function RiderEarningsHub() {
           {/* Base Pay */}
           <div className="bg-[#1A1D26] rounded-xl p-4 border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center">
-                <DollarSign className="w-5 h-5 text-[#13ec13]" />
+              <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center">
+                <DollarSign className="w-5 h-5 text-[#10E07A]" />
               </div>
               <div>
                 <p className="text-white text-sm font-bold">Base Pay</p>
@@ -210,8 +243,8 @@ export default function RiderEarningsHub() {
           {/* Customer Tips */}
           <div className="bg-[#1A1D26] rounded-xl p-4 border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center">
-                <Star className="w-5 h-5 text-[#13ec13]" />
+              <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center">
+                <Star className="w-5 h-5 text-[#10E07A]" />
               </div>
               <div>
                 <p className="text-white text-sm font-bold">Customer Tips</p>
@@ -244,7 +277,7 @@ export default function RiderEarningsHub() {
                   cy="50"
                   r="40"
                   fill="none"
-                  stroke="#13ec13"
+                  stroke="#10E07A"
                   strokeWidth="6"
                   strokeLinecap="round"
                   strokeDasharray={circumference}
@@ -258,7 +291,7 @@ export default function RiderEarningsHub() {
               </div>
             </div>
             <p className="text-white/40 text-[10px] font-bold mt-2">On-Time Rate</p>
-            <span className="text-[#13ec13] text-[9px] font-bold">{perf.completionTrend}</span>
+            <span className="text-[#10E07A] text-[9px] font-bold">{perf.completionTrend}</span>
           </div>
 
           {/* Average Rating */}
@@ -268,7 +301,7 @@ export default function RiderEarningsHub() {
             </div>
             <p className="text-white text-2xl font-black">{perf.rating}</p>
             <p className="text-white/40 text-[10px] font-bold mt-0.5">Avg Rating</p>
-            <span className="text-[#13ec13] text-[9px] font-bold">{perf.ratingTrend}</span>
+            <span className="text-[#10E07A] text-[9px] font-bold">{perf.ratingTrend}</span>
           </div>
         </div>
       </motion.div>
@@ -310,8 +343,8 @@ export default function RiderEarningsHub() {
               variants={staggerItem}
               className="bg-[#1A1D26] rounded-xl p-3 border border-white/5 flex items-start gap-3"
             >
-              <div className="w-9 h-9 bg-[#13ec13]/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                <span className="material-symbols-outlined text-[#13ec13] text-base">{comp.icon}</span>
+              <div className="w-9 h-9 bg-[#10E07A]/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                <span className="material-symbols-outlined text-[#10E07A] text-base">{comp.icon}</span>
               </div>
               <div>
                 <p className="text-white text-xs font-bold">{comp.title}</p>
@@ -326,7 +359,7 @@ export default function RiderEarningsHub() {
       <motion.div variants={staggerItem} className="mb-4">
         <button
           onClick={handleCashOut}
-          className="w-full bg-[#13ec13] text-[#05070A] py-4 rounded-2xl font-black text-sm hover:bg-[#13ec13]/90 transition-colors flex items-center justify-center gap-2 green-glow"
+          className="w-full bg-[#10E07A] text-[#05070A] py-4 rounded-2xl font-black text-sm hover:bg-[#10E07A]/90 transition-colors flex items-center justify-center gap-2 green-glow"
         >
           <DollarSign className="w-5 h-5" />
           Cash Out {formatNaira(riderEarnings)}

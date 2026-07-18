@@ -71,8 +71,8 @@ export default function VendorStockControl() {
             {/* Summary Stats */}
             <div className="px-5 pt-4 pb-2">
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#13ec13]/5 border border-[#13ec13]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#13ec13] text-xl font-black">{availableCount}</p>
+                <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
+                  <p className="text-[#10E07A] text-xl font-black">{availableCount}</p>
                   <p className="text-white/40 text-[10px] font-bold uppercase">Available</p>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 text-center">
@@ -119,7 +119,7 @@ export default function VendorStockControl() {
                         <span className="text-white/30 text-xs">{item.category}</span>
                       </div>
                       <div className="flex items-center gap-1 mt-1">
-                        <TrendingUp className="w-3 h-3 text-[#13ec13]/50" />
+                        <TrendingUp className="w-3 h-3 text-[#10E07A]/50" />
                         <span className="text-white/30 text-[10px]">{item.orders} orders</span>
                       </div>
                     </div>
@@ -128,7 +128,7 @@ export default function VendorStockControl() {
                     <button
                       onClick={() => handleToggle(item.id)}
                       className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 shrink-0 ${
-                        item.available ? 'bg-[#13ec13]' : 'bg-white/10'
+                        item.available ? 'bg-[#10E07A]' : 'bg-white/10'
                       }`}
                     >
                       <motion.div
@@ -145,7 +145,7 @@ export default function VendorStockControl() {
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => setItems(prev => prev.map(item => ({ ...item, available: true })))}
-                  className="flex-1 py-3 rounded-xl bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] text-sm font-bold hover:bg-[#13ec13]/20 transition-colors"
+                  className="flex-1 py-3 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-sm font-bold hover:bg-[#10E07A]/20 transition-colors"
                 >
                   Enable All
                 </button>

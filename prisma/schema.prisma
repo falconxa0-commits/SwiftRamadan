@@ -46,6 +46,9 @@ model User {
   vendorStatus     String   @default("active")  // active, suspended, pending
   riderStatus      String   @default("active")  // active, suspended, pending
 
+  // Referral
+  referralCode     String   @default("")  // e.g. SWIFT-A3X9K2
+
   // State
   riderOnline       Boolean  @default(false)
   vendorOnline      Boolean  @default(false)
@@ -111,7 +114,7 @@ model Order {
 
 model CartItem {
   id        String   @id @default(cuid())
-  productId Int
+  productId String
   name      String
   price     Int
   image     String   @default("")

@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, chatMessageSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // Returns true if the user exists (or senderId is null/undefined). Returns
 // false if a senderId was provided but no matching User record was found —
@@ -21,6 +22,9 @@ export async function GET(req: NextRequest) {
   // Rate limit: 100 requests per minute per IP
   const rateLimited = await checkRateLimit(req, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const url = new URL(req.url);
@@ -51,6 +55,9 @@ export async function POST(req: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
   const rateLimited = await checkRateLimit(req, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await req.json().catch(() => ({}));

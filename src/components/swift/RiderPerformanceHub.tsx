@@ -66,13 +66,13 @@ export default function RiderPerformanceHub() {
                   className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Target className="w-4 h-4 text-[#13ec13]" />
+                    <Target className="w-4 h-4 text-[#10E07A]" />
                     <span className="text-white/40 text-[10px] font-bold uppercase">Completion</span>
                   </div>
-                  <p className="text-[#13ec13] text-2xl font-black">{m.completionRate}%</p>
+                  <p className="text-[#10E07A] text-2xl font-black">{m.completionRate}%</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3 text-[#13ec13]" />
-                    <span className="text-[#13ec13] text-[10px] font-bold">{m.completionTrend}</span>
+                    <TrendingUp className="w-3 h-3 text-[#10E07A]" />
+                    <span className="text-[#10E07A] text-[10px] font-bold">{m.completionTrend}</span>
                   </div>
                 </motion.div>
 

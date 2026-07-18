@@ -103,7 +103,7 @@ export default function RewardsModal() {
                 className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 mt-4"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#FFD700]/10 blur-[60px]" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#13ec13]/10 blur-[40px]" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#10E07A]/10 blur-[40px]" />
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
                     <div>
@@ -141,7 +141,7 @@ export default function RewardsModal() {
                     <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
                       {currentTierData.benefits.slice(0, 3).map((b, i) => (
                         <div key={i} className="flex items-center gap-2">
-                          <Zap className="w-3 h-3 text-[#13ec13] shrink-0" />
+                          <Zap className="w-3 h-3 text-[#10E07A] shrink-0" />
                           <span className="text-white/60 text-xs">{b}</span>
                         </div>
                       ))}
@@ -157,8 +157,8 @@ export default function RewardsModal() {
                 transition={{ delay: 0.2 }}
                 className="mt-4"
               >
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#13ec13]/20 p-5">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#13ec13]/10 blur-[40px]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#10E07A]/20 p-5">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#10E07A]/10 blur-[40px]" />
                   <div className="relative z-10 flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -173,7 +173,7 @@ export default function RewardsModal() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98] ${
                         dailyClaimed
                           ? 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
-                          : 'bg-[#13ec13] text-[#05070A] hover:bg-[#13ec13]/90'
+                          : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
                       }`}
                     >
                       {dailyClaimed ? 'Claimed ✓' : 'Claim 50 pts'}
@@ -185,7 +185,7 @@ export default function RewardsModal() {
                       <div
                         key={i}
                         className={`flex-1 h-1.5 rounded-full transition-all ${
-                          i < dailyStreak ? 'bg-[#13ec13]' : 'bg-white/10'
+                          i < dailyStreak ? 'bg-[#10E07A]' : 'bg-white/10'
                         }`}
                       />
                     ))}
@@ -266,7 +266,7 @@ export default function RewardsModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#13ec13]" />
+                  <Zap className="w-4 h-4 text-[#10E07A]" />
                   How to Earn Points
                 </h4>
                 <div className="space-y-2">
@@ -278,8 +278,8 @@ export default function RewardsModal() {
                       transition={{ delay: 0.35 + i * 0.05 }}
                       className="flex items-center gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3"
                     >
-                      <div className="w-9 h-9 rounded-lg bg-[#13ec13]/10 flex items-center justify-center border border-[#13ec13]/20 shrink-0">
-                        <span className="material-symbols-outlined text-[#13ec13] text-lg">{activity.icon}</span>
+                      <div className="w-9 h-9 rounded-lg bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
+                        <span className="material-symbols-outlined text-[#10E07A] text-lg">{activity.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-bold truncate">{activity.activity}</p>
@@ -377,7 +377,7 @@ export default function RewardsModal() {
                         onClick={() => handleRedeem(reward)}
                         className={`bg-[#1A1D26] rounded-2xl p-4 border text-left transition-all ${
                           canAfford
-                            ? 'border-[#13ec13]/20 hover:border-[#13ec13]/40 active:scale-[0.98]'
+                            ? 'border-[#10E07A]/20 hover:border-[#10E07A]/40 active:scale-[0.98]'
                             : 'border-white/5 opacity-60'
                         }`}
                       >

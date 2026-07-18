@@ -364,6 +364,9 @@ export default function VendorDashboard() {
     setLoading(true);
     try {
       const res = await fetch(`/api/vendor?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`);
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const json = await res.json();
       if (json.success && json.data) {
         setData(json.data);
@@ -393,6 +396,9 @@ export default function VendorDashboard() {
       const res = await fetch(
         `/api/vendor/orders?email=${encodeURIComponent(userEmail || 'sani@swiftramadan.app')}`,
       );
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const json = await res.json();
       if (json.success && Array.isArray(json.orders)) {
         setAllOrders(json.orders);
@@ -415,6 +421,9 @@ export default function VendorDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId: order.id, action: 'accept' }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const json = await res.json();
       if (json.success) {
         setHiddenIds((s) => new Set(s).add(order.id));
@@ -456,6 +465,9 @@ export default function VendorDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId: order.id, action: 'reject' }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const json = await res.json();
       if (json.success) {
         setHiddenIds((s) => new Set(s).add(order.id));
@@ -497,6 +509,9 @@ export default function VendorDashboard() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, action: 'ready' }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const json = await res.json();
       if (json.success) {
         setReadyIds((s) => new Set(s).add(orderId));
@@ -538,11 +553,14 @@ export default function VendorDashboard() {
         : 'You will stop receiving new orders',
     });
     try {
-      await fetch('/api/vendor', {
+      const toggleRes = await fetch('/api/vendor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'toggle-online', email: userEmail, online: next }),
       });
+      if (!toggleRes.ok) {
+        throw new Error(`API error: ${toggleRes.status}`);
+      }
     } catch (err) {
       // silently handle
     }
@@ -845,7 +863,7 @@ export default function VendorDashboard() {
                     {/* Items */}
                     <div className="space-y-1 mb-3 max-h-32 overflow-y-auto custom-scrollbar">
                       {order.items.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between">
+                        <div key={`${item.name}-${idx}`} className="flex items-center justify-between">
                           <span className="text-white/50 text-xs">
                             {item.qty}x {item.name}
                           </span>
@@ -957,7 +975,7 @@ export default function VendorDashboard() {
 
                   <div className="space-y-1 mb-3">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
+                      <div key={`${item.name}-${idx}`} className="flex items-center justify-between">
                         <span className="text-white/50 text-xs">
                           {item.qty}x {item.name}
                         </span>
@@ -1050,7 +1068,7 @@ export default function VendorDashboard() {
 
                   <div className="space-y-1 mb-3">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center justify-between">
+                      <div key={`${item.name}-${idx}`} className="flex items-center justify-between">
                         <span className="text-white/50 text-xs">
                           {item.qty}x {item.name}
                         </span>

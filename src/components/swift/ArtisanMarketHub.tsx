@@ -119,7 +119,7 @@ export default function ArtisanMarketHub() {
                   <h3 className="text-white font-bold text-sm">Featured Artisans</h3>
                   <button
                     onClick={() => toast({ title: 'All Artisans', description: 'Browse all artisans' })}
-                    className="text-[#13ec13] text-xs font-bold"
+                    className="text-[#10E07A] text-xs font-bold"
                   >
                     See All
                   </button>
@@ -163,7 +163,7 @@ export default function ArtisanMarketHub() {
 
                         <button
                           onClick={() => toast({ title: `Visiting ${artisan.name} 🏪`, description: 'Opening artisan shop' })}
-                          className="w-full mt-2 py-2.5 rounded-xl bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#13ec13]/20 transition-colors active:scale-[0.98]"
+                          className="w-full mt-2 py-2.5 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#10E07A]/20 transition-colors active:scale-[0.98]"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                           Visit Shop

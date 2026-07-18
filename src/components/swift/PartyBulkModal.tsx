@@ -160,7 +160,7 @@ export default function PartyBulkModal() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                     activeCategory === cat.id
-                      ? 'bg-[#13ec13] text-[#05070A]'
+                      ? 'bg-[#10E07A] text-[#05070A]'
                       : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:text-white hover:border-white/20'
                   }`}
                 >
@@ -220,10 +220,10 @@ export default function PartyBulkModal() {
                         <p className="text-white/40 text-[11px] line-clamp-1">{item.description}</p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[#13ec13] font-black text-sm">{formatNaira(item.price)}</span>
+                        <span className="text-[#10E07A] font-black text-sm">{formatNaira(item.price)}</span>
                         <button
                           onClick={() => handleStartOrder(item.name, item.price, item.image, item.id)}
-                          className="bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#13ec13]/20 transition-colors"
+                          className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors"
                         >
                           Start Order
                         </button>
@@ -239,9 +239,9 @@ export default function PartyBulkModal() {
           {shouldShowSection('grains') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#13ec13] text-xl">grain</span>
+                <span className="material-symbols-outlined text-[#10E07A] text-xl">grain</span>
                 <h3 className="text-white font-bold text-lg">Grains & Staples</h3>
-                <span className="text-[#13ec13]/60 text-xs font-bold ml-auto">Bulk pricing</span>
+                <span className="text-[#10E07A]/60 text-xs font-bold ml-auto">Bulk pricing</span>
               </div>
               <div className="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
                 {grainItems.map((item, index) => (
@@ -259,12 +259,12 @@ export default function PartyBulkModal() {
                     <div className="p-3">
                       <p className="text-white font-bold text-xs mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[#13ec13] font-black text-xs">{formatNaira(item.bulkPrice)}</span>
+                        <span className="text-[#10E07A] font-black text-xs">{formatNaira(item.bulkPrice)}</span>
                         <span className="text-white/30 text-[10px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
-                        className="w-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#13ec13]/20 transition-colors"
+                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
                       >
                         Add to Cart
                       </button>
@@ -298,12 +298,12 @@ export default function PartyBulkModal() {
                     <div className="p-2.5">
                       <p className="text-white font-bold text-[11px] mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-1.5 mb-2">
-                        <span className="text-[#13ec13] font-black text-[11px]">{formatNaira(item.bulkPrice)}</span>
+                        <span className="text-[#10E07A] font-black text-[11px]">{formatNaira(item.bulkPrice)}</span>
                         <span className="text-white/30 text-[9px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
-                        className="w-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#13ec13]/20 transition-colors"
+                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
                       >
                         Add to Cart
                       </button>
@@ -340,10 +340,10 @@ export default function PartyBulkModal() {
                     </div>
                     <div className="p-3">
                       <p className="text-white font-bold text-xs mb-1 line-clamp-1">{item.name}</p>
-                      <span className="text-[#13ec13] font-black text-sm block mb-2">{formatNaira(item.price)}</span>
+                      <span className="text-[#10E07A] font-black text-sm block mb-2">{formatNaira(item.price)}</span>
                       <button
                         onClick={() => handleStartOrder(item.name, item.price, item.image, item.id)}
-                        className="w-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#13ec13]/20 transition-colors"
+                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
                       >
                         Start Order
                       </button>
@@ -378,10 +378,10 @@ export default function PartyBulkModal() {
                       />
                       <div className="p-2">
                         <p className="text-white font-bold text-[10px] mb-0.5 line-clamp-1">{item.name}</p>
-                        <span className="text-[#13ec13] text-[10px] font-bold">{formatNaira(item.price)}</span>
+                        <span className="text-[#10E07A] text-[10px] font-bold">{formatNaira(item.price)}</span>
                       </div>
                       {qty > 0 && (
-                        <div className="absolute top-1.5 right-1.5 bg-[#13ec13] text-[#05070A] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
+                        <div className="absolute top-1.5 right-1.5 bg-[#10E07A] text-[#05070A] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
                           {qty}
                         </div>
                       )}
@@ -397,7 +397,7 @@ export default function PartyBulkModal() {
                         <div className="w-px bg-white/5" />
                         <button
                           onClick={() => addToCrate(item)}
-                          className="flex-1 py-1.5 flex items-center justify-center text-[#13ec13] hover:bg-[#13ec13]/10 transition-colors"
+                          className="flex-1 py-1.5 flex items-center justify-center text-[#10E07A] hover:bg-[#10E07A]/10 transition-colors"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -412,11 +412,11 @@ export default function PartyBulkModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-[#13ec13]/20 p-4 mb-4"
+                  className="bg-[#1A1D26] rounded-2xl border border-[#10E07A]/20 p-4 mb-4"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-white/60 text-xs font-medium">Your Crate ({crateItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
-                    <span className="text-[#13ec13] font-black text-lg">{formatNaira(crateTotal)}</span>
+                    <span className="text-[#10E07A] font-black text-lg">{formatNaira(crateTotal)}</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {crateItems.map(item => (
@@ -427,7 +427,7 @@ export default function PartyBulkModal() {
                   </div>
                   <button
                     onClick={handleAddCrateToCart}
-                    className="w-full bg-[#13ec13] text-[#05070A] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#13ec13]/90 active:scale-[0.98] transition-all"
+                    className="w-full bg-[#10E07A] text-[#05070A] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add Crate to Cart

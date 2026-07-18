@@ -121,7 +121,7 @@ export default function SahurWakeUpModal() {
                   </div>
                   <button
                     onClick={() => setSahurAlarmEnabled(!sahurAlarmEnabled)}
-                    className={`relative w-14 h-7 rounded-full transition-colors ${sahurAlarmEnabled ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+                    className={`relative w-14 h-7 rounded-full transition-colors ${sahurAlarmEnabled ? 'bg-[#10E07A]' : 'bg-white/10'}`}
                     aria-label={sahurAlarmEnabled ? 'Disable alarm' : 'Enable alarm'}
                   >
                     <motion.div
@@ -200,17 +200,17 @@ export default function SahurWakeUpModal() {
                     <button
                       key={option.id}
                       onClick={() => setSelectedSound(option.id)}
-                      className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors text-left ${selectedSound === option.id ? 'bg-[#13ec13]/5 border-[#13ec13]/30' : 'bg-[#1A1D26] border-white/5 hover:border-white/10'}`}
+                      className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors text-left ${selectedSound === option.id ? 'bg-[#10E07A]/5 border-[#10E07A]/30' : 'bg-[#1A1D26] border-white/5 hover:border-white/10'}`}
                     >
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedSound === option.id ? 'bg-[#13ec13]/20' : 'bg-white/5'}`}>
-                        <span className={`material-symbols-outlined text-lg ${selectedSound === option.id ? 'text-[#13ec13]' : 'text-white/40'}`}>{option.icon}</span>
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedSound === option.id ? 'bg-[#10E07A]/20' : 'bg-white/5'}`}>
+                        <span className={`material-symbols-outlined text-lg ${selectedSound === option.id ? 'text-[#10E07A]' : 'text-white/40'}`}>{option.icon}</span>
                       </div>
                       <div className="flex-1">
-                        <p className={`font-bold text-sm ${selectedSound === option.id ? 'text-[#13ec13]' : 'text-white'}`}>{option.name}</p>
+                        <p className={`font-bold text-sm ${selectedSound === option.id ? 'text-[#10E07A]' : 'text-white'}`}>{option.name}</p>
                         <p className="text-white/40 text-xs">{option.desc}</p>
                       </div>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedSound === option.id ? 'border-[#13ec13]' : 'border-white/20'}`}>
-                        {selectedSound === option.id && <div className="w-2.5 h-2.5 rounded-full bg-[#13ec13]" />}
+                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedSound === option.id ? 'border-[#10E07A]' : 'border-white/20'}`}>
+                        {selectedSound === option.id && <div className="w-2.5 h-2.5 rounded-full bg-[#10E07A]" />}
                       </div>
                     </button>
                   ))}
@@ -236,13 +236,13 @@ export default function SahurWakeUpModal() {
                         <p className="text-white font-bold text-sm truncate">{meal.name}</p>
                         <p className="text-white/40 text-xs truncate">{meal.description}</p>
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[#13ec13] font-black text-sm">{formatNaira(meal.price)}</span>
+                          <span className="text-[#10E07A] font-black text-sm">{formatNaira(meal.price)}</span>
                           <button
                             onClick={() => {
                               addToCart({ id: meal.id, name: meal.name, price: meal.price, image: meal.image });
                               toast({ title: 'Added! 🛒', description: `${meal.name} added to cart for Sahur` });
                             }}
-                            className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] text-xs font-bold hover:bg-[#13ec13]/20 transition-colors"
+                            className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-bold hover:bg-[#10E07A]/20 transition-colors"
                           >
                             <ShoppingCart className="w-3 h-3" />
                             Add
@@ -260,13 +260,13 @@ export default function SahurWakeUpModal() {
                         <p className="text-white font-bold text-sm truncate">{trendingMeals[2].name}</p>
                         <p className="text-white/40 text-xs truncate">{trendingMeals[2].description}</p>
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[#13ec13] font-black text-sm">{formatNaira(trendingMeals[2].price)}</span>
+                          <span className="text-[#10E07A] font-black text-sm">{formatNaira(trendingMeals[2].price)}</span>
                           <button
                             onClick={() => {
                               addToCart({ id: trendingMeals[2].id, name: trendingMeals[2].name, price: trendingMeals[2].price, image: trendingMeals[2].image });
                               toast({ title: 'Added! 🛒', description: `${trendingMeals[2].name} added to cart for Sahur` });
                             }}
-                            className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#13ec13]/10 border border-[#13ec13]/20 text-[#13ec13] text-xs font-bold hover:bg-[#13ec13]/20 transition-colors"
+                            className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-bold hover:bg-[#10E07A]/20 transition-colors"
                           >
                             <ShoppingCart className="w-3 h-3" />
                             Add
@@ -307,7 +307,7 @@ export default function SahurWakeUpModal() {
               >
                 <button
                   onClick={handleSave}
-                  className="w-full py-4 bg-[#13ec13] text-[#05070A] font-bold text-base rounded-xl hover:bg-[#11d411] transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[#10E07A] text-[#05070A] font-bold text-base rounded-xl hover:bg-[#11d411] transition-colors flex items-center justify-center gap-2"
                 >
                   <AlarmClock className="w-5 h-5" />
                   Save Sahur Alarm

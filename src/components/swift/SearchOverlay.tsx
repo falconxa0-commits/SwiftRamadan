@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Search, X, Clock, TrendingUp } from 'lucide-react';
+import { Search, X, Clock, TrendingUp, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
 import { formatNaira, popularSearches } from '@/lib/data';
@@ -36,7 +36,7 @@ export default function SearchOverlay() {
 
   useEffect(() => {
     if (showSearch) {
-      setTimeout(() => inputRef.current?.focus(), 100);
+      setTimeout(() => inputRef.current?.focus(), 300);
     } else {
       setQuery('');
       setResults({ products: [], categories: [], retailers: [] });
@@ -159,8 +159,8 @@ export default function SearchOverlay() {
           {/* Search Header */}
           <div className="p-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="flex-1 flex items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#13ec13]/30 transition-all">
-                <Search className="w-5 h-5 text-[#13ec13]/70 ml-4 shrink-0" />
+              <div className="flex-1 flex items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#10E07A]/30 transition-all">
+                <Search className="w-5 h-5 text-[#10E07A]/70 ml-4 shrink-0" />
                 <input
                   ref={inputRef}
                   value={query}
@@ -178,6 +178,13 @@ export default function SearchOverlay() {
                 )}
               </div>
               <button
+                onClick={() => { setShowSearch(false); setActiveModal('voice'); }}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+                aria-label="Voice search"
+              >
+                <Mic className="w-5 h-5 text-[#10E07A]" />
+              </button>
+              <button
                 onClick={() => setShowSearch(false)}
                 className="text-white/60 text-sm font-bold"
               >
@@ -191,7 +198,7 @@ export default function SearchOverlay() {
             {/* Loading */}
             {isSearching && (
               <div className="flex items-center gap-2 py-4">
-                <div className="w-4 h-4 border-2 border-[#13ec13]/30 border-t-[#13ec13] rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
                 <span className="text-white/40 text-sm">Searching...</span>
               </div>
             )}
@@ -225,7 +232,7 @@ export default function SearchOverlay() {
                             <p className="text-white/40 text-xs">{product.category}</p>
                           </div>
                           {product.price && (
-                            <span className="text-[#13ec13] font-bold text-sm shrink-0">{formatNaira(product.price)}</span>
+                            <span className="text-[#10E07A] font-bold text-sm shrink-0">{formatNaira(product.price)}</span>
                           )}
                         </button>
                       ))}

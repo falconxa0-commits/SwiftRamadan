@@ -100,10 +100,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Coerce productId to string for DB storage
+    const productIdStr = String(productId);
+
     // Check for existing item by productId + session/user
     const existing = await db.cartItem.findFirst({
       where: {
-        productId: typeof productId === 'number' ? productId : Number(productId),
+        productId: productIdStr,
         ...(userId ? { userId } : { sessionId }),
       },
     });
@@ -116,7 +119,7 @@ export async function POST(request: NextRequest) {
     } else {
       await db.cartItem.create({
         data: {
-          productId: typeof productId === 'number' ? productId : Number(productId),
+          productId: productIdStr,
           name,
           price,
           image: image || '',

@@ -282,10 +282,10 @@ export default function MealPlannerModal() {
           >
             {/* ── Sticky header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#13ec13] via-[#FFD700] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#FFD700] to-[#8b5cf6]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#05070A]/95 backdrop-blur">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-10 rounded-xl bg-gradient-to-br from-[#13ec13] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                  <div className="size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
                     <CalendarDays className="w-5 h-5 text-[#05070A]" />
                   </div>
                   <div className="min-w-0">
@@ -325,14 +325,14 @@ export default function MealPlannerModal() {
                         onClick={() => handleSelectDay(d.key)}
                         className={`relative shrink-0 w-[68px] py-3 rounded-2xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'bg-[#1A1D26] border-[#13ec13]/60 shadow-[0_0_0_1px_rgba(19,236,19,0.25)]'
+                            ? 'bg-[#1A1D26] border-[#10E07A]/60 shadow-[0_0_0_1px_rgba(19,236,19,0.25)]'
                             : 'bg-[#0F1117] border-white/5 hover:border-white/15'
                         }`}
                         aria-pressed={isSelected}
                       >
                         <span
                           className={`text-[10px] uppercase tracking-wider font-bold ${
-                            d.isToday ? 'text-[#13ec13]' : 'text-white/40'
+                            d.isToday ? 'text-[#10E07A]' : 'text-white/40'
                           }`}
                         >
                           {d.isToday ? 'Today' : d.dayName}
@@ -348,13 +348,13 @@ export default function MealPlannerModal() {
                           className={`h-1.5 w-1.5 rounded-full transition-all ${
                             hasMeals
                               ? d.isToday
-                                ? 'bg-[#13ec13]'
+                                ? 'bg-[#10E07A]'
                                 : 'bg-[#FFD700]'
                               : 'bg-transparent'
                           }`}
                         />
                         {d.isToday && !isSelected && (
-                          <span className="absolute top-1 right-1 size-1.5 rounded-full bg-[#13ec13]/80" />
+                          <span className="absolute top-1 right-1 size-1.5 rounded-full bg-[#10E07A]/80" />
                         )}
                       </button>
                     );
@@ -387,7 +387,7 @@ export default function MealPlannerModal() {
                 <MealSection
                   slot="iftar"
                   meal={selectedDayPlan.iftar}
-                  accentColor="#13ec13"
+                  accentColor="#10E07A"
                   accentSoft="rgba(19,236,19,0.12)"
                   icon={<Moon className="w-4 h-4" />}
                   label="Iftar"
@@ -414,7 +414,7 @@ export default function MealPlannerModal() {
               {isWeekEmpty ? (
                 <div className="px-4 mt-6">
                   <div className="rounded-3xl border border-dashed border-white/10 bg-[#0F1117] p-8 flex flex-col items-center text-center">
-                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[#13ec13]/15 border border-[#8b5cf6]/30 flex items-center justify-center mb-4">
+                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[#10E07A]/15 border border-[#8b5cf6]/30 flex items-center justify-center mb-4">
                       <CalendarPlus className="w-7 h-7 text-[#8b5cf6]" />
                     </div>
                     <h4 className="text-white font-black text-lg">
@@ -426,7 +426,7 @@ export default function MealPlannerModal() {
                     </p>
                     <button
                       onClick={jumpToToday}
-                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#13ec13] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#10E07A] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <CalendarDays className="w-4 h-4" />
                       Jump to Today
@@ -445,12 +445,12 @@ export default function MealPlannerModal() {
                     </div>
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <SummaryStat label="Meals" value={summary.total} color="#FFFFFF" />
-                      <SummaryStat label="Iftar" value={summary.iftar} color="#13ec13" />
+                      <SummaryStat label="Iftar" value={summary.iftar} color="#10E07A" />
                       <SummaryStat label="Sahur" value={summary.sahur} color="#FFD700" />
                     </div>
                     <button
                       onClick={handleAddAllToCart}
-                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#13ec13] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#10E07A] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add All Ingredients to Cart
@@ -682,7 +682,7 @@ function AddMealSheet({
   onClose,
   onAdd,
 }: AddMealSheetProps) {
-  const accentColor = slot === 'iftar' ? '#13ec13' : '#FFD700';
+  const accentColor = slot === 'iftar' ? '#10E07A' : '#FFD700';
   const accentSoft = slot === 'iftar' ? 'rgba(19,236,19,0.12)' : 'rgba(255,215,0,0.12)';
 
   const adjustServings = (delta: number) => {

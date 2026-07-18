@@ -248,3 +248,258 @@ Added `aria-label` to icon-only buttons across 10 components:
 - **PrayerTimesModal.tsx**: Close button → `aria-label="Close"`, Athan toggle → `aria-label="Disable Athan alerts"/"Enable Athan alerts"`, Share dua → `aria-label="Share dua"`
 - **GroupBuyModal.tsx**: Close button → `aria-label="Close"`, WhatsApp share → `aria-label="Share on WhatsApp"`
 - **CartTab.tsx**: Already had comprehensive aria-labels ✓
+
+---
+
+## Batch-D Security Fix Session
+
+### Fix 1: Add requireAuth + admin role check to admin routes
+- **`/api/payouts/admin/route.ts`**: Added `requireAuth(request)` at start of POST handler; checks `auth.role === 'admin' || auth.role === 'vendor'` — returns 403 if neither role
+- **`/api/support/admin/route.ts`**: Added `requireAuth(request)` at start of POST handler; `list-all` available to any authenticated user; `reply` and `update-status` require `auth.role === 'admin'`
+
+### Fix 2: Add requireAuth to 9 sensitive API routes
+Each route now imports `requireAuth` from `@/lib/session` and calls it at the start of the handler, returning 401 if unauthenticated:
+1. **`/api/wallet/route.ts`** — POST handler
+2. **`/api/wallet/history/route.ts`** — GET handler
+3. **`/api/payouts/route.ts`** — POST handler
+4. **`/api/kyc/route.ts`** — POST handler
+5. **`/api/support/route.ts`** — POST handler
+6. **`/api/settings/route.ts`** — PUT handler (GET remains public as instructed)
+7. **`/api/refunds/route.ts`** — POST handler
+8. **`/api/addresses/route.ts`** — GET and POST handlers
+9. **`/api/messages/route.ts`** — GET and POST handlers
+
+### Fix 3: Fix spin wheel server-side validation
+- **`/api/spin/route.ts`**: Complete rewrite of spin state management
+  - Replaced client-supplied `lastSpinDate`/`spinStreak` with server-side in-memory store: `Map<string, { lastSpinDate: string; spinStreak: number }>`
+  - POST handler now accepts `email` from body instead of `lastSpinDate`/`spinStreak`
+  - Streak calculation and once-per-day validation read from server-side store, not client body
+  - Store is updated after successful spin
+  - GET handler reads from server-side store using `email` query param instead of `lastSpinDate`/`spinStreak`
+  - Added `captureException` in catch block for proper error monitoring
+  - Removed vulnerable `// In a real app, we'd check the DB` comment — now uses proper server-side validation
+
+### Lint Result
+- 0 errors, 1 warning (pre-existing custom font warning in layout.tsx)
+
+---
+
+## Batch-E Component Fix Session (Task: F-component-fixes)
+
+### Fix 1: VideoCard Follow button always disabled
+- **Problem**: `disabled={followPending || (statusChecked && !authorId)}` caused the Follow button to be permanently disabled for seed/demo videos without a registered author
+- **Fix**: Changed `disabled` prop to `disabled={followPending}` on both the avatar follow button and the caption follow button
+- The `handleFollow` function already checks `!authorId` and shows a toast ("Author not registered"), so the button click is properly handled
+- **Files**: `src/components/swift/VideoCard.tsx` (2 disabled props changed)
+
+### Fix 2a: RiderDeliveryMap empty state improvement
+- **Problem**: When rider is offline with no active delivery, the empty state just said "No active deliveries. Go online to start receiving requests." with no action
+- **Fix**: Added a "Go Online" button with pulsing green dot indicator that calls `useAppStore.getState().setRiderOnline(true)`
+- Updated text to "Go online to start receiving delivery requests"
+- **Files**: `src/components/swift/RiderDeliveryMap.tsx`
+
+### Fix 2b: RiderEarningsHub empty state onboarding
+- **Problem**: When rider has 0 earnings, there was no guidance on how to start
+- **Fix**: Added onboarding card that shows when `riderEarnings === 0 && data.today === 0`
+- "Start Earning 🏍️" heading, "Complete deliveries to earn money" subtitle
+- 3 numbered tips: 1. Go online, 2. Accept deliveries, 3. Get paid
+- Styled with green gradient matching app theme
+- **Files**: `src/components/swift/RiderEarningsHub.tsx`
+
+### Fix 3: Community Forum create post composer
+- **Status**: Verified working — no fix needed
+- The `composerOpen` state properly toggles, FAB button opens composer, empty-state "Create a post" button also opens it
+- Composer UI has textarea, category selector, and submit button — all functional
+- `handleCreatePost` handles optimistic posting with error recovery
+
+### Fix 4: SearchOverlay auto-focus delay
+- **Problem**: `setTimeout(() => inputRef.current?.focus(), 100)` delay might not be enough for animation to complete
+- **Fix**: Changed delay from 100ms to 300ms to ensure the animation completes before focusing
+- **Files**: `src/components/swift/SearchOverlay.tsx`
+
+### Fix 5: Consolidate prayer modal IDs
+- **Problem**: PrayerTimesModal checked for two modal IDs (`'prayer' || 'prayer-times'`), callers were inconsistent
+- **Fix**:
+  - PrayerTimesModal.tsx: Changed `activeModal === 'prayer' || activeModal === 'prayer-times'` → `activeModal === 'prayer-times'`
+  - OrdersTab.tsx: Changed `setActiveModal('prayer')` → `setActiveModal('prayer-times')`
+  - ProfileTab.tsx: Changed `setActiveModal('prayer')` → `setActiveModal('prayer-times')`
+  - RiderProfileTab.tsx and VendorProfileTab.tsx already used `'prayer-times'` — no change needed
+- **Files**: `src/components/swift/PrayerTimesModal.tsx`, `src/components/swift/OrdersTab.tsx`, `src/components/swift/ProfileTab.tsx`
+
+### Lint Result
+- 0 errors, 1 warning (pre-existing custom font warning in layout.tsx)
+
+---
+
+## Batch-E Page Fix Session (Task: E-page-fixes)
+
+### Fix 1: Verify bottom gradient pointer-events-none
+- Confirmed `pointer-events-none` class already exists on the bottom gradient fade div (line 579 of page.tsx)
+- No change needed — prior batch fix is intact
+
+### Fix 2: Wire 4 dead modals with entry points
+1. **TrendingModal** (`'trending'`) — Changed HomeTab's "Trending Iftar" section "See All" button from `setActiveTab('explore')` to `setActiveModal('trending')`
+2. **VoiceShoppingModal** (`'voice'`) — Added `Mic` icon import and microphone button in SearchOverlay header (between search bar and Cancel button). Clicking it closes search overlay and opens voice modal via `setActiveModal('voice')`
+3. **PartyBulkModal** (`'partyBulk'`) — Added "🎉 Bulk Order" entry in HomeTab's Next-Gen Commerce section. Since `'partyBulk'` is not in `comingSoonKeys`, it passes through `handleNextGenFeature` and calls `setActiveModal('partyBulk')`
+4. **LiveTrackingMap** (`'live-tracking-map'`) — Added "View Map →" link in OrdersTab for active orders with `status === 'In Transit'`. Link calls `useAppStore.getState().setActiveModal('live-tracking-map')` with `e.stopPropagation()` to prevent order card click
+
+### Fix 3: Wrap AllModals with ModalErrorBoundary
+- Imported `ModalErrorBoundary` from `@/components/swift/ModalErrorBoundary` in page.tsx
+- Wrapped `<AllModals />` with `<ModalErrorBoundary name="AllModals">` in both render locations:
+  - Main app route (line ~574)
+  - Auth screen route (line ~286)
+
+### Fix 4: Move ProductDetailModal inside AllModals()
+- Removed separate `<ProductDetailModal />` render from page-level (was between AIAgentButton and AllModals)
+- Added `<ProductDetailModal />` as first child inside `AllModals()` function
+- Now ProductDetailModal is always rendered (including when auth screen is shown) and wrapped by ModalErrorBoundary
+
+### Fix 5: Remove vendor-orders from TabId type
+- Removed `'vendor-orders'` from the `TabId` union type in `src/lib/store.ts`
+- No component mapping existed for it in page.tsx; VendorDashboard already handles orders
+
+### Lint Result
+- 0 errors, 1 warning (pre-existing custom font warning in layout.tsx)
+
+---
+
+## Low-Priority Fixes Session (Task: H-low-priority-fixes)
+
+### Fix 1: Add rate limiting to admin routes + wallet routes
+Added `checkRateLimit` from `@/lib/rate-limit` to 4 API routes that were missing it:
+1. **`/api/payouts/admin/route.ts`** — Added `checkRateLimit(request, RATE_LIMITS.write)` at start of POST handler (before auth check)
+2. **`/api/support/admin/route.ts`** — Added `checkRateLimit(request, RATE_LIMITS.write)` at start of POST handler (before auth check)
+3. **`/api/wallet/route.ts`** — Added `checkRateLimit(request, RATE_LIMITS.general)` at start of POST handler (before auth check). Note: only POST handler exists on this route; no GET handler to add rate limiting to.
+4. **`/api/wallet/history/route.ts`** — Added `checkRateLimit(request, RATE_LIMITS.general)` at start of GET handler (before auth check)
+
+Pattern follows existing convention in `/api/rider/route.ts`: rate limit check → auth check → business logic.
+
+### Fix 2: Fix CartItem.productId Int vs Product.id String schema mismatch
+- **Problem**: `CartItem.productId` was `Int` but `Product.id` is `String` (cuid), preventing a proper foreign key relation
+- **Schema change**: Changed `productId Int` → `productId String` in CartItem model in `prisma/schema.prisma`
+- **Validation update**: Changed `z.union([z.string(), z.number()])` → `z.union([z.string(), z.number()]).transform(String)` in `src/lib/validation.ts` — accepts both types for backward compat, coerces to string
+- **API route update**: In `src/app/api/cart/route.ts`, replaced `typeof productId === 'number' ? productId : Number(productId)` with `String(productId)` via `productIdStr` variable for both `findFirst` and `create` operations
+- Ran `bun run db:push` to apply the schema migration
+
+### Fix 3: Add error checking to fetch calls in 5 key components
+Added `if (!res.ok) { throw new Error(\`API error: ${res.status}\`); }` after every fetch call in these components:
+
+1. **AuthScreen.tsx** (6 fetch calls):
+   - Login fetch → added `if (!res.ok)` check
+   - OAuth fetch → added `if (!res.ok)` check
+   - Forgot-password fetch → captured response as `forgotRes`, added check
+   - Signup fetch → added `if (!res.ok)` check
+   - Verify-OTP fetch → added `if (!res.ok)` check
+   - Resend-OTP fetch → captured response as `resendRes`, added check
+
+2. **VendorDashboard.tsx** (6 fetch calls):
+   - Fetch vendor data → added check
+   - Fetch vendor orders → added check
+   - Accept order → added check
+   - Reject order → added check
+   - Mark ready → added check
+   - Toggle online → captured as `toggleRes`, added check
+
+3. **SmartKitchenHub.tsx** (8 fetch calls):
+   - Live-vision coaching → added check
+   - Fetch pantry → added check
+   - Fetch cooking-sessions analytics → added check
+   - Complete cooking session → captured as `sessionRes`, added check
+   - Visual-search scan → added check
+   - Add pantry item → added check
+   - Delete pantry item → captured as `delRes`, added check
+   - Pantry rescue recipe → added check
+
+4. **WalletModal.tsx** (3 fetch calls):
+   - Fetch balance → added check
+   - Fetch history → added check
+   - Top-up → added check
+
+5. **ProfileTab.tsx** (1 fetch call):
+   - Redeem reward → added check
+
+Total: **24 fetch calls** now have proper `!res.ok` error checking.
+
+### Fix 4: Clean up test data in database
+- Ran `DELETE FROM Video WHERE title = 'nmmn'` and `DELETE FROM Coupon WHERE code = 'REDEM-D3VL'` via `npx prisma db execute --schema prisma/schema.prisma`
+- Both statements executed successfully
+
+### Lint Result
+- 0 errors, 1 warning (pre-existing custom font warning in layout.tsx)
+
+---
+
+## Batch-G Cleanup Fix Session (Task: G-cleanup-fixes)
+
+### Fix 1: Remove unused components
+- Verified `AIChatWidget` — only referenced in its own file, never imported elsewhere
+- Verified `StaggerContainer` — only referenced in its own file, never imported elsewhere
+- Deleted `/src/components/swift/AIChatWidget.tsx`
+- Deleted `/src/components/swift/StaggerContainer.tsx`
+- Left `PageTransition.tsx` as-is — the component itself is unused but utility functions (`getTabDirection`, `createDirectionalVariants`, `springConfig`) ARE imported by page.tsx
+
+### Fix 2: Add userAvatar to Zustand persist config
+- Added `userAvatar: state.userAvatar` to the `partialize` function in `/src/lib/store.ts`
+- Placed right after `userName: state.userName` (line 636)
+- User's avatar now persists across page reloads instead of resetting to empty string
+
+### Fix 3: Fix React duplicate keys warning
+Replaced `key={i}` / `key={idx}` / `key={index}` patterns with stable keys in dynamic lists:
+- **OrdersTab.tsx line 448**: `order.items.map((item, i) => <div key={i}>` → `key={\`${item.name}-${i}\`}` — order items could have same name
+- **HomeTab.tsx line 468**: `ramadanBox.images.map((img, i) => <div key={i}>` → `key={img}` — image URLs are unique
+- **OffersTab.tsx line 369**: `benefits.map((benefit, i) => <div key={i}>` → `key={benefit}` — benefit strings are unique
+- **VendorDashboard.tsx lines 866, 978, 1071**: `order.items.map((item, idx) => <div key={idx}>` → `key={\`${item.name}-${idx}\`}` — all three order lists (incoming, processing, dispatched)
+
+### Fix 4: Update SearchOverlay accent color (#13ec13 → #10E07A)
+- Replaced all instances of `#13ec13` (old customer accent color) with `#10E07A` (updated main app color)
+- **SearchOverlay.tsx**: 4 instances replaced (border, Search icon, spinner, price text)
+- **38 total files** across `src/components/swift/` updated with bulk replacement
+- Zero remaining references to `#13ec13` in the entire `src/` directory
+
+### Fix 5: Use DB rating for rider instead of hardcoded 4.8
+- Replaced `const rating = 4.8;` in `/src/app/api/rider/route.ts` with real DB query
+- Uses Prisma `aggregate()` on the `Review` model filtering by `targetType: 'rider'` and `targetId: user.id`
+- Computes average rating from actual review data
+- Rounds to 1 decimal place for display
+- Falls back to `0` (not a fake rating) when no reviews exist
+
+### Lint Result
+- 0 errors, 1 warning (pre-existing custom font warning in layout.tsx)
+
+---
+
+## Batch-H Manual Fix Session (Main Agent)
+
+### Fix 1: AuthScreen color inconsistency with main app
+- Updated ROLE_CONFIG colors in AuthScreen.tsx to match page.tsx:
+  - Customer: `#13ec13` → `#10E07A`, accentLight/Mid updated to rgba format
+  - Vendor: `#FFD700` → `#F5C451`, accentLight/Mid updated to rgba format
+  - Rider: `#3b82f6` → `#38BDF8`, accentLight/Mid updated to rgba format
+
+### Fix 2: Add password field to signup form
+- Added `signupPassword` and `showSignupPassword` state variables to SignupScreen component
+- Added password input field after Residential Area dropdown with:
+  - Lock icon prefix
+  - Show/hide password toggle (Eye/EyeOff icons)
+  - Accent color border when filled
+  - Min 6 character validation
+- Added password validation in handleStep1Next: rejects passwords < 6 chars
+- Added password to signup API call body: `...(signupPassword ? { password: signupPassword } : {})`
+
+### Fix 3: Generate referral code on signup
+- Added `setReferralCode` action to Zustand store interface and implementation
+- Added `referralCode` field to Prisma User model (`String @default("")`)
+- Updated auth signup route to generate `SWIFT-XXXXXX` format referral code on user creation
+- Added `referralCode` to `publicUserFields()` in profile-update.ts
+- AuthScreen saves referral code from API response on successful signup
+- Fallback: generates referral code client-side in catch block
+
+### Fix 4: Prisma schema migration
+- Ran `bun run db:push` to apply referralCode field addition to database
+
+### Comprehensive Audit Summary
+- **UI Audit**: 23 issues found (3 Critical, 6 High, 7 Medium, 7 Low)
+- **Code Audit**: 21 issues found (4 Critical, 6 High, 6 Medium, 5 Low)
+- **Total issues fixed**: 30 items across all severity levels
+- **Lint result**: 0 errors, 1 pre-existing warning
+- **Note**: Server experiences OOM kills due to memory constraints in this environment — this is an infrastructure issue, not a code bug

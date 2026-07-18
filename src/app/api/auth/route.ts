@@ -142,6 +142,7 @@ export async function POST(request: NextRequest) {
             role: role || 'customer',
             area: area || '',
             avatar: avatar || '',
+            referralCode: `SWIFT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
             storeName: storeName || null,
             businessCategory: businessCategory || null,
             businessAddress: businessAddress || null,

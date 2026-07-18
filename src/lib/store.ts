@@ -3,7 +3,7 @@ import { persist } from 'zustand/middleware';
 
 export type TabId = 'home' | 'explore' | 'cart' | 'orders' | 'offers' | 'profile' | 'reels'
   | 'rider-dashboard' | 'rider-earnings' | 'rider-deliveries' | 'rider-profile'
-  | 'vendor-dashboard' | 'vendor-orders' | 'vendor-earnings' | 'vendor-store' | 'vendor-profile';
+  | 'vendor-dashboard' | 'vendor-earnings' | 'vendor-store' | 'vendor-profile';
 
 export interface CartItem {
   id: number;
@@ -216,6 +216,7 @@ interface AppState {
 
   // Referral
   referralCode: string;
+  setReferralCode: (code: string) => void;
   referralCount: number;
   incrementReferral: () => void;
 
@@ -513,6 +514,7 @@ export const useAppStore = create<AppState>()(
 
       // Referral
       referralCode: '',
+      setReferralCode: (code) => set({ referralCode: code }),
       referralCount: 0,
       incrementReferral: () => set({ referralCount: get().referralCount + 1 }),
 
@@ -631,6 +633,7 @@ export const useAppStore = create<AppState>()(
         wishlist: state.wishlist,
         isLoggedIn: state.isLoggedIn,
         userName: state.userName,
+        userAvatar: state.userAvatar,
         // SECURITY: userEmail/userPhone removed — PII should not persist to localStorage
         userRole: state.userRole,
         userArea: state.userArea,

@@ -120,8 +120,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Default rating (no Review aggregation yet)
-    const rating = 4.8;
+    // Calculate rider rating from DB reviews
+    const riderReviews = await db.review.aggregate({
+      where: {
+        targetType: 'rider',
+        targetId: user.id,
+      },
+      _avg: { rating: true },
+      _count: true,
+    });
+    const rating = riderReviews._count > 0
+      ? Math.round((riderReviews._avg.rating ?? 0) * 10) / 10
+      : 0;
 
     return NextResponse.json({
       success: true,

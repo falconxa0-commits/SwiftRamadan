@@ -38,13 +38,13 @@ import {
 /* ──────────────────── Accent Colors per Role ──────────────────── */
 
 const ROLE_ACCENT = {
-  customer: '#13ec13',
+  customer: '#10E07A',
   vendor: '#FFD700',
   rider: '#3b82f6',
 } as const;
 
 const ROLE_BTN_CLASS = {
-  customer: 'bg-[#13ec13] text-[#05070A] shadow-[#13ec13]/20',
+  customer: 'bg-[#10E07A] text-[#05070A] shadow-[#10E07A]/20',
   vendor: 'bg-[#FFD700] text-[#05070A] shadow-[#FFD700]/20',
   rider: 'bg-[#3b82f6] text-white shadow-[#3b82f6]/20',
 } as const;
@@ -166,8 +166,8 @@ function CustomerStep1() {
         initial={{ scale: 0.5, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', damping: 15, stiffness: 150, delay: 0.1 }}
-        className="w-24 h-24 rounded-full bg-[#13ec13]/10 border-2 border-[#13ec13]/30 flex items-center justify-center mb-6"
-        style={{ boxShadow: '0 0 30px #13ec1320' }}
+        className="w-24 h-24 rounded-full bg-[#10E07A]/10 border-2 border-[#10E07A]/30 flex items-center justify-center mb-6"
+        style={{ boxShadow: '0 0 30px #10E07A20' }}
       >
         <span className="text-5xl">🌙</span>
       </motion.div>
@@ -185,7 +185,7 @@ function CustomerStep1() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}
-        className="text-[#13ec13] text-xl font-bold mb-1"
+        className="text-[#10E07A] text-xl font-bold mb-1"
       >
         Ramadan Mubarak, {firstName}! 🎉
       </motion.p>
@@ -207,7 +207,7 @@ function CustomerStep1() {
         className="w-full flex flex-col gap-4"
       >
         {[
-          { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: '#13ec13' },
+          { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: '#10E07A' },
           { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: '#FFD700' },
           { icon: Heart, title: 'Charity & Zakat', desc: 'Give back this blessed month', color: '#f472b6' },
         ].map((feature, i) => (
@@ -278,7 +278,7 @@ function CustomerStep2() {
                 whileTap={{ scale: 0.95 }}
                 className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-sm font-medium transition-all ${
                   isSelected
-                    ? 'bg-[#13ec13]/15 border border-[#13ec13]/40 text-[#13ec13]'
+                    ? 'bg-[#10E07A]/15 border border-[#10E07A]/40 text-[#10E07A]'
                     : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:border-white/20'
                 }`}
               >
@@ -304,19 +304,19 @@ function CustomerStep2() {
                 whileTap={{ scale: 0.95 }}
                 className={`flex flex-col items-center gap-2 p-4 rounded-xl transition-all ${
                   isSelected
-                    ? 'bg-[#13ec13]/10 border-2 border-[#13ec13]/40'
+                    ? 'bg-[#10E07A]/10 border-2 border-[#10E07A]/40'
                     : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
                 }`}
               >
                 <span className="text-3xl">{cat.emoji}</span>
-                <span className={`text-xs font-semibold ${isSelected ? 'text-[#13ec13]' : 'text-white/60'}`}>
+                <span className={`text-xs font-semibold ${isSelected ? 'text-[#10E07A]' : 'text-white/60'}`}>
                   {cat.label}
                 </span>
                 {isSelected && (
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="w-4 h-4 rounded-full bg-[#13ec13] flex items-center justify-center"
+                    className="w-4 h-4 rounded-full bg-[#10E07A] flex items-center justify-center"
                   >
                     <Check className="w-2.5 h-2.5 text-[#05070A]" />
                   </motion.div>
@@ -352,13 +352,13 @@ function CustomerStep3() {
       <div className="flex flex-col gap-5">
         {/* Address Input */}
         <div className="relative">
-          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#13ec13]/60" />
+          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#10E07A]/60" />
           <input
             type="text"
             placeholder="Enter delivery address"
             value={deliveryAddress}
             onChange={(e) => setDeliveryAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#13ec13]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#10E07A]/50 transition-colors"
           />
         </div>
 
@@ -368,7 +368,7 @@ function CustomerStep3() {
             onClick={() => setAreaOpen(!areaOpen)}
             className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/30'}`}
           >
-            <MapPin className="w-4 h-4 mr-2 text-[#13ec13]/60" />
+            <MapPin className="w-4 h-4 mr-2 text-[#10E07A]/60" />
             {userArea || 'Select your area'}
           </button>
           <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
@@ -386,7 +386,7 @@ function CustomerStep3() {
                   <button
                     key={a}
                     onClick={() => { setUserArea(a); setAreaOpen(false); }}
-                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${userArea === a ? 'text-[#13ec13]' : 'text-white/70'}`}
+                    className={`w-full px-4 py-3 text-left text-sm hover:bg-white/5 transition-colors flex items-center justify-between ${userArea === a ? 'text-[#10E07A]' : 'text-white/70'}`}
                   >
                     {a}
                     {userArea === a && <Check className="w-4 h-4" />}
@@ -400,8 +400,8 @@ function CustomerStep3() {
         {/* Deliver Before Iftar Toggle */}
         <div className="flex items-center justify-between p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#13ec13]/10 flex items-center justify-center">
-              <Moon className="w-5 h-5 text-[#13ec13]" />
+            <div className="w-10 h-10 rounded-xl bg-[#10E07A]/10 flex items-center justify-center">
+              <Moon className="w-5 h-5 text-[#10E07A]" />
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Deliver before Iftar</p>
@@ -411,7 +411,7 @@ function CustomerStep3() {
           <button
             onClick={() => setDeliverBeforeIftar(!deliverBeforeIftar)}
             className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
-              deliverBeforeIftar ? 'bg-[#13ec13]' : 'bg-white/10'
+              deliverBeforeIftar ? 'bg-[#10E07A]' : 'bg-white/10'
             }`}
           >
             <motion.div

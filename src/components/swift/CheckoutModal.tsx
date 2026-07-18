@@ -404,9 +404,9 @@ export default function CheckoutModal() {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                         i < currentStep
-                          ? 'bg-[#13ec13] text-[#05070A]'
+                          ? 'bg-[#10E07A] text-[#05070A]'
                           : i === currentStep
-                            ? 'bg-[#13ec13]/20 border border-[#13ec13]/50 text-[#13ec13]'
+                            ? 'bg-[#10E07A]/20 border border-[#10E07A]/50 text-[#10E07A]'
                             : 'bg-white/5 text-white/20 border border-white/10'
                       }`}
                     >
@@ -420,7 +420,7 @@ export default function CheckoutModal() {
                   </div>
                   {i < stepLabels.length - 1 && (
                     <div className={`flex-1 h-0.5 mx-2 rounded-full ${
-                      i < currentStep ? 'bg-[#13ec13]' : 'bg-white/5'
+                      i < currentStep ? 'bg-[#10E07A]' : 'bg-white/5'
                     }`} />
                   )}
                 </div>
@@ -444,7 +444,7 @@ export default function CheckoutModal() {
                 className="space-y-4"
               >
                 <h3 className="text-white font-bold text-base flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-[#13ec13]" />
+                  <ShoppingBag className="w-5 h-5 text-[#10E07A]" />
                   Your Cart
                   <span className="text-white/40 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
                 </h3>
@@ -455,7 +455,7 @@ export default function CheckoutModal() {
                     <p className="text-white/40 text-sm">Your cart is empty</p>
                     <button
                       onClick={handleClose}
-                      className="mt-4 px-6 py-2.5 bg-[#13ec13] text-[#05070A] font-bold text-sm rounded-xl"
+                      className="mt-4 px-6 py-2.5 bg-[#10E07A] text-[#05070A] font-bold text-sm rounded-xl"
                     >
                       Browse Menu
                     </button>
@@ -485,7 +485,7 @@ export default function CheckoutModal() {
                         {/* Item info */}
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm truncate">{item.name}</p>
-                          <p className="text-[#13ec13] font-bold text-sm">{formatNaira(item.price)}</p>
+                          <p className="text-[#10E07A] font-bold text-sm">{formatNaira(item.price)}</p>
                         </div>
 
                         {/* Quantity controls */}
@@ -533,7 +533,7 @@ export default function CheckoutModal() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-white/40">Delivery Fee</span>
-                      <span className={deliveryFee === 0 ? 'text-[#13ec13] font-bold' : 'text-white font-bold'}>
+                      <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
@@ -542,12 +542,12 @@ export default function CheckoutModal() {
                       <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
                     </div>
                     {deliveryFee > 0 && (
-                      <p className="text-[#13ec13]/60 text-[10px]">Free delivery on orders above ₦5,000</p>
+                      <p className="text-[#10E07A]/60 text-[10px]">Free delivery on orders above ₦5,000</p>
                     )}
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between">
                       <span className="text-white font-bold text-sm">Total</span>
-                      <span className="text-[#13ec13] font-black text-lg">{formatNaira(total)}</span>
+                      <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
                     </div>
                   </div>
                 )}
@@ -696,21 +696,21 @@ export default function CheckoutModal() {
                         onClick={() => { setSelectedLocation(loc); setDeliveryAddress(loc.address); }}
                         className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
                           selectedLocation.id === loc.id
-                            ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+                            ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          selectedLocation.id === loc.id ? 'bg-[#13ec13]/20' : 'bg-white/5'
+                          selectedLocation.id === loc.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
                         }`}>
-                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#13ec13]' : 'text-white/30'}`} />
+                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#10E07A]' : 'text-white/30'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{loc.name}</p>
                           <p className="text-white/40 text-xs truncate">{loc.address}</p>
                         </div>
                         {selectedLocation.id === loc.id && (
-                          <Check className="w-5 h-5 text-[#13ec13] shrink-0" />
+                          <Check className="w-5 h-5 text-[#10E07A] shrink-0" />
                         )}
                       </button>
                     ))}
@@ -723,13 +723,13 @@ export default function CheckoutModal() {
                         <input
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
-                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#13ec13]/30 focus:outline-none"
+                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none"
                           placeholder="Enter delivery address"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={handleSaveAddress}
-                            className="flex-1 bg-[#13ec13] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
+                            className="flex-1 bg-[#10E07A] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
                           >
                             Save
                           </button>
@@ -745,7 +745,7 @@ export default function CheckoutModal() {
                       <>
                         <button
                           onClick={() => { setEditAddressValue(effectiveAddress); setIsEditingAddress(true); }}
-                          className="flex items-center gap-2 text-[#13ec13] text-xs font-bold hover:text-[#13ec13]/80 transition-colors"
+                          className="flex items-center gap-2 text-[#10E07A] text-xs font-bold hover:text-[#10E07A]/80 transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           Edit address
@@ -769,7 +769,7 @@ export default function CheckoutModal() {
                     value={deliveryInstructions}
                     onChange={e => setDeliveryInstructions(e.target.value)}
                     placeholder="e.g., Gate code, landmark, leave at door..."
-                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#13ec13]/30 focus:outline-none placeholder:text-white/20"
+                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
                   />
                 </div>
               </motion.div>
@@ -799,7 +799,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={() => setIftarPrecision(!iftarPrecision)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
-                      iftarPrecision ? 'bg-[#13ec13]' : 'bg-white/10'
+                      iftarPrecision ? 'bg-[#10E07A]' : 'bg-white/10'
                     }`}
                   >
                     <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
@@ -811,8 +811,8 @@ export default function CheckoutModal() {
                 {/* Sahur Alarm Toggle */}
                 <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center">
-                      <Bell className="w-5 h-5 text-[#13ec13]" />
+                    <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-[#10E07A]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Sahur Alarm</p>
@@ -822,7 +822,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={() => setSahurAlarm(!sahurAlarm)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
-                      sahurAlarm ? 'bg-[#13ec13]' : 'bg-white/10'
+                      sahurAlarm ? 'bg-[#10E07A]' : 'bg-white/10'
                     }`}
                   >
                     <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
@@ -834,7 +834,7 @@ export default function CheckoutModal() {
                 {/* Time Slot Selection */}
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-[#13ec13]" />
+                    <Clock className="w-5 h-5 text-[#10E07A]" />
                     Delivery Time Slot
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
@@ -846,19 +846,19 @@ export default function CheckoutModal() {
                           onClick={() => setSelectedTimeSlot(slot.id)}
                           className={`p-4 rounded-2xl border text-left transition-all relative ${
                             selectedTimeSlot === slot.id
-                              ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+                              ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
                               : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#13ec13]' : 'text-white/30'}`} />
-                            <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[#13ec13]' : 'text-white'}`}>
+                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                            <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white'}`}>
                               {slot.label}
                             </span>
                           </div>
                           <p className="text-white/40 text-xs">{slot.time}</p>
                           {selectedTimeSlot === slot.id && (
-                            <Check className="w-4 h-4 text-[#13ec13] absolute top-3 right-3" />
+                            <Check className="w-4 h-4 text-[#10E07A] absolute top-3 right-3" />
                           )}
                         </button>
                       );
@@ -881,10 +881,10 @@ export default function CheckoutModal() {
 
                 {/* Sahur Timing Option */}
                 {sahurAlarm && (
-                  <div className="bg-[#13ec13]/5 rounded-2xl border border-[#13ec13]/20 p-4">
+                  <div className="bg-[#10E07A]/5 rounded-2xl border border-[#10E07A]/20 p-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <Moon className="w-5 h-5 text-[#13ec13]" />
-                      <span className="text-[#13ec13] font-bold text-sm">Sahur Delivery</span>
+                      <Moon className="w-5 h-5 text-[#10E07A]" />
+                      <span className="text-[#10E07A] font-bold text-sm">Sahur Delivery</span>
                     </div>
                     <p className="text-white/50 text-xs">
                       Pre-dawn delivery between 3:00 - 4:30 AM so your Sahur meal is ready.
@@ -912,7 +912,7 @@ export default function CheckoutModal() {
               >
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-[#13ec13]" />
+                    <CreditCard className="w-5 h-5 text-[#10E07A]" />
                     Payment Method
                   </h3>
                   <div className="space-y-2">
@@ -922,15 +922,15 @@ export default function CheckoutModal() {
                         onClick={() => setPaymentMethod(pm.id)}
                         className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
                           paymentMethod === pm.id
-                            ? 'bg-[#13ec13]/5 border-[#13ec13]/30'
+                            ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          paymentMethod === pm.id ? 'bg-[#13ec13]/20' : 'bg-white/5'
+                          paymentMethod === pm.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
                         }`}>
                           <span className={`material-symbols-outlined text-lg ${
-                            paymentMethod === pm.id ? 'text-[#13ec13]' : 'text-white/30'
+                            paymentMethod === pm.id ? 'text-[#10E07A]' : 'text-white/30'
                           }`}>{pm.icon}</span>
                         </div>
                         <div className="flex-1">
@@ -940,7 +940,7 @@ export default function CheckoutModal() {
                           )}
                         </div>
                         {paymentMethod === pm.id && (
-                          <Check className="w-5 h-5 text-[#13ec13] shrink-0" />
+                          <Check className="w-5 h-5 text-[#10E07A] shrink-0" />
                         )}
                       </button>
                     ))}
@@ -970,7 +970,7 @@ export default function CheckoutModal() {
                             <div className="flex items-center gap-2">
                               <p className="text-white font-bold text-sm">{plan.label}</p>
                               {plan.ramadanOffer && (
-                                <span className="bg-[#13ec13]/10 text-[#13ec13] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#13ec13]/20">
+                                <span className="bg-[#10E07A]/10 text-[#10E07A] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#10E07A]/20">
                                   0% RAMADAN
                                 </span>
                               )}
@@ -1218,7 +1218,7 @@ export default function CheckoutModal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white/40 text-[10px] uppercase">Total</p>
-                <p className="text-[#13ec13] font-black text-lg">{formatNaira(total)}</p>
+                <p className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</p>
               </div>
               <div className="flex gap-2">
                 {currentStep > 0 && (

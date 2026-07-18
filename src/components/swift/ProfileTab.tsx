@@ -296,7 +296,7 @@ export default function ProfileTab() {
         useAppStore.getState().setActiveModal('delivery-location');
         break;
       case 'prayer-times':
-        useAppStore.getState().setActiveModal('prayer');
+        useAppStore.getState().setActiveModal('prayer-times');
         break;
       case 'vendor-insights':
         useAppStore.getState().setActiveModal('vendor-insights');
@@ -461,6 +461,9 @@ export default function ProfileTab() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: userEmail, rewardType: rewardId }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data?.success && data.coupon?.code) {
         setSwiftPoints(data.remainingPoints ?? Math.max(0, swiftPoints - cost));

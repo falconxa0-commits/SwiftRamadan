@@ -16,7 +16,7 @@ interface CountdownTime {
 export default function PrayerTimesModal() {
   const { activeModal, setActiveModal } = useAppStore();
   const { toast } = useToast();
-  const isOpen = activeModal === 'prayer' || activeModal === 'prayer-times';
+  const isOpen = activeModal === 'prayer-times';
 
   const [athanEnabled, setAthanEnabled] = useState(false);
   const [countdown, setCountdown] = useState<CountdownTime>({ hours: 0, minutes: 0, label: '' });
@@ -145,11 +145,11 @@ export default function PrayerTimesModal() {
             <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* Next Prayer Countdown */}
               <div className="px-4 pt-4">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[#13ec13]/20 p-6 text-center green-glow">
-                  <div className="absolute top-0 left-0 w-full h-full bg-[#13ec13]/5 blur-[80px]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[#10E07A]/20 p-6 text-center green-glow">
+                  <div className="absolute top-0 left-0 w-full h-full bg-[#10E07A]/5 blur-[80px]" />
                   <div className="relative">
                     <p className="text-white/40 text-xs uppercase tracking-widest mb-1">Next Prayer</p>
-                    <p className="text-[#13ec13] text-2xl font-black">{countdown.label}</p>
+                    <p className="text-[#10E07A] text-2xl font-black">{countdown.label}</p>
                     <motion.div
                       key={`${countdown.hours}-${countdown.minutes}`}
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -214,7 +214,7 @@ export default function PrayerTimesModal() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setActiveModal('mosque')}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#13ec13]/20 transition-colors"
+                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#10E07A]/20 transition-colors"
                   >
                     <Compass className="w-5 h-5 text-[#FFD700]" />
                     <div className="text-left">
@@ -230,11 +230,11 @@ export default function PrayerTimesModal() {
                         description: athanEnabled ? 'You won\'t receive prayer notifications' : 'You\'ll be notified at each prayer time',
                       });
                     }}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#13ec13]/20 transition-colors"
+                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#10E07A]/20 transition-colors"
                     aria-label={athanEnabled ? 'Disable Athan alerts' : 'Enable Athan alerts'}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      athanEnabled ? 'border-[#13ec13] bg-[#13ec13]' : 'border-white/20'
+                      athanEnabled ? 'border-[#10E07A] bg-[#10E07A]' : 'border-white/20'
                     }`}>
                       {athanEnabled && <div className="w-2 h-2 bg-[#05070A] rounded-full" />}
                     </div>
@@ -255,7 +255,7 @@ export default function PrayerTimesModal() {
                       key={item.name}
                       onClick={item.action}
                       whileTap={{ scale: 0.97 }}
-                      className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-left hover:border-[#13ec13]/20 transition-colors"
+                      className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-left hover:border-[#10E07A]/20 transition-colors"
                     >
                       <span className="material-symbols-outlined text-[#FFD700] text-2xl mb-2">{item.icon}</span>
                       <p className="text-white font-bold text-sm">{item.name}</p>

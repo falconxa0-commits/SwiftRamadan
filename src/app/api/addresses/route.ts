@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, addressSchema } from '@/lib/validation';
 import { geocodeAddress } from '@/lib/maps';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -21,6 +22,9 @@ export async function GET(request: NextRequest) {
   // Rate limit: 100 requests per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -52,6 +56,9 @@ export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await request.json();

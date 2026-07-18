@@ -68,9 +68,9 @@ export default function VendorSalesInsights() {
                   <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Today&apos;s Revenue</p>
                   <p className="text-[#FFD700] text-4xl font-black mt-1">{formatNaira(vendorSalesInsights.todayRevenue)}</p>
                   <div className="flex items-center gap-2 mt-2">
-                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#13ec13]/20">
-                      <ShoppingBag className="w-3 h-3 text-[#13ec13]" />
-                      <span className="text-[#13ec13] text-xs font-bold">{vendorSalesInsights.todayOrders} orders</span>
+                    <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#10E07A]/20">
+                      <ShoppingBag className="w-3 h-3 text-[#10E07A]" />
+                      <span className="text-[#10E07A] text-xs font-bold">{vendorSalesInsights.todayOrders} orders</span>
                     </div>
                   </div>
                 </div>
@@ -88,8 +88,8 @@ export default function VendorSalesInsights() {
                     <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Average Order Value</p>
                     <p className="text-white text-2xl font-black mt-1">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/20">
-                    <span className="material-symbols-outlined text-[#13ec13]">payments</span>
+                  <div className="w-12 h-12 rounded-xl bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/20">
+                    <span className="material-symbols-outlined text-[#10E07A]">payments</span>
                   </div>
                 </div>
               </motion.div>
@@ -132,14 +132,14 @@ export default function VendorSalesInsights() {
                                 isFriday
                                   ? 'bg-gradient-to-t from-[#FFD700] to-[#FFD700]/60'
                                   : isToday
-                                    ? 'bg-gradient-to-t from-[#13ec13] to-[#13ec13]/40'
+                                    ? 'bg-gradient-to-t from-[#10E07A] to-[#10E07A]/40'
                                     : 'bg-gradient-to-t from-white/20 to-white/5'
                               }`}
                               style={{ minHeight: 8 }}
                             />
                           </div>
                           <span className={`text-[10px] font-bold ${
-                            isFriday ? 'text-[#FFD700]' : isToday ? 'text-[#13ec13]' : 'text-white/30'
+                            isFriday ? 'text-[#FFD700]' : isToday ? 'text-[#10E07A]' : 'text-white/30'
                           }`}>
                             {day.day}
                           </span>
@@ -168,8 +168,8 @@ export default function VendorSalesInsights() {
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.topSellingItem}</p>
                 </div>
                 <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 text-center">
-                  <div className="w-10 h-10 rounded-xl bg-[#13ec13]/20 flex items-center justify-center mx-auto mb-2 border border-[#13ec13]/20">
-                    <Clock className="w-5 h-5 text-[#13ec13]" />
+                  <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center mx-auto mb-2 border border-[#10E07A]/20">
+                    <Clock className="w-5 h-5 text-[#10E07A]" />
                   </div>
                   <p className="text-white/30 text-[9px] uppercase tracking-widest font-bold">Peak Hour</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.peakHour}</p>
@@ -191,7 +191,7 @@ export default function VendorSalesInsights() {
                 className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-[#FFD700]/20 p-6"
               >
                 <div className="absolute top-0 right-0 w-40 h-40 bg-[#FFD700]/5 blur-[60px]" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#13ec13]/5 blur-[40px]" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#10E07A]/5 blur-[40px]" />
                 <div className="relative z-10">
                   <div className="flex items-center gap-2 mb-4">
                     <span className="material-symbols-outlined text-[#FFD700] text-lg">mosque</span>
@@ -209,8 +209,8 @@ export default function VendorSalesInsights() {
                   </div>
                   <div className="mt-4 pt-4 border-t border-white/5">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-[#13ec13]" />
-                      <span className="text-[#13ec13] text-xs font-bold">+24% vs last Ramadan</span>
+                      <TrendingUp className="w-4 h-4 text-[#10E07A]" />
+                      <span className="text-[#10E07A] text-xs font-bold">+24% vs last Ramadan</span>
                     </div>
                   </div>
                 </div>

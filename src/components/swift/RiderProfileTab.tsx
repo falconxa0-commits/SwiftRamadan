@@ -52,7 +52,7 @@ export default function RiderProfileTab() {
   const deliveriesToUnlock = 12;
 
   const menuItems = [
-    { icon: DollarSign, label: 'Earnings History', subtitle: 'View all past earnings', color: 'text-[#13ec13]', action: 'earnings-history' },
+    { icon: DollarSign, label: 'Earnings History', subtitle: 'View all past earnings', color: 'text-[#10E07A]', action: 'earnings-history' },
     { icon: BarChart3, label: 'Performance Hub', subtitle: 'Detailed metrics & insights', color: 'text-[#3b82f6]', action: 'rider-performance' },
     { icon: CheckCircle, label: 'Delivery History', subtitle: 'Past deliveries & routes', color: 'text-[#3b82f6]', action: 'delivery-history' },
     { icon: Moon, label: 'Prayer Times & Qibla', subtitle: 'Never miss a prayer', color: 'text-[#FFD700]', action: 'prayer-times' },
@@ -150,7 +150,7 @@ export default function RiderProfileTab() {
           </div>
           {/* Online/Offline dot */}
           <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#05070A] ${
-            riderOnline ? 'bg-[#13ec13] animate-pulse' : 'bg-white/30'
+            riderOnline ? 'bg-[#10E07A] animate-pulse' : 'bg-white/30'
           }`} />
         </div>
         <div className="flex-1 min-w-0">
@@ -159,8 +159,8 @@ export default function RiderProfileTab() {
           </div>
           <div className="flex items-center gap-2 mt-1">
             {/* Status indicator */}
-            <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
-            <span className={`text-xs font-bold ${riderOnline ? 'text-[#13ec13]' : 'text-white/40'}`}>
+            <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#10E07A]' : 'bg-white/30'}`} />
+            <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/40'}`}>
               {riderOnline ? 'Online' : 'Offline'}
             </span>
             <span className="text-white/20 text-xs">•</span>
@@ -178,8 +178,8 @@ export default function RiderProfileTab() {
       {/* ─── 2. Stats Grid ─── */}
       <motion.div variants={staggerItem} className="grid grid-cols-3 gap-3 mb-6">
         <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
-          <div className="w-10 h-10 bg-[#13ec13]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <DollarSign className="w-5 h-5 text-[#13ec13]" />
+          <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <DollarSign className="w-5 h-5 text-[#10E07A]" />
           </div>
           <p className="text-white text-sm font-extrabold">{formatNaira(riderEarnings)}</p>
           <p className="text-white/40 text-[10px] mt-0.5">Today&apos;s Earnings</p>
@@ -376,7 +376,7 @@ export default function RiderProfileTab() {
           {/* Cash Out */}
           <button
             onClick={() => toast({ title: 'Cash Out 💵', description: `Withdrawing ${formatNaira(riderEarnings)} to your bank account` })}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-[#1A1D26] border border-white/5 text-[#13ec13] hover:border-[#13ec13]/20 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-[#1A1D26] border border-white/5 text-[#10E07A] hover:border-[#10E07A]/20 transition-colors"
           >
             <Wallet className="w-4 h-4" />
             Cash Out

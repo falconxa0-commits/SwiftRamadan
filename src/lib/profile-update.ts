@@ -80,5 +80,6 @@ export function publicUserFields(user: Record<string, unknown>) {
     dailyStreak: user.dailyStreak,
     riderOnline: user.riderOnline,
     vendorOnline: user.vendorOnline,
+    referralCode: user.referralCode,
   };
 }

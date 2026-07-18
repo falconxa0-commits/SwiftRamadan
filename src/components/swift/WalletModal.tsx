@@ -27,11 +27,11 @@ const koboToNaira = (k: number) => Math.round(k / 100);
 
 // ── Transaction icon / color map ─────────────────────────────────────────────
 const txnMeta: Record<string, { icon: typeof ArrowDownLeft; color: string; label: string }> = {
-  topup:    { icon: ArrowDownLeft,  color: 'text-[#13ec13]', label: 'Top Up' },
+  topup:    { icon: ArrowDownLeft,  color: 'text-[#10E07A]', label: 'Top Up' },
   payment:  { icon: ArrowUpRight,   color: 'text-red-400',   label: 'Payment' },
-  refund:   { icon: RotateCcw,      color: 'text-[#13ec13]', label: 'Refund' },
+  refund:   { icon: RotateCcw,      color: 'text-[#10E07A]', label: 'Refund' },
   payout:   { icon: ArrowUpRight,   color: 'text-red-400',   label: 'Payout' },
-  cashback: { icon: Gift,           color: 'text-[#13ec13]', label: 'Cashback' },
+  cashback: { icon: Gift,           color: 'text-[#10E07A]', label: 'Cashback' },
 };
 
 function TxnIcon({ type }: { type: string }) {
@@ -39,8 +39,8 @@ function TxnIcon({ type }: { type: string }) {
   const Icon = meta.icon;
   return (
     <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
-      meta.color === 'text-[#13ec13]'
-        ? 'bg-[#13ec13]/10 border-[#13ec13]/20'
+      meta.color === 'text-[#10E07A]'
+        ? 'bg-[#10E07A]/10 border-[#10E07A]/20'
         : 'bg-red-400/10 border-red-400/20'
     }`}>
       <Icon className={`w-5 h-5 ${meta.color}`} />
@@ -87,6 +87,9 @@ export default function WalletModal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'balance', userId: userEmail }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         setWalletBalance(data.balance ?? 0);
@@ -103,6 +106,9 @@ export default function WalletModal() {
       const res = await fetch(
         `/api/wallet/history?userId=${encodeURIComponent(userEmail)}&page=${page}&limit=20`
       );
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         setTransactions(data.transactions ?? []);
@@ -134,6 +140,9 @@ export default function WalletModal() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'topup', userId: userEmail, amount }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         toast({
@@ -207,8 +216,8 @@ export default function WalletModal() {
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
               <div className="flex items-center justify-between p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/30">
-                    <Wallet className="w-5 h-5 text-[#13ec13]" />
+                  <div className="w-10 h-10 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30">
+                    <Wallet className="w-5 h-5 text-[#10E07A]" />
                   </div>
                   <h2 className="text-white text-lg font-bold">Swift Wallet</h2>
                 </div>
@@ -228,7 +237,7 @@ export default function WalletModal() {
                     onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
                       activeTab === tab.id
-                        ? 'bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20'
+                        ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
                         : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
                     }`}
                   >
@@ -258,17 +267,17 @@ export default function WalletModal() {
                         transition={{ delay: 0.1 }}
                         className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6"
                       >
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#13ec13]/10 blur-[60px]" />
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/10 blur-[60px]" />
                         <div className="relative z-10 flex flex-col items-center">
                           {/* Wallet icon with green accent glow */}
                           <div className="relative mb-4">
-                            <div className="absolute inset-0 bg-[#13ec13]/30 blur-xl rounded-full" />
-                            <div className="relative w-16 h-16 rounded-full bg-[#13ec13]/20 flex items-center justify-center border border-[#13ec13]/30">
-                              <Wallet className="w-8 h-8 text-[#13ec13]" />
+                            <div className="absolute inset-0 bg-[#10E07A]/30 blur-xl rounded-full" />
+                            <div className="relative w-16 h-16 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30">
+                              <Wallet className="w-8 h-8 text-[#10E07A]" />
                             </div>
                           </div>
                           <p className="text-white/50 text-xs font-bold uppercase tracking-widest">Wallet Balance</p>
-                          <p className="text-[#13ec13] text-4xl font-black mt-1">
+                          <p className="text-[#10E07A] text-4xl font-black mt-1">
                             {formatNaira(koboToNaira(walletBalance))}
                           </p>
                           <p className="text-white/30 text-xs mt-1">Available for orders & payments</p>
@@ -284,10 +293,10 @@ export default function WalletModal() {
                       >
                         <button
                           onClick={() => setActiveTab('topup')}
-                          className="flex items-center gap-3 p-4 rounded-2xl bg-[#13ec13]/5 border border-[#13ec13]/20 hover:bg-[#13ec13]/10 transition-all"
+                          className="flex items-center gap-3 p-4 rounded-2xl bg-[#10E07A]/5 border border-[#10E07A]/20 hover:bg-[#10E07A]/10 transition-all"
                         >
-                          <div className="w-10 h-10 rounded-xl bg-[#13ec13]/20 flex items-center justify-center">
-                            <ArrowDownLeft className="w-5 h-5 text-[#13ec13]" />
+                          <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center">
+                            <ArrowDownLeft className="w-5 h-5 text-[#10E07A]" />
                           </div>
                           <div className="text-left">
                             <p className="text-white font-bold text-sm">Top Up</p>
@@ -319,7 +328,7 @@ export default function WalletModal() {
                             <h4 className="text-white font-bold text-sm">Recent Activity</h4>
                             <button
                               onClick={() => { setActiveTab('history'); fetchHistory(1); }}
-                              className="text-[#13ec13] text-xs font-bold flex items-center gap-1"
+                              className="text-[#10E07A] text-xs font-bold flex items-center gap-1"
                             >
                               View All <ChevronRight className="w-3 h-3" />
                             </button>
@@ -338,7 +347,7 @@ export default function WalletModal() {
                                     <p className="text-white text-sm font-medium truncate">{txn.description || (txnMeta[txn.type]?.label || 'Transaction')}</p>
                                     <p className="text-white/30 text-[10px]">{formatDate(txn.createdAt)}</p>
                                   </div>
-                                  <p className={`font-bold text-sm ${isCredit ? 'text-[#13ec13]' : 'text-red-400'}`}>
+                                  <p className={`font-bold text-sm ${isCredit ? 'text-[#10E07A]' : 'text-red-400'}`}>
                                     {isCredit ? '+' : '-'}{formatNaira(displayAmount)}
                                   </p>
                                 </div>
@@ -376,7 +385,7 @@ export default function WalletModal() {
                           {/* Amount input */}
                           <div className="mb-4">
                             <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">Amount (Naira)</label>
-                            <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[#13ec13]/30 transition-all px-4 py-3">
+                            <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[#10E07A]/30 transition-all px-4 py-3">
                               <span className="text-white/40 text-lg font-bold">₦</span>
                               <input
                                 type="number"
@@ -397,7 +406,7 @@ export default function WalletModal() {
                                 onClick={() => setTopupAmount(String(amt))}
                                 className={`py-3 rounded-xl text-sm font-bold transition-all ${
                                   topupAmount === String(amt)
-                                    ? 'bg-[#13ec13]/10 text-[#13ec13] border border-[#13ec13]/20'
+                                    ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
                                     : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
                                 }`}
                               >
@@ -419,7 +428,7 @@ export default function WalletModal() {
                               </div>
                               <div className="flex justify-between items-center">
                                 <span className="text-white/40 text-xs">New balance</span>
-                                <span className="text-[#13ec13] font-bold text-sm">
+                                <span className="text-[#10E07A] font-bold text-sm">
                                   {formatNaira(koboToNaira(walletBalance) + parseFloat(topupAmount))}
                                 </span>
                               </div>
@@ -440,7 +449,7 @@ export default function WalletModal() {
                           className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] ${
                             processing || !topupAmount || parseFloat(topupAmount) <= 0
                               ? 'bg-white/5 text-white/20 cursor-not-allowed'
-                              : 'bg-[#13ec13] text-[#05070A] hover:bg-[#13ec13]/90'
+                              : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
                           }`}
                         >
                           {processing ? (
@@ -506,7 +515,7 @@ export default function WalletModal() {
                                   </div>
                                 </div>
                                 <div className="text-right shrink-0">
-                                  <p className={`font-bold text-sm ${isCredit ? 'text-[#13ec13]' : 'text-red-400'}`}>
+                                  <p className={`font-bold text-sm ${isCredit ? 'text-[#10E07A]' : 'text-red-400'}`}>
                                     {isCredit ? '+' : '-'}{formatNaira(displayAmount)}
                                   </p>
                                   <p className="text-white/20 text-[10px]">

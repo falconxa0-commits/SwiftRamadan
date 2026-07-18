@@ -127,8 +127,8 @@ export default function RiderPowerFinderModal() {
             <div className="flex-1 overflow-y-auto px-5 pb-8 custom-scrollbar">
               {/* Quick Stats */}
               <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-[#13ec13]/5 border border-[#13ec13]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#13ec13] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
+                <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
+                  <p className="text-[#10E07A] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
                   <p className="text-white/40 text-[10px] font-bold uppercase">EV Available</p>
                 </div>
                 <div className="bg-[#FFD700]/5 border border-[#FFD700]/20 rounded-xl p-3 text-center">
@@ -140,7 +140,7 @@ export default function RiderPowerFinderModal() {
               {/* EV Charging Stations */}
               <div className="mt-5">
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Battery className="w-4 h-4 text-[#13ec13]" />
+                  <Battery className="w-4 h-4 text-[#10E07A]" />
                   EV Charging Stations
                 </h4>
                 <div className="space-y-2">
@@ -152,7 +152,7 @@ export default function RiderPowerFinderModal() {
                       transition={{ delay: 0.05 + i * 0.06 }}
                       className={`bg-[#1A1D26] rounded-2xl p-4 border transition-all ${
                         station.availability !== null && station.availability > 0
-                          ? 'border-[#13ec13]/20'
+                          ? 'border-[#10E07A]/20'
                           : 'border-white/5 opacity-50'
                       }`}
                     >
@@ -160,10 +160,10 @@ export default function RiderPowerFinderModal() {
                         {/* Station Icon */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                           station.availability !== null && station.availability > 0
-                            ? 'bg-[#13ec13]/10 border border-[#13ec13]/20'
+                            ? 'bg-[#10E07A]/10 border border-[#10E07A]/20'
                             : 'bg-white/5 border border-white/10'
                         }`}>
-                          <Battery className={`w-5 h-5 ${station.availability !== null && station.availability > 0 ? 'text-[#13ec13]' : 'text-white/20'}`} />
+                          <Battery className={`w-5 h-5 ${station.availability !== null && station.availability > 0 ? 'text-[#10E07A]' : 'text-white/20'}`} />
                         </div>
 
                         {/* Station Info */}
@@ -190,7 +190,7 @@ export default function RiderPowerFinderModal() {
                                     key={slot}
                                     className={`w-3 h-3 rounded-sm ${
                                       slot < (station.availability ?? 0)
-                                        ? 'bg-[#13ec13]'
+                                        ? 'bg-[#10E07A]'
                                         : 'bg-white/10'
                                     }`}
                                   />

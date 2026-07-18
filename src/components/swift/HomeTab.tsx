@@ -465,7 +465,7 @@ export default function HomeTab() {
             <div className="grid grid-cols-2 gap-3 mb-5">
               {ramadanBox.images.map((img, i) => (
                 <div
-                  key={i}
+                  key={img}
                   className="aspect-square bg-center bg-no-repeat bg-cover rounded-2xl border border-white/10"
                   style={{ backgroundImage: `url("${img}")` }}
                 />
@@ -583,7 +583,7 @@ export default function HomeTab() {
             {activeCategory ? activeCategory : 'Trending Iftar'}
           </h3>
           <button
-            onClick={() => setActiveTab('explore')}
+            onClick={() => setActiveModal('trending')}
             className="text-[#10E07A] text-xs font-extrabold uppercase tracking-[0.12em] cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             See All
@@ -768,6 +768,7 @@ export default function HomeTab() {
         <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💰 Commerce</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
+            { emoji: '🎉', label: 'Bulk Order', modal: 'partyBulk' },
             { emoji: '⚡', label: 'Flash Auction', modal: 'flashAuction' },
             { emoji: '📦', label: 'Sub Boxes', modal: 'subscriptionBoxes' },
             { emoji: '🏪', label: 'Storefront', modal: 'vendorStorefront' },

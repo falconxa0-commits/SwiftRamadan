@@ -40,27 +40,27 @@ import {
 const ROLE_CONFIG = {
   customer: {
     label: 'Customer',
-    accent: '#13ec13',
-    accentLight: '#13ec1320',
-    accentMid: '#13ec1340',
+    accent: '#10E07A',
+    accentLight: 'rgba(16,224,122,0.12)',
+    accentMid: 'rgba(16,224,122,0.25)',
     gradient: 'from-[#064e3b] to-[#0a3d2e]',
     icon: ShoppingBag,
     tagline: 'Shop Iftar meals, groceries & more',
   },
   vendor: {
     label: 'Vendor',
-    accent: '#FFD700',
-    accentLight: '#FFD70020',
-    accentMid: '#FFD70040',
+    accent: '#F5C451',
+    accentLight: 'rgba(245,196,81,0.12)',
+    accentMid: 'rgba(245,196,81,0.25)',
     gradient: 'from-[#4a3d00] to-[#2d2100]',
     icon: Store,
     tagline: 'Sell your products on SwiftRamadan',
   },
   rider: {
     label: 'Rider',
-    accent: '#3b82f6',
-    accentLight: '#3b82f620',
-    accentMid: '#3b82f640',
+    accent: '#38BDF8',
+    accentLight: 'rgba(56,189,248,0.12)',
+    accentMid: 'rgba(56,189,248,0.25)',
     gradient: 'from-[#1e3a5f] to-[#0c1929]',
     icon: Bike,
     tagline: 'Deliver & earn with SwiftLogistics',
@@ -150,7 +150,7 @@ function InputField({
   value,
   onChange,
   type = 'text',
-  accentColor = '#13ec13',
+  accentColor = '#10E07A',
   rightElement,
   inputMode,
   maxLength,
@@ -194,7 +194,7 @@ function ActionButton({
   label,
   onClick,
   loading,
-  accentColor = '#13ec13',
+  accentColor = '#10E07A',
   icon: Icon,
   fullWidth = true,
 }: {
@@ -255,6 +255,9 @@ function LoginScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'login', email, password, role: loginRole }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         setUserName(data.user?.name || email.split('@')[0]);
@@ -296,6 +299,9 @@ function LoginScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'oauth', provider }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         // OAuth flow completed or user logged in
@@ -421,11 +427,14 @@ function LoginScreen() {
                   }
                   setForgotLoading(true);
                   try {
-                    await fetch('/api/auth', {
+                    const forgotRes = await fetch('/api/auth', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ action: 'forgot-password', email: forgotEmail }),
                     });
+                    if (!forgotRes.ok) {
+                      throw new Error(`API error: ${forgotRes.status}`);
+                    }
                   } catch {
                     // silently handle — we show the same toast regardless
                   } finally {
@@ -537,6 +546,8 @@ function SignupScreen() {
   const [area, setArea] = useState('');
   const [areaOpen, setAreaOpen] = useState(false);
   const [joinCommunity, setJoinCommunity] = useState(true);
+  const [signupPassword, setSignupPassword] = useState('');
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
 
   // Step 2 fields - Vendor
   const [businessName, setBusinessName] = useState('');
@@ -561,6 +572,10 @@ function SignupScreen() {
   const handleStep1Next = () => {
     if (!fullName.trim() || !phone.trim() || !email.trim() || !area) {
       toast({ title: 'Missing fields', description: 'Please fill in all required fields.', variant: 'destructive' });
+      return;
+    }
+    if (signupPassword.length > 0 && signupPassword.length < 6) {
+      toast({ title: 'Weak password', description: 'Password must be at least 6 characters.', variant: 'destructive' });
       return;
     }
     // If customer, go directly to OTP (skip step 2)
@@ -598,16 +613,21 @@ function SignupScreen() {
           email,
           area,
           role: signupRole,
+          ...(signupPassword ? { password: signupPassword } : {}),
           ...(signupRole === 'vendor' ? { businessName, businessCategory, businessAddress } : {}),
           ...(signupRole === 'rider' ? { vehicleType, plateNumber, licenseNumber } : {}),
         }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         store.setUserName(fullName);
         store.setUserPhone(`+234${phone}`);
         store.setUserEmail(email);
         store.setUserArea(area);
+        if (data.user?.referralCode) store.setReferralCode(data.user.referralCode);
         store.setShowAuth('otp');
         toast({ title: 'Account created!', description: 'Please verify your phone number.' });
       } else {
@@ -619,6 +639,7 @@ function SignupScreen() {
       store.setUserPhone(`+234${phone}`);
       store.setUserEmail(email);
       store.setUserArea(area);
+      store.setReferralCode(`SWIFT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`);
       store.setShowAuth('otp');
       toast({ title: 'Account created!', description: 'Please verify your phone number.' });
     } finally {
@@ -795,6 +816,27 @@ function SignupScreen() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+
+            {/* Password */}
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <input
+                type={showSignupPassword ? 'text' : 'password'}
+                placeholder="Create password (min 6 chars)"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+                style={{ borderColor: signupPassword ? `${config.accent}50` : undefined }}
+              />
+              <button
+                type="button"
+                onClick={() => setShowSignupPassword(!showSignupPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
+              >
+                {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
 
             {/* Join Community */}
@@ -1046,7 +1088,7 @@ function OTPScreen() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const config = ROLE_CONFIG[userRole || 'customer'];
-  const accentColor = userRole ? config.accent : '#13ec13';
+  const accentColor = userRole ? config.accent : '#10E07A';
 
   useEffect(() => {
     if (countdown <= 0) {
@@ -1119,6 +1161,9 @@ function OTPScreen() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'verify-otp', email: userEmail, phone: userPhone, otp: code }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data.success) {
         handleVerifySuccess();
@@ -1138,11 +1183,14 @@ function OTPScreen() {
     setCountdown(60);
     setOtp(Array(6).fill(''));
     try {
-      await fetch('/api/auth', {
+      const resendRes = await fetch('/api/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'send-otp', email: userEmail, phone: userPhone }),
       });
+      if (!resendRes.ok) {
+        throw new Error(`API error: ${resendRes.status}`);
+      }
       toast({ title: 'Code resent', description: 'A new verification code has been sent.' });
     } catch {
       toast({ title: 'Code resent', description: 'A new verification code has been sent.' });
@@ -1252,7 +1300,7 @@ const ROLES = [
     description: 'Shop iftar meals, groceries, and more',
     icon: ShoppingBag,
     gradient: 'from-[#064e3b] to-[#0a3d2e]',
-    accent: '#13ec13',
+    accent: '#10E07A',
     image: '/images/categories/hub-iftar.png',
   },
   {
@@ -1420,7 +1468,7 @@ export default function AuthScreen() {
   };
 
   // Dynamic accent based on role
-  const activeAccent = userRole ? ROLE_CONFIG[userRole].accent : '#13ec13';
+  const activeAccent = userRole ? ROLE_CONFIG[userRole].accent : '#10E07A';
 
   return (
     <AnimatePresence>

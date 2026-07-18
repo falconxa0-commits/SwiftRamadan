@@ -399,6 +399,14 @@ This is an electronic receipt — no signature required.
                               </div>
                               <div className="text-right shrink-0">
                                 <span className={`text-xs font-bold ${config?.color}`}>{order.status}</span>
+                                {order.status === 'In Transit' && (
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); useAppStore.getState().setActiveModal('live-tracking-map'); }}
+                                    className="block ml-auto mt-0.5 text-[10px] font-bold text-[#38BDF8] hover:text-[#38BDF8]/80 transition-colors"
+                                  >
+                                    View Map →
+                                  </button>
+                                )}
                                 <p className="text-white/60 text-xs font-bold">{formatNaira(order.total)}</p>
                               </div>
                             </div>
@@ -437,7 +445,7 @@ This is an electronic receipt — no signature required.
                             >
                               <div className="glass-card rounded-b-2xl border border-t-0 p-4 space-y-2 mt-1">
                                 {order.items.map((item, i) => (
-                                  <div key={i} className="flex justify-between text-xs">
+                                  <div key={`${item.name}-${i}`} className="flex justify-between text-xs">
                                     <span className="text-white/60">{item.name} x{item.qty}</span>
                                     <span className="text-white/40">{formatNaira(item.price * item.qty)}</span>
                                   </div>
@@ -608,7 +616,7 @@ This is an electronic receipt — no signature required.
             })}
           </div>
           <button
-            onClick={() => useAppStore.getState().setActiveModal('prayer')}
+            onClick={() => useAppStore.getState().setActiveModal('prayer-times')}
             className="w-full mt-4 bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
           >
             <span className="material-symbols-outlined text-sm">schedule</span>

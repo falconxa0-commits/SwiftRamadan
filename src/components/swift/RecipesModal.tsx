@@ -61,7 +61,7 @@ export default function RecipesModal() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Easy': return 'text-[#13ec13] bg-[#13ec13]/10 border-[#13ec13]/20';
+      case 'Easy': return 'text-[#10E07A] bg-[#10E07A]/10 border-[#10E07A]/20';
       case 'Medium': return 'text-[#FFD700] bg-[#FFD700]/10 border-[#FFD700]/20';
       case 'Hard': return 'text-red-400 bg-red-400/10 border-red-400/20';
       default: return 'text-white/50 bg-white/5 border-white/10';
@@ -113,8 +113,8 @@ export default function RecipesModal() {
                   onClick={() => { setSelectedCategory(cat.id); setExpandedRecipe(null); }}
                   className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
                     selectedCategory === cat.id
-                      ? 'bg-[#13ec13] text-[#05070A]'
-                      : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#13ec13]/20 hover:text-white/70'
+                      ? 'bg-[#10E07A] text-[#05070A]'
+                      : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#10E07A]/20 hover:text-white/70'
                   }`}
                 >
                   {cat.name}
@@ -126,11 +126,11 @@ export default function RecipesModal() {
             <div className="px-4 pt-4 shrink-0">
               <button
                 onClick={() => setActiveModal('ai-recipe')}
-                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#13ec13]/10 to-[#FFD700]/10 border border-[#13ec13]/25 hover:border-[#13ec13]/50 transition-all text-left"
+                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#FFD700]/10 border border-[#10E07A]/25 hover:border-[#10E07A]/50 transition-all text-left"
               >
-                <div className="relative w-10 h-10 bg-gradient-to-br from-[#13ec13]/20 to-[#FFD700]/20 rounded-xl flex items-center justify-center border border-[#13ec13]/30 shrink-0">
+                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#FFD700]/20 rounded-xl flex items-center justify-center border border-[#10E07A]/30 shrink-0">
                   <ChefHat className="w-5 h-5 text-[#FFD700]" />
-                  <Sparkles className="w-2.5 h-2.5 text-[#13ec13] absolute -top-0.5 -right-0.5" />
+                  <Sparkles className="w-2.5 h-2.5 text-[#10E07A] absolute -top-0.5 -right-0.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-bold text-sm flex items-center gap-1.5">
@@ -211,7 +211,7 @@ export default function RecipesModal() {
                               {/* Ingredients */}
                               <div>
                                 <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
-                                  <ShoppingCart className="w-4 h-4 text-[#13ec13]" />
+                                  <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
                                   Ingredients
                                   <span className="text-white/30 text-xs font-normal">({formatNaira(totalIngredientCost)} total)</span>
                                 </h4>
@@ -223,7 +223,7 @@ export default function RecipesModal() {
                                     >
                                       <div className="flex items-center gap-2">
                                         {ing.productId ? (
-                                          <span className="w-2 h-2 rounded-full bg-[#13ec13] shrink-0" />
+                                          <span className="w-2 h-2 rounded-full bg-[#10E07A] shrink-0" />
                                         ) : (
                                           <span className="w-2 h-2 rounded-full bg-white/20 shrink-0" />
                                         )}
@@ -232,7 +232,7 @@ export default function RecipesModal() {
                                       <div className="flex items-center gap-2">
                                         <span className="text-white/40 text-xs">{formatNaira(ing.price)}</span>
                                         {ing.productId && shoppedIngredients.has(ing.productId) && (
-                                          <Check className="w-3.5 h-3.5 text-[#13ec13]" />
+                                          <Check className="w-3.5 h-3.5 text-[#10E07A]" />
                                         )}
                                       </div>
                                     </div>
@@ -244,7 +244,7 @@ export default function RecipesModal() {
                                   className={`w-full mt-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
                                     allIngredientsShopped(recipe.id)
                                       ? 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
-                                      : 'bg-[#13ec13] text-[#05070A] hover:bg-[#13ec13]/90 active:scale-[0.98]'
+                                      : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
                                   }`}
                                 >
                                   {allIngredientsShopped(recipe.id) ? (

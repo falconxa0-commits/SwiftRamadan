@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // GET /api/settings?email=xxx — return UserSetting (creates default if missing)
 export async function GET(request: NextRequest) {
@@ -66,6 +67,9 @@ export async function PUT(request: NextRequest) {
   if (rateLimited) return rateLimited;
 
   try {
+    const auth = await requireAuth(request);
+    if (auth instanceof NextResponse) return auth;
+
     const body = await request.json();
     const {
       email,

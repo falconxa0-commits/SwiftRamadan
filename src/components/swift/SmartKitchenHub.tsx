@@ -138,7 +138,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const MOOD_STYLES: Record<Mood, { border: string; bg: string; emoji: string; label: string }> = {
-  praise: { border: 'border-[#13ec13]/60', bg: 'bg-[#13ec13]/8', emoji: '🎉', label: 'Praise' },
+  praise: { border: 'border-[#10E07A]/60', bg: 'bg-[#10E07A]/8', emoji: '🎉', label: 'Praise' },
   guide: { border: 'border-[#FFD700]/60', bg: 'bg-[#FFD700]/8', emoji: '💡', label: 'Tip' },
   correct: { border: 'border-[#ef4444]/60', bg: 'bg-[#ef4444]/8', emoji: '⚠️', label: 'Heads up' },
   encourage: { border: 'border-[#8b5cf6]/60', bg: 'bg-[#8b5cf6]/8', emoji: '💪', label: 'Keep going' },
@@ -192,7 +192,7 @@ function generateSteps(recipeName: string): string[] {
 }
 
 function difficultyColor(d: string): string {
-  if (d === 'easy') return '#13ec13';
+  if (d === 'easy') return '#10E07A';
   if (d === 'hard') return '#ef4444';
   return '#FFD700';
 }
@@ -364,6 +364,9 @@ export default function SmartKitchenHub() {
             email: mail,
           }),
         });
+        if (!res.ok) {
+          throw new Error(`API error: ${res.status}`);
+        }
         const data = await res.json();
         if (data?.coaching) {
           setCoaching(data.coaching as Coaching);
@@ -390,6 +393,9 @@ export default function SmartKitchenHub() {
   const fetchPantry = useCallback(async () => {
     try {
       const res = await fetch(`/api/pantry?email=${encodeURIComponent(email)}`);
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (Array.isArray(data?.items)) setPantry(data.items as PantryItem[]);
     } catch { /* silent */ }
@@ -404,6 +410,9 @@ export default function SmartKitchenHub() {
     setInsightsLoading(true);
     try {
       const res = await fetch(`/api/cooking-sessions?email=${encodeURIComponent(email)}`);
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data && typeof data === 'object') {
         setAnalytics({ ...EMPTY_ANALYTICS, ...data } as Analytics);
@@ -498,7 +507,7 @@ export default function SmartKitchenHub() {
     if (!selectedRecipe) return;
     const durationSec = Math.max(5, Math.round((Date.now() - sessionStartRef.current) / 1000));
     try {
-      await fetch('/api/cooking-sessions', {
+      const sessionRes = await fetch('/api/cooking-sessions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -510,6 +519,9 @@ export default function SmartKitchenHub() {
           usedLiveAI: true,
         }),
       });
+      if (!sessionRes.ok) {
+        throw new Error(`API error: ${sessionRes.status}`);
+      }
     } catch { /* still celebrate */ }
 
     // stop camera explicitly
@@ -563,6 +575,9 @@ export default function SmartKitchenHub() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data?.result) {
         setScanResult(data.result as VisualSearchResult);
@@ -607,6 +622,9 @@ export default function SmartKitchenHub() {
           expiresAt: pantryForm.expiresAt || undefined,
         }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data?.item) {
         setPantry((prev) => [data.item as PantryItem, ...prev]);
@@ -620,7 +638,10 @@ export default function SmartKitchenHub() {
   const handleDeletePantry = async (id: string) => {
     setPantry((prev) => prev.filter((p) => p.id !== id));
     try {
-      await fetch(`/api/pantry?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      const delRes = await fetch(`/api/pantry?email=${encodeURIComponent(email)}&id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+      if (!delRes.ok) {
+        throw new Error(`API error: ${delRes.status}`);
+      }
     } catch { /* silent */ }
   };
 
@@ -637,6 +658,9 @@ export default function SmartKitchenHub() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items: pantry.map((p) => p.name), email }),
       });
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`);
+      }
       const data = await res.json();
       if (data?.recipe) setRescueRecipe(data.recipe as RescueRecipe);
     } catch { /* silent */ }
@@ -683,7 +707,7 @@ export default function SmartKitchenHub() {
     const r = 40;
     const C = 2 * Math.PI * r;
     const segs = [
-      { value: easy, color: '#13ec13' },
+      { value: easy, color: '#10E07A' },
       { value: medium, color: '#FFD700' },
       { value: hard, color: '#8b5cf6' },
     ];
@@ -733,10 +757,10 @@ export default function SmartKitchenHub() {
           >
             {/* ── Header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#13ec13] via-[#FFD700] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#FFD700] to-[#8b5cf6]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[#13ec13] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
                     <ChefHat className="w-5 h-5 text-[#05070A]" />
                     <span className="absolute -top-1 -right-1 size-2.5 bg-[#ef4444] rounded-full live-ring" />
                   </div>
@@ -879,7 +903,7 @@ function TabButton({
     <button
       onClick={onClick}
       className={`flex flex-col items-center gap-1 py-2 rounded-xl transition-colors ${
-        active ? 'bg-[#13ec13]/12 text-[#13ec13]' : 'text-white/50 hover:text-white/80'
+        active ? 'bg-[#10E07A]/12 text-[#10E07A]' : 'text-white/50 hover:text-white/80'
       }`}
     >
       {icon}
@@ -928,7 +952,7 @@ function CoachTab(props: CoachTabProps) {
           onClick={props.onOpenScanner}
           className="gradient-border w-full p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
         >
-          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#13ec13] flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#10E07A] flex items-center justify-center shrink-0">
             <ScanLine className="w-6 h-6 text-white" />
           </div>
           <div className="text-left flex-1 min-w-0">
@@ -949,7 +973,7 @@ function CoachTab(props: CoachTabProps) {
               <button
                 key={meal.id}
                 onClick={() => props.onSelectMeal(meal)}
-                className="bg-[#0F1117] border border-white/5 hover:border-[#13ec13]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
+                className="bg-[#0F1117] border border-white/5 hover:border-[#10E07A]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
               >
                 <div className="aspect-square bg-[#1A1D26] overflow-hidden">
                   <img src={meal.image} alt={meal.name} className="w-full h-full object-cover" />
@@ -1013,12 +1037,12 @@ function CoachTab(props: CoachTabProps) {
 
         <div>
           <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-            <Utensils className="w-4 h-4 text-[#13ec13]" /> Cooking Plan
+            <Utensils className="w-4 h-4 text-[#10E07A]" /> Cooking Plan
           </h4>
           <ol className="space-y-2">
             {props.steps.map((step, i) => (
               <li key={i} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
-                <span className="size-6 rounded-full bg-[#13ec13]/15 text-[#13ec13] text-xs font-black flex items-center justify-center shrink-0">
+                <span className="size-6 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-xs font-black flex items-center justify-center shrink-0">
                   {i + 1}
                 </span>
                 <span className="text-white/80 text-sm leading-snug">{step}</span>
@@ -1029,7 +1053,7 @@ function CoachTab(props: CoachTabProps) {
 
         <button
           onClick={props.onStartLive}
-          className="w-full bg-[#13ec13] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="w-full bg-[#10E07A] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           <Sparkles className="w-5 h-5" />
           ▶ Start Live Cooking with Chef Safa
@@ -1055,7 +1079,7 @@ function CoachTab(props: CoachTabProps) {
         {/* Current step card */}
         <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[#13ec13] text-xs font-black tracking-wider">
+            <span className="text-[#10E07A] text-xs font-black tracking-wider">
               STEP {props.stepIndex + 1} OF {totalSteps}
             </span>
             <span className="text-white/40 text-xs flex items-center gap-1">
@@ -1066,7 +1090,7 @@ function CoachTab(props: CoachTabProps) {
           {/* Overall step progress */}
           <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-500"
               style={{ width: `${((props.stepIndex + 1) / totalSteps) * 100}%` }}
             />
           </div>
@@ -1117,7 +1141,7 @@ function CoachTab(props: CoachTabProps) {
                 </div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-700"
+                    className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-700"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -1136,7 +1160,7 @@ function CoachTab(props: CoachTabProps) {
               {isLast ? (
                 <button
                   onClick={props.onComplete}
-                  className="flex-[2] bg-[#13ec13] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                  className="flex-[2] bg-[#10E07A] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Mark Complete & Log
                 </button>
@@ -1196,7 +1220,7 @@ function CoachTab(props: CoachTabProps) {
         <button
           onClick={props.onSnapAndIdentify}
           disabled={!!props.cameraError || props.scanLoading}
-          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[#13ec13] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
+          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[#10E07A] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
         >
           <Camera className="w-5 h-5" /> 📸 Snap & Identify
         </button>
@@ -1206,11 +1230,11 @@ function CoachTab(props: CoachTabProps) {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[#13ec13]/40 rounded-2xl p-4 space-y-3"
+            className="bg-[#0F1117] border-2 border-[#10E07A]/40 rounded-2xl p-4 space-y-3"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="text-[#13ec13] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
+                <div className="text-[#10E07A] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
                 <h3 className="text-white text-lg font-black leading-tight truncate">{props.scanResult.foodName}</h3>
                 <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#FFD700]/15 text-[#FFD700]">
                   {props.scanResult.category}
@@ -1232,7 +1256,7 @@ function CoachTab(props: CoachTabProps) {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={props.onAddScanToCart}
-                className="flex-1 bg-[#13ec13] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                className="flex-1 bg-[#10E07A] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
               >
                 <ShoppingCart className="w-4 h-4" /> Add to Cart
               </button>
@@ -1274,7 +1298,7 @@ function CustomRecipeCard({
         onClick={() => setExpanded((v) => !v)}
         className="w-full p-3 flex flex-col items-center justify-center min-h-[140px] text-center"
       >
-        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#13ec13] flex items-center justify-center mb-2">
+        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#10E07A] flex items-center justify-center mb-2">
           <Plus className="w-5 h-5 text-white" />
         </div>
         <div className="text-white text-xs font-bold">Custom Recipe</div>
@@ -1286,7 +1310,7 @@ function CustomRecipeCard({
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="e.g. Egusi Soup"
-            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
           />
           <div className="flex gap-1.5">
             {diffs.map((d) => (
@@ -1306,7 +1330,7 @@ function CustomRecipeCard({
           </div>
           <button
             onClick={onStart}
-            className="w-full bg-[#13ec13] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
+            className="w-full bg-[#10E07A] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
           >
             Start Cooking →
           </button>
@@ -1336,7 +1360,7 @@ function CameraErrorCard({ error, onRetry }: { error: string; onRetry: () => voi
       </div>
       <button
         onClick={onRetry}
-        className="bg-[#13ec13] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
+        className="bg-[#10E07A] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
       >
         <RefreshCw className="w-4 h-4" /> Retry
       </button>
@@ -1394,7 +1418,7 @@ function PantryTab({
         </div>
         <button
           onClick={() => setShowAddPantry(!showAddPantry)}
-          className="bg-[#13ec13] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
+          className="bg-[#10E07A] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
         >
           <Plus className="w-4 h-4" /> Add Item
         </button>
@@ -1414,13 +1438,13 @@ function PantryTab({
                 value={pantryForm.name}
                 onChange={(e) => setPantryForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Item name (e.g. Tomatoes)"
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <select
                   value={pantryForm.category}
                   onChange={(e) => setPantryForm((f) => ({ ...f, category: e.target.value }))}
-                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#13ec13]/40 outline-none"
+                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#10E07A]/40 outline-none"
                 >
                   {PANTRY_CATEGORIES.map((c) => (
                     <option key={c} value={c} className="bg-[#1A1D26]">{c}</option>
@@ -1431,13 +1455,13 @@ function PantryTab({
                     value={pantryForm.quantity}
                     onChange={(e) => setPantryForm((f) => ({ ...f, quantity: e.target.value }))}
                     placeholder="Qty"
-                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
                   />
                   <input
                     value={pantryForm.unit}
                     onChange={(e) => setPantryForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder="unit"
-                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 outline-none"
+                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
                   />
                 </div>
               </div>
@@ -1445,11 +1469,11 @@ function PantryTab({
                 type="date"
                 value={pantryForm.expiresAt}
                 onChange={(e) => setPantryForm((f) => ({ ...f, expiresAt: e.target.value }))}
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#13ec13]/40 outline-none"
+                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#10E07A]/40 outline-none"
               />
               <button
                 onClick={onAdd}
-                className="w-full bg-[#13ec13] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
+                className="w-full bg-[#10E07A] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
               >
                 Save to Pantry
               </button>
@@ -1508,7 +1532,7 @@ function PantryTab({
                 <ul className="space-y-1.5">
                   {rescueRecipe.ingredients?.map((ing, i) => (
                     <li key={i} className="flex gap-2 text-xs">
-                      <span className="text-[#13ec13]">•</span>
+                      <span className="text-[#10E07A]">•</span>
                       <span className="text-white/80">
                         <span className="font-bold">{ing.name}</span>
                         <span className="text-white/50"> — {ing.use}</span>
@@ -1522,7 +1546,7 @@ function PantryTab({
                 <ol className="space-y-1.5">
                   {rescueRecipe.steps?.map((s, i) => (
                     <li key={i} className="flex gap-2 text-xs">
-                      <span className="size-5 rounded-full bg-[#13ec13]/15 text-[#13ec13] text-[10px] font-black flex items-center justify-center shrink-0">
+                      <span className="size-5 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-[10px] font-black flex items-center justify-center shrink-0">
                         {i + 1}
                       </span>
                       <span className="text-white/80 leading-snug">{s}</span>
@@ -1541,7 +1565,7 @@ function PantryTab({
               )}
               <button
                 onClick={onCookNow}
-                className="w-full bg-[#13ec13] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                className="w-full bg-[#10E07A] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
               >
                 Cook This Now <ArrowRight className="w-4 h-4" />
               </button>
@@ -1623,7 +1647,7 @@ function InsightsTab({
   }
 
   const stats = [
-    { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: '#13ec13' },
+    { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: '#10E07A' },
     { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: '#FFD700' },
     { label: 'Cook Time (min)', value: analytics.totalCookTimeMins, icon: <Clock className="w-4 h-4" />, color: '#8b5cf6' },
     { label: 'Live AI Sessions', value: analytics.liveAIUses, icon: <Bot className="w-4 h-4" />, color: '#ef4444' },
@@ -1688,7 +1712,7 @@ function InsightsTab({
           })}
           <defs>
             <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#13ec13" />
+              <stop offset="0%" stopColor="#10E07A" />
               <stop offset="100%" stopColor="#FFD700" />
             </linearGradient>
           </defs>
@@ -1721,7 +1745,7 @@ function InsightsTab({
           </svg>
           <div className="flex-1 space-y-2">
             {[
-              { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: '#13ec13' },
+              { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: '#10E07A' },
               { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: '#FFD700' },
               { label: 'Hard', value: analytics.difficultyBreakdown.hard, color: '#8b5cf6' },
             ].map((d) => (
@@ -1738,8 +1762,8 @@ function InsightsTab({
       {/* Last cooked */}
       {analytics.lastCooked && (
         <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-[#13ec13]/15 flex items-center justify-center">
-            <CookingPot className="w-5 h-5 text-[#13ec13]" />
+          <div className="size-10 rounded-xl bg-[#10E07A]/15 flex items-center justify-center">
+            <CookingPot className="w-5 h-5 text-[#10E07A]" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-white/50 text-[10px] font-black tracking-wider">LAST COOKED</div>
@@ -1802,13 +1826,13 @@ function BadgesTab({
       <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-white font-black text-sm">Progress</span>
-          <span className="text-[#13ec13] font-black text-sm">
+          <span className="text-[#10E07A] font-black text-sm">
             {unlockedCount} / {achievements.length}
           </span>
         </div>
         <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#13ec13] to-[#FFD700] transition-all duration-500"
+            className="h-full bg-gradient-to-r from-[#10E07A] to-[#FFD700] transition-all duration-500"
             style={{ width: `${(unlockedCount / Math.max(1, achievements.length)) * 100}%` }}
           />
         </div>
@@ -1823,7 +1847,7 @@ function BadgesTab({
               key={a.id}
               className={`relative rounded-2xl p-4 border ${
                 a.unlocked
-                  ? 'border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/10 to-[#13ec13]/8 gold-glow'
+                  ? 'border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/10 to-[#10E07A]/8 gold-glow'
                   : 'border-white/5 bg-[#0F1117] opacity-50 grayscale'
               }`}
             >
@@ -1841,7 +1865,7 @@ function BadgesTab({
               <div className="text-white font-black text-sm leading-tight">{a.title}</div>
               <div className="text-white/50 text-[11px] mt-0.5 leading-snug">{a.desc}</div>
               {a.unlocked && (
-                <div className="absolute top-2 right-2 size-5 rounded-full bg-[#13ec13] flex items-center justify-center">
+                <div className="absolute top-2 right-2 size-5 rounded-full bg-[#10E07A] flex items-center justify-center">
                   <CheckCircle2 className="w-3 h-3 text-[#05070A]" />
                 </div>
               )}
@@ -1862,7 +1886,7 @@ function Confetti() {
         id: i,
         x: 50 + (Math.random() - 0.5) * 60,
         angle: Math.random() * 360,
-        color: ['#13ec13', '#FFD700', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
+        color: ['#10E07A', '#FFD700', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
         delay: Math.random() * 0.15,
         size: 6 + Math.random() * 6,
         rotate: Math.random() * 720 - 360,

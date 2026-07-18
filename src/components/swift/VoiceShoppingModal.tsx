@@ -230,27 +230,27 @@ export default function VoiceShoppingModal() {
                   {isListening && (
                     <>
                       <motion.div
-                        className="absolute inset-0 rounded-full border-2 border-[#13ec13]/40"
+                        className="absolute inset-0 rounded-full border-2 border-[#10E07A]/40"
                         animate={{ scale: [1, 1.5], opacity: [0.6, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
                       />
                       <motion.div
-                        className="absolute inset-0 rounded-full border-2 border-[#13ec13]/20"
+                        className="absolute inset-0 rounded-full border-2 border-[#10E07A]/20"
                         animate={{ scale: [1, 1.8], opacity: [0.4, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
                       />
                       <motion.div
-                        className="absolute inset-0 rounded-full border border-[#13ec13]/10"
+                        className="absolute inset-0 rounded-full border border-[#10E07A]/10"
                         animate={{ scale: [1, 2.2], opacity: [0.3, 0] }}
                         transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
                       />
                     </>
                   )}
-                  <div className={`relative w-28 h-28 rounded-full flex items-center justify-center ${isListening ? 'bg-[#13ec13]' : 'bg-[#1A1D26] border-2 border-[#13ec13]/30'}`}>
+                  <div className={`relative w-28 h-28 rounded-full flex items-center justify-center ${isListening ? 'bg-[#10E07A]' : 'bg-[#1A1D26] border-2 border-[#10E07A]/30'}`}>
                     {isListening ? (
                       <MicOff className="w-10 h-10 text-[#05070A]" />
                     ) : (
-                      <Mic className="w-10 h-10 text-[#13ec13]" />
+                      <Mic className="w-10 h-10 text-[#10E07A]" />
                     )}
                   </div>
                 </button>
@@ -264,7 +264,7 @@ export default function VoiceShoppingModal() {
                 {animBars.map((height, i) => (
                   <motion.div
                     key={i}
-                    className={`w-[3px] rounded-full ${isListening ? 'bg-[#13ec13]' : 'bg-white/10'}`}
+                    className={`w-[3px] rounded-full ${isListening ? 'bg-[#10E07A]' : 'bg-white/10'}`}
                     animate={{ height: `${Math.max(4, height * 56)}px` }}
                     transition={{ duration: 0.1 }}
                   />
@@ -290,7 +290,7 @@ export default function VoiceShoppingModal() {
                     <button
                       key={cmd}
                       onClick={() => handleCommandClick(cmd)}
-                      className="px-4 py-2 rounded-full bg-[#1A1D26] border border-white/10 text-white/70 text-xs font-medium hover:border-[#13ec13]/30 hover:text-[#13ec13] transition-colors"
+                      className="px-4 py-2 rounded-full bg-[#1A1D26] border border-white/10 text-white/70 text-xs font-medium hover:border-[#10E07A]/30 hover:text-[#10E07A] transition-colors"
                     >
                       {cmd}
                     </button>
@@ -312,7 +312,7 @@ export default function VoiceShoppingModal() {
                       return (
                         <div
                           key={product.id}
-                          className={`bg-[#1A1D26] rounded-xl border ${confirmedProduct?.id === product.id ? 'border-[#13ec13]/30' : 'border-white/5'} overflow-hidden`}
+                          className={`bg-[#1A1D26] rounded-xl border ${confirmedProduct?.id === product.id ? 'border-[#10E07A]/30' : 'border-white/5'} overflow-hidden`}
                         >
                           <div className="flex gap-3 p-3">
                             <div
@@ -321,7 +321,7 @@ export default function VoiceShoppingModal() {
                             />
                             <div className="flex-1 min-w-0">
                               <p className="text-white font-bold text-sm truncate">{product.name}</p>
-                              <p className="text-[#13ec13] font-black text-lg">{formatNaira(price)}</p>
+                              <p className="text-[#10E07A] font-black text-lg">{formatNaira(price)}</p>
                               {product.deliveryTime && (
                                 <p className="text-white/30 text-xs mt-0.5">{product.deliveryTime}</p>
                               )}
@@ -330,7 +330,7 @@ export default function VoiceShoppingModal() {
                           {confirmedProduct?.id === product.id && (
                             <button
                               onClick={() => handleConfirmAdd(product)}
-                              className="w-full py-3 bg-[#13ec13] text-[#05070A] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#11d411] transition-colors"
+                              className="w-full py-3 bg-[#10E07A] text-[#05070A] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#11d411] transition-colors"
                             >
                               <ShoppingCart className="w-4 h-4" />
                               Confirm & Add to Cart

@@ -126,7 +126,7 @@ export default function LiveTrackingMap() {
               {/* Gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/60 via-transparent to-[#05070A]" />
               <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[#FFD700]/5 blur-[80px] rounded-full" />
-              <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[#13ec13]/5 blur-[70px] rounded-full" />
+              <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[#10E07A]/5 blur-[70px] rounded-full" />
             </div>
 
             {/* SVG Route Overlay */}
@@ -197,7 +197,7 @@ export default function LiveTrackingMap() {
 
                 {/* Destination marker (end) */}
                 <g>
-                  <circle cx="260" cy="620" r="18" fill="#13ec13" opacity="0.1">
+                  <circle cx="260" cy="620" r="18" fill="#10E07A" opacity="0.1">
                     <animate
                       attributeName="r"
                       values="18;26;18"
@@ -211,15 +211,15 @@ export default function LiveTrackingMap() {
                       repeatCount="indefinite"
                     />
                   </circle>
-                  <circle cx="260" cy="620" r="14" fill="#1A1D26" stroke="#13ec13" strokeWidth="2.5" />
-                  <circle cx="260" cy="620" r="6" fill="#13ec13" />
+                  <circle cx="260" cy="620" r="14" fill="#1A1D26" stroke="#10E07A" strokeWidth="2.5" />
+                  <circle cx="260" cy="620" r="6" fill="#10E07A" />
                   {/* House icon indicator */}
                   <rect x="256" y="617" width="8" height="6" rx="1" fill="#05070A" />
                 </g>
 
                 {/* Labels */}
                 <text x="100" y="165" textAnchor="middle" fill="#FFD700" fontSize="10" fontWeight="bold" opacity="0.8">Suya Central</text>
-                <text x="260" y="650" textAnchor="middle" fill="#13ec13" fontSize="10" fontWeight="bold" opacity="0.8">Your Location</text>
+                <text x="260" y="650" textAnchor="middle" fill="#10E07A" fontSize="10" fontWeight="bold" opacity="0.8">Your Location</text>
               </svg>
             </div>
 
@@ -263,7 +263,7 @@ export default function LiveTrackingMap() {
                   onClick={() => toast({ title: 'Centering Map 📍' })}
                   className="w-11 h-11 rounded-xl bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
                 >
-                  <Navigation className="w-4 h-4 text-[#13ec13]" />
+                  <Navigation className="w-4 h-4 text-[#10E07A]" />
                 </button>
               </div>
 
@@ -275,7 +275,7 @@ export default function LiveTrackingMap() {
                     <span className="text-white/50 text-[10px]">Rider</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#13ec13]" />
+                    <div className="w-3 h-3 rounded-full bg-[#10E07A]" />
                     <span className="text-white/50 text-[10px]">Your Home</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -306,9 +306,9 @@ export default function LiveTrackingMap() {
                         <motion.span
                           animate={{ scale: [1, 1.3, 1] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="w-2 h-2 bg-[#13ec13] rounded-full"
+                          className="w-2 h-2 bg-[#10E07A] rounded-full"
                         />
-                        <span className="text-[#13ec13] text-sm font-bold">Ready for Iftar</span>
+                        <span className="text-[#10E07A] text-sm font-bold">Ready for Iftar</span>
                       </div>
                     </div>
                     <div className="bg-[#1A1D26] border border-white/5 rounded-xl px-3 py-2 text-center">
