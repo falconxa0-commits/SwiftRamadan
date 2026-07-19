@@ -1153,3 +1153,29 @@ Added `checkBodySize()` from `src/lib/validation.ts` to 5 API routes that accept
 - High: 7 fixed  
 - Medium: 10 fixed
 - Low: 10 fixed (L1 console.log cleanup deferred as non-breaking)
+
+---
+
+Task ID: C2
+Agent: Lead Principal Engineer
+Task: Fix Critical Issue C2 — Middleware JWT Verification
+
+Work Log:
+- Inspected complete auth flow: middleware.ts, auth-jwt.ts, session.ts, auth-utils.ts
+- Identified root cause: middleware only checks cookie existence (`if (!sessionCookie)`), never verifies JWT signature/expiration
+- Found duplicate `isPublicApiRoute()` in middleware.ts and session.ts with different route lists
+- Found dead `x-session-token` header (set by middleware, never read by any route)
+- Found `SESSION_COOKIE_NAME` not exported from session.ts (hardcoded in middleware)
+- Updated session.ts: exported `SESSION_COOKIE_NAME`, merged public route lists from both files, added missing routes (`/api/health`, `/api/payments/callback`, `/api/group-buy`, `/api/analytics`)
+- Rewrote middleware.ts: imports `verifySessionToken` from auth-jwt.ts, imports `isPublicApiRoute` and `SESSION_COOKIE_NAME` from session.ts, makes middleware async, verifies JWT on protected routes, rejects invalid/expired/tampered tokens with 401, clears invalid cookies, attaches verified user info as request headers (`x-user-id`, `x-user-email`, `x-user-role`), removes dead `x-session-token` header
+- Ran unit tests: 9/9 JWT verification tests pass (valid token, invalid signature, expired, random string, empty, malformed, invalid chars, payload structure, isPublicApiRoute classification)
+- Ran live server tests: 7/7 pass (missing cookie→401, random string cookie→401, valid session→200, tampered cookie→401, empty cookie→401, login→200, logout→200)
+- Lint: 0 errors, 1 pre-existing warning
+
+Stage Summary:
+- Files changed: 2 (src/middleware.ts, src/lib/session.ts)
+- Middleware now verifies JWT signature + expiration on every protected API route
+- Duplicate isPublicApiRoute() consolidated to single source in session.ts
+- Dead x-session-token header removed
+- SESSION_COOKIE_NAME exported and shared
+- All validation tests pass

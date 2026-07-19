@@ -5,7 +5,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSessionToken, verifySessionToken } from '@/lib/auth-jwt';
 
-const SESSION_COOKIE_NAME = 'swiftramadan-session';
+export const SESSION_COOKIE_NAME = 'swiftramadan-session';
 const SESSION_MAX_AGE = 30 * 24 * 3600; // 30 days in seconds
 
 export interface SessionUser {
@@ -91,16 +91,29 @@ export function clearSessionCookie(response: NextResponse): void {
 
 /**
  * Check if a route path should be accessible without authentication.
- * Public routes: auth, public product browsing, Islamic features, maps (GET only)
+ *
+ * Routes that are ALWAYS public (any HTTP method):
+ *   - /api/auth          — login, signup, OTP, logout
+ *   - /api/health         — health checks / readiness probes
+ *   - /api/monitoring     — Sentry tunnel
+ *   - /api/payments/callback — payment gateway webhooks/redirects
+ *
+ * Routes that are public for GET requests only (browsable content):
+ *   - Products, offers, coupons, vendors, group-buy, analytics, etc.
  */
 export function isPublicApiRoute(pathname: string, method: string): boolean {
-  // Auth routes are always public
-  if (pathname.startsWith('/api/auth')) return true;
+  // ── Always-public routes ──
+  const alwaysPublic = [
+    '/api/auth',              // login, signup, OTP, logout
+    '/api/health',            // health checks / readiness probes
+    '/api/monitoring',        // Sentry tunnel
+    '/api/payments/callback', // payment gateway webhooks/redirects
+  ];
+  for (const route of alwaysPublic) {
+    if (pathname === route || pathname.startsWith(route + '/')) return true;
+  }
 
-  // Monitoring/sentry tunnel
-  if (pathname.startsWith('/api/monitoring')) return true;
-
-  // GET-only public routes (browsable content)
+  // ── GET-only public routes (browsable content) ──
   if (method === 'GET') {
     const publicGetRoutes = [
       '/api/products',
@@ -114,7 +127,9 @@ export function isPublicApiRoute(pathname: string, method: string): boolean {
       '/api/coupons',
       '/api/search',
       '/api/maps/',
-      '/api/vendor', // browsing vendor stores
+      '/api/vendor',       // browsing vendor stores
+      '/api/group-buy',    // group buy listings
+      '/api/analytics',    // public analytics data
     ];
 
     for (const route of publicGetRoutes) {

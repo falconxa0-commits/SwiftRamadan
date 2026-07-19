@@ -1,60 +1,50 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifySessionToken } from '@/lib/auth-jwt';
+import { isPublicApiRoute, SESSION_COOKIE_NAME } from '@/lib/session';
 
-// Public API routes that don't require authentication
-const PUBLIC_API_ROUTES = [
-  '/api/auth',
-  '/api/health',
-  '/api/offers',
-  '/api/analytics',
-];
+/**
+ * SwiftRamadan Middleware — Edge Runtime
+ *
+ * Auth gate: verifies JWT session tokens on protected API routes.
+ * Public routes bypass verification for performance.
+ * Invalid/expired tokens are rejected and the cookie is cleared.
+ */
 
-// API routes that are public for GET requests only
-const PUBLIC_GET_ROUTES = [
-  '/api/products',
-  '/api/group-buy',
-];
+export async function middleware(request: NextRequest) {
+  // ── 1. Build the base response with security headers ──
 
-function isPublicApiRoute(pathname: string, method: string): boolean {
-  // Exact matches for always-public routes
-  if (PUBLIC_API_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
-    return true;
-  }
-  // GET-only public routes
-  if (method === 'GET' && PUBLIC_GET_ROUTES.some(route => pathname === route || pathname.startsWith(route + '/'))) {
-    return true;
-  }
-  return false;
-}
+  const requestHeaders = new Headers(request.headers);
 
-export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
-  // Security headers
+  // Security headers (applied to all responses)
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(self)');
 
-  // CORS headers for API routes (same-origin by default)
+  // ── 2. API route handling ──
+
   if (request.nextUrl.pathname.startsWith('/api/')) {
+    // CORS headers (same-origin by default)
     const origin = request.headers.get('origin');
-    // Allow same-origin requests; in production, configure allowed origins via env
     if (origin) {
       const allowedOrigins = process.env.CORS_ALLOWED_ORIGINS?.split(',').map(o => o.trim()) || [];
-      // In development, allow all localhost origins
       const isAllowed = allowedOrigins.includes(origin) ||
         (process.env.NODE_ENV === 'development' && origin.includes('localhost'));
       if (isAllowed) {
         response.headers.set('Access-Control-Allow-Origin', origin);
         response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Session-Token');
+        response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         response.headers.set('Access-Control-Max-Age', '86400');
         response.headers.set('Vary', 'Origin');
       }
     }
 
-    // Handle preflight OPTIONS requests
+    // Handle preflight OPTIONS requests — no auth needed
     if (request.method === 'OPTIONS') {
       return new NextResponse(null, {
         status: 204,
@@ -62,31 +52,55 @@ export function middleware(request: NextRequest) {
       });
     }
 
-    // Pass session cookie to headers for API routes (if present)
-    const sessionCookie = request.cookies.get('swiftramadan-session')?.value;
-    if (sessionCookie) {
-      response.headers.set('x-session-token', sessionCookie);
-    }
+    // ── 3. Protected route: verify JWT session token ──
 
-    // Protected API route check — reject unauthenticated requests
     if (!isPublicApiRoute(request.nextUrl.pathname, request.method)) {
+      const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME)?.value;
+
+      // No cookie at all — reject
       if (!sessionCookie) {
         return new NextResponse(
           JSON.stringify({ success: false, message: 'Authentication required' }),
-          {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-          },
+          { status: 401, headers: { 'Content-Type': 'application/json' } },
         );
       }
+
+      // Verify the JWT — rejects invalid signatures, expired tokens, malformed tokens
+      const payload = await verifySessionToken(sessionCookie);
+
+      if (!payload) {
+        // Invalid or expired token — reject and clear the bad cookie
+        const rejectResponse = new NextResponse(
+          JSON.stringify({ success: false, message: 'Invalid or expired session' }),
+          { status: 401, headers: { 'Content-Type': 'application/json' } },
+        );
+        rejectResponse.cookies.set(SESSION_COOKIE_NAME, '', {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/',
+          maxAge: 0,
+        });
+        return rejectResponse;
+      }
+
+      // Valid token — attach verified user info to request headers
+      // Downstream route handlers can read these via request.headers.get('x-user-id') etc.
+      requestHeaders.set('x-user-id', payload.userId);
+      requestHeaders.set('x-user-email', payload.email);
+      requestHeaders.set('x-user-role', payload.role);
     }
   }
 
-  // HTTPS redirect in production
+  // ── 4. HTTPS redirect in production ──
+
   if (process.env.NODE_ENV === 'production') {
     const proto = request.headers.get('x-forwarded-proto');
     if (proto && proto !== 'https') {
-      return NextResponse.redirect(`https://${request.headers.get('host')}${request.nextUrl.pathname}`, 301);
+      return NextResponse.redirect(
+        `https://${request.headers.get('host')}${request.nextUrl.pathname}`,
+        301,
+      );
     }
   }
 
