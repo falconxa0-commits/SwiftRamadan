@@ -199,12 +199,20 @@ export async function initiatePayment({
   }
 }
 
-// Verify payment
+// Verify payment with provider
+export interface PaymentVerificationResult {
+  verified: boolean;
+  amount?: number;           // verified amount in kobo
+  currency?: string;        // e.g. 'NGN'
+  providerTransactionId?: string;  // provider's transaction ID
+  gatewayResponse?: string;
+}
+
 export async function verifyPayment(
   provider: PaymentProvider,
   reference: string,
   transactionId?: string
-): Promise<{ verified: boolean; amount?: number; gatewayResponse?: string }> {
+): Promise<PaymentVerificationResult> {
   try {
     switch (provider) {
       case 'paystack': {
@@ -212,6 +220,8 @@ export async function verifyPayment(
         return {
           verified: result.data?.status === 'success',
           amount: result.data?.amount,
+          currency: result.data?.currency || 'NGN',
+          providerTransactionId: result.data?.id?.toString(),
           gatewayResponse: result.data?.gateway_response,
         };
       }
@@ -221,6 +231,16 @@ export async function verifyPayment(
         return {
           verified: result.data?.status === 'successful',
           amount: result.data?.amount ? nairaToKobo(result.data.amount) : undefined,
+          currency: result.data?.currency || 'NGN',
+          providerTransactionId: result.data?.id?.toString(),
+        };
+      }
+      case 'monnify': {
+        const result = await monnifyVerify(reference);
+        return {
+          verified: result.data?.paymentStatus === 'PAID',
+          amount: result.data?.amountPaid ? Math.round(result.data.amountPaid * 100) : undefined,
+          providerTransactionId: result.data?.transactionReference,
         };
       }
       case 'opay': {
@@ -228,6 +248,7 @@ export async function verifyPayment(
         return {
           verified: result.verified,
           amount: result.amount,
+          currency: result.currency,
           gatewayResponse: result.channel,
         };
       }

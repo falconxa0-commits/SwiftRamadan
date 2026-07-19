@@ -299,17 +299,20 @@ model Coupon {
 
 // ── Payments ──
 model Payment {
-  id        String   @id @default(cuid())
-  orderId   String?
-  order     Order?   @relation(fields: [orderId], references: [id])
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  amount    Int
-  method    String   @default("card") // card, transfer, cash, bnpl
-  status    String   @default("pending") // pending, success, failed, refunded
-  reference String   @unique
-  provider  String   @default("paystack")
-  createdAt DateTime @default(now())
+  id                     String   @id @default(cuid())
+  orderId                String?
+  order                  Order?   @relation(fields: [orderId], references: [id])
+  userId                 String?
+  user                   User?    @relation(fields: [userId], references: [id])
+  amount                 Int      // expected amount in kobo
+  method                 String   @default("card") // card, transfer, cash, bnpl
+  status                 String   @default("pending") // pending, success, failed, refunded
+  reference              String   @unique
+  provider               String   @default("paystack")
+  providerTransactionId  String?  // provider's transaction ID (audit trail)
+  verifiedAmount         Int?     // amount confirmed by provider (kobo)
+  providerCurrency       String   @default("NGN")
+  createdAt              DateTime @default(now())
 }
 
 // ── Follow / subscribe ──

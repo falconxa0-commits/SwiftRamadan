@@ -146,10 +146,16 @@ export function verifyPaystackWebhookSignature(
     .createHmac('sha512', PAYSTACK_SECRET_KEY)
     .update(payload)
     .digest('hex');
-  return crypto.timingSafeEqual(
-    Buffer.from(expected),
-    Buffer.from(signature),
-  );
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(expected),
+      Buffer.from(signature),
+    );
+  } catch {
+    // Length mismatch — signature is definitely invalid
+    console.error('[Paystack] Webhook signature comparison failed — length mismatch');
+    return false;
+  }
 }
 
 // ─── API functions ──────────────────────────────────────────────────────────

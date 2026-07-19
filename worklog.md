@@ -1179,3 +1179,34 @@ Stage Summary:
 - Dead x-session-token header removed
 - SESSION_COOKIE_NAME exported and shared
 - All validation tests pass
+
+---
+
+Task ID: C3
+Agent: Lead Principal Engineer
+Task: Fix Critical Issue C3 — Payment Webhook Signature Verification
+
+Work Log:
+- Phase 1: Inspected complete payment flow across 7 providers (Paystack, Flutterwave, Monnify, OPay, Moniepoint, BNPL, Swift-Pay)
+- Phase 1: Found 3 providers with webhook signature functions (Paystack, Flutterwave, Monnify) that were NEVER used in the callback route
+- Phase 2: Audited all providers — found the webhook POST handler: (1) skips verification if no signature header, (2) uses inline !== instead of timingSafeEqual, (3) only verifies Paystack, (4) no Flutterwave/Monnify verification, (5) no amount verification, (6) no currency verification, (7) no idempotency protection, (8) financial operations not in database transactions
+- Phase 3: Added providerTransactionId, verifiedAmount, providerCurrency fields to Payment model (Prisma schema)
+- Phase 3: Added Monnify verification to verifyPayment() function (was missing entirely)
+- Phase 3: Enhanced verifyPayment() return type with currency and providerTransactionId fields
+- Phase 3: Fixed Paystack verifyPaystackWebhookSignature() — added try/catch for timingSafeEqual length mismatch
+- Phase 3: Rewrote POST webhook handler with mandatory signature verification for all 3 providers, provider re-verification, amount/currency verification, idempotency, database transactions
+- Phase 3: Improved GET callback handler with idempotency check, amount/currency verification, atomic database transactions
+- Phase 4: Ran 13 test categories (all pass) — Paystack/Flutterwave/Monnify signature verification, invalid signatures, modified bodies, amount tolerance, Payment model new fields, route compilation
+- Phase 4: Live server tests — no signature → 401, invalid Paystack signature → 401, GET no reference → 307 redirect
+- Phase 4: Lint: 0 errors, 1 pre-existing warning
+- Phase 4: Browser verification: app renders correctly
+
+Stage Summary:
+- Files changed: 4 (prisma/schema.prisma, src/lib/payments/index.ts, src/lib/payments/paystack.ts, src/app/api/payments/callback/route.ts)
+- Webhook signature verification now MANDATORY for Paystack, Flutterwave, and Monnify
+- Missing signature → 401 Unauthorized
+- Invalid signature → 401 Invalid signature
+- All financial operations now wrapped in database transactions
+- Amount and currency verification added
+- Idempotency protection added (re-check status inside transaction)
+- Payment model extended with audit trail fields (providerTransactionId, verifiedAmount, providerCurrency)
