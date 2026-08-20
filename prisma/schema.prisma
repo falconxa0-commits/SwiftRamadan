@@ -185,6 +185,10 @@ model CommunityPost {
   likedBy    String   @default("[]")  // JSON array of emails
   createdAt  DateTime @default(now())
   comments   CommunityComment[]
+
+  @@index([authorEmail])
+  @@index([category])
+  @@index([createdAt])
 }
 
 model CommunityComment {
@@ -219,6 +223,10 @@ model Video {
   createdAt    DateTime @default(now())
   videoComments VideoComment[]
   savedBy       SavedVideo[]
+
+  @@index([authorId])
+  @@index([category])
+  @@index([createdAt])
 }
 
 model VideoComment {
@@ -281,20 +289,40 @@ model Review {
   targetType   String   @default("product") // product, rider, vendor
   targetId     String?
   createdAt    DateTime @default(now())
+
+  @@index([productId])
+  @@index([userId])
+  @@index([targetType])
 }
 
 // ── Coupons / promo codes ──
 model Coupon {
-  id         String   @id @default(cuid())
-  code       String   @unique
-  type       String   @default("percent") // percent, fixed
-  value      Int      @default(10)
-  minOrder   Int      @default(0)
-  maxUses    Int      @default(1000)
-  uses       Int      @default(0)
-  validUntil DateTime?
-  active     Boolean  @default(true)
-  createdAt  DateTime @default(now())
+  id          String             @id @default(cuid())
+  code        String             @unique
+  type        String             @default("percent") // percent, fixed
+  value       Int                @default(10)
+  minOrder    Int                @default(0)
+  maxUses     Int                @default(1000)
+  uses        Int                @default(0)
+  validUntil  DateTime?
+  active      Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  redemptions CouponRedemption[]
+}
+
+// ── Coupon Redemptions (tracks who used which coupon) ──
+model CouponRedemption {
+  id        String   @id @default(cuid())
+  couponId  String
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  userId    String
+  orderId   String?
+  discount  Int      // discount amount in kobo
+  createdAt DateTime @default(now())
+
+  @@unique([couponId, userId])  // Prevents double-redemption
+  @@index([userId])
+  @@index([orderId])
 }
 
 // ── Payments ──
@@ -313,6 +341,10 @@ model Payment {
   verifiedAmount         Int?     // amount confirmed by provider (kobo)
   providerCurrency       String   @default("NGN")
   createdAt              DateTime @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([orderId])
 }
 
 // ── Follow / subscribe ──
@@ -420,6 +452,10 @@ model Refund {
   processedAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  @@index([orderId])
+  @@index([status])
+  @@index([userId])
 }
 
 // ── KYC Documents ──
@@ -430,7 +466,7 @@ model KYCDocument {
   documentType    String   // national_id, voters_card, drivers_license, international_passport, nin
   documentNumber  String   @default("")
   status          String   @default("pending")  // pending, verified, rejected
-  documentImage   String   @default("")  // base64 encoded image
+  documentImage   String   @default("")  // file path (e.g., "uploads/kyc/xxx.jpg") or legacy base64
   rejectionReason String   @default("")
   verifiedBy      String?  // admin user id
   verifiedAt      DateTime?

@@ -108,7 +108,7 @@ const iftarSpots: IftarSpot[] = [
 /* ───────── GET: Return nearby iftar spots ───────── */
 
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
   const { searchParams } = request.nextUrl;
   const type = searchParams.get('type'); // mosque | community | stall
@@ -134,7 +134,7 @@ export async function GET(request: NextRequest) {
 /* ───────── POST: Create a new iftar spot pin ───────── */
 
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await request.json();

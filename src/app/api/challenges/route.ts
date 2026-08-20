@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 
 // 30-day Ramadan challenges (fallback mock)
 const RAMADAN_CHALLENGES = [
@@ -38,7 +39,7 @@ const RAMADAN_CHALLENGES = [
 
 // GET: Returns challenge list + progress
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId') || 'default-user';
@@ -94,12 +95,21 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Mark challenge complete
+// FIXED: Now requires authentication
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
+  
+  // REQUIRE AUTHENTICATION - challenge progress is private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+  
   try {
     const body = await request.json();
-    const { challengeId, userId = 'default-user' } = body;
+    const { challengeId } = body;
+    
+    // Use authenticated user's ID
+    const userId = auth.userId;
 
     const challenge = RAMADAN_CHALLENGES.find(c => c.id === challengeId);
     if (!challenge) {

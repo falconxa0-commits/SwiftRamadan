@@ -130,10 +130,15 @@ export async function POST(request: NextRequest) {
 }
 
 // PUT /api/addresses { id, ...fields } → update address
+// FIXED: Now requires authentication
 export async function PUT(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  // REQUIRE AUTHENTICATION - address modifications are private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await request.json();
@@ -193,10 +198,15 @@ export async function PUT(request: NextRequest) {
 }
 
 // DELETE /api/addresses?id=xxx → delete address
+// FIXED: Now requires authentication
 export async function DELETE(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  // REQUIRE AUTHENTICATION - address deletion is private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { searchParams } = new URL(request.url);

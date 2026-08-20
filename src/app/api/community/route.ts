@@ -180,12 +180,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, post }, { status: 200 });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Unknown error';
+    // Don't expose internal error details to client
+    console.error('[Community] Error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/community' },
     });
     return NextResponse.json(
-      { success: false, message: msg },
+      { success: false, message: 'An error occurred. Please try again.' },
       { status: 500 },
     );
   }

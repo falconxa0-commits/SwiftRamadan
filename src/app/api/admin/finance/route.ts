@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /* ─── Mock finance data ─── */
 const periodData: Record<string, {
@@ -70,6 +71,10 @@ const periodData: Record<string, {
 };
 
 export async function GET(request: NextRequest) {
+  // Admin authentication required
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const period = searchParams.get('period') || 'This Month';

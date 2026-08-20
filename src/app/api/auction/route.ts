@@ -49,7 +49,7 @@ const MOCK_AUCTIONS = [
 ];
 
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
 
   try {
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await request.json();

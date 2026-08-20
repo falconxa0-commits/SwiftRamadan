@@ -4,21 +4,19 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
 
-// GET /api/settings?email=xxx — return UserSetting (creates default if missing)
+// GET /api/settings — return UserSetting for authenticated user (creates default if missing)
+// FIXED: Now requires authentication
 export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimited) return rateLimited;
 
-  try {
-    const { searchParams } = new URL(request.url);
-    const email = searchParams.get('email');
+  // REQUIRE AUTHENTICATION - settings are private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
-    if (!email) {
-      return NextResponse.json(
-        { success: false, message: 'Email query parameter is required' },
-        { status: 400 }
-      );
-    }
+  try {
+    // Use authenticated user's email - no need for query param
+    const email = auth.email;
 
     const user = await db.user.findUnique({ where: { email } });
 

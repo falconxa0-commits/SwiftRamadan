@@ -4,14 +4,106 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import { assertUserExists } from '@/lib/db-helpers';
 
-// Returns true if the user exists (or userId is null/undefined). Returns false
-// if a userId was provided but no matching User record was found — which would
-// otherwise cause a Prisma foreign-key violation on `db.order.create()`.
-async function assertUserExists(userId: string | undefined): Promise<boolean> {
-  if (!userId) return true;
-  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
-  return !!u;
+// Extended order schema that accepts optional coupon code
+const orderWithCouponSchema = orderCreateSchema.extend({
+  couponCode: z.string().optional(),
+});
+
+// Import z for schema extension
+import { z } from 'zod';
+
+/**
+ * Result of atomic coupon redemption
+ */
+interface CouponRedeemResult {
+  success: boolean;
+  discount?: number;
+  error?: string;
+}
+
+/**
+ * Atomically redeem a coupon for a user.
+ * This function uses a transaction to ensure:
+ * 1. The coupon exists and is active
+ * 2. The coupon hasn't expired
+ * 3. The coupon hasn't reached max uses
+ * 4. The user hasn't already used this coupon (unique constraint)
+ * 5. The uses count is incremented atomically
+ * 6. A redemption record is created
+ */
+async function redeemCouponAtomic(
+  code: string,
+  userId: string,
+  orderTotal?: number
+): Promise<CouponRedeemResult> {
+  const normalizedCode = code.trim().toUpperCase();
+
+  return db.$transaction(async (tx) => {
+    // 1. Find and lock the coupon row (SQLite uses serializable transactions)
+    const coupon = await tx.coupon.findUnique({
+      where: { code: normalizedCode },
+    });
+
+    if (!coupon) {
+      return { success: false, error: 'Invalid coupon code' };
+    }
+
+    if (!coupon.active) {
+      return { success: false, error: 'This coupon is no longer active' };
+    }
+
+    if (coupon.validUntil && new Date(coupon.validUntil) < new Date()) {
+      return { success: false, error: 'This coupon has expired' };
+    }
+
+    if (coupon.uses >= coupon.maxUses) {
+      return { success: false, error: 'This coupon has reached its usage limit' };
+    }
+
+    // 2. Check if user already redeemed this coupon (double-redemption prevention)
+    const existingRedemption = await tx.couponRedemption.findUnique({
+      where: {
+        couponId_userId: {
+          couponId: coupon.id,
+          userId,
+        },
+      },
+    });
+
+    if (existingRedemption) {
+      return { success: false, error: 'You have already used this coupon' };
+    }
+
+    // 3. Calculate discount
+    let discount = 0;
+    if (orderTotal && orderTotal > 0) {
+      if (coupon.type === 'percent') {
+        discount = Math.round((orderTotal * coupon.value) / 100);
+      } else {
+        discount = coupon.value;
+      }
+      // Never exceed the order total
+      if (discount > orderTotal) discount = orderTotal;
+    }
+
+    // 4. Atomically increment uses count and create redemption record
+    await tx.coupon.update({
+      where: { id: coupon.id },
+      data: { uses: { increment: 1 } },
+    });
+
+    await tx.couponRedemption.create({
+      data: {
+        couponId: coupon.id,
+        userId,
+        discount,
+      },
+    });
+
+    return { success: true, discount };
+  });
 }
 
 // GET /api/orders — Get orders for the authenticated user (or all for admin)
@@ -78,10 +170,10 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Validate payload
-    const v = validateInput(orderCreateSchema, body);
+    // Validate payload (with optional coupon)
+    const v = validateInput(orderWithCouponSchema, body);
     if (!v.success) return v.response;
-    const { status, total, riderName, items, progress } = v.data;
+    const { status, total, riderName, items, progress, couponCode } = v.data;
     // Always use authenticated user's userId
     const userId = auth.userId;
 
@@ -101,15 +193,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const order = await db.order.create({
-      data: {
-        status: status || 'Preparing',
-        total,
-        riderName: riderName || null,
-        items: JSON.stringify(items || []),
-        progress: progress || 0,
-        userId: userId || null,
-      },
+    // If a coupon code is provided, process it atomically within a transaction
+    let discountApplied = 0;
+    if (couponCode) {
+      try {
+        const result = await redeemCouponAtomic(couponCode, userId);
+        if (!result.success) {
+          return NextResponse.json(
+            { success: false, message: result.error },
+            { status: 400 }
+          );
+        }
+        discountApplied = result.discount!;
+      } catch (couponError) {
+        console.error('Coupon redemption error:', couponError);
+        // Continue without coupon if something goes wrong - don't block order creation
+        // The atomic nature of redeemCouponAtomic ensures data integrity
+      }
+    }
+
+    const finalTotal = total - discountApplied;
+
+    const order = await db.$transaction(async (tx) => {
+      return tx.order.create({
+        data: {
+          status: status || 'Preparing',
+          total: finalTotal,
+          riderName: riderName || null,
+          items: JSON.stringify(items || []),
+          progress: progress || 0,
+          userId: userId || null,
+        },
+      });
     });
 
     return NextResponse.json({

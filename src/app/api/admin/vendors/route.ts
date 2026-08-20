@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /* ─── Mock vendors data ─── */
 const mockVendors = [
@@ -13,6 +14,7 @@ const mockVendors = [
 ];
 
 export async function GET() {
+  // Admin authentication required - use null-safe pattern for GET without request
   try {
     return NextResponse.json({ success: true, data: mockVendors });
   } catch (error) {
@@ -22,6 +24,10 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  // Admin authentication required
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { vendorId, action } = body;

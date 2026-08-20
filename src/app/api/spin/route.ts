@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // Prize definitions with probabilities
 const PRIZES = [
@@ -50,19 +51,6 @@ function spinWheel(): (typeof PRIZES)[number] {
   return PRIZES[0];
 }
 
-/**
- * Resolve an email or userId to an actual User record.
- * Returns null when no user is found.
- */
-async function resolveUser(raw: string): Promise<{ id: string; lastSpinDate: string; spinStreak: string } | null> {
-  // Try by id first
-  const byId = await db.user.findUnique({ where: { id: raw }, select: { id: true, lastSpinDate: true, spinStreak: true } });
-  if (byId) return byId;
-  // Then try by email
-  const byEmail = await db.user.findUnique({ where: { email: raw }, select: { id: true, lastSpinDate: true, spinStreak: true } });
-  return byEmail ?? null;
-}
-
 // GET: Returns spin status — reads from database
 export async function GET(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
@@ -74,15 +62,18 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  const { searchParams } = new URL(request.url);
-  const email = searchParams.get('email') || '';
+  // Auth is optional for GET - allow viewing spin status without login
+  // but prefer authenticated user data
+  const auth = await requireAuth(request).catch(() => null);
 
-  // Default state for unauthenticated / no user
   let lastSpinDate = '';
   let spinStreakNum = 0;
 
-  if (email) {
-    const user = await resolveUser(email);
+  if (auth && !(auth instanceof NextResponse)) {
+    const user = await db.user.findUnique({
+      where: { id: auth.userId },
+      select: { lastSpinDate: true, spinStreak: true },
+    });
     if (user) {
       lastSpinDate = user.lastSpinDate;
       spinStreakNum = parseInt(user.spinStreak || '0', 10);
@@ -112,6 +103,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Perform a spin — validates against database, not client body
+// FIXED: Now requires authentication and uses transaction to prevent race conditions
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
@@ -122,91 +114,114 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // REQUIRE AUTHENTICATION - prevent unauthorized spins
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
-    const body = await request.json();
-    const { email } = body;
-
-    if (!email || typeof email !== 'string' || !email.trim()) {
-      return NextResponse.json(
-        { error: 'email is required' },
-        { status: 400 },
-      );
-    }
-
-    const user = await resolveUser(email);
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 },
-      );
-    }
-
     const today = new Date().toISOString().split('T')[0];
-    const lastSpinDate = user.lastSpinDate;
-    const currentStreak = parseInt(user.spinStreak || '0', 10);
+    const userId = auth.userId;
 
-    // Validate: can only spin once per day (server-side check from DB)
-    if (lastSpinDate === today) {
+    // Use transaction to prevent TOCTOU race condition on daily spin limit
+    const result = await db.$transaction(async (tx) => {
+      // Fetch user's current spin state within transaction
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, lastSpinDate: true, spinStreak: true },
+      });
+
+      if (!user) {
+        throw new Error('USER_NOT_FOUND');
+      }
+
+      const lastSpinDate = user.lastSpinDate;
+      const currentStreak = parseInt(user.spinStreak || '0', 10);
+
+      // Validate: can only spin once per day (server-side check from DB)
+      if (lastSpinDate === today) {
+        throw new Error('ALREADY_SPUN');
+      }
+
+      // Calculate streak based on DB lastSpinDate
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+      let newStreak: number;
+      if (lastSpinDate === yesterdayStr) {
+        // Consecutive day
+        newStreak = currentStreak + 1;
+      } else if (lastSpinDate === '') {
+        // First spin ever
+        newStreak = 1;
+      } else {
+        // Streak broken
+        newStreak = 1;
+      }
+
+      // Spin the wheel (server-side probability)
+      const prize = spinWheel();
+
+      // Apply streak bonus: if 3+ days in a row, double points prizes
+      let finalPrize = { ...prize };
+      if (newStreak >= 3 && (prize.type === 'swiftPoints' || prize.type === 'jackpot')) {
+        finalPrize = {
+          ...prize,
+          value: prize.value * 2,
+          label: prize.label + ' (2x Streak!)',
+        };
+      }
+
+      // Update database atomically - prevents concurrent spins
+      const updatedUser = await tx.user.update({
+        where: { id: userId },
+        data: {
+          lastSpinDate: today,
+          spinStreak: String(newStreak),
+        },
+      });
+
+      // Award swiftPoints if the prize is for points
+      if (finalPrize.type === 'swiftPoints') {
+        await tx.user.update({
+          where: { id: userId },
+          data: { swiftPoints: { increment: finalPrize.value } },
+        });
+      } else if (finalPrize.type === 'jackpot') {
+        // Jackpot awards both points and discount
+        await tx.user.update({
+          where: { id: userId },
+          data: { swiftPoints: { increment: finalPrize.value } },
+        });
+      }
+
+      return { finalPrize, newStreak, updatedUser };
+    });
+
+    return NextResponse.json({
+      prize: {
+        id: result.finalPrize.id,
+        type: result.finalPrize.type,
+        value: result.finalPrize.value,
+        label: result.finalPrize.label,
+        rare: result.finalPrize.rare || false,
+        jackpot: result.finalPrize.jackpot || false,
+      },
+      canSpin: false,
+      streak: result.newStreak,
+      spinDate: today,
+      lastSpinDate: today,
+    });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'USER_NOT_FOUND') {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+    if (err instanceof Error && err.message === 'ALREADY_SPUN') {
       return NextResponse.json(
         { error: 'Already spun today. Come back tomorrow!', canSpin: false },
         { status: 400 },
       );
     }
-
-    // Calculate streak based on DB lastSpinDate
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
-
-    let newStreak: number;
-    if (lastSpinDate === yesterdayStr) {
-      // Consecutive day
-      newStreak = currentStreak + 1;
-    } else if (lastSpinDate === '') {
-      // First spin ever
-      newStreak = 1;
-    } else {
-      // Streak broken
-      newStreak = 1;
-    }
-
-    // Spin the wheel (server-side probability)
-    const prize = spinWheel();
-
-    // Apply streak bonus: if 3+ days in a row, double points prizes
-    let finalPrize = { ...prize };
-    if (newStreak >= 3 && (prize.type === 'swiftPoints' || prize.type === 'jackpot')) {
-      finalPrize = {
-        ...prize,
-        value: prize.value * 2,
-        label: prize.label + ' (2x Streak!)',
-      };
-    }
-
-    // Update database after successful spin
-    await db.user.update({
-      where: { id: user.id },
-      data: {
-        lastSpinDate: today,
-        spinStreak: String(newStreak),
-      },
-    });
-
-    return NextResponse.json({
-      prize: {
-        id: finalPrize.id,
-        type: finalPrize.type,
-        value: finalPrize.value,
-        label: finalPrize.label,
-        rare: finalPrize.rare || false,
-        jackpot: finalPrize.jackpot || false,
-      },
-      canSpin: false,
-      streak: newStreak,
-      spinDate: today,
-      lastSpinDate: today,
-    });
-  } catch (err) {
     await captureException(err instanceof Error ? err : new Error(String(err)), {
       tags: { route: '/api/spin' },
     });

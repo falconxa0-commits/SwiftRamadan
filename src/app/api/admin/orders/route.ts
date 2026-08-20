@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /* ─── Mock orders data ─── */
 const mockOrders = [
@@ -13,6 +14,10 @@ const mockOrders = [
 ];
 
 export async function GET(request: NextRequest) {
+  // Admin authentication required
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
@@ -39,6 +44,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  // Admin authentication required
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { orderId, action } = body;

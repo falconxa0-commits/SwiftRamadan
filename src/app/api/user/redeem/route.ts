@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 
 // Reward catalog — each rewardType maps to a points cost and a Coupon payload
 const REWARDS: Record<string, { cost: number; type: 'fixed' | 'delivery'; value: number; label: string }> = {
@@ -21,20 +22,21 @@ function generateCode(prefix = 'REDEM'): string {
 }
 
 // POST /api/user/redeem
+// FIXED: Now requires authentication and uses transaction for atomicity
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  // REQUIRE AUTHENTICATION - prevent unauthorized redemptions
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { email, rewardType } = body;
+    const { rewardType } = body;
 
-    if (!email) {
-      return NextResponse.json(
-        { success: false, message: 'Email is required' },
-        { status: 400 }
-      );
-    }
+    // Use authenticated user's ID instead of email from body
+    const userId = auth.userId;
 
     const reward = REWARDS[rewardType];
     if (!reward) {
@@ -44,70 +46,81 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const user = await db.user.findUnique({ where: { email } });
-    if (!user) {
+    // Use transaction to prevent race condition on points deduction
+    const result = await db.$transaction(async (tx) => {
+      // Fetch user's current points within transaction
+      const user = await tx.user.findUnique({
+        where: { id: userId },
+        select: { id: true, swiftPoints: true, email: true },
+      });
+
+      if (!user) {
+        throw new Error('USER_NOT_FOUND');
+      }
+
+      if (user.swiftPoints < reward.cost) {
+        throw new Error('INSUFFICIENT_POINTS');
+      }
+
+      // Generate a unique code (retry if needed)
+      let code = generateCode();
+      let attempts = 0;
+      while (attempts < 5) {
+        const existing = await tx.coupon.findUnique({ where: { code } });
+        if (!existing) break;
+        code = generateCode();
+        attempts += 1;
+      }
+
+      // Atomic points deduction + coupon creation
+      const [updatedUser, coupon] = await Promise.all([
+        tx.user.update({
+          where: { id: userId },
+          data: { swiftPoints: { decrement: reward.cost } },
+        }),
+        tx.coupon.create({
+          data: {
+            code,
+            type: reward.type === 'delivery' ? 'fixed' : 'fixed',
+            value: reward.value,
+            minOrder: 0,
+            maxUses: 1,
+            uses: 0,
+            active: true,
+            validUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
+          },
+        }),
+      ]);
+
+      return { updatedUser, coupon, email: user.email };
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: `Coupon ${result.coupon.code} created! Use at checkout.`,
+      coupon: {
+        code: result.coupon.code,
+        type: result.coupon.type,
+        value: result.coupon.value,
+        label: reward.label,
+        rewardType,
+      },
+      remainingPoints: result.updatedUser.swiftPoints,
+      deductedPoints: reward.cost,
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === 'USER_NOT_FOUND') {
       return NextResponse.json(
         { success: false, message: 'User not found' },
         { status: 404 }
       );
     }
-
-    if (user.swiftPoints < reward.cost) {
+    if (error instanceof Error && error.message === 'INSUFFICIENT_POINTS') {
       return NextResponse.json(
-        {
-          success: false,
-          message: `Insufficient points. You need ${reward.cost} swift points but have ${user.swiftPoints}.`,
-          currentPoints: user.swiftPoints,
-          requiredPoints: reward.cost,
-        },
+        { success: false, message: 'Insufficient points for this reward' },
         { status: 400 }
       );
     }
-
-    // Generate a unique code (retry if needed)
-    let code = generateCode();
-    let attempts = 0;
-    while (attempts < 5) {
-      const existing = await db.coupon.findUnique({ where: { code } });
-      if (!existing) break;
-      code = generateCode();
-      attempts += 1;
-    }
-
-    // Deduct points + create coupon (transactional)
-    const [updatedUser, coupon] = await db.$transaction([
-      db.user.update({
-        where: { email },
-        data: { swiftPoints: { decrement: reward.cost } },
-      }),
-      db.coupon.create({
-        data: {
-          code,
-          type: reward.type === 'delivery' ? 'fixed' : 'fixed',
-          value: reward.value,
-          minOrder: 0,
-          maxUses: 1,
-          uses: 0,
-          active: true,
-          validUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
-        },
-      }),
-    ]);
-
-    return NextResponse.json({
-      success: true,
-      message: `Coupon ${code} created! Use at checkout.`,
-      coupon: {
-        code: coupon.code,
-        type: coupon.type,
-        value: coupon.value,
-        label: reward.label,
-        rewardType,
-      },
-      remainingPoints: updatedUser.swiftPoints,
-      deductedPoints: reward.cost,
-    });
-  } catch (error) {
     console.error('Redeem API error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/user/redeem' },

@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   verifyPayment,
-  verifyPaystackWebhookSignature,
-  verifyFlutterwaveWebhookSignature,
-  verifyMonnifyWebhookHash,
   type PaymentProvider,
 } from '@/lib/payments';
+import {
+  verifyWebhookSignature,
+  isTransactionProcessed,
+  markTransactionProcessed,
+  type WebhookProvider,
+} from '@/lib/payment-webhook';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
@@ -145,41 +148,24 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
 
-    // ── Step 1: Determine provider and verify signature ──
-
-    const paystackSignature = request.headers.get('x-paystack-signature');
-    const flutterwaveSignature = request.headers.get('verif-hash');
-    const monnifyHash = request.headers.get('monnify-signature');
-
-    // Determine which provider sent this webhook
-    let provider: PaymentProvider | null = null;
-    let signatureValid = false;
-
-    if (paystackSignature) {
-      provider = 'paystack';
-      signatureValid = verifyPaystackWebhookSignature(body, paystackSignature);
-    } else if (flutterwaveSignature) {
-      provider = 'flutterwave';
-      signatureValid = verifyFlutterwaveWebhookSignature(body, flutterwaveSignature);
-    } else if (monnifyHash) {
-      provider = 'monnify';
-      signatureValid = verifyMonnifyWebhookHash(body, monnifyHash);
-    }
-
-    // ── MANDATORY signature verification ──
-    // If no recognized signature header is present, or if the signature is
-    // invalid, reject the request. No exceptions — an unverified webhook
+    // ── Step 1: Verify webhook signature (MANDATORY) ──
+    // Uses Web Crypto API (edge-compatible) for HMAC verification.
+    // Rejects any webhook without a valid signature — an unverified webhook
     // is indistinguishable from a forgery.
 
-    if (!provider) {
-      console.warn('[Payment] Webhook rejected — no recognized signature header');
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const sigResult = await verifyWebhookSignature(body, request.headers);
+
+    if (!sigResult.provider) {
+      console.warn('[Payment] Webhook rejected — no recognized signature header:', sigResult.error);
+      return NextResponse.json({ error: 'Unauthorized', reason: sigResult.error }, { status: 401 });
     }
 
-    if (!signatureValid) {
-      console.warn(`[Payment] Webhook rejected — invalid ${provider} signature`);
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    if (!sigResult.valid) {
+      console.warn(`[Payment] Webhook rejected — invalid ${sigResult.provider} signature`);
+      return NextResponse.json({ error: 'Invalid signature', provider: sigResult.provider }, { status: 401 });
     }
+
+    const webhookProvider = sigResult.provider as WebhookProvider;
 
     // ── Step 2: Parse event ──
 
@@ -213,18 +199,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    // ── Step 4: Find payment and check idempotency ──
+    // ── Step 4: Idempotency check (replay attack prevention) ──
+    // Two-tier check: in-memory cache + database query
 
+    if (await isTransactionProcessed(reference)) {
+      console.log(`[Payment] Webhook — duplicate transaction reference: ${reference}`);
+      return NextResponse.json(
+        { received: true, reason: 'Already processed' },
+        { status: 409 } // Conflict — indicates duplicate
+      );
+    }
+
+    // Find the payment by reference
     const payment = await db.payment.findUnique({ where: { reference } });
 
     if (!payment) {
       // Unknown reference — acknowledge to prevent retries, but don't process
       console.warn(`[Payment] Webhook — unknown reference: ${reference}`);
-      return NextResponse.json({ received: true });
-    }
-
-    // Idempotency: already processed — safe to acknowledge
-    if (payment.status === 'success') {
       return NextResponse.json({ received: true });
     }
 
@@ -265,10 +256,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    // ── Step 8: Update payment + order atomically ──
+    // ── Step 8: Update payment + order atomically in DB transaction ──
+    // All financial operations MUST be wrapped in $transaction for ACID compliance
+
+    const providerTxId = providerResult.providerTransactionId || '';
 
     await db.$transaction(async (tx) => {
-      // Re-check status inside transaction for idempotency
+      // Re-check status inside transaction for idempotency (prevents race condition)
       const current = await tx.payment.findUnique({
         where: { reference },
         select: { status: true },
@@ -280,7 +274,7 @@ export async function POST(request: NextRequest) {
         data: {
           status: 'success',
           verifiedAmount: providerResult.amount ?? payment.amount,
-          providerTransactionId: providerResult.providerTransactionId,
+          providerTransactionId: providerTxId,
           providerCurrency: providerResult.currency || 'NGN',
         },
       });
@@ -292,6 +286,9 @@ export async function POST(request: NextRequest) {
         });
       }
     });
+
+    // Mark as processed in cache (after successful DB transaction)
+    await markTransactionProcessed(reference, providerTxId);
 
     return NextResponse.json({ received: true });
   } catch (error) {

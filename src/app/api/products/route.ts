@@ -5,16 +5,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheGet, cacheSet, cacheInvalidate } from '@/lib/redis';
-
-// Returns true if the user exists (or vendorId is null/undefined). Returns
-// false if a vendorId was provided but no matching User record was found —
-// which would otherwise cause a Prisma foreign-key violation on
-// `db.product.create()`.
-async function assertUserExists(userId: string | undefined): Promise<boolean> {
-  if (!userId) return true;
-  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
-  return !!u;
-}
+import { assertUserExists } from '@/lib/db-helpers';
 
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 

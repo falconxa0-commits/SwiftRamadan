@@ -40,7 +40,7 @@ const SYSTEM_PROMPT = `You are Safa, the AI assistant for SwiftRamadan — a Ram
 
 // ── POST handler ────────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
-  const rl = checkRateLimit(request, RATE_LIMITS.ai);
+  const rl = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rl) return rl;
 
   try {

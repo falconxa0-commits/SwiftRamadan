@@ -26,7 +26,7 @@ function timeToMinutes(h: number, m: number): number {
 }
 
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
 
   const now = new Date();

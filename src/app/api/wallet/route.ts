@@ -107,59 +107,61 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: { id: true, walletBalance: true },
-      });
+      /**
+       * Confirm wallet top-up payment within a transaction.
+       * Ensures atomicity: balance update and transaction record are committed together.
+       * @throws USER_NOT_FOUND if user doesn't exist
+       * @throws INVALID_AMOUNT if verified amount is not positive
+       */
+      const result = await db.$transaction(async (tx) => {
+        // Lock and fetch user record for update
+        const user = await tx.user.findUnique({
+          where: { id: userId },
+          select: { id: true, walletBalance: true },
+        });
 
-      if (!user) {
-        return NextResponse.json(
-          { success: false, message: 'User not found' },
-          { status: 404 },
-        );
-      }
+        if (!user) {
+          throw new Error('USER_NOT_FOUND');
+        }
 
-      const verification = await verifyPayment('paystack', reference);
+        const verification = await verifyPayment('paystack', reference);
 
-      if (!verification.verified) {
-        return NextResponse.json(
-          { success: false, message: 'Payment verification failed', gatewayResponse: verification.gatewayResponse },
-          { status: 400 },
-        );
-      }
+        if (!verification.verified) {
+          throw new Error('PAYMENT_VERIFICATION_FAILED');
+        }
 
-      // Verified amount is in kobo (returned by Paystack)
-      const verifiedAmountKobo = verification.amount ?? 0;
+        // Verified amount is in kobo (returned by Paystack)
+        const verifiedAmountKobo = verification.amount ?? 0;
 
-      if (verifiedAmountKobo <= 0) {
-        return NextResponse.json(
-          { success: false, message: 'Invalid verified amount' },
-          { status: 400 },
-        );
-      }
+        if (verifiedAmountKobo <= 0) {
+          throw new Error('INVALID_AMOUNT');
+        }
 
-      // Update user wallet balance
-      const updatedUser = await db.user.update({
-        where: { id: userId },
-        data: { walletBalance: { increment: verifiedAmountKobo } },
-      });
+        // Atomic increment of wallet balance
+        const updatedUser = await tx.user.update({
+          where: { id: userId },
+          data: { walletBalance: { increment: verifiedAmountKobo } },
+        });
 
-      // Create wallet transaction record
-      const transaction = await db.walletTransaction.create({
-        data: {
-          userId,
-          type: 'topup',
-          amount: verifiedAmountKobo,
-          balance: updatedUser.walletBalance,
-          description: `Wallet top-up via Paystack`,
-          reference,
-        },
+        // Create wallet transaction record (audit trail)
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            userId,
+            type: 'topup',
+            amount: verifiedAmountKobo,
+            balance: updatedUser.walletBalance,
+            description: `Wallet top-up via Paystack`,
+            reference,
+          },
+        });
+
+        return { updatedUser, transaction, gatewayResponse: verification.gatewayResponse };
       });
 
       return NextResponse.json({
         success: true,
-        newBalance: updatedUser.walletBalance,
-        transaction,
+        newBalance: result.updatedUser.walletBalance,
+        transaction: result.transaction,
       });
     }
 
@@ -185,8 +187,14 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      // Use transaction with atomic decrement to prevent TOCTOU race condition
+      /**
+       * Process wallet payment within a transaction.
+       * Uses atomic decrement with balance validation to prevent race conditions.
+       * @throws USER_NOT_FOUND if user doesn't exist
+       * @throws INSUFFICIENT_BALANCE if funds are inadequate
+       */
       const result = await db.$transaction(async (tx) => {
+        // Lock and fetch user record for update
         const user = await tx.user.findUnique({
           where: { id: userId },
           select: { id: true, walletBalance: true },
@@ -196,7 +204,7 @@ export async function POST(request: NextRequest) {
           throw new Error('USER_NOT_FOUND');
         }
 
-        // Check sufficient balance
+        // Check sufficient balance before debit
         if (user.walletBalance < amount) {
           throw new Error('INSUFFICIENT_BALANCE');
         }
@@ -212,7 +220,7 @@ export async function POST(request: NextRequest) {
           throw new Error('INSUFFICIENT_BALANCE');
         }
 
-        // Create wallet transaction record
+        // Create wallet transaction record (audit trail)
         const transaction = await tx.walletTransaction.create({
           data: {
             userId,
@@ -220,6 +228,7 @@ export async function POST(request: NextRequest) {
             amount: -amount, // negative for debit
             balance: updatedUser.walletBalance,
             description: `Payment for order ${orderId}`,
+            reference: orderId, // Store orderId in reference field for traceability
           },
         });
 
@@ -247,7 +256,19 @@ export async function POST(request: NextRequest) {
     }
     if (error instanceof Error && error.message === 'INSUFFICIENT_BALANCE') {
       return NextResponse.json(
-        { success: false, message: 'Insufficient wallet balance' },
+        { success: false, message: 'Insufficient wallet balance for this transaction' },
+        { status: 400 },
+      );
+    }
+    if (error instanceof Error && error.message === 'INVALID_AMOUNT') {
+      return NextResponse.json(
+        { success: false, message: 'Invalid amount specified' },
+        { status: 400 },
+      );
+    }
+    if (error instanceof Error && error.message === 'PAYMENT_VERIFICATION_FAILED') {
+      return NextResponse.json(
+        { success: false, message: 'Payment verification failed' },
         { status: 400 },
       );
     }

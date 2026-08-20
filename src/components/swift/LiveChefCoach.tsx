@@ -271,7 +271,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
             />
           ) : uploadedImage ? (
              
-            <img src={uploadedImage} alt="Your cooking" className="w-full h-full object-cover" />
+            <img src={uploadedImage} alt="Your cooking" className="w-full h-full object-cover" loading="lazy" decoding="async" />
           ) : (
             <div className="w-full h-full flex flex-col items-center justify-center text-center px-8">
               <motion.div

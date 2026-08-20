@@ -3,10 +3,18 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { checkBodySize } from '@/lib/validation';
+import {
+  saveKYCDocument,
+  isFilePath,
+  readKYCDocumentAsBase64,
+} from '@/lib/kyc-storage';
 
 export const runtime = 'nodejs';
 
 const VALID_DOCUMENT_TYPES = ['national_id', 'voters_card', 'drivers_license', 'international_passport', 'nin'];
+
+// Maximum base64 payload size (10MB - larger than final processed image to allow for compression)
+const MAX_BASE64_PAYLOAD_SIZE = 10 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
@@ -92,6 +100,18 @@ async function handleSubmit(
       );
     }
 
+    // Validate base64 payload size before processing
+    const base64DataLength = Buffer.byteLength(documentImage, 'utf-8');
+    if (base64DataLength > MAX_BASE64_PAYLOAD_SIZE) {
+      return NextResponse.json(
+        { 
+          success: false, 
+          message: `Image data too large. Maximum size is ${(MAX_BASE64_PAYLOAD_SIZE / (1024 * 1024)).toFixed(0)}MB` 
+        },
+        { status: 400 },
+      );
+    }
+
     // Check if user already has a verified KYC for this documentType
     const verifiedDoc = await db.kYCDocument.findFirst({
       where: {
@@ -117,6 +137,19 @@ async function handleSubmit(
       },
     });
 
+    // Save document to file storage (converts base64 to file)
+    const saveResult = await saveKYCDocument(documentImage, userId, documentType);
+
+    if (!saveResult.success) {
+      return NextResponse.json(
+        { success: false, message: saveResult.error || 'Failed to process document image' },
+        { status: 400 },
+      );
+    }
+
+    // Store file path in database instead of base64
+    const documentImagePath = saveResult.filePath!;
+
     let document;
 
     if (pendingDoc) {
@@ -125,7 +158,7 @@ async function handleSubmit(
         where: { id: pendingDoc.id },
         data: {
           documentNumber,
-          documentImage,
+          documentImage: documentImagePath,
           status: 'pending',
           rejectionReason: '', // clear any previous rejection reason
         },
@@ -137,13 +170,26 @@ async function handleSubmit(
           userId,
           documentType,
           documentNumber,
-          documentImage,
+          documentImage: documentImagePath,
           status: 'pending',
         },
       });
     }
 
-    return NextResponse.json({ success: true, document }, { status: pendingDoc ? 200 : 201 });
+    // Return response with URL for frontend use (backward compatible)
+    return NextResponse.json({ 
+      success: true, 
+      document: {
+        ...document,
+        // Include URL for immediate access
+        imageUrl: saveResult.url,
+        storageInfo: {
+          originalSize: saveResult.originalSize,
+          processedSize: saveResult.processedSize,
+          storedAsFile: true,
+        },
+      }, 
+    }, { status: pendingDoc ? 200 : 201 });
   } catch (error) {
     console.error('KYC submit error:', error);
     return NextResponse.json(
@@ -163,7 +209,27 @@ async function handleStatus(userId: string) {
 
     const isVerified = documents.some((doc) => doc.status === 'verified');
 
-    return NextResponse.json({ success: true, documents, isVerified });
+    // Transform documents to include image URLs and handle backward compatibility
+    const transformedDocs = await Promise.all(
+      documents.map(async (doc) => {
+        const transformed: Record<string, unknown> = { ...doc };
+        
+        if (isFilePath(doc.documentImage)) {
+          // New format: file path - provide URL for frontend
+          transformed.imageUrl = `/${doc.documentImage}`;
+          transformed.storedAsFile = true;
+        } else if (doc.documentImage && doc.documentImage.trim() !== '') {
+          // Old format: base64 - keep as is but flag it
+          transformed.storedAsFile = false;
+          // Note: For very old records with actual base64, we could migrate on-the-fly here
+          // But that could be expensive, so we just flag it
+        }
+        
+        return transformed;
+      })
+    );
+
+    return NextResponse.json({ success: true, documents: transformedDocs, isVerified });
   } catch (error) {
     console.error('KYC status error:', error);
     return NextResponse.json(
@@ -284,9 +350,27 @@ async function handleListAll(body: { status?: string; page?: number; limit?: num
 
     const totalPages = Math.ceil(total / limit);
 
+    // Transform documents to include image URLs
+    const transformedDocs = documents.map((doc) => {
+      const transformed: Record<string, unknown> = { ...doc };
+      
+      if (isFilePath(doc.documentImage)) {
+        transformed.imageUrl = `/${doc.documentImage}`;
+        transformed.storedAsFile = true;
+      } else {
+        transformed.storedAsFile = false;
+        // Don't include full base64 in list responses to reduce payload size
+        // Frontend can fetch the full image separately if needed
+        delete transformed.documentImage;
+        transformed.hasImage = Boolean(doc.documentImage && doc.documentImage.trim() !== '');
+      }
+      
+      return transformed;
+    });
+
     return NextResponse.json({
       success: true,
-      documents,
+      documents: transformedDocs,
       total,
       page,
       totalPages,

@@ -1224,7 +1224,7 @@ export default function AdminDashboard() {
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/20 flex items-center justify-center shrink-0 overflow-hidden">
                     {item.image ? (
-                      <img src={item.image} alt={item.title} className="w-full h-full object-cover rounded-xl" />
+                      <img src={item.image} alt={item.title} className="w-full h-full object-cover rounded-xl" loading="lazy" decoding="async" />
                     ) : (
                       <ImageIcon className="w-5 h-5 text-[#10E07A]/50" />
                     )}

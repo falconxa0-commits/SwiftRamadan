@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 
 // Fallback mock plans
 const MOCK_PLANS = [
@@ -36,7 +37,12 @@ const MOCK_PLANS = [
   },
 ];
 
-export async function GET() {
+// GET /api/subscriptions — public, no auth required for browsing plans
+export async function GET(request: NextRequest) {
+  // Check for optional auth to show user's subscription status
+  const auth = await requireAuth(request).catch(() => null);
+  const userId = auth && !(auth instanceof NextResponse) ? auth.userId : null;
+
   try {
     const dbBoxes = await db.subscriptionBox.findMany({
       where: { isActive: true },
@@ -51,15 +57,17 @@ export async function GET() {
         features: JSON.parse(b.items || '[]'),
       }));
 
-      // Check for user subscription
+      // Check for user subscription if authenticated
       let userSubscription: string | null = null;
-      try {
-        const activeSub = await db.userSubscription.findFirst({
-          where: { userId: 'default-user', status: 'active' },
-        });
-        if (activeSub) userSubscription = activeSub.boxId;
-      } catch {
-        // ignore
+      if (userId) {
+        try {
+          const activeSub = await db.userSubscription.findFirst({
+            where: { userId, status: 'active' },
+          });
+          if (activeSub) userSubscription = activeSub.boxId;
+        } catch {
+          // ignore
+        }
       }
 
       return NextResponse.json({ plans, userSubscription });
@@ -74,12 +82,22 @@ export async function GET() {
   });
 }
 
+// POST /api/subscriptions — create subscription
+// FIXED: Now requires authentication
 export async function POST(request: NextRequest) {
   const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
+
+  // REQUIRE AUTHENTICATION - subscriptions are private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
-    const { planId, userId = 'default-user' } = body;
+    const { planId } = body;
+    
+    // Use authenticated user's ID
+    const userId = auth.userId;
 
     if (!planId) {
       return NextResponse.json({ error: 'planId is required' }, { status: 400 });

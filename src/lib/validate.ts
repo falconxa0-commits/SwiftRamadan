@@ -1,7 +1,17 @@
 /* ──────────────────────────────────────────────────────────────────
+   DEPRECATED: This module is unused and will be removed in a future release.
+   
    Lightweight input validation & sanitization utilities.
    No external dependencies — complements the Zod-based validation.ts
    for scenarios that only need simple checks or HTML escaping.
+   
+   MIGRATION GUIDE:
+   - sanitizeHtml → use escapeHtml from @/lib/sanitize (identical implementation)
+   - validateEmail/validatePhone → use Zod schemas in @/lib/validation
+   - validateRequired/validateAmount → use Zod schemas in @/lib/validation
+   - rateLimiter() → use checkRateLimit from @/lib/rate-limit
+   
+   @deprecated Use @/lib/validation (Zod) or @/lib/sanitize instead
    ────────────────────────────────────────────────────────────────── */
 
 /**

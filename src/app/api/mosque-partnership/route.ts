@@ -107,7 +107,7 @@ const MOCK_ORDERS: MosqueOrder[] = [
 /* ───────── GET: Return mosque partnerships ───────── */
 
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
   const { searchParams } = request.nextUrl;
   const status = searchParams.get('status'); // open | closing_soon | fulfilled
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
 /* ───────── POST: Join a mosque order ───────── */
 
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await request.json();

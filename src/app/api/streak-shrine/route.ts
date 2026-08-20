@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 
 interface ShrineStage {
   id: string;
@@ -22,7 +23,7 @@ const SHRINE_STAGES: ShrineStage[] = [
 
 // GET: Returns streak data + shrine stage
 export async function GET(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.general);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.general);
   if (rateLimitResponse) return rateLimitResponse;
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get('userId') || 'default-user';
@@ -108,12 +109,21 @@ export async function GET(request: NextRequest) {
 }
 
 // POST: Update streak (e.g., mark a day as fasted)
+// FIXED: Now requires authentication and uses transaction for race condition prevention
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
+  
+  // REQUIRE AUTHENTICATION - streak data is private
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+  
   try {
     const body = await request.json();
-    const { userId = 'default-user', date } = body;
+    const { date } = body;
+    
+    // Use authenticated user's ID
+    const userId = auth.userId;
 
     const today = date || new Date().toISOString().split('T')[0];
 

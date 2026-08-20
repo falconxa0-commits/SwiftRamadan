@@ -139,7 +139,7 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const rateLimitResponse = checkRateLimit(req, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(req, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await req.json();

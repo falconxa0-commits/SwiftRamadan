@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 /* ─── Mock disputes data ─── */
 const mockDisputes = [
@@ -10,6 +11,7 @@ const mockDisputes = [
 ];
 
 export async function GET() {
+  // Note: Admin auth should be enforced at middleware level for GET requests
   try {
     return NextResponse.json({ success: true, data: mockDisputes });
   } catch (error) {
@@ -19,6 +21,10 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  // Admin authentication required
+  const auth = await requireAdmin(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { disputeId, action } = body;

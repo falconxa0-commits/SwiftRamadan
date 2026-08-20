@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+import { requireAdmin } from '@/lib/admin-auth';
 
 export async function GET() {
+  // Note: Admin auth should be enforced at middleware level for GET requests
   try {
     const metrics = {
       totalUsers: 12847,

@@ -8,12 +8,54 @@ import { isPublicApiRoute, SESSION_COOKIE_NAME } from '@/lib/session';
  * Auth gate: verifies JWT session tokens on protected API routes.
  * Public routes bypass verification for performance.
  * Invalid/expired tokens are rejected and the cookie is cleared.
+ * 
+ * Security: Applies security headers to all responses including:
+ * - X-Frame-Options (clickjacking protection)
+ * - X-Content-Type-Options (MIME sniffing prevention)
+ * - X-XSS-Protection (XSS filter)
+ * - Referrer-Policy (referrer control)
+ * - Permissions-Policy (feature restrictions)
+ * - Content-Security-Policy (XSS mitigation for pages)
  */
+
+/** Generate CSP value based on environment */
+function getCSP(isDev: boolean): string {
+  if (isDev) {
+    return [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com",
+      "font-src 'self' data:",
+      "connect-src 'self' https://api.z-ai.dev https://*.paystack.co https://api.flutterwave.com https://api.monnify.com ws://localhost:* ws://127.0.0.1:*",
+      "frame-src https://checkout.paystack.co https://flutterwave.com",
+      "media-src 'self' blob: https://*.cloudinary.com",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join('; ');
+  }
+  return [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline'",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob: https://res.cloudinary.com https://*.cloudinary.com",
+    "font-src 'self' data:",
+    "connect-src 'self' https://api.z-ai.dev https://*.paystack.co https://api.flutterwave.com https://api.monnify.com",
+    "frame-src https://checkout.paystack.co https://flutterwave.com",
+    "media-src 'self' blob: https://*.cloudinary.com",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "upgrade-insecure-requests",
+  ].join('; ');
+}
 
 export async function middleware(request: NextRequest) {
   // ── 1. Build the base response with security headers ──
 
   const requestHeaders = new Headers(request.headers);
+  const isDevelopment = process.env.NODE_ENV === 'development';
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },
@@ -25,6 +67,17 @@ export async function middleware(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(self), geolocation=(self)');
+  response.headers.set('X-DNS-Prefetch-Control', 'off');
+
+  // Apply Content-Security-Policy only to page requests (not API)
+  if (!request.nextUrl.pathname.startsWith('/api/')) {
+    response.headers.set('Content-Security-Policy', getCSP(isDevelopment));
+  }
+
+  // Strict Transport Security in production
+  if (!isDevelopment) {
+    response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  }
 
   // ── 2. API route handling ──
 

@@ -7,10 +7,18 @@ import { formatNaira } from '@/lib/format';
 
 export const runtime = 'nodejs';
 
-// POST /api/coupons/validate { code, cartTotal }
+// Extended schema that accepts optional userId for double-redemption check
+const couponValidateWithUserSchema = couponValidateSchema.extend({
+  userId: z.string().optional(),
+});
+
+import { z } from 'zod';
+
+// POST /api/coupons/validate { code, cartTotal, userId? }
 // Validates a coupon code against the cart total and returns the discount amount
 // and new total.
-// uses incremented when order is placed via /api/orders
+// If userId is provided, also checks if user has already redeemed this coupon.
+// Actual redemption (uses increment) happens when order is placed via /api/orders
 export async function POST(request: NextRequest) {
   // Rate limit: 30 write operations per minute per IP (coupon validation mutates DB)
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
@@ -20,9 +28,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validate payload
-    const v = validateInput(couponValidateSchema, body);
+    const v = validateInput(couponValidateWithUserSchema, body);
     if (!v.success) return v.response;
-    const { code, cartTotal } = v.data;
+    const { code, cartTotal, userId } = v.data;
 
     if (!code || typeof code !== 'string') {
       return NextResponse.json(
@@ -64,6 +72,25 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if user already used this coupon (if userId provided)
+    if (userId) {
+      const existingRedemption = await db.couponRedemption.findUnique({
+        where: {
+          couponId_userId: {
+            couponId: coupon.id,
+            userId,
+          },
+        },
+      });
+
+      if (existingRedemption) {
+        return NextResponse.json(
+          { valid: false, message: 'You have already used this coupon' },
+          { status: 200 },
+        );
+      }
+    }
+
     if (total < coupon.minOrder) {
       return NextResponse.json(
         {
@@ -86,7 +113,7 @@ export async function POST(request: NextRequest) {
 
     const newTotal = total - discount;
 
-    // uses incremented when order is placed via /api/orders
+    // uses incremented when order is placed via /api/orders (atomic transaction)
 
     return NextResponse.json({
       valid: true,

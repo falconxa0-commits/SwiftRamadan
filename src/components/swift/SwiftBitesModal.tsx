@@ -520,7 +520,7 @@ export default function SwiftBitesModal() {
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-white font-black text-lg border-2 border-white">
                       {currentVideo.creatorAvatar ? (
                          
-                        <img src={currentVideo.creatorAvatar} alt={currentVideo.creatorName} className="w-full h-full rounded-full object-cover" />
+                        <img src={currentVideo.creatorAvatar} alt={currentVideo.creatorName} className="w-full h-full rounded-full object-cover" loading="lazy" decoding="async" />
                       ) : (
                         initialFromName(currentVideo.creatorName)
                       )}

@@ -114,7 +114,7 @@ export async function GET() {
 
 // POST: Record a vote
 export async function POST(request: NextRequest) {
-  const rateLimitResponse = checkRateLimit(request, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
   try {
     const body = await request.json();

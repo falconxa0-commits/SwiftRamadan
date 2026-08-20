@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 
 /* ──────────────────────────────────────────────────────────────────
    /api/diary — Ramadan Diary
@@ -75,18 +76,25 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const rateLimitResponse = checkRateLimit(req, RATE_LIMITS.write);
+  const rateLimitResponse = await checkRateLimit(req, RATE_LIMITS.write);
   if (rateLimitResponse) return rateLimitResponse;
+  
+  // REQUIRE AUTHENTICATION - diary entries are private
+  const auth = await requireAuth(req);
+  if (auth instanceof NextResponse) return auth;
+  
   try {
     const body = await req.json();
-    const { date, text, mood, tags, orderId, userId = 'default-user' } = body as {
+    const { date, text, mood, tags, orderId } = body as {
       date?: string;
       text?: string;
       mood?: Mood;
       tags?: string[];
       orderId?: string;
-      userId?: string;
     };
+    
+    // Use authenticated user's ID
+    const userId = auth.userId;
 
     if (!date || !text) {
       return NextResponse.json(

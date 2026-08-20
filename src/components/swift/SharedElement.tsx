@@ -98,7 +98,7 @@ export function SharedElementImage({
   disabled = false,
 }: SharedElementImageProps) {
   if (disabled) {
-    return <img src={src} alt={alt} className={className} />;
+    return <img src={src} alt={alt} className={className} loading="lazy" decoding="async" />;
   }
 
   return (
@@ -107,6 +107,8 @@ export function SharedElementImage({
       src={src}
       alt={alt}
       className={className}
+      loading="lazy"
+      decoding="async"
       transition={imageSpringConfig}
       style={{ willChange: 'transform' }}
     />

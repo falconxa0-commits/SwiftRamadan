@@ -52,6 +52,31 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
+    // Handle known error types with appropriate responses
+    if (error instanceof Error) {
+      switch (error.message) {
+        case 'REFUND_NOT_FOUND':
+          return NextResponse.json(
+            { success: false, message: 'Refund not found' },
+            { status: 404 },
+          );
+        case 'USER_NOT_FOUND':
+          return NextResponse.json(
+            { success: false, message: 'User not found' },
+            { status: 404 },
+          );
+        case 'INVALID_STATE_TRANSITION':
+          return NextResponse.json(
+            { success: false, message: 'Invalid refund state for this operation' },
+            { status: 400 },
+          );
+        case 'INVALID_AMOUNT':
+          return NextResponse.json(
+            { success: false, message: 'Amount must be a positive number' },
+            { status: 400 },
+          );
+      }
+    }
     console.error('Refunds API error:', error);
     return NextResponse.json(
       { success: false, message: 'Internal server error' },
@@ -60,7 +85,13 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/** Customer requests a refund */
+/**
+ * Customer requests a refund.
+ * Creates a new refund record in 'requested' state.
+ * @param body - Request body containing orderId, amount, reason, and optional refundMethod
+ * @param userId - ID of the requesting user
+ * @returns NextResponse with created refund or error
+ */
 async function handleRequest(
   body: {
     orderId: string;
@@ -72,6 +103,7 @@ async function handleRequest(
 ) {
   const { orderId, amount, reason, refundMethod } = body;
 
+  // Input validation
   if (!orderId || !amount || !reason) {
     return NextResponse.json(
       { success: false, message: 'orderId, amount, and reason are required' },
@@ -79,9 +111,11 @@ async function handleRequest(
     );
   }
 
-  if (amount <= 0) {
+  // Validate amount is positive
+  const amountNum = Number(amount);
+  if (!Number.isFinite(amountNum) || amountNum <= 0) {
     return NextResponse.json(
-      { success: false, message: 'Amount must be positive' },
+      { success: false, message: 'Amount must be a positive number' },
       { status: 400 },
     );
   }
@@ -94,13 +128,26 @@ async function handleRequest(
     );
   }
 
+  // Validate user exists
+  const user = await db.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+
+  if (!user) {
+    return NextResponse.json(
+      { success: false, message: 'User not found' },
+      { status: 404 },
+    );
+  }
+
   const reference = `RF_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
   const refund = await db.refund.create({
     data: {
       userId,
       orderId,
-      amount,
+      amount: amountNum,
       reason,
       refundMethod: refundMethod || 'original',
       reference,
@@ -111,7 +158,11 @@ async function handleRequest(
   return NextResponse.json({ success: true, refund }, { status: 201 });
 }
 
-/** Get user's refunds sorted by createdAt desc */
+/**
+ * Get user's refunds sorted by createdAt desc.
+ * @param userId - ID of the user whose refunds to retrieve
+ * @returns NextResponse with array of refunds
+ */
 async function handleList(userId: string) {
   const refunds = await db.refund.findMany({
     where: { userId },
@@ -121,7 +172,13 @@ async function handleList(userId: string) {
   return NextResponse.json({ success: true, refunds });
 }
 
-/** Admin approves a refund */
+/**
+ * Admin approves a refund.
+ * Transitions refund status from 'requested' to 'approved'.
+ * Validates that the refund exists and is in the correct state.
+ * @param body - Request body containing refundId and optional adminNote
+ * @returns NextResponse with updated refund or error
+ */
 async function handleApprove(body: { refundId: string; adminNote?: string }) {
   const { refundId, adminNote } = body;
 
@@ -132,26 +189,44 @@ async function handleApprove(body: { refundId: string; adminNote?: string }) {
     );
   }
 
-  const existing = await db.refund.findUnique({ where: { id: refundId } });
-  if (!existing) {
-    return NextResponse.json(
-      { success: false, message: 'Refund not found' },
-      { status: 404 },
-    );
-  }
+  /**
+   * Approve refund within a transaction for atomicity.
+   * Ensures state transition is valid and recorded atomically.
+   * @throws REFUND_NOT_FOUND if refund doesn't exist
+   * @throws INVALID_STATE_TRANSITION if refund is not in 'requested' state
+   */
+  const refund = await db.$transaction(async (tx) => {
+    const existing = await tx.refund.findUnique({ where: { id: refundId } });
+    
+    if (!existing) {
+      throw new Error('REFUND_NOT_FOUND');
+    }
 
-  const refund = await db.refund.update({
-    where: { id: refundId },
-    data: {
-      status: 'approved',
-      adminNote: adminNote || '',
-    },
+    // Validate state transition: only 'requested' can be approved
+    if (existing.status !== 'requested') {
+      throw new Error('INVALID_STATE_TRANSITION');
+    }
+
+    return tx.refund.update({
+      where: { id: refundId },
+      data: {
+        status: 'approved',
+        adminNote: adminNote || '',
+      },
+    });
   });
 
   return NextResponse.json({ success: true, refund });
 }
 
-/** Admin processes an approved refund */
+/**
+ * Admin processes an approved refund.
+ * For wallet refunds: credits user's wallet balance and creates audit trail.
+ * For original refunds: attempts Paystack refund via payment provider.
+ * All database operations are wrapped in a transaction for atomicity.
+ * @param body - Request body containing refundId
+ * @returns NextResponse with updated refund and optionally newBalance
+ */
 async function handleProcess(body: { refundId: string }) {
   const { refundId } = body;
 
@@ -162,86 +237,104 @@ async function handleProcess(body: { refundId: string }) {
     );
   }
 
-  const refund = await db.refund.findUnique({ where: { id: refundId } });
-  if (!refund) {
-    return NextResponse.json(
-      { success: false, message: 'Refund not found' },
-      { status: 404 },
-    );
-  }
-
-  if (refund.status !== 'approved') {
-    return NextResponse.json(
-      { success: false, message: 'Refund must be in approved status to process' },
-      { status: 400 },
-    );
-  }
-
-  let newBalance: number | undefined;
-
-  if (refund.refundMethod === 'wallet') {
-    // Credit user's wallet balance
-    const user = await db.user.findUnique({ where: { id: refund.userId } });
-    if (!user) {
-      return NextResponse.json(
-        { success: false, message: 'User not found' },
-        { status: 404 },
-      );
+  /**
+   * Process refund within a transaction.
+   * Ensures wallet credit + transaction record + status update are atomic.
+   * @throws REFUND_NOT_FOUND if refund doesn't exist
+   * @throws INVALID_STATE_TRANSITION if refund is not in 'approved' state
+   * @throws USER_NOT_FOUND if user doesn't exist (for wallet refunds)
+   */
+  const result = await db.$transaction(async (tx) => {
+    const refund = await tx.refund.findUnique({ where: { id: refundId } });
+    
+    if (!refund) {
+      throw new Error('REFUND_NOT_FOUND');
     }
 
-    newBalance = user.walletBalance + refund.amount;
+    // Validate state transition: only 'approved' can be processed
+    if (refund.status !== 'approved') {
+      throw new Error('INVALID_STATE_TRANSITION');
+    }
 
-    await db.user.update({
-      where: { id: refund.userId },
-      data: { walletBalance: newBalance },
-    });
+    let newBalance: number | undefined;
 
-    // Create wallet transaction
-    await db.walletTransaction.create({
+    if (refund.refundMethod === 'wallet') {
+      // Lock and fetch user record for update
+      const user = await tx.user.findUnique({ 
+        where: { id: refund.userId },
+        select: { id: true, walletBalance: true },
+      });
+
+      if (!user) {
+        throw new Error('USER_NOT_FOUND');
+      }
+
+      // Calculate new balance
+      newBalance = user.walletBalance + refund.amount;
+
+      // Credit user's wallet balance
+      await tx.user.update({
+        where: { id: refund.userId },
+        data: { walletBalance: newBalance },
+      });
+
+      // Create wallet transaction record (audit trail)
+      await tx.walletTransaction.create({
+        data: {
+          userId: refund.userId,
+          type: 'refund',
+          amount: refund.amount,
+          balance: newBalance,
+          description: `Refund for order ${refund.orderId || 'N/A'}`,
+          reference: `refund-${refundId}`, // Store refund reference for traceability
+        },
+      });
+    }
+
+    // Update refund status to completed
+    const updatedRefund = await tx.refund.update({
+      where: { id: refundId },
       data: {
-        userId: refund.userId,
-        type: 'refund',
-        amount: refund.amount,
-        balance: newBalance,
-        description: `Refund for order ${refund.orderId || 'N/A'}`,
+        status: 'completed',
+        processedAt: new Date(),
       },
     });
-  }
 
-  // If refundMethod === 'original', use paystackRefund from @/lib/payments (if available)
-  // For now just mark as completed — the actual Paystack refund call would go here
-  if (refund.refundMethod === 'original') {
+    return { refund: updatedRefund, newBalance };
+  });
+
+  // Handle Paystack refund outside transaction (non-blocking)
+  // We already marked as completed; Paystack failure won't affect our state
+  const refundRecord = await db.refund.findUnique({ where: { id: refundId } });
+  if (refundRecord?.refundMethod === 'original') {
     try {
       const { paystackRefund } = await import('@/lib/payments');
-      // Attempt Paystack refund — non-blocking; we still mark completed regardless
-      await paystackRefund(refund.reference);
+      await paystackRefund(refundRecord.reference);
     } catch {
-      // Paystack refund not available or failed — still mark as completed
-      console.warn('Paystack refund unavailable or failed, marking as completed anyway');
+      // Paystack refund unavailable or failed — already marked completed
+      console.warn('[Refunds API] Paystack refund unavailable or failed, but refund already marked completed');
     }
   }
 
-  const updatedRefund = await db.refund.update({
-    where: { id: refundId },
-    data: {
-      status: 'completed',
-      processedAt: new Date(),
-    },
-  });
-
-  const response: { success: boolean; refund: typeof updatedRefund; newBalance?: number } = {
+  const response: { success: boolean; refund: typeof result.refund; newBalance?: number } = {
     success: true,
-    refund: updatedRefund,
+    refund: result.refund,
   };
 
-  if (newBalance !== undefined) {
-    response.newBalance = newBalance;
+  if (result.newBalance !== undefined) {
+    response.newBalance = result.newBalance;
   }
 
   return NextResponse.json(response);
 }
 
-/** Admin rejects a refund */
+/**
+ * Admin rejects a refund.
+ * Transitions refund status from 'requested' to 'rejected'.
+ * Requires an admin note explaining the rejection.
+ * @param body - Request body containing refundId and adminNote
+ * @returns NextResponse with updated refund or error
+ */
 async function handleReject(body: { refundId: string; adminNote: string }) {
   const { refundId, adminNote } = body;
 
@@ -252,20 +345,31 @@ async function handleReject(body: { refundId: string; adminNote: string }) {
     );
   }
 
-  const existing = await db.refund.findUnique({ where: { id: refundId } });
-  if (!existing) {
-    return NextResponse.json(
-      { success: false, message: 'Refund not found' },
-      { status: 404 },
-    );
-  }
+  /**
+   * Reject refund within a transaction for atomicity.
+   * Ensures state transition is valid and recorded atomically.
+   * @throws REFUND_NOT_FOUND if refund doesn't exist
+   * @throws INVALID_STATE_TRANSITION if refund is not in 'requested' state
+   */
+  const refund = await db.$transaction(async (tx) => {
+    const existing = await tx.refund.findUnique({ where: { id: refundId } });
+    
+    if (!existing) {
+      throw new Error('REFUND_NOT_FOUND');
+    }
 
-  const refund = await db.refund.update({
-    where: { id: refundId },
-    data: {
-      status: 'rejected',
-      adminNote,
-    },
+    // Validate state transition: only 'requested' can be rejected
+    if (existing.status !== 'requested') {
+      throw new Error('INVALID_STATE_TRANSITION');
+    }
+
+    return tx.refund.update({
+      where: { id: refundId },
+      data: {
+        status: 'rejected',
+        adminNote,
+      },
+    });
   });
 
   return NextResponse.json({ success: true, refund });

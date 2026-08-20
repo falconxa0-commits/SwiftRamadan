@@ -153,13 +153,13 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, session }, { status: 200 });
   } catch (error) {
-    const msg = error instanceof Error ? error.message : 'Failed to log session';
-    console.error('API error:', error);
+    // Don't expose internal error details to client
+    console.error('[Cooking Sessions] Error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
       tags: { route: '/api/cooking-sessions' },
     });
     return NextResponse.json(
-      { success: false, message: msg },
+      { success: false, message: 'Failed to log session. Please try again.' },
       { status: 500 },
     );
   }
