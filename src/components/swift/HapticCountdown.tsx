@@ -264,7 +264,7 @@ export default function HapticCountdown() {
             {/* Seconds label */}
             {state.phase !== 'iftar' && (
               <motion.p
-                className="text-sm font-medium text-white/40 mb-8 tracking-widest uppercase"
+                className="text-sm font-medium text-white/65 mb-8 tracking-widest uppercase"
                 animate={{ opacity: [0.3, 0.7, 0.3] }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
@@ -318,8 +318,8 @@ export default function HapticCountdown() {
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <Clock className="w-6 h-6 text-white/30 mx-auto mb-1" />
-                    <p className="text-xs text-white/30">to Maghrib</p>
+                    <Clock className="w-6 h-6 text-white/60 mx-auto mb-1" />
+                    <p className="text-xs text-white/60">to Maghrib</p>
                   </div>
                 </div>
               </div>

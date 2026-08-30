@@ -106,7 +106,7 @@ export default function PredictiveReorderModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">🔮 Smart Reorder</h2>
-                  <p className="text-white/40 text-xs">AI-predicted reorder suggestions</p>
+                  <p className="text-white/65 text-xs">AI-predicted reorder suggestions</p>
                 </div>
               </div>
               <button
@@ -134,7 +134,7 @@ export default function PredictiveReorderModal() {
               <h1 className="text-2xl font-black text-white mb-1">
                 We know what you <span className="text-[#10E07A]">crave</span>
               </h1>
-              <p className="text-white/40 text-sm">
+              <p className="text-white/65 text-sm">
                 Based on your order patterns and Ramadan habits
               </p>
               {source && (
@@ -175,7 +175,7 @@ export default function PredictiveReorderModal() {
                       <div className="flex items-start gap-3">
                         {/* Item icon */}
                         <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center shrink-0">
-                          <ShoppingBag className="w-5 h-5 text-white/30" />
+                          <ShoppingBag className="w-5 h-5 text-white/60" />
                         </div>
 
                         <div className="flex-1 min-w-0">
@@ -188,8 +188,8 @@ export default function PredictiveReorderModal() {
 
                           {/* Last ordered */}
                           <div className="flex items-center gap-1.5 mt-1">
-                            <Clock className="w-3 h-3 text-white/30" />
-                            <span className="text-white/30 text-[10px]">Last ordered {item.lastOrdered}</span>
+                            <Clock className="w-3 h-3 text-white/60" />
+                            <span className="text-white/60 text-[10px]">Last ordered {item.lastOrdered}</span>
                           </div>
 
                           {/* Reason */}
@@ -198,7 +198,7 @@ export default function PredictiveReorderModal() {
                           {/* Reorder Score */}
                           <div className="mt-2.5">
                             <div className="flex items-center justify-between mb-1">
-                              <span className="text-white/40 text-[10px]">Reorder likelihood</span>
+                              <span className="text-white/65 text-[10px]">Reorder likelihood</span>
                               <span className="text-xs font-bold" style={{ color: scoreColor }}>
                                 {item.reorderScore}%
                               </span>
@@ -223,7 +223,7 @@ export default function PredictiveReorderModal() {
                           disabled={isAdded}
                           className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                             isAdded
-                              ? 'bg-white/5 border border-white/10 text-white/30 cursor-not-allowed'
+                              ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
                               : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
                           }`}
                         >
@@ -260,7 +260,7 @@ export default function PredictiveReorderModal() {
                   disabled={allAdded}
                   className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                     allAdded
-                      ? 'bg-white/5 border border-white/10 text-white/30 cursor-not-allowed'
+                      ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
                       : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
                   }`}
                 >

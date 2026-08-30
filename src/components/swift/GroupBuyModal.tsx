@@ -60,7 +60,7 @@ export default function GroupBuyModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Group Buy</h2>
-                  <p className="text-white/40 text-xs">Split & Save Together</p>
+                  <p className="text-white/65 text-xs">Split & Save Together</p>
                 </div>
               </div>
               <button
@@ -138,15 +138,15 @@ export default function GroupBuyModal() {
                     {/* Deal Content */}
                     <div className="p-4 -mt-4 relative">
                       <h4 className="text-white font-bold text-base mb-1">{deal.name}</h4>
-                      <p className="text-white/40 text-xs mb-3 line-clamp-2">{deal.description}</p>
+                      <p className="text-white/65 text-xs mb-3 line-clamp-2">{deal.description}</p>
 
                       {/* Pricing */}
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-white/30 text-sm line-through">{formatNaira(deal.originalPrice)}</span>
+                        <span className="text-white/60 text-sm line-through">{formatNaira(deal.originalPrice)}</span>
                         <span className="text-[#10E07A] font-black text-lg">{formatNaira(deal.perPersonPrice)}</span>
-                        <span className="text-white/40 text-[10px]">per person</span>
+                        <span className="text-white/65 text-[10px]">per person</span>
                       </div>
-                      <div className="flex items-center gap-2 mb-4 text-white/30 text-xs">
+                      <div className="flex items-center gap-2 mb-4 text-white/60 text-xs">
                         <span>Group price: {formatNaira(deal.salePrice)}</span>
                         <span>•</span>
                         <span className="text-[#10E07A]/70 font-bold">{Math.round((1 - deal.salePrice / deal.originalPrice) * 100)}% off</span>
@@ -191,7 +191,7 @@ export default function GroupBuyModal() {
                             </div>
                           )}
                         </div>
-                        <span className="text-white/40 text-xs">
+                        <span className="text-white/65 text-xs">
                           {slots.filled} {slots.filled === 1 ? 'person' : 'people'} joined
                         </span>
                       </div>
@@ -210,7 +210,7 @@ export default function GroupBuyModal() {
                           disabled={slots.joined}
                           className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                             slots.joined
-                              ? 'bg-white/5 border border-white/10 text-white/40 cursor-not-allowed'
+                              ? 'bg-white/5 border border-white/10 text-white/65 cursor-not-allowed'
                               : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
                           }`}
                         >
@@ -258,7 +258,7 @@ export default function GroupBuyModal() {
                   </div>
                   <div className="text-[#10E07A] text-[10px] font-black mb-1">STEP {item.step}</div>
                   <h4 className="text-white font-bold text-xs mb-1">{item.title}</h4>
-                  <p className="text-white/40 text-[10px] leading-tight">{item.description}</p>
+                  <p className="text-white/65 text-[10px] leading-tight">{item.description}</p>
                 </motion.div>
               ))}
             </div>
@@ -278,7 +278,7 @@ export default function GroupBuyModal() {
               </div>
               <div className="text-left flex-1">
                 <h4 className="text-white font-bold text-sm">Start Your Own Split</h4>
-                <p className="text-white/40 text-xs">Create a Group Buy and invite your community</p>
+                <p className="text-white/65 text-xs">Create a Group Buy and invite your community</p>
               </div>
               <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-[#10E07A] transition-colors" />
             </motion.button>

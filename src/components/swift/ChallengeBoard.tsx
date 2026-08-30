@@ -182,7 +182,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Challenge Board</h2>
-            <p className="text-white/40 text-[10px]">30 Days of Ramadan</p>
+            <p className="text-white/65 text-[10px]">30 Days of Ramadan</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -226,7 +226,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
           />
         </div>
         <div className="flex items-center justify-between mt-1.5">
-          <span className="text-white/30 text-[10px]">{completedCount}/30 completed</span>
+          <span className="text-white/60 text-[10px]">{completedCount}/30 completed</span>
           <span className="text-[#10E07A] text-[10px] font-bold">{stats?.percentage || 0}%</span>
         </div>
       </div>
@@ -275,7 +275,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
           <>
             {/* Grid Header - Week labels */}
             <div className="mb-3">
-              <p className="text-white/40 text-xs font-semibold mb-3">Your Ramadan Journey</p>
+              <p className="text-white/65 text-xs font-semibold mb-3">Your Ramadan Journey</p>
 
               {/* Contribution Grid - 6 rows x 5 cols = 30 days */}
               <div className="grid grid-cols-6 gap-2">
@@ -348,7 +348,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
 
             {/* List View */}
             <div className="mt-4">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Today&apos;s Challenge</p>
+              <p className="text-white/65 text-xs font-bold uppercase tracking-wider mb-3">Today&apos;s Challenge</p>
               {mergedChallenges.filter(c => c.isCurrent).map(challenge => (
                 <motion.div
                   key={challenge.id}
@@ -362,15 +362,15 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-white text-sm font-bold">{challenge.title}</h3>
-                      <p className="text-white/40 text-xs mt-0.5">{challenge.description}</p>
+                      <p className="text-white/65 text-xs mt-0.5">{challenge.description}</p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
                   </div>
                 </motion.div>
               ))}
 
               {/* Upcoming Challenges */}
-              <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3 mt-5">Upcoming</p>
+              <p className="text-white/65 text-xs font-bold uppercase tracking-wider mb-3 mt-5">Upcoming</p>
               <div className="space-y-2">
                 {mergedChallenges
                   .filter(c => !c.completed && !c.isLocked && !c.isCurrent)
@@ -388,7 +388,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                       <span className="text-lg shrink-0">{challenge.icon}</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-white/80 text-xs font-semibold truncate">{challenge.title}</p>
-                        <p className="text-white/30 text-[10px]">Day {challenge.day} • +{challenge.points} pts</p>
+                        <p className="text-white/60 text-[10px]">Day {challenge.day} • +{challenge.points} pts</p>
                       </div>
                       <div
                         className="w-2 h-2 rounded-full shrink-0"
@@ -438,7 +438,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-white/40 text-[10px] font-bold uppercase tracking-wider">
+                    <span className="text-white/65 text-[10px] font-bold uppercase tracking-wider">
                       Day {selectedChallenge.day}
                     </span>
                     <div

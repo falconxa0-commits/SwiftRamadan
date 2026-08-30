@@ -93,7 +93,7 @@ export default function RiderSmartRouteModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">AI Smart Route</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Optimized delivery order</p>
+                  <p className="text-white/65 text-xs mt-0.5">Optimized delivery order</p>
                 </div>
               </div>
               <button
@@ -122,7 +122,7 @@ export default function RiderSmartRouteModal() {
                   <div>
                     <p className="text-white/50 text-[10px] font-bold uppercase tracking-widest">AI Optimization</p>
                     <p className="text-cyan-400 text-2xl font-black">{totalTimeSaved} min saved</p>
-                    <p className="text-white/30 text-xs mt-0.5">{aiRouteDeliveries.length} deliveries optimized</p>
+                    <p className="text-white/60 text-xs mt-0.5">{aiRouteDeliveries.length} deliveries optimized</p>
                   </div>
                 </div>
               </motion.div>
@@ -181,18 +181,18 @@ export default function RiderSmartRouteModal() {
                               </span>
                             )}
                           </div>
-                          <p className="text-white/40 text-xs mt-0.5 truncate">{delivery.address}</p>
-                          <p className="text-white/30 text-[10px] mt-0.5 truncate">{delivery.items}</p>
+                          <p className="text-white/65 text-xs mt-0.5 truncate">{delivery.address}</p>
+                          <p className="text-white/60 text-[10px] mt-0.5 truncate">{delivery.items}</p>
 
                           {/* Meta Row */}
                           <div className="flex items-center gap-3 mt-2">
                             <div className="flex items-center gap-1">
                               <MapPin className="w-3 h-3 text-white/20" />
-                              <span className="text-white/40 text-[10px]">{delivery.distance}</span>
+                              <span className="text-white/65 text-[10px]">{delivery.distance}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Clock className="w-3 h-3 text-white/20" />
-                              <span className="text-white/40 text-[10px]">{delivery.estimatedTime}</span>
+                              <span className="text-white/65 text-[10px]">{delivery.estimatedTime}</span>
                             </div>
                             <div className="flex items-center gap-1">
                               <Zap className="w-3 h-3 text-cyan-400/60" />

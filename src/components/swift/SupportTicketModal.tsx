@@ -304,7 +304,7 @@ export default function SupportTicketModal() {
                     <h2 className="text-white font-bold text-base tracking-tight">
                       {view === 'create' ? 'New Ticket' : view === 'conversation' ? selectedTicket?.subject : 'Support'}
                     </h2>
-                    <p className="text-white/40 text-[11px]">
+                    <p className="text-white/65 text-[11px]">
                       {view === 'create'
                         ? 'Describe your issue'
                         : view === 'conversation'
@@ -358,12 +358,12 @@ export default function SupportTicketModal() {
                       {/* Tickets list */}
                       {loading && tickets.length === 0 ? (
                         <div className="flex items-center justify-center py-8">
-                          <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+                          <Loader2 className="w-6 h-6 text-white/60 animate-spin" />
                         </div>
                       ) : tickets.length === 0 ? (
                         <div className="text-center py-8">
                           <MessageSquare className="w-10 h-10 text-white/15 mx-auto mb-3" />
-                          <p className="text-white/40 text-sm">No support tickets yet</p>
+                          <p className="text-white/65 text-sm">No support tickets yet</p>
                           <p className="text-white/25 text-xs mt-1">Create a ticket if you need help</p>
                         </div>
                       ) : (
@@ -389,7 +389,7 @@ export default function SupportTicketModal() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                   <p className="text-white text-xs font-semibold truncate">{ticket.subject}</p>
-                                  <p className="text-white/30 text-[10px] mt-0.5">
+                                  <p className="text-white/60 text-[10px] mt-0.5">
                                     {formatDate(ticket.updatedAt)} • {catConfig.label}
                                   </p>
                                 </div>
@@ -514,7 +514,7 @@ export default function SupportTicketModal() {
                         {messages.length === 0 ? (
                           <div className="text-center py-6">
                             <MessageSquare className="w-8 h-8 text-white/15 mx-auto mb-2" />
-                            <p className="text-white/30 text-xs">No messages yet</p>
+                            <p className="text-white/60 text-xs">No messages yet</p>
                           </div>
                         ) : (
                           messages.map((msg) => (

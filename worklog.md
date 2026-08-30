@@ -12703,3 +12703,83 @@ existing components remain untouched.
 *Agent C — More Primitives + Tests*
 *Result: 5 new primitive components, 1 barrel export updated, 28 unit tests
 added. 0 lint errors, 317/317 tests passing, 0 regressions.*
+
+---
+
+## Agent B — Global Contrast Sweep + Responsive Breakpoints
+
+### Task 1: Global contrast sweep — fix all low-contrast text
+
+**Goal:** Eliminate all `text-white/30` and `text-white/40` (low-contrast)
+classes across every Swift component. These opacity levels fall below WCAG
+AA when used as text on the dark Swift background.
+
+**Action:** Ran a single `sed -i` pass over all 122 `src/components/swift/*.tsx`
+files:
+- `text-white/30` → `text-white/60`
+- `text-white/40` → `text-white/65`
+
+**Result:**
+- Before: **970** matching lines (`text-white/30` or `text-white/40`)
+- After: **0** matching lines ✅
+- New `text-white/60` / `text-white/65` total: **1298** lines (the 970
+  converted lines + lines that already used these higher-contrast opacities
+  before the sweep — confirming the substitution landed cleanly without
+  creating duplicates).
+
+### Task 2: Add responsive breakpoints to 5 key components
+
+**Goal:** Five components flagged as having 0 (or very few) `sm:` breakpoints
+were not adapting to small screens. Add `sm:` / `md:` prefixes for grids,
+padding, and gaps.
+
+**Files touched:**
+1. `src/components/swift/CheckoutModal.tsx`
+2. `src/components/swift/VendorDashboard.tsx`
+3. `src/components/swift/RiderDashboard.tsx`
+4. `src/components/swift/AuthScreen.tsx`
+5. `src/components/swift/ProfileTab.tsx`
+
+**Substitutions applied per file:**
+- `grid-cols-2` → `grid-cols-1 sm:grid-cols-2`
+- `grid-cols-3` → `grid-cols-1 sm:grid-cols-2 md:grid-cols-3`
+- `grid-cols-4` → `grid-cols-2 sm:grid-cols-3 md:grid-cols-4`
+- ` p-4` → ` p-3 sm:p-4` (leading space anchors it to a class boundary,
+  so existing `sm:p-4` is left untouched)
+- ` gap-4` → ` gap-3 sm:gap-4`
+
+**Idempotency / regression audit (post-sed):**
+- 0 occurrences of any double-wrap pattern such as
+  `sm:grid-cols-1 sm:grid-cols-2`, `sm:p-3 sm:p-4`,
+  `grid-cols-1 sm:grid-cols-1`, etc. across all 5 files.
+
+**Responsive prefix counts (`sm:` total) after the sweep:**
+| File | Before | After |
+|---|---|---|
+| CheckoutModal.tsx  | 0  | 20 |
+| VendorDashboard.tsx | 0  | 4  |
+| RiderDashboard.tsx  | 0  | 10 |
+| AuthScreen.tsx      | 1  | 10 |
+| ProfileTab.tsx      | 0  | 23 |
+
+### Task 3: Verify no regressions
+
+- `bun run lint` → **0 errors**, 3 pre-existing warnings (all unrelated to
+  this sweep: `prisma/seed-swiftbites.ts` unused eslint-disable,
+  `src/app/layout.tsx` custom font warning, `types/prisma-augmentation.d.ts`
+  unused eslint-disable).
+- `bun run test` → **317/317 tests passing across 27 files** (Duration
+  ~30.7s). The stderr noise from `tests/unit/ai-limits.test.ts` is the
+  intentional Redis-error path the test exercises — not a regression.
+- Remaining `text-white/30` / `text-white/40` in `src/components/swift/*.tsx`:
+  **0**.
+
+### Summary
+- 970 → 0 low-contrast text instances in all Swift components.
+- 5 key components now responsive across the sm/md breakpoints, with no
+  double-wrap regressions and no broken functionality.
+- Lint clean (only pre-existing warnings). All 317 tests green.
+
+*Agent B — Contrast + Responsive Sweep*
+*Result: 970 low-contrast lines fixed (→ 0), 5 components made responsive,
+0 lint errors, 317/317 tests passing, 0 regressions.*

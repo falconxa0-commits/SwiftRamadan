@@ -186,7 +186,7 @@ export default function VendorAddProductModal() {
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">Add Product</h2>
-                    <p className="text-white/40 text-[10px]">Create a new item for your store</p>
+                    <p className="text-white/65 text-[10px]">Create a new item for your store</p>
                   </div>
                 </div>
                 <button
@@ -253,7 +253,7 @@ export default function VendorAddProductModal() {
                     <div className="flex flex-col items-center text-center px-4">
                       <Loader2 className="w-10 h-10 text-[#F5C451] animate-spin mb-2" />
                       <p className="text-white/60 text-xs font-bold">Uploading…</p>
-                      <p className="text-white/30 text-[10px] mt-0.5">Saving to /uploads</p>
+                      <p className="text-white/60 text-[10px] mt-0.5">Saving to /uploads</p>
                     </div>
                   ) : (
                     <button
@@ -265,7 +265,7 @@ export default function VendorAddProductModal() {
                         <UploadCloud className="w-6 h-6 text-[#F5C451]" />
                       </div>
                       <p className="text-white text-xs font-bold">Tap to upload</p>
-                      <p className="text-white/30 text-[10px] mt-0.5">
+                      <p className="text-white/60 text-[10px] mt-0.5">
                         or drop an image here • JPG, PNG, WEBP, GIF (max 5 MB)
                       </p>
                     </button>
@@ -283,7 +283,7 @@ export default function VendorAddProductModal() {
 
                 {/* Quick image picker */}
                 <div className="p-3">
-                  <p className="text-white/40 text-[10px] font-bold uppercase tracking-widest mb-2">
+                  <p className="text-white/65 text-[10px] font-bold uppercase tracking-widest mb-2">
                     Quick Pick
                   </p>
                   <div className="grid grid-cols-6 gap-2">
@@ -398,7 +398,7 @@ export default function VendorAddProductModal() {
                         className={`py-2.5 rounded-xl text-[10px] font-bold transition-all flex flex-col items-center gap-0.5 border ${
                           category === cat.id
                             ? 'bg-[#F5C451]/20 text-[#F5C451] border-[#F5C451]/30'
-                            : 'bg-[#0F1118] text-white/40 border-white/5 hover:bg-white/5'
+                            : 'bg-[#0F1118] text-white/65 border-white/5 hover:bg-white/5'
                         }`}
                       >
                         <span className="text-base">{cat.emoji}</span>
@@ -411,7 +411,7 @@ export default function VendorAddProductModal() {
                 {/* Image URL (optional override) */}
                 <div>
                   <label className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1.5 block">
-                    Image URL <span className="text-white/30 normal-case font-normal">(optional — overrides upload)</span>
+                    Image URL <span className="text-white/60 normal-case font-normal">(optional — overrides upload)</span>
                   </label>
                   <input
                     type="text"

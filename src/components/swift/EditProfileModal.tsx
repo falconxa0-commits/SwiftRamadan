@@ -204,7 +204,7 @@ export default function EditProfileModal() {
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Edit Profile</h2>
-                    <p className="text-white/40 text-[11px]">Update your personal info</p>
+                    <p className="text-white/65 text-[11px]">Update your personal info</p>
                   </div>
                 </div>
                 <button
@@ -299,7 +299,7 @@ export default function EditProfileModal() {
                         Use initials
                       </button>
                     </div>
-                    <p className="text-white/30 text-[10px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
+                    <p className="text-white/60 text-[10px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
                   </div>
                 </div>
 

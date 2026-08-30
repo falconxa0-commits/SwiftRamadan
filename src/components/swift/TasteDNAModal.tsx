@@ -147,7 +147,7 @@ export default function TasteDNAModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">🧬 Taste DNA</h2>
-                  <p className="text-white/40 text-xs">Your unique flavor fingerprint</p>
+                  <p className="text-white/65 text-xs">Your unique flavor fingerprint</p>
                 </div>
               </div>
               <button
@@ -169,7 +169,7 @@ export default function TasteDNAModal() {
             >
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-white font-bold text-base">Flavor Radar</h3>
-                <span className="text-[10px] text-white/30 bg-white/5 px-2 py-1 rounded-full">
+                <span className="text-[10px] text-white/60 bg-white/5 px-2 py-1 rounded-full">
                   {source === 'ai' ? '✨ AI Analyzed' : source === 'default' ? 'Default Profile' : 'Estimated'}
                 </span>
               </div>
@@ -319,7 +319,7 @@ export default function TasteDNAModal() {
           {/* Recommendations */}
           <div className="px-4 mb-32">
             <h3 className="text-white font-bold text-base mb-1">Based on your taste profile, you&apos;d love...</h3>
-            <p className="text-white/30 text-xs mb-3">Personalized picks for your unique palate</p>
+            <p className="text-white/60 text-xs mb-3">Personalized picks for your unique palate</p>
             <div className="grid grid-cols-2 gap-3">
               {recommendations.map((rec, i) => (
                 <motion.div
@@ -333,7 +333,7 @@ export default function TasteDNAModal() {
                     <ChefHat className="w-4 h-4 text-[#10E07A]" />
                   </div>
                   <h4 className="text-white font-bold text-sm mb-1">{rec.name}</h4>
-                  <p className="text-white/40 text-[10px] leading-tight mb-2">{rec.reason}</p>
+                  <p className="text-white/65 text-[10px] leading-tight mb-2">{rec.reason}</p>
                   <span className="text-[#10E07A] text-xs font-bold">
                     ₦{rec.price.toLocaleString()}
                   </span>

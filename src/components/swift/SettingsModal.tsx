@@ -220,7 +220,7 @@ export default function SettingsModal() {
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Settings</h2>
-                    <p className="text-white/40 text-[11px]">Manage your preferences</p>
+                    <p className="text-white/65 text-[11px]">Manage your preferences</p>
                   </div>
                 </div>
                 <button
@@ -237,13 +237,13 @@ export default function SettingsModal() {
                 {loading ? (
                   <div className="flex flex-col items-center justify-center py-12 gap-3">
                     <Loader2 className="w-7 h-7 text-[#F5C451] animate-spin" />
-                    <p className="text-white/40 text-sm">Loading settings…</p>
+                    <p className="text-white/65 text-sm">Loading settings…</p>
                   </div>
                 ) : (
                   <>
                     {/* ── Notifications ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         NOTIFICATIONS
                       </p>
                       <div className="space-y-2">
@@ -252,7 +252,7 @@ export default function SettingsModal() {
                             <Bell className="w-5 h-5 text-[#10E07A]" />
                             <div>
                               <p className="text-white font-bold text-sm">Push Notifications</p>
-                              <p className="text-white/40 text-xs">Order updates & alerts</p>
+                              <p className="text-white/65 text-xs">Order updates & alerts</p>
                             </div>
                           </div>
                           <GoldToggle
@@ -267,7 +267,7 @@ export default function SettingsModal() {
                             <MessageSquare className="w-5 h-5 text-[#38BDF8]" />
                             <div>
                               <p className="text-white font-bold text-sm">In-App Notifications</p>
-                              <p className="text-white/40 text-xs">Show inside the app</p>
+                              <p className="text-white/65 text-xs">Show inside the app</p>
                             </div>
                           </div>
                           <GoldToggle
@@ -282,7 +282,7 @@ export default function SettingsModal() {
                             <Bell className="w-5 h-5 text-[#A78BFA]" />
                             <div>
                               <p className="text-white font-bold text-sm">Email Alerts</p>
-                              <p className="text-white/40 text-xs">Receipts & promos</p>
+                              <p className="text-white/65 text-xs">Receipts & promos</p>
                             </div>
                           </div>
                           <GoldToggle
@@ -297,7 +297,7 @@ export default function SettingsModal() {
 
                     {/* ── Appearance ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         APPEARANCE
                       </p>
                       <div className="flex items-center justify-between p-3 glass-card rounded-xl">
@@ -309,7 +309,7 @@ export default function SettingsModal() {
                           )}
                           <div>
                             <p className="text-white font-bold text-sm">Theme</p>
-                            <p className="text-white/40 text-xs">
+                            <p className="text-white/65 text-xs">
                               {settings.theme === 'dark' ? 'Aurora Dark' : 'Light'}
                             </p>
                           </div>
@@ -327,7 +327,7 @@ export default function SettingsModal() {
 
                     {/* ── Language ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         LANGUAGE
                       </p>
                       <div className="p-3 glass-card rounded-xl">
@@ -363,7 +363,7 @@ export default function SettingsModal() {
 
                     {/* ── Currency ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         CURRENCY
                       </p>
                       <div className="p-3 glass-card rounded-xl">
@@ -396,7 +396,7 @@ export default function SettingsModal() {
 
                     {/* ── Account ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         ACCOUNT
                       </p>
                       <div className="space-y-2">
@@ -407,9 +407,9 @@ export default function SettingsModal() {
                           <User className="w-5 h-5 text-[#10E07A]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Edit Profile</p>
-                            <p className="text-white/40 text-xs">Name, phone, area, avatar</p>
+                            <p className="text-white/65 text-xs">Name, phone, area, avatar</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                         <button
                           onClick={() => toast({ title: 'Saved Addresses', description: 'Address management coming soon.' })}
@@ -418,9 +418,9 @@ export default function SettingsModal() {
                           <MapPin className="w-5 h-5 text-[#A78BFA]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Saved Addresses</p>
-                            <p className="text-white/40 text-xs">Manage delivery locations</p>
+                            <p className="text-white/65 text-xs">Manage delivery locations</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                         <button
                           onClick={() => toast({ title: 'Payment Methods', description: 'Payment management coming soon.' })}
@@ -429,16 +429,16 @@ export default function SettingsModal() {
                           <CreditCard className="w-5 h-5 text-[#F5C451]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Payment Methods</p>
-                            <p className="text-white/40 text-xs">Cards, bank, BNPL</p>
+                            <p className="text-white/65 text-xs">Cards, bank, BNPL</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                       </div>
                     </section>
 
                     {/* ── Support ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         SUPPORT
                       </p>
                       <div className="space-y-2">
@@ -449,9 +449,9 @@ export default function SettingsModal() {
                           <HelpCircle className="w-5 h-5 text-[#10E07A]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Help Center</p>
-                            <p className="text-white/40 text-xs">FAQs & guides</p>
+                            <p className="text-white/65 text-xs">FAQs & guides</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                         <button
                           onClick={() => toast({ title: 'Contact Us', description: 'Our support team will reach out via WhatsApp.' })}
@@ -460,9 +460,9 @@ export default function SettingsModal() {
                           <MessageSquare className="w-5 h-5 text-[#38BDF8]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Contact Us</p>
-                            <p className="text-white/40 text-xs">Chat on WhatsApp</p>
+                            <p className="text-white/65 text-xs">Chat on WhatsApp</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                         <button
                           onClick={() => openModal('help-center')}
@@ -471,16 +471,16 @@ export default function SettingsModal() {
                           <Flag className="w-5 h-5 text-[#FB7185]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Report a Problem</p>
-                            <p className="text-white/40 text-xs">Bug, issue, or feedback</p>
+                            <p className="text-white/65 text-xs">Bug, issue, or feedback</p>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-white/30" />
+                          <ChevronRight className="w-4 h-4 text-white/60" />
                         </button>
                       </div>
                     </section>
 
                     {/* ── Legal ── */}
                     <section>
-                      <p className="text-white/30 text-[10px] font-extrabold tracking-widest mb-2 px-1">
+                      <p className="text-white/60 text-[10px] font-extrabold tracking-widest mb-2 px-1">
                         LEGAL
                       </p>
                       <button
@@ -490,9 +490,9 @@ export default function SettingsModal() {
                         <FileText className="w-5 h-5 text-white/50" />
                         <div className="flex-1">
                           <p className="text-white font-bold text-sm">Terms, Privacy & About</p>
-                          <p className="text-white/40 text-xs">Legal documents</p>
+                          <p className="text-white/65 text-xs">Legal documents</p>
                         </div>
-                        <ChevronRight className="w-4 h-4 text-white/30" />
+                        <ChevronRight className="w-4 h-4 text-white/60" />
                       </button>
                     </section>
 

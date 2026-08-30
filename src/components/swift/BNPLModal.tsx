@@ -100,13 +100,13 @@ export default function BNPLModal() {
                   <p className="text-[#10E07A] text-3xl font-black mt-1">{formatNaira(150000)}</p>
                   <div className="mt-4 pt-4 border-t border-white/5 grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-white/40 text-[10px] uppercase tracking-widest">Balance Used</p>
+                      <p className="text-white/65 text-[10px] uppercase tracking-widest">Balance Used</p>
                       <p className="text-white font-bold text-lg mt-0.5">{formatNaira(45000)}</p>
                     </div>
                     <div>
-                      <p className="text-white/40 text-[10px] uppercase tracking-widest">Next Payment</p>
+                      <p className="text-white/65 text-[10px] uppercase tracking-widest">Next Payment</p>
                       <p className="text-[#F5C451] font-bold text-lg mt-0.5">{formatNaira(15000)}</p>
-                      <p className="text-white/30 text-[10px]">Due Apr 1</p>
+                      <p className="text-white/60 text-[10px]">Due Apr 1</p>
                     </div>
                   </div>
                 </div>
@@ -160,7 +160,7 @@ export default function BNPLModal() {
                             ? 'bg-[#10E07A]/20 border-[#10E07A]/30'
                             : 'bg-white/5 border-white/10'
                         }`}>
-                          <CreditCard className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                          <CreditCard className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/60'}`} />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
@@ -171,7 +171,7 @@ export default function BNPLModal() {
                               </span>
                             )}
                           </div>
-                          <p className="text-white/40 text-xs mt-0.5">
+                          <p className="text-white/65 text-xs mt-0.5">
                             {plan.interestRate === 0 ? 'No interest' : `${plan.interestRate}% interest`} • {plan.months} monthly payments
                           </p>
                         </div>
@@ -203,9 +203,9 @@ export default function BNPLModal() {
                 </h4>
                 <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5">
                   <div className="mb-4">
-                    <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">Purchase Amount</label>
+                    <label className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">Purchase Amount</label>
                     <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[#10E07A]/30 transition-all px-4 py-3">
-                      <span className="text-white/40 text-lg font-bold">₦</span>
+                      <span className="text-white/65 text-lg font-bold">₦</span>
                       <input
                         type="number"
                         value={amount}
@@ -223,7 +223,7 @@ export default function BNPLModal() {
                           className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
                             amount === String(amt)
                               ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
-                              : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                              : 'bg-white/5 text-white/65 border border-white/5 hover:bg-white/10'
                           }`}
                         >
                           {formatNaira(amt)}
@@ -240,17 +240,17 @@ export default function BNPLModal() {
                       className="border-t border-white/5 pt-4 mt-4 space-y-3"
                     >
                       <div className="flex justify-between items-center">
-                        <span className="text-white/40 text-xs">Purchase Amount</span>
+                        <span className="text-white/65 text-xs">Purchase Amount</span>
                         <span className="text-white font-bold text-sm">{formatNaira(numericAmount)}</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-white/40 text-xs">Interest ({currentPlan.interestRate}%)</span>
+                        <span className="text-white/65 text-xs">Interest ({currentPlan.interestRate}%)</span>
                         <span className={`font-bold text-sm ${currentPlan.interestRate === 0 ? 'text-[#10E07A]' : 'text-[#F5C451]'}`}>
                           {currentPlan.interestRate === 0 ? 'FREE' : formatNaira(Math.ceil(calculation.totalInterest))}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-white/40 text-xs">Total Amount</span>
+                        <span className="text-white/65 text-xs">Total Amount</span>
                         <span className="text-white font-bold text-sm">{formatNaira(Math.ceil(calculation.totalAmount))}</span>
                       </div>
                       <div className="h-px bg-white/5" />
@@ -258,7 +258,7 @@ export default function BNPLModal() {
                         <span className="text-white text-sm font-bold">Monthly Payment</span>
                         <span className="text-[#10E07A] text-xl font-black">{formatNaira(Math.ceil(calculation.monthlyPayment))}</span>
                       </div>
-                      <p className="text-white/30 text-[10px] text-center">for {currentPlan.months} months</p>
+                      <p className="text-white/60 text-[10px] text-center">for {currentPlan.months} months</p>
                     </motion.div>
                   )}
                 </div>

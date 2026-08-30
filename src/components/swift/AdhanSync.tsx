@@ -182,11 +182,11 @@ export default function AdhanSync() {
                   {adhanSyncEnabled ? (
                     <Volume2 className="w-5 h-5 text-[#10E07A]" />
                   ) : (
-                    <VolumeX className="w-5 h-5 text-white/40" />
+                    <VolumeX className="w-5 h-5 text-white/65" />
                   )}
                   <div>
                     <p className="text-sm font-semibold text-white">Adhan Sync</p>
-                    <p className="text-xs text-white/40">Auto-sync with Maghrib adhan</p>
+                    <p className="text-xs text-white/65">Auto-sync with Maghrib adhan</p>
                   </div>
                 </div>
                 <button
@@ -212,7 +212,7 @@ export default function AdhanSync() {
                   <Volume2 className="w-5 h-5 text-[#F5C451]" />
                   <div>
                     <p className="text-sm font-semibold text-white">Adhan Notifications</p>
-                    <p className="text-xs text-white/40">Get notified at prayer times</p>
+                    <p className="text-xs text-white/65">Get notified at prayer times</p>
                   </div>
                 </div>
                 <button
@@ -245,10 +245,10 @@ export default function AdhanSync() {
                     <MapPin className="w-4 h-4 text-[#10E07A]" />
                     <div className="text-left">
                       <p className="text-sm font-medium text-white">{currentMosque.name}</p>
-                      <p className="text-xs text-white/40">{currentMosque.distance} away</p>
+                      <p className="text-xs text-white/65">{currentMosque.distance} away</p>
                     </div>
                   </div>
-                  <ChevronDown className={`w-4 h-4 text-white/40 transition-transform ${showMosquePicker ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`w-4 h-4 text-white/65 transition-transform ${showMosquePicker ? 'rotate-180' : ''}`} />
                 </button>
 
                 <AnimatePresence>
@@ -274,7 +274,7 @@ export default function AdhanSync() {
                         >
                           <div className="text-left">
                             <p className="text-sm font-medium text-white">{mosque.name}</p>
-                            <p className="text-xs text-white/40">{mosque.address} · {mosque.distance}</p>
+                            <p className="text-xs text-white/65">{mosque.address} · {mosque.distance}</p>
                           </div>
                           {selectedMosque === mosque.id && (
                             <Check className="w-4 h-4 text-[#10E07A]" />
@@ -388,8 +388,8 @@ export default function AdhanSync() {
 
               {/* Location info */}
               <div className="flex items-center justify-center gap-2 pt-2">
-                <MapPin className="w-3 h-3 text-white/30" />
-                <p className="text-xs text-white/30">{adhanData?.location || 'Lagos, Nigeria'}</p>
+                <MapPin className="w-3 h-3 text-white/60" />
+                <p className="text-xs text-white/60">{adhanData?.location || 'Lagos, Nigeria'}</p>
               </div>
             </div>
           </motion.div>

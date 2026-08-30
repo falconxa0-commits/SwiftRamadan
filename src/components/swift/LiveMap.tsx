@@ -215,7 +215,7 @@ export default function LiveMap({
   if (!delivery) {
     return (
       <div className={`relative bg-[#080c12] flex items-center justify-center ${className}`}>
-        <div className="text-white/40 text-sm">Loading live map…</div>
+        <div className="text-white/65 text-sm">Loading live map…</div>
       </div>
     );
   }

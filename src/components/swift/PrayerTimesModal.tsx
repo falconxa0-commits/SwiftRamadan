@@ -148,7 +148,7 @@ export default function PrayerTimesModal() {
                 <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[#10E07A]/20 p-6 text-center green-glow">
                   <div className="absolute top-0 left-0 w-full h-full bg-[#10E07A]/5 blur-[80px]" />
                   <div className="relative">
-                    <p className="text-white/40 text-xs uppercase tracking-widest mb-1">Next Prayer</p>
+                    <p className="text-white/65 text-xs uppercase tracking-widest mb-1">Next Prayer</p>
                     <p className="text-[#10E07A] text-2xl font-black">{countdown.label}</p>
                     <motion.div
                       key={`${countdown.hours}-${countdown.minutes}`}
@@ -160,7 +160,7 @@ export default function PrayerTimesModal() {
                         {countdown.hours}h {countdown.minutes}m
                       </p>
                     </motion.div>
-                    <p className="text-white/30 text-xs mt-1">until adhan</p>
+                    <p className="text-white/60 text-xs mt-1">until adhan</p>
                   </div>
                 </div>
               </div>
@@ -187,7 +187,7 @@ export default function PrayerTimesModal() {
                           isNext ? 'bg-[#F5C451]/20' : 'bg-white/5'
                         }`}>
                           <span className={`material-symbols-outlined text-lg ${
-                            isNext ? 'text-[#F5C451]' : 'text-white/40'
+                            isNext ? 'text-[#F5C451]' : 'text-white/65'
                           }`}>{prayer.icon}</span>
                         </div>
                         <div className="flex-1">
@@ -219,7 +219,7 @@ export default function PrayerTimesModal() {
                     <Compass className="w-5 h-5 text-[#F5C451]" />
                     <div className="text-left">
                       <p className="text-white font-bold text-xs">Qibla Finder</p>
-                      <p className="text-white/30 text-[10px]">NE 56°</p>
+                      <p className="text-white/60 text-[10px]">NE 56°</p>
                     </div>
                   </button>
                   <button
@@ -240,7 +240,7 @@ export default function PrayerTimesModal() {
                     </div>
                     <div className="text-left">
                       <p className="text-white font-bold text-xs">Athan Alerts</p>
-                      <p className="text-white/30 text-[10px]">{athanEnabled ? 'Enabled' : 'Disabled'}</p>
+                      <p className="text-white/60 text-[10px]">{athanEnabled ? 'Enabled' : 'Disabled'}</p>
                     </div>
                   </button>
                 </div>
@@ -277,13 +277,13 @@ export default function PrayerTimesModal() {
                       className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
                       aria-label="Share dua"
                     >
-                      <Share2 className="w-4 h-4 text-white/40" />
+                      <Share2 className="w-4 h-4 text-white/65" />
                     </button>
                   </div>
                   <p className="text-white/70 text-sm leading-relaxed italic">
                     &ldquo;{dailyDuas[dailyDuaIndex]}&rdquo;
                   </p>
-                  <p className="text-white/30 text-[10px] mt-2">Day {Math.min(new Date().getDate(), 30)} of Ramadan</p>
+                  <p className="text-white/60 text-[10px] mt-2">Day {Math.min(new Date().getDate(), 30)} of Ramadan</p>
                 </div>
               </div>
             </div>

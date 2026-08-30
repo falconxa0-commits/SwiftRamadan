@@ -178,7 +178,7 @@ export default function PredictiveReorder() {
                 <Zap className="w-4 h-4" style={{ color: '#F5C451' }} />
                 <span className="text-white text-sm font-semibold">AI Prediction</span>
               </div>
-              <p className="text-white/40 text-xs">
+              <p className="text-white/65 text-xs">
                 Based on your order patterns, we predict you&apos;ll need these items soon.
                 Items are ranked by reorder probability.
               </p>
@@ -188,7 +188,7 @@ export default function PredictiveReorder() {
             {isLoading && (
               <div className="py-12 flex flex-col items-center gap-2">
                 <Loader2 className="w-6 h-6 text-white/20 animate-spin" />
-                <p className="text-white/30 text-sm">Analyzing your order patterns...</p>
+                <p className="text-white/60 text-sm">Analyzing your order patterns...</p>
               </div>
             )}
 
@@ -230,19 +230,19 @@ export default function PredictiveReorder() {
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
                             <p className="text-white text-sm font-medium truncate">{item.name}</p>
-                            <p className="text-white/30 text-xs mt-0.5">{item.reason}</p>
+                            <p className="text-white/60 text-xs mt-0.5">{item.reason}</p>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                          <span className="text-white/40 text-xs flex items-center gap-1">
+                          <span className="text-white/65 text-xs flex items-center gap-1">
                             <Clock className="w-3 h-3" />
                             {timeAgo(item.daysSinceLastOrder)}
                           </span>
-                          <span className="text-white/30 text-xs">
+                          <span className="text-white/60 text-xs">
                             Ordered {item.orderCount}x
                           </span>
-                          <span className="text-white/30 text-xs">
+                          <span className="text-white/60 text-xs">
                             Every ~{item.avgCadenceDays}d
                           </span>
                         </div>
@@ -293,7 +293,7 @@ export default function PredictiveReorder() {
             {!isLoading && items.length === 0 && (
               <div className="py-8 text-center">
                 <p className="text-2xl mb-2">📦</p>
-                <p className="text-white/40 text-sm">No predictions yet. Order more to unlock smart reorders!</p>
+                <p className="text-white/65 text-sm">No predictions yet. Order more to unlock smart reorders!</p>
               </div>
             )}
 
@@ -314,7 +314,7 @@ export default function PredictiveReorder() {
 
             {/* Legend */}
             {!isLoading && items.length > 0 && (
-              <div className="flex items-center justify-center gap-4 text-[10px] text-white/30">
+              <div className="flex items-center justify-center gap-4 text-[10px] text-white/60">
                 <span className="flex items-center gap-1">
                   <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#10E07A' }} />
                   High confidence

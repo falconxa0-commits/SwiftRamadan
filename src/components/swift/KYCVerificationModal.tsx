@@ -257,7 +257,7 @@ export default function KYCVerificationModal() {
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">KYC Verification</h2>
-                    <p className="text-white/40 text-[11px]">Identity verification for {userRole}s</p>
+                    <p className="text-white/65 text-[11px]">Identity verification for {userRole}s</p>
                   </div>
                 </div>
                 <button
@@ -308,7 +308,7 @@ export default function KYCVerificationModal() {
                     </p>
                   )}
                   {kycStatus === 'none' && (
-                    <p className="text-white/40 text-xs mt-1">
+                    <p className="text-white/65 text-xs mt-1">
                       Submit your identity documents to get verified. Required: {requiredDocs.join(', ')}.
                     </p>
                   )}
@@ -411,11 +411,11 @@ export default function KYCVerificationModal() {
                           ) : (
                             <>
                               <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                                <Camera className="w-5 h-5 text-white/40" />
+                                <Camera className="w-5 h-5 text-white/65" />
                               </div>
                               <div>
                                 <p className="text-white/60 text-xs font-medium">Upload document photo</p>
-                                <p className="text-white/30 text-[10px]">JPG, PNG — max 5MB</p>
+                                <p className="text-white/60 text-[10px]">JPG, PNG — max 5MB</p>
                               </div>
                             </>
                           )}
@@ -466,13 +466,13 @@ export default function KYCVerificationModal() {
                         className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5"
                       >
                         <div className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                          <FileText className="w-4 h-4 text-white/40" />
+                          <FileText className="w-4 h-4 text-white/65" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white text-xs font-medium truncate">
                             {getDocTypeLabel(doc.documentType)}
                           </p>
-                          <p className="text-white/30 text-[10px] font-mono">
+                          <p className="text-white/60 text-[10px] font-mono">
                             {doc.documentNumber.replace(/(.{4})(.*)(.{4})/, '$1••••$3')}
                           </p>
                           {doc.rejectionReason && doc.status === 'rejected' && (
@@ -492,7 +492,7 @@ export default function KYCVerificationModal() {
                 {/* Loading state */}
                 {loading && documents.length === 0 && (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="w-6 h-6 text-white/30 animate-spin" />
+                    <Loader2 className="w-6 h-6 text-white/60 animate-spin" />
                   </div>
                 )}
               </div>

@@ -337,7 +337,7 @@ export default function SupportModal() {
                   <h2 className="text-white font-bold text-base tracking-tight truncate">
                     {activeView === 'detail' ? selectedTicket?.subject ?? 'Ticket Details' : 'Support Center'}
                   </h2>
-                  <p className="text-white/40 text-[11px]">
+                  <p className="text-white/65 text-[11px]">
                     {activeView === 'detail'
                       ? `${getCategoryLabel(selectedTicket?.category ?? '')} · ${STATUS_CONFIG[selectedTicket?.status ?? 'open']?.label ?? ''}`
                       : 'Get help & submit tickets'}
@@ -381,7 +381,7 @@ export default function SupportModal() {
                     {loading ? (
                       <div className="flex flex-col items-center justify-center py-16 gap-2">
                         <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
-                        <p className="text-white/40 text-xs">Loading tickets…</p>
+                        <p className="text-white/65 text-xs">Loading tickets…</p>
                       </div>
                     ) : tickets.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -389,7 +389,7 @@ export default function SupportModal() {
                           <Headphones className="w-7 h-7 text-[#10E07A]" />
                         </div>
                         <p className="text-white font-bold text-base">No support tickets</p>
-                        <p className="text-white/40 text-sm mt-1 max-w-[240px]">
+                        <p className="text-white/65 text-sm mt-1 max-w-[240px]">
                           Create a ticket and our team will get back to you quickly.
                         </p>
                       </div>
@@ -411,7 +411,7 @@ export default function SupportModal() {
                               <h3 className="text-white font-bold text-sm leading-tight line-clamp-1 flex-1">
                                 {ticket.subject}
                               </h3>
-                              <ChevronRight className="w-4 h-4 text-white/30 shrink-0 mt-0.5" />
+                              <ChevronRight className="w-4 h-4 text-white/60 shrink-0 mt-0.5" />
                             </div>
                             <div className="flex items-center gap-2 flex-wrap mb-2">
                               <span
@@ -430,7 +430,7 @@ export default function SupportModal() {
                               </span>
                             </div>
                             {lastMsg && (
-                              <p className="text-white/40 text-xs line-clamp-1 mb-1">
+                              <p className="text-white/65 text-xs line-clamp-1 mb-1">
                                 {lastMsg.text}
                               </p>
                             )}
@@ -482,7 +482,7 @@ export default function SupportModal() {
                           className={`py-2.5 rounded-xl text-xs font-bold border transition-all ${
                             priority === p.value
                               ? 'bg-white/10 border-white/20 text-white'
-                              : 'bg-white/[0.02] border-white/5 text-white/40 hover:text-white/60'
+                              : 'bg-white/[0.02] border-white/5 text-white/65 hover:text-white/60'
                           }`}
                         >
                           {p.label}
@@ -574,11 +574,11 @@ export default function SupportModal() {
                           {(selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && <CheckCircle className="w-2.5 h-2.5" />}
                           {STATUS_CONFIG[selectedTicket.status]?.label ?? 'Open'}
                         </span>
-                        <span className="text-[10px] font-bold px-2 h-5 rounded-full flex items-center bg-white/5 text-white/40">
+                        <span className="text-[10px] font-bold px-2 h-5 rounded-full flex items-center bg-white/5 text-white/65">
                           {selectedTicket.priority.charAt(0).toUpperCase() + selectedTicket.priority.slice(1)} Priority
                         </span>
                       </div>
-                      <p className="text-white/30 text-[10px]">
+                      <p className="text-white/60 text-[10px]">
                         Created {formatDateTime(selectedTicket.createdAt)}
                       </p>
                     </div>
@@ -589,7 +589,7 @@ export default function SupportModal() {
                     {selectedTicket.messages.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-8 text-center">
                         <MessageSquare className="w-6 h-6 text-white/20 mb-2" />
-                        <p className="text-white/40 text-xs">No messages yet</p>
+                        <p className="text-white/65 text-xs">No messages yet</p>
                       </div>
                     ) : (
                       selectedTicket.messages.map((msg, i) => {
@@ -610,7 +610,7 @@ export default function SupportModal() {
                               }`}
                             >
                               {isUser && (
-                                <span className="text-[10px] font-bold text-white/30 block mb-1">You</span>
+                                <span className="text-[10px] font-bold text-white/60 block mb-1">You</span>
                               )}
                               {!isUser && (
                                 <span className="text-[10px] font-bold text-[#04140C]/50 block mb-1">Support</span>
@@ -646,7 +646,7 @@ export default function SupportModal() {
                               }
                             }}
                             placeholder="Type a message…"
-                            className="flex-1 bg-transparent text-white text-sm px-4 py-3 focus:outline-none placeholder:text-white/30"
+                            className="flex-1 bg-transparent text-white text-sm px-4 py-3 focus:outline-none placeholder:text-white/60"
                           />
                         </div>
                         <button
@@ -660,7 +660,7 @@ export default function SupportModal() {
                       </div>
                       <button
                         onClick={handleCloseTicket}
-                        className="w-full mt-2 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 border border-white/5 text-white/40 text-xs font-bold hover:text-white/60 hover:border-white/10 transition-colors"
+                        className="w-full mt-2 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-white/5 border border-white/5 text-white/65 text-xs font-bold hover:text-white/60 hover:border-white/10 transition-colors"
                       >
                         <AlertCircle className="w-3.5 h-3.5" />
                         Close Ticket
@@ -673,7 +673,7 @@ export default function SupportModal() {
                     <div className="px-4 py-3 border-t border-white/5 shrink-0">
                       <div className="flex items-center gap-2 bg-white/[0.03] rounded-xl p-3">
                         <CheckCircle className="w-4 h-4 text-[#38BDF8] shrink-0" />
-                        <p className="text-white/40 text-xs">
+                        <p className="text-white/65 text-xs">
                           This ticket is {selectedTicket.status}. Create a new ticket if you need more help.
                         </p>
                       </div>

@@ -43,7 +43,7 @@ export default function RiderPerformanceHub() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Performance Hub</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Track your delivery metrics</p>
+                  <p className="text-white/65 text-xs mt-0.5">Track your delivery metrics</p>
                 </div>
               </div>
               <button
@@ -68,7 +68,7 @@ export default function RiderPerformanceHub() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="w-4 h-4 text-[#10E07A]" />
-                    <span className="text-white/40 text-[10px] font-bold uppercase">Completion</span>
+                    <span className="text-white/65 text-[10px] font-bold uppercase">Completion</span>
                   </div>
                   <p className="text-[#10E07A] text-2xl font-black">{m.completionRate}%</p>
                   <div className="flex items-center gap-1 mt-1">
@@ -86,7 +86,7 @@ export default function RiderPerformanceHub() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Star className="w-4 h-4 text-[#F5C451]" />
-                    <span className="text-white/40 text-[10px] font-bold uppercase">Rating</span>
+                    <span className="text-white/65 text-[10px] font-bold uppercase">Rating</span>
                   </div>
                   <p className="text-[#F5C451] text-2xl font-black">{m.rating}</p>
                   <div className="flex items-center gap-1 mt-1">
@@ -104,7 +104,7 @@ export default function RiderPerformanceHub() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Heart className="w-4 h-4 text-rose-400" />
-                    <span className="text-white/40 text-[10px] font-bold uppercase">Compliments</span>
+                    <span className="text-white/65 text-[10px] font-bold uppercase">Compliments</span>
                   </div>
                   <p className="text-rose-400 text-2xl font-black">{m.compliments}</p>
                   <div className="flex items-center gap-1 mt-1">
@@ -122,10 +122,10 @@ export default function RiderPerformanceHub() {
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="w-4 h-4 text-[#38BDF8]" />
-                    <span className="text-white/40 text-[10px] font-bold uppercase">Incentive</span>
+                    <span className="text-white/65 text-[10px] font-bold uppercase">Incentive</span>
                   </div>
                   <p className="text-[#38BDF8] text-2xl font-black">{m.incentiveProgress}%</p>
-                  <p className="text-white/30 text-[10px] mt-1">{m.incentiveRemaining}</p>
+                  <p className="text-white/60 text-[10px] mt-1">{m.incentiveRemaining}</p>
                 </motion.div>
               </div>
 
@@ -151,7 +151,7 @@ export default function RiderPerformanceHub() {
                     className="h-3 rounded-full bg-gradient-to-r from-[#38BDF8] to-[#F5C451]"
                   />
                 </div>
-                <p className="text-white/30 text-xs mt-2 text-center">{m.incentiveRemaining} to unlock bonus</p>
+                <p className="text-white/60 text-xs mt-2 text-center">{m.incentiveRemaining} to unlock bonus</p>
               </motion.div>
 
               {/* Top Compliments */}
@@ -180,7 +180,7 @@ export default function RiderPerformanceHub() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{compliment.title}</p>
-                          <p className="text-white/40 text-xs mt-0.5 italic line-clamp-2">&ldquo;{compliment.quote}&rdquo;</p>
+                          <p className="text-white/65 text-xs mt-0.5 italic line-clamp-2">&ldquo;{compliment.quote}&rdquo;</p>
                         </div>
                         <ChevronRight className="w-4 h-4 text-white/10 shrink-0" />
                       </div>

@@ -154,7 +154,7 @@ export default function SubscriptionBoxes() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Subscription Boxes</h2>
-                  <p className="text-white/40 text-xs">Curated meals, delivered daily</p>
+                  <p className="text-white/65 text-xs">Curated meals, delivered daily</p>
                 </div>
               </div>
               <button
@@ -252,7 +252,7 @@ export default function SubscriptionBoxes() {
                     </div>
                     <div>
                       <h3 className="text-white font-bold text-lg">{currentPlan.name}</h3>
-                      <p className="text-white/40 text-xs">{currentPlan.subtitle}</p>
+                      <p className="text-white/65 text-xs">{currentPlan.subtitle}</p>
                     </div>
                   </div>
 
@@ -261,7 +261,7 @@ export default function SubscriptionBoxes() {
                     <span className="font-black text-3xl" style={{ color: currentPlan.color }}>
                       {formatNaira(currentPlan.price)}
                     </span>
-                    <span className="text-white/40 text-sm mb-1">/ {currentPlan.period}</span>
+                    <span className="text-white/65 text-sm mb-1">/ {currentPlan.period}</span>
                   </div>
 
                   {/* Features */}
@@ -296,7 +296,7 @@ export default function SubscriptionBoxes() {
                       <span className="text-white/70 text-sm font-medium">Delivery Schedule</span>
                     </div>
                     <ChevronRight
-                      className={`w-4 h-4 text-white/30 transition-transform ${showSchedule ? 'rotate-90' : ''}`}
+                      className={`w-4 h-4 text-white/60 transition-transform ${showSchedule ? 'rotate-90' : ''}`}
                     />
                   </button>
 
@@ -320,8 +320,8 @@ export default function SubscriptionBoxes() {
                               </span>
                               <span className="text-white/60 text-xs flex-1">{item.meal}</span>
                               <div className="flex items-center gap-1">
-                                <Clock className="w-3 h-3 text-white/30" />
-                                <span className="text-white/40 text-[10px]">{item.time}</span>
+                                <Clock className="w-3 h-3 text-white/60" />
+                                <span className="text-white/65 text-[10px]">{item.time}</span>
                               </div>
                             </div>
                           ))}
@@ -375,7 +375,7 @@ export default function SubscriptionBoxes() {
             <h3 className="text-white font-bold text-lg mb-4">Compare Plans</h3>
             <div className="bg-[#0F1118] rounded-2xl border border-white/8 overflow-hidden">
               <div className="grid grid-cols-3 border-b border-white/8">
-                <div className="p-3 text-white/40 text-xs font-bold">Feature</div>
+                <div className="p-3 text-white/65 text-xs font-bold">Feature</div>
                 <div className="p-3 text-center text-[#F5C451] text-xs font-bold">Sahur Box</div>
                 <div className="p-3 text-center text-[#10E07A] text-xs font-bold">Full Plan</div>
               </div>
@@ -433,7 +433,7 @@ export default function SubscriptionBoxes() {
                 </div>
                 <div>
                   <p className="text-white text-xs font-bold">Fatima K.</p>
-                  <p className="text-white/30 text-[10px]">Full Plan Subscriber</p>
+                  <p className="text-white/60 text-[10px]">Full Plan Subscriber</p>
                 </div>
               </div>
             </div>
@@ -452,7 +452,7 @@ export default function SubscriptionBoxes() {
                 </div>
                 <div className="flex-1">
                   <p className="text-[#10E07A] font-bold text-sm">Active: {plans.find((p) => p.id === activeSubscription)?.name}</p>
-                  <p className="text-white/40 text-xs">Your next delivery is scheduled</p>
+                  <p className="text-white/65 text-xs">Your next delivery is scheduled</p>
                 </div>
                 <Check className="w-5 h-5 text-[#10E07A]" />
               </motion.div>

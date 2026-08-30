@@ -130,7 +130,7 @@ export default function VendorProfileTab() {
                 {vendorBusinessCategory || 'General'}
               </span>
             </div>
-            <p className="text-white/40 text-xs mt-1">Ramadan 2026 Vendor</p>
+            <p className="text-white/65 text-xs mt-1">Ramadan 2026 Vendor</p>
           </div>
         </div>
       </div>
@@ -145,7 +145,7 @@ export default function VendorProfileTab() {
             className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5"
           >
             <p className="text-[#10E07A] text-lg font-black">{formatNaira(vendorBalance)}</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Available</p>
+            <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Available</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -154,7 +154,7 @@ export default function VendorProfileTab() {
             className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5"
           >
             <p className="text-[#F5C451] text-lg font-black">{formatNaira(vendorTotalEarnings)}</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Ramadan Revenue</p>
+            <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Ramadan Revenue</p>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -163,7 +163,7 @@ export default function VendorProfileTab() {
             className="bg-[#1A1D26] rounded-2xl p-4 text-center border border-white/5"
           >
             <p className="text-orange-400 text-lg font-black">{formatNaira(vendorPendingSettlement)}</p>
-            <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Pending</p>
+            <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Pending</p>
           </motion.div>
         </div>
       </div>
@@ -194,21 +194,21 @@ export default function VendorProfileTab() {
             <div className="flex items-start gap-3">
               <Store className="w-4 h-4 text-[#F5C451] mt-0.5 shrink-0" />
               <div>
-                <p className="text-white/40 text-[10px] uppercase font-bold">Store Name</p>
+                <p className="text-white/65 text-[10px] uppercase font-bold">Store Name</p>
                 <p className="text-white text-sm font-medium">{storeName}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Package className="w-4 h-4 text-[#F5C451] mt-0.5 shrink-0" />
               <div>
-                <p className="text-white/40 text-[10px] uppercase font-bold">Business Category</p>
+                <p className="text-white/65 text-[10px] uppercase font-bold">Business Category</p>
                 <p className="text-white text-sm font-medium">{vendorBusinessCategory || 'Not set'}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <MapPin className="w-4 h-4 text-[#F5C451] mt-0.5 shrink-0" />
               <div>
-                <p className="text-white/40 text-[10px] uppercase font-bold">Business Address</p>
+                <p className="text-white/65 text-[10px] uppercase font-bold">Business Address</p>
                 <p className="text-white text-sm font-medium">{vendorBusinessAddress || 'Not set'}</p>
               </div>
             </div>
@@ -240,22 +240,22 @@ export default function VendorProfileTab() {
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Star className="w-5 h-5 text-[#F5C451] mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.topSellingItem}</p>
-            <p className="text-white/40 text-[10px] mt-0.5">Top Selling Item</p>
+            <p className="text-white/65 text-[10px] mt-0.5">Top Selling Item</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Clock className="w-5 h-5 text-cyan-400 mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.peakHour}</p>
-            <p className="text-white/40 text-[10px] mt-0.5">Peak Hour</p>
+            <p className="text-white/65 text-[10px] mt-0.5">Peak Hour</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Users className="w-5 h-5 text-emerald-400 mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.customerRetention}%</p>
-            <p className="text-white/40 text-[10px] mt-0.5">Customer Retention</p>
+            <p className="text-white/65 text-[10px] mt-0.5">Customer Retention</p>
           </div>
           <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5">
             <Wallet className="w-5 h-5 text-orange-400 mb-2" />
             <p className="text-white text-sm font-bold">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
-            <p className="text-white/40 text-[10px] mt-0.5">Avg Order Value</p>
+            <p className="text-white/65 text-[10px] mt-0.5">Avg Order Value</p>
           </div>
         </div>
       </motion.div>
@@ -282,7 +282,7 @@ export default function VendorProfileTab() {
                 </div>
                 <div className="flex-1">
                   <p className="text-white font-bold text-sm">{menuItem.label}</p>
-                  <p className="text-white/40 text-xs">{menuItem.subtitle}</p>
+                  <p className="text-white/65 text-xs">{menuItem.subtitle}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20" />
               </motion.button>
@@ -300,7 +300,7 @@ export default function VendorProfileTab() {
             </div>
             <div className="flex-1">
               <p className="text-red-400 font-bold text-sm">Logout</p>
-              <p className="text-white/30 text-xs">Sign out of your account</p>
+              <p className="text-white/60 text-xs">Sign out of your account</p>
             </div>
             <ChevronRight className="w-4 h-4 text-red-400/30" />
           </motion.button>

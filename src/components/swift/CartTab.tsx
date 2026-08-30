@@ -113,7 +113,7 @@ export default function CartTab() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-white/40 text-sm text-center mb-6 max-w-xs"
+            className="text-white/65 text-sm text-center mb-6 max-w-xs"
           >
             Add some delicious meals — Iftar boxes, Sahur essentials, and more await.
           </motion.p>
@@ -212,7 +212,7 @@ export default function CartTab() {
                   >
                     <Plus className="w-3 h-3 text-white" />
                   </button>
-                  <span className="text-white/40 text-xs ml-auto">{formatNaira(item.price * item.quantity)}</span>
+                  <span className="text-white/65 text-xs ml-auto">{formatNaira(item.price * item.quantity)}</span>
                 </div>
               </div>
             </motion.div>
@@ -244,7 +244,7 @@ export default function CartTab() {
             </div>
             <button
               onClick={handleRemoveCoupon}
-              className="text-white/40 text-xs font-bold hover:text-[#FB7185] transition-colors"
+              className="text-white/65 text-xs font-bold hover:text-[#FB7185] transition-colors"
             >
               Remove
             </button>
@@ -252,13 +252,13 @@ export default function CartTab() {
         ) : (
           <div className="flex gap-2">
             <div className="flex-1 flex items-center glass-card rounded-xl px-3">
-              <Tag className="w-4 h-4 text-white/30 shrink-0" />
+              <Tag className="w-4 h-4 text-white/60 shrink-0" />
               <input
                 value={coupon}
                 onChange={(e) => setCoupon(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !couponLoading) handleApplyCoupon(); }}
                 placeholder="Enter coupon code"
-                className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+                className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/60"
                 aria-label="Coupon code input"
               />
             </div>
@@ -276,7 +276,7 @@ export default function CartTab() {
           </div>
         )}
         {!couponApplied && (
-          <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
+          <p className="text-white/60 text-[10px] mt-2 flex items-center gap-1">
             <Sparkles className="w-3 h-3 text-[#F5C451]" />
             Have a coupon? Enter it above for a discount
           </p>

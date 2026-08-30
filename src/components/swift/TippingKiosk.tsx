@@ -140,7 +140,7 @@ export default function TippingKiosk() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Tip Your Rider</h2>
-                  <p className="text-white/40 text-xs">100% goes to your rider</p>
+                  <p className="text-white/65 text-xs">100% goes to your rider</p>
                 </div>
               </div>
               <button
@@ -192,7 +192,7 @@ export default function TippingKiosk() {
                       <div className="flex items-center justify-center gap-1 mb-4">
                         <Star className="w-4 h-4 text-[#F5C451] fill-[#F5C451]" />
                         <span className="text-[#F5C451] font-bold text-sm">{riderStats.rating}</span>
-                        <span className="text-white/30 text-xs">· {riderStats.yearsActive} years</span>
+                        <span className="text-white/60 text-xs">· {riderStats.yearsActive} years</span>
                       </div>
                     </div>
                   </motion.div>
@@ -207,7 +207,7 @@ export default function TippingKiosk() {
                     >
                       <Coffee className="w-5 h-5 text-[#F5C451] mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{riderStats.iftarsDelivered.toLocaleString()}</p>
-                      <p className="text-white/30 text-[10px]">Iftars Delivered</p>
+                      <p className="text-white/60 text-[10px]">Iftars Delivered</p>
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
@@ -217,7 +217,7 @@ export default function TippingKiosk() {
                     >
                       <Bike className="w-5 h-5 text-[#10E07A] mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{riderStats.yearsActive}</p>
-                      <p className="text-white/30 text-[10px]">Years Active</p>
+                      <p className="text-white/60 text-[10px]">Years Active</p>
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
@@ -227,7 +227,7 @@ export default function TippingKiosk() {
                     >
                       <Heart className="w-5 h-5 text-red-400 mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{formatNaira(riderStats.totalTips)}</p>
-                      <p className="text-white/30 text-[10px]">Total Tips</p>
+                      <p className="text-white/60 text-[10px]">Total Tips</p>
                     </motion.div>
                   </div>
 
@@ -296,7 +296,7 @@ export default function TippingKiosk() {
                           className="overflow-hidden"
                         >
                           <div className="mt-3 relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 font-bold">₦</span>
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/65 font-bold">₦</span>
                             <input
                               type="number"
                               value={customAmount}
@@ -405,7 +405,7 @@ export default function TippingKiosk() {
                     className="bg-[#0F1118] rounded-2xl border border-white/8 p-6 mb-6"
                   >
                     <p className="text-[#F5C451] font-bold text-lg mb-3">{thankYouMsg}</p>
-                    <p className="text-white/40 text-xs leading-relaxed">
+                    <p className="text-white/65 text-xs leading-relaxed">
                       Your generosity makes a real difference. {riderStats.name.split(' ')[0]} will receive every kobo of your tip. 
                       May Allah reward your kindness this Ramadan.
                     </p>

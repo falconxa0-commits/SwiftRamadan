@@ -315,7 +315,7 @@ export default function TasteDNAProfile() {
               <span className="font-semibold text-sm" style={{ color: TASTE_COLORS[dominant] }}>
                 {TASTE_LABELS[dominant]}
               </span>
-              <span className="ml-auto text-white/30 text-xs">{tasteProfile[dominant]}/100</span>
+              <span className="ml-auto text-white/60 text-xs">{tasteProfile[dominant]}/100</span>
             </motion.div>
 
             {/* Radar Chart */}
@@ -331,19 +331,19 @@ export default function TasteDNAProfile() {
             <div className="flex gap-2">
               <button
                 onClick={() => { setShowBars(false); setShowEvolution(false); }}
-                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${!showBars && !showEvolution ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${!showBars && !showEvolution ? 'bg-white/10 text-white' : 'text-white/65 hover:text-white/60'}`}
               >
                 Radar
               </button>
               <button
                 onClick={() => { setShowBars(true); setShowEvolution(false); }}
-                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${showBars ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${showBars ? 'bg-white/10 text-white' : 'text-white/65 hover:text-white/60'}`}
               >
                 Breakdown
               </button>
               <button
                 onClick={() => { setShowEvolution(true); setShowBars(false); }}
-                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${showEvolution ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white/60'}`}
+                className={`flex-1 text-xs py-2 rounded-lg transition-colors ${showEvolution ? 'bg-white/10 text-white' : 'text-white/65 hover:text-white/60'}`}
               >
                 Evolution
               </button>
@@ -389,7 +389,7 @@ export default function TasteDNAProfile() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
                     >
-                      <span className="text-white/30 w-10">{entry.date}</span>
+                      <span className="text-white/60 w-10">{entry.date}</span>
                       <div className="flex-1 flex gap-1">
                         {TASTE_KEYS.map((key) => (
                           <div
@@ -407,7 +407,7 @@ export default function TasteDNAProfile() {
                       <ChevronRight className="w-3 h-3 text-white/20" />
                     </motion.div>
                   ))}
-                  <p className="text-white/30 text-[10px] text-center pt-1">
+                  <p className="text-white/60 text-[10px] text-center pt-1">
                     <TrendingUp className="w-3 h-3 inline mr-1" />
                     Based on your order history over the past 6 months
                   </p>

@@ -421,8 +421,8 @@ export default function SwiftBitesModal() {
             </div>
           ) : videos.length === 0 ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-[#0B0D14] to-black">
-              <Sparkles className="w-10 h-10 text-white/30" />
-              <p className="text-white/40 text-sm">No videos in this category yet</p>
+              <Sparkles className="w-10 h-10 text-white/60" />
+              <p className="text-white/65 text-sm">No videos in this category yet</p>
             </div>
           ) : (
             <>
@@ -768,7 +768,7 @@ export default function SwiftBitesModal() {
                     ) : comments.length === 0 ? (
                       <div className="text-center py-12">
                         <MessageCircle className="w-8 h-8 text-white/10 mx-auto mb-2" />
-                        <p className="text-white/30 text-sm">Be the first to comment</p>
+                        <p className="text-white/60 text-sm">Be the first to comment</p>
                       </div>
                     ) : (
                       comments.map((c) => (
@@ -784,15 +784,15 @@ export default function SwiftBitesModal() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
                               <span className="text-white/80 text-xs font-bold">{c.authorHandle}</span>
-                              <span className="text-white/30 text-[10px]">· {c.time}</span>
+                              <span className="text-white/60 text-[10px]">· {c.time}</span>
                             </div>
                             <p className="text-white text-sm leading-snug">{c.content}</p>
                             <div className="flex items-center gap-3 mt-1.5">
-                              <button className="flex items-center gap-1 text-white/40 text-xs hover:text-[#FB7185] transition-colors">
+                              <button className="flex items-center gap-1 text-white/65 text-xs hover:text-[#FB7185] transition-colors">
                                 <Heart className="w-3 h-3" />
                                 {c.likes > 0 && formatCount(c.likes)}
                               </button>
-                              <button className="text-white/40 text-xs hover:text-white/70 transition-colors">
+                              <button className="text-white/65 text-xs hover:text-white/70 transition-colors">
                                 Reply
                               </button>
                             </div>
@@ -819,7 +819,7 @@ export default function SwiftBitesModal() {
                           }
                         }}
                         placeholder="Add a comment…"
-                        className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40"
+                        className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40"
                       />
                       <button
                         onClick={handlePostComment}

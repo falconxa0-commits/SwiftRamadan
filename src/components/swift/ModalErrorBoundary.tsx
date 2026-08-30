@@ -63,7 +63,7 @@ export class ModalErrorBoundary extends React.Component<Props, State> {
           </div>
           <p className="text-white/70 text-sm mb-1">This section encountered an error</p>
           {this.state.error && (
-            <p className="text-white/40 text-xs mb-3">{this.state.error.message}</p>
+            <p className="text-white/65 text-xs mb-3">{this.state.error.message}</p>
           )}
           <button
             onClick={this.handleDismiss}

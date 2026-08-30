@@ -238,7 +238,7 @@ function RamadanDiaryInner() {
   /* ── Mood icon helper ── */
   const getMoodIcon = (mood: Mood) => {
     const m = MOODS.find((mo) => mo.value === mood);
-    if (!m) return <Meh className="w-4 h-4 text-white/40" />;
+    if (!m) return <Meh className="w-4 h-4 text-white/65" />;
     const Icon = m.icon;
     return <Icon className="w-4 h-4" style={{ color: m.color }} />;
   };
@@ -334,15 +334,15 @@ function RamadanDiaryInner() {
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
           <p className="text-[#10E07A] text-lg font-bold">{daysWithEntry}</p>
-          <p className="text-white/40 text-[10px]">Days Logged</p>
+          <p className="text-white/65 text-[10px]">Days Logged</p>
         </div>
         <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
           <p className="text-[#F5C451] text-lg font-bold">{totalEntries}</p>
-          <p className="text-white/40 text-[10px]">Total Entries</p>
+          <p className="text-white/65 text-[10px]">Total Entries</p>
         </div>
         <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
           <p className="text-[#A78BFA] text-lg font-bold">{ramadanProgress}%</p>
-          <p className="text-white/40 text-[10px]">Progress</p>
+          <p className="text-white/65 text-[10px]">Progress</p>
         </div>
       </div>
 
@@ -386,7 +386,7 @@ function RamadanDiaryInner() {
         {/* Day Headers */}
         <div className="grid grid-cols-7 gap-1 mb-2">
           {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-            <div key={d} className="text-center text-white/30 text-[10px] py-1">
+            <div key={d} className="text-center text-white/60 text-[10px] py-1">
               {d}
             </div>
           ))}
@@ -423,7 +423,7 @@ function RamadanDiaryInner() {
                     ? 'text-[#F5C451] font-bold'
                     : day.hasEntry
                       ? 'text-white'
-                      : 'text-white/30'
+                      : 'text-white/60'
                 }`}
               >
                 {day.date.split('-')[2]?.replace(/^0/, '')}
@@ -448,7 +448,7 @@ function RamadanDiaryInner() {
             return (
               <div key={m.value} className="flex items-center gap-1">
                 <Icon className="w-3 h-3" style={{ color: m.color }} />
-                <span className="text-white/30 text-[9px]">{m.label}</span>
+                <span className="text-white/60 text-[9px]">{m.label}</span>
               </div>
             );
           })}
@@ -483,7 +483,7 @@ function RamadanDiaryInner() {
             {selectedEntries.length === 0 ? (
               <div className="bg-[#0F1118] border border-white/8 rounded-xl p-6 text-center">
                 <Moon className="w-8 h-8 text-white/15 mx-auto mb-2" />
-                <p className="text-white/30 text-sm">No entries for this day</p>
+                <p className="text-white/60 text-sm">No entries for this day</p>
                 <button
                   onClick={() => setShowCreate(true)}
                   className="mt-2 text-[#10E07A] text-xs hover:underline"
@@ -511,7 +511,7 @@ function RamadanDiaryInner() {
                         )}
                       </div>
                       {entry.orderId && (
-                        <span className="text-white/30 text-[10px] flex items-center gap-1">
+                        <span className="text-white/60 text-[10px] flex items-center gap-1">
                           <Utensils className="w-3 h-3" /> {entry.orderId}
                         </span>
                       )}
@@ -522,7 +522,7 @@ function RamadanDiaryInner() {
                         {entry.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="text-[10px] text-white/40 bg-white/5 px-2 py-0.5 rounded-full"
+                            className="text-[10px] text-white/65 bg-white/5 px-2 py-0.5 rounded-full"
                           >
                             {tag}
                           </span>
@@ -573,7 +573,7 @@ function RamadanDiaryInner() {
                 <div>
                   <label className="text-white/60 text-xs block mb-1">Date</label>
                   <div className="bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white/70 text-sm flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-white/30" />
+                    <Calendar className="w-4 h-4 text-white/60" />
                     {selectedDate || todayStr}
                   </div>
                 </div>
@@ -619,7 +619,7 @@ function RamadanDiaryInner() {
                     onChange={(e) => setNewText(e.target.value)}
                     placeholder="How was your day of fasting? What are you grateful for?"
                     rows={4}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#A78BFA]/50 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#A78BFA]/50 resize-none"
                   />
                 </div>
 
@@ -634,7 +634,7 @@ function RamadanDiaryInner() {
                         className={`px-3 py-1 rounded-full text-xs transition-all flex items-center gap-1 ${
                           newTags.includes(tag)
                             ? 'bg-[#A78BFA]/20 text-[#A78BFA] border border-[#A78BFA]/30'
-                            : 'bg-white/5 text-white/40 hover:bg-white/10'
+                            : 'bg-white/5 text-white/65 hover:bg-white/10'
                         }`}
                       >
                         {newTags.includes(tag) && <Check className="w-3 h-3" />}
@@ -688,7 +688,7 @@ function RamadanDiaryInner() {
                       My Ramadan
                     </h3>
                     <h2 className="text-white text-2xl font-bold">Ramadan 2026</h2>
-                    <p className="text-white/30 text-xs mt-1">{userName || 'A Blessed Soul'}</p>
+                    <p className="text-white/60 text-xs mt-1">{userName || 'A Blessed Soul'}</p>
                   </div>
 
                   {/* Crescent + Stars decoration */}
@@ -702,26 +702,26 @@ function RamadanDiaryInner() {
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white/5 rounded-xl p-3 text-center">
                       <p className="text-[#10E07A] text-xl font-bold">{daysWithEntry}</p>
-                      <p className="text-white/40 text-[10px]">Days Journaled</p>
+                      <p className="text-white/65 text-[10px]">Days Journaled</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
                       <p className="text-[#F5C451] text-xl font-bold">{totalEntries}</p>
-                      <p className="text-white/40 text-[10px]">Entries Written</p>
+                      <p className="text-white/65 text-[10px]">Entries Written</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
                       <p className="text-[#A78BFA] text-xl font-bold">{totalTags}</p>
-                      <p className="text-white/40 text-[10px]">Tags Used</p>
+                      <p className="text-white/65 text-[10px]">Tags Used</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
                       <p className="text-[#38BDF8] text-xl font-bold">{ramadanProgress}%</p>
-                      <p className="text-white/40 text-[10px]">Consistency</p>
+                      <p className="text-white/65 text-[10px]">Consistency</p>
                     </div>
                   </div>
 
                   {/* Top Mood */}
                   {topMood && (
                     <div className="text-center">
-                      <p className="text-white/30 text-xs">Your Ramadan Mood</p>
+                      <p className="text-white/60 text-xs">Your Ramadan Mood</p>
                       <p className="text-white text-sm font-medium capitalize flex items-center justify-center gap-1 mt-1">
                         {getMoodIcon(topMood[0] as Mood)}
                         {topMood[0]}
@@ -731,7 +731,7 @@ function RamadanDiaryInner() {
 
                   {/* Progress Bar */}
                   <div>
-                    <div className="flex justify-between text-[10px] text-white/40 mb-1">
+                    <div className="flex justify-between text-[10px] text-white/65 mb-1">
                       <span>Ramadan Journey</span>
                       <span>{ramadanProgress}%</span>
                     </div>

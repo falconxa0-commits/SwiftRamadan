@@ -192,7 +192,7 @@ export default function AIRecipeGeneratorModal() {
                   <h2 className="text-white font-bold text-lg flex items-center gap-2">
                     AI Chef Safa
                   </h2>
-                  <p className="text-white/40 text-xs">
+                  <p className="text-white/65 text-xs">
                     Custom Ramadan recipes, instantly ✨
                   </p>
                 </div>
@@ -222,7 +222,7 @@ export default function AIRecipeGeneratorModal() {
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g. I'm craving something spicy with plantain for iftar..."
                   rows={3}
-                  className="w-full bg-[#05070A] text-white text-sm placeholder:text-white/30 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[#10E07A]/40 resize-none"
+                  className="w-full bg-[#05070A] text-white text-sm placeholder:text-white/60 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[#10E07A]/40 resize-none"
                 />
                 {/* Quick prompts */}
                 <div className="flex flex-wrap gap-2">
@@ -353,7 +353,7 @@ export default function AIRecipeGeneratorModal() {
                         <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
                         Ingredients
                       </h4>
-                      <span className="text-white/40 text-xs">
+                      <span className="text-white/65 text-xs">
                         {formatNaira(totalCost)} total
                       </span>
                     </div>
@@ -386,7 +386,7 @@ export default function AIRecipeGeneratorModal() {
                                 <p className="text-white text-sm truncate">
                                   {ing.name}
                                 </p>
-                                <p className="text-white/40 text-xs">
+                                <p className="text-white/65 text-xs">
                                   {ing.quantity}
                                 </p>
                               </div>

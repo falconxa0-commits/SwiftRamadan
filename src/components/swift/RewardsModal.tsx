@@ -116,7 +116,7 @@ export default function RewardsModal() {
                   </div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[#F5C451] text-2xl font-black">{hasanatPoints.toLocaleString()}</span>
-                    <span className="text-white/40 text-xs">Hasanat Points</span>
+                    <span className="text-white/65 text-xs">Hasanat Points</span>
                   </div>
                   {nextTier && (
                     <>
@@ -130,8 +130,8 @@ export default function RewardsModal() {
                         />
                       </div>
                       <div className="flex justify-between mt-2">
-                        <span className="text-white/30 text-[10px]">{currentTierData.minPoints.toLocaleString()} pts</span>
-                        <span className="text-white/30 text-[10px]">{nextTier.minPoints.toLocaleString()} pts to {nextTier.name}</span>
+                        <span className="text-white/60 text-[10px]">{currentTierData.minPoints.toLocaleString()} pts</span>
+                        <span className="text-white/60 text-[10px]">{nextTier.minPoints.toLocaleString()} pts to {nextTier.name}</span>
                       </div>
                     </>
                   )}
@@ -163,14 +163,14 @@ export default function RewardsModal() {
                         <Flame className="w-5 h-5 text-orange-400" />
                         <span className="text-white font-bold text-sm">Day {dailyStreak} Streak</span>
                       </div>
-                      <p className="text-white/40 text-xs">Log in daily to build your streak and earn bonus points</p>
+                      <p className="text-white/65 text-xs">Log in daily to build your streak and earn bonus points</p>
                     </div>
                     <button
                       onClick={handleClaimDaily}
                       disabled={dailyClaimed}
                       className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98] ${
                         dailyClaimed
-                          ? 'bg-white/5 text-white/30 border border-white/5 cursor-not-allowed'
+                          ? 'bg-white/5 text-white/60 border border-white/5 cursor-not-allowed'
                           : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
                       }`}
                     >
@@ -228,13 +228,13 @@ export default function RewardsModal() {
                                   FREE SPIN
                                 </span>
                               ) : (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-white/30 border border-white/5">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-white/60 border border-white/5">
                                   SPUN TODAY
                                 </span>
                               );
                             })()}
                           </div>
-                          <p className="text-white/40 text-xs mt-0.5">
+                          <p className="text-white/65 text-xs mt-0.5">
                             {lastSpinDate !== new Date().toISOString().split('T')[0]
                               ? 'Spin the wheel for free rewards!'
                               : 'Come back tomorrow for another spin'}
@@ -333,7 +333,7 @@ export default function RewardsModal() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-white/30 text-[10px]">{tier.minPoints.toLocaleString()} - {tier.maxPoints.toLocaleString()} pts</p>
+                            <p className="text-white/60 text-[10px]">{tier.minPoints.toLocaleString()} - {tier.maxPoints.toLocaleString()} pts</p>
                           </div>
                           <ChevronRight className="w-4 h-4 text-white/20 shrink-0" />
                         </div>
@@ -383,7 +383,7 @@ export default function RewardsModal() {
                           <span className="material-symbols-outlined text-[#F5C451] text-xl">{reward.icon}</span>
                         </div>
                         <p className="text-white font-bold text-xs mb-1 leading-tight">{reward.name}</p>
-                        <p className="text-white/30 text-[10px] mb-2 line-clamp-2">{reward.description}</p>
+                        <p className="text-white/60 text-[10px] mb-2 line-clamp-2">{reward.description}</p>
                         <div className="flex items-center gap-1">
                           <Star className="w-3 h-3 text-[#F5C451]" fill="#F5C451" />
                           <span className="text-[#F5C451] text-xs font-black">{reward.points.toLocaleString()}</span>

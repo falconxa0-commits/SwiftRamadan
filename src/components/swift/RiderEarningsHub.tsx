@@ -143,7 +143,7 @@ export default function RiderEarningsHub() {
               <TrendingUp className="w-3.5 h-3.5 text-[#10E07A]" />
               <span className="text-[#10E07A] text-xs font-bold">+18% from yesterday</span>
               <span className="text-white/20 text-xs">•</span>
-              <span className="text-white/40 text-xs">{data.completedDeliveries} deliveries</span>
+              <span className="text-white/65 text-xs">{data.completedDeliveries} deliveries</span>
             </div>
           </div>
         </div>
@@ -152,7 +152,7 @@ export default function RiderEarningsHub() {
       {/* Hourly Performance Chart (Recharts) */}
       <motion.div variants={staggerItem} className="mb-6">
         <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-white/40" />
+          <Clock className="w-4 h-4 text-white/65" />
           Hourly Performance
         </h3>
         <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
@@ -192,7 +192,7 @@ export default function RiderEarningsHub() {
           <div className="flex items-center gap-4 mt-3 pt-3 border-t border-white/5">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#10E07A]/40" />
-              <span className="text-white/30 text-[9px]">Regular</span>
+              <span className="text-white/60 text-[9px]">Regular</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#F5C451]" />
@@ -214,7 +214,7 @@ export default function RiderEarningsHub() {
               </div>
               <div>
                 <p className="text-white text-sm font-bold">Base Pay</p>
-                <p className="text-white/30 text-[10px]">{data.completedDeliveries} completed deliveries</p>
+                <p className="text-white/60 text-[10px]">{data.completedDeliveries} completed deliveries</p>
               </div>
             </div>
             <p className="text-white font-extrabold">{formatNaira(data.basePay)}</p>
@@ -234,7 +234,7 @@ export default function RiderEarningsHub() {
                     Active
                   </span>
                 </div>
-                <p className="text-white/30 text-[10px]">2x multiplier on Iftar deliveries</p>
+                <p className="text-white/60 text-[10px]">2x multiplier on Iftar deliveries</p>
               </div>
             </div>
             <p className="text-[#F5C451] font-extrabold relative z-10">{formatNaira(data.iftarBonuses)}</p>
@@ -248,7 +248,7 @@ export default function RiderEarningsHub() {
               </div>
               <div>
                 <p className="text-white text-sm font-bold">Customer Tips</p>
-                <p className="text-white/30 text-[10px]">{data.gratefulCustomers} grateful customers</p>
+                <p className="text-white/60 text-[10px]">{data.gratefulCustomers} grateful customers</p>
               </div>
             </div>
             <p className="text-white font-extrabold">{formatNaira(data.tips)}</p>
@@ -290,7 +290,7 @@ export default function RiderEarningsHub() {
                 <p className="text-white text-lg font-black">{onTimeRate}%</p>
               </div>
             </div>
-            <p className="text-white/40 text-[10px] font-bold mt-2">On-Time Rate</p>
+            <p className="text-white/65 text-[10px] font-bold mt-2">On-Time Rate</p>
             <span className="text-[#10E07A] text-[9px] font-bold">{perf.completionTrend}</span>
           </div>
 
@@ -300,7 +300,7 @@ export default function RiderEarningsHub() {
               <Star className="w-7 h-7 text-[#F5C451]" />
             </div>
             <p className="text-white text-2xl font-black">{perf.rating}</p>
-            <p className="text-white/40 text-[10px] font-bold mt-0.5">Avg Rating</p>
+            <p className="text-white/65 text-[10px] font-bold mt-0.5">Avg Rating</p>
             <span className="text-[#10E07A] text-[9px] font-bold">{perf.ratingTrend}</span>
           </div>
         </div>
@@ -325,7 +325,7 @@ export default function RiderEarningsHub() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-white/40 text-[10px]">{perf.incentiveRemaining}</p>
+            <p className="text-white/65 text-[10px]">{perf.incentiveRemaining}</p>
             <p className="text-[#F5C451] text-[10px] font-bold">{perf.incentiveGoal}</p>
           </div>
         </div>
@@ -348,7 +348,7 @@ export default function RiderEarningsHub() {
               </div>
               <div>
                 <p className="text-white text-xs font-bold">{comp.title}</p>
-                <p className="text-white/30 text-[10px] mt-0.5 italic">&ldquo;{comp.quote}&rdquo;</p>
+                <p className="text-white/60 text-[10px] mt-0.5 italic">&ldquo;{comp.quote}&rdquo;</p>
               </div>
             </motion.div>
           ))}

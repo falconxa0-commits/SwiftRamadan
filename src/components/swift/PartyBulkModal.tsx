@@ -142,7 +142,7 @@ export default function PartyBulkModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Party & Bulk</h2>
-                  <p className="text-white/40 text-xs">Plan Your Ramadan Gathering</p>
+                  <p className="text-white/65 text-xs">Plan Your Ramadan Gathering</p>
                 </div>
               </div>
               <button
@@ -218,7 +218,7 @@ export default function PartyBulkModal() {
                             </span>
                           )}
                         </div>
-                        <p className="text-white/40 text-[11px] line-clamp-1">{item.description}</p>
+                        <p className="text-white/65 text-[11px] line-clamp-1">{item.description}</p>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-[#10E07A] font-black text-sm">{formatNaira(item.price)}</span>
@@ -261,7 +261,7 @@ export default function PartyBulkModal() {
                       <p className="text-white font-bold text-xs mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-[#10E07A] font-black text-xs">{formatNaira(item.bulkPrice)}</span>
-                        <span className="text-white/30 text-[10px] line-through">{formatNaira(item.singlePrice)}</span>
+                        <span className="text-white/60 text-[10px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
@@ -300,7 +300,7 @@ export default function PartyBulkModal() {
                       <p className="text-white font-bold text-[11px] mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-1.5 mb-2">
                         <span className="text-[#10E07A] font-black text-[11px]">{formatNaira(item.bulkPrice)}</span>
-                        <span className="text-white/30 text-[9px] line-through">{formatNaira(item.singlePrice)}</span>
+                        <span className="text-white/60 text-[9px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
@@ -362,7 +362,7 @@ export default function PartyBulkModal() {
                 <span className="material-symbols-outlined text-[#f59e0b] text-xl">inventory_2</span>
                 <h3 className="text-white font-bold text-lg">Mix & Match Crate Builder</h3>
               </div>
-              <p className="text-white/40 text-xs mb-4">Build your perfect custom crate</p>
+              <p className="text-white/65 text-xs mb-4">Build your perfect custom crate</p>
 
               <div className="grid grid-cols-3 gap-2.5 mb-4">
                 {crateBuilderItems.map((item) => {
@@ -482,7 +482,7 @@ export default function PartyBulkModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Event Name</label>
                       <div className="relative">
-                        <PartyPopper className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <PartyPopper className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                         <input
                           type="text"
                           value={partyForm.eventName}
@@ -496,7 +496,7 @@ export default function PartyBulkModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Date</label>
                       <div className="relative">
-                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                         <input
                           type="date"
                           value={partyForm.date}
@@ -509,7 +509,7 @@ export default function PartyBulkModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Number of Guests</label>
                       <div className="relative">
-                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                         <input
                           type="number"
                           value={partyForm.guestCount}
@@ -523,7 +523,7 @@ export default function PartyBulkModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Budget Range</label>
                       <div className="relative">
-                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                         <select
                           value={partyForm.budgetRange}
                           onChange={(e) => setPartyForm(p => ({ ...p, budgetRange: e.target.value }))}
@@ -535,7 +535,7 @@ export default function PartyBulkModal() {
                           <option value="250k-500k" className="bg-[#1A1D26]">₦250,000 - ₦500,000</option>
                           <option value="500k+" className="bg-[#1A1D26]">₦500,000+</option>
                         </select>
-                        <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 rotate-90" />
+                        <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 rotate-90" />
                       </div>
                     </div>
 
@@ -545,7 +545,7 @@ export default function PartyBulkModal() {
                       className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                         partyForm.eventName && partyForm.guestCount
                           ? 'bg-[#F5C451] text-[#05070A] hover:bg-[#F5C451]/90 active:scale-[0.98]'
-                          : 'bg-white/5 text-white/30 cursor-not-allowed border border-white/10'
+                          : 'bg-white/5 text-white/60 cursor-not-allowed border border-white/10'
                       }`}
                     >
                       <Truck className="w-4 h-4" />

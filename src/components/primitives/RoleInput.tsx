@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 type InputVariant = 'default' | 'error' | 'success';
 type InputSize = 'sm' | 'md' | 'lg';
 
-interface RoleInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface RoleInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   variant?: InputVariant;
   size?: InputSize;
 }

@@ -285,7 +285,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <p className="text-white/50 text-sm max-w-xs mb-1">
                 Let Chef Safa <span className="text-[#FFD700] font-semibold">see your kitchen</span> and guide you in real time as you cook <span className="text-white font-semibold">{recipe.name}</span>.
               </p>
-              <p className="text-white/30 text-xs max-w-xs mb-6">
+              <p className="text-white/60 text-xs max-w-xs mb-6">
                 She&rsquo;ll watch your pot, judge your heat, and tell you when to move on — out loud.
               </p>
               {cameraError && (
@@ -474,7 +474,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
         {/* Coaching history (collapsible) */}
         {notes.length > 1 && (cameraOn || uploadedImage) && (
           <div className="relative z-10 px-4 pb-2 max-h-24 overflow-y-auto custom-scrollbar">
-            <p className="text-white/30 text-[10px] font-bold mb-1">Earlier notes</p>
+            <p className="text-white/60 text-[10px] font-bold mb-1">Earlier notes</p>
             <div className="space-y-1">
               {notes.slice(1, 5).map((n) => {
                 const m = ACTION_META[n.action];
@@ -551,7 +551,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                 <Sparkles className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-center text-white/40 text-[10px] mt-2.5">
+            <p className="text-center text-white/65 text-[10px] mt-2.5">
               {cameraOn
                 ? 'Chef Safa watches your pot and coaches you out loud'
                 : uploadedImage

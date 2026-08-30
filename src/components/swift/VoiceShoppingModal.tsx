@@ -295,7 +295,7 @@ export default function VoiceShoppingModal() {
                 {voiceTranscript ? (
                   <p className="text-white text-base font-medium">&quot;{voiceTranscript}&quot;</p>
                 ) : (
-                  <p className="text-white/30 text-sm">
+                  <p className="text-white/60 text-sm">
                     {isListening ? 'Speak now...' : 'Didn\'t catch that? Try again'}
                   </p>
                 )}
@@ -342,7 +342,7 @@ export default function VoiceShoppingModal() {
                               <p className="text-white font-bold text-sm truncate">{product.name}</p>
                               <p className="text-[#10E07A] font-black text-lg">{formatNaira(price)}</p>
                               {product.deliveryTime && (
-                                <p className="text-white/30 text-xs mt-0.5">{product.deliveryTime}</p>
+                                <p className="text-white/60 text-xs mt-0.5">{product.deliveryTime}</p>
                               )}
                             </div>
                           </div>
@@ -371,7 +371,7 @@ export default function VoiceShoppingModal() {
                 >
                   <Volume2 className="w-10 h-10 text-white/20 mx-auto mb-3" />
                   <p className="text-white/50 text-sm">No products found for &quot;{voiceTranscript}&quot;</p>
-                  <p className="text-white/30 text-xs mt-1">Try saying a product name like &quot;Jollof Rice&quot; or &quot;Dates&quot;</p>
+                  <p className="text-white/60 text-xs mt-1">Try saying a product name like &quot;Jollof Rice&quot; or &quot;Dates&quot;</p>
                 </motion.div>
               )}
 
@@ -380,7 +380,7 @@ export default function VoiceShoppingModal() {
                 <div className="bg-[#1A1D26] rounded-2xl border border-amber-500/20 p-6 text-center mb-6">
                   <MicOff className="w-10 h-10 text-amber-400 mx-auto mb-3" />
                   <p className="text-amber-400 font-bold text-sm">Voice Not Supported</p>
-                  <p className="text-white/40 text-xs mt-1">Your browser doesn&apos;t support voice recognition. Please use Chrome or try the quick commands below.</p>
+                  <p className="text-white/65 text-xs mt-1">Your browser doesn&apos;t support voice recognition. Please use Chrome or try the quick commands below.</p>
                 </div>
               )}
             </div>

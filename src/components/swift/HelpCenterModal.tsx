@@ -230,7 +230,7 @@ export default function HelpCenterModal() {
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Help Center</h2>
-                    <p className="text-white/40 text-[11px]">FAQs, guides & support</p>
+                    <p className="text-white/65 text-[11px]">FAQs, guides & support</p>
                   </div>
                 </div>
                 <button
@@ -245,17 +245,17 @@ export default function HelpCenterModal() {
               {/* Search */}
               <div className="px-5 pt-4 pb-3 shrink-0">
                 <div className="flex items-center gap-2 bg-[#0F1118] border border-white/10 rounded-xl px-3 focus-within:border-[#10E07A]/40 transition-colors">
-                  <Search className="w-4 h-4 text-white/40 shrink-0" />
+                  <Search className="w-4 h-4 text-white/65 shrink-0" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search FAQs…"
-                    className="flex-1 bg-transparent text-white text-sm py-2.5 focus:outline-none placeholder:text-white/30"
+                    className="flex-1 bg-transparent text-white text-sm py-2.5 focus:outline-none placeholder:text-white/60"
                   />
                   {search && (
                     <button
                       onClick={() => setSearch('')}
-                      className="text-white/40 hover:text-white/60"
+                      className="text-white/65 hover:text-white/60"
                       aria-label="Clear search"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -298,7 +298,7 @@ export default function HelpCenterModal() {
                       <HelpCircle className="w-8 h-8 text-white/20" />
                     </div>
                     <p className="text-white/70 text-sm font-bold">No results found</p>
-                    <p className="text-white/40 text-xs mt-1 max-w-[240px]">
+                    <p className="text-white/65 text-xs mt-1 max-w-[240px]">
                       Try a different search term or category — or contact our support team.
                     </p>
                   </motion.div>
@@ -325,7 +325,7 @@ export default function HelpCenterModal() {
                             transition={{ duration: 0.2 }}
                             className="shrink-0"
                           >
-                            <ChevronDown className={`w-4 h-4 ${isOpenFaq ? 'text-[#10E07A]' : 'text-white/40'}`} />
+                            <ChevronDown className={`w-4 h-4 ${isOpenFaq ? 'text-[#10E07A]' : 'text-white/65'}`} />
                           </motion.span>
                         </button>
                         <AnimatePresence initial={false}>

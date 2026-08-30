@@ -95,7 +95,7 @@ export default function RecipesModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Ramadan Kitchen</h2>
-                  <p className="text-white/40 text-xs">Recipes for the holy month</p>
+                  <p className="text-white/65 text-xs">Recipes for the holy month</p>
                 </div>
               </div>
               <button
@@ -140,7 +140,7 @@ export default function RecipesModal() {
                   </p>
                   <p className="text-white/50 text-xs">Describe your craving & get a custom AI recipe ✨</p>
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+                <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
               </button>
             </div>
 
@@ -194,7 +194,7 @@ export default function RecipesModal() {
                           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getDifficultyColor(recipe.difficulty)}`}>
                             {recipe.difficulty}
                           </span>
-                          <ChevronRight className={`w-4 h-4 text-white/30 ml-auto transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                          <ChevronRight className={`w-4 h-4 text-white/60 ml-auto transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                         </div>
                       </button>
 
@@ -214,7 +214,7 @@ export default function RecipesModal() {
                                 <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
                                   <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
                                   Ingredients
-                                  <span className="text-white/30 text-xs font-normal">({formatNaira(totalIngredientCost)} total)</span>
+                                  <span className="text-white/60 text-xs font-normal">({formatNaira(totalIngredientCost)} total)</span>
                                 </h4>
                                 <div className="space-y-2">
                                   {recipe.ingredients.map((ing, i) => (
@@ -231,7 +231,7 @@ export default function RecipesModal() {
                                         <span className="text-white text-xs">{ing.name}</span>
                                       </div>
                                       <div className="flex items-center gap-2">
-                                        <span className="text-white/40 text-xs">{formatNaira(ing.price)}</span>
+                                        <span className="text-white/65 text-xs">{formatNaira(ing.price)}</span>
                                         {ing.productId && shoppedIngredients.has(ing.productId) && (
                                           <Check className="w-3.5 h-3.5 text-[#10E07A]" />
                                         )}
@@ -244,7 +244,7 @@ export default function RecipesModal() {
                                   disabled={allIngredientsShopped(recipe.id)}
                                   className={`w-full mt-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
                                     allIngredientsShopped(recipe.id)
-                                      ? 'bg-white/5 text-white/30 border border-white/10 cursor-not-allowed'
+                                      ? 'bg-white/5 text-white/60 border border-white/10 cursor-not-allowed'
                                       : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
                                   }`}
                                 >
@@ -292,7 +292,7 @@ export default function RecipesModal() {
               </AnimatePresence>
 
               {filteredRecipes.length === 0 && (
-                <div className="flex flex-col items-center py-12 text-white/30">
+                <div className="flex flex-col items-center py-12 text-white/60">
                   <ChefHat className="w-12 h-12 mb-3" />
                   <p className="text-sm font-bold">No recipes found</p>
                   <p className="text-xs">Try a different category</p>

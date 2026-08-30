@@ -184,7 +184,7 @@ export default function UploadVideoModal({
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Smoky Jollof in 90 seconds"
                 maxLength={120}
-                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
+                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
               />
             </div>
 
@@ -197,7 +197,7 @@ export default function UploadVideoModal({
                 placeholder="Tell viewers about your reel... #iftar #ramadan"
                 maxLength={500}
                 rows={3}
-                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors resize-none"
+                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors resize-none"
               />
             </div>
 
@@ -230,11 +230,11 @@ export default function UploadVideoModal({
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="https://...mp4"
-                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors font-mono"
+                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors font-mono"
               />
               {/* Quick pick sample clips */}
               <div className="mt-2">
-                <p className="text-white/40 text-[10px] font-medium mb-1.5">Quick pick a demo clip:</p>
+                <p className="text-white/65 text-[10px] font-medium mb-1.5">Quick pick a demo clip:</p>
                 <div className="flex gap-2">
                   {SAMPLE_CLIPS.map((url, i) => (
                     <button
@@ -255,7 +255,7 @@ export default function UploadVideoModal({
 
             {/* Thumbnail upload + URL (optional) */}
             <div>
-              <label className="text-white/60 text-xs font-bold uppercase tracking-wider">Thumbnail <span className="text-white/30 normal-case font-normal">(optional)</span></label>
+              <label className="text-white/60 text-xs font-bold uppercase tracking-wider">Thumbnail <span className="text-white/60 normal-case font-normal">(optional)</span></label>
 
               {/* Preview / upload zone */}
               <div
@@ -304,7 +304,7 @@ export default function UploadVideoModal({
                       <UploadCloud className="w-5 h-5 text-[#10E07A]" />
                     </div>
                     <p className="text-white/80 text-[11px] font-bold">Tap to upload thumbnail</p>
-                    <p className="text-white/40 text-[9px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
+                    <p className="text-white/65 text-[9px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
                   </div>
                 )}
                 <input
@@ -318,13 +318,13 @@ export default function UploadVideoModal({
 
               {/* URL override (kept for manual paste) */}
               <div className="relative mt-2">
-                <ImageIcon className="w-3.5 h-3.5 text-white/30 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <ImageIcon className="w-3.5 h-3.5 text-white/60 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   value={thumbnailUrl.startsWith('/uploads/') ? '' : thumbnailUrl}
                   onChange={(e) => setThumbnailUrl(e.target.value)}
                   placeholder="…or paste a thumbnail URL"
                   disabled={thumbUploading}
-                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors disabled:opacity-50 font-mono"
+                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors disabled:opacity-50 font-mono"
                 />
               </div>
             </div>

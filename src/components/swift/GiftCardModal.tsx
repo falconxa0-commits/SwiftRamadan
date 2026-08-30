@@ -157,7 +157,7 @@ export default function GiftCardModal() {
                       ? 'bg-[#10E07A] text-[#05070A]'
                       : step < giftCardStep
                       ? 'bg-[#10E07A]/30 text-[#10E07A]'
-                      : 'bg-white/5 text-white/30 border border-white/10'
+                      : 'bg-white/5 text-white/60 border border-white/10'
                   }`}
                 >
                   {step < giftCardStep ? <Check className="w-4 h-4" /> : step + 1}
@@ -245,7 +245,7 @@ export default function GiftCardModal() {
                         <div
                           className={`bg-gradient-to-br ${template.color} h-28 flex items-center justify-center`}
                         >
-                          <span className="material-symbols-outlined text-4xl text-white/40">
+                          <span className="material-symbols-outlined text-4xl text-white/65">
                             {template.icon}
                           </span>
                         </div>
@@ -283,7 +283,7 @@ export default function GiftCardModal() {
                 {/* Custom Amount */}
                 <div className="mt-4 flex gap-2">
                   <div className="flex-1 flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
-                    <span className="text-white/30 text-sm">₦</span>
+                    <span className="text-white/60 text-sm">₦</span>
                     <input
                       type="number"
                       value={customAmount}
@@ -293,7 +293,7 @@ export default function GiftCardModal() {
                         if (val > 0) setGiftCardAmount(val);
                       }}
                       placeholder="Custom amount"
-                      className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+                      className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/60"
                     />
                   </div>
                   <button
@@ -342,20 +342,20 @@ export default function GiftCardModal() {
                 {/* Recipient Name */}
                 <h3 className="text-white font-bold text-sm mb-3 mt-2">Recipient Name</h3>
                 <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
-                  <User className="w-4 h-4 text-white/30 shrink-0" />
+                  <User className="w-4 h-4 text-white/60 shrink-0" />
                   <input
                     type="text"
                     value={giftCardRecipient}
                     onChange={(e) => setGiftCardRecipient(e.target.value)}
                     placeholder="Who is this gift for?"
-                    className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/30"
+                    className="flex-1 bg-transparent text-white text-sm py-3 px-2 focus:outline-none placeholder:text-white/60"
                   />
                 </div>
 
                 {/* From Field */}
                 <h3 className="text-white font-bold text-sm mb-3 mt-5">From</h3>
                 <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
-                  <User className="w-4 h-4 text-white/30 shrink-0" />
+                  <User className="w-4 h-4 text-white/60 shrink-0" />
                   <input
                     type="text"
                     value={userName}
@@ -367,7 +367,7 @@ export default function GiftCardModal() {
                 {/* Message */}
                 <h3 className="text-white font-bold text-sm mb-3 mt-5">
                   Message{' '}
-                  <span className="text-white/30 font-normal">
+                  <span className="text-white/60 font-normal">
                     ({giftCardMessage.length}/200)
                   </span>
                 </h3>
@@ -379,7 +379,7 @@ export default function GiftCardModal() {
                     }}
                     placeholder="Write a heartfelt message..."
                     rows={3}
-                    className="w-full bg-transparent text-white text-sm focus:outline-none placeholder:text-white/30 resize-none"
+                    className="w-full bg-transparent text-white text-sm focus:outline-none placeholder:text-white/60 resize-none"
                   />
                 </div>
 
@@ -445,7 +445,7 @@ export default function GiftCardModal() {
                     {giftCardRecipient && (
                       <p className="text-white/80 text-sm mt-2">To: {giftCardRecipient}</p>
                     )}
-                    <p className="text-white/40 text-xs mt-1">From: {userName}</p>
+                    <p className="text-white/65 text-xs mt-1">From: {userName}</p>
                   </div>
                   <div className="bg-[#1A1D26] p-4">
                     {giftCardMessage && (
@@ -485,10 +485,10 @@ export default function GiftCardModal() {
                     <p className="text-white text-4xl font-black">{formatNaira(giftCardAmount)}</p>
                     <div className="mt-4 space-y-1">
                       <p className="text-white/80 text-sm">
-                        <span className="text-white/40">To:</span> {giftCardRecipient || 'Recipient'}
+                        <span className="text-white/65">To:</span> {giftCardRecipient || 'Recipient'}
                       </p>
                       <p className="text-white/60 text-xs">
-                        <span className="text-white/40">From:</span> {userName}
+                        <span className="text-white/65">From:</span> {userName}
                       </p>
                     </div>
                   </div>
@@ -499,7 +499,7 @@ export default function GiftCardModal() {
                         <p className="text-white/60 text-xs italic leading-relaxed">&ldquo;{giftCardMessage}&rdquo;</p>
                       </div>
                     )}
-                    <div className="flex items-center gap-2 text-white/40 text-xs">
+                    <div className="flex items-center gap-2 text-white/65 text-xs">
                       <Send className="w-3 h-3" />
                       <span>Via {giftCardDeliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}</span>
                       <span className="mx-1">•</span>
@@ -551,7 +551,7 @@ export default function GiftCardModal() {
                   </div>
                   <div>
                     <p className="text-white text-sm font-bold">Donate 10% to Charity 🤲</p>
-                    <p className="text-white/40 text-xs">{formatNaira(charityOptIn ? charityAmount : Math.round(giftCardAmount * 0.1))} will feed the fasting</p>
+                    <p className="text-white/65 text-xs">{formatNaira(charityOptIn ? charityAmount : Math.round(giftCardAmount * 0.1))} will feed the fasting</p>
                   </div>
                 </button>
 

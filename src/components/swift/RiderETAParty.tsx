@@ -275,7 +275,7 @@ export default function RiderETAParty() {
 
                 <div className="relative flex items-center justify-between">
                   <div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-wider">
+                    <p className="text-white/65 text-[10px] uppercase tracking-wider">
                       {currentStage === 'delivered' ? 'Delivered' : 'Estimated Arrival'}
                     </p>
                     <div className="flex items-baseline gap-1 mt-1">
@@ -286,7 +286,7 @@ export default function RiderETAParty() {
                         {currentStage === 'delivered' ? '✓' : etaMinutes}
                       </span>
                       {currentStage !== 'delivered' && (
-                        <span className="text-white/40 text-sm font-medium">min</span>
+                        <span className="text-white/65 text-sm font-medium">min</span>
                       )}
                     </div>
                   </div>
@@ -390,9 +390,9 @@ export default function RiderETAParty() {
                 <div className="flex-1 min-w-0">
                   <h4 className="text-white font-bold text-sm">{MOCK_RIDER.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-white/40 text-xs">{MOCK_RIDER.vehicleType}</span>
+                    <span className="text-white/65 text-xs">{MOCK_RIDER.vehicleType}</span>
                     <span className="text-white/20">•</span>
-                    <span className="text-white/40 text-xs">{MOCK_RIDER.plateNumber}</span>
+                    <span className="text-white/65 text-xs">{MOCK_RIDER.plateNumber}</span>
                     <span className="text-white/20">•</span>
                     <span className="text-[#F5C451] text-xs font-bold">★ {MOCK_RIDER.rating}</span>
                   </div>
@@ -425,7 +425,7 @@ export default function RiderETAParty() {
                       <Users className="w-4 h-4 text-[#A78BFA]" />
                       <span className="text-white font-semibold text-sm">Group Order</span>
                     </div>
-                    <span className="text-white/40 text-xs">{MOCK_GROUP_MEMBERS.length} members</span>
+                    <span className="text-white/65 text-xs">{MOCK_GROUP_MEMBERS.length} members</span>
                   </div>
                   <div className="flex gap-2 overflow-x-auto no-scrollbar">
                     {MOCK_GROUP_MEMBERS.map((member, i) => (
@@ -454,7 +454,7 @@ export default function RiderETAParty() {
                       </motion.div>
                     ))}
                   </div>
-                  <p className="text-white/30 text-[10px] mt-3 text-center">Everyone sees live rider tracking simultaneously</p>
+                  <p className="text-white/60 text-[10px] mt-3 text-center">Everyone sees live rider tracking simultaneously</p>
                 </div>
               </div>
             )}
@@ -561,7 +561,7 @@ export default function RiderETAParty() {
                   </span>
                 </motion.button>
               ) : (
-                <div className="flex items-center justify-center gap-2 text-white/30 text-xs py-2">
+                <div className="flex items-center justify-center gap-2 text-white/60 text-xs py-2">
                   <Clock className="w-3 h-3" />
                   <span>Auto-updating • Live tracking active</span>
                 </div>

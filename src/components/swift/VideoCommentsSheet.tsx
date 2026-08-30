@@ -159,10 +159,10 @@ export default function VideoCommentsSheet({
           ) : comments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3">
-                <MessageCircle className="w-5 h-5 text-white/30" />
+                <MessageCircle className="w-5 h-5 text-white/60" />
               </div>
               <p className="text-white font-bold text-sm">No comments yet</p>
-              <p className="text-white/40 text-xs mt-1">Start the conversation</p>
+              <p className="text-white/65 text-xs mt-1">Start the conversation</p>
             </div>
           ) : (
             comments.map((c) => {
@@ -179,14 +179,14 @@ export default function VideoCommentsSheet({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="text-white/60 text-xs font-bold">{c.authorHandle || c.authorName}</span>
-                      <span className="text-white/30 text-[10px]">•</span>
-                      <span className="text-white/30 text-[10px]">{timeAgo(c.createdAt)}</span>
+                      <span className="text-white/60 text-[10px]">•</span>
+                      <span className="text-white/60 text-[10px]">{timeAgo(c.createdAt)}</span>
                     </div>
                     <p className="text-white text-sm leading-snug mt-0.5 break-words">{c.content}</p>
                     <div className="flex items-center gap-4 mt-1.5">
                       <button
                         onClick={() => toggleCommentLike(c.id)}
-                        className="flex items-center gap-1 text-white/40 hover:text-[#FB7185] transition-colors"
+                        className="flex items-center gap-1 text-white/65 hover:text-[#FB7185] transition-colors"
                       >
                         <Heart
                           className={`w-3.5 h-3.5 ${liked ? 'text-[#FB7185] fill-[#FB7185]' : ''}`}
@@ -195,7 +195,7 @@ export default function VideoCommentsSheet({
                           {(c.likes + (liked ? 1 : 0)) || 'Like'}
                         </span>
                       </button>
-                      <button className="text-white/40 hover:text-white/70 text-[11px] font-medium transition-colors">
+                      <button className="text-white/65 hover:text-white/70 text-[11px] font-medium transition-colors">
                         Reply
                       </button>
                     </div>
@@ -222,7 +222,7 @@ export default function VideoCommentsSheet({
                 }
               }}
               placeholder="Add a comment..."
-              className="flex-1 h-10 rounded-full bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
+              className="flex-1 h-10 rounded-full bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
             />
             <button
               onClick={handleSubmit}

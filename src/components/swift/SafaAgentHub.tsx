@@ -416,9 +416,9 @@ export default function SafaAgentHub() {
                     <Sparkles className="w-2.5 h-2.5" /> AI
                   </span>
                 </div>
-                <p className="text-[10px] text-white/40 truncate">{activeAgent?.description}</p>
+                <p className="text-[10px] text-white/65 truncate">{activeAgent?.description}</p>
               </div>
-              <ChevronRight className={`w-4 h-4 text-white/40 transition-transform shrink-0 ${showAgentList ? 'rotate-90' : ''}`} />
+              <ChevronRight className={`w-4 h-4 text-white/65 transition-transform shrink-0 ${showAgentList ? 'rotate-90' : ''}`} />
             </button>
 
             {/* Online indicator */}
@@ -448,7 +448,7 @@ export default function SafaAgentHub() {
                 className="overflow-hidden border-b border-white/10 shrink-0"
               >
                 <div className="p-3 space-y-2">
-                  <p className="text-[10px] text-white/30 uppercase tracking-wider font-semibold px-1">Choose an Agent</p>
+                  <p className="text-[10px] text-white/60 uppercase tracking-wider font-semibold px-1">Choose an Agent</p>
                   <div className="flex flex-wrap gap-2">
                     {agents.map(agent => {
                       const isActive = activeAgentId === agent.id;
@@ -497,7 +497,7 @@ export default function SafaAgentHub() {
                 </motion.div>
                 <h3 className="text-lg font-semibold text-white">{activeAgent.name}</h3>
                 <p className="text-sm text-white/50 mt-1 max-w-[260px] mx-auto">{activeAgent.description}</p>
-                <p className="text-xs text-white/30 mt-3">Send a message or try a quick action below</p>
+                <p className="text-xs text-white/60 mt-3">Send a message or try a quick action below</p>
               </div>
             )}
 

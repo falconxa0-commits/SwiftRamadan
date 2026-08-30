@@ -240,7 +240,7 @@ export default function FridgeScanner() {
                   </div>
                   <div className="text-center">
                     <p className="text-white font-medium">Scan Your Fridge</p>
-                    <p className="text-white/40 text-sm mt-1">Take a photo to identify ingredients and get recipe suggestions</p>
+                    <p className="text-white/65 text-sm mt-1">Take a photo to identify ingredients and get recipe suggestions</p>
                   </div>
                   <div className="flex gap-3">
                     <button
@@ -332,9 +332,9 @@ export default function FridgeScanner() {
                 </motion.div>
                 <div className="text-center">
                   <p className="text-white font-medium">Scanning your fridge...</p>
-                  <p className="text-white/40 text-sm mt-1">Identifying ingredients with AI</p>
+                  <p className="text-white/65 text-sm mt-1">Identifying ingredients with AI</p>
                 </div>
-                <Loader2 className="w-5 h-5 text-white/30 animate-spin" />
+                <Loader2 className="w-5 h-5 text-white/60 animate-spin" />
               </motion.div>
             )}
 
@@ -372,7 +372,7 @@ export default function FridgeScanner() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white text-sm font-medium truncate">{item.name}</p>
-                          <p className="text-white/30 text-xs">
+                          <p className="text-white/60 text-xs">
                             {item.inCart ? 'Already in cart' : formatNaira(item.price)}
                           </p>
                         </div>
@@ -436,7 +436,7 @@ export default function FridgeScanner() {
                               {recipe.matchPercent}% match
                             </span>
                           </div>
-                          <div className="flex items-center gap-3 text-xs text-white/40">
+                          <div className="flex items-center gap-3 text-xs text-white/65">
                             <span>{recipe.cookTime}</span>
                             {recipe.missingIngredients.length > 0 && (
                               <span>Missing: {recipe.missingIngredients.join(', ')}</span>

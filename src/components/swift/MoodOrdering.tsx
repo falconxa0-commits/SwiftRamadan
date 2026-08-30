@@ -225,7 +225,7 @@ export default function MoodOrdering() {
                 {isLoading ? (
                   <div className="py-8 flex flex-col items-center gap-2">
                     <Loader2 className="w-6 h-6 text-white/20 animate-spin" />
-                    <p className="text-white/30 text-sm">Finding the perfect matches...</p>
+                    <p className="text-white/60 text-sm">Finding the perfect matches...</p>
                   </div>
                 ) : (
                   <AnimatePresence mode="wait">
@@ -258,13 +258,13 @@ export default function MoodOrdering() {
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
                             <p className="text-white text-sm font-medium truncate">{product.name}</p>
-                            <p className="text-white/30 text-xs mt-0.5 line-clamp-2">{product.description}</p>
+                            <p className="text-white/60 text-xs mt-0.5 line-clamp-2">{product.description}</p>
                             <div className="flex items-center gap-2 mt-1.5">
                               <span className="text-white/50 text-xs flex items-center gap-1">
                                 <Star className="w-3 h-3" style={{ color: '#F5C451' }} />
                                 {product.rating}
                               </span>
-                              <span className="text-white/30 text-xs flex items-center gap-1">
+                              <span className="text-white/60 text-xs flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {product.deliveryTime}
                               </span>
@@ -306,7 +306,7 @@ export default function MoodOrdering() {
                 animate={{ opacity: 1 }}
               >
                 <p className="text-3xl mb-3">🎭</p>
-                <p className="text-white/40 text-sm">Select a mood to see personalized recommendations</p>
+                <p className="text-white/65 text-sm">Select a mood to see personalized recommendations</p>
               </motion.div>
             )}
           </div>

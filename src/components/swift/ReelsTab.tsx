@@ -190,13 +190,13 @@ export default function ReelsTab() {
             {isSavedMode ? (
               <Bookmark className="w-7 h-7 text-[#F5C451]" />
             ) : (
-              <Film className="w-7 h-7 text-white/30" />
+              <Film className="w-7 h-7 text-white/60" />
             )}
           </div>
           <p className="text-white font-bold text-lg">
             {isSavedMode ? 'No saved reels' : 'No reels yet'}
           </p>
-          <p className="text-white/40 text-sm mt-1">
+          <p className="text-white/65 text-sm mt-1">
             {isSavedMode
               ? 'Bookmark videos to watch later — they will show up here.'
               : 'Be the first to share a Ramadan food short!'}

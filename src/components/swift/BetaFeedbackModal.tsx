@@ -82,7 +82,7 @@ export default function BetaFeedbackModal() {
                     Beta Feedback
                     <span className="px-1.5 py-0.5 rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30 text-[#FFD700] text-[9px] font-black uppercase tracking-wider">Beta</span>
                   </h2>
-                  <p className="text-white/40 text-xs">Help us improve SwiftRamadan</p>
+                  <p className="text-white/65 text-xs">Help us improve SwiftRamadan</p>
                 </div>
               </div>
               <button onClick={handleClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" aria-label="Close">
@@ -100,7 +100,7 @@ export default function BetaFeedbackModal() {
                   </motion.div>
                   <h3 className="text-white font-black text-xl">Shukran! 💚</h3>
                   <p className="text-white/50 text-sm mt-1">Your feedback has been received.</p>
-                  <p className="text-white/40 text-xs mt-2 max-w-xs mx-auto">Our team reviews every submission. You're helping make SwiftRamadan better for the whole community.</p>
+                  <p className="text-white/65 text-xs mt-2 max-w-xs mx-auto">Our team reviews every submission. You're helping make SwiftRamadan better for the whole community.</p>
                   <button onClick={handleClose} className="mt-5 bg-[#13ec13] text-[#05070A] font-bold text-sm py-2.5 px-6 rounded-xl active:scale-[0.98] transition-transform">
                     Done
                   </button>
@@ -109,7 +109,7 @@ export default function BetaFeedbackModal() {
                 <div className="space-y-4">
                   {/* Type selector */}
                   <div>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">What kind of feedback?</p>
+                    <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">What kind of feedback?</p>
                     <div className="grid grid-cols-3 gap-2">
                       {TYPES.map((t) => {
                         const Icon = t.icon; const active = type === t.id;
@@ -127,7 +127,7 @@ export default function BetaFeedbackModal() {
 
                   {/* Rating */}
                   <div>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">Rate your experience</p>
+                    <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Rate your experience</p>
                     <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((s) => (
                         <button key={s} onClick={() => setRating(s)} onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)}
@@ -141,21 +141,21 @@ export default function BetaFeedbackModal() {
 
                   {/* Subject */}
                   <div>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">Subject</p>
+                    <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Subject</p>
                     <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Brief summary of your feedback"
-                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 focus:outline-none" />
+                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none" />
                   </div>
 
                   {/* Message */}
                   <div>
-                    <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2">Message</p>
+                    <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Message</p>
                     <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us more… What happened? What were you trying to do? Any ideas?"
                       rows={5}
-                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/30 focus:border-[#13ec13]/40 focus:outline-none resize-none custom-scrollbar" />
+                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none resize-none custom-scrollbar" />
                   </div>
 
                   {/* Context chip */}
-                  <div className="flex items-center gap-2 text-xs text-white/40">
+                  <div className="flex items-center gap-2 text-xs text-white/65">
                     <span className="px-2 py-1 rounded-full bg-white/5 border border-white/10">Page: {activeTab || 'home'}</span>
                     <ChevronRight className="w-3 h-3" />
                     <span>Auto-attached to help our team reproduce</span>

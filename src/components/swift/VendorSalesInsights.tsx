@@ -65,7 +65,7 @@ export default function VendorSalesInsights() {
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/5 blur-[60px]" />
                 <div className="relative z-10">
-                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Today&apos;s Revenue</p>
+                  <p className="text-white/65 text-xs font-bold uppercase tracking-widest">Today&apos;s Revenue</p>
                   <p className="text-[#F5C451] text-4xl font-black mt-1">{formatNaira(vendorSalesInsights.todayRevenue)}</p>
                   <div className="flex items-center gap-2 mt-2">
                     <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#10E07A]/20">
@@ -85,7 +85,7 @@ export default function VendorSalesInsights() {
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-white/40 text-xs font-bold uppercase tracking-widest">Average Order Value</p>
+                    <p className="text-white/65 text-xs font-bold uppercase tracking-widest">Average Order Value</p>
                     <p className="text-white text-2xl font-black mt-1">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
                   </div>
                   <div className="w-12 h-12 rounded-xl bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/20">
@@ -117,7 +117,7 @@ export default function VendorSalesInsights() {
                               animate={{ opacity: 1 }}
                               transition={{ delay: 0.5 + i * 0.06 }}
                               className={`text-[9px] font-bold whitespace-nowrap ${
-                                isFriday ? 'text-[#F5C451]' : 'text-white/40'
+                                isFriday ? 'text-[#F5C451]' : 'text-white/65'
                               }`}
                             >
                               {formatNaira(day.revenue).replace('₦', '₦')}
@@ -139,7 +139,7 @@ export default function VendorSalesInsights() {
                             />
                           </div>
                           <span className={`text-[10px] font-bold ${
-                            isFriday ? 'text-[#F5C451]' : isToday ? 'text-[#10E07A]' : 'text-white/30'
+                            isFriday ? 'text-[#F5C451]' : isToday ? 'text-[#10E07A]' : 'text-white/60'
                           }`}>
                             {day.day}
                           </span>
@@ -164,21 +164,21 @@ export default function VendorSalesInsights() {
                   <div className="w-10 h-10 rounded-xl bg-[#F5C451]/20 flex items-center justify-center mx-auto mb-2 border border-[#F5C451]/20">
                     <Star className="w-5 h-5 text-[#F5C451]" />
                   </div>
-                  <p className="text-white/30 text-[9px] uppercase tracking-widest font-bold">Top Seller</p>
+                  <p className="text-white/60 text-[9px] uppercase tracking-widest font-bold">Top Seller</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.topSellingItem}</p>
                 </div>
                 <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 text-center">
                   <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center mx-auto mb-2 border border-[#10E07A]/20">
                     <Clock className="w-5 h-5 text-[#10E07A]" />
                   </div>
-                  <p className="text-white/30 text-[9px] uppercase tracking-widest font-bold">Peak Hour</p>
+                  <p className="text-white/60 text-[9px] uppercase tracking-widest font-bold">Peak Hour</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.peakHour}</p>
                 </div>
                 <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 text-center">
                   <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto mb-2 border border-blue-500/20">
                     <Users className="w-5 h-5 text-blue-400" />
                   </div>
-                  <p className="text-white/30 text-[9px] uppercase tracking-widest font-bold">Retention</p>
+                  <p className="text-white/60 text-[9px] uppercase tracking-widest font-bold">Retention</p>
                   <p className="text-white text-[11px] font-bold mt-1">{vendorSalesInsights.customerRetention}%</p>
                 </div>
               </motion.div>
@@ -199,11 +199,11 @@ export default function VendorSalesInsights() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">Total Revenue</p>
+                      <p className="text-white/60 text-[10px] uppercase tracking-widest font-bold">Total Revenue</p>
                       <p className="text-white text-2xl font-black mt-1">{formatNaira(vendorSalesInsights.ramadanRevenue)}</p>
                     </div>
                     <div>
-                      <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">Total Orders</p>
+                      <p className="text-white/60 text-[10px] uppercase tracking-widest font-bold">Total Orders</p>
                       <p className="text-white text-2xl font-black mt-1">{vendorSalesInsights.ramadanOrders.toLocaleString()}</p>
                     </div>
                   </div>

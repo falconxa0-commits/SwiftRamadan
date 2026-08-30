@@ -105,7 +105,7 @@ export default function CookAlongMode() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg flex items-center gap-2">Cook-Along</h2>
-                  <p className="text-white/40 text-xs truncate max-w-[200px]">{recipe.name}</p>
+                  <p className="text-white/65 text-xs truncate max-w-[200px]">{recipe.name}</p>
                 </div>
               </div>
               <button onClick={handleClose} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" aria-label="Close">
@@ -116,7 +116,7 @@ export default function CookAlongMode() {
             <div className="shrink-0 px-4 pt-3 pb-2">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-white/50 text-[10px] font-bold uppercase tracking-wider">{done ? 'Completed' : `Step ${currentStep + 1} of ${total}`}</span>
-                <span className="text-white/40 text-xs font-mono">{Math.round(progress)}%</span>
+                <span className="text-white/65 text-xs font-mono">{Math.round(progress)}%</span>
               </div>
               <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
                 <motion.div className="h-full rounded-full bg-gradient-to-r from-[#13ec13] to-[#FFD700]" animate={{ width: `${progress}%` }} transition={{ duration: 0.3 }} />
@@ -152,11 +152,11 @@ export default function CookAlongMode() {
 
                   {currentStep < total - 1 && (
                     <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3">
-                      <p className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><ListChecks className="w-3 h-3" /> Up Next</p>
+                      <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2 flex items-center gap-1"><ListChecks className="w-3 h-3" /> Up Next</p>
                       <div className="space-y-1.5">
                         {steps.slice(currentStep + 1, currentStep + 4).map((s, i) => (
                           <div key={i} className="flex gap-2 text-xs">
-                            <span className="w-4 h-4 rounded-full bg-white/5 text-white/40 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">{currentStep + 2 + i}</span>
+                            <span className="w-4 h-4 rounded-full bg-white/5 text-white/65 font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">{currentStep + 2 + i}</span>
                             <span className="text-white/50 line-clamp-2">{s}</span>
                           </div>
                         ))}
@@ -226,17 +226,17 @@ function CompletionView({ recipeName, cuisine, elapsed, totalSteps, onRestart, o
         <div className="rounded-xl bg-[#0F1117] border border-white/10 p-3">
           <Clock className="w-4 h-4 text-[#FFD700] mx-auto mb-1" />
           <p className="text-white font-black text-lg leading-none">{mins}:{secs.toString().padStart(2, '0')}</p>
-          <p className="text-white/40 text-[9px] mt-1 uppercase tracking-wider">Minutes</p>
+          <p className="text-white/65 text-[9px] mt-1 uppercase tracking-wider">Minutes</p>
         </div>
         <div className="rounded-xl bg-[#0F1117] border border-white/10 p-3">
           <ListChecks className="w-4 h-4 text-[#13ec13] mx-auto mb-1" />
           <p className="text-white font-black text-lg leading-none">{totalSteps}</p>
-          <p className="text-white/40 text-[9px] mt-1 uppercase tracking-wider">Steps</p>
+          <p className="text-white/65 text-[9px] mt-1 uppercase tracking-wider">Steps</p>
         </div>
         <div className="rounded-xl bg-[#0F1117] border border-white/10 p-3">
           <Flame className="w-4 h-4 text-orange-400 mx-auto mb-1" />
           <p className="text-white font-black text-sm leading-none mt-1">{cuisine}</p>
-          <p className="text-white/40 text-[9px] mt-1 uppercase tracking-wider">Cuisine</p>
+          <p className="text-white/65 text-[9px] mt-1 uppercase tracking-wider">Cuisine</p>
         </div>
       </div>
       <div className="rounded-xl bg-[#13ec13]/5 border border-[#13ec13]/20 p-3 mt-4 flex items-start gap-2">

@@ -198,7 +198,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Chef Battles</h2>
-            <p className="text-white/40 text-[10px]">Blind taste test — pick the winner!</p>
+            <p className="text-white/65 text-[10px]">Blind taste test — pick the winner!</p>
           </div>
         </div>
         <button
@@ -217,7 +217,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'active'
               ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/25'
-              : 'bg-white/3 text-white/40 border border-white/5'
+              : 'bg-white/3 text-white/65 border border-white/5'
           }`}
           aria-label="Active battles"
         >
@@ -229,7 +229,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'leaderboard'
               ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/25'
-              : 'bg-white/3 text-white/40 border border-white/5'
+              : 'bg-white/3 text-white/65 border border-white/5'
           }`}
           aria-label="Leaderboard"
         >
@@ -283,7 +283,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                       >
                         <div className="text-3xl mb-2">{battle.chefA.image}</div>
                         <p className="text-white text-xs font-bold">{battle.chefA.name}</p>
-                        <p className="text-white/30 text-[9px]">{battle.chefA.restaurant}</p>
+                        <p className="text-white/60 text-[9px]">{battle.chefA.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
                           <Star className="w-2.5 h-2.5 text-[#F5C451]" fill="#F5C451" />
                           <span className="text-[#F5C451] text-[9px] font-bold">{battle.chefA.rating}</span>
@@ -305,7 +305,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                       >
                         <div className="text-3xl mb-2">{battle.chefB.image}</div>
                         <p className="text-white text-xs font-bold">{battle.chefB.name}</p>
-                        <p className="text-white/30 text-[9px]">{battle.chefB.restaurant}</p>
+                        <p className="text-white/60 text-[9px]">{battle.chefB.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
                           <Star className="w-2.5 h-2.5 text-[#F5C451]" fill="#F5C451" />
                           <span className="text-[#F5C451] text-[9px] font-bold">{battle.chefB.rating}</span>
@@ -337,7 +337,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
             {/* Past Battles */}
             {pastBattles.length > 0 && (
               <div className="mt-6">
-                <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Recent Results</p>
+                <p className="text-white/65 text-xs font-bold uppercase tracking-wider mb-3">Recent Results</p>
                 <div className="space-y-2">
                   {pastBattles.map(battle => (
                     <div key={battle.id} className="bg-[#0F1118] rounded-xl border border-white/5 p-3">
@@ -389,13 +389,13 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   i === 0 ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/20' :
                   i === 1 ? 'bg-white/10 text-white/70 border border-white/10' :
                   i === 2 ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
-                  'bg-white/5 text-white/40 border border-white/5'
+                  'bg-white/5 text-white/65 border border-white/5'
                 }`}>
                   {i === 0 ? <Crown className="w-4 h-4" /> : entry.rank}
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-bold">{entry.chef}</p>
-                  <p className="text-white/30 text-[9px]">{entry.restaurant}</p>
+                  <p className="text-white/60 text-[9px]">{entry.restaurant}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <div className="flex items-center gap-1">
@@ -440,13 +440,13 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
               <div className="flex items-center justify-center gap-2 mb-4">
                 <Timer className="w-4 h-4 text-[#F5C451]" />
                 <span className="text-[#F5C451] text-sm font-bold">{countdown}</span>
-                <span className="text-white/30 text-xs">remaining</span>
+                <span className="text-white/60 text-xs">remaining</span>
               </div>
 
               <h3 className="text-white text-center text-lg font-bold mb-1">
                 {selectedBattle.dish} Battle
               </h3>
-              <p className="text-white/40 text-center text-xs mb-5">Pick your winner — blind taste test!</p>
+              <p className="text-white/65 text-center text-xs mb-5">Pick your winner — blind taste test!</p>
 
               {/* VS Selection */}
               <div className="grid grid-cols-2 gap-3 mb-5">
@@ -464,7 +464,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 >
                   <div className="text-4xl mb-2">{selectedBattle.chefA.image}</div>
                   <p className="text-white text-sm font-bold">{selectedBattle.chefA.name}</p>
-                  <p className="text-white/30 text-[10px]">{selectedBattle.chefA.restaurant}</p>
+                  <p className="text-white/60 text-[10px]">{selectedBattle.chefA.restaurant}</p>
                   <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-[#10E07A] flex items-center justify-center">
                     <span className="text-[10px] font-black text-[#0B0D14]">A</span>
                   </div>
@@ -484,7 +484,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 >
                   <div className="text-4xl mb-2">{selectedBattle.chefB.image}</div>
                   <p className="text-white text-sm font-bold">{selectedBattle.chefB.name}</p>
-                  <p className="text-white/30 text-[10px]">{selectedBattle.chefB.restaurant}</p>
+                  <p className="text-white/60 text-[10px]">{selectedBattle.chefB.restaurant}</p>
                   <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#A78BFA] flex items-center justify-center">
                     <span className="text-[10px] font-black text-white">B</span>
                   </div>
@@ -564,7 +564,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 <p className="text-white text-sm mb-1">
                   You chose {userVote === 'A' ? selectedBattle.chefA.name : selectedBattle.chefB.name}
                 </p>
-                <p className="text-white/40 text-xs mb-5">
+                <p className="text-white/65 text-xs mb-5">
                   {selectedBattle.totalVotes} total votes • {selectedBattle.dish}
                 </p>
 

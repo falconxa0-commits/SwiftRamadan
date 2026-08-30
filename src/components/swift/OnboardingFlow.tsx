@@ -116,7 +116,7 @@ function ProgressBar({ step, total, accent }: { step: number; total: number; acc
           />
         </div>
       ))}
-      <span className="text-white/30 text-xs font-medium ml-2 shrink-0">
+      <span className="text-white/60 text-xs font-medium ml-2 shrink-0">
         Step {step + 1} of {total}
       </span>
     </div>
@@ -359,7 +359,7 @@ function CustomerStep3() {
             placeholder="Enter delivery address"
             value={deliveryAddress}
             onChange={(e) => setDeliveryAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#10E07A]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#10E07A]/50 transition-colors"
           />
         </div>
 
@@ -367,12 +367,12 @@ function CustomerStep3() {
         <div className="relative">
           <button
             onClick={() => setAreaOpen(!areaOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/30'}`}
+            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/60'}`}
           >
             <MapPin className="w-4 h-4 mr-2 text-[#10E07A]/60" />
             {userArea || 'Select your area'}
           </button>
-          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
 
           <AnimatePresence>
             {areaOpen && (
@@ -406,7 +406,7 @@ function CustomerStep3() {
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Deliver before Iftar</p>
-              <p className="text-white/40 text-xs">Priority delivery before Maghrib</p>
+              <p className="text-white/65 text-xs">Priority delivery before Maghrib</p>
             </div>
           </div>
           <button
@@ -459,8 +459,8 @@ function VendorStep1() {
             onClick={() => toast({ title: 'Coming soon', description: 'Logo upload will be available soon.' })}
             className="w-24 h-24 rounded-2xl bg-[#1A1D26] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[#F5C451]/40 transition-colors"
           >
-            <Camera className="w-6 h-6 text-white/30" />
-            <span className="text-white/30 text-[10px] font-medium">Store Logo</span>
+            <Camera className="w-6 h-6 text-white/60" />
+            <span className="text-white/60 text-[10px] font-medium">Store Logo</span>
           </motion.button>
         </div>
 
@@ -472,7 +472,7 @@ function VendorStep1() {
             placeholder="Store name"
             value={vendorStoreName}
             onChange={(e) => setVendorStoreName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -480,12 +480,12 @@ function VendorStep1() {
         <div className="relative">
           <button
             onClick={() => setCatOpen(!catOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/30'}`}
+            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/60'}`}
           >
             <ShoppingBag className="w-4 h-4 mr-2 text-[#F5C451]/60" />
             {vendorBusinessCategory || 'Business category'}
           </button>
-          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
           <AnimatePresence>
             {catOpen && (
               <motion.div
@@ -518,7 +518,7 @@ function VendorStep1() {
             placeholder="Business address"
             value={vendorBusinessAddress}
             onChange={(e) => setVendorBusinessAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -528,7 +528,7 @@ function VendorStep1() {
           value={storeDesc}
           onChange={(e) => setStoreDesc(e.target.value)}
           rows={3}
-          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors resize-none"
+          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors resize-none"
         />
       </div>
     </motion.div>
@@ -592,7 +592,7 @@ function VendorStep2() {
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Open for Sahur orders</p>
-              <p className="text-white/40 text-xs">Accept orders between 4-5 AM</p>
+              <p className="text-white/65 text-xs">Accept orders between 4-5 AM</p>
             </div>
           </div>
           <button
@@ -615,7 +615,7 @@ function VendorStep2() {
             </div>
             <div>
               <p className="text-white text-sm font-semibold">Accept Iftar rush orders</p>
-              <p className="text-white/40 text-xs">High-demand period before Maghrib</p>
+              <p className="text-white/65 text-xs">High-demand period before Maghrib</p>
             </div>
           </div>
           <button
@@ -640,7 +640,7 @@ function VendorStep2() {
               placeholder="e.g., 50"
               value={maxOrders}
               onChange={(e) => setMaxOrders(e.target.value)}
-              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
             />
           </div>
         </div>
@@ -686,7 +686,7 @@ function VendorStep3() {
             placeholder="Bank name"
             value={vendorBankName}
             onChange={(e) => setVendorBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -698,7 +698,7 @@ function VendorStep3() {
             placeholder="Account number"
             value={vendorAccountNumber}
             onChange={(e) => setVendorAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -710,7 +710,7 @@ function VendorStep3() {
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#F5C451]/50 transition-colors"
           />
         </div>
 
@@ -770,11 +770,11 @@ function RiderStep1() {
                 }`}
                 style={{ boxShadow: isSelected ? '0 0 15px #38BDF820' : 'none' }}
               >
-                <Icon className={`w-8 h-8 ${isSelected ? 'text-[#38BDF8]' : 'text-white/40'}`} />
+                <Icon className={`w-8 h-8 ${isSelected ? 'text-[#38BDF8]' : 'text-white/65'}`} />
                 <span className={`text-sm font-bold ${isSelected ? 'text-[#38BDF8]' : 'text-white/70'}`}>
                   {vehicle.label}
                 </span>
-                <span className="text-white/30 text-[10px] text-center">{vehicle.description}</span>
+                <span className="text-white/60 text-[10px] text-center">{vehicle.description}</span>
                 {isSelected && (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -797,7 +797,7 @@ function RiderStep1() {
             placeholder="Vehicle color"
             value={riderVehicleColor}
             onChange={(e) => setRiderVehicleColor(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -809,7 +809,7 @@ function RiderStep1() {
             placeholder="Plate number (e.g., LSR 123 AB)"
             value={riderPlateNumber}
             onChange={(e) => setRiderPlateNumber(e.target.value.toUpperCase())}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors uppercase tracking-wider font-mono"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors uppercase tracking-wider font-mono"
           />
         </div>
       </div>
@@ -843,7 +843,7 @@ function RiderStep2() {
             placeholder="License number"
             value={riderLicenseNumber}
             onChange={(e) => setRiderLicenseNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -851,12 +851,12 @@ function RiderStep2() {
         <div className="relative">
           <button
             onClick={() => setIdOpen(!idOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/30'}`}
+            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/60'}`}
           >
             <User className="w-4 h-4 mr-2 text-[#38BDF8]/60" />
             {idType || 'ID type'}
           </button>
-          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${idOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${idOpen ? 'rotate-180' : ''}`} />
           <AnimatePresence>
             {idOpen && (
               <motion.div
@@ -889,7 +889,7 @@ function RiderStep2() {
             placeholder="ID number"
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -905,7 +905,7 @@ function RiderStep2() {
                 className="flex flex-col items-center gap-2 p-5 bg-[#1A1D26] border border-dashed border-white/20 rounded-xl hover:border-[#38BDF8]/30 transition-colors"
               >
                 <Camera className="w-6 h-6 text-white/25" />
-                <span className="text-white/40 text-[11px] font-medium text-center">{doc}</span>
+                <span className="text-white/65 text-[11px] font-medium text-center">{doc}</span>
               </motion.button>
             ))}
           </div>
@@ -960,7 +960,7 @@ function RiderStep3() {
             placeholder="Bank name"
             value={riderBankName}
             onChange={(e) => setRiderBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -972,7 +972,7 @@ function RiderStep3() {
             placeholder="Account number"
             value={riderAccountNumber}
             onChange={(e) => setRiderAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -984,7 +984,7 @@ function RiderStep3() {
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[#38BDF8]/50 transition-colors"
           />
         </div>
 
@@ -1238,7 +1238,7 @@ export default function OnboardingFlow() {
           {/* Skip Button */}
           <button
             onClick={handleSkip}
-            className="text-white/40 text-sm font-semibold hover:text-white/60 transition-colors px-2"
+            className="text-white/65 text-sm font-semibold hover:text-white/60 transition-colors px-2"
           >
             Skip
           </button>

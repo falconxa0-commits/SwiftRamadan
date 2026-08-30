@@ -239,7 +239,7 @@ export default function WalletModal() {
                     className={`flex-1 py-2 rounded-xl text-sm font-bold transition-all ${
                       activeTab === tab.id
                         ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
-                        : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                        : 'bg-white/5 text-white/65 border border-white/5 hover:bg-white/10'
                     }`}
                   >
                     {tab.label}
@@ -281,7 +281,7 @@ export default function WalletModal() {
                           <p className="text-[#10E07A] text-4xl font-black mt-1">
                             {formatNaira(koboToNaira(walletBalance))}
                           </p>
-                          <p className="text-white/30 text-xs mt-1">Available for orders & payments</p>
+                          <p className="text-white/60 text-xs mt-1">Available for orders & payments</p>
                         </div>
                       </motion.div>
 
@@ -301,7 +301,7 @@ export default function WalletModal() {
                           </div>
                           <div className="text-left">
                             <p className="text-white font-bold text-sm">Top Up</p>
-                            <p className="text-white/40 text-[10px]">Add funds</p>
+                            <p className="text-white/65 text-[10px]">Add funds</p>
                           </div>
                         </button>
                         <button
@@ -313,7 +313,7 @@ export default function WalletModal() {
                           </div>
                           <div className="text-left">
                             <p className="text-white font-bold text-sm">History</p>
-                            <p className="text-white/40 text-[10px]">Transactions</p>
+                            <p className="text-white/65 text-[10px]">Transactions</p>
                           </div>
                         </button>
                       </motion.div>
@@ -346,7 +346,7 @@ export default function WalletModal() {
                                   <TxnIcon type={txn.type} />
                                   <div className="flex-1 min-w-0">
                                     <p className="text-white text-sm font-medium truncate">{txn.description || (txnMeta[txn.type]?.label || 'Transaction')}</p>
-                                    <p className="text-white/30 text-[10px]">{formatDate(txn.createdAt)}</p>
+                                    <p className="text-white/60 text-[10px]">{formatDate(txn.createdAt)}</p>
                                   </div>
                                   <p className={`font-bold text-sm ${isCredit ? 'text-[#10E07A]' : 'text-red-400'}`}>
                                     {isCredit ? '+' : '-'}{formatNaira(displayAmount)}
@@ -366,7 +366,7 @@ export default function WalletModal() {
                           className="text-center py-8"
                         >
                           <Wallet className="w-12 h-12 text-white/10 mx-auto mb-3" />
-                          <p className="text-white/30 text-sm">No transactions yet</p>
+                          <p className="text-white/60 text-sm">No transactions yet</p>
                           <p className="text-white/20 text-xs mt-1">Top up your wallet to get started</p>
                         </motion.div>
                       )}
@@ -385,9 +385,9 @@ export default function WalletModal() {
                         <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5">
                           {/* Amount input */}
                           <div className="mb-4">
-                            <label className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">Amount (Naira)</label>
+                            <label className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">Amount (Naira)</label>
                             <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[#10E07A]/30 transition-all px-4 py-3">
-                              <span className="text-white/40 text-lg font-bold">₦</span>
+                              <span className="text-white/65 text-lg font-bold">₦</span>
                               <input
                                 type="number"
                                 inputMode="numeric"
@@ -408,7 +408,7 @@ export default function WalletModal() {
                                 className={`py-3 rounded-xl text-sm font-bold transition-all ${
                                   topupAmount === String(amt)
                                     ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
-                                    : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                                    : 'bg-white/5 text-white/65 border border-white/5 hover:bg-white/10'
                                 }`}
                               >
                                 {formatNaira(amt)}
@@ -424,11 +424,11 @@ export default function WalletModal() {
                               className="mt-4 pt-4 border-t border-white/5 space-y-2"
                             >
                               <div className="flex justify-between items-center">
-                                <span className="text-white/40 text-xs">Top-up amount</span>
+                                <span className="text-white/65 text-xs">Top-up amount</span>
                                 <span className="text-white font-bold text-sm">{formatNaira(parseFloat(topupAmount))}</span>
                               </div>
                               <div className="flex justify-between items-center">
-                                <span className="text-white/40 text-xs">New balance</span>
+                                <span className="text-white/65 text-xs">New balance</span>
                                 <span className="text-[#10E07A] font-bold text-sm">
                                   {formatNaira(koboToNaira(walletBalance) + parseFloat(topupAmount))}
                                 </span>
@@ -486,7 +486,7 @@ export default function WalletModal() {
                           className="text-center py-12"
                         >
                           <Clock className="w-12 h-12 text-white/10 mx-auto mb-3" />
-                          <p className="text-white/30 text-sm">No transactions found</p>
+                          <p className="text-white/60 text-sm">No transactions found</p>
                           <p className="text-white/20 text-xs mt-1">Your transaction history will appear here</p>
                         </motion.div>
                       ) : (
@@ -509,7 +509,7 @@ export default function WalletModal() {
                                     {txn.description || meta.label}
                                   </p>
                                   <div className="flex items-center gap-2 mt-0.5">
-                                    <span className="text-white/30 text-[10px]">{formatDate(txn.createdAt)}</span>
+                                    <span className="text-white/60 text-[10px]">{formatDate(txn.createdAt)}</span>
                                     {txn.reference && (
                                       <span className="text-white/15 text-[10px] truncate">• {txn.reference}</span>
                                     )}
@@ -545,7 +545,7 @@ export default function WalletModal() {
                               >
                                 Previous
                               </button>
-                              <span className="text-white/30 text-xs">
+                              <span className="text-white/60 text-xs">
                                 Page {historyPage} of {historyTotalPages}
                               </span>
                               <button

@@ -279,7 +279,7 @@ export default function VisualSearchModal() {
                     Snap to Shop
                     <Sparkles className="w-4 h-4 text-[#F5C451]" />
                   </h2>
-                  <p className="text-white/40 text-xs">
+                  <p className="text-white/65 text-xs">
                     AI-powered visual food search
                   </p>
                 </div>
@@ -486,7 +486,7 @@ export default function VisualSearchModal() {
                   {/* AI description + estimated price */}
                   <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 space-y-3">
                     <div>
-                      <h4 className="text-white/40 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <h4 className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3 text-[#F5C451]" />
                         AI Description
                       </h4>
@@ -495,7 +495,7 @@ export default function VisualSearchModal() {
                       </p>
                     </div>
                     <div className="flex items-center justify-between pt-3 border-t border-white/5">
-                      <span className="text-white/40 text-xs">
+                      <span className="text-white/65 text-xs">
                         Estimated price
                       </span>
                       <span className="text-[#10E07A] font-black text-lg">
@@ -521,7 +521,7 @@ export default function VisualSearchModal() {
                     <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
                       <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
                       Found Similar Products
-                      <span className="text-white/30 text-xs font-normal">
+                      <span className="text-white/60 text-xs font-normal">
                         ({similarProducts.length})
                       </span>
                     </h4>
@@ -560,7 +560,7 @@ export default function VisualSearchModal() {
                               <h5 className="text-white text-xs font-bold leading-tight line-clamp-2">
                                 {product.name}
                               </h5>
-                              <div className="flex items-center gap-1 text-[10px] text-white/40">
+                              <div className="flex items-center gap-1 text-[10px] text-white/65">
                                 <span>★ {product.rating?.toFixed(1) ?? '4.5'}</span>
                                 <span>•</span>
                                 <span>{product.deliveryTime ?? '20 min'}</span>

@@ -57,7 +57,7 @@ export default function VendorStockControl() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Stock Control</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Toggle items on or off</p>
+                  <p className="text-white/65 text-xs mt-0.5">Toggle items on or off</p>
                 </div>
               </div>
               <button
@@ -73,11 +73,11 @@ export default function VendorStockControl() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
                   <p className="text-[#10E07A] text-xl font-black">{availableCount}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Available</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Available</p>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 text-center">
                   <p className="text-red-400 text-xl font-black">{unavailableCount}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Unavailable</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Unavailable</p>
                 </div>
               </div>
             </div>
@@ -108,7 +108,7 @@ export default function VendorStockControl() {
 
                     {/* Item Info */}
                     <div className="flex-1 min-w-0">
-                      <p className={`font-bold text-sm truncate ${item.available ? 'text-white' : 'text-white/40'}`}>
+                      <p className={`font-bold text-sm truncate ${item.available ? 'text-white' : 'text-white/65'}`}>
                         {item.name}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
@@ -116,11 +116,11 @@ export default function VendorStockControl() {
                           {formatNaira(item.price)}
                         </span>
                         <span className="text-white/10 text-xs">•</span>
-                        <span className="text-white/30 text-xs">{item.category}</span>
+                        <span className="text-white/60 text-xs">{item.category}</span>
                       </div>
                       <div className="flex items-center gap-1 mt-1">
                         <TrendingUp className="w-3 h-3 text-[#10E07A]/50" />
-                        <span className="text-white/30 text-[10px]">{item.orders} orders</span>
+                        <span className="text-white/60 text-[10px]">{item.orders} orders</span>
                       </div>
                     </div>
 
@@ -160,7 +160,7 @@ export default function VendorStockControl() {
               {/* Tip */}
               <div className="mt-4 flex items-start gap-2 bg-[#F5C451]/5 border border-[#F5C451]/10 rounded-xl p-3">
                 <AlertCircle className="w-4 h-4 text-[#F5C451] shrink-0 mt-0.5" />
-                <p className="text-white/40 text-xs leading-relaxed">
+                <p className="text-white/65 text-xs leading-relaxed">
                   Unavailable items won&apos;t show to customers. Toggle them back on when stock is replenished.
                 </p>
               </div>

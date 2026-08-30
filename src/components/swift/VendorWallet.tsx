@@ -136,7 +136,7 @@ export default function VendorWallet() {
     }
     return (
       <div className="w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center border border-white/10">
-        <Wallet className="w-4 h-4 text-white/40" />
+        <Wallet className="w-4 h-4 text-white/65" />
       </div>
     );
   };
@@ -274,7 +274,7 @@ export default function VendorWallet() {
                 <div className="w-10 h-1 bg-white/10 rounded-full" />
               </div>
               <h3 className="text-white text-lg font-bold mb-1">Request Payout</h3>
-              <p className="text-white/40 text-xs mb-4">
+              <p className="text-white/65 text-xs mb-4">
                 Available: {formatNaira(vendorBalance)}
               </p>
 
@@ -307,7 +307,7 @@ export default function VendorWallet() {
                 <Building2 className="w-4 h-4 text-[#38BDF8] shrink-0" />
                 <div className="flex-1">
                   <p className="text-white text-sm font-semibold">{bankDisplay}</p>
-                  <p className="text-white/30 text-[10px]">Primary account</p>
+                  <p className="text-white/60 text-[10px]">Primary account</p>
                 </div>
               </div>
 
@@ -350,7 +350,7 @@ export default function VendorWallet() {
           <div className="w-8 h-8 rounded-lg bg-[#F5C451]/20 flex items-center justify-center mb-2">
             <span className="material-symbols-outlined text-[#F5C451] text-sm">pending</span>
           </div>
-          <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+          <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
             Pending Settlements
           </p>
           {loading ? (
@@ -365,7 +365,7 @@ export default function VendorWallet() {
           <div className="w-8 h-8 rounded-lg bg-[#10E07A]/20 flex items-center justify-center mb-2">
             <TrendingUp className="w-4 h-4 text-[#10E07A]" />
           </div>
-          <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+          <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
             Ramadan Earnings
           </p>
           {loading ? (
@@ -400,7 +400,7 @@ export default function VendorWallet() {
               className={`px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                 activeFilter === chip.id
                   ? 'bg-[#F5C451]/20 text-[#F5C451] border border-[#F5C451]/30'
-                  : 'bg-white/5 text-white/40 border border-white/5 hover:bg-white/10'
+                  : 'bg-white/5 text-white/65 border border-white/5 hover:bg-white/10'
               }`}
             >
               {chip.label}
@@ -413,14 +413,14 @@ export default function VendorWallet() {
           {loading ? (
             <div className="flex flex-col items-center py-10">
               <Loader2 className="w-6 h-6 text-[#F5C451] animate-spin mb-2" />
-              <p className="text-white/40 text-xs">Loading transactions...</p>
+              <p className="text-white/65 text-xs">Loading transactions...</p>
             </div>
           ) : filteredTransactions.length === 0 ? (
             <div className="flex flex-col items-center py-10">
               <div className="w-14 h-14 rounded-2xl bg-white/5 flex items-center justify-center mb-3">
                 <History className="w-7 h-7 text-white/20" />
               </div>
-              <p className="text-white/30 text-sm font-semibold">No transactions yet</p>
+              <p className="text-white/60 text-sm font-semibold">No transactions yet</p>
               <p className="text-white/15 text-xs mt-1">
                 Your transaction history will appear here
               </p>
@@ -437,7 +437,7 @@ export default function VendorWallet() {
                 {getTxIcon(tx.type, tx.status)}
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-semibold truncate">{tx.reference}</p>
-                  <p className="text-white/30 text-[10px] mt-0.5">{tx.date}</p>
+                  <p className="text-white/60 text-[10px] mt-0.5">{tx.date}</p>
                 </div>
                 <div className="text-right shrink-0">
                   <p
@@ -484,7 +484,7 @@ export default function VendorWallet() {
             </div>
             <div>
               <p className="text-white text-sm font-bold">{bankDisplay}</p>
-              <p className="text-white/30 text-xs">Primary account</p>
+              <p className="text-white/60 text-xs">Primary account</p>
             </div>
           </div>
           <button

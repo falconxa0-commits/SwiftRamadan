@@ -112,7 +112,7 @@ export default function RiderPowerFinderModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Power Finder</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Charging & fuel near you</p>
+                  <p className="text-white/65 text-xs mt-0.5">Charging & fuel near you</p>
                 </div>
               </div>
               <button
@@ -130,11 +130,11 @@ export default function RiderPowerFinderModal() {
               <div className="grid grid-cols-2 gap-3 mt-4">
                 <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
                   <p className="text-[#10E07A] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">EV Available</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">EV Available</p>
                 </div>
                 <div className="bg-[#F5C451]/5 border border-[#F5C451]/20 rounded-xl p-3 text-center">
                   <p className="text-[#F5C451] text-xl font-black">{fuelStations.filter(s => s.isOpen).length}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Fuel Open</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Fuel Open</p>
                 </div>
               </div>
 
@@ -179,7 +179,7 @@ export default function RiderPowerFinderModal() {
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <MapPin className="w-3 h-3 text-white/20" />
-                            <span className="text-white/40 text-xs">{station.distance}</span>
+                            <span className="text-white/65 text-xs">{station.distance}</span>
                           </div>
 
                           {/* Availability */}
@@ -197,7 +197,7 @@ export default function RiderPowerFinderModal() {
                                   />
                                 ))}
                               </div>
-                              <span className="text-white/30 text-[10px]">
+                              <span className="text-white/60 text-[10px]">
                                 {station.availability}/{station.totalSlots} available
                               </span>
                             </div>
@@ -207,11 +207,11 @@ export default function RiderPowerFinderModal() {
                           <div className="flex items-center gap-3 mt-2">
                             <div className="flex items-center gap-1">
                               <Clock className="w-3 h-3 text-white/20" />
-                              <span className="text-white/40 text-[10px]">~{station.estimatedWait} wait</span>
+                              <span className="text-white/65 text-[10px]">~{station.estimatedWait} wait</span>
                             </div>
                             <div className="flex items-center gap-1">
                               {station.connectorTypes.map(ct => (
-                                <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/5 text-white/30 border border-white/5">
+                                <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/5 text-white/60 border border-white/5">
                                   {ct}
                                 </span>
                               ))}
@@ -275,10 +275,10 @@ export default function RiderPowerFinderModal() {
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <MapPin className="w-3 h-3 text-white/20" />
-                            <span className="text-white/40 text-xs">{station.distance}</span>
+                            <span className="text-white/65 text-xs">{station.distance}</span>
                             <span className="text-white/10 text-xs">•</span>
                             <Clock className="w-3 h-3 text-white/20" />
-                            <span className="text-white/40 text-xs">~{station.estimatedWait} wait</span>
+                            <span className="text-white/65 text-xs">~{station.estimatedWait} wait</span>
                           </div>
                           <div className="flex items-center gap-1 mt-2">
                             {station.connectorTypes.map(ct => (

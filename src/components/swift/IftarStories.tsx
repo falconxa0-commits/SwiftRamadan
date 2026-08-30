@@ -468,7 +468,7 @@ function IftarStoriesInner() {
                 </div>
                 <div>
                   <p className="text-white text-sm font-semibold">{viewingStory.authorName}</p>
-                  <p className="text-white/40 text-xs flex items-center gap-1">
+                  <p className="text-white/65 text-xs flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {timeAgo(viewingStory.createdAt)}
                   </p>
@@ -645,8 +645,8 @@ function IftarStoriesInner() {
                     />
                   ) : (
                     <>
-                      <Camera className="w-10 h-10 text-white/30" />
-                      <p className="text-white/40 text-sm">Tap to add a photo</p>
+                      <Camera className="w-10 h-10 text-white/60" />
+                      <p className="text-white/65 text-sm">Tap to add a photo</p>
                     </>
                   )}
                 </div>
@@ -679,7 +679,7 @@ function IftarStoriesInner() {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     placeholder="What's your iftar moment?"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-[#10E07A]/50"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50"
                     maxLength={120}
                   />
                 </div>
@@ -694,7 +694,7 @@ function IftarStoriesInner() {
                 </button>
 
                 {/* 24h Notice */}
-                <p className="text-white/30 text-xs text-center flex items-center justify-center gap-1">
+                <p className="text-white/60 text-xs text-center flex items-center justify-center gap-1">
                   <Clock className="w-3 h-3" /> Stories disappear after 24 hours
                 </p>
               </div>

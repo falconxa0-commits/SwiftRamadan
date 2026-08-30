@@ -499,7 +499,7 @@ export default function ProfileTab() {
       <div className="px-5 pt-6 pb-2">
         <div className="relative overflow-hidden rounded-3xl premium-card">
           <div className="absolute inset-0 aurora-hero opacity-60 pointer-events-none" />
-          <div className="relative p-5 flex items-center gap-4">
+          <div className="relative p-5 flex items-center gap-3 sm:gap-4">
             {/* Avatar wrapped in a emerald→gold→violet gradient ring */}
             <div
               className="p-[2px] rounded-full shrink-0"
@@ -591,39 +591,39 @@ export default function ProfileTab() {
 
       {/* ─── Stats Row ─── */}
       <div className="px-5 mt-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {userRole === 'vendor' ? (
             <>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <p className="text-[#10E07A] text-lg font-black">{formatNaira(vendorBalance)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Revenue</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <p className="text-[#F5C451] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Orders Today</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <p className="text-[#38BDF8] text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Avg Order</p>
               </div>
             </>
           ) : userRole === 'rider' ? (
             <>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <div className="w-8 h-8 bg-[#10E07A]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <DollarSign className="w-4 h-4 text-[#10E07A]" />
                 </div>
                 <p className="text-[#10E07A] text-lg font-black">{formatNaira(riderEarnings)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <div className="w-8 h-8 bg-[#38BDF8]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Zap className="w-4 h-4 text-[#38BDF8]" />
                 </div>
                 <p className="text-[#38BDF8] text-lg font-black">{riderCompletedToday}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Completed</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <div className="w-8 h-8 bg-[#F5C451]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Star className="w-4 h-4 text-[#F5C451]" />
                 </div>
@@ -633,15 +633,15 @@ export default function ProfileTab() {
             </>
           ) : (
             <>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <p className="text-[#F5C451] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase">Hasanat Pts</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <p className="text-[#10E07A] text-xl font-black">{swiftPoints.toLocaleString()}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase">Swift Pts</p>
               </div>
-              <div className="glass-card rounded-2xl p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
                 <div className="flex items-center justify-center gap-1">
                   <Flame className={`w-4 h-4 ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`} />
                   <p className={`text-xl font-black ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`}>{dailyStreak}</p>
@@ -655,7 +655,7 @@ export default function ProfileTab() {
 
       {/* ─── Daily Streak flame widget (banner) ─── */}
       <div className="px-5 mt-3">
-        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-950/40 via-[#0F1118] to-[#0F1118] p-4 flex items-center gap-3">
+        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-950/40 via-[#0F1118] to-[#0F1118] p-3 sm:p-4 flex items-center gap-3">
           <div className="absolute -top-6 -right-6 w-24 h-24 bg-orange-500/15 blur-[40px] pointer-events-none" />
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${dailyStreak >= 3 ? 'bg-orange-500/20' : 'bg-orange-500/10'}`}>
             <Flame className={`w-6 h-6 ${dailyStreak >= 3 ? 'text-orange-500 animate-pulse' : 'text-orange-400'}`} />
@@ -708,7 +708,7 @@ export default function ProfileTab() {
           {cookingLoading ? (
             /* Loading skeleton */
             <div className="relative space-y-3 animate-pulse">
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="h-16 bg-white/5 rounded-xl" />
                 <div className="h-16 bg-white/5 rounded-xl" />
                 <div className="h-16 bg-white/5 rounded-xl" />
@@ -723,7 +723,7 @@ export default function ProfileTab() {
           ) : cookingStats && (cookingStats.totalSessions ?? 0) > 0 ? (
             <div className="relative space-y-4">
               {/* 3-stat row */}
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="glass-card rounded-xl p-3 text-center">
                   <p className="text-[#10E07A] text-lg font-black">{cookingStats.totalSessions ?? 0}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Sessions Cooked</p>
@@ -804,7 +804,7 @@ export default function ProfileTab() {
               </div>
               <span className="text-emerald-400 text-xs font-bold uppercase tracking-widest">Eco Impact</span>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               <div className="text-center">
                 <p className="text-white text-lg font-black">{ecoImpactData.co2Saved}</p>
                 <p className="text-white/65 text-[10px]">CO₂ Saved</p>
@@ -843,7 +843,7 @@ export default function ProfileTab() {
               </div>
             </div>
 
-            <div className="relative grid grid-cols-2 gap-2.5">
+            <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {REWARDS.map(reward => {
                 const affordable = swiftPoints >= reward.cost;
                 const isRedeeming = redeeming === reward.id;
@@ -901,7 +901,7 @@ export default function ProfileTab() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.03 }}
                       onClick={() => handleMenuClick(item.action)}
-                      className={`flex items-center gap-4 p-4 rounded-2xl border transition-colors w-full text-left hover:bg-white/5 active:scale-[0.99] ${
+                      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-colors w-full text-left hover:bg-white/5 active:scale-[0.99] ${
                         isSwitchRole
                           ? 'aurora-card border-white/10 hover:border-white/20'
                           : 'glass-card border-white/[0.07] hover:border-white/15'
@@ -928,7 +928,7 @@ export default function ProfileTab() {
       <div className="px-5 mt-4">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-4 p-4 bg-[#FB7185]/5 rounded-2xl border border-[#FB7185]/10 hover:border-[#FB7185]/20 transition-colors w-full text-left active:scale-[0.99]"
+          className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#FB7185]/5 rounded-2xl border border-[#FB7185]/10 hover:border-[#FB7185]/20 transition-colors w-full text-left active:scale-[0.99]"
         >
           <div className="w-10 h-10 bg-[#FB7185]/10 rounded-xl flex items-center justify-center shrink-0 icon-tile">
             <LogOut className="w-5 h-5 text-[#FB7185] relative z-10" />
@@ -947,12 +947,12 @@ export default function ProfileTab() {
             <Heart className="w-5 h-5 text-[#FB7185]" />
             Give Back This Ramadan
           </h3>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {charityItems.slice(0, 4).map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleCharityClick(item)}
-                className="glass-card rounded-2xl p-4 cursor-pointer hover:border-white/15 transition-colors text-left active:scale-[0.98]"
+                className="glass-card rounded-2xl p-3 sm:p-4 cursor-pointer hover:border-white/15 transition-colors text-left active:scale-[0.98]"
               >
                 <span className="material-symbols-outlined text-[#F5C451] text-2xl mb-2">{item.icon}</span>
                 <p className="text-white font-bold text-sm">{item.name}</p>
@@ -984,7 +984,7 @@ export default function ProfileTab() {
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
               className="fixed bottom-0 left-0 right-0 max-h-[70vh] bg-[#0F1118] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
             >
-              <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
                 <h2 className="text-white font-bold tracking-tight">{modalContent.title}</h2>
                 <button
                   onClick={() => setShowModal(false)}
@@ -993,7 +993,7 @@ export default function ProfileTab() {
                   <X className="w-4 h-4 text-white/60" />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar">
                 {modalContent.content}
               </div>
             </motion.div>
@@ -1045,7 +1045,7 @@ export default function ProfileTab() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08 }}
                       onClick={() => handleSwitchRole(card.role)}
-                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${
+                      className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all text-left ${
                         isActive
                           ? 'bg-white/5 border-white/20'
                           : 'glass-card border-white/[0.07] hover:border-white/15'

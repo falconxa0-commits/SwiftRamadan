@@ -135,7 +135,7 @@ export default function RamadanCountdown() {
               <p className="text-white text-sm font-bold leading-none">
                 {countdown.label}
               </p>
-              <p className="text-white/40 text-[10px] mt-0.5">
+              <p className="text-white/65 text-[10px] mt-0.5">
                 {isIftar ? 'Time to break your fast' : 'Pre-dawn meal window'}
               </p>
             </div>
@@ -157,7 +157,7 @@ export default function RamadanCountdown() {
             >
               {hh}
             </span>
-            <span className="text-white/30 text-[9px] font-bold uppercase mt-1">hrs</span>
+            <span className="text-white/60 text-[9px] font-bold uppercase mt-1">hrs</span>
           </div>
           <span className="text-2xl font-black text-white/20 mb-4">:</span>
           <div className="flex flex-col items-center">
@@ -167,7 +167,7 @@ export default function RamadanCountdown() {
             >
               {mm}
             </span>
-            <span className="text-white/30 text-[9px] font-bold uppercase mt-1">min</span>
+            <span className="text-white/60 text-[9px] font-bold uppercase mt-1">min</span>
           </div>
           <span className="text-2xl font-black text-white/20 mb-4">:</span>
           <div className="flex flex-col items-center">
@@ -177,7 +177,7 @@ export default function RamadanCountdown() {
             >
               {ss}
             </span>
-            <span className="text-white/30 text-[9px] font-bold uppercase mt-1">sec</span>
+            <span className="text-white/60 text-[9px] font-bold uppercase mt-1">sec</span>
           </div>
         </div>
 

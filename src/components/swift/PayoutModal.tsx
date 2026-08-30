@@ -211,7 +211,7 @@ export default function PayoutModal() {
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">Payout</h2>
-                    <p className="text-white/40 text-xs">Withdraw to your bank account</p>
+                    <p className="text-white/65 text-xs">Withdraw to your bank account</p>
                   </div>
                 </div>
                 <button
@@ -276,7 +276,7 @@ export default function PayoutModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Amount (₦)</label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-lg font-bold">₦</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 text-lg font-bold">₦</span>
                         <input
                           type="number"
                           value={amount}
@@ -294,7 +294,7 @@ export default function PayoutModal() {
                     <div>
                       <label className="text-white/50 text-xs font-medium mb-1.5 block">Bank Name</label>
                       <div className="relative">
-                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
                         <input
                           type="text"
                           value={bankName}
@@ -367,14 +367,14 @@ export default function PayoutModal() {
                     {loading ? (
                       <div className="flex flex-col items-center justify-center py-12 gap-3">
                         <Loader2 className="w-8 h-8 text-green-400 animate-spin" />
-                        <p className="text-white/40 text-sm">Loading payout history...</p>
+                        <p className="text-white/65 text-sm">Loading payout history...</p>
                       </div>
                     ) : payouts.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-12 gap-3">
                         <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center">
                           <Banknote className="w-8 h-8 text-white/20" />
                         </div>
-                        <p className="text-white/40 text-sm">No payout history yet</p>
+                        <p className="text-white/65 text-sm">No payout history yet</p>
                         <p className="text-white/25 text-xs">Your payout requests will appear here</p>
                       </div>
                     ) : (
@@ -390,7 +390,7 @@ export default function PayoutModal() {
                             >
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-white/40 text-[10px] font-mono truncate">{payout.reference}</p>
+                                  <p className="text-white/65 text-[10px] font-mono truncate">{payout.reference}</p>
                                   <p className="text-white font-bold text-lg mt-0.5">{formatNaira(koboToNaira(payout.amount))}</p>
                                 </div>
                                 <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-medium ${config.bg} ${config.text}`}>
@@ -400,10 +400,10 @@ export default function PayoutModal() {
                               </div>
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <Building2 className="w-3.5 h-3.5 text-white/30" />
+                                  <Building2 className="w-3.5 h-3.5 text-white/60" />
                                   <span className="text-white/50 text-xs">{payout.bankName} • {maskAccount(payout.accountNumber)}</span>
                                 </div>
-                                <span className="text-white/30 text-xs">{formatDate(payout.createdAt)}</span>
+                                <span className="text-white/60 text-xs">{formatDate(payout.createdAt)}</span>
                               </div>
                             </motion.div>
                           );

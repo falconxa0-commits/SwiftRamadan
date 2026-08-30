@@ -157,7 +157,7 @@ export default function RiderProfileTab() {
           <div className="flex items-center gap-2 mt-1">
             {/* Status indicator */}
             <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#10E07A]' : 'bg-white/30'}`} />
-            <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/40'}`}>
+            <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/65'}`}>
               {riderOnline ? 'Online' : 'Offline'}
             </span>
             <span className="text-white/20 text-xs">•</span>
@@ -179,21 +179,21 @@ export default function RiderProfileTab() {
             <DollarSign className="w-5 h-5 text-[#10E07A]" />
           </div>
           <p className="text-white text-sm font-extrabold">{formatNaira(riderEarnings)}</p>
-          <p className="text-white/40 text-[10px] mt-0.5">Today&apos;s Earnings</p>
+          <p className="text-white/65 text-[10px] mt-0.5">Today&apos;s Earnings</p>
         </div>
         <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
           <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <CheckCircle className="w-5 h-5 text-[#38BDF8]" />
           </div>
           <p className="text-white text-xl font-extrabold">{riderCompletedToday}</p>
-          <p className="text-white/40 text-[10px] mt-0.5">Completed Today</p>
+          <p className="text-white/65 text-[10px] mt-0.5">Completed Today</p>
         </div>
         <div className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-center">
           <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <Star className="w-5 h-5 text-[#F5C451]" />
           </div>
           <p className="text-white text-xl font-extrabold">{riderRating}</p>
-          <p className="text-white/40 text-[10px] mt-0.5">Rating</p>
+          <p className="text-white/65 text-[10px] mt-0.5">Rating</p>
         </div>
       </motion.div>
 
@@ -223,15 +223,15 @@ export default function RiderProfileTab() {
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <p className="text-white/30 text-[10px] font-medium uppercase tracking-wider">Type</p>
+              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Type</p>
               <p className="text-white text-sm font-bold mt-0.5">{riderVehicleType || '—'}</p>
             </div>
             <div>
-              <p className="text-white/30 text-[10px] font-medium uppercase tracking-wider">Plate No.</p>
+              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Plate No.</p>
               <p className="text-white text-sm font-bold mt-0.5 font-mono">{riderPlateNumber || '—'}</p>
             </div>
             <div>
-              <p className="text-white/30 text-[10px] font-medium uppercase tracking-wider">Color</p>
+              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Color</p>
               <p className="text-white text-sm font-bold mt-0.5">{riderVehicleColor || '—'}</p>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function RiderProfileTab() {
             />
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-white/40 text-[10px]">{deliveriesToUnlock} more deliveries to unlock</p>
+            <p className="text-white/65 text-[10px]">{deliveriesToUnlock} more deliveries to unlock</p>
             <p className="text-[#F5C451] text-xs font-bold">₦{bonusTarget.toLocaleString()}</p>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function RiderProfileTab() {
             </div>
             <div>
               <p className="text-white text-sm font-bold">On-time</p>
-              <p className="text-white/40 text-[10px]">Rate</p>
+              <p className="text-white/65 text-[10px]">Rate</p>
             </div>
           </div>
 
@@ -308,7 +308,7 @@ export default function RiderProfileTab() {
             </div>
             <div>
               <p className="text-white text-xl font-extrabold">{gratefulCustomers}</p>
-              <p className="text-white/40 text-[10px]">Grateful customers</p>
+              <p className="text-white/65 text-[10px]">Grateful customers</p>
             </div>
           </div>
         </div>
@@ -331,7 +331,7 @@ export default function RiderProfileTab() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-bold text-sm">{item.label}</p>
-                  <p className="text-white/40 text-xs truncate">{item.subtitle}</p>
+                  <p className="text-white/65 text-xs truncate">{item.subtitle}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-white/20 shrink-0" />
               </motion.button>
@@ -349,7 +349,7 @@ export default function RiderProfileTab() {
             </div>
             <div className="flex-1">
               <p className="text-red-500 font-bold text-sm">Logout</p>
-              <p className="text-white/40 text-xs">Sign out of your account</p>
+              <p className="text-white/65 text-xs">Sign out of your account</p>
             </div>
             <ChevronRight className="w-4 h-4 text-red-500/30 shrink-0" />
           </motion.button>

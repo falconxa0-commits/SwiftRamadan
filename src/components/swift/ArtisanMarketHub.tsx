@@ -78,7 +78,7 @@ export default function ArtisanMarketHub() {
                   <span className="text-lg">🏪</span>
                   <div>
                     <h2 className="text-white text-lg font-bold">Artisan Market</h2>
-                    <p className="text-white/30 text-[10px]">Local crafts & traditional goods</p>
+                    <p className="text-white/60 text-[10px]">Local crafts & traditional goods</p>
                   </div>
                 </div>
                 <button
@@ -152,12 +152,12 @@ export default function ArtisanMarketHub() {
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <h4 className="text-white font-bold text-sm">{artisan.name}</h4>
-                            <p className="text-white/40 text-xs mt-0.5">{artisan.specialty}</p>
+                            <p className="text-white/65 text-xs mt-0.5">{artisan.specialty}</p>
                           </div>
                           <div className="flex items-center gap-1 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-lg px-2 py-1">
                             <Star className="w-3 h-3 text-[#F5C451]" fill="#F5C451" />
                             <span className="text-[#F5C451] text-xs font-bold">{artisan.rating}</span>
-                            <span className="text-white/30 text-[10px]">({artisan.reviews})</span>
+                            <span className="text-white/60 text-[10px]">({artisan.reviews})</span>
                           </div>
                         </div>
 
@@ -187,7 +187,7 @@ export default function ArtisanMarketHub() {
                   </div>
                   <div className="flex-1">
                     <p className="text-[#F5C451] text-sm font-bold">Ramadan Artisan Fair</p>
-                    <p className="text-white/40 text-xs mt-0.5">Special collections for the holy month</p>
+                    <p className="text-white/65 text-xs mt-0.5">Special collections for the holy month</p>
                   </div>
                   <button
                     onClick={() => toast({ title: 'Ramadan Fair 🎪', description: 'Exploring Ramadan artisan collections' })}

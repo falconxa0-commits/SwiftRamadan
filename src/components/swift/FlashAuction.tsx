@@ -201,7 +201,7 @@ export default function FlashAuction() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Flash Auction</h2>
-                  <p className="text-white/40 text-xs">Prices drop every minute — Grab fast!</p>
+                  <p className="text-white/65 text-xs">Prices drop every minute — Grab fast!</p>
                 </div>
               </div>
               <button
@@ -309,11 +309,11 @@ export default function FlashAuction() {
                     {/* Content */}
                     <div className="p-4">
                       <h4 className="text-white font-bold text-base mb-0.5">{auction.name}</h4>
-                      <p className="text-white/40 text-xs mb-3">by {auction.vendor}</p>
+                      <p className="text-white/65 text-xs mb-3">by {auction.vendor}</p>
 
                       {/* Price Display */}
                       <div className="flex items-end gap-3 mb-3">
-                        <span className="text-white/30 text-sm line-through">{formatNaira(auction.startPrice)}</span>
+                        <span className="text-white/60 text-sm line-through">{formatNaira(auction.startPrice)}</span>
                         <motion.span
                           key={auction.currentPrice}
                           initial={{ scale: 1.2, color: '#10E07A' }}
@@ -326,7 +326,7 @@ export default function FlashAuction() {
 
                       <div className="flex items-center gap-2 mb-3">
                         <TrendingDown className="w-3.5 h-3.5 text-[#10E07A]/70" />
-                        <span className="text-white/40 text-xs">Drops {formatNaira(auction.dropRate)}/min</span>
+                        <span className="text-white/65 text-xs">Drops {formatNaira(auction.dropRate)}/min</span>
                       </div>
 
                       {/* Countdown + Stock */}
@@ -335,13 +335,13 @@ export default function FlashAuction() {
                         <div className="flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2 flex-1">
                           <Clock className="w-3.5 h-3.5 text-[#F5C451]" />
                           <span className="text-[#F5C451] font-mono font-bold text-sm">{formatTime(auction.minutesLeft)}</span>
-                          <span className="text-white/30 text-xs">left</span>
+                          <span className="text-white/60 text-xs">left</span>
                         </div>
                         {/* Stock */}
                         <div className="flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2 flex-1">
                           <Package className="w-3.5 h-3.5 text-[#A78BFA]" />
                           <span className="text-[#A78BFA] font-bold text-sm">{auction.remainingStock}</span>
-                          <span className="text-white/30 text-xs">left</span>
+                          <span className="text-white/60 text-xs">left</span>
                         </div>
                       </div>
 
@@ -381,7 +381,7 @@ export default function FlashAuction() {
                       ) : (
                         <button
                           disabled
-                          className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-white/5 border border-white/8 text-white/30 cursor-not-allowed"
+                          className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-white/5 border border-white/8 text-white/60 cursor-not-allowed"
                         >
                           <Trophy className="w-4 h-4" />
                           {auction.grabbed ? 'You Grabbed This!' : isSoldOut ? 'Sold Out' : 'Auction Ended'}

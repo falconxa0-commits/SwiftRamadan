@@ -199,7 +199,7 @@ const ABOUT_CONTENT = (
       </div>
     </section>
 
-    <p className="text-center text-white/30 text-[10px] pt-3">
+    <p className="text-center text-white/60 text-[10px] pt-3">
       Made with 💚 in Lagos • © 2026 SwiftRamadan
     </p>
   </>
@@ -249,7 +249,7 @@ export default function LegalPagesModal() {
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Legal</h2>
-                    <p className="text-white/40 text-[11px]">Terms, privacy & about</p>
+                    <p className="text-white/65 text-[11px]">Terms, privacy & about</p>
                   </div>
                 </div>
                 <button
@@ -291,7 +291,7 @@ export default function LegalPagesModal() {
                       <h3 className="text-white font-extrabold text-base tracking-tight">
                         {activeTab === 'terms' ? 'Terms of Service' : 'Privacy Policy'}
                       </h3>
-                      <p className="text-white/40 text-[11px] mt-0.5">
+                      <p className="text-white/65 text-[11px] mt-0.5">
                         Last updated: February 2026 • Effective immediately
                       </p>
                     </div>
@@ -318,7 +318,7 @@ export default function LegalPagesModal() {
                       <h3 className="text-white font-extrabold text-base tracking-tight">
                         About SwiftRamadan
                       </h3>
-                      <p className="text-white/40 text-[11px] mt-0.5">
+                      <p className="text-white/65 text-[11px] mt-0.5">
         Ramadan 2026 • Lagos, Nigeria
                       </p>
                     </div>

@@ -96,7 +96,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: typeof Star; labe
       </div>
       <div>
         <p className="text-lg font-bold text-white">{value}</p>
-        <p className="text-xs text-white/40">{label}</p>
+        <p className="text-xs text-white/65">{label}</p>
       </div>
     </motion.div>
   );
@@ -266,7 +266,7 @@ export default function PostRamadanMode() {
                   <Sparkles className="w-5 h-5 text-[#10E07A]" />
                   <div>
                     <p className="text-sm font-semibold text-white">Post-Ramadan Mode</p>
-                    <p className="text-xs text-white/40">Enable Eid celebration theme</p>
+                    <p className="text-xs text-white/65">Enable Eid celebration theme</p>
                   </div>
                 </div>
                 <button
@@ -317,17 +317,17 @@ export default function PostRamadanMode() {
                       </div>
 
                       <div className="mt-4 p-3 rounded-xl bg-white/3 border border-white/5">
-                        <p className="text-xs text-white/40 mb-1">Total Spent</p>
+                        <p className="text-xs text-white/65 mb-1">Total Spent</p>
                         <p className="text-xl font-bold text-[#F5C451]">{formatNaira(data.ramadanReview.totalSpent)}</p>
                       </div>
 
                       <div className="mt-3 flex items-center justify-between">
                         <div>
-                          <p className="text-xs text-white/30">Favorite Meal</p>
+                          <p className="text-xs text-white/60">Favorite Meal</p>
                           <p className="text-sm text-white/70">{data.ramadanReview.favoriteMeal}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-white/30">Hasanat Earned</p>
+                          <p className="text-xs text-white/60">Hasanat Earned</p>
                           <p className="text-sm font-bold text-[#10E07A]">{data.ramadanReview.totalHasanatEarned.toLocaleString()}</p>
                         </div>
                       </div>
@@ -355,10 +355,10 @@ export default function PostRamadanMode() {
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-bold text-white">{bundle.name}</p>
-                              <p className="text-xs text-white/40 mt-0.5">{bundle.description}</p>
+                              <p className="text-xs text-white/65 mt-0.5">{bundle.description}</p>
                               <div className="flex items-center gap-2 mt-2">
                                 <span className="text-sm font-bold text-[#10E07A]">{formatNaira(bundle.price)}</span>
-                                <span className="text-xs text-white/30 line-through">{formatNaira(bundle.originalPrice)}</span>
+                                <span className="text-xs text-white/60 line-through">{formatNaira(bundle.originalPrice)}</span>
                                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#10E07A]/15 text-[#10E07A]">
                                   {Math.round((1 - bundle.price / bundle.originalPrice) * 100)}% OFF
                                 </span>
@@ -370,7 +370,7 @@ export default function PostRamadanMode() {
                                   </span>
                                 ))}
                                 {bundle.items.length > 3 && (
-                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/30">
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 text-white/60">
                                     +{bundle.items.length - 3} more
                                   </span>
                                 )}

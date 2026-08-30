@@ -527,7 +527,7 @@ export default function CommunityForum() {
                       <span className="text-base">🌙</span>
                       <span className="beta-badge text-[9px]">BETA</span>
                     </h2>
-                    <p className="text-white/40 text-xs">
+                    <p className="text-white/65 text-xs">
                       {posts.length} {posts.length === 1 ? 'post' : 'posts'} · break fast together
                     </p>
                   </div>
@@ -567,7 +567,7 @@ export default function CommunityForum() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     sortMode === 'latest'
                       ? 'bg-[#10E07A]/20 text-[#10E07A]'
-                      : 'text-white/40 hover:text-white/70'
+                      : 'text-white/65 hover:text-white/70'
                   }`}
                 >
                   <Clock className="w-3.5 h-3.5" />
@@ -578,7 +578,7 @@ export default function CommunityForum() {
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     sortMode === 'trending'
                       ? 'bg-[#F5C451]/20 text-[#F5C451]'
-                      : 'text-white/40 hover:text-white/70'
+                      : 'text-white/65 hover:text-white/70'
                   }`}
                 >
                   <Flame className="w-3.5 h-3.5" />
@@ -655,7 +655,7 @@ export default function CommunityForum() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-white/40 text-sm mt-1 max-w-[240px]"
+                    className="text-white/65 text-sm mt-1 max-w-[240px]"
                   >
                     {activeFilter === 'all'
                       ? 'Be the first to share something with the community.'
@@ -710,7 +710,7 @@ export default function CommunityForum() {
                             <p className="text-white text-sm font-bold truncate">
                               {post.authorName}
                             </p>
-                            <p className="text-white/30 text-[11px]">
+                            <p className="text-white/60 text-[11px]">
                               {formatRelativeTime(post.createdAt)}
                             </p>
                           </div>
@@ -748,7 +748,7 @@ export default function CommunityForum() {
                             className={`flex items-center gap-1.5 transition-all active:scale-90 disabled:opacity-50 ${
                               liked
                                 ? 'text-[#FF6B6B]'
-                                : 'text-white/40 hover:text-[#FF6B6B]'
+                                : 'text-white/65 hover:text-[#FF6B6B]'
                             }`}
                           >
                             <motion.span
@@ -771,7 +771,7 @@ export default function CommunityForum() {
                             className={`flex items-center gap-1.5 transition-all active:scale-90 ${
                               expanded
                                 ? 'text-[#10E07A]'
-                                : 'text-white/40 hover:text-[#10E07A]'
+                                : 'text-white/65 hover:text-[#10E07A]'
                             }`}
                           >
                             <MessageCircle className="w-4 h-4" />
@@ -781,7 +781,7 @@ export default function CommunityForum() {
                           <button
                             onClick={() => handleShare(post)}
                             aria-label="Share"
-                            className="flex items-center gap-1.5 text-white/40 hover:text-[#F5C451] transition-all active:scale-90"
+                            className="flex items-center gap-1.5 text-white/65 hover:text-[#F5C451] transition-all active:scale-90"
                           >
                             <Share2 className="w-4 h-4" />
                             <span className="text-xs font-semibold">Share</span>
@@ -800,7 +800,7 @@ export default function CommunityForum() {
                             >
                               <div className="mt-3 pt-3 border-t border-white/5 space-y-3">
                                 {commentCount === 0 && !draft && (
-                                  <p className="text-white/30 text-xs text-center py-2">
+                                  <p className="text-white/60 text-xs text-center py-2">
                                     No comments yet · be the first to reply
                                   </p>
                                 )}
@@ -818,7 +818,7 @@ export default function CommunityForum() {
                                         <p className="text-white text-xs font-bold truncate">
                                           {c.authorName}
                                         </p>
-                                        <span className="text-white/30 text-[10px] shrink-0">
+                                        <span className="text-white/60 text-[10px] shrink-0">
                                           {formatRelativeTime(c.createdAt)}
                                         </span>
                                       </div>
@@ -848,7 +848,7 @@ export default function CommunityForum() {
                                       }
                                     }}
                                     placeholder="Write a comment…"
-                                    className="flex-1 bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-full px-3.5 py-2 text-white text-xs placeholder:text-white/30 outline-none transition-colors"
+                                    className="flex-1 bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-full px-3.5 py-2 text-white text-xs placeholder:text-white/60 outline-none transition-colors"
                                   />
                                   <button
                                     onClick={() => handleSubmitComment(post)}
@@ -932,7 +932,7 @@ export default function CommunityForum() {
                         <p className="text-white text-xs font-bold truncate">
                           {authorName}
                         </p>
-                        <p className="text-white/30 text-[10px]">Posting as you</p>
+                        <p className="text-white/60 text-[10px]">Posting as you</p>
                       </div>
                     </div>
 
@@ -945,7 +945,7 @@ export default function CommunityForum() {
                           className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-bold border transition-all ${
                             composerCategory === cat
                               ? CATEGORY_BADGES[cat] || CATEGORY_BADGES.General
-                              : 'bg-white/5 border-white/5 text-white/40 hover:text-white/70'
+                              : 'bg-white/5 border-white/5 text-white/65 hover:text-white/70'
                           }`}
                         >
                           {cat}
@@ -960,10 +960,10 @@ export default function CommunityForum() {
                       placeholder="Share your Ramadan cooking story, a recipe, or ask the community…"
                       rows={4}
                       maxLength={1000}
-                      className="w-full bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/30 outline-none resize-none transition-colors custom-scrollbar"
+                      className="w-full bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
                     />
                     <div className="flex justify-end mb-3">
-                      <span className="text-[10px] text-white/30">
+                      <span className="text-[10px] text-white/60">
                         {composerContent.length}/1000
                       </span>
                     </div>

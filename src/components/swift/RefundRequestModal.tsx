@@ -77,7 +77,7 @@ function StatusBadge({ status }: { status: string }) {
     Pending: 'bg-[#F5C451]/20 text-[#F5C451] border-[#F5C451]/20',
     Refunded: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
   };
-  const classes = colorMap[status] || 'bg-white/5 text-white/40 border-white/5';
+  const classes = colorMap[status] || 'bg-white/5 text-white/65 border-white/5';
   return (
     <span className={`px-2 py-0.5 rounded-md text-[9px] font-bold border ${classes}`}>
       {status}
@@ -222,7 +222,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
             <div>
               <h2 className="text-white text-lg font-bold">Request Refund</h2>
               {state === 'flow' && (
-                <p className="text-white/30 text-xs">Step {step} of 3 — {stepLabels[step - 1]}</p>
+                <p className="text-white/60 text-xs">Step {step} of 3 — {stepLabels[step - 1]}</p>
               )}
             </div>
           </div>
@@ -303,22 +303,22 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   className="w-full max-w-xs bg-[#0F1118] border border-white/5 rounded-2xl p-5 space-y-3"
                 >
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Amount</span>
+                    <span className="text-white/65 text-xs">Amount</span>
                     <span className="text-[#10E07A] font-bold">{formatNaira(successAmount)}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Order</span>
+                    <span className="text-white/65 text-xs">Order</span>
                     <span className="text-white/60 text-xs font-mono">{selectedOrder?.id}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Reference</span>
+                    <span className="text-white/65 text-xs">Reference</span>
                     <span className="text-white/60 text-xs font-mono">{successRef}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Credited To</span>
+                    <span className="text-white/65 text-xs">Credited To</span>
                     <span className="text-white/60 text-xs">Swift Wallet</span>
                   </div>
                 </motion.div>
@@ -345,7 +345,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 {/* Refundable Orders */}
                 <motion.div variants={staggerItem}>
                   <h3 className="text-white text-sm font-bold mb-1">Recent Orders</h3>
-                  <p className="text-white/30 text-xs mb-4">Select an order to request a refund</p>
+                  <p className="text-white/60 text-xs mb-4">Select an order to request a refund</p>
                 </motion.div>
 
                 {orders.length === 0 ? (
@@ -379,14 +379,14 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                           <p className="text-white text-sm font-semibold truncate">{order.item}</p>
                           <div className="flex items-center gap-2 mt-0.5">
                             <Clock className="w-3 h-3 text-white/20" />
-                            <span className="text-white/30 text-[10px]">{order.eta}</span>
+                            <span className="text-white/60 text-[10px]">{order.eta}</span>
                           </div>
                         </div>
                         <div className="text-right shrink-0 flex flex-col items-end gap-1">
                           <p className="text-white font-bold text-sm">{formatNaira(order.total)}</p>
                           <StatusBadge status={order.status} />
                         </div>
-                        <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/40 transition-colors shrink-0" />
+                        <ChevronRight className="w-4 h-4 text-white/20 group-hover:text-white/65 transition-colors shrink-0" />
                       </motion.button>
                     ))}
 
@@ -407,14 +407,14 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                               <Package className="w-5 h-5 text-white/20" />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-white/40 text-sm font-semibold truncate">{order.item}</p>
+                              <p className="text-white/65 text-sm font-semibold truncate">{order.item}</p>
                               <div className="flex items-center gap-2 mt-0.5">
                                 <Clock className="w-3 h-3 text-white/10" />
                                 <span className="text-white/20 text-[10px]">{order.eta}</span>
                               </div>
                             </div>
                             <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                              <p className="text-white/30 font-bold text-sm">{formatNaira(order.total)}</p>
+                              <p className="text-white/60 font-bold text-sm">{formatNaira(order.total)}</p>
                               <StatusBadge status={order.status} />
                             </div>
                           </div>
@@ -441,7 +441,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-semibold truncate">{selectedOrder?.item}</p>
-                      <p className="text-white/30 text-[10px]">Order #{selectedOrder?.id}</p>
+                      <p className="text-white/60 text-[10px]">Order #{selectedOrder?.id}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-white font-bold text-sm">{formatNaira(selectedOrder?.total ?? 0)}</p>
@@ -457,7 +457,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                     Refund Amount
                   </h3>
                   <div className="relative mb-3">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-lg font-bold">₦</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 text-lg font-bold">₦</span>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -556,32 +556,32 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
 
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40 text-xs">Order</span>
+                      <span className="text-white/65 text-xs">Order</span>
                       <span className="text-white text-xs font-semibold truncate max-w-[180px]">{selectedOrder?.item}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40 text-xs">Order ID</span>
+                      <span className="text-white/65 text-xs">Order ID</span>
                       <span className="text-white/60 text-xs font-mono">{selectedOrder?.id}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40 text-xs">Order Total</span>
+                      <span className="text-white/65 text-xs">Order Total</span>
                       <span className="text-white/60 text-xs">{formatNaira(selectedOrder?.total ?? 0)}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40 text-xs">Refund Amount</span>
+                      <span className="text-white/65 text-xs">Refund Amount</span>
                       <span className="text-[#10E07A] font-bold">{formatNaira(parseInt(refundAmount) || 0)}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-start">
-                      <span className="text-white/40 text-xs shrink-0">Reason</span>
+                      <span className="text-white/65 text-xs shrink-0">Reason</span>
                       <span className="text-white/60 text-xs text-right max-w-[180px]">{reason}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-center">
-                      <span className="text-white/40 text-xs">Credited To</span>
+                      <span className="text-white/65 text-xs">Credited To</span>
                       <span className="text-white/60 text-xs">Swift Wallet</span>
                     </div>
                   </div>
@@ -592,7 +592,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   <ShieldCheck className="w-5 h-5 text-[#10E07A] shrink-0 mt-0.5" />
                   <div>
                     <p className="text-[#10E07A]/80 text-xs font-bold">Refund Protection</p>
-                    <p className="text-white/30 text-[10px] mt-0.5">
+                    <p className="text-white/60 text-[10px] mt-0.5">
                       Your refund will be credited to your Swift Wallet instantly. If you prefer a card refund, contact support.
                     </p>
                   </div>

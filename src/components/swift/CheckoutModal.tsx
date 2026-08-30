@@ -391,7 +391,7 @@ export default function CheckoutModal() {
       >
         {/* Header with Progress Stepper */}
         <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-          <div className="flex items-center justify-between p-4">
+          <div className="flex items-center justify-between p-3 sm:p-4">
             <h2 className="text-white font-bold text-lg">Checkout</h2>
             <button
               onClick={handleClose}
@@ -453,13 +453,13 @@ export default function CheckoutModal() {
                 <h3 className="text-white font-bold text-base flex items-center gap-2">
                   <ShoppingBag className="w-5 h-5 text-[#10E07A]" />
                   Your Cart
-                  <span className="text-white/40 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
+                  <span className="text-white/65 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
                 </h3>
 
                 {cartItems.length === 0 ? (
                   <div className="flex flex-col items-center py-12 text-center">
                     <ShoppingBag className="w-16 h-16 text-white/10 mb-4" />
-                    <p className="text-white/40 text-sm">Your cart is empty</p>
+                    <p className="text-white/65 text-sm">Your cart is empty</p>
                     <button
                       onClick={handleClose}
                       className="mt-4 px-6 py-2.5 bg-[#10E07A] text-[#05070A] font-bold text-sm rounded-xl"
@@ -476,7 +476,7 @@ export default function CheckoutModal() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -100 }}
-                        className="flex items-center gap-3 p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
+                        className="flex items-center gap-3 p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
                       >
                         {/* Item image */}
                         <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-white/5 relative">
@@ -533,19 +533,19 @@ export default function CheckoutModal() {
 
                 {/* Cart Summary */}
                 {cartItems.length > 0 && (
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 space-y-3 mt-4">
+                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 mt-4">
                     <div className="flex justify-between text-sm">
-                      <span className="text-white/40">Subtotal</span>
+                      <span className="text-white/65">Subtotal</span>
                       <span className="text-white font-bold">{formatNaira(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-white/40">Delivery Fee</span>
+                      <span className="text-white/65">Delivery Fee</span>
                       <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span className="text-white/40">Service Fee</span>
+                      <span className="text-white/65">Service Fee</span>
                       <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
                     </div>
                     {deliveryFee > 0 && (
@@ -579,16 +579,16 @@ export default function CheckoutModal() {
 
                   {/* Saved Addresses (from /api/addresses) */}
                   <div className="space-y-2 mb-3">
-                    <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
+                    <p className="text-white/65 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
                     {fetchingAddresses ? (
-                      <div className="flex items-center gap-2 p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                      <div className="flex items-center gap-2 p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                         <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
-                        <span className="text-white/40 text-sm">Loading saved addresses…</span>
+                        <span className="text-white/65 text-sm">Loading saved addresses…</span>
                       </div>
                     ) : savedAddresses.length === 0 ? (
                       <div className="p-4 bg-[#1A1D26] rounded-2xl border border-white/5 text-center">
-                        <p className="text-white/40 text-sm">No saved addresses yet</p>
-                        <p className="text-white/30 text-xs mt-1">Add one below or pick a default location</p>
+                        <p className="text-white/65 text-sm">No saved addresses yet</p>
+                        <p className="text-white/60 text-xs mt-1">Add one below or pick a default location</p>
                       </div>
                     ) : (
                       savedAddresses.map(addr => {
@@ -598,7 +598,7 @@ export default function CheckoutModal() {
                           <button
                             key={addr.id}
                             onClick={() => handleSelectAddress(addr)}
-                            className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+                            className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                               isSelected
                                 ? 'bg-[#10E07A]/5 border-[#10E07A]/40'
                                 : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
@@ -607,7 +607,7 @@ export default function CheckoutModal() {
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                               isSelected ? 'bg-[#10E07A]/20' : 'bg-white/5'
                             }`}>
-                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/60'}`} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
@@ -616,7 +616,7 @@ export default function CheckoutModal() {
                                   <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#F5C451]/20 uppercase">Default</span>
                                 )}
                               </div>
-                              <p className="text-white/40 text-xs truncate">{addr.address}{addr.area ? `, ${addr.area}` : ''}</p>
+                              <p className="text-white/65 text-xs truncate">{addr.address}{addr.area ? `, ${addr.area}` : ''}</p>
                             </div>
                             {isSelected && <Check className="w-5 h-5 text-[#10E07A] shrink-0" />}
                           </button>
@@ -630,9 +630,9 @@ export default function CheckoutModal() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="bg-[#1A1D26] rounded-2xl p-4 border border-[#10E07A]/20 space-y-3"
+                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-[#10E07A]/20 space-y-3"
                     >
-                      <div className="grid grid-cols-2 gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {['Home', 'Office', 'Partner', 'Other'].map(lbl => (
                           <button
                             key={lbl}
@@ -700,14 +700,14 @@ export default function CheckoutModal() {
 
                   <div className="h-px bg-white/5 my-4" />
 
-                  <p className="text-white/40 text-[11px] uppercase tracking-widest font-bold mb-2">Default Locations</p>
+                  <p className="text-white/65 text-[11px] uppercase tracking-widest font-bold mb-2">Default Locations</p>
                   {/* Saved Locations */}
                   <div className="space-y-2">
                     {deliveryLocations.map(loc => (
                       <button
                         key={loc.id}
                         onClick={() => { setSelectedLocation(loc); setDeliveryAddress(loc.address); }}
-                        className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+                        className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           selectedLocation.id === loc.id
                             ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
@@ -716,11 +716,11 @@ export default function CheckoutModal() {
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                           selectedLocation.id === loc.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
                         }`}>
-                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#10E07A]' : 'text-white/60'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{loc.name}</p>
-                          <p className="text-white/40 text-xs truncate">{loc.address}</p>
+                          <p className="text-white/65 text-xs truncate">{loc.address}</p>
                         </div>
                         {selectedLocation.id === loc.id && (
                           <Check className="w-5 h-5 text-[#10E07A] shrink-0" />
@@ -730,9 +730,9 @@ export default function CheckoutModal() {
                   </div>
 
                   {/* Edit Address */}
-                  <div className="mt-3 flex items-center gap-4">
+                  <div className="mt-3 flex items-center gap-3 sm:gap-4">
                     {isEditingAddress ? (
-                      <div className="flex-1 bg-[#1A1D26] rounded-2xl p-4 border border-white/5 space-y-3">
+                      <div className="flex-1 bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 space-y-3">
                         <label htmlFor="checkout-edit-address" className="sr-only">Edit delivery address</label>
                         <input
                           id="checkout-edit-address"
@@ -803,14 +803,14 @@ export default function CheckoutModal() {
                 className="space-y-6"
               >
                 {/* Iftar Precision Toggle */}
-                <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center">
                       <Sun className="w-5 h-5 text-[#F5C451]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Iftar Precision</p>
-                      <p className="text-white/40 text-xs">Deliver 15 min before Maghrib</p>
+                      <p className="text-white/65 text-xs">Deliver 15 min before Maghrib</p>
                     </div>
                   </div>
                   <button
@@ -826,14 +826,14 @@ export default function CheckoutModal() {
                 </div>
 
                 {/* Sahur Alarm Toggle */}
-                <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center">
                       <Bell className="w-5 h-5 text-[#10E07A]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Sahur Alarm</p>
-                      <p className="text-white/40 text-xs">Wake-up reminder before Fajr</p>
+                      <p className="text-white/65 text-xs">Wake-up reminder before Fajr</p>
                     </div>
                   </div>
                   <button
@@ -854,7 +854,7 @@ export default function CheckoutModal() {
                     <Clock className="w-5 h-5 text-[#10E07A]" />
                     Delivery Time Slot
                   </h3>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {timeSlots.map(slot => {
                       const Icon = slot.icon;
                       return (
@@ -868,12 +868,12 @@ export default function CheckoutModal() {
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white/30'}`} />
+                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white/60'}`} />
                             <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white'}`}>
                               {slot.label}
                             </span>
                           </div>
-                          <p className="text-white/40 text-xs">{slot.time}</p>
+                          <p className="text-white/65 text-xs">{slot.time}</p>
                           {selectedTimeSlot === slot.id && (
                             <Check className="w-4 h-4 text-[#10E07A] absolute top-3 right-3" />
                           )}
@@ -885,7 +885,7 @@ export default function CheckoutModal() {
 
                 {/* Iftar Timing Option */}
                 {iftarPrecision && (
-                  <div className="bg-[#F5C451]/5 rounded-2xl border border-[#F5C451]/20 p-4">
+                  <div className="bg-[#F5C451]/5 rounded-2xl border border-[#F5C451]/20 p-3 sm:p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <Sun className="w-5 h-5 text-[#F5C451]" />
                       <span className="text-[#F5C451] font-bold text-sm">Iftar Delivery</span>
@@ -898,7 +898,7 @@ export default function CheckoutModal() {
 
                 {/* Sahur Timing Option */}
                 {sahurAlarm && (
-                  <div className="bg-[#10E07A]/5 rounded-2xl border border-[#10E07A]/20 p-4">
+                  <div className="bg-[#10E07A]/5 rounded-2xl border border-[#10E07A]/20 p-3 sm:p-4">
                     <div className="flex items-center gap-3 mb-2">
                       <Moon className="w-5 h-5 text-[#10E07A]" />
                       <span className="text-[#10E07A] font-bold text-sm">Sahur Delivery</span>
@@ -910,8 +910,8 @@ export default function CheckoutModal() {
                 )}
 
                 {/* Address Summary */}
-                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
-                  <p className="text-white/40 text-xs mb-1">Delivering to</p>
+                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4">
+                  <p className="text-white/65 text-xs mb-1">Delivering to</p>
                   <p className="text-white font-bold text-sm">{effectiveAddress}</p>
                 </div>
               </motion.div>
@@ -937,7 +937,7 @@ export default function CheckoutModal() {
                       <button
                         key={pm.id}
                         onClick={() => setPaymentMethod(pm.id)}
-                        className={`w-full flex items-center gap-3 p-4 rounded-2xl border text-left transition-all ${
+                        className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           paymentMethod === pm.id
                             ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
@@ -947,13 +947,13 @@ export default function CheckoutModal() {
                           paymentMethod === pm.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
                         }`}>
                           <span className={`material-symbols-outlined text-lg ${
-                            paymentMethod === pm.id ? 'text-[#10E07A]' : 'text-white/30'
+                            paymentMethod === pm.id ? 'text-[#10E07A]' : 'text-white/60'
                           }`}>{pm.icon}</span>
                         </div>
                         <div className="flex-1">
                           <p className="text-white font-bold text-sm">{pm.name}</p>
                           {pm.providers.length > 0 && (
-                            <p className="text-white/40 text-xs">{pm.providers.join(', ')}</p>
+                            <p className="text-white/65 text-xs">{pm.providers.join(', ')}</p>
                           )}
                         </div>
                         {paymentMethod === pm.id && (
@@ -977,7 +977,7 @@ export default function CheckoutModal() {
                         <button
                           key={plan.months}
                           onClick={() => setSelectedBnplPlan(plan.months)}
-                          className={`w-full flex items-center justify-between p-4 rounded-2xl border text-left transition-all ${
+                          className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                             selectedBnplPlan === plan.months
                               ? 'bg-[#F5C451]/5 border-[#F5C451]/30'
                               : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
@@ -992,7 +992,7 @@ export default function CheckoutModal() {
                                 </span>
                               )}
                             </div>
-                            <p className="text-white/40 text-xs">
+                            <p className="text-white/65 text-xs">
                               {plan.interestRate}% interest &bull; {formatNaira(Math.round(total / plan.months))}/mo
                             </p>
                           </div>
@@ -1012,7 +1012,7 @@ export default function CheckoutModal() {
                     Promo Code
                   </h4>
                   {couponState === 'applied' ? (
-                    <div className="bg-[#10E07A]/5 border border-[#10E07A]/30 rounded-2xl p-4 flex items-center gap-3">
+                    <div className="bg-[#10E07A]/5 border border-[#10E07A]/30 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center">
                         <Check className="w-5 h-5 text-[#10E07A]" />
                       </div>
@@ -1067,7 +1067,7 @@ export default function CheckoutModal() {
                     <Package className="w-4 h-4 text-[#F5C451]" />
                     Order Summary
                   </h4>
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 space-y-3">
+                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3">
                     {cartItems.map(item => (
                       <div key={item.id} className="flex justify-between items-center">
                         <div className="flex-1 min-w-0">
@@ -1078,17 +1078,17 @@ export default function CheckoutModal() {
                     ))}
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between text-xs">
-                      <span className="text-white/40">Subtotal</span>
+                      <span className="text-white/65">Subtotal</span>
                       <span className="text-white font-bold">{formatNaira(subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-white/40">Delivery Fee</span>
+                      <span className="text-white/65">Delivery Fee</span>
                       <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-white/40">Service Fee</span>
+                      <span className="text-white/65">Service Fee</span>
                       <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
                     </div>
                     {discount > 0 && (
@@ -1161,11 +1161,11 @@ export default function CheckoutModal() {
                   className="w-full bg-[#1A1D26] rounded-2xl border border-white/5 p-5 space-y-3 text-left"
                 >
                   <div className="flex justify-between">
-                    <span className="text-white/40 text-xs">Order Number</span>
+                    <span className="text-white/65 text-xs">Order Number</span>
                     <span className="text-white font-bold text-xs font-mono">{orderId}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40 text-xs">Estimated Delivery</span>
+                    <span className="text-white/65 text-xs">Estimated Delivery</span>
                     <span className="text-[#10E07A] font-bold text-xs">
                       {selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
                        selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
@@ -1173,22 +1173,22 @@ export default function CheckoutModal() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40 text-xs">Items</span>
+                    <span className="text-white/65 text-xs">Items</span>
                     <span className="text-white font-bold text-xs">{placedCartItems.length} item{placedCartItems.length !== 1 ? 's' : ''}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-white/40 text-xs">Total</span>
+                    <span className="text-white/65 text-xs">Total</span>
                     <span className="text-[#10E07A] font-black text-sm">{formatNaira(placedTotal)}</span>
                   </div>
                   {appliedCouponCode && (
                     <div className="flex justify-between">
-                      <span className="text-white/40 text-xs">Promo Code</span>
+                      <span className="text-white/65 text-xs">Promo Code</span>
                       <span className="text-[#10E07A] font-bold text-xs font-mono">{appliedCouponCode}</span>
                     </div>
                   )}
                   {paymentReference && (
                     <div className="flex justify-between">
-                      <span className="text-white/40 text-xs">Payment Ref</span>
+                      <span className="text-white/65 text-xs">Payment Ref</span>
                       <span className="text-white/60 font-mono text-[10px] truncate max-w-[60%] text-right">{paymentReference}</span>
                     </div>
                   )}
@@ -1221,7 +1221,7 @@ export default function CheckoutModal() {
 
                 <button
                   onClick={handleClose}
-                  className="text-white/40 text-sm font-bold hover:text-white/60 transition-colors"
+                  className="text-white/65 text-sm font-bold hover:text-white/60 transition-colors"
                 >
                   Continue Shopping
                 </button>
@@ -1236,7 +1236,7 @@ export default function CheckoutModal() {
             {/* Order Total Bar */}
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-white/40 text-[10px] uppercase">Total</p>
+                <p className="text-white/65 text-[10px] uppercase">Total</p>
                 <p className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</p>
               </div>
               <div className="flex gap-2">

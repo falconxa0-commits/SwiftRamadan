@@ -136,7 +136,7 @@ export default function DeliveryLocationMap() {
                         }}
                         onFocus={() => setShowSuggestions(true)}
                         placeholder="Search for address..."
-                        className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/30"
+                        className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/60"
                       />
                     </div>
                   </div>
@@ -163,7 +163,7 @@ export default function DeliveryLocationMap() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-white text-sm font-semibold">{loc.name}</p>
-                                <p className="text-white/40 text-xs truncate">{loc.address}</p>
+                                <p className="text-white/65 text-xs truncate">{loc.address}</p>
                               </div>
                             </button>
                           ))}
@@ -198,7 +198,7 @@ export default function DeliveryLocationMap() {
                     <span className="text-lg">🌙</span>
                     <div>
                       <p className="text-[#F5C451] text-xs font-bold">Deliver before Iftar</p>
-                      <p className="text-white/40 text-[10px]">Maghrib 6:45 PM</p>
+                      <p className="text-white/65 text-[10px]">Maghrib 6:45 PM</p>
                     </div>
                   </div>
                 </motion.div>
@@ -269,15 +269,15 @@ export default function DeliveryLocationMap() {
                       <MapPin className="w-5 h-5 text-[#10E07A]" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-white/40 text-xs mb-0.5">Current Address</p>
+                      <p className="text-white/65 text-xs mb-0.5">Current Address</p>
                       <p className="text-white text-sm font-semibold leading-snug">{searchQuery || deliveryAddress}</p>
                     </div>
-                    <ChevronDown className="w-5 h-5 text-white/30 shrink-0 mt-1" />
+                    <ChevronDown className="w-5 h-5 text-white/60 shrink-0 mt-1" />
                   </div>
 
                   {/* Apartment/Suite Input */}
                   <div className="mb-4">
-                    <label className="text-white/40 text-xs mb-1.5 block">Apartment / Suite</label>
+                    <label className="text-white/65 text-xs mb-1.5 block">Apartment / Suite</label>
                     <input
                       type="text"
                       value={apartment}
@@ -289,7 +289,7 @@ export default function DeliveryLocationMap() {
 
                   {/* Delivery Instructions */}
                   <div className="mb-5">
-                    <label className="text-white/40 text-xs mb-1.5 block">Delivery Instructions</label>
+                    <label className="text-white/65 text-xs mb-1.5 block">Delivery Instructions</label>
                     <textarea
                       value={deliveryInstructions}
                       onChange={(e) => setDeliveryInstructions(e.target.value)}
@@ -301,7 +301,7 @@ export default function DeliveryLocationMap() {
 
                   {/* Quick Shortcuts */}
                   <div className="mb-6">
-                    <p className="text-white/40 text-xs mb-2">Quick Shortcuts</p>
+                    <p className="text-white/65 text-xs mb-2">Quick Shortcuts</p>
                     <div className="flex gap-2">
                       {shortcuts.map((sc) => {
                         const Icon = sc.icon;

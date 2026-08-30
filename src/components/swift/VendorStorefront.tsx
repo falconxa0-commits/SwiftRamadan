@@ -177,7 +177,7 @@ export default function VendorStorefront() {
                       <Crown className="w-4 h-4 text-[#F5C451]" />
                     )}
                   </div>
-                  <p className="text-white/40 text-xs">{data.tagline}</p>
+                  <p className="text-white/65 text-xs">{data.tagline}</p>
                 </div>
               </div>
               <button
@@ -219,21 +219,21 @@ export default function VendorStorefront() {
                   <Star className="w-3.5 h-3.5 text-[#F5C451] fill-[#F5C451]" />
                   <span className="text-white font-black text-lg">{data.rating}</span>
                 </div>
-                <p className="text-white/40 text-[10px]">{data.reviewCount} reviews</p>
+                <p className="text-white/65 text-[10px]">{data.reviewCount} reviews</p>
               </div>
               <div className="text-center border-x border-white/8">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <TrendingUp className="w-3.5 h-3.5 text-[#10E07A]" />
                   <span className="text-white font-black text-lg">{(data.totalSales / 1000).toFixed(1)}k</span>
                 </div>
-                <p className="text-white/40 text-[10px]">orders</p>
+                <p className="text-white/65 text-[10px]">orders</p>
               </div>
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Heart className="w-3.5 h-3.5 text-red-400" />
                   <span className="text-white font-black text-lg">{(data.followers / 1000).toFixed(1)}k</span>
                 </div>
-                <p className="text-white/40 text-[10px]">followers</p>
+                <p className="text-white/65 text-[10px]">followers</p>
               </div>
             </div>
           </div>
@@ -348,7 +348,7 @@ export default function VendorStorefront() {
                     <div className="flex items-center gap-2">
                       <span style={{ color: currentTheme.color }} className="font-black text-sm">{formatNaira(product.price)}</span>
                       {product.originalPrice && (
-                        <span className="text-white/30 text-[10px] line-through">{formatNaira(product.originalPrice)}</span>
+                        <span className="text-white/60 text-[10px] line-through">{formatNaira(product.originalPrice)}</span>
                       )}
                     </div>
                   </div>
@@ -361,7 +361,7 @@ export default function VendorStorefront() {
           <div className="px-4 mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-white font-bold text-sm">Customer Reviews</h3>
-              <span className="text-white/30 text-xs">{data.reviewCount} total</span>
+              <span className="text-white/60 text-xs">{data.reviewCount} total</span>
             </div>
             <div className="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">
               {data.reviews.map((review, i) => (
@@ -407,7 +407,7 @@ export default function VendorStorefront() {
               </div>
               <div className="flex-1 text-left">
                 <h4 className="text-white font-bold text-sm">Storefront Theme</h4>
-                <p className="text-white/40 text-xs">Current: {currentTheme.name}</p>
+                <p className="text-white/65 text-xs">Current: {currentTheme.name}</p>
               </div>
               <ChevronRight className={`w-4 h-4 text-white/20 transition-transform ${showThemePicker ? 'rotate-90' : ''}`} />
             </button>
@@ -449,7 +449,7 @@ export default function VendorStorefront() {
                 <Shield className="w-5 h-5 text-[#F5C451]" />
                 <div>
                   <p className="text-[#F5C451] font-bold text-xs">Premium Storefront</p>
-                  <p className="text-white/40 text-[10px]">Priority placement · Custom themes · Story highlights</p>
+                  <p className="text-white/65 text-[10px]">Priority placement · Custom themes · Story highlights</p>
                 </div>
               </div>
             </div>

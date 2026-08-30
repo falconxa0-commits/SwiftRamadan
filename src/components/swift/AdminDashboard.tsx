@@ -255,7 +255,7 @@ function EmptyState({ icon: Icon, message }: { icon: typeof LayoutDashboard; mes
       <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
         <Icon className="w-8 h-8 text-white/20" />
       </div>
-      <p className="text-white/40 text-sm font-semibold">{message}</p>
+      <p className="text-white/65 text-sm font-semibold">{message}</p>
     </div>
   );
 }
@@ -289,13 +289,13 @@ function SearchBar({
 }) {
   return (
     <div className="relative">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60" />
       <input
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-10 pl-10 pr-4 rounded-xl bg-[#0F1117] border border-white/10 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 focus:outline-none transition-all"
+        className="w-full h-10 pl-10 pr-4 rounded-xl bg-[#0F1117] border border-white/10 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 focus:outline-none transition-all"
       />
     </div>
   );
@@ -319,7 +319,7 @@ function FilterChips({
           className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
             selected === opt
               ? 'bg-[#10E07A] text-[#04140C]'
-              : 'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white/60 border border-white/5'
+              : 'bg-white/5 text-white/65 hover:bg-white/10 hover:text-white/60 border border-white/5'
           }`}
         >
           {opt}
@@ -365,7 +365,7 @@ function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] })
           const height = Math.max((d.revenue / maxRevenue) * 100, 4);
           return (
             <div key={d.day} className="flex-1 flex flex-col items-center gap-1.5">
-              <span className="text-[9px] text-white/40 font-semibold">
+              <span className="text-[9px] text-white/65 font-semibold">
                 {formatNaira(d.revenue).replace('₦', '₦').replace(/,.*/, '')}
               </span>
               <motion.div
@@ -380,7 +380,7 @@ function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] })
               >
                 <div className="absolute inset-0 bg-gradient-to-t from-transparent to-white/10" />
               </motion.div>
-              <span className="text-[10px] text-white/40 font-semibold">{d.day}</span>
+              <span className="text-[10px] text-white/65 font-semibold">{d.day}</span>
             </div>
           );
         })}
@@ -742,7 +742,7 @@ export default function AdminDashboard() {
                 <div key={s.status}>
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-white/60 text-xs font-semibold">{s.status}</span>
-                    <span className="text-white/40 text-[10px] font-bold">{s.count}</span>
+                    <span className="text-white/65 text-[10px] font-bold">{s.count}</span>
                   </div>
                   <div className="h-2 rounded-full bg-white/5 overflow-hidden">
                     <motion.div
@@ -770,7 +770,7 @@ export default function AdminDashboard() {
                 </span>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-semibold truncate">{v.name}</p>
-                  <p className="text-white/30 text-[10px]">{v.orders} orders</p>
+                  <p className="text-white/60 text-[10px]">{v.orders} orders</p>
                 </div>
                 <span className="text-[#10E07A] text-xs font-bold">{formatNaira(v.revenue)}</span>
               </div>
@@ -822,14 +822,14 @@ export default function AdminDashboard() {
                         <p className="text-white text-sm font-semibold truncate">{user.name}</p>
                         {user.verified && <BadgeCheck className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />}
                       </div>
-                      <p className="text-white/30 text-[10px] truncate">{user.email}</p>
+                      <p className="text-white/60 text-[10px] truncate">{user.email}</p>
                     </div>
                   </div>
                   <StatusBadge status={user.status} />
                 </div>
                 <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/5">
                   <div className="flex items-center gap-3">
-                    <span className="text-white/30 text-[10px] font-semibold capitalize">{user.role}</span>
+                    <span className="text-white/60 text-[10px] font-semibold capitalize">{user.role}</span>
                     <span className="text-white/15 text-[10px]">•</span>
                     <span className="text-white/25 text-[10px]">{user.joined}</span>
                   </div>
@@ -876,7 +876,7 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-white text-sm font-bold">Vendor Management</h3>
-          <span className="text-white/30 text-xs font-semibold">{vendors.length} vendors</span>
+          <span className="text-white/60 text-xs font-semibold">{vendors.length} vendors</span>
         </div>
 
         {vendorsLoading ? (
@@ -902,7 +902,7 @@ export default function AdminDashboard() {
                         <p className="text-white text-sm font-semibold truncate">{vendor.storeName}</p>
                         {vendor.verified && <BadgeCheck className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />}
                       </div>
-                      <p className="text-white/30 text-[10px]">{vendor.owner} • {vendor.category}</p>
+                      <p className="text-white/60 text-[10px]">{vendor.owner} • {vendor.category}</p>
                     </div>
                   </div>
                   <StatusBadge status={vendor.status} />
@@ -911,7 +911,7 @@ export default function AdminDashboard() {
                   <div className="flex items-center gap-3">
                     <span className="text-[#10E07A] text-[10px] font-bold">{formatNaira(vendor.revenue)}</span>
                     <span className="text-white/15 text-[10px]">•</span>
-                    <span className="text-white/30 text-[10px]">{vendor.orders} orders</span>
+                    <span className="text-white/60 text-[10px]">{vendor.orders} orders</span>
                     <span className="text-white/15 text-[10px]">•</span>
                     <span className="text-[#F5C451] text-[10px] font-semibold">{vendor.commission}% comm.</span>
                   </div>
@@ -982,7 +982,7 @@ export default function AdminDashboard() {
                       <span className="text-white text-sm font-bold">#{order.shortId}</span>
                       <StatusBadge status={order.status} />
                     </div>
-                    <p className="text-white/30 text-[10px] mt-0.5">
+                    <p className="text-white/60 text-[10px] mt-0.5">
                       {order.customer} → {order.vendor}
                     </p>
                   </div>
@@ -990,7 +990,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center justify-between mt-3 pt-2 border-t border-white/5">
                   <div className="flex items-center gap-3">
-                    <span className="text-white/30 text-[10px]">{order.items} items</span>
+                    <span className="text-white/60 text-[10px]">{order.items} items</span>
                     <span className="text-white/15 text-[10px]">•</span>
                     <span className="text-white/25 text-[10px]">{order.date}</span>
                     {order.rider && (
@@ -1076,7 +1076,7 @@ export default function AdminDashboard() {
                       </span>
                       <StatusBadge status={dispute.status} />
                     </div>
-                    <p className="text-white/30 text-[10px] mt-0.5 line-clamp-1">{dispute.description}</p>
+                    <p className="text-white/60 text-[10px] mt-0.5 line-clamp-1">{dispute.description}</p>
                   </div>
                   <span className="text-[#F5C451] text-xs font-bold shrink-0">{formatNaira(dispute.amount)}</span>
                 </div>
@@ -1153,7 +1153,7 @@ export default function AdminDashboard() {
         <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-white text-sm font-bold">Recent Transactions</h3>
-            <span className="text-white/30 text-[10px] font-semibold">{finance.transactions.length} entries</span>
+            <span className="text-white/60 text-[10px] font-semibold">{finance.transactions.length} entries</span>
           </div>
           <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
             {finance.transactions.map((tx) => {
@@ -1234,7 +1234,7 @@ export default function AdminDashboard() {
                       <p className="text-white text-sm font-semibold truncate">{item.title}</p>
                       <StatusBadge status={item.active ? 'active' : 'banned'} />
                     </div>
-                    <p className="text-white/30 text-[10px] capitalize">{item.type} • Position #{item.position}</p>
+                    <p className="text-white/60 text-[10px] capitalize">{item.type} • Position #{item.position}</p>
                   </div>
                   <div className="flex gap-1.5">
                     <ActionButton
@@ -1276,7 +1276,7 @@ export default function AdminDashboard() {
             <ImageIcon className="w-7 h-7 text-[#38BDF8]" />
           </div>
           <h3 className="text-white text-sm font-bold mb-1">Banner Management</h3>
-          <p className="text-white/30 text-xs">Create and manage promotional banners for the home screen.</p>
+          <p className="text-white/60 text-xs">Create and manage promotional banners for the home screen.</p>
           <span className="inline-flex items-center gap-1 mt-3 px-3 py-1 rounded-full bg-[#F5C451]/10 text-[#F5C451] text-[10px] font-bold border border-[#F5C451]/20">
             <Clock className="w-3 h-3" />
             Coming Soon
@@ -1327,7 +1327,7 @@ export default function AdminDashboard() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive ? 'text-[#06070B]' : 'text-white/40 hover:text-white/60'
+                  isActive ? 'text-[#06070B]' : 'text-white/65 hover:text-white/60'
                 }`}
               >
                 {isActive && (

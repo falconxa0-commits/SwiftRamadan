@@ -450,7 +450,7 @@ export default function ChatModal() {
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-full gap-2">
                   <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
-                  <p className="text-white/40 text-xs">Loading conversation…</p>
+                  <p className="text-white/65 text-xs">Loading conversation…</p>
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center px-8">
@@ -458,7 +458,7 @@ export default function ChatModal() {
                     <MessageCircle className="w-7 h-7 text-[#10E07A]" />
                   </div>
                   <p className="text-white font-bold text-base">No messages yet</p>
-                  <p className="text-white/40 text-sm mt-1">
+                  <p className="text-white/65 text-sm mt-1">
                     Start the conversation!
                   </p>
                 </div>
@@ -494,7 +494,7 @@ export default function ChatModal() {
                       >
                         {m.content}
                       </div>
-                      <span className="text-white/30 text-[10px] mt-1 px-1">
+                      <span className="text-white/60 text-[10px] mt-1 px-1">
                         {formatTime(m.createdAt)}
                       </span>
                     </motion.div>
@@ -544,7 +544,7 @@ export default function ChatModal() {
                     }}
                     placeholder="Type a message…"
                     rows={1}
-                    className="flex-1 bg-transparent text-white text-sm px-4 py-3 focus:outline-none placeholder:text-white/30 resize-none max-h-24 custom-scrollbar"
+                    className="flex-1 bg-transparent text-white text-sm px-4 py-3 focus:outline-none placeholder:text-white/60 resize-none max-h-24 custom-scrollbar"
                   />
                 </div>
                 <button

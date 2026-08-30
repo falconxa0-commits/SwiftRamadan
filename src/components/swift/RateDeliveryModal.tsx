@@ -171,7 +171,7 @@ export default function RateDeliveryModal() {
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-white font-black text-lg leading-tight">Rate your delivery</h2>
-                  <p className="text-white/40 text-xs truncate">
+                  <p className="text-white/65 text-xs truncate">
                     How was {riderName}?
                   </p>
                 </div>
@@ -257,10 +257,10 @@ export default function RateDeliveryModal() {
                   placeholder="Share details about your delivery experience…"
                   rows={3}
                   maxLength={500}
-                  className="w-full bg-white/5 border border-white/8 focus:border-[#F5C451]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/30 outline-none resize-none transition-colors custom-scrollbar"
+                  className="w-full bg-white/5 border border-white/8 focus:border-[#F5C451]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
                 />
                 <div className="flex justify-end">
-                  <span className="text-[10px] text-white/30 mt-0.5">{comment.length}/500</span>
+                  <span className="text-[10px] text-white/60 mt-0.5">{comment.length}/500</span>
                 </div>
               </div>
 
@@ -282,7 +282,7 @@ export default function RateDeliveryModal() {
                 </button>
                 <button
                   onClick={handleClose}
-                  className="w-full py-2 text-white/40 text-xs font-bold hover:text-white/70 transition-colors"
+                  className="w-full py-2 text-white/65 text-xs font-bold hover:text-white/70 transition-colors"
                 >
                   Maybe later
                 </button>

@@ -565,7 +565,7 @@ export default function RealTimeTrackingModal() {
                       <span className="w-2 h-2 rounded-full bg-white/30 inline-block" />
                     )}
                   </h2>
-                  <p className="text-white/40 text-[11px] truncate">
+                  <p className="text-white/65 text-[11px] truncate">
                     {delivery
                       ? `Order #${delivery.orderId.slice(-6).toUpperCase()} • ${delivery.rider.name}`
                       : 'Connecting to rider...'}
@@ -655,7 +655,7 @@ export default function RealTimeTrackingModal() {
                             ) : (
                               <Icon
                                 className={`w-4 h-4 ${
-                                  isActive ? 'text-[#38BDF8]' : 'text-white/30'
+                                  isActive ? 'text-[#38BDF8]' : 'text-white/60'
                                 }`}
                               />
                             )}
@@ -676,7 +676,7 @@ export default function RealTimeTrackingModal() {
                                     ? 'text-white'
                                     : isPast
                                       ? 'text-[#10E07A]'
-                                      : 'text-white/40'
+                                      : 'text-white/65'
                                 }`}
                               >
                                 {stage.label}
@@ -693,7 +693,7 @@ export default function RealTimeTrackingModal() {
                             </div>
                             <p
                               className={`text-[11px] mt-0.5 ${
-                                isFuture ? 'text-white/30' : 'text-white/50'
+                                isFuture ? 'text-white/60' : 'text-white/50'
                               }`}
                             >
                               {stage.desc}
@@ -732,7 +732,7 @@ export default function RealTimeTrackingModal() {
                     </span>
                   </div>
                   {delivery && (
-                    <p className="text-white/40 text-[11px] mt-2 relative">
+                    <p className="text-white/65 text-[11px] mt-2 relative">
                       {delivery.status === 'delivered'
                         ? 'Order completed 🎉'
                         : delivery.status === 'arriving'
@@ -769,8 +769,8 @@ export default function RealTimeTrackingModal() {
                           <span className="text-[#F5C451] text-[11px] font-bold">
                             {delivery.rider.rating}
                           </span>
-                          <span className="text-white/30 text-[11px]">•</span>
-                          <span className="text-white/40 text-[11px] truncate">
+                          <span className="text-white/60 text-[11px]">•</span>
+                          <span className="text-white/65 text-[11px] truncate">
                             {delivery.rider.vehicle}
                           </span>
                         </div>
@@ -788,11 +788,11 @@ export default function RealTimeTrackingModal() {
                   ) : (
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-[#1A1D26] border-2 border-white/10 flex items-center justify-center">
-                        <User className="w-5 h-5 text-white/30" />
+                        <User className="w-5 h-5 text-white/60" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-white/40 text-sm">Waiting for rider...</p>
-                        <p className="text-white/30 text-xs mt-1">
+                        <p className="text-white/65 text-sm">Waiting for rider...</p>
+                        <p className="text-white/60 text-xs mt-1">
                           {socketConnected
                             ? 'Realtime channel live'
                             : isPolling
@@ -810,7 +810,7 @@ export default function RealTimeTrackingModal() {
                 <section className="px-4 pt-4">
                   <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
                     <div className="flex items-center gap-2 mb-3">
-                      <Package className="w-4 h-4 text-white/40" />
+                      <Package className="w-4 h-4 text-white/65" />
                       <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
                         Order Summary
                       </span>
@@ -827,7 +827,7 @@ export default function RealTimeTrackingModal() {
                         ))}
                       </div>
                     ) : (
-                      <p className="text-white/40 text-xs">No items</p>
+                      <p className="text-white/65 text-xs">No items</p>
                     )}
                     <div className="h-px bg-white/5 my-2" />
                     <div className="flex justify-between text-xs font-bold">
@@ -844,7 +844,7 @@ export default function RealTimeTrackingModal() {
                   <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
                     <Clock className="w-4 h-4 text-[#38BDF8]" />
                     <span className="text-white text-sm font-bold">Delivery Updates</span>
-                    <span className="ml-auto text-white/30 text-[10px]">
+                    <span className="ml-auto text-white/60 text-[10px]">
                       {messages.length} updates
                     </span>
                   </div>
@@ -857,7 +857,7 @@ export default function RealTimeTrackingModal() {
                     {messages.length === 0 ? (
                       <div className="py-8 text-center">
                         <Clock className="w-8 h-8 text-white/10 mx-auto mb-2" />
-                        <p className="text-white/30 text-xs">
+                        <p className="text-white/60 text-xs">
                           Updates will appear here as your order progresses.
                         </p>
                       </div>
@@ -904,19 +904,19 @@ export default function RealTimeTrackingModal() {
                 </motion.div>
               </div>
               {isPolling && (
-                <p className="text-white/30 text-[10px] mt-2 flex items-center gap-1">
+                <p className="text-white/60 text-[10px] mt-2 flex items-center gap-1">
                   {socketConnected ? (
                     <>
                       <Wifi className="w-3 h-3 text-[#10E07A]" />
                       <span className="text-[#10E07A]">Realtime</span>
-                      <span className="text-white/30">• fallback poll every 5s</span>
+                      <span className="text-white/60">• fallback poll every 5s</span>
                     </>
                   ) : (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin" />
                       <WifiOff className="w-3 h-3 text-[#FB7185]" />
                       <span className="text-[#FB7185]">Socket offline</span>
-                      <span className="text-white/30">• polling every 5s</span>
+                      <span className="text-white/60">• polling every 5s</span>
                     </>
                   )}
                 </p>
@@ -1163,7 +1163,7 @@ function UpdateBubble({ msg }: { msg: UpdateMessage }) {
     >
       <span className="text-[11px] text-white/60 bg-white/5 px-3 py-1.5 rounded-full text-center max-w-[90%]">
         {msg.text}
-        <span className="text-white/30 ml-2">· {formatTime(msg.timestamp)}</span>
+        <span className="text-white/60 ml-2">· {formatTime(msg.timestamp)}</span>
       </span>
     </motion.div>
   );

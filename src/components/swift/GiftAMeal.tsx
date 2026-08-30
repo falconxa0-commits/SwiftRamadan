@@ -152,7 +152,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Gift-a-Meal</h2>
-            <p className="text-white/40 text-[10px]">Feed a fellow Muslim this Ramadan</p>
+            <p className="text-white/65 text-[10px]">Feed a fellow Muslim this Ramadan</p>
           </div>
         </div>
         <button
@@ -187,7 +187,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                 <div>
                   <p className="text-white/50 text-xs">Community meals gifted</p>
                   <p className="text-[#10E07A] text-2xl font-black">{totalStats.gifts.toLocaleString()}</p>
-                  <p className="text-white/30 text-[10px]">across {totalStats.cities} cities</p>
+                  <p className="text-white/60 text-[10px]">across {totalStats.cities} cities</p>
                 </div>
               </div>
             </motion.div>
@@ -208,13 +208,13 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                       i === 0 ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/20' :
                       i === 1 ? 'bg-white/10 text-white/70 border border-white/10' :
                       i === 2 ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
-                      'bg-white/5 text-white/40 border border-white/5'
+                      'bg-white/5 text-white/65 border border-white/5'
                     }`}>
                       {i + 1}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <MapPin className="w-3 h-3 text-white/30" />
+                        <MapPin className="w-3 h-3 text-white/60" />
                         <span className="text-white text-xs font-bold">{chain.city}</span>
                       </div>
                       <div className="w-full bg-white/5 rounded-full h-1.5 mt-1.5">
@@ -254,7 +254,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     <span className="text-2xl shrink-0">{meal.icon}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-bold">{meal.name}</p>
-                      <p className="text-white/40 text-[10px] mt-0.5">{meal.description}</p>
+                      <p className="text-white/65 text-[10px] mt-0.5">{meal.description}</p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-[#10E07A] text-sm font-black">{FORMAT_NAIRA(meal.price)}</p>
@@ -342,7 +342,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   )}
                 </motion.button>
               ) : (
-                <div className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center gap-2 text-white/30 text-sm">
+                <div className="w-full py-4 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center gap-2 text-white/60 text-sm">
                   <Gift className="w-4 h-4" />
                   Select a meal to gift
                 </div>
@@ -419,7 +419,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="text-white/40 text-xs mb-4"
+                  className="text-white/65 text-xs mb-4"
                 >
                   {FORMAT_NAIRA(sentGift.amount)} • A stranger will receive your Iftar gift
                 </motion.p>

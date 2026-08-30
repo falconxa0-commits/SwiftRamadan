@@ -181,7 +181,7 @@ export default function CharityZakatModal() {
                       className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 mb-4 w-full max-w-xs"
                     >
                       <p className="text-[#10E07A] text-3xl font-black">{confirmedMeals}</p>
-                      <p className="text-white/40 text-xs">Meal{confirmedMeals > 1 ? 's' : ''} Sponsored</p>
+                      <p className="text-white/65 text-xs">Meal{confirmedMeals > 1 ? 's' : ''} Sponsored</p>
                     </motion.div>
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -190,7 +190,7 @@ export default function CharityZakatModal() {
                       className="bg-[#F5C451]/10 rounded-xl p-3 border border-[#F5C451]/20 mb-6 w-full max-w-xs"
                     >
                       <p className="text-[#F5C451] text-sm font-bold">+{confirmedMeals * 50} Hasanat Points</p>
-                      <p className="text-white/40 text-[10px]">Earned from your generosity</p>
+                      <p className="text-white/65 text-[10px]">Earned from your generosity</p>
                     </motion.div>
                     <div className="flex gap-3 w-full max-w-xs">
                       <button
@@ -266,13 +266,13 @@ export default function CharityZakatModal() {
                             <div className="flex items-start justify-between mb-3">
                               <div>
                                 <h4 className="text-white font-bold text-sm">{orphanage.name}</h4>
-                                <p className="text-white/40 text-xs mt-0.5">{orphanage.location}</p>
+                                <p className="text-white/65 text-xs mt-0.5">{orphanage.location}</p>
                               </div>
                               <span className="text-[#F5C451] text-xs font-bold">{orphanage.mealsServed} meals served</span>
                             </div>
                             {/* Progress Bar */}
                             <div className="mb-2">
-                              <div className="flex justify-between text-[10px] text-white/40 mb-1">
+                              <div className="flex justify-between text-[10px] text-white/65 mb-1">
                                 <span>{orphanage.progress}% funded</span>
                                 <span>{formatNaira(orphanage.raised)} / {formatNaira(orphanage.goal)}</span>
                               </div>
@@ -327,7 +327,7 @@ export default function CharityZakatModal() {
                               placeholder="Custom amount"
                               value={customAmount}
                               onChange={e => { setCustomAmount(e.target.value); }}
-                              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/30 focus:outline-none mb-3"
+                              className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/30 focus:outline-none mb-3"
                             />
                             <button
                               onClick={handleConfirmDonation}
@@ -350,7 +350,7 @@ export default function CharityZakatModal() {
                         </div>
                         <div className="space-y-3">
                           <div>
-                            <label className="text-white/40 text-[10px] uppercase tracking-widest mb-1 block">Annual Income</label>
+                            <label className="text-white/65 text-[10px] uppercase tracking-widest mb-1 block">Annual Income</label>
                             <input
                               type="number"
                               placeholder="e.g. 5000000"
@@ -360,7 +360,7 @@ export default function CharityZakatModal() {
                             />
                           </div>
                           <div>
-                            <label className="text-white/40 text-[10px] uppercase tracking-widest mb-1 block">Savings & Assets</label>
+                            <label className="text-white/65 text-[10px] uppercase tracking-widest mb-1 block">Savings & Assets</label>
                             <input
                               type="number"
                               placeholder="e.g. 2000000"
@@ -370,7 +370,7 @@ export default function CharityZakatModal() {
                             />
                           </div>
                           <div>
-                            <label className="text-white/40 text-[10px] uppercase tracking-widest mb-1 block">Debts & Liabilities</label>
+                            <label className="text-white/65 text-[10px] uppercase tracking-widest mb-1 block">Debts & Liabilities</label>
                             <input
                               type="number"
                               placeholder="e.g. 500000"
@@ -391,7 +391,7 @@ export default function CharityZakatModal() {
                               animate={{ opacity: 1, y: 0 }}
                               className="bg-black/30 p-4 rounded-xl border border-[#F5C451]/20 text-center"
                             >
-                              <p className="text-white/40 text-xs mb-1">Your Zakat (2.5% of net assets)</p>
+                              <p className="text-white/65 text-xs mb-1">Your Zakat (2.5% of net assets)</p>
                               <p className="text-[#F5C451] text-2xl font-black">{formatNaira(Math.round(zakatResult))}</p>
                               {zakatResult > 0 && (
                                 <button
@@ -425,7 +425,7 @@ export default function CharityZakatModal() {
                           >
                             <span className="material-symbols-outlined text-[#F5C451] text-2xl mb-2">{item.icon}</span>
                             <p className="text-white font-bold text-sm">{item.name}</p>
-                            <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
+                            <p className="text-white/65 text-[10px] mt-0.5">{item.description}</p>
                             {item.amount > 0 && (
                               <p className="text-[#10E07A] text-xs font-bold mt-2">{formatNaira(item.amount)}</p>
                             )}

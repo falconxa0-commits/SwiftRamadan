@@ -189,14 +189,14 @@ export default function TrendingModal() {
                     <h2 className="text-white font-black text-lg leading-tight flex items-center gap-1.5">
                       Trending in Lagos
                     </h2>
-                    <p className="text-white/40 text-xs flex items-center gap-1.5">
+                    <p className="text-white/65 text-xs flex items-center gap-1.5">
                       <span className="relative flex h-1.5 w-1.5">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10E07A] opacity-75" />
                         <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#10E07A]" />
                       </span>
                       Live from the web
                       {lastUpdated && (
-                        <span className="text-white/30">· updated {prettyDate(lastUpdated.toISOString())}</span>
+                        <span className="text-white/60">· updated {prettyDate(lastUpdated.toISOString())}</span>
                       )}
                     </p>
                   </div>
@@ -233,7 +233,7 @@ export default function TrendingModal() {
                         ? 'bg-[#10E07A]/10 text-[#10E07A] border-[#10E07A]/30'
                         : source === 'fallback'
                           ? 'bg-amber-400/10 text-amber-300 border-amber-400/30'
-                          : 'bg-white/5 text-white/40 border-white/10'
+                          : 'bg-white/5 text-white/65 border-white/10'
                     }`}
                   >
                     <Globe className="w-2.5 h-2.5" />
@@ -323,7 +323,7 @@ export default function TrendingModal() {
                     <Globe className="w-6 h-6 text-amber-300" />
                   </div>
                   <p className="text-white font-bold text-sm mb-1">No trending items found</p>
-                  <p className="text-white/40 text-xs mb-4 max-w-[240px]">{error}</p>
+                  <p className="text-white/65 text-xs mb-4 max-w-[240px]">{error}</p>
                   <button
                     onClick={handleRefresh}
                     className="px-4 py-2 rounded-full bg-[#10E07A] text-[#05070A] text-xs font-bold flex items-center gap-1.5 hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all"
@@ -342,10 +342,10 @@ export default function TrendingModal() {
                   className="flex flex-col items-center justify-center py-16 text-center"
                 >
                   <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-                    <TrendingUp className="w-6 h-6 text-white/40" />
+                    <TrendingUp className="w-6 h-6 text-white/65" />
                   </div>
                   <p className="text-white font-bold text-sm mb-1">No trending items found</p>
-                  <p className="text-white/40 text-xs">Try another category or refresh the feed.</p>
+                  <p className="text-white/65 text-xs">Try another category or refresh the feed.</p>
                 </motion.div>
               )}
 
@@ -386,7 +386,7 @@ export default function TrendingModal() {
                           <span className="text-white/60 text-[11px] font-medium truncate">
                             {item.source}
                           </span>
-                          <span className="text-white/30 text-[11px] flex items-center gap-1 shrink-0">
+                          <span className="text-white/60 text-[11px] flex items-center gap-1 shrink-0">
                             <Clock className="w-2.5 h-2.5" />
                             {prettyDate(item.date)}
                           </span>

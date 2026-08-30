@@ -164,7 +164,7 @@ export default function FridgeScanModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">📸 Fridge Scanner</h2>
-                  <p className="text-white/40 text-xs">Snap your fridge, get ingredient insights</p>
+                  <p className="text-white/65 text-xs">Snap your fridge, get ingredient insights</p>
                 </div>
               </div>
               <button
@@ -189,7 +189,7 @@ export default function FridgeScanModal() {
                   <Camera className="w-8 h-8 text-[#38BDF8]" />
                 </div>
                 <h3 className="text-white font-bold text-base mb-1">Scan Your Fridge</h3>
-                <p className="text-white/40 text-xs text-center mb-6 max-w-[260px]">
+                <p className="text-white/65 text-xs text-center mb-6 max-w-[260px]">
                   Take a photo or upload an image of your fridge and we&apos;ll identify all the ingredients
                 </p>
                 <div className="flex gap-3">
@@ -251,7 +251,7 @@ export default function FridgeScanModal() {
                           <ScanLine className="w-8 h-8 text-[#38BDF8] mx-auto" />
                         </motion.div>
                         <p className="text-white text-sm font-bold mt-4">Scanning...</p>
-                        <p className="text-white/40 text-xs">Detecting ingredients</p>
+                        <p className="text-white/65 text-xs">Detecting ingredients</p>
                       </div>
                     </div>
                   )}
@@ -294,7 +294,7 @@ export default function FridgeScanModal() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-white font-bold text-base">Detected Items</h3>
-                  <span className="text-[10px] text-white/30 bg-white/5 px-2 py-1 rounded-full">
+                  <span className="text-[10px] text-white/60 bg-white/5 px-2 py-1 rounded-full">
                     {source === 'vlm' ? '✨ VLM Detected' : source === 'mock' ? 'Fallback Data' : 'AI Scanned'}
                   </span>
                 </div>
@@ -317,11 +317,11 @@ export default function FridgeScanModal() {
                           <FreshnessIndicator freshness={item.freshness} />
                         </div>
                         <div className="flex items-center gap-3 mt-1">
-                          <span className="text-white/30 text-[10px] capitalize">
+                          <span className="text-white/60 text-[10px] capitalize">
                             {item.category}
                           </span>
                           <span className="text-white/10">•</span>
-                          <span className="text-white/30 text-[10px]">
+                          <span className="text-white/60 text-[10px]">
                             Qty: {item.estimated_quantity}
                           </span>
                         </div>
@@ -375,7 +375,7 @@ export default function FridgeScanModal() {
           {/* Empty state after scan with no results */}
           {scanned && items.length === 0 && !loading && (
             <div className="px-4 py-12 text-center">
-              <p className="text-white/40 text-sm">No items detected. Try a clearer photo!</p>
+              <p className="text-white/65 text-sm">No items detected. Try a clearer photo!</p>
             </div>
           )}
         </motion.div>

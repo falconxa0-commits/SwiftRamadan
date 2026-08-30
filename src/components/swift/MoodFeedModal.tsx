@@ -108,7 +108,7 @@ export default function MoodFeedModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">😊 Mood Order</h2>
-                  <p className="text-white/40 text-xs">Eat how you feel</p>
+                  <p className="text-white/65 text-xs">Eat how you feel</p>
                 </div>
               </div>
               <button
@@ -140,7 +140,7 @@ export default function MoodFeedModal() {
                     style={isSelected ? { boxShadow: `0 0 20px ${mood.color}20` } : {}}
                   >
                     <span className="text-2xl">{mood.emoji}</span>
-                    <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-white/40'}`}>
+                    <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-white/65'}`}>
                       {mood.label}
                     </span>
                     {isSelected && (() => {
@@ -181,7 +181,7 @@ export default function MoodFeedModal() {
                 className="px-4 py-16 text-center"
               >
                 <span className="text-5xl mb-4 block">🍽️</span>
-                <p className="text-white/40 text-sm">Pick a mood above to discover meals that match your vibe</p>
+                <p className="text-white/65 text-sm">Pick a mood above to discover meals that match your vibe</p>
               </motion.div>
             )}
 
@@ -197,7 +197,7 @@ export default function MoodFeedModal() {
                   <h3 className="text-white font-bold text-base">
                     {activeMood?.emoji} {activeMood?.label} Picks
                   </h3>
-                  <span className="text-[10px] text-white/30 bg-white/5 px-2 py-1 rounded-full">
+                  <span className="text-[10px] text-white/60 bg-white/5 px-2 py-1 rounded-full">
                     {source === 'ai' ? '✨ AI Curated' : 'Popular Picks'}
                   </span>
                 </div>
@@ -218,7 +218,7 @@ export default function MoodFeedModal() {
 
                       <div className="p-3">
                         <h4 className="text-white font-bold text-sm mb-0.5 truncate">{product.name}</h4>
-                        <p className="text-white/40 text-[10px] leading-tight mb-2 line-clamp-2">{product.description}</p>
+                        <p className="text-white/65 text-[10px] leading-tight mb-2 line-clamp-2">{product.description}</p>
 
                         {/* Mood match */}
                         <p className="text-[#F59E0B] text-[10px] mb-2 line-clamp-1 italic">
@@ -228,8 +228,8 @@ export default function MoodFeedModal() {
                         {/* Meta row */}
                         <div className="flex items-center gap-3 mb-2">
                           <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-white/30" />
-                            <span className="text-white/40 text-[10px]">{product.prep_time}m</span>
+                            <Clock className="w-3 h-3 text-white/60" />
+                            <span className="text-white/65 text-[10px]">{product.prep_time}m</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Flame className="w-3 h-3 text-red-500/50" />
@@ -262,7 +262,7 @@ export default function MoodFeedModal() {
                 animate={{ opacity: 1 }}
                 className="px-4 py-16 text-center"
               >
-                <p className="text-white/40 text-sm">No meals found for this mood. Try another!</p>
+                <p className="text-white/65 text-sm">No meals found for this mood. Try another!</p>
               </motion.div>
             )}
           </AnimatePresence>

@@ -167,7 +167,7 @@ export default function SearchOverlay() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search Jollof, Groceries, or Boxes..."
-                  className="flex-1 bg-transparent text-white text-sm px-3 focus:outline-none placeholder:text-white/30"
+                  className="flex-1 bg-transparent text-white text-sm px-3 focus:outline-none placeholder:text-white/60"
                 />
                 {query && (
                   <button
@@ -200,14 +200,14 @@ export default function SearchOverlay() {
             {isSearching && (
               <div className="flex items-center gap-2 py-4">
                 <div className="w-4 h-4 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
-                <span className="text-white/40 text-sm">Searching...</span>
+                <span className="text-white/65 text-sm">Searching...</span>
               </div>
             )}
 
             {/* Results */}
             {!isSearching && query && totalResults > 0 && (
               <div className="space-y-6">
-                <p className="text-white/30 text-xs font-bold uppercase tracking-widest">
+                <p className="text-white/60 text-xs font-bold uppercase tracking-widest">
                   {totalResults} result{totalResults !== 1 ? 's' : ''} for &quot;{query}&quot;
                 </p>
 
@@ -230,7 +230,7 @@ export default function SearchOverlay() {
                           )}
                           <div className="flex-1 min-w-0">
                             <p className="text-white font-bold text-sm truncate">{product.name}</p>
-                            <p className="text-white/40 text-xs">{product.category}</p>
+                            <p className="text-white/65 text-xs">{product.category}</p>
                           </div>
                           {product.price && (
                             <span className="text-[#10E07A] font-bold text-sm shrink-0">{formatNaira(product.price)}</span>
@@ -260,7 +260,7 @@ export default function SearchOverlay() {
                           )}
                           <div>
                             <p className="text-white font-bold text-sm">{cat.name}</p>
-                            <p className="text-white/40 text-xs">{cat.category}</p>
+                            <p className="text-white/65 text-xs">{cat.category}</p>
                           </div>
                         </button>
                       ))}
@@ -287,7 +287,7 @@ export default function SearchOverlay() {
                           )}
                           <div>
                             <p className="text-white font-bold text-sm">{retailer.name}</p>
-                            <p className="text-white/40 text-xs">{retailer.category}</p>
+                            <p className="text-white/65 text-xs">{retailer.category}</p>
                           </div>
                         </button>
                       ))}
@@ -300,7 +300,7 @@ export default function SearchOverlay() {
             {/* No Results */}
             {!isSearching && query && totalResults === 0 && (
               <div className="text-center py-12">
-                <p className="text-white/40 text-sm">No results for &quot;{query}&quot;</p>
+                <p className="text-white/65 text-sm">No results for &quot;{query}&quot;</p>
                 <p className="text-white/20 text-xs mt-2">Try searching for jollof, dates, or iftar</p>
               </div>
             )}

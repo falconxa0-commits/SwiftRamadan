@@ -155,7 +155,7 @@ export default function MosqueSadaqahModal() {
                       transition={{ delay: 0.5 }}
                       className="bg-[#1A1D26] rounded-2xl p-4 border border-[#10E07A]/20 mb-6 text-center"
                     >
-                      <p className="text-white/40 text-[10px] uppercase tracking-widest">Hasanat Points Earned</p>
+                      <p className="text-white/65 text-[10px] uppercase tracking-widest">Hasanat Points Earned</p>
                       <p className="text-[#10E07A] text-2xl font-black">+{donationPoints}</p>
                     </motion.div>
                     <motion.button
@@ -187,7 +187,7 @@ export default function MosqueSadaqahModal() {
                       <X className="w-4 h-4 text-white/60" />
                     </button>
                     <h3 className="text-white font-bold text-lg mb-2">Qibla Finder</h3>
-                    <p className="text-white/40 text-sm mb-8">Pointing toward Makkah (NE)</p>
+                    <p className="text-white/65 text-sm mb-8">Pointing toward Makkah (NE)</p>
 
                     {/* Compass */}
                     <div className="relative w-64 h-64">
@@ -197,7 +197,7 @@ export default function MosqueSadaqahModal() {
                       {['N', 'E', 'S', 'W'].map((dir, i) => (
                         <span
                           key={dir}
-                          className="absolute text-white/30 text-xs font-bold"
+                          className="absolute text-white/60 text-xs font-bold"
                           style={{
                             top: i === 0 ? '4px' : i === 2 ? 'auto' : '50%',
                             bottom: i === 2 ? '4px' : 'auto',
@@ -240,7 +240,7 @@ export default function MosqueSadaqahModal() {
 
                     <div className="mt-8 bg-[#1A1D26] rounded-xl p-4 border border-white/5 text-center">
                       <p className="text-[#10E07A] text-lg font-black">56° NE</p>
-                      <p className="text-white/40 text-xs">Qibla direction from Lagos</p>
+                      <p className="text-white/65 text-xs">Qibla direction from Lagos</p>
                     </div>
                   </motion.div>
                 )}
@@ -294,13 +294,13 @@ export default function MosqueSadaqahModal() {
               {/* Search Bar */}
               <div className="px-4 mt-4">
                 <div className="flex items-center rounded-xl h-11 bg-[#1A1D26] border border-white/5 focus-within:border-[#10E07A]/30 transition-all">
-                  <Search className="w-4 h-4 text-white/30 ml-3 shrink-0" />
+                  <Search className="w-4 h-4 text-white/60 ml-3 shrink-0" />
                   <input
                     type="text"
                     placeholder="Search mosques near you"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}
-                    className="flex-1 bg-transparent text-white text-sm px-3 py-2 focus:outline-none placeholder:text-white/30"
+                    className="flex-1 bg-transparent text-white text-sm px-3 py-2 focus:outline-none placeholder:text-white/60"
                   />
                 </div>
               </div>
@@ -345,8 +345,8 @@ export default function MosqueSadaqahModal() {
                       <div>
                         <h4 className="text-white font-bold text-sm">{mosque.name}</h4>
                         <div className="flex items-center gap-1 mt-1">
-                          <MapPin className="w-3 h-3 text-white/30" />
-                          <p className="text-white/40 text-xs">{mosque.address}</p>
+                          <MapPin className="w-3 h-3 text-white/60" />
+                          <p className="text-white/65 text-xs">{mosque.address}</p>
                         </div>
                         <p className="text-[#10E07A] text-xs font-bold mt-1">{mosque.distance}</p>
                       </div>
@@ -368,7 +368,7 @@ export default function MosqueSadaqahModal() {
                           Sadaqah
                         </span>
                       )}
-                      <span className="px-2 py-0.5 bg-white/5 text-white/40 text-[10px] font-bold rounded-full border border-white/5">
+                      <span className="px-2 py-0.5 bg-white/5 text-white/65 text-[10px] font-bold rounded-full border border-white/5">
                         {mosque.capacity}
                       </span>
                     </div>
@@ -392,9 +392,9 @@ export default function MosqueSadaqahModal() {
                         className="w-10 bg-white/5 rounded-xl flex items-center justify-center border border-white/5 hover:bg-white/10 transition-colors"
                       >
                         {selectedMosque === mosque.id ? (
-                          <ChevronUp className="w-4 h-4 text-white/40" />
+                          <ChevronUp className="w-4 h-4 text-white/65" />
                         ) : (
-                          <ChevronDown className="w-4 h-4 text-white/40" />
+                          <ChevronDown className="w-4 h-4 text-white/65" />
                         )}
                       </button>
                     </div>
@@ -411,7 +411,7 @@ export default function MosqueSadaqahModal() {
                           <div className="mt-4 pt-4 border-t border-white/5 space-y-3">
                             {/* Prayer Times */}
                             <div>
-                              <p className="text-white/40 text-[10px] uppercase tracking-widest mb-2">Prayer Times</p>
+                              <p className="text-white/65 text-[10px] uppercase tracking-widest mb-2">Prayer Times</p>
                               <div className="grid grid-cols-5 gap-2">
                                 {Object.entries(mosque.prayerTimes).map(([name, time]) => (
                                   <div key={name} className="bg-black/30 p-2 rounded-lg text-center border border-white/5">
@@ -424,11 +424,11 @@ export default function MosqueSadaqahModal() {
                             {/* Capacity & Funding */}
                             <div className="flex gap-3">
                               <div className="flex-1 bg-black/30 p-3 rounded-xl border border-white/5">
-                                <p className="text-white/40 text-[10px]">Capacity</p>
+                                <p className="text-white/65 text-[10px]">Capacity</p>
                                 <p className="text-white font-bold text-sm">{mosque.capacity}</p>
                               </div>
                               <div className="flex-1 bg-black/30 p-3 rounded-xl border border-white/5">
-                                <p className="text-white/40 text-[10px]">Funding Goal</p>
+                                <p className="text-white/65 text-[10px]">Funding Goal</p>
                                 <div className="w-full bg-white/5 rounded-full h-1.5 mt-2">
                                   <div className="bg-[#10E07A] h-1.5 rounded-full" style={{ width: `${mosque.sadaqah ? 65 : 40}%` }} />
                                 </div>
@@ -478,7 +478,7 @@ export default function MosqueSadaqahModal() {
                   </div>
                   <div className="flex-1 text-left">
                     <p className="text-white font-bold text-sm">Qibla Finder</p>
-                    <p className="text-white/40 text-xs">Find prayer direction (NE &bull; 56°)</p>
+                    <p className="text-white/65 text-xs">Find prayer direction (NE &bull; 56°)</p>
                   </div>
                   <span className="material-symbols-outlined text-white/20">arrow_forward</span>
                 </button>

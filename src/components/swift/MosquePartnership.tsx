@@ -400,7 +400,7 @@ function MosquePartnershipInner() {
                           >
                             {getStatusLabel(order.status)}
                           </span>
-                          <span className="text-white/30 text-[10px] flex items-center gap-1">
+                          <span className="text-white/60 text-[10px] flex items-center gap-1">
                             <Clock className="w-2.5 h-2.5" />
                             {order.deadline}
                           </span>
@@ -412,7 +412,7 @@ function MosquePartnershipInner() {
                     {/* Progress bar */}
                     <div className="mt-3">
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-white/40 text-[10px] uppercase tracking-wider">Order Progress</span>
+                        <span className="text-white/65 text-[10px] uppercase tracking-wider">Order Progress</span>
                         <span className="text-xs font-semibold" style={{ color: statusColor }}>
                           {order.packsClaimed}/{order.totalPacks} packs
                         </span>
@@ -429,7 +429,7 @@ function MosquePartnershipInner() {
                           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-pulse" />
                         </motion.div>
                       </div>
-                      <p className="text-white/30 text-[10px] mt-1">
+                      <p className="text-white/60 text-[10px] mt-1">
                         {packsRemaining > 0 ? `${packsRemaining} left — want to add yours?` : 'All packs claimed!'}
                       </p>
                     </div>
@@ -439,7 +439,7 @@ function MosquePartnershipInner() {
                       <p className="text-white/50 text-xs">{order.menuDescription}</p>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-[#F5C451] text-xs font-bold">{formatNaira(order.pricePerPack)}/pack</span>
-                        <span className="text-white/30 text-[10px] flex items-center gap-1">
+                        <span className="text-white/60 text-[10px] flex items-center gap-1">
                           <Users className="w-2.5 h-2.5" />
                           {order.partners} partners
                         </span>
@@ -466,7 +466,7 @@ function MosquePartnershipInner() {
                             {order.isJoined && (
                               <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'rgba(16,224,122,0.06)', border: '1px solid rgba(16,224,122,0.15)' }}>
                                 <div>
-                                  <p className="text-white/40 text-[10px] uppercase tracking-wider">Your Contribution</p>
+                                  <p className="text-white/65 text-[10px] uppercase tracking-wider">Your Contribution</p>
                                   <p className="text-[#10E07A] text-lg font-black">{order.myPacks} packs</p>
                                 </div>
                                 <p className="text-[#10E07A] text-sm font-bold">{formatNaira(order.myPacks * order.pricePerPack)}</p>
@@ -520,7 +520,7 @@ function MosquePartnershipInner() {
               {filteredOrders.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12">
                   <AlertCircle className="w-10 h-10 text-white/10 mb-3" />
-                  <p className="text-white/30 text-sm">No orders found for this filter</p>
+                  <p className="text-white/60 text-sm">No orders found for this filter</p>
                 </div>
               )}
             </div>
@@ -565,7 +565,7 @@ function MosquePartnershipInner() {
 
                           {/* Pack selector */}
                           <div>
-                            <label className="text-white/40 text-[10px] uppercase tracking-wider mb-3 block">
+                            <label className="text-white/65 text-[10px] uppercase tracking-wider mb-3 block">
                               How many packs?
                             </label>
                             <div className="flex items-center justify-center gap-6">
@@ -578,7 +578,7 @@ function MosquePartnershipInner() {
                               </button>
                               <div className="text-center">
                                 <p className="text-white text-4xl font-black">{joinPacks}</p>
-                                <p className="text-white/30 text-xs mt-1">packs</p>
+                                <p className="text-white/60 text-xs mt-1">packs</p>
                               </div>
                               <button
                                 onClick={() => setJoinPacks(Math.min(100, joinPacks + 5))}
@@ -611,11 +611,11 @@ function MosquePartnershipInner() {
                           {/* Cost summary */}
                           <div className="rounded-2xl p-4 border border-white/8 space-y-2" style={{ backgroundColor: '#0F1118' }}>
                             <div className="flex items-center justify-between">
-                              <span className="text-white/40 text-xs">Price per pack</span>
+                              <span className="text-white/65 text-xs">Price per pack</span>
                               <span className="text-white text-xs font-medium">{formatNaira(order.pricePerPack)}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                              <span className="text-white/40 text-xs">Quantity</span>
+                              <span className="text-white/65 text-xs">Quantity</span>
                               <span className="text-white text-xs font-medium">× {joinPacks}</span>
                             </div>
                             <div className="h-px bg-white/8 my-1" />

@@ -131,7 +131,7 @@ export default function ReferEarnModal() {
               >
                 <h4 className="text-white font-bold text-sm mb-3">Share Your Link</h4>
                 <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4">
-                  <p className="text-white/40 text-xs mb-2">Your unique referral link</p>
+                  <p className="text-white/65 text-xs mb-2">Your unique referral link</p>
                   <div className="flex items-center gap-2 bg-[#0F1117] rounded-lg p-3 border border-white/5">
                     <p className="text-[#10E07A] text-sm font-mono flex-1 truncate">{referralLink}</p>
                     <button
@@ -165,11 +165,11 @@ export default function ReferEarnModal() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4 text-center">
                     <p className="text-[#10E07A] text-3xl font-black">{referralCount}</p>
-                    <p className="text-white/40 text-xs mt-1">Referrals</p>
+                    <p className="text-white/65 text-xs mt-1">Referrals</p>
                   </div>
                   <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4 text-center">
                     <p className="text-[#F5C451] text-3xl font-black">₦{earnedAmount.toLocaleString()}</p>
-                    <p className="text-white/40 text-xs mt-1">Earned</p>
+                    <p className="text-white/65 text-xs mt-1">Earned</p>
                   </div>
                 </div>
                 <div className="mt-3 bg-[#1A1D26] rounded-xl border border-white/5 p-4">
@@ -185,7 +185,7 @@ export default function ReferEarnModal() {
                       className="gold-gradient h-2.5 rounded-full"
                     />
                   </div>
-                  <p className="text-white/30 text-[10px] mt-1.5">{nextTier - referralCount} more referrals to unlock Gold Badge</p>
+                  <p className="text-white/60 text-[10px] mt-1.5">{nextTier - referralCount} more referrals to unlock Gold Badge</p>
                 </div>
               </motion.div>
 
@@ -203,7 +203,7 @@ export default function ReferEarnModal() {
                       key={person.name}
                       className={`flex items-center gap-3 p-3.5 ${i < sortedLeaderboard.length - 1 ? 'border-b border-white/5' : ''} ${person.isYou ? 'bg-[#10E07A]/5' : ''}`}
                     >
-                      <span className={`w-6 text-center text-xs font-black ${i === 0 ? 'text-[#F5C451]' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-white/30'}`}>
+                      <span className={`w-6 text-center text-xs font-black ${i === 0 ? 'text-[#F5C451]' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-white/60'}`}>
                         {i + 1}
                       </span>
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A]/30 to-[#10E07A]/10 flex items-center justify-center border border-white/10 shrink-0">
@@ -217,7 +217,7 @@ export default function ReferEarnModal() {
                       </div>
                       <div className="text-right">
                         <p className="text-white font-bold text-sm">{person.count}</p>
-                        <p className="text-white/30 text-[10px]">referrals</p>
+                        <p className="text-white/60 text-[10px]">referrals</p>
                       </div>
                     </div>
                   ))}
@@ -278,7 +278,7 @@ export default function ReferEarnModal() {
                             <ChevronRight className="w-3 h-3 text-white/20" />
                             <span className="text-white font-bold text-sm">{item.title}</span>
                           </div>
-                          <p className="text-white/40 text-xs mt-0.5">{item.desc}</p>
+                          <p className="text-white/65 text-xs mt-0.5">{item.desc}</p>
                         </div>
                       </div>
                     );

@@ -457,12 +457,12 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
           )}
           {!canSpin && !isSpinning && (
             <div className="text-center">
-              <p className="text-white/40 text-sm mb-1">You&apos;ve already spun today!</p>
+              <p className="text-white/65 text-sm mb-1">You&apos;ve already spun today!</p>
               <div className="flex items-center justify-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-[#F5C451]/60" />
                 <span className="text-[#F5C451] text-sm font-mono font-bold">{countdown}</span>
               </div>
-              <p className="text-white/30 text-xs mt-1">until next free spin</p>
+              <p className="text-white/60 text-xs mt-1">until next free spin</p>
             </div>
           )}
         </div>
@@ -607,7 +607,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     Claim Reward 🎁
                   </motion.button>
 
-                  <p className="text-white/30 text-xs mt-3">Reward added to your account</p>
+                  <p className="text-white/60 text-xs mt-3">Reward added to your account</p>
                 </div>
               </motion.div>
             </motion.div>

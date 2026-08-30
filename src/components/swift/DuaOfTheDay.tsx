@@ -271,7 +271,7 @@ export default function DuaOfTheDay() {
                           animate={{ opacity: 1 }}
                           transition={{ delay: 0.4 }}
                         >
-                          <span className="text-xs text-white/30">— {currentDua?.source}</span>
+                          <span className="text-xs text-white/60">— {currentDua?.source}</span>
                           <span className="text-xs text-white/20">Day {currentDua?.day}</span>
                         </motion.div>
                       </motion.div>

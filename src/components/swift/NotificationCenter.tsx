@@ -183,7 +183,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-white/40 text-sm mt-1"
+                    className="text-white/65 text-sm mt-1"
                   >
                     You&apos;re all caught up!
                   </motion.p>
@@ -221,7 +221,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                           </p>
                           {!notification.read && <span className="w-2 h-2 bg-[#10E07A] rounded-full shrink-0" />}
                         </div>
-                        <p className="text-white/40 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
+                        <p className="text-white/65 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
                         <p className="text-white/20 text-[10px] mt-1">{notification.time}</p>
                       </div>
                     </motion.button>

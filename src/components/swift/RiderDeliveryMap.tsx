@@ -47,7 +47,7 @@ export default function RiderDeliveryMap() {
         <div className="glass-effect rounded-2xl border border-white/10 p-1">
           <div className="flex items-center gap-3 px-3 py-2">
             <Search className="w-4 h-4 text-[#10E07A] shrink-0" />
-            <span className="text-white/30 text-sm flex-1 truncate">{destAddress}</span>
+            <span className="text-white/60 text-sm flex-1 truncate">{destAddress}</span>
             <MapPin className="w-4 h-4 text-white/20 shrink-0" />
           </div>
         </div>
@@ -65,7 +65,7 @@ export default function RiderDeliveryMap() {
             <Navigation className="w-8 h-8 text-white/20" />
           </motion.div>
           <h3 className="text-white text-lg font-extrabold">No Active Delivery</h3>
-          <p className="text-white/40 text-sm text-center mt-2">
+          <p className="text-white/65 text-sm text-center mt-2">
             {riderOnline
               ? 'Accept a delivery request to see the route map here'
               : 'Go online to start receiving delivery requests'}
@@ -285,13 +285,13 @@ export default function RiderDeliveryMap() {
                 </div>
                 <div className="flex-1">
                   <p className="text-white text-sm font-bold">{activeDelivery.customer}</p>
-                  <p className="text-white/40 text-[10px]">
+                  <p className="text-white/65 text-[10px]">
                     {pickupAddress} → {activeDelivery.address}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-[#10E07A] text-xs font-bold">{activeDelivery.id}</p>
-                  <p className="text-white/30 text-[10px]">{activeDelivery.progress}% complete</p>
+                  <p className="text-white/60 text-[10px]">{activeDelivery.progress}% complete</p>
                 </div>
               </div>
 
@@ -351,7 +351,7 @@ export default function RiderDeliveryMap() {
             <div className="glass-effect rounded-2xl border border-white/10 p-5 text-center">
               {riderOnline ? (
                 <>
-                  <p className="text-white/40 text-sm">Waiting for delivery requests...</p>
+                  <p className="text-white/65 text-sm">Waiting for delivery requests...</p>
                   <button
                     onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
                     className="mt-3 px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors"
@@ -361,7 +361,7 @@ export default function RiderDeliveryMap() {
                 </>
               ) : (
                 <div className="flex flex-col items-center gap-3">
-                  <p className="text-white/40 text-sm">Go online to start receiving delivery requests</p>
+                  <p className="text-white/65 text-sm">Go online to start receiving delivery requests</p>
                   <button
                     onClick={() => useAppStore.getState().setRiderOnline(true)}
                     className="px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors flex items-center gap-2"

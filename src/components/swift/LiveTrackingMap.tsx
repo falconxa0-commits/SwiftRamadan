@@ -236,7 +236,7 @@ export default function LiveTrackingMap() {
                   </button>
                   <div className="text-center">
                     <h2 className="text-white text-sm font-bold">Live Iftar Tracking</h2>
-                    <p className="text-white/40 text-[10px]">Real-time delivery updates</p>
+                    <p className="text-white/65 text-[10px]">Real-time delivery updates</p>
                   </div>
                   <div className="bg-[#1A1D26] border border-[#F5C451]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
                     <Clock className="w-3 h-3 text-[#F5C451]" />
@@ -312,7 +312,7 @@ export default function LiveTrackingMap() {
                       </div>
                     </div>
                     <div className="bg-[#1A1D26] border border-white/5 rounded-xl px-3 py-2 text-center">
-                      <p className="text-white/30 text-[10px]">Order</p>
+                      <p className="text-white/60 text-[10px]">Order</p>
                       <p className="text-white text-xs font-bold">#SWR-2847</p>
                     </div>
                   </div>
@@ -325,7 +325,7 @@ export default function LiveTrackingMap() {
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-bold text-sm">Musa</p>
-                        <p className="text-white/40 text-xs">Electric Bike &bull; Golden Route Delivery</p>
+                        <p className="text-white/65 text-xs">Electric Bike &bull; Golden Route Delivery</p>
                       </div>
                       <div className="flex gap-2">
                         <button

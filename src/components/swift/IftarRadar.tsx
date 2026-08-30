@@ -490,7 +490,7 @@ function IftarRadarInner() {
                             <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: '#10E07A', boxShadow: '0 0 6px #10E07A' }} />
                           )}
                         </div>
-                        <p className="text-white/40 text-xs mt-0.5 line-clamp-1">{spot.description}</p>
+                        <p className="text-white/65 text-xs mt-0.5 line-clamp-1">{spot.description}</p>
                         <div className="flex items-center gap-3 mt-2">
                           <span className="flex items-center gap-1 text-white/50 text-[11px]">
                             <MapPin className="w-3 h-3" style={{ color }} />
@@ -522,7 +522,7 @@ function IftarRadarInner() {
                             {/* Meals left progress */}
                             <div>
                               <div className="flex items-center justify-between mb-1.5">
-                                <span className="text-white/40 text-[10px] uppercase tracking-wider">Meals Remaining</span>
+                                <span className="text-white/65 text-[10px] uppercase tracking-wider">Meals Remaining</span>
                                 <span className="text-white/60 text-xs font-bold">{spot.mealsLeft} left</span>
                               </div>
                               <div className="w-full bg-white/5 rounded-full h-2">
@@ -573,7 +573,7 @@ function IftarRadarInner() {
               {filteredSpots.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12">
                   <MapPin className="w-10 h-10 text-white/10 mb-3" />
-                  <p className="text-white/30 text-sm">No iftar spots found for this filter</p>
+                  <p className="text-white/60 text-sm">No iftar spots found for this filter</p>
                 </div>
               )}
             </div>
@@ -601,7 +601,7 @@ function IftarRadarInner() {
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
                     {/* Type selector */}
                     <div>
-                      <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block">Type</label>
+                      <label className="text-white/65 text-[10px] uppercase tracking-wider mb-2 block">Type</label>
                       <div className="flex gap-2">
                         {(['mosque', 'community', 'stall'] as const).map((t) => (
                           <button
@@ -622,7 +622,7 @@ function IftarRadarInner() {
 
                     {/* Name input */}
                     <div>
-                      <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block">Spot Name</label>
+                      <label className="text-white/65 text-[10px] uppercase tracking-wider mb-2 block">Spot Name</label>
                       <input
                         type="text"
                         value={pinName}
@@ -634,7 +634,7 @@ function IftarRadarInner() {
 
                     {/* Description */}
                     <div>
-                      <label className="text-white/40 text-[10px] uppercase tracking-wider mb-2 block">Description</label>
+                      <label className="text-white/65 text-[10px] uppercase tracking-wider mb-2 block">Description</label>
                       <textarea
                         value={pinDescription}
                         onChange={(e) => setPinDescription(e.target.value)}

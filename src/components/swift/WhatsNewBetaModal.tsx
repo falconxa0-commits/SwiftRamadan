@@ -61,7 +61,7 @@ export default function WhatsNewBetaModal() {
                     What's New
                     <span className="px-1.5 py-0.5 rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30 text-[#FFD700] text-[9px] font-black uppercase tracking-wider">Beta</span>
                   </h2>
-                  <p className="text-white/40 text-xs">Release notes & fresh features</p>
+                  <p className="text-white/65 text-xs">Release notes & fresh features</p>
                 </div>
               </div>
               <button onClick={() => setActiveModal(null)} className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors" aria-label="Close">
@@ -77,7 +77,7 @@ export default function WhatsNewBetaModal() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="text-white font-black text-base">{release.version}</h3>
-                      <p className="text-white/40 text-xs">{release.date}</p>
+                      <p className="text-white/65 text-xs">{release.date}</p>
                     </div>
                     <span className="px-2 py-1 rounded-full bg-[#FFD700]/15 border border-[#FFD700]/30 text-[#FFD700] text-[10px] font-black uppercase tracking-wider">{release.tag}</span>
                   </div>
@@ -132,7 +132,7 @@ export default function WhatsNewBetaModal() {
                 <div className="flex items-center justify-center gap-1 mb-1">
                   {[1, 2, 3, 4, 5].map((s) => (<Star key={s} className="w-3 h-3 text-[#FFD700] fill-[#FFD700]" />))}
                 </div>
-                <p className="text-white/30 text-[10px]">SwiftRamadan Beta · Built with 💚 for the Ummah</p>
+                <p className="text-white/60 text-[10px]">SwiftRamadan Beta · Built with 💚 for the Ummah</p>
               </div>
             </div>
           </motion.div>

@@ -967,7 +967,7 @@ function CoachTab(props: CoachTabProps) {
               Point your camera at any dish — Safa AI names it, prices it, and adds it to cart.
             </p>
           </div>
-          <ArrowRight className="w-4 h-4 text-white/40 shrink-0" />
+          <ArrowRight className="w-4 h-4 text-white/65 shrink-0" />
         </button>
 
         <div>
@@ -1062,7 +1062,7 @@ function CoachTab(props: CoachTabProps) {
           <Sparkles className="w-5 h-5" />
           ▶ Start Live Cooking with Chef Safa
         </button>
-        <p className="text-center text-white/40 text-xs -mt-2">
+        <p className="text-center text-white/65 text-xs -mt-2">
           Safa AI will watch your webcam and guide you in real-time.
         </p>
       </div>
@@ -1086,7 +1086,7 @@ function CoachTab(props: CoachTabProps) {
             <span className="text-[#10E07A] text-xs font-black tracking-wider">
               STEP {props.stepIndex + 1} OF {totalSteps}
             </span>
-            <span className="text-white/40 text-xs flex items-center gap-1">
+            <span className="text-white/65 text-xs flex items-center gap-1">
               <Clock className="w-3 h-3" /> {r.timeMins}m
             </span>
           </div>
@@ -1139,7 +1139,7 @@ function CoachTab(props: CoachTabProps) {
               </p>
               {/* Live progress bar */}
               <div className="mt-3">
-                <div className="flex items-center justify-between text-[10px] text-white/40 mb-1">
+                <div className="flex items-center justify-between text-[10px] text-white/65 mb-1">
                   <span>Cooking progress</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
@@ -1179,7 +1179,7 @@ function CoachTab(props: CoachTabProps) {
             </div>
             <button
               onClick={props.onBackToSelect}
-              className="w-full text-white/40 text-xs hover:text-white/70 py-1"
+              className="w-full text-white/65 text-xs hover:text-white/70 py-1"
             >
               End session without logging
             </button>
@@ -1200,7 +1200,7 @@ function CoachTab(props: CoachTabProps) {
           >
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
-          <span className="text-white/40 text-xs">Food Scanner</span>
+          <span className="text-white/65 text-xs">Food Scanner</span>
         </div>
 
         {props.cameraError ? (
@@ -1245,7 +1245,7 @@ function CoachTab(props: CoachTabProps) {
                 </span>
               </div>
               <div className="text-right shrink-0">
-                <div className="text-white/40 text-[10px]">Est. price</div>
+                <div className="text-white/65 text-[10px]">Est. price</div>
                 <div className="text-[#F5C451] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
               </div>
             </div>
@@ -1306,7 +1306,7 @@ function CustomRecipeCard({
           <Plus className="w-5 h-5 text-white" />
         </div>
         <div className="text-white text-xs font-bold">Custom Recipe</div>
-        <div className="text-white/40 text-[10px] mt-0.5">Cook anything with Safa</div>
+        <div className="text-white/65 text-[10px] mt-0.5">Cook anything with Safa</div>
       </button>
       {expanded && (
         <div className="p-3 pt-0 space-y-2">
@@ -1314,7 +1314,7 @@ function CustomRecipeCard({
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="e.g. Egusi Soup"
-            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
+            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
           />
           <div className="flex gap-1.5">
             {diffs.map((d) => (
@@ -1442,7 +1442,7 @@ function PantryTab({
                 value={pantryForm.name}
                 onChange={(e) => setPantryForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Item name (e.g. Tomatoes)"
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
+                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <select
@@ -1459,13 +1459,13 @@ function PantryTab({
                     value={pantryForm.quantity}
                     onChange={(e) => setPantryForm((f) => ({ ...f, quantity: e.target.value }))}
                     placeholder="Qty"
-                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
+                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
                   />
                   <input
                     value={pantryForm.unit}
                     onChange={(e) => setPantryForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder="unit"
-                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/30 focus:border-[#10E07A]/40 outline-none"
+                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
                   />
                 </div>
               </div>
@@ -1582,8 +1582,8 @@ function PantryTab({
       {pantry.length === 0 && !showAddPantry ? (
         <div className="text-center py-10">
           <CookingPot className="w-10 h-10 text-white/20 mx-auto mb-2" />
-          <p className="text-white/40 text-sm">Your pantry is empty.</p>
-          <p className="text-white/30 text-xs">Add items so Chef Safa can suggest recipes.</p>
+          <p className="text-white/65 text-sm">Your pantry is empty.</p>
+          <p className="text-white/60 text-xs">Add items so Chef Safa can suggest recipes.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -1603,7 +1603,7 @@ function PantryTab({
                     >
                       <div className="flex-1 min-w-0">
                         <div className="text-white text-sm font-bold truncate">{item.name}</div>
-                        <div className="text-white/40 text-xs">
+                        <div className="text-white/65 text-xs">
                           {item.quantity} {item.unit}
                           {item.expiresAt && ` · exp ${new Date(item.expiresAt).toLocaleDateString()}`}
                         </div>
@@ -1681,7 +1681,7 @@ function InsightsTab({
       <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-white font-black text-sm">Weekly Activity</h4>
-          <span className="text-white/40 text-[10px]">last 7 days</span>
+          <span className="text-white/65 text-[10px]">last 7 days</span>
         </div>
         <svg viewBox="0 0 320 140" className="w-full h-32">
           {/* baseline */}
@@ -1863,7 +1863,7 @@ function BadgesTab({
                 {a.unlocked ? (
                   <IconComp className="w-6 h-6 text-[#F5C451]" />
                 ) : (
-                  <IconComp className="w-6 h-6 text-white/30" />
+                  <IconComp className="w-6 h-6 text-white/60" />
                 )}
               </div>
               <div className="text-white font-black text-sm leading-tight">{a.title}</div>

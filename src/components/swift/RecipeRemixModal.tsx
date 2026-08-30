@@ -111,7 +111,7 @@ export default function RecipeRemixModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">🍳 Recipe Remix</h2>
-                  <p className="text-white/40 text-xs">Give your favorite dish a twist</p>
+                  <p className="text-white/65 text-xs">Give your favorite dish a twist</p>
                 </div>
               </div>
               <button
@@ -199,7 +199,7 @@ export default function RecipeRemixModal() {
                   <div className="p-5 border-b border-white/5">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-white font-bold text-lg">{remix.name}</h3>
-                      <span className="text-[10px] text-white/30 bg-white/5 px-2 py-1 rounded-full">
+                      <span className="text-[10px] text-white/60 bg-white/5 px-2 py-1 rounded-full">
                         {source === 'ai' ? '✨ AI Generated' : '💡 Suggested'}
                       </span>
                     </div>
@@ -294,13 +294,13 @@ export default function RecipeRemixModal() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="text-white font-bold text-sm">{item.name}</h4>
-                      <p className="text-white/40 text-[10px] truncate">
+                      <p className="text-white/65 text-[10px] truncate">
                         {item.description} • from {item.originalName}
                       </p>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
                       <Heart className="w-3.5 h-3.5 text-red-400/60" />
-                      <span className="text-white/40 text-[10px] font-bold">{item.likes}</span>
+                      <span className="text-white/65 text-[10px] font-bold">{item.likes}</span>
                     </div>
                   </motion.button>
                 ))}

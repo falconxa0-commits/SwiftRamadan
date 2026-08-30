@@ -279,7 +279,7 @@ export default function AIChatWidget() {
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                       placeholder="Ask Chef Safa anything…"
-                      className="flex-1 bg-[#1A1D26] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#13ec13]/30"
+                      className="flex-1 bg-[#1A1D26] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/60 focus:outline-none focus:border-[#13ec13]/30"
                     />
                     <button
                       onClick={() => toast({ title: '🎤 Coming soon', description: 'Voice input coming soon' })}

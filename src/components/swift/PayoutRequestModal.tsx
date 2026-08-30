@@ -307,7 +307,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
             </div>
             <div>
               <h2 className="text-white text-lg font-bold">Request Payout</h2>
-              <p className="text-white/30 text-xs">
+              <p className="text-white/60 text-xs">
                 {role === 'rider' ? 'Rider Earnings' : 'Vendor Earnings'} → Bank Account
               </p>
             </div>
@@ -365,7 +365,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     <div className={`w-8 h-8 rounded-lg ${accentBg20} flex items-center justify-center mb-2 border ${accentBorder20}`}>
                       <Wallet className={`w-4 h-4 ${accentText}`} />
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">Available</p>
+                    <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">Available</p>
                     {loading ? (
                       <div className="mt-0.5 h-5 w-20 bg-white/5 rounded animate-pulse" />
                     ) : (
@@ -376,7 +376,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     <div className="w-8 h-8 rounded-lg bg-[#38BDF8]/20 flex items-center justify-center mb-2 border border-[#38BDF8]/20">
                       <Clock className="w-4 h-4 text-[#38BDF8]" />
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+                    <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
                       {role === 'rider' ? 'Withdrawn' : 'Pending'}
                     </p>
                     {loading ? (
@@ -391,7 +391,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     <div className="w-8 h-8 rounded-lg bg-[#10E07A]/20 flex items-center justify-center mb-2 border border-[#10E07A]/20">
                       <TrendingUp className="w-4 h-4 text-[#10E07A]" />
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">Total Earned</p>
+                    <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">Total Earned</p>
                     {loading ? (
                       <div className="mt-0.5 h-5 w-20 bg-white/5 rounded animate-pulse" />
                     ) : (
@@ -402,7 +402,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     <div className="w-8 h-8 rounded-lg bg-[#F5C451]/20 flex items-center justify-center mb-2 border border-[#F5C451]/20">
                       <ArrowDownLeft className="w-4 h-4 text-[#F5C451]" />
                     </div>
-                    <p className="text-white/40 text-[10px] uppercase tracking-widest font-bold">
+                    <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
                       {role === 'rider' ? 'Today' : 'Revenue'}
                     </p>
                     {loading ? (
@@ -417,7 +417,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                 {role === 'rider' && weeklyEarnings.length > 0 && (
                   <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
                     <div className="flex items-center gap-2 mb-3">
-                      <BarChart3 className="w-4 h-4 text-white/40" />
+                      <BarChart3 className="w-4 h-4 text-white/65" />
                       <h3 className="text-white text-sm font-bold">Weekly Earnings</h3>
                     </div>
                     <div className="flex items-end gap-2 h-20">
@@ -436,7 +436,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                                 style={{ height: `${Math.max(pct, 4)}%` }}
                               />
                             </div>
-                            <span className={`text-[9px] font-bold ${isToday ? 'text-[#38BDF8]' : 'text-white/30'}`}>
+                            <span className={`text-[9px] font-bold ${isToday ? 'text-[#38BDF8]' : 'text-white/60'}`}>
                               {day.day}
                             </span>
                           </div>
@@ -451,7 +451,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   <h3 className="text-white text-sm font-bold mb-3">Payout Amount</h3>
 
                   <div className="relative mb-3">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-lg font-bold">₦</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 text-lg font-bold">₦</span>
                     <input
                       type="text"
                       inputMode="numeric"
@@ -495,7 +495,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       </div>
                       <div className="flex-1">
                         <p className="text-white text-sm font-semibold">{bankDisplay}</p>
-                        <p className="text-white/30 text-[10px]">Primary account</p>
+                        <p className="text-white/60 text-[10px]">Primary account</p>
                       </div>
                       <CheckCircle2 className="w-5 h-5 text-[#10E07A]" />
                     </div>
@@ -504,7 +504,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
                       <div>
                         <p className="text-red-400 text-xs font-bold">No bank account configured</p>
-                        <p className="text-white/30 text-[10px]">Add your bank details in settings to receive payouts</p>
+                        <p className="text-white/60 text-[10px]">Add your bank details in settings to receive payouts</p>
                       </div>
                     </div>
                   )}
@@ -526,7 +526,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                 {loading && (
                   <div className="flex flex-col items-center py-8">
                     <Loader2 className={`w-8 h-8 ${accentText} animate-spin mb-2`} />
-                    <p className="text-white/40 text-xs">Loading your earnings data...</p>
+                    <p className="text-white/65 text-xs">Loading your earnings data...</p>
                   </div>
                 )}
 
@@ -608,27 +608,27 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   className="w-full max-w-xs bg-[#0F1118] border border-white/5 rounded-2xl p-5 space-y-3"
                 >
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Amount</span>
+                    <span className="text-white/65 text-xs">Amount</span>
                     <span className="text-white font-bold">{formatNaira(successAmount)}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Reference</span>
+                    <span className="text-white/65 text-xs">Reference</span>
                     <span className="text-white/60 text-xs font-mono">{successReference}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Destination</span>
+                    <span className="text-white/65 text-xs">Destination</span>
                     <span className="text-white/60 text-xs">{successBankDisplay}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">Status</span>
+                    <span className="text-white/65 text-xs">Status</span>
                     <span className="text-[#38BDF8] text-xs font-bold">Processing</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
-                    <span className="text-white/40 text-xs">ETA</span>
+                    <span className="text-white/65 text-xs">ETA</span>
                     <span className="text-white/60 text-xs">Within 24 hours</span>
                   </div>
                 </motion.div>

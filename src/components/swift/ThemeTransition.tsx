@@ -162,7 +162,7 @@ export default function ThemeTransition() {
               <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8">
                 <div>
                   <p className="text-sm font-semibold text-white">Auto-Detect Time</p>
-                  <p className="text-xs text-white/40">Theme shifts based on prayer schedule</p>
+                  <p className="text-xs text-white/65">Theme shifts based on prayer schedule</p>
                 </div>
                 <button
                   onClick={() => setAutoDetect(!autoDetect)}
@@ -249,7 +249,7 @@ export default function ThemeTransition() {
                           <Icon className="w-4 h-4" style={{ color: info.color }} />
                         </div>
                         <p className="text-sm font-semibold text-white">{info.label}</p>
-                        <p className="text-xs text-white/40 mt-1">{info.description}</p>
+                        <p className="text-xs text-white/65 mt-1">{info.description}</p>
                         {isActive && (
                           <motion.div
                             layoutId="theme-indicator"

@@ -156,7 +156,7 @@ function IftarCountdownBanner() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.12 }}
-      className={`relative overflow-hidden rounded-2xl border p-4 ${
+      className={`relative overflow-hidden rounded-2xl border p-3 sm:p-4 ${
         isUrgent ? 'bg-red-500/10 border-red-500/20' : 'bg-[#F5C451]/10 border-[#F5C451]/20'
       }`}
     >
@@ -185,7 +185,7 @@ function IftarCountdownBanner() {
             <p className={`text-sm font-bold ${isUrgent ? 'text-red-400' : 'text-[#F5C451]'}`}>
               Iftar Countdown
             </p>
-            <p className="text-white/40 text-[10px]">Maghrib at 6:45 PM</p>
+            <p className="text-white/65 text-[10px]">Maghrib at 6:45 PM</p>
           </div>
         </div>
         <div className="text-right">
@@ -196,7 +196,7 @@ function IftarCountdownBanner() {
           >
             {mins}:{secs.toString().padStart(2, '0')}
           </p>
-          <p className="text-white/30 text-[9px] font-bold">remaining</p>
+          <p className="text-white/60 text-[9px] font-bold">remaining</p>
         </div>
       </div>
     </motion.div>
@@ -697,7 +697,7 @@ export default function VendorDashboard() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="relative overflow-hidden rounded-2xl glass-card border border-white/5 p-4"
+        className="relative overflow-hidden rounded-2xl glass-card border border-white/5 p-3 sm:p-4"
       >
         <div className="absolute top-0 right-0 w-24 h-24 bg-[#F5C451]/5 blur-[40px]" />
         <div className="relative z-10 flex items-center justify-between">
@@ -753,7 +753,7 @@ export default function VendorDashboard() {
             key={filter.id}
             onClick={() => setActiveFilter(filter.id)}
             className={`relative flex-1 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ${
-              activeFilter === filter.id ? 'text-[#06070B]' : 'text-white/40 hover:text-white/60'
+              activeFilter === filter.id ? 'text-[#06070B]' : 'text-white/65 hover:text-white/60'
             }`}
           >
             {activeFilter === filter.id && (
@@ -769,7 +769,7 @@ export default function VendorDashboard() {
                 className={`relative z-10 text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   activeFilter === filter.id
                     ? 'bg-[#06070B]/20 text-[#06070B]'
-                    : 'bg-white/10 text-white/40'
+                    : 'bg-white/10 text-white/65'
                 }`}
               >
                 {filter.count}
@@ -811,7 +811,7 @@ export default function VendorDashboard() {
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Package className="w-8 h-8 text-white/20" />
                 </div>
-                <p className="text-white/40 text-sm font-semibold">No incoming orders</p>
+                <p className="text-white/65 text-sm font-semibold">No incoming orders</p>
                 <p className="text-white/20 text-xs mt-1">
                   New orders will appear here in real time
                 </p>
@@ -852,8 +852,8 @@ export default function VendorDashboard() {
                       <div>
                         <p className="text-white text-sm font-bold">{order.customer}</p>
                         <div className="flex items-center gap-1 mt-0.5">
-                          <MapPin className="w-3 h-3 text-white/30" />
-                          <span className="text-white/40 text-xs">{order.area}</span>
+                          <MapPin className="w-3 h-3 text-white/60" />
+                          <span className="text-white/65 text-xs">{order.area}</span>
                         </div>
                       </div>
                       <div className="text-right">
@@ -868,7 +868,7 @@ export default function VendorDashboard() {
                           <span className="text-white/50 text-xs">
                             {item.qty}x {item.name}
                           </span>
-                          <span className="text-white/30 text-xs">
+                          <span className="text-white/60 text-xs">
                             {formatNaira(item.price * item.qty)}
                           </span>
                         </div>
@@ -908,7 +908,7 @@ export default function VendorDashboard() {
                         className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all"
                         aria-label="More options"
                       >
-                        <MoreVertical className="w-4 h-4 text-white/40" />
+                        <MoreVertical className="w-4 h-4 text-white/65" />
                       </button>
                     </div>
                   </div>
@@ -938,7 +938,7 @@ export default function VendorDashboard() {
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Clock className="w-8 h-8 text-white/20" />
                 </div>
-                <p className="text-white/40 text-sm font-semibold">No processing orders</p>
+                <p className="text-white/65 text-sm font-semibold">No processing orders</p>
                 <p className="text-white/20 text-xs mt-1">Accept incoming orders to see them here</p>
               </div>
             ) : (
@@ -948,7 +948,7 @@ export default function VendorDashboard() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className={`rounded-2xl bg-[#0F1118] border p-4 ${
+                  className={`rounded-2xl bg-[#0F1118] border p-3 sm:p-4 ${
                     readyIds.has(order.id) ? 'border-[#10E07A]/30' : 'border-[#F5C451]/20'
                   }`}
                 >
@@ -967,8 +967,8 @@ export default function VendorDashboard() {
                         </span>
                       </div>
                       <div className="flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3 h-3 text-white/30" />
-                        <span className="text-white/40 text-xs">{order.area}</span>
+                        <MapPin className="w-3 h-3 text-white/60" />
+                        <span className="text-white/65 text-xs">{order.area}</span>
                       </div>
                     </div>
                     <p className="text-[#F5C451] font-black text-sm">{formatNaira(order.total)}</p>
@@ -980,7 +980,7 @@ export default function VendorDashboard() {
                         <span className="text-white/50 text-xs">
                           {item.qty}x {item.name}
                         </span>
-                        <span className="text-white/30 text-xs">{formatNaira(item.price * item.qty)}</span>
+                        <span className="text-white/60 text-xs">{formatNaira(item.price * item.qty)}</span>
                       </div>
                     ))}
                   </div>
@@ -988,7 +988,7 @@ export default function VendorDashboard() {
                   <div className="flex items-center justify-between pt-3 border-t border-white/5">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-3.5 h-3.5 text-[#F5C451]" />
-                      <span className="text-white/40 text-xs">Started {order.startedAt}</span>
+                      <span className="text-white/65 text-xs">Started {order.startedAt}</span>
                     </div>
                     <span className="text-[#10E07A] text-xs font-bold">Ready by {order.estimatedReady}</span>
                   </div>
@@ -1031,7 +1031,7 @@ export default function VendorDashboard() {
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Truck className="w-8 h-8 text-white/20" />
                 </div>
-                <p className="text-white/40 text-sm font-semibold">No dispatched orders</p>
+                <p className="text-white/65 text-sm font-semibold">No dispatched orders</p>
                 <p className="text-white/20 text-xs mt-1">
                   Orders marked ready or out for delivery will appear here
                 </p>
@@ -1043,7 +1043,7 @@ export default function VendorDashboard() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-2xl bg-[#0F1118] border border-[#10E07A]/20 p-4"
+                  className="rounded-2xl bg-[#0F1118] border border-[#10E07A]/20 p-3 sm:p-4"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div>
@@ -1060,8 +1060,8 @@ export default function VendorDashboard() {
                         </span>
                       </div>
                       <div className="flex items-center gap-1 mt-0.5">
-                        <MapPin className="w-3 h-3 text-white/30" />
-                        <span className="text-white/40 text-xs">{order.area}</span>
+                        <MapPin className="w-3 h-3 text-white/60" />
+                        <span className="text-white/65 text-xs">{order.area}</span>
                       </div>
                     </div>
                     <p className="text-[#F5C451] font-black text-sm">{formatNaira(order.total)}</p>
@@ -1073,7 +1073,7 @@ export default function VendorDashboard() {
                         <span className="text-white/50 text-xs">
                           {item.qty}x {item.name}
                         </span>
-                        <span className="text-white/30 text-xs">
+                        <span className="text-white/60 text-xs">
                           {formatNaira(item.price * item.qty)}
                         </span>
                       </div>
@@ -1083,7 +1083,7 @@ export default function VendorDashboard() {
                   <div className="flex items-center justify-between pt-3 border-t border-white/5">
                     <div className="flex items-center gap-1.5">
                       <Truck className="w-3.5 h-3.5 text-[#10E07A]" />
-                      <span className="text-white/40 text-xs">
+                      <span className="text-white/65 text-xs">
                         {order.riderName
                           ? `Rider: ${order.riderName}`
                           : order.orderStatus === 'In Transit'
@@ -1091,7 +1091,7 @@ export default function VendorDashboard() {
                             : 'Ready for pickup'}
                       </span>
                     </div>
-                    <span className="text-white/30 text-[10px]">Placed {order.createdAtLabel}</span>
+                    <span className="text-white/60 text-[10px]">Placed {order.createdAtLabel}</span>
                   </div>
                 </motion.div>
               ))

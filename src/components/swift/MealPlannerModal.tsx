@@ -333,7 +333,7 @@ export default function MealPlannerModal() {
                       >
                         <span
                           className={`text-[10px] uppercase tracking-wider font-bold ${
-                            d.isToday ? 'text-[#10E07A]' : 'text-white/40'
+                            d.isToday ? 'text-[#10E07A]' : 'text-white/65'
                           }`}
                         >
                           {d.isToday ? 'Today' : d.dayName}
@@ -366,7 +366,7 @@ export default function MealPlannerModal() {
               {/* Selected day header */}
               <div className="px-4 mt-5 flex items-center justify-between">
                 <div>
-                  <p className="text-white/40 text-[11px] uppercase tracking-wider font-bold">
+                  <p className="text-white/65 text-[11px] uppercase tracking-wider font-bold">
                     {selectedDayMeta.isToday ? 'Today' : 'Selected day'}
                   </p>
                   <h3 className="text-white text-lg font-black">
@@ -442,7 +442,7 @@ export default function MealPlannerModal() {
                         <CalendarDays className="w-4 h-4 text-[#F5C451]" />
                         <h4 className="text-white font-black text-sm">This Week</h4>
                       </div>
-                      <span className="text-white/40 text-[11px] font-bold">7 days</span>
+                      <span className="text-white/65 text-[11px] font-bold">7 days</span>
                     </div>
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <SummaryStat label="Meals" value={summary.total} color="#FFFFFF" />
@@ -456,7 +456,7 @@ export default function MealPlannerModal() {
                       <ShoppingCart className="w-4 h-4" />
                       Add All Ingredients to Cart
                     </button>
-                    <p className="text-white/30 text-[10px] text-center mt-2">
+                    <p className="text-white/60 text-[10px] text-center mt-2">
                       Adds the main meal of each planned day to your cart.
                     </p>
                   </div>
@@ -552,7 +552,7 @@ function MealSection({
               {label === 'Iftar' ? 'Sunset' : 'Pre-dawn'}
             </span>
           </div>
-          <p className="text-white/40 text-[11px]">{sublabel}</p>
+          <p className="text-white/65 text-[11px]">{sublabel}</p>
         </div>
       </div>
 
@@ -651,7 +651,7 @@ function SummaryStat({ label, value, color }: { label: string; value: number; co
       <div className="text-2xl font-black" style={{ color }}>
         {value}
       </div>
-      <div className="text-[10px] uppercase tracking-wider text-white/40 font-bold mt-0.5">
+      <div className="text-[10px] uppercase tracking-wider text-white/65 font-bold mt-0.5">
         {label}
       </div>
     </div>
@@ -735,7 +735,7 @@ function AddMealSheet({
 
         {/* Recipe suggestions */}
         <div className="px-5 pb-4">
-          <p className="text-white/40 text-[11px] uppercase tracking-wider font-bold mb-2">
+          <p className="text-white/65 text-[11px] uppercase tracking-wider font-bold mb-2">
             Trending recipes
           </p>
           <div className="flex gap-3 overflow-x-auto no-scrollbar -mx-1 px-1 pb-1">
@@ -772,8 +772,8 @@ function AddMealSheet({
                       {m.name}
                     </p>
                     <div className="flex items-center gap-1 mt-1">
-                      <Clock className="w-2.5 h-2.5 text-white/40" />
-                      <span className="text-white/40 text-[10px]">{m.deliveryTime}</span>
+                      <Clock className="w-2.5 h-2.5 text-white/65" />
+                      <span className="text-white/65 text-[10px]">{m.deliveryTime}</span>
                     </div>
                   </div>
                 </button>
@@ -784,7 +784,7 @@ function AddMealSheet({
 
         {/* Custom meal name */}
         <div className="px-5 pb-4">
-          <p className="text-white/40 text-[11px] uppercase tracking-wider font-bold mb-2">
+          <p className="text-white/65 text-[11px] uppercase tracking-wider font-bold mb-2">
             Or type your own
           </p>
           <input
@@ -795,13 +795,13 @@ function AddMealSheet({
               if (e.target.value && pickedRecipeId !== null) setPickedRecipeId(null);
             }}
             placeholder="e.g. Auntie&apos;s Pepper Soup"
-            className="w-full px-4 py-3 rounded-2xl bg-[#1A1D26] border border-white/10 text-white text-sm placeholder:text-white/30 focus:outline-none focus:border-white/30 transition-colors"
+            className="w-full px-4 py-3 rounded-2xl bg-[#1A1D26] border border-white/10 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-white/30 transition-colors"
           />
         </div>
 
         {/* Servings stepper */}
         <div className="px-5 pb-5">
-          <p className="text-white/40 text-[11px] uppercase tracking-wider font-bold mb-2">
+          <p className="text-white/65 text-[11px] uppercase tracking-wider font-bold mb-2">
             Servings
           </p>
           <div className="flex items-center justify-between bg-[#1A1D26] border border-white/10 rounded-2xl p-2">
@@ -815,7 +815,7 @@ function AddMealSheet({
             </button>
             <div className="flex items-baseline gap-1.5">
               <span className="text-white text-2xl font-black">{servings}</span>
-              <span className="text-white/40 text-xs font-bold">
+              <span className="text-white/65 text-xs font-bold">
                 serving{servings > 1 ? 's' : ''}
               </span>
             </div>
@@ -845,7 +845,7 @@ function AddMealSheet({
             Add to {slot === 'iftar' ? 'Iftar' : 'Sahur'}
           </button>
           {!customName.trim() && pickedRecipeId === null && (
-            <p className="text-white/30 text-[10px] text-center mt-2">
+            <p className="text-white/60 text-[10px] text-center mt-2">
               Pick a recipe above or type a custom name
             </p>
           )}

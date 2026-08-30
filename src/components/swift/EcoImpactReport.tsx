@@ -89,9 +89,9 @@ export default function EcoImpactReport() {
                   <div className="w-16 h-16 mx-auto rounded-2xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 mb-4 green-glow">
                     <TreePine className="w-8 h-8 text-[#10E07A]" />
                   </div>
-                  <p className="text-white/40 text-xs mb-1">Total CO₂ Saved This Ramadan</p>
+                  <p className="text-white/65 text-xs mb-1">Total CO₂ Saved This Ramadan</p>
                   <h3 className="text-[#10E07A] text-4xl font-black">{ecoImpactData.co2Saved}</h3>
-                  <p className="text-white/30 text-xs mt-2">That&apos;s equivalent to charging 1,000 smartphones! 📱</p>
+                  <p className="text-white/60 text-xs mt-2">That&apos;s equivalent to charging 1,000 smartphones! 📱</p>
                 </div>
               </motion.div>
 
@@ -113,7 +113,7 @@ export default function EcoImpactReport() {
                           <Icon className={`w-4.5 h-4.5 ${stat.color}`} />
                         </div>
                         <p className={`text-xl font-black ${stat.color}`}>{stat.value}</p>
-                        <p className="text-white/30 text-[11px] mt-0.5">{stat.label}</p>
+                        <p className="text-white/60 text-[11px] mt-0.5">{stat.label}</p>
                       </motion.div>
                     );
                   })}
@@ -139,7 +139,7 @@ export default function EcoImpactReport() {
                           <span className="text-white/60 text-xs font-semibold">{bar.label}</span>
                           <div className="flex items-center gap-3 text-[10px]">
                             <span className="text-[#10E07A] font-bold">You: {bar.yours}{bar.unit}</span>
-                            <span className="text-white/30">Avg: {bar.average}{bar.unit}</span>
+                            <span className="text-white/60">Avg: {bar.average}{bar.unit}</span>
                           </div>
                         </div>
                         {/* Your bar */}
@@ -166,11 +166,11 @@ export default function EcoImpactReport() {
                   <div className="flex items-center gap-4 pt-1 border-t border-white/5">
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-2 bg-[#10E07A] rounded-full" />
-                      <span className="text-white/30 text-[10px]">You</span>
+                      <span className="text-white/60 text-[10px]">You</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <div className="w-3 h-2 bg-white/20 rounded-full" />
-                      <span className="text-white/30 text-[10px]">Average User</span>
+                      <span className="text-white/60 text-[10px]">Average User</span>
                     </div>
                   </div>
                 </div>
@@ -198,7 +198,7 @@ export default function EcoImpactReport() {
                       </div>
                       <div>
                         <p className="text-white text-sm font-bold">{tip.title}</p>
-                        <p className="text-white/40 text-xs mt-0.5">{tip.description}</p>
+                        <p className="text-white/65 text-xs mt-0.5">{tip.description}</p>
                       </div>
                     </motion.div>
                   ))}

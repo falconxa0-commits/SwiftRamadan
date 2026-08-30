@@ -348,7 +348,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Streak Shrine</h2>
-            <p className="text-white/40 text-[10px]">Build your mosque, one fast at a time</p>
+            <p className="text-white/65 text-[10px]">Build your mosque, one fast at a time</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -404,18 +404,18 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                   <Flame className="w-3.5 h-3.5 text-[#F5C451]" />
                   <span className="text-[#F5C451] text-lg font-black">{dailyStreak}</span>
                 </div>
-                <p className="text-white/30 text-[9px]">Current Streak</p>
+                <p className="text-white/60 text-[9px]">Current Streak</p>
               </div>
               <div className="bg-[#0F1118] rounded-xl border border-white/5 p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Star className="w-3.5 h-3.5 text-[#A78BFA]" />
                   <span className="text-[#A78BFA] text-lg font-black">{streak?.longest || 0}</span>
                 </div>
-                <p className="text-white/30 text-[9px]">Longest Streak</p>
+                <p className="text-white/60 text-[9px]">Longest Streak</p>
               </div>
               <div className="bg-[#0F1118] rounded-xl border border-white/5 p-3 text-center">
                 <span className="text-[#10E07A] text-lg font-black">{shrine?.overallProgress || 0}%</span>
-                <p className="text-white/30 text-[9px]">Complete</p>
+                <p className="text-white/60 text-[9px]">Complete</p>
               </div>
             </motion.div>
 
@@ -436,7 +436,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-white text-sm font-bold">{shrine?.currentStage?.name || 'Foundation'}</h3>
-                  <p className="text-white/40 text-[10px]">{shrine?.currentStage?.description}</p>
+                  <p className="text-white/65 text-[10px]">{shrine?.currentStage?.description}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-white/60 text-[10px]">Day {shrine?.currentStage?.dayRange?.[0]}-{shrine?.currentStage?.dayRange?.[1]}</p>
@@ -468,7 +468,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                   <p className="text-white/50 text-[10px]">Next Milestone</p>
                   <p className="text-white text-xs font-bold">{shrine.nextStage.name} (Day {shrine.nextStage.dayRange[0]})</p>
                 </div>
-                <span className="text-white/30 text-[10px]">{shrine.nextStage.dayRange[0] - dailyStreak} days to go</span>
+                <span className="text-white/60 text-[10px]">{shrine.nextStage.dayRange[0] - dailyStreak} days to go</span>
               </motion.div>
             )}
 
@@ -506,7 +506,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
 
             {/* Stage Timeline */}
             <div className="mt-6">
-              <p className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">Mosque Stages</p>
+              <p className="text-white/65 text-xs font-bold uppercase tracking-wider mb-3">Mosque Stages</p>
               <div className="space-y-1.5">
                 {stages.map((stage, i) => {
                   const isUnlocked = shrine?.unlockedStages?.some(s => s.id === stage.id) || false;
@@ -542,7 +542,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-[10px] font-bold ${isUnlocked ? 'text-white/80' : 'text-white/30'}`}>
+                        <p className={`text-[10px] font-bold ${isUnlocked ? 'text-white/80' : 'text-white/60'}`}>
                           {stage.name}
                         </p>
                         <p className="text-white/20 text-[8px]">Day {stage.dayRange[0]}-{stage.dayRange[1]}</p>
@@ -590,7 +590,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                 </div>
                 <h3 className="text-white text-lg font-bold mb-1">My Streak Shrine 🕌</h3>
                 <p className="text-[#10E07A] text-sm font-bold">{dailyStreak} Day Fasting Streak</p>
-                <p className="text-white/40 text-xs mt-1">{shrine.currentStage.name} Stage • {shrine.overallProgress}% Complete</p>
+                <p className="text-white/65 text-xs mt-1">{shrine.currentStage.name} Stage • {shrine.overallProgress}% Complete</p>
 
                 <motion.button
                   whileTap={{ scale: 0.95 }}

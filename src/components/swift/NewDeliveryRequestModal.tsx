@@ -247,7 +247,7 @@ export default function NewDeliveryRequestModal() {
                   </div>
                   <div>
                     <h2 className="text-white text-base font-extrabold">New Delivery Request</h2>
-                    <p className="text-white/30 text-[10px]">
+                    <p className="text-white/60 text-[10px]">
                       {delivery ? `Order #${delivery.id.slice(-6).toUpperCase()}` : 'Checking for requests...'}
                     </p>
                   </div>
@@ -257,7 +257,7 @@ export default function NewDeliveryRequestModal() {
                   className="w-8 h-8 bg-white/5 rounded-full flex items-center justify-center hover:bg-white/10 transition-colors"
                   aria-label="Close"
                 >
-                  <X className="w-4 h-4 text-white/40" />
+                  <X className="w-4 h-4 text-white/65" />
                 </button>
               </div>
 
@@ -277,7 +277,7 @@ export default function NewDeliveryRequestModal() {
                     <h3 className="text-white font-bold text-base mb-1">
                       No new delivery requests
                     </h3>
-                    <p className="text-white/40 text-xs max-w-xs">
+                    <p className="text-white/65 text-xs max-w-xs">
                       New orders will pop up here as soon as vendors mark them ready. Stay online!
                     </p>
                     <button
@@ -335,7 +335,7 @@ export default function NewDeliveryRequestModal() {
                           </span>
                         </div>
                       </div>
-                      <p className="text-white/30 text-[10px] mt-2">
+                      <p className="text-white/60 text-[10px] mt-2">
                         Iftar at 6:45 PM • {minutesToIftar} min remaining • Deliver before Maghrib
                       </p>
                     </div>
@@ -349,8 +349,8 @@ export default function NewDeliveryRequestModal() {
                         <div className="flex-1">
                           <p className="text-white text-sm font-bold">Customer Order</p>
                           <div className="flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3 h-3 text-white/30" />
-                            <p className="text-white/40 text-xs">{riderArea} drop-off</p>
+                            <MapPin className="w-3 h-3 text-white/60" />
+                            <p className="text-white/65 text-xs">{riderArea} drop-off</p>
                           </div>
                         </div>
                       </div>
@@ -359,7 +359,7 @@ export default function NewDeliveryRequestModal() {
                     {/* Items Ordered */}
                     <div className="glass-card rounded-2xl p-4 mb-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <Package className="w-4 h-4 text-white/30" />
+                        <Package className="w-4 h-4 text-white/60" />
                         <span className="text-white/50 text-xs font-bold uppercase tracking-wider">
                           Items Ordered
                         </span>
@@ -378,7 +378,7 @@ export default function NewDeliveryRequestModal() {
                       <p className="text-white text-sm">
                         Vendor kitchen, {riderArea}
                       </p>
-                      <p className="text-white/30 text-[10px] mt-1">
+                      <p className="text-white/60 text-[10px] mt-1">
                         ~2.4 km from your current location
                       </p>
                     </div>
@@ -386,13 +386,13 @@ export default function NewDeliveryRequestModal() {
                     {/* Payment Summary */}
                     <div className="glass-card rounded-2xl p-4 mb-5">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-white/40 text-xs">Order Total</span>
+                        <span className="text-white/65 text-xs">Order Total</span>
                         <span className="text-white text-sm font-bold">
                           {formatNaira(delivery.total)}
                         </span>
                       </div>
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-white/40 text-xs">Customer Pays</span>
+                        <span className="text-white/65 text-xs">Customer Pays</span>
                         <span className="text-white/60 text-sm">
                           {formatNaira(delivery.total)}
                         </span>

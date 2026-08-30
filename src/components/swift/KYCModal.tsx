@@ -165,7 +165,7 @@ export default function KYCModal() {
           </div>
           <div>
             <h3 className="text-[#10E07A] font-bold text-sm">Identity Verified</h3>
-            <p className="text-white/40 text-xs mt-0.5">Your identity has been successfully verified</p>
+            <p className="text-white/65 text-xs mt-0.5">Your identity has been successfully verified</p>
           </div>
         </motion.div>
       );
@@ -183,7 +183,7 @@ export default function KYCModal() {
           </div>
           <div>
             <h3 className="text-[#F5C451] font-bold text-sm">Verification In Progress</h3>
-            <p className="text-white/40 text-xs mt-0.5">Your documents are being reviewed. This usually takes 24-48 hours.</p>
+            <p className="text-white/65 text-xs mt-0.5">Your documents are being reviewed. This usually takes 24-48 hours.</p>
           </div>
         </motion.div>
       );
@@ -196,11 +196,11 @@ export default function KYCModal() {
         className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10"
       >
         <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/10 shrink-0">
-          <Shield className="w-6 h-6 text-white/40" />
+          <Shield className="w-6 h-6 text-white/65" />
         </div>
         <div>
           <h3 className="text-white/60 font-bold text-sm">No Documents Submitted</h3>
-          <p className="text-white/30 text-xs mt-0.5">Submit a valid ID to verify your identity and unlock full features</p>
+          <p className="text-white/60 text-xs mt-0.5">Submit a valid ID to verify your identity and unlock full features</p>
         </div>
       </motion.div>
     );
@@ -264,7 +264,7 @@ export default function KYCModal() {
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">KYC Verification</h2>
-                    <p className="text-white/30 text-[10px] uppercase tracking-widest">
+                    <p className="text-white/60 text-[10px] uppercase tracking-widest">
                       {userRole === 'vendor' ? 'Vendor' : 'Rider'} Identity Check
                     </p>
                   </div>
@@ -291,7 +291,7 @@ export default function KYCModal() {
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'status'
                       ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
-                      : 'text-white/40 hover:text-white/60'
+                      : 'text-white/65 hover:text-white/60'
                   }`}
                 >
                   Status
@@ -301,7 +301,7 @@ export default function KYCModal() {
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'submit'
                       ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
-                      : 'text-white/40 hover:text-white/60'
+                      : 'text-white/65 hover:text-white/60'
                   }`}
                 >
                   Submit Document
@@ -320,7 +320,7 @@ export default function KYCModal() {
                     {loading ? (
                       <div className="flex items-center justify-center p-8 rounded-2xl bg-white/5 border border-white/5">
                         <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
-                        <span className="text-white/40 text-sm ml-3">Loading verification status...</span>
+                        <span className="text-white/65 text-sm ml-3">Loading verification status...</span>
                       </div>
                     ) : (
                       getVerificationBanner()
@@ -343,7 +343,7 @@ export default function KYCModal() {
                     ) : documents.length === 0 ? (
                       <div className="text-center py-10 rounded-2xl bg-white/[0.02] border border-white/5">
                         <FileText className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                        <p className="text-white/30 text-sm">No documents submitted yet</p>
+                        <p className="text-white/60 text-sm">No documents submitted yet</p>
                         <button
                           onClick={() => setActiveTab('submit')}
                           className="mt-3 text-[#10E07A] text-xs font-bold hover:underline"
@@ -380,7 +380,7 @@ export default function KYCModal() {
                                 </div>
                                 <div>
                                   <p className="text-white font-bold text-sm">{doc.typeLabel}</p>
-                                  <p className="text-white/30 text-xs mt-0.5">{maskDocumentNumber(doc.number)}</p>
+                                  <p className="text-white/60 text-xs mt-0.5">{maskDocumentNumber(doc.number)}</p>
                                 </div>
                               </div>
                               {getStatusBadge(doc.status, doc.rejectionReason)}
@@ -395,14 +395,14 @@ export default function KYCModal() {
                                 <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
                                 <div>
                                   <p className="text-red-400 text-xs font-bold">Rejection Reason</p>
-                                  <p className="text-white/40 text-xs mt-0.5">{doc.rejectionReason}</p>
+                                  <p className="text-white/65 text-xs mt-0.5">{doc.rejectionReason}</p>
                                 </div>
                               </motion.div>
                             )}
 
                             <div className="mt-3 pt-3 border-t border-white/5 flex items-center justify-between">
                               <span className="text-white/20 text-[10px] uppercase tracking-widest">Submitted</span>
-                              <span className="text-white/30 text-xs">{formatDate(doc.submittedAt)}</span>
+                              <span className="text-white/60 text-xs">{formatDate(doc.submittedAt)}</span>
                             </div>
                           </motion.div>
                         ))}
@@ -429,7 +429,7 @@ export default function KYCModal() {
                     <AlertCircle className="w-5 h-5 text-[#F5C451] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white/60 text-xs font-bold">Requirements</p>
-                      <p className="text-white/30 text-xs mt-1 leading-relaxed">
+                      <p className="text-white/60 text-xs mt-1 leading-relaxed">
                         Upload a clear photo of a valid government-issued ID. Make sure all details are visible and the image is not blurry.
                       </p>
                     </div>
@@ -442,7 +442,7 @@ export default function KYCModal() {
                     transition={{ delay: 0.2 }}
                     className="mt-5"
                   >
-                    <label htmlFor="kyc-document-type" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-type" className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Type
                     </label>
                     <div className="relative">
@@ -472,7 +472,7 @@ export default function KYCModal() {
                     transition={{ delay: 0.25 }}
                     className="mt-4"
                   >
-                    <label htmlFor="kyc-document-number" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-number" className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Number
                     </label>
                     <input
@@ -492,7 +492,7 @@ export default function KYCModal() {
                     transition={{ delay: 0.3 }}
                     className="mt-4"
                   >
-                    <label htmlFor="kyc-document-upload" className="text-white/40 text-xs font-bold uppercase tracking-widest block mb-2">
+                    <label htmlFor="kyc-document-upload" className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">
                       Document Image
                     </label>
 
@@ -521,7 +521,7 @@ export default function KYCModal() {
                             }}
                             className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-red-500/20 transition-colors shrink-0"
                           >
-                            <X className="w-4 h-4 text-white/40" />
+                            <X className="w-4 h-4 text-white/65" />
                           </button>
                         </div>
                         {/* Preview */}
@@ -539,11 +539,11 @@ export default function KYCModal() {
                         className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[#10E07A]/30 transition-all cursor-pointer"
                       >
                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
-                          <Upload className="w-6 h-6 text-white/30" />
+                          <Upload className="w-6 h-6 text-white/60" />
                         </div>
                         <div className="text-center">
                           <p className="text-white/60 text-sm font-bold">Upload Document Image</p>
-                          <p className="text-white/30 text-xs mt-1">Click to select a file</p>
+                          <p className="text-white/60 text-xs mt-1">Click to select a file</p>
                         </div>
                         <span className="text-white/20 text-[10px]">Maximum file size: 5MB</span>
                       </label>

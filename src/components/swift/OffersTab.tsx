@@ -96,7 +96,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
         <p className="text-white font-bold text-sm tracking-tight">{sale.name}</p>
         <div className="flex items-center gap-2 mt-1">
           <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
-          <span className="text-white/30 text-xs line-through">{formatNaira(sale.originalPrice)}</span>
+          <span className="text-white/60 text-xs line-through">{formatNaira(sale.originalPrice)}</span>
         </div>
         {/* Real Countdown */}
         <div className="flex items-center gap-1 mt-2">
@@ -118,7 +118,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
               style={{ width: `${sale.claimed}%` }}
             />
           </div>
-          <p className="text-white/30 text-[9px]">{sale.claimed}% claimed</p>
+          <p className="text-white/60 text-[9px]">{sale.claimed}% claimed</p>
         </div>
         <div className="flex gap-2 mt-2">
           <button
@@ -354,7 +354,7 @@ export default function OffersTab() {
             <p className={`font-bold text-sm tracking-tight ${dailyClaimed ? 'text-[#10E07A]' : 'text-white'}`}>
               {dailyClaimed ? '✓ Claimed Today!' : 'Claim Daily Points'}
             </p>
-            <p className="text-white/40 text-xs">
+            <p className="text-white/65 text-xs">
               {dailyClaimed
                 ? `Streak: ${dailyStreak + 1} days - Come back tomorrow!`
                 : `+50 pts • ${dailyStreak} day streak • Streak bonuses available!`
@@ -388,11 +388,11 @@ export default function OffersTab() {
             </div>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-white/40 text-xs">Hasanat Points</p>
+                <p className="text-white/65 text-xs">Hasanat Points</p>
                 <p className="text-white text-3xl font-black tracking-tight">{hasanatPoints.toLocaleString()}</p>
               </div>
               <div className="text-right">
-                <p className="text-white/40 text-xs">Swift Points</p>
+                <p className="text-white/65 text-xs">Swift Points</p>
                 <p className="text-white/80 text-lg font-bold">{swiftPoints.toLocaleString()}</p>
               </div>
             </div>
@@ -472,7 +472,7 @@ export default function OffersTab() {
                     <p className="text-white font-bold text-sm font-mono tracking-wider">{coupon.code}</p>
                     <span className="soft-chip">{coupon.discount}</span>
                   </div>
-                  <p className="text-white/40 text-xs mt-0.5">{coupon.desc}</p>
+                  <p className="text-white/65 text-xs mt-0.5">{coupon.desc}</p>
                 </div>
                 <button
                   onClick={() => handleCopyCoupon(coupon.code)}
@@ -524,10 +524,10 @@ export default function OffersTab() {
                 </div>
                 <div className="p-3">
                   <p className="text-white text-xs font-bold truncate tracking-tight">{offer.title}</p>
-                  <p className="text-white/40 text-[10px]">{offer.desc}</p>
+                  <p className="text-white/65 text-[10px]">{offer.desc}</p>
                   <div className="flex items-center gap-1.5 mt-1.5">
                     <span className="text-[#10E07A] text-sm font-black">{formatNaira(offer.price)}</span>
-                    <span className="text-white/30 text-[10px] line-through">{formatNaira(offer.originalPrice)}</span>
+                    <span className="text-white/60 text-[10px] line-through">{formatNaira(offer.originalPrice)}</span>
                   </div>
                 </div>
               </motion.div>
@@ -612,7 +612,7 @@ export default function OffersTab() {
                     <h4 className="text-white font-bold text-sm truncate tracking-tight">{deal.name}</h4>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[#10E07A] font-black text-sm">{formatNaira(deal.perPersonPrice)}</span>
-                      <span className="text-white/30 text-xs">per person</span>
+                      <span className="text-white/60 text-xs">per person</span>
                     </div>
                     <div className="mt-2">
                       <div className="w-full bg-white/5 rounded-full h-1.5">
@@ -621,7 +621,7 @@ export default function OffersTab() {
                           style={{ width: `${fillPercent}%` }}
                         />
                       </div>
-                      <p className="text-white/30 text-[9px] mt-0.5">{currentFilled}/{slotsTotal} slots filled</p>
+                      <p className="text-white/60 text-[9px] mt-0.5">{currentFilled}/{slotsTotal} slots filled</p>
                     </div>
                   </div>
                 </div>
@@ -667,7 +667,7 @@ export default function OffersTab() {
               <span className="bg-[#38BDF8] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full">
                 ₦2,000
               </span>
-              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
             </div>
           </div>
         </button>
@@ -689,7 +689,7 @@ export default function OffersTab() {
                 <p className="text-white font-bold text-sm tracking-tight">Charity &amp; Zakat</p>
                 <p className="text-white/50 text-xs mt-0.5">Give back this Ramadan — donations &amp; Zakat calculator</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
             </div>
           </div>
         </button>
@@ -714,7 +714,7 @@ export default function OffersTab() {
                 </div>
                 <p className="text-white/50 text-xs mt-0.5">Split your order into 3 interest-free payments</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+              <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
             </div>
           </div>
         </button>

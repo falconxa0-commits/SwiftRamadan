@@ -233,7 +233,7 @@ function NeighborAlertsInner() {
                 </button>
                 <button
                   onClick={() => setShowPrivacyInfo(true)}
-                  className="text-white/40 text-xs flex items-center gap-1 hover:text-white/60"
+                  className="text-white/65 text-xs flex items-center gap-1 hover:text-white/60"
                 >
                   <Shield className="w-3 h-3" /> Privacy Info
                 </button>
@@ -248,7 +248,7 @@ function NeighborAlertsInner() {
           </span>
           <button
             onClick={() => setShowPrivacyInfo(true)}
-            className="text-white/30 text-[10px] flex items-center gap-1 hover:text-white/50"
+            className="text-white/60 text-[10px] flex items-center gap-1 hover:text-white/50"
           >
             <Shield className="w-3 h-3" /> Privacy
           </button>
@@ -280,7 +280,7 @@ function NeighborAlertsInner() {
           {filteredOrders.length === 0 ? (
             <div className="bg-[#0F1118] border border-white/8 rounded-xl p-6 text-center">
               <Truck className="w-8 h-8 text-white/15 mx-auto mb-2" />
-              <p className="text-white/30 text-sm">No nearby orders right now</p>
+              <p className="text-white/60 text-sm">No nearby orders right now</p>
               <p className="text-white/20 text-xs mt-1">Check back in a few minutes</p>
             </div>
           ) : (
@@ -302,30 +302,30 @@ function NeighborAlertsInner() {
                         <MapPin className="w-3.5 h-3.5 text-[#10E07A] shrink-0" />
                         <span className="text-white/60 text-xs">{order.area}</span>
                         <span className="text-white/20 text-[10px]">•</span>
-                        <span className="text-white/30 text-[10px]">{order.distance}</span>
+                        <span className="text-white/60 text-[10px]">{order.distance}</span>
                       </div>
                       <p className="text-white font-medium text-sm">{order.restaurant}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
                       <p className="text-[#10E07A] text-sm font-bold">Save {formatNaira(order.savedFee)}</p>
-                      <p className="text-white/30 text-[10px]">on delivery</p>
+                      <p className="text-white/60 text-[10px]">on delivery</p>
                     </div>
                   </div>
 
                   {/* Items Preview */}
                   <div className="flex items-center gap-2 mb-3">
-                    <ShoppingBag className="w-3.5 h-3.5 text-white/30 shrink-0" />
+                    <ShoppingBag className="w-3.5 h-3.5 text-white/60 shrink-0" />
                     <p className="text-white/50 text-xs truncate">{order.items.join(', ')}</p>
                   </div>
 
                   {/* Order Count & Time */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <span className="text-white/40 text-xs flex items-center gap-1">
+                      <span className="text-white/65 text-xs flex items-center gap-1">
                         <Users className="w-3 h-3" />
                         {order.orderCount}/{order.maxOrders} joined
                       </span>
-                      <span className="text-white/40 text-xs flex items-center gap-1">
+                      <span className="text-white/65 text-xs flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {order.timeLeft} left
                       </span>
@@ -334,7 +334,7 @@ function NeighborAlertsInner() {
                       onClick={() =>
                         setExpandedOrder(expandedOrder === order.id ? null : order.id)
                       }
-                      className="text-white/30 text-[10px] flex items-center gap-0.5 hover:text-white/50"
+                      className="text-white/60 text-[10px] flex items-center gap-0.5 hover:text-white/50"
                     >
                       {expandedOrder === order.id ? (
                         <>
@@ -385,10 +385,10 @@ function NeighborAlertsInner() {
                       <div className="px-4 pb-4 border-t border-white/5 pt-3 space-y-3">
                         {/* Delivery Fee Breakdown */}
                         <div>
-                          <p className="text-white/40 text-[10px] mb-1">Delivery Fee Breakdown</p>
+                          <p className="text-white/65 text-[10px] mb-1">Delivery Fee Breakdown</p>
                           <div className="flex justify-between text-xs">
                             <span className="text-white/50">Original fee</span>
-                            <span className="text-white/30 line-through">{formatNaira(order.deliveryFee)}</span>
+                            <span className="text-white/60 line-through">{formatNaira(order.deliveryFee)}</span>
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-white/50">Combined fee</span>
@@ -402,15 +402,15 @@ function NeighborAlertsInner() {
 
                         {/* Privacy Level */}
                         <div className="flex items-center gap-2">
-                          <Shield className="w-3.5 h-3.5 text-white/30" />
-                          <span className="text-white/30 text-[10px]">
+                          <Shield className="w-3.5 h-3.5 text-white/60" />
+                          <span className="text-white/60 text-[10px]">
                             Privacy: Only your {order.privacyLevel.replace('-', ' ')} is shared
                           </span>
                         </div>
 
                         {/* Items List */}
                         <div>
-                          <p className="text-white/40 text-[10px] mb-1">Items in this order</p>
+                          <p className="text-white/65 text-[10px] mb-1">Items in this order</p>
                           {order.items.map((item, i) => (
                             <div key={i} className="flex items-center gap-2 text-xs text-white/50">
                               <span className="w-1 h-1 rounded-full bg-[#10E07A]/50" />
@@ -440,10 +440,10 @@ function NeighborAlertsInner() {
               className="bg-[#0F1118] border border-white/8 rounded-xl p-4 opacity-50 blur-[2px] relative overflow-hidden"
             >
               <div className="flex items-center gap-2 mb-2">
-                <MapPin className="w-3.5 h-3.5 text-white/30" />
-                <span className="text-white/30 text-xs">{order.area}</span>
+                <MapPin className="w-3.5 h-3.5 text-white/60" />
+                <span className="text-white/60 text-xs">{order.area}</span>
               </div>
-              <p className="text-white/30 text-sm">{order.restaurant}</p>
+              <p className="text-white/60 text-sm">{order.restaurant}</p>
               <p className="text-[#10E07A]/30 text-xs mt-1">Save ₦{order.savedFee}</p>
             </motion.div>
           ))}
@@ -487,7 +487,7 @@ function NeighborAlertsInner() {
                     <span className="text-white/70 text-sm">{showJoinConfirm.restaurant}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-white/40" />
+                    <Users className="w-4 h-4 text-white/65" />
                     <span className="text-white/50 text-xs">
                       {showJoinConfirm.orderCount}/{showJoinConfirm.maxOrders} spots filled
                     </span>
@@ -499,13 +499,13 @@ function NeighborAlertsInner() {
                   <p className="text-[#10E07A] text-lg font-bold">
                     Save {formatNaira(showJoinConfirm.savedFee)}
                   </p>
-                  <p className="text-white/40 text-xs">on delivery fee</p>
+                  <p className="text-white/65 text-xs">on delivery fee</p>
                 </div>
 
                 {/* Privacy Notice */}
                 <div className="flex items-start gap-2">
-                  <Shield className="w-4 h-4 text-white/30 shrink-0 mt-0.5" />
-                  <p className="text-white/30 text-[10px] leading-relaxed">
+                  <Shield className="w-4 h-4 text-white/60 shrink-0 mt-0.5" />
+                  <p className="text-white/60 text-[10px] leading-relaxed">
                     Only your area will be shared with other participants. Your exact address and order details remain private.
                   </p>
                 </div>
@@ -570,7 +570,7 @@ function NeighborAlertsInner() {
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">Area only, not address</p>
-                      <p className="text-white/40 text-xs">Only your general area (e.g., &quot;Lekki Phase 1&quot;) is shared — never your exact address</p>
+                      <p className="text-white/65 text-xs">Only your general area (e.g., &quot;Lekki Phase 1&quot;) is shared — never your exact address</p>
                     </div>
                   </div>
 
@@ -580,7 +580,7 @@ function NeighborAlertsInner() {
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">No order details shared</p>
-                      <p className="text-white/40 text-xs">Other participants only see the restaurant name, not what you ordered</p>
+                      <p className="text-white/65 text-xs">Other participants only see the restaurant name, not what you ordered</p>
                     </div>
                   </div>
 
@@ -590,7 +590,7 @@ function NeighborAlertsInner() {
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">Opt out anytime</p>
-                      <p className="text-white/40 text-xs">You can disable delivery sharing at any time from settings</p>
+                      <p className="text-white/65 text-xs">You can disable delivery sharing at any time from settings</p>
                     </div>
                   </div>
 
@@ -600,7 +600,7 @@ function NeighborAlertsInner() {
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">No contact info shared</p>
-                      <p className="text-white/40 text-xs">Your phone number and identity are never revealed to other participants</p>
+                      <p className="text-white/65 text-xs">Your phone number and identity are never revealed to other participants</p>
                     </div>
                   </div>
                 </div>

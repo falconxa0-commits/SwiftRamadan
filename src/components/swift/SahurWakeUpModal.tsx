@@ -177,7 +177,7 @@ export default function SahurWakeUpModal() {
                   </div>
                 </div>
 
-                <p className="text-white/30 text-xs mt-3">Adjust by 5-minute increments</p>
+                <p className="text-white/60 text-xs mt-3">Adjust by 5-minute increments</p>
 
                 {/* Preview Button */}
                 <button
@@ -205,11 +205,11 @@ export default function SahurWakeUpModal() {
                       className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-colors text-left ${selectedSound === option.id ? 'bg-[#10E07A]/5 border-[#10E07A]/30' : 'bg-[#1A1D26] border-white/5 hover:border-white/10'}`}
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedSound === option.id ? 'bg-[#10E07A]/20' : 'bg-white/5'}`}>
-                        <span className={`material-symbols-outlined text-lg ${selectedSound === option.id ? 'text-[#10E07A]' : 'text-white/40'}`}>{option.icon}</span>
+                        <span className={`material-symbols-outlined text-lg ${selectedSound === option.id ? 'text-[#10E07A]' : 'text-white/65'}`}>{option.icon}</span>
                       </div>
                       <div className="flex-1">
                         <p className={`font-bold text-sm ${selectedSound === option.id ? 'text-[#10E07A]' : 'text-white'}`}>{option.name}</p>
-                        <p className="text-white/40 text-xs">{option.desc}</p>
+                        <p className="text-white/65 text-xs">{option.desc}</p>
                       </div>
                       <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${selectedSound === option.id ? 'border-[#10E07A]' : 'border-white/20'}`}>
                         {selectedSound === option.id && <div className="w-2.5 h-2.5 rounded-full bg-[#10E07A]" />}
@@ -236,7 +236,7 @@ export default function SahurWakeUpModal() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm truncate">{meal.name}</p>
-                        <p className="text-white/40 text-xs truncate">{meal.description}</p>
+                        <p className="text-white/65 text-xs truncate">{meal.description}</p>
                         <div className="flex items-center justify-between mt-1.5">
                           <span className="text-[#10E07A] font-black text-sm">{formatNaira(meal.price)}</span>
                           <button
@@ -260,7 +260,7 @@ export default function SahurWakeUpModal() {
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm truncate">{trendingMeals[2].name}</p>
-                        <p className="text-white/40 text-xs truncate">{trendingMeals[2].description}</p>
+                        <p className="text-white/65 text-xs truncate">{trendingMeals[2].description}</p>
                         <div className="flex items-center justify-between mt-1.5">
                           <span className="text-[#10E07A] font-black text-sm">{formatNaira(trendingMeals[2].price)}</span>
                           <button

@@ -136,7 +136,7 @@ export default class ErrorBoundary extends React.Component<
                     Error Details
                   </span>
                   <svg
-                    className={`w-4 h-4 text-white/40 transition-transform duration-200 ${this.state.showDetails ? 'rotate-180' : ''}`}
+                    className={`w-4 h-4 text-white/65 transition-transform duration-200 ${this.state.showDetails ? 'rotate-180' : ''}`}
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -154,7 +154,7 @@ export default class ErrorBoundary extends React.Component<
                       {this.state.error.message}
                     </p>
                     {this.state.error.stack && (
-                      <pre className="mt-2 text-white/30 text-[10px] font-mono break-all whitespace-pre-wrap max-h-32 overflow-y-auto">
+                      <pre className="mt-2 text-white/60 text-[10px] font-mono break-all whitespace-pre-wrap max-h-32 overflow-y-auto">
                         {this.state.error.stack.split('\n').slice(1, 6).join('\n')}
                       </pre>
                     )}

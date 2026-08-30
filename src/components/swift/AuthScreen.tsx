@@ -176,7 +176,7 @@ function InputField({
   return (
     <div className="relative">
       {id && <label htmlFor={id} className="sr-only">{placeholder}</label>}
-      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+      <Icon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
       <input
         id={id}
         type={type}
@@ -186,7 +186,7 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+        className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none transition-colors"
         style={{ borderColor: value ? `${accentColor}50` : undefined }}
       />
       {rightElement && (
@@ -377,7 +377,7 @@ function LoginScreen() {
       </div>
 
       {/* Form */}
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-3 sm:gap-4 flex-1">
         {/* Email */}
         <InputField
           icon={Mail}
@@ -392,7 +392,7 @@ function LoginScreen() {
         {/* Password */}
         <div className="relative">
           <label htmlFor="auth-login-password" className="sr-only">Password</label>
-          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
           <input
             id="auth-login-password"
             type={showPassword ? 'text' : 'password'}
@@ -400,13 +400,13 @@ function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/60 text-sm focus:outline-none transition-colors"
             style={{ borderColor: password ? `${config.accent}50` : undefined }}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/60 transition-colors"
             aria-label={showPassword ? 'Hide password' : 'Show password'}
           >
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -421,7 +421,7 @@ function LoginScreen() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-3 sm:gap-4"
             >
               <p className="text-white/50 text-xs">Enter your email and we&apos;ll send you a password reset link.</p>
               <InputField
@@ -464,7 +464,7 @@ function LoginScreen() {
               />
               <button
                 onClick={() => { setShowForgotPassword(false); setForgotEmail(''); }}
-                className="text-white/40 text-xs font-semibold flex items-center gap-1 justify-center hover:text-white/60 transition-colors"
+                className="text-white/65 text-xs font-semibold flex items-center gap-1 justify-center hover:text-white/60 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 Back to Login
@@ -476,7 +476,7 @@ function LoginScreen() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-3 sm:gap-4"
             >
               <div className="flex justify-end">
                 <button
@@ -500,9 +500,9 @@ function LoginScreen() {
         </AnimatePresence>
 
         {/* Divider */}
-        <div className="flex items-center gap-4 my-2">
+        <div className="flex items-center gap-3 sm:gap-4 my-2">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-white/30 text-xs">or continue with</span>
+          <span className="text-white/60 text-xs">or continue with</span>
           <div className="flex-1 h-px bg-white/10" />
         </div>
 
@@ -708,7 +708,7 @@ function SignupScreen() {
             transition={{ duration: 0.3, delay: i * 0.1 }}
           />
         ))}
-        <span className="text-white/30 text-xs ml-2">
+        <span className="text-white/60 text-xs ml-2">
           Step {filledSegments}/{progressSegments}
         </span>
       </div>
@@ -722,7 +722,7 @@ function SignupScreen() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="flex flex-col gap-4 flex-1"
+            className="flex flex-col gap-3 sm:gap-4 flex-1"
           >
             {/* Role Selection */}
             <div>
@@ -771,7 +771,7 @@ function SignupScreen() {
             {/* Phone */}
             <div className="relative">
               <label htmlFor="auth-signup-phone" className="sr-only">Phone number</label>
-              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
               <div className="absolute left-12 top-1/2 -translate-y-1/2 flex items-center pr-2 border-r border-white/10">
                 <span className="text-white/50 text-sm font-medium">+234</span>
               </div>
@@ -782,7 +782,7 @@ function SignupScreen() {
                 placeholder="Phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 15))}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/30 text-sm focus:outline-none focus:border-white/20 transition-colors"
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-white/20 transition-colors"
                 style={{ borderColor: phone ? `${config.accent}50` : undefined }}
               />
             </div>
@@ -800,15 +800,15 @@ function SignupScreen() {
 
             {/* Residential Area */}
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
               <button
                 onClick={() => setAreaOpen(!areaOpen)}
-                className={`w-full h-14 bg-[#1A1D26] border rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${area ? 'text-white' : 'text-white/30'}`}
+                className={`w-full h-14 bg-[#1A1D26] border rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${area ? 'text-white' : 'text-white/60'}`}
                 style={{ borderColor: area ? `${config.accent}50` : 'rgba(255,255,255,0.1)' }}
               >
                 {area || 'Residential area'}
               </button>
-              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${areaOpen ? 'rotate-180' : ''}`} />
 
               <AnimatePresence>
                 {areaOpen && (
@@ -840,20 +840,20 @@ function SignupScreen() {
             {/* Password */}
             <div className="relative">
               <label htmlFor="auth-signup-password" className="sr-only">Create password</label>
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
               <input
                 id="auth-signup-password"
                 type={showSignupPassword ? 'text' : 'password'}
                 placeholder="Create password (min 6 chars)"
                 value={signupPassword}
                 onChange={(e) => setSignupPassword(e.target.value)}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/30 text-sm focus:outline-none transition-colors"
+                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/60 text-sm focus:outline-none transition-colors"
                 style={{ borderColor: signupPassword ? `${config.accent}50` : undefined }}
               />
               <button
                 type="button"
                 onClick={() => setShowSignupPassword(!showSignupPassword)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white/60 transition-colors"
                 aria-label={showSignupPassword ? 'Hide password' : 'Show password'}
               >
                 {showSignupPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -876,7 +876,7 @@ function SignupScreen() {
               </div>
               <div className="flex flex-col items-start">
                 <span className="text-white text-sm font-medium">Join Community</span>
-                <span className="text-white/40 text-xs">Get group buy deals & community offers</span>
+                <span className="text-white/65 text-xs">Get group buy deals & community offers</span>
               </div>
             </button>
 
@@ -897,13 +897,13 @@ function SignupScreen() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="flex flex-col gap-4 flex-1"
+            className="flex flex-col gap-3 sm:gap-4 flex-1"
           >
             {/* Role-specific header */}
             <motion.div
               initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="flex items-center gap-3 p-4 rounded-2xl border"
+              className="flex items-center gap-3 p-3 sm:p-4 rounded-2xl border"
               style={{
                 backgroundColor: config.accentLight,
                 borderColor: config.accentMid,
@@ -941,7 +941,7 @@ function SignupScreen() {
 
                 {/* Business Category */}
                 <div className="relative">
-                  <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                  <ShoppingCart className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
                   <button
                     onClick={() => setBusinessCategoryOpen(!businessCategoryOpen)}
                     className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
@@ -956,7 +956,7 @@ function SignupScreen() {
                       {businessCategory || 'Business category'}
                     </span>
                   </button>
-                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${businessCategoryOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${businessCategoryOpen ? 'rotate-180' : ''}`} />
 
                   <AnimatePresence>
                     {businessCategoryOpen && (
@@ -1008,7 +1008,7 @@ function SignupScreen() {
               <>
                 {/* Vehicle Type */}
                 <div className="relative">
-                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+                  <Truck className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60" />
                   <button
                     onClick={() => setVehicleTypeOpen(!vehicleTypeOpen)}
                     className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center text-white"
@@ -1016,7 +1016,7 @@ function SignupScreen() {
                   >
                     {vehicleType || 'Vehicle type'}
                   </button>
-                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30 transition-transform ${vehicleTypeOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/60 transition-transform ${vehicleTypeOpen ? 'rotate-180' : ''}`} />
 
                   <AnimatePresence>
                     {vehicleTypeOpen && (
@@ -1080,7 +1080,7 @@ function SignupScreen() {
             {/* Back link */}
             <button
               onClick={() => setStep(1)}
-              className="text-white/40 text-sm text-center hover:text-white/60 transition-colors"
+              className="text-white/65 text-sm text-center hover:text-white/60 transition-colors"
             >
               ← Back to basic info
             </button>
@@ -1269,7 +1269,7 @@ function OTPScreen() {
             transition={{ duration: 0.3 }}
           />
         ))}
-        <span className="text-white/30 text-xs ml-2">
+        <span className="text-white/60 text-xs ml-2">
           Step {filledSteps}/{totalSteps}
         </span>
       </div>
@@ -1310,7 +1310,7 @@ function OTPScreen() {
             Resend Code
           </button>
         ) : (
-          <span className="text-white/30 text-sm">
+          <span className="text-white/60 text-sm">
             Resend code in <span className="text-[#f4c025] font-mono font-bold">{formatCountdown(countdown)}</span>
           </span>
         )}
@@ -1420,7 +1420,7 @@ function RoleScreen() {
       </div>
 
       {/* Role Cards */}
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-3 sm:gap-4 flex-1">
         {ROLES.map((role, i) => {
           const Icon = role.icon;
           const isSelected = selected === role.id;
@@ -1453,7 +1453,7 @@ function RoleScreen() {
               <div className={`absolute inset-0 bg-gradient-to-r ${role.gradient} opacity-80`} />
 
               {/* Content */}
-              <div className="relative flex items-center gap-4 p-5">
+              <div className="relative flex items-center gap-3 sm:gap-4 p-5">
                 {/* Icon */}
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
@@ -1549,7 +1549,7 @@ export default function AuthScreen() {
               >
                 <ArrowLeft className="w-4.5 h-4.5 text-white/70" />
               </button>
-              <span className="text-white/40 text-xs font-semibold uppercase tracking-[0.15em]">{getTitle()}</span>
+              <span className="text-white/65 text-xs font-semibold uppercase tracking-[0.15em]">{getTitle()}</span>
             </div>
             <button
               onClick={() => { setShowWelcome(true); setShowAuth(null); }}

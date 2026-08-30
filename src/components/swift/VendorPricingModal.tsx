@@ -75,7 +75,7 @@ export default function VendorPricingModal() {
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Dynamic Pricing</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Adjust prices for demand</p>
+                  <p className="text-white/65 text-xs mt-0.5">Adjust prices for demand</p>
                 </div>
               </div>
               <button
@@ -95,7 +95,7 @@ export default function VendorPricingModal() {
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm">Peak Hours Mode</p>
-                    <p className="text-white/40 text-xs">Auto-adjust during 5:30 - 7:00 PM</p>
+                    <p className="text-white/65 text-xs">Auto-adjust during 5:30 - 7:00 PM</p>
                   </div>
                 </div>
                 <button
@@ -165,9 +165,9 @@ export default function VendorPricingModal() {
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm truncate">{item.name}</p>
                           <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-white/30 text-xs">{item.category}</span>
+                            <span className="text-white/60 text-xs">{item.category}</span>
                             <span className="text-white/10 text-xs">•</span>
-                            <span className="text-white/40 text-xs">Base: {formatNaira(item.price)}</span>
+                            <span className="text-white/65 text-xs">Base: {formatNaira(item.price)}</span>
                           </div>
                         </div>
                         <div className="text-right shrink-0 ml-3">
@@ -204,7 +204,7 @@ export default function VendorPricingModal() {
                             ? 'bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20'
                             : item.adjustment < 0
                               ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
-                              : 'bg-white/5 text-white/30 border border-white/10'
+                              : 'bg-white/5 text-white/60 border border-white/10'
                         }`}>
                           {item.adjustment > 0 ? '+' : ''}{item.adjustment}%
                         </span>
@@ -217,7 +217,7 @@ export default function VendorPricingModal() {
               {/* Info Tip */}
               <div className="mt-4 flex items-start gap-2 bg-cyan-400/5 border border-cyan-400/10 rounded-xl p-3">
                 <AlertCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                <p className="text-white/40 text-xs leading-relaxed">
+                <p className="text-white/65 text-xs leading-relaxed">
                   Adjust individual product prices based on demand. Peak hours mode adds an automatic markup during high-traffic Iftar periods.
                 </p>
               </div>

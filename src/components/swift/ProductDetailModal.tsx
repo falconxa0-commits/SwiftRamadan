@@ -325,7 +325,7 @@ export default function ProductDetailModal() {
                   <div className="flex items-center gap-1.5">
                     <StarRow rating={avgRating} size="w-4 h-4" />
                     <span className="text-white font-bold text-sm">{avgRating.toFixed(1)}</span>
-                    <span className="text-white/40 text-xs">({displayReviewCount} review{displayReviewCount !== 1 ? 's' : ''})</span>
+                    <span className="text-white/65 text-xs">({displayReviewCount} review{displayReviewCount !== 1 ? 's' : ''})</span>
                   </div>
                   <div className="flex items-center gap-1 text-white/50 text-xs">
                     <Clock className="w-3 h-3" />
@@ -338,7 +338,7 @@ export default function ProductDetailModal() {
                   <span className="text-[#10E07A] text-3xl font-black tracking-tighter">{formatNaira(salePrice)}</span>
                   {(('salePrice' in product && product.salePrice) || ('originalPrice' in product && product.originalPrice)) && originalPrice > salePrice && (
                     <>
-                      <span className="text-white/30 text-lg line-through mb-1">{formatNaira(originalPrice)}</span>
+                      <span className="text-white/60 text-lg line-through mb-1">{formatNaira(originalPrice)}</span>
                       <span className="bg-[#10E07A]/10 text-[#10E07A] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
                         -{Math.round((1 - salePrice / originalPrice) * 100)}%
                       </span>
@@ -362,17 +362,17 @@ export default function ProductDetailModal() {
                   <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
                     <Truck className="w-5 h-5 text-[#10E07A] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Free Delivery</p>
-                    <p className="text-white/30 text-[9px]">Orders ₦5K+</p>
+                    <p className="text-white/60 text-[9px]">Orders ₦5K+</p>
                   </div>
                   <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
                     <Shield className="w-5 h-5 text-[#F5C451] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Quality Assured</p>
-                    <p className="text-white/30 text-[9px]">100% Fresh</p>
+                    <p className="text-white/60 text-[9px]">100% Fresh</p>
                   </div>
                   <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
                     <Clock className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Iftar Ready</p>
-                    <p className="text-white/30 text-[9px]">Timed Delivery</p>
+                    <p className="text-white/60 text-[9px]">Timed Delivery</p>
                   </div>
                 </div>
 
@@ -397,7 +397,7 @@ export default function ProductDetailModal() {
                       <div className="text-center">
                         <p className="text-[#F5C451] text-3xl font-black">{avgRating.toFixed(1)}</p>
                         <StarRow rating={avgRating} />
-                        <p className="text-white/40 text-[10px] mt-1">{reviewCount} review{reviewCount !== 1 ? 's' : ''}</p>
+                        <p className="text-white/65 text-[10px] mt-1">{reviewCount} review{reviewCount !== 1 ? 's' : ''}</p>
                       </div>
                       <div className="flex-1 space-y-1">
                         {[5, 4, 3, 2, 1].map(star => {
@@ -410,7 +410,7 @@ export default function ProductDetailModal() {
                               <div className="flex-1 bg-white/5 rounded-full h-1.5 overflow-hidden">
                                 <div className="bg-[#F5C451] h-1.5 rounded-full" style={{ width: `${pct}%` }} />
                               </div>
-                              <span className="text-white/40 w-5 text-right">{count}</span>
+                              <span className="text-white/65 w-5 text-right">{count}</span>
                             </div>
                           );
                         })}
@@ -470,7 +470,7 @@ export default function ProductDetailModal() {
                               'Post Review'
                             )}
                           </button>
-                          <p className="text-white/30 text-[10px] text-center">
+                          <p className="text-white/60 text-[10px] text-center">
                             Posting as {userName || 'Guest Reviewer'}
                           </p>
                         </div>
@@ -482,13 +482,13 @@ export default function ProductDetailModal() {
                   {fetchingReviews ? (
                     <div className="flex items-center gap-2 p-4 bg-[#1A1D26] rounded-xl border border-white/5">
                       <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
-                      <span className="text-white/40 text-sm">Loading reviews...</span>
+                      <span className="text-white/65 text-sm">Loading reviews...</span>
                     </div>
                   ) : reviews.length === 0 ? (
                     <div className="p-4 bg-[#1A1D26] rounded-xl border border-white/5 text-center">
                       <MessageSquare className="w-8 h-8 text-white/10 mx-auto mb-2" />
-                      <p className="text-white/40 text-sm">No reviews yet</p>
-                      <p className="text-white/30 text-xs mt-0.5">Be the first to share your experience!</p>
+                      <p className="text-white/65 text-sm">No reviews yet</p>
+                      <p className="text-white/60 text-xs mt-0.5">Be the first to share your experience!</p>
                     </div>
                   ) : (
                     <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-1">
@@ -505,11 +505,11 @@ export default function ProductDetailModal() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-2">
                                 <p className="text-white font-bold text-sm truncate">{review.authorName}</p>
-                                <span className="text-white/30 text-[10px] shrink-0">{timeAgo(review.createdAt)}</span>
+                                <span className="text-white/60 text-[10px] shrink-0">{timeAgo(review.createdAt)}</span>
                               </div>
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <StarRow rating={review.rating} size="w-3 h-3" />
-                                <span className="text-white/40 text-[10px]">{review.rating}.0</span>
+                                <span className="text-white/65 text-[10px]">{review.rating}.0</span>
                               </div>
                               <p className="text-white/60 text-xs mt-2 leading-relaxed">{review.comment}</p>
                             </div>
