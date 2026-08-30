@@ -520,6 +520,8 @@
   --sr-radius-lg: 14px;
   --sr-radius-xl: 20px;
   --sr-radius-2xl: 28px;
+  /* Luxury accent — Auren Constitution gold trim, distinct from --sr-vendor */
+  --sr-luxury-gold: #D4AF37;
 }
 
 /* WCAG AA compliant text colors */
