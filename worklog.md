@@ -13185,3 +13185,154 @@ buttons, trust microcopy on all 4 screens, full aria-labelling +
 keyboard rings + role=form/radiogroup/listbox/dialog semantics, 0
 lint/tsc errors, 317/317 tests green, 1656 lines, zero auth logic
 changed.*
+
+---
+
+## PHASE-14-ONBOARDING-V2 — OnboardingFlow Premium Rebuild
+
+### Context
+- Target file: `src/components/swift/OnboardingFlow.tsx` (1280 lines)
+- Baseline: **0** responsive `sm:` breakpoints, **100** lines with
+  hardcoded hex colors, **0** CSS variable references.
+- Backup at `src/__ui_backup__/phase14/OnboardingFlow.tsx.original`
+  (untouched) plus intermediate
+  `src/__ui_backup__/phase14/OnboardingFlow.tsx.pre-v2-sed` snapshot
+  taken immediately before this sed pass.
+- All required CSS variables (`--sr-customer`, `--sr-vendor`,
+  `--sr-rider`, `--sr-surface-base/raised/elevated/hover`) already
+  defined in `src/app/globals.css` `:root` — verified by grep before
+  running sed (zero regression risk for any consumer).
+
+### Changes applied (verbatim from task sed scripts)
+
+#### 1. Responsive breakpoints
+- `grid-cols-2` → `grid-cols-1 sm:grid-cols-2`
+- `grid-cols-3` → `grid-cols-1 sm:grid-cols-2 md:grid-cols-3`
+- `grid-cols-4` → `grid-cols-2 sm:grid-cols-3 md:grid-cols-4`
+- ` p-4` → ` p-3 sm:p-4`  (leading space prevents `pl-/pr-/px-/py-4`
+  false positives)
+- ` gap-4` → ` gap-3 sm:gap-4`
+- ` p-6` → ` p-4 sm:p-6`
+- ` gap-6` → ` gap-4 sm:gap-6`
+
+#### 2. Color tokens → CSS variables
+- `bg/text/border-[#10E07A]` → `var(--sr-customer)` (role: customer)
+- `bg/text/border-[#F5C451]` → `var(--sr-vendor)`  (role: vendor)
+- `bg/text/border-[#38BDF8]` → `var(--sr-rider)`   (role: rider)
+- `bg-[#06070B]` → `var(--sr-surface-base)` (no-op — color absent
+  from this file; `#05070A` is a different near-black, intentionally
+  left untouched per the task's sed list)
+- `bg-[#0F1118]` → `var(--sr-surface-raised)` (no-op — absent)
+- `bg-[#161924]` → `var(--sr-surface-elevated)` (no-op — absent)
+- `bg-[#1B1F2A]` → `var(--sr-surface-hover)` (no-op — absent)
+- `border-[#05070A]` → `border-[var(--sr-surface-base)]` (no-op —
+  no `border-[#05070A]` instances; all `#05070A` uses are `bg-` or
+  `text-`, which were intentionally NOT in the task's sed list)
+
+### Quantitative deltas
+
+| Metric                         | Before | After | Δ            |
+|--------------------------------|-------:|------:|--------------|
+| `sm:` breakpoints (lines)      | 0      | 13    | +13          |
+| Lines w/ hardcoded hex         | 100    | 55    | −45 (−45%)   |
+| Total hex occurrences          | 138    | 63    | −75 (−54%)   |
+| Lines w/ `var(--sr-*)`          | 0      | 70    | +70          |
+| Total `var(--sr-*)` occurrences | 0     | 75    | +75          |
+| File length                    | 1280   | 1280  | unchanged    |
+
+### Remaining hardcoded hex (intentional, 55 lines / 63 occurrences)
+
+Distribution of remaining 6-char hex strings (grep -oE):
+
+| Hex       | Count | Why kept (matches AuthScreen precedent)                  |
+|-----------|------:|----------------------------------------------------------|
+| `#1A1D26` | 36    | Not in the task's sed list; bespoke surface tint used as  |
+|           |       | `bg-[#1A1D26]` for the card / chip backgrounds throughout  |
+|           |       | the multi-step wizard. Future agent could add             |
+|           |       | `--sr-surface-card` token, but out of scope here.         |
+| `#05070A` |  7    | Near-black (`#05070A`) used as `bg-[#05070A]` for full-  |
+|           |       | screen modal overlays (lines ~1029/1215/1255/1276) and   |
+|           |       | `text-[#05070A]` for check-icon contrast on the three    |
+|           |       | role accent backgrounds (lines 50/51/324). Different from |
+|           |       | `--sr-surface-base` (`#06070B`); left per task spec.     |
+| `#F5C451` |  6    | Role-config string (`vendor: '#F5C451'`), inline styles  |
+|           |       | (`backgroundColor: '#F5C45110'`, `border: '1px solid       |
+|           |       | #F5C45130'`), and `shadow-[#F5C451]/20` Tailwind opacity   |
+|           |       | modifier. The 8-char hex-with-alpha forms cannot be       |
+|           |       | replaced with `var(--sr-vendor)` without refactoring to  |
+|           |       | `color-mix()` (modern browsers only). Precedent from      |
+|           |       | PHASE-14-AUTH.                                           |
+| `#38BDF8` |  5    | Same situation as `#F5C451` (rider): role string, inline |
+|           |       | style box-shadow, and `shadow-[#38BDF8]/20` opacity form. |
+| `#10E07A` |  4    | Same situation as `#F5C451` (customer): role string,     |
+|           |       | inline `boxShadow: '0 0 30px #10E07A20'`, and            |
+|           |       | `shadow-[#10E07A]/20` opacity form.                       |
+| `#f472b6` |  2    | Pink-ish decorative color in the `PALETTE` array (line   |
+|           |       | ~1010) used to seed avatar gradient permutations.        |
+|           |       | Decorative, no semantic token equivalent.                |
+| `#ffffff` |  1    | White in the same PALETTE array.                          |
+| `#a78bfa` |  1    | Purple in the same PALETTE array.                        |
+| `#06b6d4` |  1    | Cyan in the same PALETTE array.                          |
+
+### Verification (per task VERIFICATION block)
+
+| Check                                | Result                       |
+|--------------------------------------|------------------------------|
+| `bun run lint`                       | **0 errors**, 3 warnings    |
+|                                      | (all pre-existing, in       |
+|                                      | `src/app/layout.tsx` and     |
+|                                      | `types/prisma-augmentation.d.ts` |
+|                                      | — NOT in this file)         |
+| `bun run test`                       | **317 / 317 passed**, 27    |
+|                                      | test files, 0 failures       |
+| `npx tsc --noEmit`                   | Exit code **0**, 0 errors   |
+| File length                          | 1280 lines (unchanged)      |
+| Functionality preserved              | All onboarding flow steps,  |
+|                                      | role selection, form fields, |
+|                                      | OTP inputs, store hooks,     |
+|                                      | analytics calls, and toast  |
+|                                      | messages untouched. sed     |
+|                                      | only touched className      |
+|                                      | strings and color literals  |
+|                                      | in Tailwind class position. |
+
+### Notes for next agent
+
+1. **The 4 `bg-[#1…0/1]` surface sed substitutions were no-ops** for
+   this file (those exact hex codes are not present — OnboardingFlow
+   uses `#1A1D26` for cards and `#05070A` for overlays, neither of
+   which is in the standard `--sr-surface-*` palette). They remain
+   in the script for cross-file consistency with AuthScreen /
+   WelcomeScreen and are harmless.
+
+2. **A future agent could push the hex count further** by:
+   - Adding a `--sr-surface-card: #1A1D26;` token to `globals.css`
+     and replacing the 36 `bg-[#1A1D26]` instances. This would
+     eliminate the largest remaining cluster.
+   - Adding `--sr-overlay: #05070A;` and replacing the 4 overlay
+     `bg-[#05070A]` + 3 check-icon `text-[#05070A]` instances.
+   - Refactoring the inline `style={{ boxShadow: ... }}` strings to
+     use `color-mix(in srgb, var(--sr-*) 20%, transparent)` (modern
+     browsers) so the 6 role-accent inline shadows can join the var
+     system.
+   Each is non-trivial and was deliberately out of scope for this
+   safe-sed pass.
+
+3. **Role config objects (`customer: '#10E07A'`, etc.) at lines
+   44–46** are string literals feeding into template-literal Tailwind
+   classes like `shadow-${accent}/20`. Cannot be CSS vars without
+   refactoring the consumer. Same precedent documented in the
+   PHASE-14-AUTH entry.
+
+4. **`PALETTE` array (line ~1010)** seeds avatar gradients and lives
+   entirely in JS — semantic token substitution would not improve
+   maintainability. Left as-is.
+
+5. **Line count unchanged at 1280** because sed substitutions
+   preserve line boundaries (all replacements are in-place within
+   single className/style strings).
+
+*Agent — Premium UX Architect (OnboardingFlow Rebuild v2)*
+*Result: 0→13 sm: breakpoints, 100→55 hardcoded hex lines (−45%),
+0→70 var(--sr-*) lines (+75 occurrences), 0 lint/tsc errors,
+317/317 tests green, 1280 lines, zero onboarding logic changed.*
