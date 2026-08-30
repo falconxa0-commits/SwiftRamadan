@@ -12299,3 +12299,147 @@ $ grep -c "sm:\|md:" src/components/swift/HomeTab.tsx
 BottomNav via Tailwind arbitrary CSS. viewportFit: 'cover' added to
 layout.tsx. 0 lint errors (3 pre-existing warnings unchanged);
 271/271 tests passing; 0 regressions.*
+
+---
+
+## PHASE-12-C-PRIMITIVES — Component Consolidation Engineer (Agent C)
+
+### Mission
+Create reusable component primitives to reduce duplication across the
+122 Swift components (3,509 hardcoded hex colors, massive button/card
+duplication). ADDITIVE only — create new primitives, do not modify
+existing components.
+
+### Pre-existing state
+`src/components/primitives/RoleButton.tsx` already existed and matched the
+spec exactly (role variants customer/vendor/rider/ai/neutral, size
+sm/md/lg, optional `glow`, `min-h-[44px]` WCAG 2.5.5 touch target,
+`forwardRef`, `active:scale-95`, `focus-visible:ring-2`). Per the
+ADDITIVE rule, it was NOT modified.
+
+### Files created (3 new + 1 barrel + 1 test file)
+
+1. `src/components/primitives/GlassCard.tsx`
+   - Variants: `default` (transparent glass tint), `raised`
+     (`#0F1118` surface + shadow), `elevated` (`#161924` modal surface
+     + stronger shadow).
+   - Optional `hover` (tint + border lift), `strongBlur` (24px instead
+     of 12px) for use over video.
+   - Always `rounded-2xl` (28px per `design-tokens.ts`).
+   - `forwardRef<HTMLDivElement>`, `transition-all duration-200`.
+   - All surface/blur values pulled from `src/lib/design-tokens.ts`.
+
+2. `src/components/primitives/RoleBadge.tsx`
+   - Variants: `customer`/`vendor`/`rider`/`ai` (role hexes) plus
+     `success`/`warning`/`error`/`neutral` (semantic hexes).
+   - Pill shape: `rounded-full`.
+   - Default treatment: `uppercase tracking-wider` per the brand spec;
+     pass `plain` to keep original casing (useful for order IDs /
+     numeric values).
+   - Sizes: `sm` (`text-[10px]`) and `md` (`text-xs`).
+   - Each variant uses a 15% tint of its role color with a 30% border
+     for accessibility on the dark surface.
+   - `forwardRef<HTMLSpanElement>`.
+
+3. `src/components/primitives/index.ts`
+   - Barrel export for `RoleButton`, `GlassCard`, `RoleBadge`.
+   - Re-exports type aliases (`GlassCardProps`, `GlassVariant`,
+     `RoleBadgeProps`, `BadgeVariant`) for downstream consumers.
+   - `RoleButtonProps` is NOT re-exported because the existing
+     `RoleButton.tsx` interface is not exported (and per the
+     ADDITIVE rule the file was not modified).
+
+4. `tests/unit/primitives.test.tsx` (18 tests, 4 describe blocks)
+   - **RoleButton** (8 tests): default render, each of 4 role
+     variants applies the correct bg-* class, `min-h-[44px]` touch
+     target (WCAG 2.5.5), `active:scale-95` micro-interaction,
+     `focus-visible:ring-2`, glow shadow class, ref forwarding to
+     `<button>`, size variants (sm/md/lg).
+   - **GlassCard** (5 tests): renders children + `backdrop-blur`,
+     `rounded-2xl`, `elevated` variant applies `#161924`, `hover`
+     adds `hover:bg-white/[0.06]`, ref forwarding to `<div>`.
+   - **RoleBadge** (4 tests): `rounded-full` pill shape, default
+     `uppercase tracking-wider`, each of 7 color variants
+     (customer/vendor/rider/ai/success/warning/error) applies the
+     correct hex class, neutral default variant uses `bg-white/5`.
+   - **Barrel export** (1 test): `RoleButton`, `GlassCard`,
+     `RoleBadge` all exported from `@/components/primitives`.
+
+### Test strategy notes
+- jsdom does not run a real CSS engine, so `getBoundingClientRect`
+  would return zeros for the 44px assertion. Instead, the touch-target
+  test asserts the presence of the `min-h-[44px]` class (the design
+  contract enforced by the implementation). This is intentional and
+  documented inline in the test file.
+- All color/variant assertions check the Tailwind class string rather
+  than computed styles, for the same reason — robust and engine-
+  independent.
+- The 18 new tests bring the total suite from 271 → 289 tests, all
+  passing.
+
+### Verification
+
+```bash
+$ cd /home/z/my-project && ls src/components/primitives/
+GlassCard.tsx
+RoleBadge.tsx
+RoleButton.tsx
+index.ts
+
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+  17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+✖ 3 problems (0 errors, 3 warnings)
+  0 errors and 2 warnings potentially fixable with the --fix option.
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ Test Files  26 passed (26)
+      Tests  289 passed (289)
+   Duration  30.11s
+```
+
+- 0 lint errors (3 pre-existing warnings unchanged —
+  `prisma/seed-swiftbites.ts`, `src/app/layout.tsx`,
+  `types/prisma-augmentation.d.ts`).
+- 289/289 tests pass (was 271; +18 from `primitives.test.tsx`).
+- 0 regressions.
+
+### Notes for the next agent
+
+1. **Adoption is opt-in.** Existing Swift components were NOT touched.
+   Migration of individual components to use `RoleButton` / `GlassCard`
+   / `RoleBadge` is a separate sweep — recommended approach is one
+   component at a time with a per-file diff, since class merging via
+   `cn()` means the existing per-component Tailwind overrides will
+   still take precedence if the consumer passes them through
+   `className`.
+
+2. **`RoleButtonProps` is not exported** from the barrel because the
+   pre-existing `RoleButton.tsx` declares its interface without
+   `export`. If a future consumer needs the type, either export it
+   from `RoleButton.tsx` (a one-line change — `export interface
+   RoleButtonProps`) and re-add the re-export to `index.ts`, or
+   derive it via `ComponentProps<typeof RoleButton>`.
+
+3. **GlassCard variants are surface-tier, not role-tier.** The card
+   intentionally does not take a `role` prop — role color belongs to
+   the content (badge/button) inside the card, not the card itself.
+   This matches the design system: surfaces stay neutral, accents
+   belong to interactive/identity elements.
+
+4. **`strongBlur` is a soft opt-in.** Default blur is 12px (matches
+   `design-tokens.glass.blur`); `strongBlur` swaps to 24px
+   (`glass.blurStrong`) for cards rendered over video feeds (LiveMap,
+   RealTimeTrackingModal, LiveChefCoach). Consumers can also override
+   with `className="backdrop-blur-[36px]"` if they need a custom
+   value — `cn()` (twMerge) dedupes intelligently.
+
+5. **Next step suggestion:** A `RoleInput` and `RoleAvatar` primitive
+   pair would round out the role-aware set — both follow the same
+   `variant`/`forwardRef` pattern and would close the loop on the
+   role-themed UI surfaces (login, profile, vendor storefront).
+
+*Agent C — Component Primitives*
+*Result: 3 primitives (RoleButton verified, GlassCard + RoleBadge
+new), 1 barrel export, 18 new tests. 0 lint errors, 289/289 tests
+passing. 0 existing components modified.*
