@@ -8,6 +8,7 @@ import {
   isFilePath,
   readKYCDocumentAsBase64,
 } from '@/lib/kyc-storage';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -97,6 +98,18 @@ async function handleSubmit(
       return NextResponse.json(
         { success: false, message: `documentType must be one of: ${VALID_DOCUMENT_TYPES.join(', ')}` },
         { status: 400 },
+      );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. Returns a clean 404 instead of a Prisma FK
+    // violation 500 if the user was deleted between JWT issuance and this
+    // request. Mirrors `/api/cart/route.ts` and `/api/support/route.ts`.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
       );
     }
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import * as usersService from '@/services/users/users.service';
 
 // Fallback storefront data
 const storefrontData = {
@@ -87,6 +88,15 @@ export async function PUT(request: Request) {
     // Try to update DB storefront
     try {
       if (vendorId) {
+        // MIGRATED (Phase 11): defense-in-depth vendor existence check via
+        // `usersService.getUserById`. The `vendorId` body field is used as
+        // the FK on `vendorStorefront`. Verify the vendor exists before
+        // upserting to prevent FK violations. Mirrors `/api/cart/route.ts`.
+        const vendor = await usersService.getUserById(vendorId);
+        if (!vendor) {
+          return NextResponse.json({ error: 'Vendor not found' }, { status: 404 });
+        }
+
         await db.vendorStorefront.upsert({
           where: { vendorId },
           update: {},

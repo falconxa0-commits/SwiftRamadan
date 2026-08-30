@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // Fallback mock plans
 const MOCK_PLANS = [
@@ -102,6 +103,16 @@ export async function POST(request: NextRequest) {
 
     if (!planId) {
       return NextResponse.json({ error: 'planId is required' }, { status: 400 });
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. Mirrors the pattern established in
+    // `/api/support/route.ts` and `/api/cart/route.ts` — returns a clean 404
+    // instead of a Prisma FK violation 500 if the user was deleted between
+    // JWT issuance and this request.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Try DB

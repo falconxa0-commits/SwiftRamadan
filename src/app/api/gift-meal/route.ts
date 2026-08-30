@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import * as usersService from '@/services/users/users.service';
 
 const MEAL_OPTIONS = [
   { id: 'light', name: 'Light Iftar', price: 2000, description: 'Dates, water, fruit & small snack', icon: '🫒' },
@@ -102,6 +103,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid city' },
         { status: 400 }
+      );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth sender existence check via
+    // `usersService.getUserById`. When a real `senderId` (other than the
+    // default 'default-user' placeholder) is provided, verify the sender
+    // exists before recording the gift. Mirrors `/api/cart/route.ts`.
+    if (senderId && senderId !== 'default-user' && !(await usersService.getUserById(senderId))) {
+      return NextResponse.json(
+        { error: 'Sender not found' },
+        { status: 404 }
       );
     }
 

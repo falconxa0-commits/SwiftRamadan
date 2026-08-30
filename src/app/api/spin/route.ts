@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // Prize definitions with probabilities
 const PRIZES = [
@@ -121,6 +122,17 @@ export async function POST(request: NextRequest) {
   try {
     const today = new Date().toISOString().split('T')[0];
     const userId = auth.userId;
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. The transaction below re-checks inside its
+    // own scope (for atomicity), but this pre-flight check returns a clean
+    // 404 with a meaningful message earlier in the request lifecycle. The
+    // inline `db.user.findUnique` inside the transaction is preserved (it
+    // MUST run inside the tx for TOCTOU protection on the daily spin limit).
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     // Use transaction to prevent TOCTOU race condition on daily spin limit
     const result = await db.$transaction(async (tx) => {

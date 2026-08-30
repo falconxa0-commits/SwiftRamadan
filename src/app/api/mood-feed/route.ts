@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { sanitizePromptInput } from '@/ai/security';
 import { aiRequest } from '@/ai/gateway';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -104,6 +105,17 @@ export async function GET(request: NextRequest) {
   // Auth required — AI route (Phase 3 — secure AI routes)
   const auth = await requireAuth(request);
   if (auth instanceof NextResponse) return auth;
+
+  // MIGRATED (Phase 11): defense-in-depth user existence check via
+  // `usersService.getUserById`. Mirrors `/api/cart/route.ts` — returns a
+  // clean 404 if the user was deleted between JWT issuance and this request.
+  const userExists = await usersService.getUserById(auth.userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { success: false, message: 'User not found' },
+      { status: 404 },
+    );
+  }
 
   try {
     const { searchParams } = new URL(request.url);

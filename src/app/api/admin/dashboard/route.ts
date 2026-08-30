@@ -2,12 +2,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAdmin } from '@/lib/admin-auth';
+import * as usersService from '@/services/users/users.service';
 
 export async function GET(request: NextRequest) {
   const auth = await requireAdmin(request);
   if (auth instanceof NextResponse) return auth;
 
   try {
+    // MIGRATED (Phase 11): defense-in-depth admin user existence check via
+    // `usersService.getUserById`. `requireAdmin` verifies the JWT and admin
+    // role but does NOT verify the user still exists in the DB. Returns a
+    // clean 404 if the admin was deleted between JWT issuance and this
+    // request. Mirrors `/api/cart/route.ts`.
+    const adminUser = await usersService.getUserById(auth.userId);
+    if (!adminUser) {
+      return NextResponse.json(
+        { error: 'Admin user not found' },
+        { status: 404 },
+      );
+    }
+
     // ── Core counts ──
     const [
       totalUsers,

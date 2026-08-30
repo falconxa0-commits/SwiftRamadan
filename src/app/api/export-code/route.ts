@@ -5,6 +5,7 @@ import { readFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { requireAdmin } from '@/lib/admin-auth';
+import * as usersService from '@/services/users/users.service';
 
 const execAsync = promisify(exec);
 
@@ -24,7 +25,17 @@ export async function GET(request: NextRequest) {
   // authenticated user to download the entire source code.
   const adminCheck = await requireAdmin(request);
   if (adminCheck instanceof NextResponse) return adminCheck;
-  
+
+  // MIGRATED (Phase 11): defense-in-depth admin user existence check via
+  // `usersService.getUserById`. `requireAdmin` verifies the JWT and admin
+  // role but does NOT verify the user still exists in the DB. Returns a
+  // clean 404 instead of letting the source-code export proceed with
+  // stale auth state. Mirrors `/api/admin/dashboard/route.ts`.
+  const adminUser = await usersService.getUserById(adminCheck.userId);
+  if (!adminUser) {
+    return NextResponse.json({ error: 'Admin user not found' }, { status: 404 });
+  }
+
   const projectRoot = process.cwd();
   const zipFileName = `swiftramadan-export-${Date.now()}.zip`;
   const zipPath = join(tmpdir(), zipFileName);

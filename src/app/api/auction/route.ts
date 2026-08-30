@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import * as usersService from '@/services/users/users.service';
 
 // Fallback mock auctions
 const MOCK_AUCTIONS = [
@@ -93,6 +94,16 @@ export async function POST(request: NextRequest) {
 
     if (!auctionId) {
       return NextResponse.json({ error: 'auctionId is required' }, { status: 400 });
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth bidder existence check via
+    // `usersService.getUserById`. When a real `userId` (other than the
+    // default 'anonymous' placeholder) is provided, verify the user exists
+    // before linking the bid to them. This prevents stale userId references
+    // from causing FK violations on the `auctionBid.userId` column. Mirrors
+    // `/api/cart/route.ts`.
+    if (userId && userId !== 'anonymous' && !(await usersService.getUserById(userId))) {
+      return NextResponse.json({ error: 'Bidder not found' }, { status: 404 });
     }
 
     // Try DB

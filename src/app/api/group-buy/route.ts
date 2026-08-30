@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -140,6 +141,18 @@ export async function POST(request: NextRequest) {
 
   const auth = await requireAuth(request);
   if (auth instanceof NextResponse) return auth;
+
+  // MIGRATED (Phase 11): defense-in-depth user existence check via
+  // `usersService.getUserById`. The POST joins a group buy on behalf of the
+  // authenticated user — verify the user still exists in the DB to prevent
+  // stale auth state from reserving a slot. Mirrors `/api/cart/route.ts`.
+  const userExists = await usersService.getUserById(auth.userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { success: false, message: 'User not found' },
+      { status: 404 },
+    );
+  }
 
   try {
     const body = await request.json();

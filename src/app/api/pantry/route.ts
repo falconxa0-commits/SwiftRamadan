@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { validateInput, pantryItemSchema } from '@/lib/validation';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -56,6 +57,19 @@ export async function POST(request: NextRequest) {
 
     const v = validateInput(pantryItemSchema, rawBody);
     if (!v.success) return v.response;
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. `requireAuth` verifies the JWT but does
+    // NOT verify the user still exists in the DB. Returns a clean 404 if
+    // the user was deleted between JWT issuance and this request. Mirrors
+    // `/api/cart/route.ts` and `/api/support/route.ts`.
+    const userExists = await usersService.getUserById(auth.userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
+      );
+    }
 
     let expiresAt: Date | null = null;
     if (v.data.expiresAt) {

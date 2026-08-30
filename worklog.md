@@ -11572,3 +11572,261 @@ selector hooks across 23 files; `store-selectors.ts` extended with
 0 lint errors (3 pre-existing warnings unchanged); 162/162 tests
 passing; 0 TypeScript errors; 78 `getState()` non-reactive calls
 preserved unchanged.*
+
+---
+
+## PHASE-11-B-AI-GATEWAY — AI Gateway Migration: Final Verification
+
+*Agent B — AI Gateway Migration — Final Completion*
+*Session: PHASE-11-BRAVO*
+
+### Mission
+Migrate ALL remaining text-only AI routes to the unified `aiRequest()`
+gateway. Stated baseline: 8/20. Stated target: 12+/20 (all text routes).
+
+### Step 1 — Discovery (re-run, full scan)
+
+```
+$ find src/app/api -name "route.ts" | xargs grep -l "ZAI.create\|getAISDK\|z-ai-web-dev-sdk"
+src/app/api/agent/route.ts
+src/app/api/ai-recipe/route.ts        ← false positive (uses aiRequest; ZAI mention is in a comment only)
+src/app/api/asr/route.ts
+src/app/api/chef-tts/route.ts
+src/app/api/chef-vision/route.ts
+src/app/api/fridge-scan/route.ts
+src/app/api/image-gen/route.ts
+src/app/api/live-vision/route.ts
+src/app/api/safa-vision/route.ts
+src/app/api/trending/route.ts
+src/app/api/tts/route.ts
+src/app/api/visual-search/route.ts
+src/app/api/web-reader/route.ts
+
+$ grep -rln "aiRequest" src/app/api/ | wc -l
+8        ← chat, safa, ai-recipe, recipe-remix, mood-feed,
+           predictive-reorder, taste-dna, pantry/rescue
+```
+
+Total AI routes: 20 (8 aiRequest + 12 ZAI-direct). Matches the task's "/20"
+denominator.
+
+### Step 2 — Per-route classification (verified method-by-method)
+
+Each remaining ZAI-direct route was opened and the SDK call site inspected:
+
+| # | Route | SDK method | Modality | Action |
+|---|-------|------------|----------|--------|
+| 1 | `agent/route.ts` | `zai.chat.completions.create({ tools: [...] })` | **Text chat + tool calling** | LEAVE (spec rule: "Tool calling (`tools` param) → LEAVE") |
+| 2 | `asr/route.ts` | `zai.asr.create({ audio, language })` | ASR (speech→text) | LEAVE |
+| 3 | `chef-tts/route.ts` | `zai.audio.tts.create(...)` | TTS | LEAVE |
+| 4 | `chef-vision/route.ts` | `zai.chat.completions.createVision({ messages:[{content:[{type:'image_url'}]}] })` | VLM | LEAVE |
+| 5 | `fridge-scan/route.ts` | `zai.chat.completions.createVision(...)` | VLM | LEAVE |
+| 6 | `image-gen/route.ts` | `zai.image.create(...)` | Image gen | LEAVE |
+| 7 | `live-vision/route.ts` | `zai.chat.completions.createVision(...)` | VLM | LEAVE |
+| 8 | `safa-vision/route.ts` | `zai.chat.completions.createVision(...)` | VLM | LEAVE |
+| 9 | `trending/route.ts` | `zai.functions.invoke('web_search', {query, num})` | Web search (tools) | LEAVE (spec rule: "`sdk.functions.invoke()` — Tools → LEAVE") |
+| 10 | `tts/route.ts` | `zai.tts.create(...)` | TTS | LEAVE |
+| 11 | `visual-search/route.ts` | `zai.chat.completions.createVision(...)` | VLM | LEAVE |
+| 12 | `web-reader/route.ts` | `zai.functions.invoke('web_reader', {url})` | Web reader (tools) | LEAVE (spec rule: "`sdk.functions.invoke()` — Tools → LEAVE") |
+
+Cross-checked for hidden text-only chat paths:
+- `grep -rn "chat\.completions\.create\b" src/app/api/` → only `agent/route.ts` (text chat WITH tools). No other text-chat call sites exist outside the 8 already-migrated routes.
+- Each VLM route (`chef-vision`, `fridge-scan`, `live-vision`, `safa-vision`, `visual-search`) was opened and confirmed to have NO text-only fallback path — they fall back to a local JS mock (e.g. `pickFallback()`, `fallbackResponse()`, `FALLBACK_ITEMS`), not to `chat.completions.create`.
+- `trending/route.ts` does branch on the web_search response shape and can take a `choices[0].message.content` path, but that's the SDK's own response envelope for `functions.invoke` — not a separate chat-completion call.
+- No route uses `getAISDK` from `@/lib/ai/sdk` except `agent/route.ts` (intentional).
+
+### Step 3 — Priority route verification (all 8 already migrated)
+
+Each task-listed priority route was opened and confirmed to:
+- import `aiRequest` from `@/ai/gateway`
+- invoke `aiRequest({ userId, userRole, message, maxTokens })` after `requireAuth` + `checkRateLimit`
+- handle `result.success` / `result.response` and return the existing contract shape on failure (fallback constants unchanged)
+
+| Route | aiRequest import | aiRequest call | Fallback preserved |
+|------|------------------|----------------|--------------------|
+| `chat/route.ts` | ✅ line 5 | ✅ line 102 | ✅ |
+| `safa/route.ts` | ✅ line 7 | ✅ line 123 | ✅ |
+| `ai-recipe/route.ts` | ✅ line 6 | ✅ line 236 | ✅ |
+| `recipe-remix/route.ts` | ✅ line 5 | ✅ line 118 | ✅ |
+| `mood-feed/route.ts` | ✅ line 5 | ✅ line 122 | ✅ `MOOD_FALLBACKS` |
+| `predictive-reorder/route.ts` | ✅ line 4 | ✅ line 84 | ✅ `FALLBACK_ITEMS` |
+| `taste-dna/route.ts` | ✅ line 5 | ✅ line 108 | ✅ `DEFAULT_PROFILE` |
+| `pantry/rescue/route.ts` | ✅ line 5 | ✅ line 116 | ✅ `FALLBACK_RECIPE` |
+
+Additionally verified that none of the 8 migrated routes still import
+`getAISDK` or `ZAI.create` — they are fully migrated (not hybrid).
+
+### Step 4 — Verification commands
+
+```
+$ bun run lint 2>&1 | tail -5
+✖ 3 problems (0 errors, 3 warnings)
+  0 errors and 2 warnings potentially fixable with the --fix option.
+
+$ bun run test 2>&1 | tail -5
+ Test Files  17 passed (17)
+      Tests  162 passed (162)
+   Duration  19.98s
+
+$ grep -rln "aiRequest" src/app/api/ | wc -l
+8
+
+$ grep -rln "getAISDK" src/app/api/ | wc -l
+1        ← agent/route.ts (tool calling — intentional skip per spec)
+
+$ grep -rln "ZAI.create" src/app/api/ | wc -l
+11       ← all VLM/TTS/ASR/image-gen/web-search/web-reader routes
+           (intentional skips — gateway doesn't support these modalities)
+```
+
+The 3 lint warnings (`prisma/seed-swiftbites.ts`, `src/app/layout.tsx`,
+`types/prisma-augmentation.d.ts`) are pre-existing and unrelated to AI
+gateway work (also flagged by the previous Agent Bravo).
+
+### Conclusion: target attainment analysis
+
+**Final state: 8/20 routes use `aiRequest`.**
+
+The task's stated target ("12+/20 = all text routes") is based on the
+assumption that the codebase contains ≥12 text-only chat routes. The
+audit proves otherwise — the codebase contains exactly 8 text-only
+chat-completion routes, and all 8 are already migrated. The remaining
+12 routes use SDK methods that the gateway's `aiRequest()` does not
+support, and per the task's own STEP 2 rules they MUST be left:
+
+- 5 VLM routes (image input — gateway is text-only)
+- 2 TTS routes (audio synthesis — different SDK surface)
+- 1 ASR route (speech recognition — different SDK surface)
+- 1 image-gen route (image generation — different SDK surface)
+- 2 `functions.invoke` routes (`web_search` + `web_reader` — spec rule "Tools → LEAVE")
+- 1 tool-calling route (`agent` — spec rule "Tool calling → LEAVE")
+
+**Therefore: 100% of text-only chat-completion routes are migrated
+(8/8). The 12+ target is not achievable through text-route migration
+alone; reaching it would require either (a) extending the gateway to
+support VLM/TTS/ASR/image-gen/web-tools (out of scope per spec), or
+(b) misclassifying non-text routes as text routes (would violate the
+spec's STEP 2 rules and break functionality).**
+
+### Files changed this session
+
+None. No migration was required — all 8 text-only chat-completion
+routes had already been migrated by the previous Agent Bravo
+(PHASE-10-BRAVO) and were re-verified this session. No code was added,
+deleted, or modified.
+
+### Notes for the next agent
+
+1. **No further text-route migration is possible** without first
+   extending the gateway's surface area. If the goal is to push
+   adoption beyond 8/20, the next phase should add a `aiVisionRequest`
+   (VLM) and a `aiWebToolRequest` (`functions.invoke`) entry point to
+   `src/ai/gateway.ts`. Tool-calling support for the `agent` route
+   would need a separate `aiToolRequest` that accepts `tools` defs
+   and loops on `tool_calls` — the orchestrator pattern in
+   `src/app/api/agent/route.ts` is the reference implementation.
+2. The 3 lint warnings are pre-existing — leave them as documented
+   by Agent Bravo.
+3. The `agent/route.ts` orchestrator remains the largest single
+   file still on the direct-SDK path; it cannot migrate piecemeal
+   because the tool-calling loop needs `tool_calls` array access on
+   the raw SDK response (not exposed by the gateway today).
+
+*Agent B — AI Gateway Migration*
+*Result: Verified all 8 text-only chat-completion routes (chat, safa,
+ai-recipe, recipe-remix, mood-feed, predictive-reorder, taste-dna,
+pantry/rescue) are fully migrated to `aiRequest` — 100% of text-chat
+routes. Remaining 12 routes are non-text (VLM/TTS/ASR/image-gen/
+web-search/web-reader/tool-calling) and correctly left per the spec's
+own STEP 2 rules. 0 lint errors (3 pre-existing warnings unchanged);
+162/162 tests passing; 0 TypeScript errors in modified files (no files
+modified).*
+
+---
+
+## PHASE-11-C-TESTS-V2 — Test Expansion to 250+ (Agent C)
+
+*Task: Expand unit tests from 162 to 250+ across 8 new test files.*
+
+### Files Created (109 new tests, 271 total)
+
+| File | Tests | Module Under Test |
+|------|-------|-------------------|
+| `tests/unit/ai-gateway.test.ts` | 13 | `src/ai/gateway.ts` (`aiRequest` pipeline) |
+| `tests/unit/ai-limits.test.ts` | 17 | `src/ai/limits.ts` (token budget + `resolveMaxTokens`) |
+| `tests/unit/ai-memory.test.ts` | 13 | `src/ai/memory.ts` (Redis-backed conversation memory) |
+| `tests/unit/session.test.ts` | 12 | `src/lib/session.ts` (`isPublicApiRoute`, `requireAuth`) |
+| `tests/unit/auth-jwt.test.ts` | 14 | `src/lib/auth-jwt.ts` (HMAC-SHA256 JWT, dev/prod secret) |
+| `tests/unit/rate-limit.test.ts` | 13 | `src/lib/rate-limit.ts` (in-memory limiter + `checkRateLimit`) |
+| `tests/unit/store.test.ts` | 17 | `src/lib/store.ts` (Zustand store + persist `partialize`) |
+| `tests/unit/security-headers.test.ts` | 10 | `src/middleware.ts` (security headers + session handling) |
+| **Total new** | **109** | |
+| **Grand total** | **271** (was 162) | |
+
+### Coverage Highlights
+
+- **AI Gateway**: Verified the pipeline never throws, records token usage on
+  success AND validation failure (defence-in-depth against budget bypass),
+  redacts Stripe-shaped secrets via the real `validateOutput`, includes
+  `FOOD_SAFETY_RULES` in every system prompt, uses the `getAISDK` singleton
+  (NOT inline `ZAI.create()`), and logs structured entries via `console.log`
+  without leaking the message body or response.
+- **AI Limits**: Verified `checkTokenBudget` allows/blocks correctly, fails
+  open when Redis is `null` or errors, uses a date-scoped key
+  (`ai:budget:<userId>:<YYYY-MM-DD>`); `recordTokenUsage` calls `incrby` then
+  `expire` with 86_400s TTL; `resolveMaxTokens` clamps to `[1, 2000]` and
+  defaults to 500.
+- **AI Memory**: Verified `getConversation`/`saveConversation`/`clearConversation`
+  all go through the `@/lib/redis` cache helpers (NOT an in-memory `Map`),
+  respect the 24h TTL (86_400s), trim to `MAX_HISTORY_MESSAGES=20`, and degrade
+  gracefully when Redis is unavailable.
+- **Session**: Verified `isPublicApiRoute` exact-match semantics (the B12 audit
+  fix: `/api/auth/device-token` is NOT public); `requireAuth` returns the
+  SessionUser on a valid token, 401 on missing/invalid cookie.
+- **Auth-JWT**: Verified `createSessionToken` produces a 3-segment JWT with
+  HS256 header, 30-day expiry, and the supplied `userId`/`email`/`role`;
+  `verifySessionToken` returns null on malformed/expired/tampered tokens;
+  production throws without `APP_SECRET` but accepts the legacy
+  `NEXTAUTH_SECRET`; constant-time comparison rejects same-length forged
+  signatures.
+- **Rate-Limit**: Verified `rateLimit` allows/blocks/resets correctly;
+  `checkRateLimit` returns null on allow, a 429 `Response` with `Retry-After`
+  and `X-RateLimit-*` headers on block; uses the rightmost IP from
+  `x-forwarded-for`; `RATE_LIMITS.auth = 10/min`.
+- **Store**: Verified initial state, all cart mutations (with cartCount =
+  sum of quantities), tab/modal/role setters, wishlist toggle, and that the
+  persist `partialize` excludes PII (`userEmail`, `userPhone`,
+  `vendorBusinessAddress`) and financial data (`vendorBalance`,
+  `riderEarnings`) — only non-sensitive fields land in localStorage under
+  the `swiftramadan-store` key.
+- **Security Headers**: Verified middleware sets `X-Frame-Options: DENY`,
+  `X-Content-Type-Options: nosniff`, `Referrer-Policy`,
+  `Permissions-Policy` (camera disabled), CSP on page (non-API) requests,
+  HSTS in production only; clears invalid session cookies with `Max-Age=0`
+  on 401; passes valid tokens through with `x-user-id`/`x-user-email`/
+  `x-user-role` attached to request headers for downstream route handlers.
+
+### Mock Strategy
+
+- All external SDK calls (`getAISDK`, `ZAI.create`) are stubbed via
+  `vi.mock` so no network/credentials are required.
+- `@/lib/redis` is mocked to control cache hit/miss, Redis availability, and
+  to assert that the AI memory + limits modules actually use Redis (not
+  in-memory Maps).
+- `@/ai/security` is intentionally NOT mocked in the gateway tests so the
+  real `validateOutput` runs against secret-redaction test cases.
+- `@/lib/auth-jwt` is mocked in `session.test.ts` and
+  `security-headers.test.ts` so JWT verification is deterministic.
+
+### Verification
+
+```bash
+$ cd /home/z/my-project && bun run test 2>&1 | tail -8
+ Test Files  25 passed (25)
+      Tests  271 passed (271)
+   Start at  10:07:13
+   Duration  27.70s
+```
+
+**Baseline**: 162 tests across 17 files → **Final**: 271 tests across 25 files
+(+109 tests, +8 files). Target of 250+ met. 0 failures, 0 lint regressions.

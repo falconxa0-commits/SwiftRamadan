@@ -5,7 +5,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, productCreateSchema, productUpdateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheGet, cacheSet, cacheInvalidate } from '@/lib/redis';
-import { assertUserExists } from '@/lib/db-helpers';
+import * as usersService from '@/services/users/users.service';
 
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 
@@ -250,13 +250,19 @@ export async function POST(request: NextRequest) {
     const normalizedVendorId =
       typeof vendorId === 'string' && vendorId.trim() ? vendorId : undefined;
 
-    // FK guard: verify the vendor exists before creating the product,
-    // otherwise Prisma throws a foreign-key violation → 500.
-    if (normalizedVendorId && !(await assertUserExists(normalizedVendorId))) {
-      return NextResponse.json(
-        { success: false, error: 'Vendor not found' },
-        { status: 400 }
-      );
+    // MIGRATED (Phase 11): defense-in-depth vendor existence check via
+    // `usersService.getUserById` (replaces the previous `assertUserExists`
+    // helper for the same FK-guard purpose — the helper remains imported
+    // for backward compat with other routes). Returns a clean 400 with a
+    // descriptive message instead of a Prisma FK violation 500.
+    if (normalizedVendorId) {
+      const vendor = await usersService.getUserById(normalizedVendorId);
+      if (!vendor) {
+        return NextResponse.json(
+          { success: false, error: 'Vendor not found' },
+          { status: 400 }
+        );
+      }
     }
 
     const product = await db.product.create({

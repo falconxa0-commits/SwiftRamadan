@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 
@@ -235,6 +236,20 @@ export async function PUT(
       );
     }
 
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. `requireAuth` verifies the JWT but does
+    // NOT verify the user still exists in the DB. Without this check, a
+    // user deleted between JWT issuance and this request would cause a
+    // 500 on the product lookup below if it joins to user data. Returns a
+    // clean 404 instead. Mirrors `/api/cart/route.ts`.
+    const userExists = await usersService.getUserById(auth.userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 404 },
+      );
+    }
+
     // SECURITY FIX: Ownership check (audit B10).
     // Only the vendor who owns the product (or an admin) can update it.
     // vendorId is REMOVED from the allowed-fields list to prevent product theft.
@@ -322,6 +337,17 @@ export async function DELETE(
       return NextResponse.json(
         { success: false, error: 'Cannot delete static product' },
         { status: 400 },
+      );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check (mirror of
+    // the PUT handler). Returns a clean 404 if the authenticated user no
+    // longer exists in the DB.
+    const userExists = await usersService.getUserById(auth.userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, error: 'User not found' },
+        { status: 404 },
       );
     }
 

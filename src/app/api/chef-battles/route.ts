@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import * as usersService from '@/services/users/users.service';
 
 // Chef battle data (fallback mock)
 interface Battle {
@@ -125,6 +126,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Invalid vote data. Provide battleId and vote (A or B)' },
         { status: 400 }
+      );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth voter existence check via
+    // `usersService.getUserById`. When a real `userId` (other than the
+    // default 'default-user' placeholder) is provided, verify the user
+    // exists before recording their vote. Mirrors `/api/cart/route.ts`.
+    if (userId && userId !== 'default-user' && !(await usersService.getUserById(userId))) {
+      return NextResponse.json(
+        { error: 'Voter not found' },
+        { status: 404 }
       );
     }
 

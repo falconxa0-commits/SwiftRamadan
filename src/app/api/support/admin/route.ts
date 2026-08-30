@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import * as usersService from '@/services/users/users.service';
 
 const VALID_STATUSES = ['open', 'in_progress', 'resolved', 'closed'];
 const VALID_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
@@ -128,6 +129,18 @@ async function handleReply(body: {
     return NextResponse.json(
       { success: false, message: 'senderId is required' },
       { status: 400 }
+    );
+  }
+
+  // MIGRATED (Phase 11): defense-in-depth sender existence check via
+  // `usersService.getUserById`. Mirrors `/api/support/route.ts` — returns a
+  // clean 404 instead of a Prisma FK violation 500 if the admin's user record
+  // was deleted between JWT issuance and this request.
+  const senderExists = await usersService.getUserById(senderId);
+  if (!senderExists) {
+    return NextResponse.json(
+      { success: false, message: 'Sender not found' },
+      { status: 404 }
     );
   }
 

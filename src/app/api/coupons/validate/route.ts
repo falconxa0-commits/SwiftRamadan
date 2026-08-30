@@ -4,6 +4,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, couponValidateSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
 import { formatNaira } from '@/lib/format';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -74,6 +75,19 @@ export async function POST(request: NextRequest) {
 
     // Check if user already used this coupon (if userId provided)
     if (userId) {
+      // MIGRATED (Phase 11): defense-in-depth user existence check via
+      // `usersService.getUserById`. When a userId is supplied for the
+      // double-redemption check, verify the user exists first — saves a
+      // redundant `couponRedemption` lookup against a non-existent user and
+      // returns a clean 404. Mirrors `/api/cart/route.ts`.
+      const userExists = await usersService.getUserById(userId);
+      if (!userExists) {
+        return NextResponse.json(
+          { valid: false, message: 'User not found' },
+          { status: 404 },
+        );
+      }
+
       const existingRedemption = await db.couponRedemption.findUnique({
         where: {
           couponId_userId: {

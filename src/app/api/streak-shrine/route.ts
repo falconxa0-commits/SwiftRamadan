@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 interface ShrineStage {
   id: string;
@@ -126,6 +127,15 @@ export async function POST(request: NextRequest) {
     const userId = auth.userId;
 
     const today = date || new Date().toISOString().split('T')[0];
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. Returns a clean 404 instead of a Prisma FK
+    // violation 500 if the user was deleted between JWT issuance and this
+    // request. Mirrors `/api/cart/route.ts`.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
 
     // Try DB
     let currentStreak = 1;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 /* ──────────────────────────────────────────────────────────────────
    /api/diary — Ramadan Diary
@@ -102,6 +103,15 @@ export async function POST(req: NextRequest) {
         { error: 'Date and text are required' },
         { status: 400 }
       );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. Returns a clean 404 instead of a Prisma FK
+    // violation 500 if the user was deleted between JWT issuance and this
+    // request. Mirrors `/api/cart/route.ts` and `/api/support/route.ts`.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     const validMoods: Mood[] = ['blessed', 'happy', 'neutral', 'tired', 'grateful'];

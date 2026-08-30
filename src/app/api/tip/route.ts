@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
+import * as usersService from '@/services/users/users.service';
 
 // Fallback in-memory rider stats and tip history
 const riderStats: Record<string, { iftarsDelivered: number; rating: number; totalTips: number; yearsActive: number; tipCount: number }> = {
@@ -90,6 +91,16 @@ export async function POST(request: NextRequest) {
 
     if (!riderName || !amount || amount <= 0) {
       return NextResponse.json({ error: 'riderName and valid amount are required' }, { status: 400 });
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth sender existence check via
+    // `usersService.getUserById`. The `userId` field in the body is optional
+    // (tips can be anonymous), but when provided we verify the sender
+    // actually exists in the DB before linking the tip to them. This
+    // prevents stale userId references from causing FK violations on the
+    // `tip.fromUserId` column. Mirrors `/api/cart/route.ts`.
+    if (userId && !(await usersService.getUserById(userId))) {
+      return NextResponse.json({ error: 'Sender not found' }, { status: 404 });
     }
 
     // Write to DB

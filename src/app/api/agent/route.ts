@@ -9,12 +9,21 @@ import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { checkBodySize } from '@/lib/validation';
 import type { AgentId, AgentMessage, AgentContext, ToolCall } from '@/lib/ai/types';
+import * as usersService from '@/services/users/users.service';
 
 // ── POST: Send a message to an agent ──
 export async function POST(request: NextRequest) {
   // Auth check
   const auth = await requireAuth(request);
   if (auth instanceof NextResponse) return auth;
+
+  // MIGRATED (Phase 11): defense-in-depth user existence check via
+  // `usersService.getUserById`. Mirrors `/api/cart/route.ts` — returns a
+  // clean 404 if the user was deleted between JWT issuance and this request.
+  const userExists = await usersService.getUserById(auth.userId);
+  if (!userExists) {
+    return NextResponse.json({ error: 'User not found' }, { status: 404 });
+  }
 
   // Rate limit
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);

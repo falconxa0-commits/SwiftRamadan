@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // 30-day Ramadan challenges (fallback mock)
 const RAMADAN_CHALLENGES = [
@@ -118,6 +119,15 @@ export async function POST(request: NextRequest) {
         { error: 'Challenge not found' },
         { status: 404 }
       );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. Mirrors `/api/cart/route.ts`. Returns a
+    // clean 404 instead of a Prisma FK violation 500 if the user was deleted
+    // between JWT issuance and this request.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check DB for existing completion

@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // Reward catalog — each rewardType maps to a points cost and a Coupon payload
 const REWARDS: Record<string, { cost: number; type: 'fixed' | 'delivery'; value: number; label: string }> = {
@@ -43,6 +44,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, message: `Invalid rewardType. Valid options: ${Object.keys(REWARDS).join(', ')}` },
         { status: 400 }
+      );
+    }
+
+    // MIGRATED (Phase 11): defense-in-depth user existence check via
+    // `usersService.getUserById`. The transaction below does its own
+    // `tx.user.findUnique` and throws USER_NOT_FOUND, but the pre-flight
+    // check here returns a clean 404 with a meaningful message earlier in
+    // the request lifecycle. Mirrors `/api/cart/route.ts`.
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 }
       );
     }
 
