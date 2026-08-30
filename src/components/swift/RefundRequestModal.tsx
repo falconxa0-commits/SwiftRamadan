@@ -16,7 +16,8 @@ import {
   Receipt,
   ShieldCheck,
 } from 'lucide-react';
-import { useAppStore, OrderItem } from '@/lib/store';
+import { OrderItem } from '@/lib/store';
+import { useOrders } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -89,7 +90,7 @@ function StatusBadge({ status }: { status: string }) {
    ════════════════════════════════════════════════════════════════ */
 
 export default function RefundRequestModal({ onClose }: RefundRequestModalProps) {
-  const { orders } = useAppStore();
+  const { orders } = useOrders();
   const { toast } = useToast();
 
   const [state, setState] = useState<ModalState>('flow');

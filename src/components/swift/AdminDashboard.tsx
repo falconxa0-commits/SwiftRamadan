@@ -31,7 +31,7 @@ import {
   Plus,
   AlertCircle,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -394,7 +394,7 @@ function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] })
    ══════════════════════════════════════════════════════════════════ */
 
 export default function AdminDashboard() {
-  const { setActiveModal } = useAppStore();
+  const setActiveModal = useAppStore(s => s.setActiveModal);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<AdminTab>('overview');
 

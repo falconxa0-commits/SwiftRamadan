@@ -13,7 +13,7 @@ import {
   ChevronRight,
   Loader2,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -51,7 +51,8 @@ function timeAgo(days: number): string {
 }
 
 export default function PredictiveReorder() {
-  const { setActiveModal, addToCart, activeModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const isOpen = activeModal === 'predictive-reorder';
   const { toast } = useToast();
   const [items, setItems] = useState<ReorderItem[]>([]);

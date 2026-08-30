@@ -2,14 +2,15 @@
 
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useIsLoggedIn, useAppStore } from '@/lib/store-selectors';
 
 /**
  * Floating AI Agent button — visible for ALL roles (customer, rider, vendor)
  * Opens the SafaAgentHub modal with role-appropriate agents
  */
 export default function AIAgentButton() {
-  const { isLoggedIn, setActiveModal } = useAppStore();
+  const isLoggedIn = useIsLoggedIn();
+  const setActiveModal = useAppStore(s => s.setActiveModal);
 
   if (!isLoggedIn) return null;
 

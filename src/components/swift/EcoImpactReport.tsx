@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Leaf, TreePine, Droplets, Recycle, Share2, Lightbulb, TrendingUp } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { ecoImpactData, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -27,7 +27,7 @@ const ecoTips = [
 ];
 
 export default function EcoImpactReport() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
 
   const isOpen = activeModal === 'eco-impact';

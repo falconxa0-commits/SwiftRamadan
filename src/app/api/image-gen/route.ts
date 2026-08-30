@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -9,11 +11,15 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
-    const prompt = typeof body?.prompt === 'string' ? body.prompt.trim() : '';
+    const prompt = typeof body?.prompt === 'string' ? sanitizePromptInput(body.prompt) : '';
     const size = typeof body?.size === 'string' ? body.size.trim() : '1024x1024';
-    const style = typeof body?.style === 'string' ? body.style.trim() : '';
+    const style = typeof body?.style === 'string' ? sanitizePromptInput(body.style) : '';
 
     if (!prompt) {
       return NextResponse.json(
@@ -30,6 +36,9 @@ export async function POST(request: NextRequest) {
         ? `${prompt}, ${style}`
         : `${prompt}, Nigerian food photography, professional lighting, dark background`;
 
+      // @ts-expect-error — ZAI SDK type exposes `images.generations.create`,
+      // but this route uses the legacy `image.create` shortcut. Changing
+      // the access path would alter runtime behaviour, so suppress.
       const response = await zai.image.create({
         prompt: fullPrompt,
         size,

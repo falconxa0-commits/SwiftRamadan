@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Banknote, ArrowUpRight, CheckCircle, Clock, XCircle, Loader2, X, Building2, ChevronRight } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -50,7 +50,11 @@ const statusConfig: Record<string, { bg: string; text: string; icon: React.React
 };
 
 export default function PayoutModal() {
-  const { activeModal, setActiveModal, userEmail, userRole, vendorBalance, riderEarnings } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const userRole = useAppStore(s => s.userRole);
+  const vendorBalance = useAppStore(s => s.vendorBalance);
+  const riderEarnings = useAppStore(s => s.riderEarnings);
   const { toast } = useToast();
   const isOpen = activeModal === 'payout';
 

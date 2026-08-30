@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChefHat, Sparkles, Heart, List, BookOpen, Wand2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface RecipeRemix {
@@ -22,7 +22,7 @@ interface PopularRemix {
 }
 
 export default function RecipeRemixModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'recipe-remix';
 

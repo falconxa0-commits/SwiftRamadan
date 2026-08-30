@@ -3,14 +3,15 @@
 import { motion } from 'framer-motion';
 import { Phone, MessageCircle, Plus, Minus, Navigation, Search, Clock, MapPin, Package } from 'lucide-react';
 import { riderActiveDeliveries, riderDeliveryRequests } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useNavigation } from '@/lib/store-selectors';
 import { toast } from '@/hooks/use-toast';
 import { useState } from 'react';
 
 export default function RiderDeliveryMap() {
-  const { riderCurrentDelivery, riderOnline } = useAppStore();
+  const riderCurrentDelivery = useAppStore(s => s.riderCurrentDelivery);
+  const riderOnline = useAppStore(s => s.riderOnline);
   const [zoom, setZoom] = useState(1);
-  const { setActiveTab } = useAppStore();
+  const { setActiveTab } = useNavigation();
 
   // Only show active delivery when rider has accepted one (riderCurrentDelivery is set in store)
   const activeDelivery = riderCurrentDelivery

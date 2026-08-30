@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, TrendingUp, DollarSign, Clock, Zap, AlertCircle } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { vendorMenuItems, formatNaira } from '@/lib/data';
 
 interface PriceItem {
@@ -15,7 +15,7 @@ interface PriceItem {
 }
 
 export default function VendorPricingModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'vendor-pricing';
 
   const [priceItems, setPriceItems] = useState<PriceItem[]>(

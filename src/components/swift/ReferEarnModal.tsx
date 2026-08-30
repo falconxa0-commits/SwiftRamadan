@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Copy, Share2, Users, Gift, ChevronRight, Check } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useReferral } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 const leaderboardData = [
@@ -24,7 +24,8 @@ const socialProofMessages = [
 ];
 
 export default function ReferEarnModal() {
-  const { activeModal, setActiveModal, referralCode, referralCount } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { referralCode, referralCount } = useReferral();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [tickerIndex, setTickerIndex] = useState(0);

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Plus, Minus, ShoppingCart, Calendar, Users, DollarSign, PartyPopper, ChevronRight, Truck } from 'lucide-react';
 import { partyCategories, formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface CrateItem {
@@ -61,7 +61,8 @@ const partyPackItems = [
 ];
 
 export default function PartyBulkModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'partyBulk';
 

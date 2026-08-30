@@ -3,7 +3,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Clock, CreditCard, Check, ChevronRight, Truck, Bell, Sun, Moon, Edit3, Package, Minus, Plus, Trash2, ShoppingBag, PartyPopper, Loader2, Tag, Home, Briefcase, Plus as PlusIcon } from 'lucide-react';
-import { useAppStore, OrderItem } from '@/lib/store';
+import { OrderItem } from '@/lib/store';
+import { useAppStore, useNavigation, useCart, useCheckout, useOrders } from '@/lib/store-selectors';
 import { deliveryLocations, paymentMethods, bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
@@ -57,18 +58,23 @@ function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
 }
 
 export default function CheckoutModal() {
+  const { activeModal, setActiveModal, setActiveTab } = useNavigation();
+  const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
   const {
-    activeModal, setActiveModal,
-    cartItems, removeFromCart, updateQuantity, clearCart,
-    checkoutStep, setCheckoutStep,
-    deliveryAddress, setDeliveryAddress,
-    deliveryInstructions, setDeliveryInstructions,
-    iftarPrecision, setIftarPrecision,
-    sahurAlarm, setSahurAlarm,
-    paymentMethod, setPaymentMethod,
-    setActiveTab,
-    addOrder,
-  } = useAppStore();
+    checkoutStep,
+    setCheckoutStep,
+    deliveryAddress,
+    setDeliveryAddress,
+    deliveryInstructions,
+    setDeliveryInstructions,
+    iftarPrecision,
+    setIftarPrecision,
+    sahurAlarm,
+    setSahurAlarm,
+    paymentMethod,
+    setPaymentMethod,
+  } = useCheckout();
+  const { addOrder } = useOrders();
   const { toast } = useToast();
   const isOpen = activeModal === 'checkout';
 

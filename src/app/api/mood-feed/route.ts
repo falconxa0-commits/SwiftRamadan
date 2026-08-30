@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -98,34 +101,38 @@ export async function GET(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { searchParams } = new URL(request.url);
-    const mood = searchParams.get('mood') || 'cozy';
+    const mood = sanitizePromptInput(searchParams.get('mood') || 'cozy') || 'cozy';
 
     try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-
-      const response = await zai.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a Nigerian food recommendation AI. Given a mood, suggest 6 specific Nigerian/West African dishes that match. Return ONLY a JSON array of objects with: name, description (1 sentence), price (in naira, realistic), image (empty string), mood_match (why this dish fits the mood), spice_level (1-5), prep_time (minutes).',
-          },
-          {
-            role: 'user',
-            content: `Suggest Nigerian dishes for someone feeling ${mood}.`,
-          },
-        ],
+      // PHASE-10: migrated to the unified AI gateway (`aiRequest`). The
+      // task-specific system instruction is prepended to the user message
+      // because the gateway bakes in a fixed Safa system persona (see
+      // `src/ai/gateway.ts`). The model still receives the JSON output
+      // constraint; the only structural change is that it arrives in the
+      // user turn instead of the system turn.
+      const moodSystemInstruction =
+        'You are a Nigerian food recommendation AI. Given a mood, suggest 6 specific Nigerian/West African dishes that match. Return ONLY a JSON array of objects with: name, description (1 sentence), price (in naira, realistic), image (empty string), mood_match (why this dish fits the mood), spice_level (1-5), prep_time (minutes).';
+      const fullMessage = `${moodSystemInstruction}\n\nSuggest Nigerian dishes for someone feeling ${mood}.`;
+      const result = await aiRequest({
+        userId: auth.userId,
+        userRole: auth.role,
+        message: fullMessage,
+        maxTokens: 1000,
       });
 
-      const content: string = response?.choices?.[0]?.message?.content ?? '';
-      const parsed = extractJsonArray(content);
-      const normalized = parsed ? sanitizeProducts(parsed) : null;
+      if (result.success && result.response) {
+        const parsed = extractJsonArray(result.response);
+        const normalized = parsed ? sanitizeProducts(parsed) : null;
 
-      if (normalized) {
-        return NextResponse.json({ success: true, products: normalized, mood, source: 'ai' });
+        if (normalized) {
+          return NextResponse.json({ success: true, products: normalized, mood, source: 'ai' });
+        }
       }
     } catch (aiError) {
       console.error('[Mood Feed] AI error:', aiError);

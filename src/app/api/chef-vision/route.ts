@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
 
 /* ----------------------------------------------------------------------------
  * Chef Safa Live Vision Coach API
@@ -103,11 +106,18 @@ function fallbackResponse(step: string): VisionResponse {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit + auth (Phase 3 — secure AI routes)
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
     const imageRaw = typeof body?.image === 'string' ? body.image.trim() : '';
-    const recipeName = typeof body?.recipeName === 'string' ? body.recipeName.trim().slice(0, 120) : 'your dish';
-    const step = typeof body?.step === 'string' ? body.step.trim().slice(0, 600) : '';
+    const recipeName = typeof body?.recipeName === 'string' ? sanitizePromptInput(body.recipeName).slice(0, 120) : 'your dish';
+    const step = typeof body?.step === 'string' ? sanitizePromptInput(body.step).slice(0, 600) : '';
     const stepIndex = Math.min(Math.max(Number(body?.stepIndex) || 0, 0), 100);
 
     if (!imageRaw) {
@@ -135,6 +145,9 @@ export async function POST(request: NextRequest) {
       const ZAI = (await import('z-ai-web-dev-sdk')).default;
       const zai = await ZAI.create();
 
+      // @ts-expect-error — `CreateChatCompletionVisionBody.model` is required
+      // by the SDK type but the backend selects a default model when omitted;
+      // passing a model would change runtime behaviour, so suppress here.
       const response = await zai.chat.completions.createVision({
         messages: [
           {

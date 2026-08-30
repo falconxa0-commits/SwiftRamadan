@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Users, Share2, Plus, Check, Truck, Clock, ChevronRight, Sparkles } from 'lucide-react';
 import { groupBuyDeals, formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useGroupBuy } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 export default function GroupBuyModal() {
-  const { activeModal, setActiveModal, groupBuySlots, joinGroupBuy } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { groupBuySlots, joinGroupBuy } = useGroupBuy();
   const { toast } = useToast();
   const isOpen = activeModal === 'groupBuy';
 

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Dna, RefreshCw, ChevronRight, Sparkles, TrendingUp } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useMood } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface TasteEvolution {
@@ -188,7 +188,8 @@ function TasteBar({ label, value, color }: { label: string; value: number; color
 }
 
 export default function TasteDNAProfile() {
-  const { tasteProfile, setTasteProfile, setActiveModal, activeModal } = useAppStore();
+  const { tasteProfile, setTasteProfile } = useMood();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'taste-dna';
   const { toast } = useToast();
   const [isUpdating, setIsUpdating] = useState(false);

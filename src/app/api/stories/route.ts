@@ -97,6 +97,7 @@ export async function GET() {
     const dbStories = await db.story.findMany({
       where: { expiresAt: { gt: new Date() } },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     if (dbStories.length > 0) {

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, PartyPopper, Gift, Star, TrendingUp, Heart, Clock, UtensilsCrossed, Sparkles } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, usePostRamadan } from '@/lib/store-selectors';
 
 interface RamadanReview {
   fastsCompleted: number;
@@ -103,7 +103,8 @@ function StatCard({ icon: Icon, label, value, color }: { icon: typeof Star; labe
 }
 
 export default function PostRamadanMode() {
-  const { activeModal, setActiveModal, isPostRamadan, setIsPostRamadan } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { isPostRamadan, setIsPostRamadan } = usePostRamadan();
   const isOpen = activeModal === 'post-ramadan';
 
   const [data, setData] = useState<PostRamadanData | null>(null);

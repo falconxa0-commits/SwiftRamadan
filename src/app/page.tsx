@@ -1,8 +1,21 @@
 'use client';
 
 import { useState, useEffect, useMemo, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useAppStore } from '@/lib/store';
+import {
+  useAppStore,
+  useActiveTab,
+  useCartCount,
+  useIsLoggedIn,
+  useUserName,
+  useUserRole,
+  useUserArea,
+  useNavigation,
+  useOnboarding,
+  useVendor,
+  useRider,
+} from '@/lib/store-selectors';
 import {
   getTabDirection,
   createDirectionalVariants,
@@ -20,64 +33,20 @@ import OffersTab from '@/components/swift/OffersTab';
 import ProfileTab from '@/components/swift/ProfileTab';
 import ReelsTab from '@/components/swift/ReelsTab';
 import SafaAIAssistant from '@/components/swift/SafaAIAssistant';
-import SafaAgentHub from '@/components/swift/SafaAgentHub';
 import AIAgentButton from '@/components/swift/AIAgentButton';
 import NotificationCenter from '@/components/swift/NotificationCenter';
-import ProductDetailModal from '@/components/swift/ProductDetailModal';
 import ModalErrorBoundary from '@/components/swift/ModalErrorBoundary';
 import SearchOverlay from '@/components/swift/SearchOverlay';
 import AuthScreen from '@/components/swift/AuthScreen';
 import OnboardingFlow from '@/components/swift/OnboardingFlow';
-import PrayerTimesModal from '@/components/swift/PrayerTimesModal';
-import SahurWakeUpModal from '@/components/swift/SahurWakeUpModal';
-import GroupBuyModal from '@/components/swift/GroupBuyModal';
-import VoiceShoppingModal from '@/components/swift/VoiceShoppingModal';
-import GiftCardModal from '@/components/swift/GiftCardModal';
-import MosqueSadaqahModal from '@/components/swift/MosqueSadaqahModal';
-import ReferEarnModal from '@/components/swift/ReferEarnModal';
-import CharityZakatModal from '@/components/swift/CharityZakatModal';
-import PartyBulkModal from '@/components/swift/PartyBulkModal';
-import RecipesModal from '@/components/swift/RecipesModal';
-import VisualSearchModal from '@/components/swift/VisualSearchModal';
-import AIRecipeGeneratorModal from '@/components/swift/AIRecipeGeneratorModal';
-import TrendingModal from '@/components/swift/TrendingModal';
-import CheckoutModal from '@/components/swift/CheckoutModal';
-import RewardsModal from '@/components/swift/RewardsModal';
-import BNPLModal from '@/components/swift/BNPLModal';
-import DeliveryLocationMap from '@/components/swift/DeliveryLocationMap';
-import RealTimeTrackingModal from '@/components/swift/RealTimeTrackingModal';
-import LiveTrackingMap from '@/components/swift/LiveTrackingMap';
-import SmartKitchenHub from '@/components/swift/SmartKitchenHub';
-import CommunityForum from '@/components/swift/CommunityForum';
-import MealPlannerModal from '@/components/swift/MealPlannerModal';
-import ArtisanMarketHub from '@/components/swift/ArtisanMarketHub';
-import EcoImpactReport from '@/components/swift/EcoImpactReport';
 import VendorDashboard from '@/components/swift/VendorDashboard';
 import VendorWallet from '@/components/swift/VendorWallet';
 import VendorStoreTab from '@/components/swift/VendorStoreTab';
-import VendorSalesInsights from '@/components/swift/VendorSalesInsights';
-import VendorStockControl from '@/components/swift/VendorStockControl';
-import VendorPricingModal from '@/components/swift/VendorPricingModal';
-import VendorAddProductModal from '@/components/swift/VendorAddProductModal';
-import RiderPerformanceHub from '@/components/swift/RiderPerformanceHub';
-import RiderSmartRouteModal from '@/components/swift/RiderSmartRouteModal';
-import RiderPowerFinderModal from '@/components/swift/RiderPowerFinderModal';
 import VendorProfileTab from '@/components/swift/VendorProfileTab';
 import RiderDashboard from '@/components/swift/RiderDashboard';
 import RiderEarningsHub from '@/components/swift/RiderEarningsHub';
 import RiderDeliveryMap from '@/components/swift/RiderDeliveryMap';
 import RiderProfileTab from '@/components/swift/RiderProfileTab';
-import NewDeliveryRequestModal from '@/components/swift/NewDeliveryRequestModal';
-import ChatModal from '@/components/swift/ChatModal';
-import RateDeliveryModal from '@/components/swift/RateDeliveryModal';
-import SettingsModal from '@/components/swift/SettingsModal';
-import EditProfileModal from '@/components/swift/EditProfileModal';
-import HelpCenterModal from '@/components/swift/HelpCenterModal';
-import LegalPagesModal from '@/components/swift/LegalPagesModal';
-import WalletModal from '@/components/swift/WalletModal';
-import PayoutModal from '@/components/swift/PayoutModal';
-import KYCModal from '@/components/swift/KYCModal';
-import SupportModal from '@/components/swift/SupportModal';
 import {
   Search,
   ShoppingBag,
@@ -90,6 +59,54 @@ import {
   Package,
   ArrowLeftRight,
 } from 'lucide-react';
+
+/* ──────────────────── Dynamic Modal Imports (code-split, ssr: false) ──────────────────── */
+/* Each modal becomes its own lazy chunk — kept out of the initial page bundle.
+   AllModals() still renders all 44, so they activate when activeModal matches. */
+const ProductDetailModal = dynamic(() => import('@/components/swift/ProductDetailModal').then(m => m.default), { ssr: false });
+const PrayerTimesModal = dynamic(() => import('@/components/swift/PrayerTimesModal').then(m => m.default), { ssr: false });
+const SahurWakeUpModal = dynamic(() => import('@/components/swift/SahurWakeUpModal').then(m => m.default), { ssr: false });
+const GroupBuyModal = dynamic(() => import('@/components/swift/GroupBuyModal').then(m => m.default), { ssr: false });
+const VoiceShoppingModal = dynamic(() => import('@/components/swift/VoiceShoppingModal').then(m => m.default), { ssr: false });
+const GiftCardModal = dynamic(() => import('@/components/swift/GiftCardModal').then(m => m.default), { ssr: false });
+const MosqueSadaqahModal = dynamic(() => import('@/components/swift/MosqueSadaqahModal').then(m => m.default), { ssr: false });
+const ReferEarnModal = dynamic(() => import('@/components/swift/ReferEarnModal').then(m => m.default), { ssr: false });
+const CharityZakatModal = dynamic(() => import('@/components/swift/CharityZakatModal').then(m => m.default), { ssr: false });
+const PartyBulkModal = dynamic(() => import('@/components/swift/PartyBulkModal').then(m => m.default), { ssr: false });
+const RecipesModal = dynamic(() => import('@/components/swift/RecipesModal').then(m => m.default), { ssr: false });
+const VisualSearchModal = dynamic(() => import('@/components/swift/VisualSearchModal').then(m => m.default), { ssr: false });
+const AIRecipeGeneratorModal = dynamic(() => import('@/components/swift/AIRecipeGeneratorModal').then(m => m.default), { ssr: false });
+const TrendingModal = dynamic(() => import('@/components/swift/TrendingModal').then(m => m.default), { ssr: false });
+const CheckoutModal = dynamic(() => import('@/components/swift/CheckoutModal').then(m => m.default), { ssr: false });
+const RewardsModal = dynamic(() => import('@/components/swift/RewardsModal').then(m => m.default), { ssr: false });
+const BNPLModal = dynamic(() => import('@/components/swift/BNPLModal').then(m => m.default), { ssr: false });
+const DeliveryLocationMap = dynamic(() => import('@/components/swift/DeliveryLocationMap').then(m => m.default), { ssr: false });
+const RealTimeTrackingModal = dynamic(() => import('@/components/swift/RealTimeTrackingModal').then(m => m.default), { ssr: false });
+const LiveTrackingMap = dynamic(() => import('@/components/swift/LiveTrackingMap').then(m => m.default), { ssr: false });
+const SmartKitchenHub = dynamic(() => import('@/components/swift/SmartKitchenHub').then(m => m.default), { ssr: false });
+const CommunityForum = dynamic(() => import('@/components/swift/CommunityForum').then(m => m.default), { ssr: false });
+const MealPlannerModal = dynamic(() => import('@/components/swift/MealPlannerModal').then(m => m.default), { ssr: false });
+const ArtisanMarketHub = dynamic(() => import('@/components/swift/ArtisanMarketHub').then(m => m.default), { ssr: false });
+const EcoImpactReport = dynamic(() => import('@/components/swift/EcoImpactReport').then(m => m.default), { ssr: false });
+const VendorSalesInsights = dynamic(() => import('@/components/swift/VendorSalesInsights').then(m => m.default), { ssr: false });
+const VendorStockControl = dynamic(() => import('@/components/swift/VendorStockControl').then(m => m.default), { ssr: false });
+const VendorPricingModal = dynamic(() => import('@/components/swift/VendorPricingModal').then(m => m.default), { ssr: false });
+const VendorAddProductModal = dynamic(() => import('@/components/swift/VendorAddProductModal').then(m => m.default), { ssr: false });
+const RiderPerformanceHub = dynamic(() => import('@/components/swift/RiderPerformanceHub').then(m => m.default), { ssr: false });
+const RiderSmartRouteModal = dynamic(() => import('@/components/swift/RiderSmartRouteModal').then(m => m.default), { ssr: false });
+const RiderPowerFinderModal = dynamic(() => import('@/components/swift/RiderPowerFinderModal').then(m => m.default), { ssr: false });
+const NewDeliveryRequestModal = dynamic(() => import('@/components/swift/NewDeliveryRequestModal').then(m => m.default), { ssr: false });
+const ChatModal = dynamic(() => import('@/components/swift/ChatModal').then(m => m.default), { ssr: false });
+const RateDeliveryModal = dynamic(() => import('@/components/swift/RateDeliveryModal').then(m => m.default), { ssr: false });
+const SettingsModal = dynamic(() => import('@/components/swift/SettingsModal').then(m => m.default), { ssr: false });
+const EditProfileModal = dynamic(() => import('@/components/swift/EditProfileModal').then(m => m.default), { ssr: false });
+const HelpCenterModal = dynamic(() => import('@/components/swift/HelpCenterModal').then(m => m.default), { ssr: false });
+const LegalPagesModal = dynamic(() => import('@/components/swift/LegalPagesModal').then(m => m.default), { ssr: false });
+const SafaAgentHub = dynamic(() => import('@/components/swift/SafaAgentHub').then(m => m.default), { ssr: false });
+const WalletModal = dynamic(() => import('@/components/swift/WalletModal').then(m => m.default), { ssr: false });
+const PayoutModal = dynamic(() => import('@/components/swift/PayoutModal').then(m => m.default), { ssr: false });
+const KYCModal = dynamic(() => import('@/components/swift/KYCModal').then(m => m.default), { ssr: false });
+const SupportModal = dynamic(() => import('@/components/swift/SupportModal').then(m => m.default), { ssr: false });
 
 /* ──────────────────── Tab Mappings per Role ──────────────────── */
 
@@ -156,24 +173,17 @@ const overlayVariants = {
    ══════════════════════════════════════════════════════════════════ */
 
 export default function Home() {
-  const {
-    activeTab,
-    showWelcome,
-    cartCount,
-    userRole,
-    userName,
-    vendorStoreName,
-    riderOnline,
-    vendorOnline,
-    isLoggedIn,
-    showAuth,
-    showOnboarding,
-    onboardingComplete,
-    setActiveTab,
-    setShowAuth,
-    userArea,
-    riderCompletedToday,
-  } = useAppStore();
+  const activeTab = useActiveTab();
+  const cartCount = useCartCount();
+  const userRole = useUserRole();
+  const userName = useUserName();
+  const isLoggedIn = useIsLoggedIn();
+  const userArea = useUserArea();
+
+  const { setActiveTab } = useNavigation();
+  const { showWelcome, showAuth, showOnboarding, onboardingComplete, setShowAuth } = useOnboarding();
+  const { vendorStoreName, vendorOnline } = useVendor();
+  const { riderOnline, riderCompletedToday } = useRider();
 
   const [showNotifications, setShowNotifications] = useState(false);
 

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -96,35 +99,34 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
-    const originalRecipe = typeof body?.originalRecipe === 'string' ? body.originalRecipe.trim() : 'Jollof Rice';
-    const twist = typeof body?.twist === 'string' ? body.twist.trim() : 'make it healthier with extra vegetables';
+    const originalRecipe = typeof body?.originalRecipe === 'string' ? sanitizePromptInput(body.originalRecipe) : 'Jollof Rice';
+    const twist = typeof body?.twist === 'string' ? sanitizePromptInput(body.twist) : 'make it healthier with extra vegetables';
 
     try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-
-      const response = await zai.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a creative Nigerian food remix AI. Take a classic Nigerian dish and add a creative twist. Return ONLY a JSON object with: name (remixed name), description (1-2 sentences), ingredients (array of strings), steps (array of strings), twist_explanation (why this twist works).',
-          },
-          {
-            role: 'user',
-            content: `Remix "${originalRecipe}" with this twist: "${twist}"`,
-          },
-        ],
+      // PHASE-6-2: route now goes through the unified AI gateway. The remix
+      // JSON instruction is baked into the user message (the gateway's system
+      // prompt is the fixed default Safa persona).
+      const remixSystemInstruction =
+        'You are a creative Nigerian food remix AI. Take a classic Nigerian dish and add a creative twist. Return ONLY a JSON object with: name (remixed name), description (1-2 sentences), ingredients (array of strings), steps (array of strings), twist_explanation (why this twist works).';
+      const fullMessage = `${remixSystemInstruction}\n\nRemix "${originalRecipe}" with this twist: "${twist}"`;
+      const result = await aiRequest({
+        userId: auth.userId,
+        userRole: auth.role,
+        message: fullMessage,
+        maxTokens: 1000,
       });
-
-      const content: string = response?.choices?.[0]?.message?.content ?? '';
-      const parsed = extractJsonObject(content);
-      const remix = sanitizeRemix(parsed);
-
-      if (remix) {
-        return NextResponse.json({ success: true, remix, source: 'ai' });
+      if (result.success && result.response) {
+        const parsed = extractJsonObject(result.response);
+        const remix = sanitizeRemix(parsed);
+        if (remix) {
+          return NextResponse.json({ success: true, remix, source: 'ai' });
+        }
       }
     } catch (aiError) {
       console.error('[Recipe Remix] AI error:', aiError);

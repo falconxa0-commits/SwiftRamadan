@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Package, Eye, EyeOff, TrendingUp, AlertCircle } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { vendorMenuItems, formatNaira } from '@/lib/data';
 
 export default function VendorStockControl() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'vendor-stock';
 
   const [items, setItems] = useState(

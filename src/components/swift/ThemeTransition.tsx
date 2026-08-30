@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback, createContext, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sun, Moon, Sunrise, Sunset, Sparkles } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAdhanSync } from '@/lib/store-selectors';
 
 type AppTheme = 'ramadan' | 'iftar' | 'sahur' | 'eid';
 
@@ -52,7 +52,7 @@ const THEME_INFO: Record<AppTheme, { label: string; description: string; icon: t
 
 // Theme Provider — wraps the app and applies CSS classes to body
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { appTheme, setAppTheme } = useAppStore();
+  const { appTheme, setAppTheme } = useAdhanSync();
   const [autoDetect, setAutoDetect] = useState(true);
   const [suggestedTheme, setSuggestedTheme] = useState<AppTheme>('ramadan');
 
@@ -93,7 +93,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 // Theme Transition Settings Modal
 export default function ThemeTransition() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'theme-transition';
   const { theme, setTheme, autoDetect, setAutoDetect, suggestedTheme } = useThemeContext();
 

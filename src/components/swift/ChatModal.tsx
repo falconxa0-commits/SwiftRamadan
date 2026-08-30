@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Send, MessageCircle, Loader2, Wifi, WifiOff } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { useSocket } from '@/hooks/use-socket';
 
@@ -71,7 +71,10 @@ function buildRoomId(ctx: ChatContext, currentUserId: string): string {
 }
 
 export default function ChatModal() {
-  const { activeModal, setActiveModal, userEmail, userName, userRole } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const userName = useAppStore(s => s.userName);
+  const userRole = useAppStore(s => s.userRole);
   const { toast } = useToast();
 
   const isOpen = activeModal === 'chat';

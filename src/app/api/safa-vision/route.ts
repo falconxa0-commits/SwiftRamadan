@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -57,9 +60,9 @@ Respond with ONLY a JSON object — no markdown, no fences, no commentary. The s
 function buildUserPrompt(req: VisionRequest): string {
   const stepNum = typeof req.currentStep === 'number' ? req.currentStep + 1 : 1;
   const total = typeof req.totalSteps === 'number' ? req.totalSteps : 1;
-  const recipe = req.recipeName?.trim() || 'a home-cooked meal';
-  const stepText = req.stepText?.trim() || '(step text unavailable)';
-  const history = req.history?.trim();
+  const recipe = sanitizePromptInput(req.recipeName ?? '') || 'a home-cooked meal';
+  const stepText = sanitizePromptInput(req.stepText ?? '') || '(step text unavailable)';
+  const history = sanitizePromptInput(req.history ?? '');
 
   let prompt = `The cook is making: ${recipe}\n`;
   prompt += `They are on step ${stepNum} of ${total}.\n`;
@@ -163,6 +166,13 @@ function sanitize(raw: unknown): CoachGuidance | null {
 }
 
 export async function POST(request: NextRequest) {
+  // Rate limit + auth (Phase 3 — secure AI routes)
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   let body: VisionRequest;
   try {
     body = (await request.json()) as VisionRequest;
@@ -184,6 +194,8 @@ export async function POST(request: NextRequest) {
   try {
     const ZAI = (await import('z-ai-web-dev-sdk')).default;
     const zai = await ZAI.create();
+    // @ts-expect-error — `CreateChatCompletionVisionBody.model` is required
+    // by the SDK type but the backend selects a default model when omitted.
     const response = await zai.chat.completions.createVision({
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

@@ -15,7 +15,7 @@ import {
   Loader2,
   Lightbulb,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { formatNaira } from '@/lib/format';
 
@@ -58,7 +58,8 @@ const getDifficultyColor = (difficulty: string) => {
 };
 
 export default function AIRecipeGeneratorModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'ai-recipe';
 

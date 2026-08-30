@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 /* ──────────── helpers ──────────── */
 
@@ -68,17 +69,16 @@ export async function GET(request: NextRequest) {
   if (auth.role !== 'vendor') return NextResponse.json({ error: 'Vendor access required' }, { status: 403 });
 
   try {
-    const { searchParams } = new URL(request.url);
-    const email = auth.email || searchParams.get('email');
-
-    if (!email) {
-      return NextResponse.json(
-        { success: false, error: 'Email query param is required', data: emptyVendorData() },
-        { status: 400 }
-      );
-    }
-
-    const user = await db.user.findUnique({ where: { email } });
+    // MIGRATED (Phase 10): the previous flow looked up the vendor by
+    // `auth.email || ?email=` query param, which allowed a vendor to fetch
+    // another vendor's dashboard by passing their email — an IDOR. We now
+    // use `usersService.getUserById(auth.userId)`, keyed solely on the
+    // authenticated user's ID. The `?email=` query param is silently
+    // ignored. The service returns a `PublicUser` (typed as `unknown`
+    // fields — we coerce the ones we read: id, name, storeName,
+    // vendorOnline). All four are included in `publicUserFields`'s base
+    // projection.
+    const user = await usersService.getUserById(auth.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -87,9 +87,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const userId = String(user.id);
+    const userName = String(user.name);
+    const storeName = user.storeName ? String(user.storeName) : '';
+    const vendorOnline = Boolean(user.vendorOnline);
+
     // Vendor's products
     const products = await db.product.findMany({
-      where: { vendorId: user.id },
+      where: { vendorId: userId },
       orderBy: { createdAt: 'desc' },
     });
 
@@ -199,8 +204,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        storeName: user.storeName || `${user.name}'s Store`,
-        online: user.vendorOnline,
+        storeName: storeName || `${userName}'s Store`,
+        online: vendorOnline,
         balance,
         pendingSettlement,
         totalEarnings,
@@ -217,7 +222,7 @@ export async function GET(request: NextRequest) {
           ramadanOrders: vendorOrders.length,
           dailyTrend,
         },
-        vendorId: user.id,
+        vendorId: userId,
       },
     });
   } catch (error) {
@@ -245,24 +250,33 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { action, online, amount } = body;
-    const email = auth.email || body.email;
 
     if (action === 'toggle-online') {
-      if (!email) {
-        return NextResponse.json(
-          { success: false, message: 'Email required' },
-          { status: 400 }
-        );
+      // MIGRATED (Phase 10): inline `db.user.update({ where: { email }, data: { vendorOnline } })`
+      // replaced with `usersService.updateProfile(auth.userId, { vendorOnline })`.
+      // The previous flow looked up the vendor by `auth.email || body.email`,
+      // which allowed a vendor to toggle another vendor's online status by
+      // passing their email — an IDOR. The service is keyed on `auth.userId`,
+      // closing the IDOR. `vendorOnline` is in `PROFILE_ALLOWED_FIELDS`.
+      // The `body.email` fallback is no longer accepted.
+      try {
+        const updated = await usersService.updateProfile(auth.userId, {
+          vendorOnline: Boolean(online),
+        });
+        return NextResponse.json({
+          success: true,
+          message: `Store is now ${online ? 'online' : 'offline'}.`,
+          data: { online: Boolean(updated.vendorOnline) },
+        });
+      } catch (err) {
+        if (err instanceof Error && err.message === 'USER_NOT_FOUND') {
+          return NextResponse.json(
+            { success: false, message: 'Vendor not found' },
+            { status: 404 },
+          );
+        }
+        throw err;
       }
-      const updated = await db.user.update({
-        where: { email },
-        data: { vendorOnline: Boolean(online) },
-      });
-      return NextResponse.json({
-        success: true,
-        message: `Store is now ${online ? 'online' : 'offline'}.`,
-        data: { online: updated.vendorOnline },
-      });
     }
 
     if (action === 'withdraw') {

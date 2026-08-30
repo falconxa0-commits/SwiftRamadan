@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 /**
  * GET /api/rider?email=xxx
@@ -16,30 +17,14 @@ export async function GET(request: NextRequest) {
   if (auth.role !== 'rider') return NextResponse.json({ error: 'Rider access required' }, { status: 403 });
 
   try {
-    const { searchParams } = new URL(request.url);
-    const email = auth.email || searchParams.get('email');
-
-    if (!email) {
-      return NextResponse.json(
-        { success: false, message: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    // Look up rider's User record
-    const user = await db.user.findUnique({
-      where: { email },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        riderOnline: true,
-        vehicleType: true,
-        plateNumber: true,
-        area: true,
-      },
-    });
+    // MIGRATED (Phase 10): the previous flow looked up the rider by
+    // `auth.email || ?email=` query param, which allowed a rider to fetch
+    // another rider's dashboard by passing their email — an IDOR. We now
+    // use `usersService.getUserById(auth.userId)` which is keyed solely on
+    // the authenticated user's ID. The `?email=` query param is silently
+    // ignored. The service returns a `PublicUser` (typed as `unknown`
+    // fields — we coerce the ones we read).
+    const user = await usersService.getUserById(auth.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -48,7 +33,11 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const riderName = user.name;
+    const userId = String(user.id);
+    const riderName = String(user.name);
+    const riderOnline = Boolean(user.riderOnline);
+    const vehicleType = user.vehicleType ? String(user.vehicleType) : '';
+    const area = user.area ? String(user.area) : '';
 
     const orders = await db.order.findMany({
       where: {
@@ -58,6 +47,7 @@ export async function GET(request: NextRequest) {
         ],
       },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     // Parse items JSON for each order
@@ -124,7 +114,7 @@ export async function GET(request: NextRequest) {
     const riderReviews = await db.review.aggregate({
       where: {
         targetType: 'rider',
-        targetId: user.id,
+        targetId: userId,
       },
       _avg: { rating: true },
       _count: true,
@@ -136,7 +126,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       riderName,
-      online: user.riderOnline,
+      online: riderOnline,
       rating,
       completedToday,
       earningsToday,
@@ -145,8 +135,8 @@ export async function GET(request: NextRequest) {
       availableDeliveries,
       recentDeliveries,
       weeklyEarnings,
-      vehicleType: user.vehicleType || 'Motorcycle',
-      area: user.area || 'Lagos Island',
+      vehicleType: vehicleType || 'Motorcycle',
+      area: area || 'Lagos Island',
     });
   } catch (error) {
     console.error('Rider API GET error:', error);

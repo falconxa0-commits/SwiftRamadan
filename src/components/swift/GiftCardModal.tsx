@@ -6,7 +6,7 @@ import {
   X, ChevronLeft, ChevronRight, Gift, Heart, Send,
   Check, Sparkles, MessageSquare, User, CreditCard
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useGiftCard, useUserName, useOrders } from '@/lib/store-selectors';
 import {
   giftCardTemplates,
   giftCardMoods,
@@ -30,8 +30,8 @@ const reverseThemeMap: Record<string, string> = Object.fromEntries(
 );
 
 export default function GiftCardModal() {
+  const { activeModal, setActiveModal } = useNavigation();
   const {
-    activeModal, setActiveModal,
     giftCardStep, setGiftCardStep,
     giftCardTheme, setGiftCardTheme,
     giftCardAmount, setGiftCardAmount,
@@ -40,9 +40,9 @@ export default function GiftCardModal() {
     giftCardDeliveryMethod, setGiftCardDeliveryMethod,
     giftCardMood, setGiftCardMood,
     resetGiftCard,
-    userName,
-    addOrder,
-  } = useAppStore();
+  } = useGiftCard();
+  const userName = useUserName();
+  const { addOrder } = useOrders();
 
   const isOpen = activeModal === 'giftcard';
   const [customAmount, setCustomAmount] = useState('');

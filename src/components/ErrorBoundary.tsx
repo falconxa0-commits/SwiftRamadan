@@ -35,7 +35,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     captureException(error, {
       tags: {
         component: 'ErrorBoundary',
-        componentStack: errorInfo.componentStack?.substring(0, 200),
+        componentStack: errorInfo.componentStack?.substring(0, 200) ?? '',
       },
       extra: { componentStack: errorInfo.componentStack },
     }).catch(() => {}); // Don't fail if Sentry is down

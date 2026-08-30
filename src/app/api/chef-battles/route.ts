@@ -72,6 +72,7 @@ export async function GET() {
     const dbBattles = await db.chefBattle.findMany({
       include: { votes: true },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     if (dbBattles.length > 0) {

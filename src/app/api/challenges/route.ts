@@ -49,6 +49,7 @@ export async function GET(request: NextRequest) {
   try {
     const progressRecords = await db.challengeProgress.findMany({
       where: { userId, completed: true },
+      take: 50,
     });
     completedIds = new Set(progressRecords.map(p => p.challengeId));
   } catch {

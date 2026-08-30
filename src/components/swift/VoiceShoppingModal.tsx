@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mic, MicOff, ShoppingCart, Plus, Volume2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useVoice, useCart } from '@/lib/store-selectors';
 import { allProducts, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -22,10 +22,29 @@ interface SpeechRecognitionErrorEvent {
   error: string;
 }
 
+/**
+ * Minimal webkit/standard SpeechRecognition shape used by this component.
+ * The full DOM typings for SpeechRecognition are not part of the default
+ * `lib.dom.d.ts` in this TypeScript version, so we declare the slice we use.
+ */
+interface SpeechRecognition {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null;
+  onend: (() => void) | null;
+  start(): void;
+  stop(): void;
+  abort(): void;
+}
+
 type SpeechRecognitionClass = new () => SpeechRecognition;
 
 export default function VoiceShoppingModal() {
-  const { activeModal, setActiveModal, isListening, setIsListening, voiceTranscript, setVoiceTranscript, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { isListening, setIsListening, voiceTranscript, setVoiceTranscript } = useVoice();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const [matchedProducts, setMatchedProducts] = useState<typeof allProducts>([]);
   const [confirmedProduct, setConfirmedProduct] = useState<typeof allProducts[0] | null>(null);

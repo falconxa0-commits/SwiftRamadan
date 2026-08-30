@@ -1,6 +1,7 @@
 'use client';
 
-import { useAppStore, type TabId } from '@/lib/store';
+import { type TabId } from '@/lib/store';
+import { useNavigation, useCartCount, useUserRole } from '@/lib/store-selectors';
 import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings, Clapperboard } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { track } from '@/lib/analytics';
@@ -36,7 +37,9 @@ const vendorTabs: NavTab[] = [
 ];
 
 export default function BottomNav() {
-  const { activeTab, setActiveTab, cartCount, userRole } = useAppStore();
+  const { activeTab, setActiveTab } = useNavigation();
+  const cartCount = useCartCount();
+  const userRole = useUserRole();
 
   const tabs = userRole === 'rider' ? riderTabs : userRole === 'vendor' ? vendorTabs : customerTabs;
   const accentColor = userRole === 'rider' ? '#38BDF8' : userRole === 'vendor' ? '#F5C451' : '#10E07A';

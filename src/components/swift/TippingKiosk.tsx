@@ -7,7 +7,7 @@ import {
   Check, Coffee, HandHeart, Sparkles, MessageCircle, Shield
 } from 'lucide-react';
 import { formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface RiderStats {
@@ -41,7 +41,7 @@ const thankYouMessages = [
 ];
 
 export default function TippingKiosk() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'tippingKiosk';
 

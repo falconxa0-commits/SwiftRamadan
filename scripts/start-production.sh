@@ -60,9 +60,14 @@ if [ -d "prisma" ]; then
   if [ $? -eq 0 ]; then
     echo "  ✅ Migrations applied successfully"
   else
+    # SECURITY FIX: Removed --accept-data-loss fallback (audit G12).
+    # Previously, migration failure silently wiped production data via
+    # `prisma db push --accept-data-loss || true`. Now we fail loudly so
+    # operators can investigate without destroying data.
     echo "  ❌ Migration failed! Check your DATABASE_URL and schema."
-    echo "  Trying prisma db push as fallback..."
-    npx prisma db push --accept-data-loss 2>&1 || true
+    echo "  ⛔  Refusing to start with --accept-data-loss — that would destroy production data."
+    echo "  Please investigate the migration failure and fix it manually."
+    exit 1
   fi
 else
   echo "  ⚠️  No prisma directory found, skipping migrations"

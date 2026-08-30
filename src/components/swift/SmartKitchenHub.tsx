@@ -32,7 +32,7 @@ import {
   CookingPot,
   ShoppingCart,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useUserEmail, useUserName, useCart } from '@/lib/store-selectors';
 import { trendingMeals, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import Image from 'next/image';
@@ -201,7 +201,10 @@ function difficultyColor(d: string): string {
 /* ───────────────────────── Component ───────────────────────── */
 
 export default function SmartKitchenHub() {
-  const { activeModal, setActiveModal, userEmail, userName, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useUserEmail();
+  const userName = useUserName();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'smart-kitchen';
 

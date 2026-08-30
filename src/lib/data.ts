@@ -3,6 +3,32 @@
 // Re-export shared formatNaira from the central utility
 export { formatNaira } from '@/lib/format';
 
+/**
+ * A single product listing.
+ *
+ * `allProducts` is built from several heterogeneous sources (Ramadan box,
+ * trending meals, flash sales, bulk items). Some variants carry a single
+ * `price` while others carry `originalPrice` + `salePrice`. All three are
+ * declared optional so callers can pick the right field without tripping
+ * the TypeScript union-access check.
+ */
+export interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price?: number;
+  originalPrice?: number;
+  salePrice?: number;
+  category: string;
+  rating: number;
+  reviews: number;
+  deliveryTime: string;
+  inStock: boolean;
+  image: string;
+  images: string[];
+  contents?: string;
+}
+
 // Hero Slides
 export const heroSlides = [
   {
@@ -281,7 +307,7 @@ export const prayerTimes = [
 ];
 
 // All Products (combined for search and product detail)
-export const allProducts = [
+export const allProducts: Product[] = [
   {
     id: 100,
     name: 'The Ultimate Ramadan Box',

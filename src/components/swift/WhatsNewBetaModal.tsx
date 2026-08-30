@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Brain, ChefHat, BarChart3, Award, MessageSquare, Rocket, Star, Zap, TrendingUp, Camera, Bike } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 interface ReleaseItem {
   category: 'AI' | 'Smart Kitchen' | 'Delivery' | 'Community';
@@ -39,7 +39,7 @@ const CATEGORY_COLOR: Record<ReleaseItem['category'], string> = {
 };
 
 export default function WhatsNewBetaModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'whats-new';
 
   return (

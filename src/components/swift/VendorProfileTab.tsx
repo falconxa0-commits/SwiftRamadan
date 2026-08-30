@@ -19,7 +19,7 @@ import {
   Package,
   Star,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useVendor, useNavigation, useOnboarding, useAuth } from '@/lib/store-selectors';
 import { formatNaira, vendorSalesInsights } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
@@ -59,15 +59,12 @@ export default function VendorProfileTab() {
     vendorBalance,
     vendorPendingSettlement,
     vendorTotalEarnings,
-    setActiveModal,
-    setShowOnboarding,
-    setOnboardingStep,
-    setActiveTab,
-    setShowAuth,
-    logout,
     vendorOpenTime,
     vendorCloseTime,
-  } = useAppStore();
+  } = useVendor();
+  const { setActiveModal, setActiveTab } = useNavigation();
+  const { setShowOnboarding, setOnboardingStep } = useOnboarding();
+  const { setShowAuth, logout } = useAuth();
 
   const { toast } = useToast();
 

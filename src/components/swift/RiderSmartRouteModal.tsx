@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Navigation, Clock, MapPin, Zap, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 const aiRouteDeliveries = [
   {
@@ -58,7 +58,7 @@ const aiRouteDeliveries = [
 const totalTimeSaved = aiRouteDeliveries.reduce((sum, d) => sum + parseInt(d.timeSaved), 0);
 
 export default function RiderSmartRouteModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'rider-smart-route';
 
   const handleClose = () => {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -129,10 +130,11 @@ async function handleRequest(
   }
 
   // Validate user exists
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { id: true },
-  });
+  // MIGRATED (Phase 10 Alpha Batch 2): the inline `db.user.findUnique` is
+  // replaced with `usersService.getUserById`, which returns the same
+  // `null` when the user doesn't exist. Response shape (404 with
+  // "User not found") is unchanged.
+  const user = await usersService.getUserById(userId);
 
   if (!user) {
     return NextResponse.json(
@@ -167,6 +169,7 @@ async function handleList(userId: string) {
   const refunds = await db.refund.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
+    take: 50,
   });
 
   return NextResponse.json({ success: true, refunds });
@@ -269,14 +272,28 @@ async function handleProcess(body: { refundId: string }) {
         throw new Error('USER_NOT_FOUND');
       }
 
-      // Calculate new balance
-      newBalance = user.walletBalance + refund.amount;
-
-      // Credit user's wallet balance
-      await tx.user.update({
+      // IMPROVED (Phase 10 Alpha Batch 2): use atomic `increment` instead of
+      // `set: newBalance`. The previous `set` pattern computed
+      // `newBalance = user.walletBalance + refund.amount` and wrote the
+      // absolute value, which could override a concurrent wallet update
+      // that happened between the `findUnique` and the `update` (within
+      // the same transaction, SQLite doesn't lock individual rows the way
+      // PostgreSQL does). `increment` delegates the arithmetic to Prisma/
+      // SQLite, which handles it atomically. We then re-fetch the updated
+      // balance from the `update` result for the audit row below.
+      //
+      // Note: this wallet credit + audit row + refund status update remain
+      // in a single `$transaction` for full atomicity. We intentionally do
+      // NOT delegate to `walletService.refund` here because that service
+      // runs its own internal `$transaction`, which would NOT include the
+      // refund status update below — losing cross-step atomicity (admin
+      // could re-process and credit the user twice if the status update
+      // failed after the wallet credit succeeded).
+      const updatedUser = await tx.user.update({
         where: { id: refund.userId },
-        data: { walletBalance: newBalance },
+        data: { walletBalance: { increment: refund.amount } },
       });
+      newBalance = updatedUser.walletBalance;
 
       // Create wallet transaction record (audit trail)
       await tx.walletTransaction.create({

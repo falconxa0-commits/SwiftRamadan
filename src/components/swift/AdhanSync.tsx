@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Radio, MapPin, Clock, Volume2, VolumeX, ChevronDown, Check } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAdhanSync } from '@/lib/store-selectors';
 
 interface PrayerTime {
   name: string;
@@ -48,7 +48,8 @@ const MOSQUES = [
 ];
 
 export default function AdhanSync() {
-  const { activeModal, setActiveModal, adhanSyncEnabled, setAdhanSyncEnabled, setAppTheme } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { adhanSyncEnabled, setAdhanSyncEnabled, setAppTheme } = useAdhanSync();
   const isOpen = activeModal === 'adhan-sync';
 
   const [adhanData, setAdhanData] = useState<AdhanData | null>(null);

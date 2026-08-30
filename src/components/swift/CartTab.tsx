@@ -2,6 +2,7 @@
 
 import { Minus, Plus, Trash2, ShoppingBag, Tag, ChevronRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useAppStore } from '@/lib/store';
+import { useCart } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +16,7 @@ interface AppliedCouponData {
 }
 
 export default function CartTab() {
-  const { cartItems, updateQuantity, removeFromCart, clearCart } = useAppStore();
+  const { cartItems, updateQuantity, removeFromCart, clearCart } = useCart();
   const { toast } = useToast();
   const [coupon, setCoupon] = useState('');
   const [couponApplied, setCouponApplied] = useState(false);

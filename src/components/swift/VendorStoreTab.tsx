@@ -17,7 +17,7 @@ import {
   Check,
 } from 'lucide-react';
 import { formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useNavigation, useUserEmail } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────── Types ──────────────────── */
@@ -48,7 +48,8 @@ type CategoryFilter = 'All' | 'meals' | 'snacks' | 'drinks' | 'desserts' | 'groc
 
 export default function VendorStoreTab() {
   const { toast } = useToast();
-  const { setActiveModal, userEmail } = useAppStore();
+  const { setActiveModal } = useNavigation();
+  const userEmail = useUserEmail();
   const [activeCategory, setActiveCategory] = useState<CategoryFilter>('All');
   const [products, setProducts] = useState<VendorProduct[]>([]);
   const [loading, setLoading] = useState(true);

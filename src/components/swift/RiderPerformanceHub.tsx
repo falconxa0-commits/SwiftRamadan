@@ -2,11 +2,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, BarChart3, Star, Heart, Trophy, Target, TrendingUp, ChevronRight } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { riderPerformanceMetrics } from '@/lib/data';
 
 export default function RiderPerformanceHub() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'rider-performance';
 
   const m = riderPerformanceMetrics;

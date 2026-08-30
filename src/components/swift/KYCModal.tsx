@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Shield, FileText, Upload, CheckCircle, XCircle, Clock, X, AlertCircle, Loader2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface KYCDocument {
@@ -39,7 +39,9 @@ function formatDate(dateStr: string): string {
 }
 
 export default function KYCModal() {
-  const { activeModal, setActiveModal, userEmail, userRole } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const userRole = useAppStore(s => s.userRole);
   const { toast } = useToast();
   const isOpen = activeModal === 'kyc';
 

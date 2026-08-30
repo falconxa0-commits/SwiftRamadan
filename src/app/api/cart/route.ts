@@ -4,13 +4,17 @@ import { validateInput, cartItemSchema } from '@/lib/validation';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // Returns true if the user exists (or userId is null/undefined). Returns false
 // if a userId was provided but no matching User record was found — which would
 // otherwise cause a Prisma foreign-key violation on `db.cartItem.create()`.
+//
+// MIGRATED (Phase 10): inline `db.user.findUnique({ where: { id: userId }, select: { id: true } })`
+// replaced with `usersService.getUserById(userId)`; same null-check semantics.
 async function assertUserExists(userId: string | undefined): Promise<boolean> {
   if (!userId) return true;
-  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  const u = await usersService.getUserById(userId);
   return !!u;
 }
 

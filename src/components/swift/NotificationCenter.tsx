@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { X, ShoppingBag, Clock, Gift, Users, Truck, Bell } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppStore } from '@/lib/store';
+import { useNotifications } from '@/lib/store-selectors';
 
 interface Notification {
   id: number;
@@ -33,7 +33,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [filter, setFilter] = useState<FilterType>('all');
-  const { setUnreadCount } = useAppStore();
+  const { setUnreadCount } = useNotifications();
 
   useEffect(() => {
     if (isOpen) {

@@ -97,7 +97,7 @@ export function isNigerianNumber(phone: string): boolean {
  * Transactional messages (OTP, order updates) can bypass DND via the
  * "dnd" channel on Termii. This helper picks the right channel.
  */
-export function getTermiiChannel(messageType: 'transactional' | 'promotional'): string {
+export function getTermiiChannel(messageType: 'transactional' | 'promotional'): 'dnd' | 'generic' {
   // Transactional messages (OTP, order updates, delivery status) use DND bypass
   // Promotional messages use the standard route
   return messageType === 'transactional' ? 'dnd' : 'generic';

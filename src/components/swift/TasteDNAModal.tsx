@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Dna, Sparkles, ChefHat, Flame, Leaf, Droplets, Sun } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface TasteProfile {
@@ -58,7 +58,7 @@ function generateRecommendations(profile: TasteProfile): Recommendation[] {
 }
 
 export default function TasteDNAModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'taste-dna';
 

@@ -2,7 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppStore } from '@/lib/store';
+import {
+  useAuth, useOnboarding, useCustomerOnboarding, useCheckout, useVendor,
+  useRider, useNavigation, useSetIsLoggedIn,
+} from '@/lib/store-selectors';
 import { toast } from '@/hooks/use-toast';
 import {
   X,
@@ -150,7 +153,7 @@ function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
    ════════════════════════════════════════════════════════════════ */
 
 function CustomerStep1() {
-  const { userName } = useAppStore();
+  const { userName } = useAuth();
   const firstName = userName?.split(' ')[0] || 'there';
 
   return (
@@ -236,7 +239,7 @@ function CustomerStep1() {
 }
 
 function CustomerStep2() {
-  const { customerDietaryPrefs, setCustomerDietaryPrefs, customerFavoriteCategories, setCustomerFavoriteCategories } = useAppStore();
+  const { customerDietaryPrefs, setCustomerDietaryPrefs, customerFavoriteCategories, setCustomerFavoriteCategories } = useCustomerOnboarding();
 
   const toggleDietary = (id: string) => {
     setCustomerDietaryPrefs(
@@ -331,10 +334,8 @@ function CustomerStep2() {
 }
 
 function CustomerStep3() {
-  const {
-    deliveryAddress, setDeliveryAddress,
-    userArea, setUserArea,
-  } = useAppStore();
+  const { deliveryAddress, setDeliveryAddress } = useCheckout();
+  const { userArea, setUserArea } = useAuth();
   const [deliverBeforeIftar, setDeliverBeforeIftar] = useState(false);
   const [areaOpen, setAreaOpen] = useState(false);
 
@@ -435,7 +436,7 @@ function VendorStep1() {
     vendorStoreName, setVendorStoreName,
     vendorBusinessCategory, setVendorBusinessCategory,
     vendorBusinessAddress, setVendorBusinessAddress,
-  } = useAppStore();
+  } = useVendor();
   const [storeDesc, setStoreDesc] = useState('');
   const [catOpen, setCatOpen] = useState(false);
 
@@ -538,7 +539,7 @@ function VendorStep2() {
   const {
     vendorOpenTime, setVendorOpenTime,
     vendorCloseTime, setVendorCloseTime,
-  } = useAppStore();
+  } = useVendor();
   const [sahurOrders, setSahurOrders] = useState(false);
   const [iftarRush, setIftarRush] = useState(true);
   const [maxOrders, setMaxOrders] = useState('50');
@@ -652,7 +653,7 @@ function VendorStep3() {
   const {
     vendorBankName, setVendorBankName,
     vendorAccountNumber, setVendorAccountNumber,
-  } = useAppStore();
+  } = useVendor();
   const [accountHolder, setAccountHolder] = useState('');
 
   return (
@@ -734,7 +735,7 @@ function RiderStep1() {
     riderVehicleType, setRiderVehicleType,
     riderVehicleColor, setRiderVehicleColor,
     riderPlateNumber, setRiderPlateNumber,
-  } = useAppStore();
+  } = useRider();
 
   return (
     <motion.div
@@ -817,7 +818,7 @@ function RiderStep1() {
 }
 
 function RiderStep2() {
-  const { riderLicenseNumber, setRiderLicenseNumber } = useAppStore();
+  const { riderLicenseNumber, setRiderLicenseNumber } = useRider();
   const [idType, setIdType] = useState('');
   const [idNumber, setIdNumber] = useState('');
   const [idOpen, setIdOpen] = useState(false);
@@ -926,7 +927,7 @@ function RiderStep3() {
   const {
     riderBankName, setRiderBankName,
     riderAccountNumber, setRiderAccountNumber,
-  } = useAppStore();
+  } = useRider();
   const [accountHolder, setAccountHolder] = useState('');
 
   return (
@@ -1105,9 +1106,9 @@ export default function OnboardingFlow() {
     onboardingComplete,
     setOnboardingComplete,
     userRole,
-    setActiveTab,
-    setIsLoggedIn,
-  } = useAppStore();
+  } = useOnboarding();
+  const { setActiveTab } = useNavigation();
+  const setIsLoggedIn = useSetIsLoggedIn();
 
   const [showCelebration, setShowCelebration] = useState(false);
 

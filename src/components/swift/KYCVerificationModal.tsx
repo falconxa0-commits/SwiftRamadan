@@ -14,7 +14,7 @@ import {
   AlertCircle,
   Camera,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface KYCDocument {
@@ -69,7 +69,9 @@ const STATUS_CONFIG = {
 type KycStatus = keyof typeof STATUS_CONFIG;
 
 export default function KYCVerificationModal() {
-  const { activeModal, setActiveModal, userEmail, userRole } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const userRole = useAppStore(s => s.userRole);
   const { toast } = useToast();
   const isOpen = activeModal === 'kyc';
 

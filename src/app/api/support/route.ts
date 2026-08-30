@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { checkBodySize } from '@/lib/validation';
+import * as usersService from '@/services/users/users.service';
 
 const VALID_CATEGORIES = ['general', 'order', 'payment', 'delivery', 'account', 'vendor', 'rider'];
 const VALID_PRIORITIES = ['low', 'medium', 'high', 'urgent'];
@@ -91,6 +92,22 @@ async function handleCreate(
     );
   }
 
+  // MIGRATED (Phase 10 Alpha Batch 2): defense-in-depth user check via
+  // `usersService.getUserById`. `requireAuth` only verifies the JWT — it
+  // does NOT verify the user still exists in the DB. Without this check,
+  // a user deleted between JWT issuance and this request would cause a
+  // Prisma FK violation on `supportTicket.create` below, which the outer
+  // catch would surface as a generic 500. This check returns a clean 404
+  // with a meaningful message instead. Mirrors the pattern in
+  // `/api/cart/route.ts` (`assertUserExists`).
+  const userExists = await usersService.getUserById(userId);
+  if (!userExists) {
+    return NextResponse.json(
+      { success: false, message: 'User not found' },
+      { status: 404 }
+    );
+  }
+
   // Create ticket and first message in a transaction
   const ticket = await db.supportTicket.create({
     data: {
@@ -119,6 +136,7 @@ async function handleList(userId: string) {
     where: { userId },
     include: { messages: true },
     orderBy: { createdAt: 'desc' },
+    take: 50,
   });
 
   return NextResponse.json({ success: true, tickets });
@@ -195,20 +213,29 @@ async function handleMessage(body: { ticketId: string; message: string }, userId
     );
   }
 
-  // Create message and update ticket in a transaction
-  const newMessage = await db.ticketMessage.create({
-    data: {
-      ticketId,
-      senderId: userId,
-      message: message.trim(),
-      isAdmin: false,
-    },
-  });
+  // IMPROVED (Phase 10 Alpha Batch 2): wrap the message create + ticket
+  // `updatedAt` bump in a `$transaction` for atomicity. Previously these
+  // were two separate writes — if the `supportTicket.update` failed after
+  // the `ticketMessage.create` succeeded, the ticket would have a new
+  // message but a stale `updatedAt` timestamp. The `$transaction` ensures
+  // both succeed or both fail. Response shape is unchanged.
+  const newMessage = await db.$transaction(async (tx) => {
+    const msg = await tx.ticketMessage.create({
+      data: {
+        ticketId,
+        senderId: userId,
+        message: message.trim(),
+        isAdmin: false,
+      },
+    });
 
-  // Update ticket's updatedAt timestamp
-  await db.supportTicket.update({
-    where: { id: ticketId },
-    data: { updatedAt: new Date() },
+    // Update ticket's updatedAt timestamp
+    await tx.supportTicket.update({
+      where: { id: ticketId },
+      data: { updatedAt: new Date() },
+    });
+
+    return msg;
   });
 
   return NextResponse.json({ success: true, message: newMessage }, { status: 201 });

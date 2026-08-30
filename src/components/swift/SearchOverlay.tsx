@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, X, Clock, TrendingUp, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useSetActiveCategory, useSetSelectedProduct } from '@/lib/store-selectors';
 import { formatNaira, popularSearches } from '@/lib/data';
 import { track } from '@/lib/analytics';
 
@@ -23,8 +23,9 @@ interface SearchResults {
 }
 
 export default function SearchOverlay() {
-  const { showSearch, setShowSearch } = useAppStore();
-  const { setActiveTab, setActiveCategory, setSelectedProduct, setActiveModal } = useAppStore();
+  const { showSearch, setShowSearch, setActiveTab, setActiveModal } = useNavigation();
+  const setActiveCategory = useSetActiveCategory();
+  const setSelectedProduct = useSetSelectedProduct();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResults>({ products: [], categories: [], retailers: [] });
   const [recentSearches, setRecentSearches] = useState<string[]>([]);

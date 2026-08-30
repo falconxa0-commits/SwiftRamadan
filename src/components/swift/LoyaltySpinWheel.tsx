@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, Sparkles, Clock, RotateCcw, Flame } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useSpinWheel, useLoyalty } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 // Prize configuration (must match the API)
@@ -55,11 +55,13 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
     spinStreak,
     setSpinStreak,
     addPendingReward,
+  } = useSpinWheel();
+  const {
     swiftPoints,
     setSwiftPoints,
     hasanatPoints,
     setHasanatPoints,
-  } = useAppStore();
+  } = useLoyalty();
 
   const { toast } = useToast();
   const [isSpinning, setIsSpinning] = useState(false);

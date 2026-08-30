@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { X, Share2, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useDailyDua } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface DuaData {
@@ -30,7 +30,8 @@ const DUA_COLLECTION: DuaData[] = [
 ];
 
 export default function DuaOfTheDay() {
-  const { activeModal, setActiveModal, setDailyDua } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { setDailyDua } = useDailyDua();
   const isOpen = activeModal === 'dua-of-the-day';
   const { toast } = useToast();
 

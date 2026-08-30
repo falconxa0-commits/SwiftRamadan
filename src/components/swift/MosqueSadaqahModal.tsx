@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, Navigation, Heart, MapPin, Compass, ChevronUp, ChevronDown } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { mosques, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 type CategoryChip = 'iftar' | 'jummah' | 'sadaqah' | 'large';
 
 export default function MosqueSadaqahModal() {
-  const { activeModal, setActiveModal, hasanatPoints, setHasanatPoints } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const hasanatPoints = useAppStore(s => s.hasanatPoints);
+  const setHasanatPoints = useAppStore(s => s.setHasanatPoints);
   const { toast } = useToast();
   const isOpen = activeModal === 'mosque';
 

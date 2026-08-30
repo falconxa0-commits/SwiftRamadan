@@ -3,12 +3,13 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Users, ChefHat, ShoppingCart, ChevronRight, Check, Sparkles } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { recipes, recipeCategories, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RecipesModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'recipes';
 

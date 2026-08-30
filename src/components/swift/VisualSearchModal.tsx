@@ -14,7 +14,7 @@ import {
   ImageIcon,
   AlertCircle,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { allProducts, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -137,7 +137,8 @@ function findSimilarProducts(
 }
 
 export default function VisualSearchModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'visual-search';
 

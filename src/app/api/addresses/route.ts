@@ -5,15 +5,21 @@ import { validateInput, addressSchema } from '@/lib/validation';
 import { geocodeAddress } from '@/lib/maps';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
-/** Resolve email-or-id to real User.id; returns null if not found. */
+/** Resolve email-or-id to real User.id; returns null if not found.
+ *
+ * MIGRATED (Phase 10): the `by id` lookup path is delegated to
+ * `usersService.getUserById` (returns `PublicUser | null`). The `by email`
+ * fallback stays inline because the service only supports userId-keyed
+ * lookups. */
 async function resolveUserId(raw: string | null | undefined): Promise<string | null> {
   if (!raw || raw === 'guest') return null;
-  const byId = await db.user.findUnique({ where: { id: raw } });
-  if (byId) return byId.id;
-  const byEmail = await db.user.findUnique({ where: { email: raw } });
+  const byId = await usersService.getUserById(raw);
+  if (byId) return String(byId.id);
+  const byEmail = await db.user.findUnique({ where: { email: raw }, select: { id: true } });
   return byEmail?.id ?? null;
 }
 
@@ -163,6 +169,16 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // SECURITY FIX: IDOR protection (audit B9).
+    // Only the address owner can modify it. Prevents users from editing
+    // anyone else's saved addresses.
+    if (existing.userId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, message: 'Forbidden: you can only modify your own addresses' },
+        { status: 403 },
+      );
+    }
+
     // If marking as default, unset previous defaults for this user
     if (isDefault && !existing.isDefault) {
       await db.address.updateMany({
@@ -216,6 +232,23 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json(
         { success: false, message: 'Address id is required' },
         { status: 400 },
+      );
+    }
+
+    // SECURITY FIX: IDOR protection (audit B9).
+    // Fetch the address first and verify ownership before deleting.
+    // Prevents users from deleting anyone else's saved addresses.
+    const existing = await db.address.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, message: 'Address not found' },
+        { status: 404 },
+      );
+    }
+    if (existing.userId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, message: 'Forbidden: you can only delete your own addresses' },
+        { status: 403 },
       );
     }
 

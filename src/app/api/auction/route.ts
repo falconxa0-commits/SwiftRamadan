@@ -56,6 +56,7 @@ export async function GET(request: NextRequest) {
     const dbAuctions = await db.auctionItem.findMany({
       where: { status: 'live' },
       include: { bids: true },
+      take: 50,
     });
 
     if (dbAuctions.length > 0) {

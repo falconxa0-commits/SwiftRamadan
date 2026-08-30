@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin, Clock, Package, Navigation, X, Loader2, Bike,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
 import { useState, useEffect, useCallback, useRef } from 'react';
@@ -39,7 +39,8 @@ const COUNTDOWN_SECONDS = 30;
 /* ───────── Component ───────── */
 
 export default function NewDeliveryRequestModal() {
-  const { activeModal, setActiveModal, userEmail, setActiveTab } = useAppStore();
+  const { activeModal, setActiveModal, setActiveTab } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
   const isOpen = activeModal === 'new-delivery';
 
   const [delivery, setDelivery] = useState<AvailableDelivery | null>(null);

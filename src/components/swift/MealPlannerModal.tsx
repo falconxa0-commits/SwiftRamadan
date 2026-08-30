@@ -18,7 +18,7 @@ import {
   Sparkles,
   ChevronRight,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { trendingMeals } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -82,7 +82,8 @@ function prettyDate(d: Date): string {
 /* ───────────────────────── Component ───────────────────────── */
 
 export default function MealPlannerModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'meal-planner';
 

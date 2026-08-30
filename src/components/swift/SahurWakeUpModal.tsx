@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlarmClock, Plus, Minus, Play, ShoppingCart, Moon } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useSahurAlarm, useCart } from '@/lib/store-selectors';
 import { trendingMeals, dailyDuas, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -15,7 +15,9 @@ const wakeUpOptions = [
 ];
 
 export default function SahurWakeUpModal() {
-  const { activeModal, setActiveModal, sahurAlarmTime, setSahurAlarmTime, sahurAlarmEnabled, setSahurAlarmEnabled, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { sahurAlarmTime, setSahurAlarmTime, sahurAlarmEnabled, setSahurAlarmEnabled } = useSahurAlarm();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const [selectedSound, setSelectedSound] = useState('adhan');
   const [previewing, setPreviewing] = useState(false);

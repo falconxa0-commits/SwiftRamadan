@@ -15,7 +15,7 @@ import {
   Globe,
   Sparkles,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 /* ──────────────────────────────────────────────────────────────────
    Trending in Lagos — live web-powered feed modal
@@ -91,7 +91,7 @@ function prettyDate(input: string): string {
 }
 
 export default function TrendingModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'trending';
 
   const [items, setItems] = useState<TrendingItem[]>([]);

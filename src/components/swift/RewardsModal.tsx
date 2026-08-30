@@ -3,23 +3,21 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Star, Trophy, Flame, ChevronRight, Gift, Zap, Sparkles, Clock } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useLoyalty, useSpinWheel } from '@/lib/store-selectors';
 import { loyaltyRewards, loyaltyTiers, pointEarningActivities, loyaltyData } from '@/lib/data';
 import LoyaltySpinWheel from './LoyaltySpinWheel';
 import { useToast } from '@/hooks/use-toast';
 
 export default function RewardsModal() {
+  const { activeModal, setActiveModal } = useNavigation();
   const {
-    activeModal,
-    setActiveModal,
     hasanatPoints,
     setHasanatPoints,
     loyaltyTier,
     dailyStreak,
     claimDailyPoints,
-    lastSpinDate,
-    spinStreak,
-  } = useAppStore();
+  } = useLoyalty();
+  const { lastSpinDate, spinStreak } = useSpinWheel();
   const { toast } = useToast();
   const isOpen = activeModal === 'rewards';
 

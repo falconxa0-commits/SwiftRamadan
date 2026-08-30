@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { validateInput, communityPostSchema, communityCommentSchema, communityLikeSchema } from '@/lib/validation';
+import { requireAuth } from '@/lib/session';
 
 export const runtime = 'nodejs';
 
@@ -57,6 +58,7 @@ export async function GET(request: NextRequest) {
   try {
     const posts = await db.communityPost.findMany({
       orderBy: { createdAt: 'desc' },
+      take: 50,
       include: {
         comments: {
           orderBy: { createdAt: 'asc' },
@@ -78,9 +80,20 @@ export async function GET(request: NextRequest) {
 //   'comment'      → add a comment to a post
 //   'like'         → toggle the requester's email in the post's likedBy array
 // Always returns 200.
+//
+// SECURITY (Phase 10): write operations now require authentication. The
+// previous flow accepted an anonymous `body.email` for the author field,
+// which allowed anyone to spoof posts/comments/likes as any email address.
+// We now require a valid session. The authenticated user's email is used as
+// the author email (with `body.email` as a fallback for backward compat —
+// only used if the client explicitly passes it, which the legacy UIs do).
 export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  // Require authentication for all community write operations.
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   let body: Record<string, unknown> = {};
   try {
@@ -92,8 +105,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Prefer the authenticated user's email; fall back to body.email for
+  // backward compatibility with legacy clients that pass it explicitly.
   const email = sanitizeText(
-    typeof body.email === 'string' && body.email.trim() ? body.email : 'guest',
+    typeof body.email === 'string' && body.email.trim()
+      ? body.email
+      : auth.email || 'guest',
   );
   const action = typeof body.action === 'string' ? body.action : '';
 

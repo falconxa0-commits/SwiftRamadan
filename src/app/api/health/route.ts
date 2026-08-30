@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { isRedisAvailable } from '@/lib/redis';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   const checks: Record<string, { status: string; latency?: number; error?: string }> = {};
+  let allHealthy = true;
 
   // Check database connectivity
   const dbStart = Date.now();
@@ -12,7 +15,13 @@ export async function GET() {
     await db.$queryRaw`SELECT 1`;
     checks.database = { status: 'ok', latency: Date.now() - dbStart };
   } catch (error) {
-    checks.database = { status: 'error', error: error instanceof Error ? error.message : 'Unknown error' };
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    checks.database = { status: 'error', error: message };
+    allHealthy = false;
+    logger.error('Health check: database error', {
+      latency: Date.now() - dbStart,
+      error: message,
+    });
   }
 
   // Check Redis connectivity
@@ -23,23 +32,41 @@ export async function GET() {
       await redis.ping();
       checks.redis = { status: 'ok', latency: Date.now() - redisStart };
     } else {
-      checks.redis = { status: 'degraded', error: 'Redis not configured (using in-memory fallback)' };
+      // Redis not configured — degraded but not failing, in-memory fallback is in use.
+      checks.redis = {
+        status: 'not_configured',
+        error: 'Redis not configured (using in-memory fallback)',
+      };
     }
-  } catch {
-    checks.redis = { status: 'degraded', error: 'Redis unavailable' };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Redis unavailable';
+    checks.redis = { status: 'error', error: message };
+    allHealthy = false;
+    logger.warn('Health check: redis degraded', {
+      latency: Date.now() - redisStart,
+      error: message,
+    });
   }
 
-  // Overall status
-  const hasError = Object.values(checks).some(c => c.status === 'error');
-  const status = hasError ? 'unhealthy' : 'ok';
-  const statusCode = hasError ? 503 : 200;
+  // Overall status: `ok` only if every required dependency is healthy.
+  // Redis-not-configured does NOT fail the overall status (the app has an
+  // in-memory fallback), but DB errors do.
+  const status = allHealthy ? 'ok' : 'degraded';
+  const statusCode = allHealthy ? 200 : 503;
 
-  return NextResponse.json({
-    status,
-    timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '0.2.0',
-    uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
-    checks,
-  }, { status: statusCode });
+  return NextResponse.json(
+    {
+      status,
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version || '0.2.0',
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'development',
+      checks,
+      // Configuration flags for ops visibility (no secrets — just booleans).
+      flags: {
+        redisConfigured: isRedisAvailable,
+      },
+    },
+    { status: statusCode },
+  );
 }

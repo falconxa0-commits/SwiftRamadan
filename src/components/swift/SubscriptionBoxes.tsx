@@ -7,7 +7,7 @@ import {
   Sparkles, ChevronRight, Sun, Moon, Utensils, Coffee, Apple
 } from 'lucide-react';
 import { formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useSubscriptions } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface SubscriptionPlan {
@@ -82,7 +82,8 @@ const plans: SubscriptionPlan[] = [
 ];
 
 export default function SubscriptionBoxes() {
-  const { activeModal, setActiveModal, activeSubscription, setActiveSubscription } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { activeSubscription, setActiveSubscription } = useSubscriptions();
   const { toast } = useToast();
   const isOpen = activeModal === 'subscriptionBoxes';
 

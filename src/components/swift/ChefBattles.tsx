@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Swords, Timer, Trophy, Star, Vote, ChevronRight, Crown } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface ChefInfo {
@@ -40,7 +40,9 @@ interface ChefBattlesProps {
 }
 
 function ChefBattlesInner({ onClose }: ChefBattlesProps) {
-  const { setActiveModal, activeModal, swiftPoints, setSwiftPoints } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const swiftPoints = useAppStore(s => s.swiftPoints);
+  const setSwiftPoints = useAppStore(s => s.setSwiftPoints);
   const isOpen = activeModal === 'chef-battles';
   const { toast } = useToast();
 

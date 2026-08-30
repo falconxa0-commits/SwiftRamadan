@@ -3,9 +3,14 @@
 
 import ZAI from 'z-ai-web-dev-sdk';
 
-let sdkInstance: InstanceType<typeof ZAI> | null = null;
+// ZAI's constructor is private; the SDK is obtained via `ZAI.create()`.
+// Use the return type of `create()` so we don't trip the `abstract new (...)` constraint
+// that `InstanceType<typeof ZAI>` would require.
+type ZAISDK = Awaited<ReturnType<typeof ZAI.create>>;
 
-export async function getAISDK() {
+let sdkInstance: ZAISDK | null = null;
+
+export async function getAISDK(): Promise<ZAISDK> {
   if (!sdkInstance) {
     const ZAISDK = (await import('z-ai-web-dev-sdk')).default;
     sdkInstance = await ZAISDK.create();

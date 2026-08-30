@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, Flame, Star, Check, Lock, ChevronRight, Award } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useChallenges, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface Challenge {
@@ -47,7 +47,10 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
-  const { challengeProgress, completeChallenge, hasanatPoints, setHasanatPoints, setActiveModal, activeModal } = useAppStore();
+  const { challengeProgress, completeChallenge } = useChallenges();
+  const hasanatPoints = useAppStore(s => s.hasanatPoints);
+  const setHasanatPoints = useAppStore(s => s.setHasanatPoints);
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'challenge-board';
   const { toast } = useToast();
 

@@ -6,7 +6,7 @@ import {
   X, Wallet, ArrowDownLeft, ArrowUpRight, RotateCcw,
   Gift, Clock, ChevronRight, ShieldCheck,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -64,7 +64,8 @@ function formatDate(iso: string) {
 
 // ── Component ────────────────────────────────────────────────────────────────
 export default function WalletModal() {
-  const { activeModal, setActiveModal, userEmail } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
   const isOpen = activeModal === 'wallet';
 

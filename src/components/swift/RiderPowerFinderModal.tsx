@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Zap, MapPin, Clock, Fuel, Battery, Navigation, CheckCircle } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 const chargingStations = [
   {
@@ -74,7 +74,7 @@ const chargingStations = [
 ];
 
 export default function RiderPowerFinderModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'rider-power-finder';
 
   const handleClose = () => {

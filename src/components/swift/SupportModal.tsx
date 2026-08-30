@@ -14,7 +14,7 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -105,7 +105,8 @@ function getCategoryLabel(value: string): string {
 // ─── Component ───────────────────────────────────────────────
 
 export default function SupportModal() {
-  const { activeModal, setActiveModal, userEmail } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
   const isOpen = activeModal === 'support';
 

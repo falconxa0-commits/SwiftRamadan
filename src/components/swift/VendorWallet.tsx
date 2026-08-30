@@ -12,7 +12,7 @@ import {
   BarChart3,
   Loader2,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useVendor, useUserEmail, useNavigation } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -58,16 +58,16 @@ type TxFilter = 'all' | 'completed' | 'processing' | 'refunded';
 export default function VendorWallet() {
   const {
     vendorBalance,
-    vendorPendingSettlement,
-    vendorTotalEarnings,
-    setActiveModal,
-    userEmail,
     setVendorBalance,
+    vendorPendingSettlement,
     setVendorPendingSettlement,
+    vendorTotalEarnings,
     setVendorTotalEarnings,
     vendorBankName,
     vendorAccountNumber,
-  } = useAppStore();
+  } = useVendor();
+  const { setActiveModal } = useNavigation();
+  const userEmail = useUserEmail();
   const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState<TxFilter>('all');
   const [showWithdrawConfirm, setShowWithdrawConfirm] = useState(false);

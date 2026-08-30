@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -18,7 +19,12 @@ export async function GET(request: NextRequest) {
   if (auth.role !== 'rider') return NextResponse.json({ error: 'Rider access required' }, { status: 403 });
 
   try {
-    const user = await db.user.findUnique({ where: { id: auth.userId } });
+    // MIGRATED (Phase 10): inline `db.user.findUnique({ where: { id: auth.userId } })`
+    // replaced with `usersService.getUserById(auth.userId)`. The service
+    // returns a `PublicUser` (typed as `unknown` fields — we coerce the
+    // ones we read: id, name, riderBankName, riderAccountNumber). All four
+    // are included in `publicUserFields`'s base projection.
+    const user = await usersService.getUserById(auth.userId);
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Rider not found' },
@@ -26,7 +32,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const riderName = user.name;
+    const userId = String(user.id);
+    const riderName = String(user.name);
+    const riderBankName = user.riderBankName ? String(user.riderBankName) : null;
+    const riderAccountNumber = user.riderAccountNumber ? String(user.riderAccountNumber) : null;
 
     // Get all delivered orders for this rider
     const deliveredOrders = await db.order.findMany({
@@ -54,7 +63,7 @@ export async function GET(request: NextRequest) {
     // Subtract previous payouts
     const previousPayouts = await db.payment.findMany({
       where: {
-        userId: user.id,
+        userId,
         type: 'payout',
         status: { in: ['pending', 'success'] },
       },
@@ -65,7 +74,7 @@ export async function GET(request: NextRequest) {
     // Recent payout history
     const recentPayouts = await db.payment.findMany({
       where: {
-        userId: user.id,
+        userId,
         type: 'payout',
       },
       orderBy: { createdAt: 'desc' },
@@ -105,12 +114,12 @@ export async function GET(request: NextRequest) {
         recentPayouts,
         weeklyEarnings,
         bankDetails: {
-          bankName: user.riderBankName || null,
-          accountNumber: user.riderAccountNumber
-            ? user.riderAccountNumber.slice(-4).padStart(user.riderAccountNumber.length, '*')
+          bankName: riderBankName,
+          accountNumber: riderAccountNumber
+            ? riderAccountNumber.slice(-4).padStart(riderAccountNumber.length, '*')
             : null,
         },
-        hasBankDetails: !!(user.riderBankName && user.riderAccountNumber),
+        hasBankDetails: !!(riderBankName && riderAccountNumber),
       },
     });
   } catch (error) {
@@ -138,7 +147,10 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { amount } = body;
 
-    const user = await db.user.findUnique({ where: { id: auth.userId } });
+    // MIGRATED (Phase 10): inline `db.user.findUnique({ where: { id: auth.userId } })`
+    // replaced with `usersService.getUserById(auth.userId)`. Same coercion
+    // pattern as the GET handler above.
+    const user = await usersService.getUserById(auth.userId);
     if (!user) {
       return NextResponse.json(
         { success: false, message: 'Rider not found' },
@@ -146,15 +158,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const userId = String(user.id);
+    const riderName = String(user.name);
+    const riderBankName = user.riderBankName ? String(user.riderBankName) : null;
+    const riderAccountNumber = user.riderAccountNumber ? String(user.riderAccountNumber) : null;
+
     // Check rider has bank details
-    if (!user.riderAccountNumber || !user.riderBankName) {
+    if (!riderAccountNumber || !riderBankName) {
       return NextResponse.json(
         { success: false, message: 'Bank account details not configured. Please add your bank name and account number in settings.' },
         { status: 400 },
       );
     }
-
-    const riderName = user.name;
 
     // Calculate total earnings
     const deliveredOrders = await db.order.findMany({
@@ -171,7 +186,7 @@ export async function POST(request: NextRequest) {
     // Subtract previous payouts
     const previousPayouts = await db.payment.findMany({
       where: {
-        userId: user.id,
+        userId,
         type: 'payout',
         status: { in: ['pending', 'success'] },
       },
@@ -195,12 +210,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Create payout record
-    const reference = `RPO-${user.id.slice(-6)}-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    const reference = `RPO-${userId.slice(-6)}-${Date.now()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
     const isDev = !process.env.PAYSTACK_SECRET_KEY;
 
     const payout = await db.payment.create({
       data: {
-        userId: user.id,
+        userId,
         amount: requestedAmount,
         method: 'transfer',
         status: isDev ? 'success' : 'pending',
@@ -227,8 +242,8 @@ export async function POST(request: NextRequest) {
         availableBalance: availableBalance - requestedAmount,
         totalEarnings,
         totalWithdrawn: totalWithdrawn + requestedAmount,
-        bankName: user.riderBankName,
-        accountNumber: user.riderAccountNumber.slice(-4).padStart(user.riderAccountNumber.length, '*'),
+        bankName: riderBankName,
+        accountNumber: riderAccountNumber.slice(-4).padStart(riderAccountNumber.length, '*'),
       },
     }, { status: 201 });
   } catch (error) {

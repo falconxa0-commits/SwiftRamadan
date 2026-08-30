@@ -16,7 +16,7 @@ import {
   Sparkles,
   Timer,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ───────── Types ───────── */
@@ -107,7 +107,7 @@ function PartyParticles({ active }: { active: boolean }) {
    ══════════════════════════════════════════════════════════════════ */
 
 export default function RiderETAParty() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'rider-eta-party';
 

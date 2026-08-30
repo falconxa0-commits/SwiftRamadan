@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
 
 /* ----------------------------------------------------------------------------
  * Chef Safa Voice (TTS) API
@@ -11,9 +14,16 @@ import { NextRequest, NextResponse } from 'next/server';
 const MAX_LEN = 1000;
 
 export async function POST(request: NextRequest) {
+  // Rate limit + auth (Phase 3 — secure AI routes)
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
+  if (rateLimited) return rateLimited;
+
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
-    const text = typeof body?.text === 'string' ? body.text.trim() : '';
+    const text = typeof body?.text === 'string' ? sanitizePromptInput(body.text) : '';
     if (!text) {
       return NextResponse.json({ error: 'Text is required' }, { status: 400 });
     }

@@ -2,31 +2,45 @@ version: '3.8'
 
 services:
   # PostgreSQL Database
+  # Env vars (in priority order — see .env.example):
+  #   POSTGRES_PASSWORD (preferred)  ←  set by operators going forward
+  #   DB_PASSWORD        (legacy)     ←  written by scripts/bootstrap-production.sh
+  #   swiftramadan2026   (last-resort default, replaces the audit-flagged `changeme` — see worklog E2)
   postgres:
     image: postgres:16-alpine
     container_name: swiftramadan-db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: swiftramadan
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
       POSTGRES_DB: swiftramadan
+      POSTGRES_USER: ${POSTGRES_USER:-swiftramadan}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-${DB_PASSWORD:-swiftramadan2026}}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U swiftramadan"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-swiftramadan}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  # Redis Cache
+  # Redis Cache (password-protected — see audit G7)
+  # `requirepass` is mandatory: without it, a public Redis on a cloud VM is a
+  # known cryptominer attack vector (per the audit). The password is interpolated
+  # from the host's `REDIS_PASSWORD` env var (or `swiftramadan2026` by default).
+  # `REDISCLI_AUTH` is set on the container so `redis-cli ping` in the
+  # healthcheck authenticates automatically without leaking the password on
+  # the process list (no `-a <password>` arg).
   redis:
     image: redis:7-alpine
     container_name: swiftramadan-redis
     restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-swiftramadan2026}
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-swiftramadan2026}
+      - REDISCLI_AUTH=${REDIS_PASSWORD:-swiftramadan2026}
     volumes:
       - redis_data:/data
     healthcheck:
@@ -45,8 +59,21 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=postgresql://swiftramadan:${DB_PASSWORD:-changeme}@postgres:5432/swiftramadan?schema=public
-      - REDIS_URL=redis://redis:6379
+      # PostgreSQL connection (production mode).
+      # POSTGRES_USER / POSTGRES_PASSWORD are preferred (see .env.example);
+      # DB_PASSWORD is kept as a legacy fallback so existing
+      # `scripts/bootstrap-production.sh`-generated `.env` files keep working.
+      # The `?schema=public` query param is Prisma's PostgreSQL default — kept
+      # explicit so it survives any future Prisma version that changes the
+      # implicit default.
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-swiftramadan}:${POSTGRES_PASSWORD:-${DB_PASSWORD:-swiftramadan2026}}@postgres:5432/swiftramadan?schema=public
+      # REDIS_URL uses standard `redis://` protocol — `src/lib/redis.ts` now
+      # supports both Upstash REST (`UPSTASH_REDIS_REST_URL`) and standard
+      # Redis (`REDIS_URL` via `ioredis`). Format: `redis://[:password@]host:port`.
+      # The leading `:` (no username) is the standard Redis URL convention for
+      # password-only auth. The password is interpolated from the same
+      # `REDIS_PASSWORD` env var as the `redis` service above, so they stay in sync.
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-swiftramadan2026}@redis:6379
       - NODE_ENV=production
     env_file:
       - .env

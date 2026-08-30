@@ -4,6 +4,20 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
 import { formatNaira } from '@/lib/format';
+import * as ordersService from '@/services/orders/orders.service';
+
+// Parse the JSON-encoded `items` string on an order row. Returns [] on
+// malformed JSON.
+function parseItems(raw: string | null | undefined): Array<{ name: string; qty: number; price: number }> {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) return parsed as Array<{ name: string; qty: number; price: number }>;
+    return [];
+  } catch {
+    return [];
+  }
+}
 
 /**
  * GET /api/rider/assign?email=xxx
@@ -41,6 +55,7 @@ export async function GET(request: NextRequest) {
     const orders = await db.order.findMany({
       where: { riderName: user.name },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     const parsed = orders.map((o) => {
@@ -123,26 +138,39 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'accept') {
-      const updated = await db.order.update({
-        where: { id: orderId },
-        data: {
-          riderName: user.name,
-          status: 'In Transit',
-          progress: 75,
-        },
-      });
-
-      let parsedItems: Array<{ name: string; qty: number; price: number }> = [];
+      // MIGRATED (Phase 10): the `db.order.update` for status + progress is
+      // delegated to `ordersService.updateOrderStatus`. We pass `userId = null`
+      // to skip the service's own ownership check (it would check
+      // `order.userId === callerUserId`, which is the customer, not the
+      // rider). The service does NOT accept `riderName`, so we follow up
+      // with a single `db.order.update` to set riderName to the accepting
+      // rider's name. The brief window between the status update and the
+      // riderName update is acceptable — if the riderName update fails, the
+      // order is in 'In Transit' without an assigned rider and can be
+      // re-accepted by another rider.
+      let updated;
       try {
-        parsedItems = JSON.parse(updated.items);
-      } catch {
-        parsedItems = [];
+        updated = await ordersService.updateOrderStatus(orderId, 'In Transit', null, 75);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'ORDER_NOT_FOUND') {
+          return NextResponse.json(
+            { success: false, message: 'Order not found' },
+            { status: 404 },
+          );
+        }
+        throw err;
       }
+      // Follow-up: set riderName to the accepting rider's name.
+      const riderAssigned = await db.order.update({
+        where: { id: orderId },
+        data: { riderName: user.name },
+      });
+      updated = { ...updated, riderName: riderAssigned.riderName };
 
       return NextResponse.json({
         success: true,
         message: `Order ${orderId} accepted. Head to pickup location.`,
-        order: { ...updated, items: parsedItems },
+        order: { ...updated, items: parseItems(updated.items) },
       });
     }
 
@@ -172,19 +200,23 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const updated = await db.order.update({
-        where: { id: orderId },
-        data: {
-          status: 'Delivered',
-          progress: 100,
-        },
-      });
-
-      let parsedItems: Array<{ name: string; qty: number; price: number }> = [];
+      // MIGRATED (Phase 10): inline `db.order.update` for status + progress
+      // delegated to `ordersService.updateOrderStatus`. No riderName change
+      // here (the rider was assigned at accept-time), so no follow-up
+      // needed. We pass `userId = null` to skip the service's ownership
+      // check (the riderName-match check above is the correct authorisation
+      // for this endpoint).
+      let updated;
       try {
-        parsedItems = JSON.parse(updated.items);
-      } catch {
-        parsedItems = [];
+        updated = await ordersService.updateOrderStatus(orderId, 'Delivered', null, 100);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'ORDER_NOT_FOUND') {
+          return NextResponse.json(
+            { success: false, message: 'Order not found' },
+            { status: 404 },
+          );
+        }
+        throw err;
       }
 
       const earnings = Math.round(updated.total * 0.15);
@@ -192,7 +224,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: `Order ${orderId} delivered. You earned ${formatNaira(earnings)}.`,
-        order: { ...updated, items: parsedItems },
+        order: { ...updated, items: parseItems(updated.items) },
         earnings,
       });
     }

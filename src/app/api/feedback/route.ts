@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
     const items = await db.betaFeedback.findMany({
       where: { owner },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
     return NextResponse.json({ success: true, items });
   } catch (error) {

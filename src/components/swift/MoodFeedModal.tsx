@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Smile, ShoppingCart, Clock, Flame, Zap, Sofa, Globe, Heart, Target } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -47,7 +47,8 @@ function SpiceDots({ level }: { level: number }) {
 }
 
 export default function MoodFeedModal() {
-  const { activeModal, setActiveModal, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const isOpen = activeModal === 'mood-ordering';
 
@@ -142,7 +143,10 @@ export default function MoodFeedModal() {
                     <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-white/40'}`}>
                       {mood.label}
                     </span>
-                    {isSelected && <MoodIcon className="w-3 h-3" style={{ color: mood.color }} />}
+                    {isSelected && (() => {
+                      const Icon = mood.icon as React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+                      return <Icon className="w-3 h-3" style={{ color: mood.color }} />;
+                    })()}
                   </motion.button>
                 );
               })}

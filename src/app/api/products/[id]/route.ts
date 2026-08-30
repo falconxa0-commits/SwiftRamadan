@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
+import { requireAuth } from '@/lib/session';
 
 /* ──────────── Static seed products (preserved for browse) ──────────── */
 
@@ -219,6 +220,10 @@ export async function PUT(
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
 
+  // SECURITY FIX: Require authentication (audit B10).
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const { id } = await params;
 
@@ -227,6 +232,23 @@ export async function PUT(
       return NextResponse.json(
         { success: false, error: 'Cannot update static product' },
         { status: 400 },
+      );
+    }
+
+    // SECURITY FIX: Ownership check (audit B10).
+    // Only the vendor who owns the product (or an admin) can update it.
+    // vendorId is REMOVED from the allowed-fields list to prevent product theft.
+    const existing = await db.product.findUnique({ where: { id }, select: { vendorId: true } });
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: 'Product not found' },
+        { status: 404 },
+      );
+    }
+    if (auth.role !== 'admin' && existing.vendorId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: you can only update your own products' },
+        { status: 403 },
       );
     }
 
@@ -245,7 +267,7 @@ export async function PUT(
       'inStock',
       'rating',
       'reviewCount',
-      'vendorId',
+      // SECURITY: 'vendorId' intentionally removed — prevents product theft
     ];
     for (const key of allowed) {
       if (key in body) data[key] = body[key];
@@ -281,12 +303,16 @@ export async function PUT(
 /* ──────────── DELETE: delete product by ID ──────────── */
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   // Rate limit: 30 write operations per minute per IP
-  const rateLimited = await checkRateLimit(_request, RATE_LIMITS.write);
+  const rateLimited = await checkRateLimit(request, RATE_LIMITS.write);
   if (rateLimited) return rateLimited;
+
+  // SECURITY FIX: Require authentication (audit B10).
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const { id } = await params;
@@ -296,6 +322,22 @@ export async function DELETE(
       return NextResponse.json(
         { success: false, error: 'Cannot delete static product' },
         { status: 400 },
+      );
+    }
+
+    // SECURITY FIX: Ownership check (audit B10).
+    // Only the vendor who owns the product (or an admin) can delete it.
+    const existing = await db.product.findUnique({ where: { id }, select: { vendorId: true } });
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: 'Product not found' },
+        { status: 404 },
+      );
+    }
+    if (auth.role !== 'admin' && existing.vendorId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden: you can only delete your own products' },
+        { status: 403 },
       );
     }
 

@@ -7,7 +7,7 @@ import {
   MessageSquare, ArrowLeftRight, Settings, HelpCircle,
   LogOut, Wallet, Award, ShieldCheck, Moon, BarChart3,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useUserName, useRider, useOnboarding, useAuth, useNavigation } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
 
@@ -22,8 +22,8 @@ const staggerItem = {
 };
 
 export default function RiderProfileTab() {
+  const userName = useUserName();
   const {
-    userName,
     riderOnline,
     setRiderOnline,
     riderEarnings,
@@ -35,13 +35,10 @@ export default function RiderProfileTab() {
     riderBankName,
     riderAccountNumber,
     riderLicenseNumber,
-    showAuth,
-    setShowAuth,
-    logout,
-    setShowOnboarding,
-    setOnboardingStep,
-    setActiveModal,
-  } = useAppStore();
+  } = useRider();
+  const { showAuth, setShowAuth, setShowOnboarding, setOnboardingStep } = useOnboarding();
+  const { logout } = useAuth();
+  const { setActiveModal } = useNavigation();
 
   const displayName = userName || 'Rider';
 

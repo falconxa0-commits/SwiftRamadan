@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     const coupons = await db.coupon.findMany({
       where: { active: true },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     // Static curated offers (flash sales + Ramadan specials that aren't coupons)

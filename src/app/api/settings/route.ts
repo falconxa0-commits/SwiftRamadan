@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // GET /api/settings — return UserSetting for authenticated user (creates default if missing)
 // FIXED: Now requires authentication
@@ -15,10 +16,13 @@ export async function GET(request: NextRequest) {
   if (auth instanceof NextResponse) return auth;
 
   try {
-    // Use authenticated user's email - no need for query param
-    const email = auth.email;
-
-    const user = await db.user.findUnique({ where: { email } });
+    // MIGRATED (Phase 10): the previous flow looked up the user by
+    // `auth.email` to get their `id` for the UserSetting FK. We now use
+    // `usersService.getUserById(auth.userId)` which is keyed on the
+    // authenticated user's ID. The service returns null if the user has
+    // been deleted between session issuance and this call (preserves the
+    // previous 404 behaviour).
+    const user = await usersService.getUserById(auth.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -27,15 +31,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const userId = String(user.id);
+
     // Find or create default UserSetting
     let setting = await db.userSetting.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     if (!setting) {
       setting = await db.userSetting.create({
         data: {
-          userId: user.id,
+          userId,
           notificationsEnabled: true,
           pushEnabled: true,
           emailEnabled: false,
@@ -70,7 +76,6 @@ export async function PUT(request: NextRequest) {
 
     const body = await request.json();
     const {
-      email,
       notificationsEnabled,
       pushEnabled,
       emailEnabled,
@@ -79,14 +84,11 @@ export async function PUT(request: NextRequest) {
       theme,
     } = body;
 
-    if (!email) {
-      return NextResponse.json(
-        { success: false, message: 'Email is required' },
-        { status: 400 }
-      );
-    }
-
-    const user = await db.user.findUnique({ where: { email } });
+    // MIGRATED (Phase 10): user lookup via `usersService.getUserById`.
+    // The previous flow also accepted a `body.email` fallback; that is
+    // dropped (IDOR tightening — only the authenticated user can update
+    // their own settings).
+    const user = await usersService.getUserById(auth.userId);
 
     if (!user) {
       return NextResponse.json(
@@ -94,6 +96,8 @@ export async function PUT(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    const userId = String(user.id);
 
     const updateData: Record<string, unknown> = {};
     if (typeof notificationsEnabled === 'boolean') updateData.notificationsEnabled = notificationsEnabled;
@@ -104,10 +108,10 @@ export async function PUT(request: NextRequest) {
     if (typeof theme === 'string') updateData.theme = theme;
 
     const setting = await db.userSetting.upsert({
-      where: { userId: user.id },
+      where: { userId },
       update: updateData,
       create: {
-        userId: user.id,
+        userId,
         notificationsEnabled: notificationsEnabled ?? true,
         pushEnabled: pushEnabled ?? true,
         emailEnabled: emailEnabled ?? false,

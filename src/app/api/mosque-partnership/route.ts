@@ -117,6 +117,7 @@ export async function GET(request: NextRequest) {
   try {
     const dbMosques = await db.mosquePartner.findMany({
       where: { status: 'active' },
+      take: 50,
     });
 
     if (dbMosques.length > 0) {

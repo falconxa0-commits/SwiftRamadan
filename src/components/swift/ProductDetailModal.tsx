@@ -2,7 +2,7 @@
 
 import { X, Star, Clock, Shield, Truck, Minus, Plus, ChevronRight, BadgeCheck, Heart, Share2, Loader2, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useNavigation, useCart, useWishlist, useAuth, useSelectedProduct } from '@/lib/store-selectors';
 import { allProducts, formatNaira } from '@/lib/data';
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -50,7 +50,11 @@ function timeAgo(iso: string): string {
 }
 
 export default function ProductDetailModal() {
-  const { activeModal, setActiveModal, selectedProduct, addToCart, wishlist, toggleWishlist, userName, userEmail, userAvatar } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const selectedProduct = useSelectedProduct();
+  const { addToCart } = useCart();
+  const { wishlist, toggleWishlist } = useWishlist();
+  const { userName, userEmail, userAvatar } = useAuth();
   const { toast } = useToast();
   const [quantity, setQuantity] = useState(1);
   const [prevProductId, setPrevProductId] = useState(selectedProduct);

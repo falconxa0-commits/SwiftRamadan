@@ -22,7 +22,7 @@ import {
   Sparkles,
   Check,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useUserName, useDiary } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────────────────────────────────────────────────────
@@ -118,7 +118,9 @@ const MOCK_ENTRIES: DiaryEntry[] = [
 ];
 
 function RamadanDiaryInner() {
-  const { userName, diaryEntries, addDiaryEntry, activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userName = useUserName();
+  const { diaryEntries, addDiaryEntry } = useDiary();
   const isOpen = activeModal === 'ramadan-diary';
   const { toast } = useToast();
 

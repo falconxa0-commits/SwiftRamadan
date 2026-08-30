@@ -12,6 +12,7 @@ import {
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as paymentsService from '@/services/payments/payments.service';
 
 export const runtime = 'nodejs';
 
@@ -257,38 +258,27 @@ export async function POST(request: NextRequest) {
     }
 
     // ── Step 8: Update payment + order atomically in DB transaction ──
-    // All financial operations MUST be wrapped in $transaction for ACID compliance
-
+    // MIGRATED (Phase 10): the inline `db.$transaction` (idempotency re-check
+    // → payment.update → order.update) is delegated to
+    // `paymentsService.processWebhook`, which performs the same atomic
+    // steps inside its own `$transaction`. We pass `amount: undefined`
+    // because we've already done the tolerance check above (the service
+    // would otherwise repeat it). Currency was verified above; the service
+    // stores it on the Payment row.
     const providerTxId = providerResult.providerTransactionId || '';
 
-    await db.$transaction(async (tx) => {
-      // Re-check status inside transaction for idempotency (prevents race condition)
-      const current = await tx.payment.findUnique({
-        where: { reference },
-        select: { status: true },
-      });
-      if (!current || current.status === 'success') return;
+    const webhookResult = await paymentsService.processWebhook(
+      reference,
+      'success',
+      undefined, // amount — already validated inline above
+      providerResult.currency || 'NGN',
+      providerTxId,
+    );
 
-      await tx.payment.update({
-        where: { reference },
-        data: {
-          status: 'success',
-          verifiedAmount: providerResult.amount ?? payment.amount,
-          providerTransactionId: providerTxId,
-          providerCurrency: providerResult.currency || 'NGN',
-        },
-      });
-
-      if (payment.orderId) {
-        await tx.order.update({
-          where: { id: payment.orderId },
-          data: { status: 'Confirmed', progress: 10 },
-        });
-      }
-    });
-
-    // Mark as processed in cache (after successful DB transaction)
-    await markTransactionProcessed(reference, providerTxId);
+    if (webhookResult.updated) {
+      // Mark as processed in cache (after successful DB transaction)
+      await markTransactionProcessed(reference, providerTxId);
+    }
 
     return NextResponse.json({ received: true });
   } catch (error) {

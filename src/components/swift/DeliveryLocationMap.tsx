@@ -3,19 +3,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search, MapPin, Navigation, Home, Building2, Heart, ChevronDown } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCheckout } from '@/lib/store-selectors';
 import { deliveryLocations } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DeliveryLocationMap() {
+  const { activeModal, setActiveModal } = useNavigation();
   const {
-    activeModal,
-    setActiveModal,
     deliveryAddress,
     setDeliveryAddress,
     deliveryInstructions,
     setDeliveryInstructions,
-  } = useAppStore();
+  } = useCheckout();
   const { toast } = useToast();
 
   const isOpen = activeModal === 'delivery-location';

@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Loader2, Check, Tag, Truck, Plus, UploadCloud } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { useUpload } from '@/hooks/use-upload';
 
@@ -29,7 +29,8 @@ const SAMPLE_IMAGES = [
 /* ──────────────────── Component ──────────────────── */
 
 export default function VendorAddProductModal() {
-  const { activeModal, setActiveModal, userEmail } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
   const { upload, uploading } = useUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);

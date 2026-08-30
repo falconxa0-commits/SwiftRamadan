@@ -1,16 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
-import { initiatePayment, PaymentProvider } from '@/lib/payments';
+import { PaymentProvider } from '@/lib/payments';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as paymentsService from '@/services/payments/payments.service';
 
 export const runtime = 'nodejs';
-
-/** Generate a unique-ish payment reference. */
-function generateReference(): string {
-  return `SWR-PAY-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-}
 
 // Map frontend method names to payment provider identifiers
 const methodToProvider: Record<string, PaymentProvider> = {
@@ -43,18 +39,22 @@ export async function GET(request: NextRequest) {
       const payments = await db.payment.findMany({
         where: { orderId },
         orderBy: { createdAt: 'desc' },
+        take: 50,
       });
       return NextResponse.json({ payments });
     }
 
+    // MIGRATED (Phase 6.1): the user-scoped `db.payment.findMany` is now
+    // delegated to `paymentsService.listUserPayments`. The order-scoped branch
+    // above remains inline because the service only supports user-keyed
+    // listings (no `orderId` filter). The service's pagination metadata
+    // (`total`/`page`/`limit`/`totalPages`) is dropped here to preserve the
+    // previous response shape of `{ payments }`.
     const userId = auth.userId;
 
-    const payments = await db.payment.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
-    });
+    const result = await paymentsService.listUserPayments(userId, 1, 50);
 
-    return NextResponse.json({ payments });
+    return NextResponse.json({ payments: result.payments });
   } catch (error) {
     console.error('Payments API GET error:', error);
     await captureException(error instanceof Error ? error : new Error(String(error)), {
@@ -91,98 +91,113 @@ export async function POST(request: NextRequest) {
     const finalMethod = validMethods.includes(method) ? method : 'card';
     const provider = methodToProvider[finalMethod] || 'swift-pay';
 
-    // Use provided reference, ensure uniqueness by appending a suffix if needed
-    let finalReference = typeof reference === 'string' && reference.trim()
-      ? reference.trim()
-      : generateReference();
-
-    // Optional: link to existing order if provided
+    // Optional: link to existing order if provided. The service does not
+    // validate order existence or ownership — the caller is responsible for
+    // that. The previous inline flow also did not check ownership, so
+    // behaviour is preserved.
     let validOrderId: string | null = null;
     if (orderId) {
       const order = await db.order.findUnique({ where: { id: String(orderId) } });
       if (order) validOrderId = order.id;
     }
 
-    // User is already authenticated — use auth.userId directly
+    // MIGRATED (Phase 10 Alpha): inline `db.payment.findUnique` (reference
+    // collision check) + `initiatePayment` (provider gateway call) +
+    // `db.payment.create` + `db.order.update` (COD order confirmation)
+    // replaced with `paymentsService.initiatePayment`, which performs the
+    // same steps internally: reference generation/collision check, gateway
+    // call (for non-COD), Payment row creation, and COD order confirmation.
+    //
+    // The service expects `amount` in KOBO (matching the Payment.amount
+    // column). The previous inline flow passed the body's `amount` (which
+    // the frontend sends in NAIRA — see CheckoutModal.tsx's `snapshotTotal`)
+    // directly to both `db.payment.create` AND `lib/payments.initiatePayment`
+    // (which expects naira). This was inconsistent: the gateway call was
+    // correct (naira → kobo via lib's `nairaToKobo`), but the stored
+    // `Payment.amount` was naira-where-kobo-was-expected, breaking the
+    // amount-tolerance check in `/api/payments/callback` (Paystack returns
+    // kobo; the stored naira value differed by ~100x, always exceeding the
+    // ₦1.00 tolerance). The migration converts naira → kobo (`* 100`)
+    // before calling the service, which fixes the stored-amount bug AND
+    // preserves the gateway charge (the service divides by 100 to recover
+    // naira for the gateway call).
+    //
+    // Behaviour changes:
+    //   1. `db.payment.amount` now stores KOBO (was naira). Side-effect:
+    //      the `/api/payments/callback` amount-tolerance check now passes
+    //      (was always failing due to the unit mismatch — a latent bug).
+    //   2. The previous flow short-circuited with a 400 BEFORE creating
+    //      the Payment row when the gateway returned !success in production
+    //      (dev-mode without `PAYSTACK_SECRET_KEY` allowed it through).
+    //      The service creates the Payment row regardless; the route
+    //      checks `init.success` afterwards and returns 400 if the gateway
+    //      failed in production. The orphan Payment row (status: 'pending')
+    //      is left in place — it represents a failed payment attempt and
+    //      can be cleaned up by a sweep job. Minor regression from the
+    //      previous behaviour but matches the service's contract.
+    //   3. The previous flow silently appended a random suffix on any
+    //      reference collision (caller-supplied or auto-generated). The
+    //      service throws `REFERENCE_TAKEN` on a caller-supplied collision
+    //      and only auto-retries on an auto-generated collision. This is
+    //      more conservative — callers can retry with a fresh reference.
+    //      In practice the frontend generates references with
+    //      `Date.now() + Math.random()`, so collisions are vanishingly
+    //      rare.
+    const callbackUrl = `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/api/payments/callback`;
+    const amountKobo = Math.round(Number(amount) * 100);
 
-    // Ensure reference is unique (if collision, append random suffix and retry once)
-    const existing = await db.payment.findUnique({ where: { reference: finalReference } });
-    if (existing) {
-      finalReference = `${finalReference}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    }
-
-    // Initialize payment with the real gateway for non-COD methods
-    let paymentInitResult: { checkoutUrl?: string; accountNumber?: string; bankName?: string } = {};
-    const initialStatus = provider === 'swift-pay' ? 'success' : 'pending';
-
-    if (provider !== 'swift-pay') {
-      const result = await initiatePayment({
-        provider,
-        amount: Number(amount),
-        reference: finalReference,
-        email: auth.email || 'customer@swiftramadan.com',
-        name: 'SwiftRamadan Customer',
-        callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/api/payments/callback`,
-      });
-
-      paymentInitResult = {
-        checkoutUrl: result.checkoutUrl,
-        accountNumber: result.accountNumber,
-        bankName: result.bankName,
-      };
-
-      if (!result.success) {
-        // If real gateway fails but we're in dev mode (no keys), still allow
-        const isDev = !process.env.PAYSTACK_SECRET_KEY;
-        if (!isDev) {
-          return NextResponse.json(
-            { success: false, message: result.message || 'Payment initialization failed' },
-            { status: 400 },
-          );
-        }
-        // In dev mode with mock responses, treat as successful
-      }
-
-      // For card payments that redirect to a checkout URL, mark as pending
-      // The callback will update the status to 'success' after verification
-      if (provider === 'paystack' || provider === 'flutterwave') {
-        // Payment is pending until the callback confirms it
-      } else if (provider === 'monnify') {
-        // Bank transfer — the customer needs to transfer to the provided account
-      } else if (provider === 'bnpl') {
-        // BNPL — checkout URL provided, pending until confirmed
-      }
-    }
-
-    const payment = await db.payment.create({
-      data: {
-        orderId: validOrderId,
+    let serviceResult;
+    try {
+      serviceResult = await paymentsService.initiatePayment(
         userId,
-        amount: Number(amount),
-        method: finalMethod,
-        status: initialStatus,
-        reference: finalReference,
+        validOrderId,
+        amountKobo,
+        finalMethod,
         provider,
-      },
-    });
+        typeof reference === 'string' ? reference : undefined,
+        auth.email || undefined,
+        'SwiftRamadan Customer',
+        callbackUrl,
+      );
+    } catch (err) {
+      if (err instanceof Error && err.message === 'INVALID_AMOUNT') {
+        return NextResponse.json(
+          { success: false, message: 'A positive amount is required' },
+          { status: 400 },
+        );
+      }
+      if (err instanceof Error && err.message === 'REFERENCE_TAKEN') {
+        return NextResponse.json(
+          { success: false, message: 'Payment reference already in use — please retry with a fresh reference' },
+          { status: 409 },
+        );
+      }
+      throw err;
+    }
 
-    // If linked to an order and payment is already successful (COD), mark it as Confirmed
-    if (validOrderId && initialStatus === 'success') {
-      const order = await db.order.findUnique({ where: { id: validOrderId } });
-      if (order && (order.status === 'Preparing' || order.progress < 10)) {
-        await db.order.update({
-          where: { id: validOrderId },
-          data: { status: 'Confirmed', progress: 10 },
-        });
+    const { payment, init } = serviceResult;
+
+    // Dev-mode fallback: if the gateway failed and we're in dev (no
+    // PAYSTACK_SECRET_KEY), continue with the mock data. Otherwise return
+    // the gateway error to the client. The Payment row has already been
+    // created by the service; the orphan row (status: 'pending') is left
+    // in place for traceability — it represents a failed payment attempt.
+    if (!init.success) {
+      const isDev = !process.env.PAYSTACK_SECRET_KEY;
+      if (!isDev) {
+        return NextResponse.json(
+          { success: false, message: init.message || 'Payment initialization failed' },
+          { status: 400 },
+        );
       }
     }
 
     return NextResponse.json({
       success: true,
       payment,
-      checkoutUrl: paymentInitResult.checkoutUrl,
-      accountNumber: paymentInitResult.accountNumber,
-      bankName: paymentInitResult.bankName,
+      checkoutUrl: init.checkoutUrl,
+      accountNumber: init.accountNumber,
+      bankName: init.bankName,
     }, { status: 201 });
   } catch (error) {
     console.error('Payments API POST error:', error);

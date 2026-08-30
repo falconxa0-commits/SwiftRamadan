@@ -17,7 +17,7 @@ import {
   Truck,
   BellRing,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useVendor, useUserEmail, useNavigation } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 import { VendorDashboardSkeleton } from './Skeletons';
@@ -227,13 +227,13 @@ export default function VendorDashboard() {
     vendorStoreName,
     vendorOnline,
     setVendorOnline,
-    setActiveModal,
-    userEmail,
     setVendorStoreName,
     setVendorBalance,
     setVendorPendingSettlement,
     setVendorTotalEarnings,
-  } = useAppStore();
+  } = useVendor();
+  const { setActiveModal } = useNavigation();
+  const userEmail = useUserEmail();
   const { toast } = useToast();
   const [activeFilter, setActiveFilter] = useState<OrderStatus>('incoming');
 

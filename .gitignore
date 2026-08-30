@@ -33,6 +33,9 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# Allow the env template to be committed (Phase 8.2 — audit G7 + worklog line 6180).
+!.env.example
+
 # vercel
 .vercel
 

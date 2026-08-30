@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import * as walletService from '@/services/wallet/wallet.service';
 
 export const runtime = 'nodejs';
 
@@ -186,6 +187,20 @@ async function rejectPayout(body: {
   }
 
   // Credit the amount back to user's wallet
+  // MIGRATED (Phase 10): the inline `db.user.findUnique` → `db.user.update`
+  // (increment walletBalance) → `db.walletTransaction.create` triplet is
+  // replaced with `walletService.refund`, which performs the same three
+  // steps inside a `$transaction` (atomic credit + audit row). The previous
+  // flow was NOT wrapped in a `$transaction` — the wallet credit and the
+  // payout status update (below) were independent operations, so this
+  // migration preserves the previous lack of cross-step atomicity while
+  // making the wallet credit itself atomic.
+  //
+  // Note: the previous flow stored `description: 'Payout rejected - refunded
+  // to wallet'` and `reference: existing.reference` on the audit row. The
+  // service's `refund` function hardcodes `description: 'Refund credited to
+  // wallet'` — we lose the payout-specific description but the reference is
+  // preserved (used for traceability).
   const user = await db.user.findUnique({ where: { id: existing.userId } });
   if (!user) {
     return NextResponse.json(
@@ -194,24 +209,29 @@ async function rejectPayout(body: {
     );
   }
 
-  const newBalance = user.walletBalance + existing.amount;
-
-  await db.user.update({
-    where: { id: existing.userId },
-    data: { walletBalance: newBalance },
-  });
-
-  // Create refund wallet transaction
-  await db.walletTransaction.create({
-    data: {
-      userId: existing.userId,
-      type: 'refund',
-      amount: existing.amount,
-      balance: newBalance,
-      description: 'Payout rejected - refunded to wallet',
-      reference: existing.reference,
-    },
-  });
+  let newBalance: number;
+  try {
+    const result = await walletService.refund(
+      existing.userId,
+      existing.amount,
+      existing.reference,
+    );
+    newBalance = result.newBalance;
+  } catch (err) {
+    if (err instanceof Error && err.message === 'USER_NOT_FOUND') {
+      return NextResponse.json(
+        { success: false, message: 'User not found for this payout' },
+        { status: 404 },
+      );
+    }
+    if (err instanceof Error && err.message === 'INVALID_AMOUNT') {
+      return NextResponse.json(
+        { success: false, message: 'Invalid refund amount' },
+        { status: 400 },
+      );
+    }
+    throw err;
+  }
 
   // Update payout status
   const payout = await db.payout.update({

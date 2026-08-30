@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
 import { initiatePayment, verifyPayment, koboToNaira } from '@/lib/payments';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { formatNaira } from '@/lib/format';
+import * as walletService from '@/services/wallet/wallet.service';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -28,12 +29,12 @@ export async function POST(request: NextRequest) {
 
     // ── balance ────────────────────────────────────────────────────────────
     if (action === 'balance') {
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: { walletBalance: true },
-      });
+      // MIGRATED (Phase 6.1): inline `db.user.findUnique({ select: { walletBalance } })`
+      // replaced with `walletService.getBalance`. Service returns the wallet
+      // balance in kobo (or null if user not found), same semantics as before.
+      const balance = await walletService.getBalance(userId);
 
-      if (!user) {
+      if (balance === null) {
         return NextResponse.json(
           { success: false, message: 'User not found' },
           { status: 404 },
@@ -42,8 +43,8 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({
         success: true,
-        balance: user.walletBalance,
-        walletBalance: formatNairaFromKobo(user.walletBalance),
+        balance,
+        walletBalance: formatNairaFromKobo(balance),
       });
     }
 
@@ -58,10 +59,13 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const user = await db.user.findUnique({
-        where: { id: userId },
-        select: { email: true, name: true },
-      });
+      // MIGRATED (Phase 10 Alpha): inline `db.user.findUnique({ select: { email,
+      // name } })` replaced with `usersService.getUserById(userId)`. The
+      // service returns a `PublicUser` whose `email` and `name` fields are
+      // projected by `publicUserFields` (matching the previous `select`
+      // shape). Null semantics are preserved — `getUserById` returns `null`
+      // when the user doesn't exist.
+      const user = await usersService.getUserById(userId);
 
       if (!user) {
         return NextResponse.json(
@@ -76,8 +80,8 @@ export async function POST(request: NextRequest) {
         provider: 'paystack',
         amount, // in naira — initiatePayment converts to kobo internally
         reference,
-        email: user.email,
-        name: user.name,
+        email: String(user.email),
+        name: String(user.name),
         metadata: { type: 'wallet_topup', userId },
         callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL || process.env.APP_URL || 'http://localhost:3000'}/api/payments/callback`,
       });
@@ -107,65 +111,54 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      /**
-       * Confirm wallet top-up payment within a transaction.
-       * Ensures atomicity: balance update and transaction record are committed together.
-       * @throws USER_NOT_FOUND if user doesn't exist
-       * @throws INVALID_AMOUNT if verified amount is not positive
-       */
-      const result = await db.$transaction(async (tx) => {
-        // Lock and fetch user record for update
-        const user = await tx.user.findUnique({
-          where: { id: userId },
-          select: { id: true, walletBalance: true },
-        });
+      // MIGRATED (Phase 10 Alpha): the wallet-credit half of this flow (lock
+      // user → increment walletBalance → create WalletTransaction audit
+      // row) is delegated to `walletService.topUp`, which performs the same
+      // atomic steps inside its own `$transaction`. The previous inline
+      // flow ran `verifyPayment` (an external HTTP call to Paystack) INSIDE
+      // a `db.$transaction`, which is an anti-pattern: it held a SQLite
+      // write lock for the duration of the network round-trip. The
+      // migrated flow runs `verifyPayment` OUTSIDE any DB transaction,
+      // then calls `walletService.topUp` for the atomic DB mutations.
+      //
+      // The service throws `USER_NOT_FOUND` / `INVALID_AMOUNT` — mapped to
+      // HTTP responses by the existing catch block below.
+      // `PAYMENT_VERIFICATION_FAILED` is checked inline here (the service
+      // has no notion of payment verification — that's a payment-provider
+      // concern that belongs in the route layer).
+      const verification = await verifyPayment('paystack', reference);
+      if (!verification.verified) {
+        return NextResponse.json(
+          { success: false, message: 'Payment verification failed' },
+          { status: 400 },
+        );
+      }
 
-        if (!user) {
-          throw new Error('USER_NOT_FOUND');
-        }
+      const verifiedAmountKobo = verification.amount ?? 0;
+      if (verifiedAmountKobo <= 0) {
+        return NextResponse.json(
+          { success: false, message: 'Invalid amount specified' },
+          { status: 400 },
+        );
+      }
 
-        const verification = await verifyPayment('paystack', reference);
-
-        if (!verification.verified) {
-          throw new Error('PAYMENT_VERIFICATION_FAILED');
-        }
-
-        // Verified amount is in kobo (returned by Paystack)
-        const verifiedAmountKobo = verification.amount ?? 0;
-
-        if (verifiedAmountKobo <= 0) {
-          throw new Error('INVALID_AMOUNT');
-        }
-
-        // Atomic increment of wallet balance
-        const updatedUser = await tx.user.update({
-          where: { id: userId },
-          data: { walletBalance: { increment: verifiedAmountKobo } },
-        });
-
-        // Create wallet transaction record (audit trail)
-        const transaction = await tx.walletTransaction.create({
-          data: {
-            userId,
-            type: 'topup',
-            amount: verifiedAmountKobo,
-            balance: updatedUser.walletBalance,
-            description: `Wallet top-up via Paystack`,
-            reference,
-          },
-        });
-
-        return { updatedUser, transaction, gatewayResponse: verification.gatewayResponse };
-      });
+      const result = await walletService.topUp(userId, verifiedAmountKobo, reference);
 
       return NextResponse.json({
         success: true,
-        newBalance: result.updatedUser.walletBalance,
+        newBalance: result.newBalance,
         transaction: result.transaction,
+        gatewayResponse: verification.gatewayResponse,
       });
     }
 
     // ── pay ────────────────────────────────────────────────────────────────
+    // MIGRATED (Phase 10): inline `db.$transaction` (lock-user → check-balance
+    // → decrement → re-check-non-negative → create audit row) replaced with
+    // `walletService.debit`, which performs the same atomic steps inside its
+    // own `$transaction`. The service throws `USER_NOT_FOUND` /
+    // `INSUFFICIENT_BALANCE` / `INVALID_AMOUNT` — mapped to HTTP responses by
+    // the existing catch block below.
     if (action === 'pay') {
       const { orderId, amount } = body as {
         action: string;
@@ -187,57 +180,16 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      /**
-       * Process wallet payment within a transaction.
-       * Uses atomic decrement with balance validation to prevent race conditions.
-       * @throws USER_NOT_FOUND if user doesn't exist
-       * @throws INSUFFICIENT_BALANCE if funds are inadequate
-       */
-      const result = await db.$transaction(async (tx) => {
-        // Lock and fetch user record for update
-        const user = await tx.user.findUnique({
-          where: { id: userId },
-          select: { id: true, walletBalance: true },
-        });
-
-        if (!user) {
-          throw new Error('USER_NOT_FOUND');
-        }
-
-        // Check sufficient balance before debit
-        if (user.walletBalance < amount) {
-          throw new Error('INSUFFICIENT_BALANCE');
-        }
-
-        // Atomic decrement — deduct from wallet
-        const updatedUser = await tx.user.update({
-          where: { id: userId },
-          data: { walletBalance: { decrement: amount } },
-        });
-
-        // If balance went negative, rollback (defends against concurrent payments)
-        if (updatedUser.walletBalance < 0) {
-          throw new Error('INSUFFICIENT_BALANCE');
-        }
-
-        // Create wallet transaction record (audit trail)
-        const transaction = await tx.walletTransaction.create({
-          data: {
-            userId,
-            type: 'payment',
-            amount: -amount, // negative for debit
-            balance: updatedUser.walletBalance,
-            description: `Payment for order ${orderId}`,
-            reference: orderId, // Store orderId in reference field for traceability
-          },
-        });
-
-        return { updatedUser, transaction };
-      });
+      const result = await walletService.debit(
+        userId,
+        amount,
+        orderId,
+        `Payment for order ${orderId}`,
+      );
 
       return NextResponse.json({
         success: true,
-        newBalance: result.updatedUser.walletBalance,
+        newBalance: result.newBalance,
         transaction: result.transaction,
       });
     }
@@ -263,12 +215,6 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.message === 'INVALID_AMOUNT') {
       return NextResponse.json(
         { success: false, message: 'Invalid amount specified' },
-        { status: 400 },
-      );
-    }
-    if (error instanceof Error && error.message === 'PAYMENT_VERIFICATION_FAILED') {
-      return NextResponse.json(
-        { success: false, message: 'Payment verification failed' },
         { status: 400 },
       );
     }

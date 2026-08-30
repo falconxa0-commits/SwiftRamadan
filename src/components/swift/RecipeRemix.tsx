@@ -14,7 +14,7 @@ import {
   Shuffle,
   Award,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useUserName } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────────────────────────────────────────────────────
@@ -145,7 +145,8 @@ const MOCK_REMIXES: RecipeRemix[] = [
 ];
 
 function RecipeRemixInner() {
-  const { userName, activeModal, setActiveModal } = useAppStore();
+  const userName = useUserName();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'recipe-remix';
   const { toast } = useToast();
 

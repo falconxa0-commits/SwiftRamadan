@@ -45,6 +45,7 @@ export async function GET(request: NextRequest) {
     const coupons = await db.coupon.findMany({
       where: { active: true },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     return NextResponse.json({ success: true, coupons });

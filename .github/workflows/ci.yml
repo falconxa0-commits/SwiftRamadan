@@ -1,3 +1,31 @@
+# ============================================================================
+# SwiftRamadan CI — Merge Protection Rules
+# ============================================================================
+# This workflow is the hard merge gate for the SwiftRamadan monorepo. Every
+# step in the `quality` job MUST pass before a pull request targeting `main`
+# can be merged. GitHub branch protection on `main` MUST be configured with:
+#
+#   1. Required status check: `quality` (must pass on the latest commit).
+#   2. Required status check: `e2e` (must pass on PRs; gated behind `quality`).
+#   3. "Require branches to be up to date before merging" enabled.
+#   4. "Dismiss stale pull request approvals when new commits are pushed" enabled.
+#   5. Administrators ARE NOT exempt (so a failing pipeline blocks everyone).
+#
+# Pipeline order — every failure blocks merge, no `|| true`, no `continue-on-error`:
+#   Install → Lint → TypeScript Type Check → Unit Tests → Build → Security Audit
+#
+# Audit history:
+#   - G1 (closed): `bun audit` was previously softened with `|| true`, which
+#     made the security-audit job always pass even with critical CVEs. The
+#     `|| true` is now permanently removed and a regression guard exists in
+#     tests/security/ci-config.test.ts to prevent reintroduction.
+#   - Type Check: `npx tsc --noEmit` runs against the whole project. Pre-
+#     existing TS errors in `src/app/api/`, `src/components/swift/`, and
+#     `prisma/seed-*.ts` are tracked as Phase 9 follow-up; the strict gate
+#     surfaces them so they cannot regress further. Lint and unit tests
+#     (vitest) currently pass clean.
+# ============================================================================
+
 name: SwiftRamadan CI
 
 on:
@@ -7,7 +35,7 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-type-check:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,29 +43,44 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bun run lint
-      - run: bun tsc --noEmit
 
-  build-check:
-    runs-on: ubuntu-latest
-    needs: lint-and-type-check
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-      - run: bun install
-      - run: bun run db:push
-      - run: bun run build
+      # Lint
+      - name: ESLint
+        run: bun run lint
+
+      # Type Check
+      - name: TypeScript Type Check
+        run: npx tsc --noEmit
+
+      # Unit Tests
+      - name: Unit Tests
+        run: bun run test
+
+      # Build
+      - name: Build
+        run: bun run build
         env:
           DATABASE_URL: file:./test.db
+          APP_SECRET: test-secret-for-ci-only
 
-  security-audit:
+      # Security Scan
+      - name: Security Audit
+        run: bun audit
+
+  e2e:
     runs-on: ubuntu-latest
+    needs: quality
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
       - run: bun install
-      - run: bun audit || true
+      - name: Install Playwright Browsers
+        run: bunx playwright install --with-deps chromium
+      - name: E2E Tests
+        run: bun run test:e2e
+        env:
+          DATABASE_URL: file:./test.db
+          APP_SECRET: test-secret-for-ci-only

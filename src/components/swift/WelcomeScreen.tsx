@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { useAppStore } from '@/lib/store';
+import { useOnboarding } from '@/lib/store-selectors';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
@@ -419,7 +419,7 @@ function SectionHeading({ icon: Icon, title, accent = AURORA.emerald, action }: 
    ══════════════════════════════════════════════════════════════════ */
 
 export default function WelcomeScreen() {
-  const { setShowWelcome, setShowAuth } = useAppStore();
+  const { setShowWelcome, setShowAuth } = useOnboarding();
   const [showPrompt, setShowPrompt] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);

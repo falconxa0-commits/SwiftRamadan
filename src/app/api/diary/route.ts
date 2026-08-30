@@ -54,6 +54,7 @@ export async function GET() {
   try {
     const dbEntries = await db.diaryEntry.findMany({
       orderBy: { date: 'asc' },
+      take: 50,
     });
 
     if (dbEntries.length > 0) {

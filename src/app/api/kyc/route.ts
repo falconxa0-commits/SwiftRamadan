@@ -205,6 +205,7 @@ async function handleStatus(userId: string) {
     const documents = await db.kYCDocument.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     const isVerified = documents.some((doc) => doc.status === 'verified');

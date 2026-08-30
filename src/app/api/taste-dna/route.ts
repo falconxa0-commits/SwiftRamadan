@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -75,6 +78,10 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
     const orderHistory = body?.orderHistory ?? [];
@@ -82,29 +89,36 @@ export async function POST(request: NextRequest) {
     const currentProfile = body?.currentProfile ?? DEFAULT_PROFILE;
 
     try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-
-      const response = await zai.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content:
-              'You are a taste profiling AI for a food delivery app. Based on order history and preferences, generate a taste profile with 6 dimensions: smoky (0-100), sweet (0-100), spicy (0-100), umami (0-100), fresh (0-100), rich (0-100). Return ONLY a JSON object with these 6 keys.',
-          },
-          {
-            role: 'user',
-            content: `Analyze this user's taste profile:\nOrder History: ${JSON.stringify(orderHistory)}\nPreferences: ${JSON.stringify(preferences)}\nCurrent Profile: ${JSON.stringify(currentProfile)}`,
-          },
-        ],
+      // PHASE-10: migrated to the unified AI gateway (`aiRequest`). The
+      // task-specific system instruction is prepended to the user message
+      // because the gateway bakes in a fixed Safa system persona (see
+      // `src/ai/gateway.ts`). The gateway already sanitizes the message
+      // internally; we still run `sanitizePromptInput` on the user-controlled
+      // portion (orderHistory / preferences strings could contain
+      // prompt-injection phrases) before assembling the final message so
+      // the sanitization happens before the prompt-injection detection
+      // layer in the gateway (which would refuse if the sanitized text
+      // still trips `containsInjectionAttempt`).
+      const tasteSystemInstruction =
+        'You are a taste profiling AI for a food delivery app. Based on order history and preferences, generate a taste profile with 6 dimensions: smoky (0-100), sweet (0-100), spicy (0-100), umami (0-100), fresh (0-100), rich (0-100). Return ONLY a JSON object with these 6 keys.';
+      const userPayload = sanitizePromptInput(
+        `Analyze this user's taste profile:\nOrder History: ${JSON.stringify(orderHistory)}\nPreferences: ${JSON.stringify(preferences)}\nCurrent Profile: ${JSON.stringify(currentProfile)}`,
+      );
+      const fullMessage = `${tasteSystemInstruction}\n\n${userPayload}`;
+      const result = await aiRequest({
+        userId: auth.userId,
+        userRole: auth.role,
+        message: fullMessage,
+        maxTokens: 1000,
       });
 
-      const content: string = response?.choices?.[0]?.message?.content ?? '';
-      const parsed = extractJsonObject(content);
-      const profile = sanitizeProfile(parsed);
+      if (result.success && result.response) {
+        const parsed = extractJsonObject(result.response);
+        const profile = sanitizeProfile(parsed);
 
-      if (profile) {
-        return NextResponse.json({ success: true, profile, source: 'ai' });
+        if (profile) {
+          return NextResponse.json({ success: true, profile, source: 'ai' });
+        }
       }
     } catch (aiError) {
       console.error('[Taste DNA] AI error:', aiError);

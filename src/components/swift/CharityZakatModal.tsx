@@ -3,14 +3,17 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, ChevronRight, Check, Share2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart, useAppStore } from '@/lib/store-selectors';
 import { charityItems, charityOrphanages, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 type DonationTab = 'single' | 'box';
 
 export default function CharityZakatModal() {
-  const { activeModal, setActiveModal, hasanatPoints, setHasanatPoints, addToCart } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
+  const hasanatPoints = useAppStore(s => s.hasanatPoints);
+  const setHasanatPoints = useAppStore(s => s.setHasanatPoints);
   const { toast } = useToast();
   const isOpen = activeModal === 'charity';
 

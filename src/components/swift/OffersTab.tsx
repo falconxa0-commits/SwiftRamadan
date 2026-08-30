@@ -2,7 +2,7 @@
 
 import { Timer, Star, Gift, Crown, ChevronRight, TrendingUp, Zap, Copy, Check, Users, Heart, CreditCard, Sparkles } from 'lucide-react';
 import { flashSales, loyaltyTiers, giftCardTemplates, groupBuyDeals, formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useNavigation, useCart, useSetSelectedProduct, useLoyalty } from '@/lib/store-selectors';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -40,7 +40,9 @@ function useCountdown(endTime: Date): CountdownTime {
 }
 
 function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
-  const { addToCart, setSelectedProduct, setActiveModal } = useAppStore();
+  const { addToCart } = useCart();
+  const setSelectedProduct = useSetSelectedProduct();
+  const { setActiveModal } = useNavigation();
   const { toast } = useToast();
 
   // Calculate end time from endsIn string
@@ -178,7 +180,8 @@ interface ApiOffer {
 }
 
 export default function OffersTab() {
-  const { setActiveModal, hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints } = useAppStore();
+  const { setActiveModal } = useNavigation();
+  const { hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints } = useLoyalty();
   const { toast } = useToast();
   const [dailyClaimed, setDailyClaimed] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);

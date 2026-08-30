@@ -128,7 +128,7 @@ export default function AccessibleModal({
   }, []);
 
   // eslint-disable-next-line react-hooks/refs
-  const animationConfig = prefersReducedMotion.current
+  const animationConfig: import('framer-motion').Transition = prefersReducedMotion.current
     ? { duration: 0 }
     : { type: 'spring', damping: 25, stiffness: 300 };
 

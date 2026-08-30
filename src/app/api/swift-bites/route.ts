@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
       const comments = await db.swiftBiteComment.findMany({
         where: { videoId: commentsFor },
         orderBy: { createdAt: 'desc' },
+        take: 50,
       });
       const hydrated = comments.map((c) => ({
         ...c,
@@ -49,6 +50,7 @@ export async function GET(request: NextRequest) {
     const videos = await db.swiftBiteVideo.findMany({
       where: category && category !== 'For You' ? { category } : undefined,
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     return NextResponse.json({

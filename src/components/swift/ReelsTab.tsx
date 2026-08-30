@@ -6,7 +6,7 @@ import { Plus, Film, Bookmark } from 'lucide-react';
 import VideoCard, { type ReelVideo } from './VideoCard';
 import VideoCommentsSheet from './VideoCommentsSheet';
 import UploadVideoModal from './UploadVideoModal';
-import { useAppStore } from '@/lib/store';
+import { useUserName, useAppStore } from '@/lib/store-selectors';
 import { ReelsTabSkeleton } from './Skeletons';
 
 const CATEGORIES = [
@@ -20,7 +20,8 @@ const CATEGORIES = [
 ];
 
 export default function ReelsTab() {
-  const { userName, userEmail } = useAppStore();
+  const userName = useUserName();
+  const userEmail = useAppStore(s => s.userEmail);
   const [videos, setVideos] = useState<ReelVideo[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('all');

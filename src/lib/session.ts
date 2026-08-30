@@ -103,14 +103,19 @@ export function clearSessionCookie(response: NextResponse): void {
  */
 export function isPublicApiRoute(pathname: string, method: string): boolean {
   // ── Always-public routes ──
-  const alwaysPublic = [
-    '/api/auth',              // login, signup, OTP, logout
+  // SECURITY FIX: Removed blanket '/api/auth' prefix match (audit B12).
+  // Previously, any /api/auth/* route was public, including /api/auth/device-token
+  // which allowed anonymous attackers to register device tokens for push phishing.
+  // Now we explicitly list the public auth sub-routes. Protected auth sub-routes
+  // (device-token, etc.) require authentication via requireAuth().
+  const alwaysPublicExact = [
+    '/api/auth',              // POST login/signup/send-otp/verify-otp/logout/oauth — switch on action
     '/api/health',            // health checks / readiness probes
     '/api/monitoring',        // Sentry tunnel
     '/api/payments/callback', // payment gateway webhooks/redirects
   ];
-  for (const route of alwaysPublic) {
-    if (pathname === route || pathname.startsWith(route + '/')) return true;
+  for (const route of alwaysPublicExact) {
+    if (pathname === route) return true; // exact match only — NO prefix match
   }
 
   // ── GET-only public routes (browsable content) ──

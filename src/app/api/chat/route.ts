@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 import { checkBodySize } from '@/lib/validation';
-import { captureException } from '@/lib/monitoring/sentry';
-import { formatNaira } from '@/lib/format';
 
 /* ──────────────────── Types ──────────────────── */
-
-interface ChatMessage {
-  role: 'user' | 'assistant';
-  content: string;
-}
 
 interface ChatContext {
   userName?: string;
@@ -54,69 +50,6 @@ function findBestResponse(input: string): string {
   return "I'm here to help! You can ask me about Iftar meals, Sahur boxes, delivery times, promotions, SwiftRewards, group buys, or anything else about SwiftRamadan. 🌙";
 }
 
-/* ──────────────────── System Prompt Builder ──────────────────── */
-
-function buildSystemPrompt(context?: ChatContext): string {
-  const basePrompt = `You are Safa, an expert AI assistant for SwiftRamadan — a Ramadan food delivery super-app in Lagos, Nigeria. You specialize in Ramadan food & lifestyle guidance, Nigerian cuisine, and Islamic practices during Ramadan.
-
-Core personality: Warm, knowledgeable, concise. Use occasional emojis. Reference Naira (₦) for prices. Keep responses under 120 words unless the user specifically asks for detail.
-
-You can help with:
-- Food recommendations for Iftar & Sahur (Nigerian and international cuisine)
-- Meal planning and recipe suggestions
-- Order tracking, delivery info, and promotions
-- Islamic guidance during Ramadan (prayer times, Sunnah foods, etiquette)
-- SwiftRewards, group buys, and payment options
-- Dietary advice (halal, vegetarian, protein-rich for fasting)
-
-Guidelines:
-- Be culturally sensitive and respectful of Islamic traditions
-- Suggest Sunnah foods (dates, water, honey) when relevant
-- If near Maghrib time, proactively suggest Iftar meal options
-- If near Fajr time, proactively suggest Sahur meal options
-- Always give practical, actionable advice
-- If you don't know something, be honest and redirect to what you can help with`;
-
-  if (!context) return basePrompt;
-
-  const contextParts: string[] = [basePrompt, '', '--- USER CONTEXT ---'];
-
-  if (context.userName) {
-    contextParts.push(`User's name: ${context.userName}`);
-  }
-
-  if (context.loyaltyTier) {
-    contextParts.push(`Loyalty tier: ${context.loyaltyTier.charAt(0).toUpperCase() + context.loyaltyTier.slice(1)} member`);
-  }
-
-  if (context.swiftPoints !== undefined) {
-    contextParts.push(`SwiftPoints balance: ${context.swiftPoints.toLocaleString()}`);
-  }
-
-  if (context.dietaryPrefs && context.dietaryPrefs.length > 0) {
-    contextParts.push(`Dietary preferences: ${context.dietaryPrefs.join(', ')}`);
-  }
-
-  if (context.cartItems && context.cartItems.length > 0) {
-    const cartSummary = context.cartItems.map(i => `${i.name} x${i.qty} (${formatNaira(i.price)})`).join(', ');
-    const cartTotal = context.cartItems.reduce((sum, i) => sum + i.price * i.qty, 0);
-    contextParts.push(`Current cart items: ${cartSummary}`);
-    contextParts.push(`Cart total: ${formatNaira(cartTotal)}`);
-    contextParts.push('The user has items in their cart — you can reference these when making recommendations.');
-  }
-
-  if (context.recentOrders && context.recentOrders.length > 0) {
-    const orderSummary = context.recentOrders.slice(0, 3).map(o => `${o.item} (${o.status})`).join(', ');
-    contextParts.push(`Recent orders: ${orderSummary}`);
-  }
-
-  if (context.cartItems && context.cartItems.length > 0 || context.recentOrders && context.recentOrders.length > 0) {
-    contextParts.push('Use this context to personalize your responses. Reference their cart or orders when relevant.');
-  }
-
-  return contextParts.join('\n');
-}
-
 /* ──────────────────── POST Handler ──────────────────── */
 
 export async function POST(request: NextRequest) {
@@ -124,59 +57,65 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   const bodyResult = await checkBodySize(request);
   if (bodyResult.tooLarge) return bodyResult.response;
 
   try {
     const body = JSON.parse(bodyResult.body);
-    const message = body.message as string;
-    const messages = body.messages as ChatMessage[] | undefined;
+    const message = sanitizePromptInput(body.message as string);
     const context = body.context as ChatContext | undefined;
 
-    // Support both single message (backward compat) and multi-turn
-    if (!message || typeof message !== 'string') {
+    if (!message) {
       return NextResponse.json(
         { error: 'Message is required' },
         { status: 400 }
       );
     }
 
-    // Build conversation history for the LLM
-    const systemPrompt = buildSystemPrompt(context);
-    const conversationMessages: { role: 'system' | 'user' | 'assistant'; content: string }[] = [
-      { role: 'system', content: systemPrompt },
-    ];
-
-    // Add conversation history if provided (multi-turn)
-    if (messages && Array.isArray(messages) && messages.length > 0) {
-      // Keep last 10 messages to stay within token limits
-      const recentMessages = messages.slice(-10);
-      for (const msg of recentMessages) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
-          conversationMessages.push({ role: msg.role, content: msg.content });
-        }
+    // PHASE-6-2: this route now goes through the unified AI gateway
+    // (`@/ai/gateway`). The gateway owns the Safa system prompt, Redis-backed
+    // multi-turn conversation memory (keyed by `auth.userId`), input
+    // sanitization (defence in depth — we already sanitized above), token
+    // budget enforcement, model call, and output validation.
+    //
+    // The client-supplied `messages` array (legacy multi-turn) is no longer
+    // read here: the gateway reconstructs history from Redis, so multi-turn
+    // works without the client echoing back the prior transcript. The
+    // `context` payload is mapped onto the gateway's supported context
+    // fields (`userName`, `loyaltyTier`, `dietaryPrefs`, `cartItems`).
+    const gatewayContext: Record<string, unknown> = {};
+    if (context) {
+      if (context.userName) gatewayContext.userName = context.userName;
+      if (context.loyaltyTier) gatewayContext.loyaltyTier = context.loyaltyTier;
+      if (context.dietaryPrefs && context.dietaryPrefs.length > 0) {
+        gatewayContext.dietaryPrefs = context.dietaryPrefs;
+      }
+      if (context.cartItems && context.cartItems.length > 0) {
+        gatewayContext.cartItems = context.cartItems;
       }
     }
 
-    // Add current message
-    conversationMessages.push({ role: 'user', content: message });
+    const result = await aiRequest({
+      userId: auth.userId,
+      userRole: auth.role,
+      message,
+      context: Object.keys(gatewayContext).length > 0 ? gatewayContext : undefined,
+      maxTokens: 500,
+    });
 
-    // Try LLM SDK first
-    try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-      const response = await zai.chat.completions.create({
-        messages: conversationMessages,
-      });
-      const reply = response.choices[0].message.content;
-      return NextResponse.json({ reply });
-    } catch (llmError) {
-      // Log LLM failure for monitoring
-      console.warn('[Chat API] LLM failed, falling back to keyword matcher:', llmError);
-      // Fallback to keyword matcher
+    if (!result.success || !result.response) {
+      // Gateway refused (budget / injection / model error). Fall back to the
+      // keyword matcher so the UI keeps working.
+      console.warn('[Chat API] Gateway failed, using keyword fallback:', result.error);
       const reply = findBestResponse(message);
       return NextResponse.json({ reply });
     }
+
+    return NextResponse.json({ reply: result.response });
   } catch {
     return NextResponse.json(
       { error: 'Failed to process message' },

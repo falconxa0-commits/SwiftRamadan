@@ -13,7 +13,7 @@ import {
   RefreshCw,
   UploadCloud,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAuth } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { useUpload } from '@/hooks/use-upload';
 
@@ -58,9 +58,8 @@ function generateAvatarUrl(name: string): string {
 }
 
 export default function EditProfileModal() {
+  const { activeModal, setActiveModal } = useNavigation();
   const {
-    activeModal,
-    setActiveModal,
     userEmail,
     userName,
     userPhone,
@@ -70,7 +69,7 @@ export default function EditProfileModal() {
     setUserPhone,
     setUserArea,
     setUserAvatar,
-  } = useAppStore();
+  } = useAuth();
   const { toast } = useToast();
   const { upload, uploading: avatarUploading } = useUpload();
   const fileInputRef = useRef<HTMLInputElement>(null);

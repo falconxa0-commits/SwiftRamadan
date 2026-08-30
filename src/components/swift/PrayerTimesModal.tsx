@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Compass, Share2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { prayerTimes, dailyDuas, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -14,7 +14,7 @@ interface CountdownTime {
 }
 
 export default function PrayerTimesModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'prayer-times';
 

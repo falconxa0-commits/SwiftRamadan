@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Star, ExternalLink } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 const artisanCategories = [
@@ -45,7 +45,7 @@ const featuredArtisans = [
 ];
 
 export default function ArtisanMarketHub() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
 
   const isOpen = activeModal === 'artisan-market';

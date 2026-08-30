@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, Play, Pause, SkipForward, CheckCircle2, Clock, ChefHat, Trophy, RotateCcw, Flame, ListChecks, Sparkles, Video } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCookAlong, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
-function guessCuisine(category: string, name: string): string {
-  const s = `${category} ${name}`.toLowerCase();
+function guessCuisine(category: string | undefined, name: string): string {
+  const s = `${category ?? ''} ${name}`.toLowerCase();
   if (s.match(/jollof|suya|moi|asaro|egusi|ogbono|sahur|nigerian|yam|plantain/)) return 'Nigerian';
   if (s.match(/sushi|ramen|tempura|stir|noodle|asian|chinese|thai/)) return 'Asian';
   if (s.match(/pasta|pizza|risotto|italian|tiramisu/)) return 'Italian';
@@ -20,7 +20,9 @@ function guessCuisine(category: string, name: string): string {
 }
 
 export default function CookAlongMode() {
-  const { activeModal, setActiveModal, activeRecipe, setActiveRecipe, userEmail, setSmartKitchenInitialTab } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { activeRecipe, setActiveRecipe, setSmartKitchenInitialTab } = useCookAlong();
+  const userEmail = useAppStore(s => s.userEmail);
   const isOpen = activeModal === 'cook-along' && activeRecipe !== null;
   const { toast } = useToast();
 

@@ -142,6 +142,7 @@ export async function GET(request: NextRequest) {
 
     const dbProducts = await db.product.findMany({
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
     const dbMapped = dbProducts.map((p) => ({
       id: p.id,

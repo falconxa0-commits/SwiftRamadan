@@ -16,7 +16,7 @@ import {
   Store,
   Bike,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 type Category = 'Getting Started' | 'Orders & Delivery' | 'Payments' | 'Account' | 'Ramadan Features';
@@ -160,7 +160,7 @@ const CATEGORIES: { id: Category | 'All'; label: string; icon: React.ComponentTy
 ];
 
 export default function HelpCenterModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'help-center';
 

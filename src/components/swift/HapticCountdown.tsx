@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Heart } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 interface CountdownState {
   seconds: number;
@@ -18,7 +18,7 @@ function computePhase(secs: number): CountdownState['phase'] {
 }
 
 export default function HapticCountdown() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'haptic-countdown';
 
   const [state, setState] = useState<CountdownState>({ seconds: 60, phase: 'idle' });

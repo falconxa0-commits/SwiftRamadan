@@ -11,7 +11,7 @@
  * Run: `bun run prisma/seed-phase2.ts`
  */
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 
 const db = new PrismaClient();
 
@@ -77,7 +77,7 @@ async function main() {
     },
   ];
 
-  const vendorUsers = [];
+  const vendorUsers: User[] = [];
   for (const v of vendors) {
     const user = await db.user.upsert({
       where: { email: v.email },
@@ -144,7 +144,7 @@ async function main() {
     },
   ];
 
-  const riderUsers = [];
+  const riderUsers: User[] = [];
   for (const r of riders) {
     const user = await db.user.upsert({
       where: { email: r.email },

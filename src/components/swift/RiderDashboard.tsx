@@ -7,7 +7,7 @@ import {
   MapPin, Phone, Navigation, ChevronRight,
   Package, Loader2, CheckCircle, Moon,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore, useRider, useUserEmail, useNavigation } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { toast } from '@/hooks/use-toast';
 import { RiderDashboardSkeleton } from './Skeletons';
@@ -88,13 +88,9 @@ function timeAgo(iso: string): string {
 /* ───────── Component ───────── */
 
 export default function RiderDashboard() {
-  const {
-    riderOnline,
-    setRiderOnline,
-    userEmail,
-    setActiveModal,
-    setActiveTab,
-  } = useAppStore();
+  const { riderOnline, setRiderOnline } = useRider();
+  const userEmail = useUserEmail();
+  const { setActiveModal, setActiveTab } = useNavigation();
 
   const [data, setData] = useState<RiderData | null>(null);
   const [loading, setLoading] = useState(true);

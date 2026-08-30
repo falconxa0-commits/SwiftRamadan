@@ -1,47 +1,30 @@
-import ZAI from 'z-ai-web-dev-sdk';
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { getConversation, saveConversation, clearConversation } from '@/ai/memory';
+import { aiRequest } from '@/ai/gateway';
+import * as usersService from '@/services/users/users.service';
 
-// ── Singleton ZAI instance ──────────────────────────────────────────────────
-let zaiInstance: Awaited<ReturnType<typeof ZAI.create>> | null = null;
-async function getZAI() {
-  if (!zaiInstance) zaiInstance = await ZAI.create();
-  return zaiInstance;
-}
-
-// ── In-memory conversation store (sessionId → messages[]) ───────────────────
-const conversations = new Map<string, { role: string; content: string }[]>();
-
-// ── Rich system prompt ──────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are Safa, the AI assistant for SwiftRamadan — a Ramadan food delivery super-app in Lagos, Nigeria. You help users with:
-
-1. **Ordering Food**: When users say "I want jollof rice" or "order suya for me", help them find the right product. Suggest popular items. Prices are in Nigerian Naira (₦).
-
-2. **Order Tracking**: When users ask about their order, tell them you can check the status. Suggest they check the Orders tab for real-time tracking.
-
-3. **Recipe Help**: Help users with cooking tips, ingredient substitutions, and iftar meal planning.
-
-4. **Ramadan Info**: Answer questions about prayer times, iftar/sahur traditions, and halal food guidelines.
-
-5. **App Navigation**: Help users find features like flash sales, group buys, loyalty rewards, vendor profiles, etc.
-
-**Tone**: Warm, friendly, helpful. Use occasional Arabic greetings like "Assalamu Alaikum" and "Ramadan Kareem". Keep responses concise (2-3 sentences max, unless giving a recipe). Use Nigerian Pidgin occasionally for local flavor.
-
-**Key Rules**:
-- Always be respectful of Islamic traditions
-- Never suggest non-halal items
-- When suggesting products, mention the price in ₦
-- If you don't know something, say so honestly
-- For order-related queries, suggest checking the Orders tab
-- For delivery queries, suggest the real-time tracking feature
-
-**Current Context**: {dynamicContext}`;
+// ── Conversation memory ────────────────────────────────────────────────────
+// The unified AI gateway reads conversation history from Redis (`getConversation`)
+// but does NOT write it back — the route is responsible for appending the new
+// turn. We keep that contract here: read before the call (so we know the prior
+// transcript), call `aiRequest`, then push the new user + assistant messages
+// and save.
+//
+// Keys are namespaced per `auth.userId` so users cannot read each other's
+// histories; TTL is 24h (enforced by `@/ai/memory`).
 
 // ── POST handler ────────────────────────────────────────────────────────────
 export async function POST(request: NextRequest) {
   const rl = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rl) return rl;
+
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
 
   try {
     const body = await request.json();
@@ -58,8 +41,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Sanitize user input destined for the LLM (Phase 3 — input sanitization)
+    const cleanMessage = sanitizePromptInput(message);
+    if (!cleanMessage) {
+      return NextResponse.json(
+        { success: false, message: 'Message is required' },
+        { status: 400 }
+      );
+    }
+
     // ── Build dynamic context from DB ─────────────────────────────────────
+    // PHASE-6-2: the gateway's `buildSystemPrompt` only injects a fixed set
+    // of context fields (`userName`, `role`, `loyaltyTier`, `dietaryPrefs`,
+    // `cartItems`). The richer "product count + top-rated products" context
+    // we used to inject into the system prompt is now prepended to the user
+    // message — the model still sees it, just in the user turn instead of
+    // the system turn.
     let dynamicContext = 'App is running.';
+    let userContext: { userName?: string; loyaltyTier?: string } = {};
     try {
       const productCount = await db.product.count({
         where: { inStock: true },
@@ -73,47 +72,81 @@ export async function POST(request: NextRequest) {
       dynamicContext = `There are ${productCount} products available. Top rated: ${topProducts.map((p) => `${p.name} (₦${p.price}, ${p.category}, ⭐${p.rating})`).join(', ')}.`;
 
       if (userEmail) {
-        const user = await db.user.findUnique({
-          where: { email: userEmail },
-          select: { name: true, loyaltyTier: true, hasanatPoints: true },
-        });
+        // MIGRATED (Phase 10): user lookup via `usersService.getUserById`.
+        // The previous flow looked up by `userEmail` (from the request body),
+        // which could be ANY email — an IDOR that leaked another user's
+        // name + loyalty tier + Hasanat points into the AI context. We now
+        // use the authenticated user's ID, so only the caller's own data is
+        // injected. The `userEmail` body field is now ignored (kept in the
+        // body type for backward compatibility with clients that send it).
+        //
+        // The service returns a `PublicUser` whose TypeScript type is the
+        // union of the base + owner-extras branches of `publicUserFields`.
+        // `loyaltyTier` and `hasanatPoints` are owner-extras (only added
+        // when `requesterId === user.id`, which the service guarantees by
+        // passing `auth.userId` as both args). We use a narrow cast to
+        // access them; the runtime values are populated because the service
+        // always passes the matching requesterId.
+        const user = await usersService.getUserById(auth.userId);
         if (user) {
-          dynamicContext += ` Current user: ${user.name}, ${user.loyaltyTier} tier, ${user.hasanatPoints} Hasanat points.`;
+          const userName = String(user.name);
+          const ownerExtras = user as { loyaltyTier?: unknown; hasanatPoints?: unknown };
+          const loyaltyTier = ownerExtras.loyaltyTier ? String(ownerExtras.loyaltyTier) : '';
+          const hasanatPoints = ownerExtras.hasanatPoints != null ? Number(ownerExtras.hasanatPoints) : 0;
+          dynamicContext += ` Current user: ${userName}, ${loyaltyTier} tier, ${hasanatPoints} Hasanat points.`;
+          userContext = {
+            userName,
+            loyaltyTier,
+          };
         }
       }
     } catch {
       // Context enrichment is optional — continue with default
     }
 
-    // ── Get or create conversation ────────────────────────────────────────
-    let history = conversations.get(sessionId) || [];
+    // ── Get or create conversation (Redis-backed, keyed by auth userId) ────
+    // We read the history here so we can append the new turn after the call.
+    // (The gateway also reads it internally, but does not save it back.)
+    let history = await getConversation(auth.userId);
 
     // Trim history to last 20 messages to keep context manageable
+    // (also enforced server-side by `saveConversation`)
     if (history.length > 20) {
       history = history.slice(-20);
     }
 
-    const zai = await getZAI();
-    const completion = await zai.chat.completions.create({
-      messages: [
-        {
-          role: 'assistant',
-          content: SYSTEM_PROMPT.replace('{dynamicContext}', dynamicContext),
-        },
-        ...history,
-        { role: 'user', content: message },
-      ],
-      thinking: { type: 'disabled' },
+    // ── Call the unified AI gateway ───────────────────────────────────────
+    // Prepend the dynamic DB context to the user message so the model still
+    // sees product/user info (the gateway's system prompt is the fixed
+    // default Safa persona).
+    const messageWithContext = `[App context: ${dynamicContext}]\n\n${cleanMessage}`;
+    const result = await aiRequest({
+      userId: auth.userId,
+      userRole: auth.role,
+      message: messageWithContext,
+      context: {
+        role: auth.role,
+        ...userContext,
+      },
+      maxTokens: 500,
     });
 
-    const aiResponse =
-      completion.choices[0]?.message?.content ||
-      "I'm sorry, I couldn't process that. Please try again.";
+    if (!result.success || !result.response) {
+      return NextResponse.json(
+        { success: false, message: result.error || 'AI assistant temporarily unavailable' },
+        { status: 500 }
+      );
+    }
 
-    // ── Update history ────────────────────────────────────────────────────
-    history.push({ role: 'user', content: message });
+    const aiResponse = result.response;
+
+    // ── Update history (Redis-backed) ─────────────────────────────────────
+    // Save the *un-prefixed* user message (no `[App context: …]` prefix) so
+    // future turns see a clean transcript. The gateway already returned a
+    // validated assistant message, so we persist that as-is.
+    history.push({ role: 'user', content: cleanMessage });
     history.push({ role: 'assistant', content: aiResponse });
-    conversations.set(sessionId, history);
+    await saveConversation(auth.userId, history);
 
     return NextResponse.json({
       success: true,
@@ -131,8 +164,11 @@ export async function POST(request: NextRequest) {
 
 // ── DELETE handler — clear conversation ─────────────────────────────────────
 export async function DELETE(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const sessionId = searchParams.get('sessionId');
-  if (sessionId) conversations.delete(sessionId);
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
+  // Clear the authenticated user's conversation in Redis (idempotent).
+  await clearConversation(auth.userId);
   return NextResponse.json({ success: true });
 }

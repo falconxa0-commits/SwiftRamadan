@@ -3,6 +3,7 @@
 import { Package, Truck, CheckCircle, Clock, Phone, ChevronDown, ChevronUp, MapPin, ShoppingBag, Navigation, XCircle, Download, RotateCcw } from 'lucide-react';
 import { myOrders, formatNaira, prayerTimes } from '@/lib/data';
 import { useAppStore, type OrderItem } from '@/lib/store';
+import { useOrders } from '@/lib/store-selectors';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { useState, useEffect } from 'react';
@@ -68,7 +69,7 @@ function OrderProgressTracker({ progress, status }: { progress: number; status: 
 type OrderTab = 'active' | 'past';
 
 export default function OrdersTab() {
-  const { orders, setOrders } = useAppStore();
+  const { orders, setOrders } = useOrders();
   const [isLoading, setIsLoading] = useState(true);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<OrderTab>('active');

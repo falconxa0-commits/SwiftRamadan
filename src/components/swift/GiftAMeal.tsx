@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, Send, Gift, MapPin, MessageCircle, Sparkles, ArrowRight } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useGiftAMeal, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface MealOption {
@@ -28,7 +28,12 @@ interface GiftAMealProps {
 const FORMAT_NAIRA = (amount: number) => `₦${amount.toLocaleString()}`;
 
 export default function GiftAMeal({ onClose }: GiftAMealProps) {
-  const { giftChainCount, setGiftChainCount, hasanatPoints, setHasanatPoints, dailyStreak, setDailyStreak, setActiveModal, activeModal } = useAppStore();
+  const { giftChainCount, setGiftChainCount } = useGiftAMeal();
+  const hasanatPoints = useAppStore(s => s.hasanatPoints);
+  const setHasanatPoints = useAppStore(s => s.setHasanatPoints);
+  const dailyStreak = useAppStore(s => s.dailyStreak);
+  const setDailyStreak = useAppStore(s => s.setDailyStreak);
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'gift-meal';
   const { toast } = useToast();
 

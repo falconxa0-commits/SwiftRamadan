@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Flame, Share2, ChevronRight, Star, Building2 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useLoyalty } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface ShrineStageInfo {
@@ -222,7 +222,8 @@ function MosqueSVG({ stage, progress, streak }: { stage: string; progress: numbe
 }
 
 function StreakShrineInner({ onClose }: StreakShrineProps) {
-  const { setActiveModal, activeModal, dailyStreak } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { dailyStreak } = useLoyalty();
   const isOpen = activeModal === 'streak-shrine';
   const { toast } = useToast();
 

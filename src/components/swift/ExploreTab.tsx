@@ -1,7 +1,7 @@
 'use client';
 
-import { categoryHubItems, popularRetailers, quickActions, allProducts, formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { categoryHubItems, popularRetailers, quickActions, allProducts, formatNaira, type Product } from '@/lib/data';
+import { useAppStore, useNavigation, useCart, useActiveCategory, useSetActiveCategory, useSetSelectedProduct } from '@/lib/store-selectors';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
 import { X, SlidersHorizontal, Star, CheckCircle, Search, Camera, Sparkles, ChevronRight } from 'lucide-react';
@@ -9,7 +9,11 @@ import { useState, useEffect } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ExploreTab() {
-  const { activeCategory, setActiveCategory, setSelectedProduct, setActiveModal, addToCart, setActiveTab, setShowSearch } = useAppStore();
+  const activeCategory = useActiveCategory();
+  const setActiveCategory = useSetActiveCategory();
+  const setSelectedProduct = useSetSelectedProduct();
+  const { activeModal, setActiveModal, setActiveTab, setShowSearch } = useNavigation();
+  const { addToCart } = useCart();
   const { toast } = useToast();
   const [selectedRetailer, setSelectedRetailer] = useState<typeof popularRetailers[0] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,12 +90,12 @@ export default function ExploreTab() {
     setActiveModal('product');
   };
 
-  const handleAddToCart = (product: { id: number; name: string; price: number; salePrice?: number; image: string }, e: React.MouseEvent) => {
+  const handleAddToCart = (product: Product, e: React.MouseEvent) => {
     e.stopPropagation();
     addToCart({
       id: product.id,
       name: product.name,
-      price: product.salePrice || product.price,
+      price: product.salePrice || product.price || 0,
       image: product.image,
     });
     toast({ title: 'Added to Cart! 🛒', description: `${product.name} added to your cart` });
@@ -413,7 +417,7 @@ export default function ExploreTab() {
                 <div className="flex items-center justify-between mt-1.5">
                   <div>
                     <span className="text-[#10E07A] text-sm font-black">
-                      {formatNaira(product.salePrice || product.price)}
+                      {formatNaira(product.salePrice || product.price || 0)}
                     </span>
                     {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
                       <span className="text-white/30 text-[10px] line-through ml-1">{formatNaira(product.originalPrice)}</span>

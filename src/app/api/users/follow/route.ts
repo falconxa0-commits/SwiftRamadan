@@ -3,14 +3,20 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
+//
+// MIGRATED (Phase 10): the `by id` lookup path is delegated to
+// `usersService.getUserById` (which returns a `PublicUser | null`). The
+// `by email` fallback stays inline because the service only supports
+// userId-keyed lookups.
 async function resolveUserId(identifier: string): Promise<string | null> {
   if (!identifier) return null;
-  // Try by id first
-  const byId = await db.user.findUnique({ where: { id: identifier }, select: { id: true } });
-  if (byId) return byId.id;
-  // Then by email
+  // Try by id first (via service)
+  const byId = await usersService.getUserById(identifier);
+  if (byId) return String(byId.id);
+  // Then by email (inline — service has no by-email lookup)
   const byEmail = await db.user.findUnique({ where: { email: identifier }, select: { id: true } });
   return byEmail ? byEmail.id : null;
 }

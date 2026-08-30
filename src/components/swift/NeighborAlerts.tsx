@@ -17,7 +17,7 @@ import {
   Sparkles,
   Wallet,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useUserName } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────────────────────────────────────────────────────
@@ -107,7 +107,8 @@ const MOCK_ORDERS: NeighborOrder[] = [
 ];
 
 function NeighborAlertsInner() {
-  const { userName, activeModal, setActiveModal } = useAppStore();
+  const userName = useUserName();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'neighbor-alerts';
   const { toast } = useToast();
 

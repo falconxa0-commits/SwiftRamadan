@@ -21,7 +21,7 @@ import {
   Settings as SettingsIcon,
   Loader2,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface UserSetting {
@@ -91,7 +91,9 @@ function GoldToggle({
 }
 
 export default function SettingsModal() {
-  const { activeModal, setActiveModal, userEmail, logout } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const logout = useAppStore(s => s.logout);
   const { toast } = useToast();
   const isOpen = activeModal === 'settings';
 

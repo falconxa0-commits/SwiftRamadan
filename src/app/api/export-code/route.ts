@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { readFile, unlink } from 'fs/promises';
@@ -18,10 +18,12 @@ export const runtime = 'nodejs';
  * Excludes: node_modules, .next, .git, build artifacts, screenshots, logs.
  * Includes: src/, prisma/, public/ (with food images), mini-services/, config files.
  */
-export async function GET() {
-  // ADMIN ONLY - Source code access requires admin privileges
-  // For GET without request object, we rely on middleware-level protection
-  // In production, consider moving this to POST with explicit auth check
+export async function GET(request: NextRequest) {
+  // SECURITY FIX: Actually enforce admin authentication (audit B6).
+  // Previously requireAdmin was imported but NEVER called, allowing any
+  // authenticated user to download the entire source code.
+  const adminCheck = await requireAdmin(request);
+  if (adminCheck instanceof NextResponse) return adminCheck;
   
   const projectRoot = process.cwd();
   const zipFileName = `swiftramadan-export-${Date.now()}.zip`;

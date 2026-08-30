@@ -10,7 +10,7 @@ import {
   Sparkles,
   Loader2,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useMood, useCart } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -42,7 +42,9 @@ const MOODS: Mood[] = [
 ];
 
 export default function MoodOrdering() {
-  const { currentMood, setCurrentMood, setActiveModal, addToCart, activeModal, tasteProfile, setTasteProfile } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { currentMood, setCurrentMood, tasteProfile, setTasteProfile } = useMood();
+  const { addToCart } = useCart();
   const isOpen = activeModal === 'mood-ordering';
   const { toast } = useToast();
   const [products, setProducts] = useState<MoodProduct[]>([]);

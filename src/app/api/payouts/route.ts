@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -74,6 +75,32 @@ async function requestPayout(
 
   // Use transaction with atomic decrement to prevent double-spend race condition
   try {
+    // MIGRATED (Phase 10 Alpha Batch 2): pre-check user existence with
+    // `usersService.getUserById` before entering the `$transaction`. This
+    // provides a clean 404 early exit (matching the previous in-transaction
+    // 404 response shape) and serves as defense-in-depth against the rare
+    // race where the user is deleted after the JWT was issued but before
+    // this request runs. The in-transaction `tx.user.findUnique` below is
+    // kept as the authoritative check (it also fetches `walletBalance` for
+    // the balance check, so it can't be removed).
+    //
+    // Note: the main logic (balance check + decrement + audit + payout
+    // create) stays inline in a single `$transaction` for full atomicity.
+    // We intentionally do NOT delegate the wallet debit to
+    // `walletService.debit` because that service runs its own internal
+    // `$transaction`, which would NOT include the `payout.create` below —
+    // losing atomicity between the wallet debit and the payout record
+    // (if `payout.create` failed after `walletService.debit` succeeded,
+    // the user's wallet would be debited with no corresponding payout
+    // record).
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
+      );
+    }
+
     const result = await db.$transaction(async (tx) => {
       // Check user exists
       const user = await tx.user.findUnique({ where: { id: userId } });
@@ -157,6 +184,7 @@ async function listPayouts(userId: string) {
   const payouts = await db.payout.findMany({
     where: { userId },
     orderBy: { createdAt: 'desc' },
+    take: 50,
   });
 
   return NextResponse.json({

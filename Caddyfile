@@ -1,23 +1,53 @@
 :81 {
-	@transform_port_query {
-		query XTransformPort=*
-	}
+        # SECURITY FIX: Restrict XTransformPort to a safe allowlist (audit B1).
+        # Previously, ANY port could be specified, allowing internal port scanning
+        # and access to Redis/Postgres/metadata endpoints. Now only the known
+        # mini-service ports are allowed.
+        @transform_port_query {
+                query XTransformPort=*
+        }
+        handle @transform_port_query {
+                # Allow only the known mini-service ports:
+                # 3002 = ai-service, 3003 = realtime-service, 3004 = tracking-service
+                @allowed_port query XTransformPort=3002
+                handle @allowed_port {
+                        reverse_proxy localhost:3002 {
+                                header_up Host {host}
+                                header_up X-Forwarded-For {remote_host}
+                                header_up X-Forwarded-Proto {scheme}
+                                header_up X-Real-IP {remote_host}
+                        }
+                }
+                @allowed_port_3 query XTransformPort=3003
+                handle @allowed_port_3 {
+                        reverse_proxy localhost:3003 {
+                                header_up Host {host}
+                                header_up X-Forwarded-For {remote_host}
+                                header_up X-Forwarded-Proto {scheme}
+                                header_up X-Real-IP {remote_host}
+                        }
+                }
+                @allowed_port_4 query XTransformPort=3004
+                handle @allowed_port_4 {
+                        reverse_proxy localhost:3004 {
+                                header_up Host {host}
+                                header_up X-Forwarded-For {remote_host}
+                                header_up X-Forwarded-Proto {scheme}
+                                header_up X-Real-IP {remote_host}
+                        }
+                }
+                # Reject all other ports
+                handle @transform_port_query {
+                        respond "Forbidden: port not allowed" 403
+                }
+        }
 
-	handle @transform_port_query {
-		reverse_proxy localhost:{query.XTransformPort} {
-			header_up Host {host}
-			header_up X-Forwarded-For {remote_host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Real-IP {remote_host}
-		}
-	}
-
-	handle {
-		reverse_proxy localhost:3000 {
-			header_up Host {host}
-			header_up X-Forwarded-For {remote_host}
-			header_up X-Forwarded-Proto {scheme}
-			header_up X-Real-IP {remote_host}
-		}
-	}
+        handle {
+                reverse_proxy localhost:3000 {
+                        header_up Host {host}
+                        header_up X-Forwarded-For {remote_host}
+                        header_up X-Forwarded-Proto {scheme}
+                        header_up X-Real-IP {remote_host}
+                }
+        }
 }

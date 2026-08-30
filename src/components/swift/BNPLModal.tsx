@@ -3,12 +3,12 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, CreditCard, Sparkles, Calculator, Check } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { bnplPlans, formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
 export default function BNPLModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'bnpl';
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageSquare, Bug, Lightbulb, Star, Send, Loader2, CheckCircle2, ChevronRight } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 type FeedbackType = 'feedback' | 'bug' | 'feature';
@@ -15,7 +15,8 @@ const TYPES: { id: FeedbackType; label: string; icon: typeof Bug; color: string;
 ];
 
 export default function BetaFeedbackModal() {
-  const { activeModal, setActiveModal, userEmail, activeTab } = useAppStore();
+  const { activeModal, setActiveModal, activeTab } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
   const isOpen = activeModal === 'beta-feedback';
   const { toast } = useToast();
 

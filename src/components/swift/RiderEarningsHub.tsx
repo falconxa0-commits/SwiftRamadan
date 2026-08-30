@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { DollarSign, TrendingUp, Star, Clock, Zap } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useAppStore } from '@/lib/store-selectors';
 import {
   formatNaira,
   riderEarningsBreakdown,
@@ -50,7 +50,7 @@ function HourlyTooltip({ active, payload }: HourlyTooltipProps) {
 }
 
 export default function RiderEarningsHub() {
-  const { riderEarnings } = useAppStore();
+  const riderEarnings = useAppStore(s => s.riderEarnings);
   const data = riderEarningsBreakdown;
   const perf = riderPerformanceMetrics;
 

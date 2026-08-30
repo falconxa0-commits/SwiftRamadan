@@ -4,14 +4,21 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { validateInput, chatMessageSchema } from '@/lib/validation';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 // Returns true if the user exists (or senderId is null/undefined). Returns
 // false if a senderId was provided but no matching User record was found —
 // which would otherwise cause a Prisma foreign-key violation on
 // `db.chatMessage.create()`.
+//
+// MIGRATED (Phase 10): inline `db.user.findUnique({ where: { id: userId }, select: { id: true } })`
+// replaced with `usersService.getUserById(userId)`. The service returns a
+// `PublicUser | null`; we just check for null. Same semantics, but the
+// service call also applies `publicUserFields` (cheap — single object
+// projection) which the inline `select: { id: true } }` skipped.
 async function assertUserExists(userId: string | null | undefined): Promise<boolean> {
   if (!userId) return true;
-  const u = await db.user.findUnique({ where: { id: userId }, select: { id: true } });
+  const u = await usersService.getUserById(userId);
   return !!u;
 }
 
@@ -37,6 +44,7 @@ export async function GET(req: NextRequest) {
     const messages = await db.chatMessage.findMany({
       where: { roomId },
       orderBy: { createdAt: 'asc' },
+      take: 50,
     });
 
     return NextResponse.json({ messages });

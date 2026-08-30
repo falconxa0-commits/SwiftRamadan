@@ -2,13 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
-/** Resolve email-or-id to real User.id; returns null if not found. */
+/** Resolve email-or-id to real User.id; returns null if not found.
+ *
+ * MIGRATED (Phase 10): the `by id` lookup path is delegated to
+ * `usersService.getUserById` (returns `PublicUser | null`). The `by email`
+ * fallback stays inline because the service only supports userId-keyed
+ * lookups. */
 async function resolveUserId(raw: string | null | undefined): Promise<string | null> {
   if (!raw || raw === 'guest') return null;
-  const byId = await db.user.findUnique({ where: { id: raw } });
-  if (byId) return byId.id;
-  const byEmail = await db.user.findUnique({ where: { email: raw } });
+  const byId = await usersService.getUserById(raw);
+  if (byId) return String(byId.id);
+  const byEmail = await db.user.findUnique({ where: { email: raw }, select: { id: true } });
   return byEmail?.id ?? null;
 }
 
@@ -32,6 +38,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
         ],
       },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     // Parse images JSON string for each review

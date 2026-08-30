@@ -2,11 +2,11 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, TrendingUp, Star, Clock, Users, ShoppingBag } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { vendorSalesInsights, formatNaira } from '@/lib/data';
 
 export default function VendorSalesInsights() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'vendor-insights';
 
   const { dailyTrend } = vendorSalesInsights;

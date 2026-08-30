@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -53,6 +54,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { success: false, message: 'productId and name are required' },
         { status: 400 },
+      );
+    }
+
+    // MIGRATED (Phase 10 Alpha Batch 2): defense-in-depth user check via
+    // `usersService.getUserById`. `requireAuth` only verifies the JWT — it
+    // does NOT verify the user still exists in the DB. Without this check,
+    // a user deleted between JWT issuance and this request would cause a
+    // Prisma FK violation on `wishlistItem.create` below, which the outer
+    // catch would surface as a generic 500. This check returns a clean 404
+    // with a meaningful message instead. Mirrors the pattern in
+    // `/api/cart/route.ts` (`assertUserExists`).
+    const userExists = await usersService.getUserById(userId);
+    if (!userExists) {
+      return NextResponse.json(
+        { success: false, message: 'User not found' },
+        { status: 404 },
       );
     }
 

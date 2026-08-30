@@ -11,7 +11,7 @@ import {
   ChevronRight,
   Send,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useUserName } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────────────────────────────────────────────────────
@@ -157,7 +157,8 @@ const MOCK_STORIES: Story[] = [
 ];
 
 function IftarStoriesInner() {
-  const { userName, activeModal, setActiveModal } = useAppStore();
+  const userName = useUserName();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'iftar-stories';
   const { toast } = useToast();
 

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { captureException } from '@/lib/monitoring/sentry';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 
 /* ----------------------------------------------------------------------------
  * AI Recipe Generator API
@@ -203,9 +206,13 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
-    const prompt = typeof body?.prompt === 'string' ? body.prompt.trim() : '';
+    const prompt = typeof body?.prompt === 'string' ? sanitizePromptInput(body.prompt) : '';
     const dietaryPrefs: string[] = Array.isArray(body?.dietaryPrefs)
       ? body.dietaryPrefs.filter((p: unknown): p is string => typeof p === 'string')
       : [];
@@ -219,20 +226,25 @@ export async function POST(request: NextRequest) {
       : prompt;
 
     try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-      const response = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: userContent },
-        ],
+      // PHASE-6-2: route now goes through the unified AI gateway. The gateway
+      // owns the Safa persona, sanitization, token budget, and output
+      // validation. The Chef-Safa JSON instruction is baked into the user
+      // message because the gateway's system prompt is the fixed default
+      // Safa persona (which is fine — the JSON contract is reinforced in the
+      // user turn).
+      const fullMessage = `${SYSTEM_PROMPT}\n\nUser request: ${userContent}`;
+      const result = await aiRequest({
+        userId: auth.userId,
+        userRole: auth.role,
+        message: fullMessage,
+        maxTokens: 1000,
       });
-
-      const content: string = response?.choices?.[0]?.message?.content ?? '';
-      const parsed = extractJson(content);
-      const recipe = sanitizeRecipe(parsed);
-      if (recipe) {
-        return NextResponse.json({ recipe });
+      if (result.success && result.response) {
+        const parsed = extractJson(result.response);
+        const recipe = sanitizeRecipe(parsed);
+        if (recipe) {
+          return NextResponse.json({ recipe });
+        }
       }
     } catch {
       // fall through to fallback

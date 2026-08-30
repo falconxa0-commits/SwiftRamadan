@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
+import { aiRequest } from '@/ai/gateway';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -84,12 +87,16 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const items: string[] = Array.isArray(body?.items)
       ? body.items
           .filter((x: unknown): x is string => typeof x === 'string')
-          .map((x: string) => x.trim())
+          .map((x: string) => sanitizePromptInput(x))
           .filter(Boolean)
       : [];
 
@@ -98,31 +105,32 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-      const ZAI = (await import('z-ai-web-dev-sdk')).default;
-      const zai = await ZAI.create();
-
-      const response = await zai.chat.completions.create({
-        messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          {
-            role: 'user',
-            content: `Pantry items: ${items.join(', ')}. Suggest a recipe I can cook now.`,
-          },
-        ],
-        thinking: { type: 'disabled' },
+      // PHASE-10: migrated to the unified AI gateway (`aiRequest`). The
+      // task-specific system instruction is prepended to the user message
+      // because the gateway bakes in a fixed Safa system persona (see
+      // `src/ai/gateway.ts`). The model still receives the JSON output
+      // constraint; the only structural change is that it arrives in the
+      // user turn instead of the system turn.
+      const fullMessage =
+        `${SYSTEM_PROMPT}\n\nPantry items: ${items.join(', ')}. Suggest a recipe I can cook now.`;
+      const result = await aiRequest({
+        userId: auth.userId,
+        userRole: auth.role,
+        message: fullMessage,
+        maxTokens: 1000,
       });
 
-      const content: string =
-        response?.choices?.[0]?.message?.content ?? '';
-      const parsed = extractJson(content);
+      if (result.success && result.response) {
+        const parsed = extractJson(result.response);
 
-      if (
-        parsed &&
-        isRecipeShape(parsed) &&
-        typeof parsed.recipeName === 'string' &&
-        parsed.recipeName.trim()
-      ) {
-        return NextResponse.json({ recipe: parsed }, { status: 200 });
+        if (
+          parsed &&
+          isRecipeShape(parsed) &&
+          typeof parsed.recipeName === 'string' &&
+          parsed.recipeName.trim()
+        ) {
+          return NextResponse.json({ recipe: parsed }, { status: 200 });
+        }
       }
 
       return NextResponse.json({ recipe: FALLBACK_RECIPE }, { status: 200 });

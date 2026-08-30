@@ -15,7 +15,7 @@ import {
   DollarSign,
   BarChart3,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useUserEmail, useVendor } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -86,15 +86,15 @@ const confettiColors = ['#F5C451', '#10E07A', '#38BDF8', '#FF6B6B', '#A855F7', '
    ════════════════════════════════════════════════════════════════ */
 
 export default function PayoutRequestModal({ onClose, role }: PayoutRequestModalProps) {
+  const userEmail = useUserEmail();
   const {
-    userEmail,
     vendorBalance,
-    vendorPendingSettlement,
-    vendorTotalEarnings,
     setVendorBalance,
+    vendorPendingSettlement,
     setVendorPendingSettlement,
+    vendorTotalEarnings,
     setVendorTotalEarnings,
-  } = useAppStore();
+  } = useVendor();
   const { toast } = useToast();
 
   const [step, setStep] = useState<PayoutStep>('form');

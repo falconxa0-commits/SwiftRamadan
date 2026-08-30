@@ -7,7 +7,7 @@ import {
   Volume2, VolumeX, Plus, ChevronUp, ChevronDown, Verified, Send,
   ShoppingBag, Sparkles,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ──────────────────────── types ──────────────────────── */
@@ -68,7 +68,10 @@ type Category = (typeof CATEGORIES)[number];
 /* ──────────────────────── main component ──────────────────────── */
 
 export default function SwiftBitesModal() {
-  const { activeModal, setActiveModal, addToCart, setActiveTab, userName, userEmail } = useAppStore();
+  const { activeModal, setActiveModal, setActiveTab } = useNavigation();
+  const { addToCart } = useCart();
+  const userName = useAppStore(s => s.userName);
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
   const isOpen = activeModal === 'swift-bites';
 

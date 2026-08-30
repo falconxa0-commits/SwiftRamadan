@@ -46,6 +46,7 @@ export async function GET(request: NextRequest) {
   try {
     const dbBoxes = await db.subscriptionBox.findMany({
       where: { isActive: true },
+      take: 50,
     });
 
     if (dbBoxes.length > 0) {

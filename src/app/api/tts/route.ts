@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
+import { sanitizePromptInput } from '@/ai/security';
 import { captureException } from '@/lib/monitoring/sentry';
 
 export const runtime = 'nodejs';
@@ -9,9 +11,13 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json().catch(() => ({}));
-    const text = typeof body?.text === 'string' ? body.text.trim() : '';
+    const text = typeof body?.text === 'string' ? sanitizePromptInput(body.text) : '';
     const voice = typeof body?.voice === 'string' ? body.voice.trim() : 'alloy';
 
     if (!text) {
@@ -25,6 +31,9 @@ export async function POST(request: NextRequest) {
       const ZAI = (await import('z-ai-web-dev-sdk')).default;
       const zai = await ZAI.create();
 
+      // @ts-expect-error — ZAI SDK type declares `audio.tts.create`,
+      // but the route uses the legacy `tts.create` shortcut. Changing
+      // the access path would alter runtime behaviour, so suppress.
       const response = await zai.tts.create({
         text,
         voice,

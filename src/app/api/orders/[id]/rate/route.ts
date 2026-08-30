@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as ordersService from '@/services/orders/orders.service';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
 async function resolveUserId(identifier: string | null | undefined): Promise<string | null> {
@@ -34,10 +35,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const body = await req.json().catch(() => ({}));
 
     const orderId = String(body.orderId || id);
-    
-    // Use authenticated user's ID, fallback to body userId for legacy compatibility
-    // but ensure the rater is the authenticated user
-    const userIdRaw = auth.userId;
+
     const authorName = String(body.authorName || auth.email?.split('@')[0] || 'User');
     const authorAvatar = String(body.authorAvatar || '');
     const rating = Math.max(1, Math.min(5, Number(body.rating) || 5));
@@ -45,18 +43,71 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const targetType = String(body.targetType || 'rider');
     const targetId = body.targetId ? String(body.targetId) : null;
 
+    // MIGRATED (Phase 10): order existence + ownership check + duplicate check
+    // + review creation delegated to `ordersService.rateOrder`, which performs
+    // the same ownership + de-duplication logic inside a `$transaction`.
+    //
+    // Behaviour notes:
+    //   - The service does NOT support an admin override (it always enforces
+    //     `order.userId === callerUserId`). The previous inline flow allowed
+    //     admins to rate any order; that path is preserved here by skipping
+    //     the service for admins and using the inline flow below.
+    //   - The service's `rateOrder` creates the Review with empty
+    //     `authorName`/`authorAvatar` and a fixed `targetType: 'rider'` /
+    //     `targetId: null`. We follow up with a single `db.review.update` to
+    //     restore the caller-supplied author metadata, preserving the
+    //     previous response shape.
+    if (auth.role !== 'admin') {
+      let review;
+      try {
+        review = await ordersService.rateOrder(orderId, auth.userId, rating, comment);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'ORDER_NOT_FOUND') {
+          return NextResponse.json({ error: 'Order not found' }, { status: 404 });
+        }
+        if (err instanceof Error && err.message === 'FORBIDDEN') {
+          return NextResponse.json(
+            { error: 'You can only rate your own orders' },
+            { status: 403 },
+          );
+        }
+        if (err instanceof Error && err.message === 'DUPLICATE_REVIEW') {
+          return NextResponse.json(
+            { error: 'You have already rated this order' },
+            { status: 409 },
+          );
+        }
+        throw err;
+      }
+
+      // Follow-up: restore caller-supplied author metadata (service uses
+      // empty defaults). The service has already verified ownership + de-dup,
+      // so this update is safe.
+      if (
+        authorName !== '' ||
+        authorAvatar !== '' ||
+        targetType !== 'rider' ||
+        targetId !== null
+      ) {
+        review = await db.review.update({
+          where: { id: review.id },
+          data: {
+            authorName,
+            authorAvatar,
+            targetType,
+            targetId,
+          },
+        });
+      }
+
+      return NextResponse.json({ review }, { status: 201 });
+    }
+
+    // ── Admin path (preserves previous admin override) ──
     // Verify order exists
     const order = await db.order.findUnique({ where: { id: orderId } });
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
-    }
-
-    // Verify the order belongs to the authenticated user (or user is admin)
-    if (auth.role !== 'admin' && order.userId !== auth.userId) {
-      return NextResponse.json(
-        { error: 'You can only rate your own orders' },
-        { status: 403 }
-      );
     }
 
     // Check if user already rated this order (prevent duplicate ratings)
@@ -66,7 +117,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (existingReview) {
       return NextResponse.json(
         { error: 'You have already rated this order', review: existingReview },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -99,7 +150,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     if (err instanceof Error && err.message === 'DUPLICATE_REVIEW') {
       return NextResponse.json(
         { error: 'You have already rated this order' },
-        { status: 409 }
+        { status: 409 },
       );
     }
     console.error('[orders/rate] POST error', err);
@@ -125,6 +176,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     const reviews = await db.review.findMany({
       where: { orderId },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     return NextResponse.json({ reviews });

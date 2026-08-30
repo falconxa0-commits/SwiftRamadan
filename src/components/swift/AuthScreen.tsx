@@ -3,6 +3,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import {
+  useAuth, useOnboarding, useSetIsLoggedIn, useSetUserName, useSetUserEmail,
+  useUserPhone, useSetShowOnboarding, useSetOnboardingComplete, useShowAuth,
+} from '@/lib/store-selectors';
 import { toast } from '@/hooks/use-toast';
 import { track } from '@/lib/analytics';
 import {
@@ -235,7 +239,10 @@ function ActionButton({
 /* ─────────────── Login Screen ─────────────── */
 
 function LoginScreen() {
-  const { setShowAuth, setIsLoggedIn, setUserName, setUserEmail, setUserRole } = useAppStore();
+  const { setShowAuth, setUserRole } = useAuth();
+  const setIsLoggedIn = useSetIsLoggedIn();
+  const setUserName = useSetUserName();
+  const setUserEmail = useSetUserEmail();
   const [loginRole, setLoginRole] = useState<RoleKey>('customer');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -542,7 +549,7 @@ function LoginScreen() {
 /* ─────────────── Signup Screen (Multi-Step) ─────────────── */
 
 function SignupScreen() {
-  const store = useAppStore();
+  const store = useAppStore.getState();
   const [step, setStep] = useState<1 | 2>(1);
   // Use the role already set in the store (from RoleScreen), fallback to 'customer'
   const [signupRole, setSignupRole] = useState<RoleKey>(store.userRole || 'customer');
@@ -1098,7 +1105,10 @@ function SignupScreen() {
 /* ─────────────── OTP Screen ─────────────── */
 
 function OTPScreen() {
-  const { userPhone, userEmail, userRole, setUserRole, setShowAuth, setIsLoggedIn, setShowOnboarding } = useAppStore();
+  const userPhone = useUserPhone();
+  const { userEmail, userRole, setUserRole, setShowAuth } = useAuth();
+  const setIsLoggedIn = useSetIsLoggedIn();
+  const setShowOnboarding = useSetShowOnboarding();
   const [otp, setOtp] = useState<string[]>(Array(6).fill(''));
   const [countdown, setCountdown] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -1188,9 +1198,17 @@ function OTPScreen() {
       } else {
         toast({ title: 'Invalid code', description: data.message || 'The code you entered is incorrect.', variant: 'destructive' });
       }
-    } catch {
-      // Fallback for demo - accept any 6-digit code
-      handleVerifySuccess();
+    } catch (err) {
+      // SECURITY FIX: Removed OTP client-side bypass.
+      // Previously, ANY network error accepted any 6-digit code as valid.
+      // Now we surface the error and require the user to retry.
+      // This closes the authentication bypass (audit H4).
+      const message = err instanceof Error ? err.message : 'Verification failed. Please try again.';
+      toast({
+        title: 'Verification failed',
+        description: message,
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -1342,7 +1360,9 @@ const ROLES = [
 ];
 
 function RoleScreen() {
-  const { setUserRole, setShowAuth, isLoggedIn, setShowOnboarding, setOnboardingComplete } = useAppStore();
+  const { setUserRole, setShowAuth, isLoggedIn } = useAuth();
+  const setShowOnboarding = useSetShowOnboarding();
+  const setOnboardingComplete = useSetOnboardingComplete();
   const [selected, setSelected] = useState<'customer' | 'vendor' | 'rider'>('customer');
   const [loading, setLoading] = useState(false);
 
@@ -1478,7 +1498,9 @@ function RoleScreen() {
 /* ─────────────── Main Auth Screen ─────────────── */
 
 export default function AuthScreen() {
-  const { showAuth, setShowAuth, userRole, setShowWelcome, isLoggedIn } = useAppStore();
+  const showAuth = useShowAuth();
+  const { setShowAuth, userRole, isLoggedIn } = useAuth();
+  const { setShowWelcome } = useOnboarding();
 
   const handleBack = () => {
     if (showAuth === 'otp') {

@@ -11,10 +11,12 @@ import {
   isEmailVerifiedAsync,
   clearVerifiedAsync,
 } from '@/lib/otp-store';
-import { hashPassword, verifyPassword } from '@/lib/auth-utils';
+import { hashPassword } from '@/lib/auth-utils';
 import { setSessionCookie, clearSessionCookie, getSessionUser } from '@/lib/session';
 import { sendOTP } from '@/lib/communications';
+import { enqueueEmail, enqueueSMS } from '@/lib/queues';
 import { filterProfileFields, PROFILE_BLOCKED_FIELDS, publicUserFields } from '@/lib/profile-update';
+import * as authService from '@/services/auth/auth.service';
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                    */
@@ -58,53 +60,38 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        let user = await db.user.findUnique({ where: { email } });
-
-        // Auto-create user for demo/beta — seamless onboarding
-        if (!user) {
-          const displayName = email.split('@')[0] || 'User';
-          const userRole = role === 'vendor' ? 'vendor' : role === 'rider' ? 'rider' : 'customer';
-          const hashedPw = password ? await hashPassword(password) : '';
-          user = await db.user.create({
-            data: {
-              email,
-              name: displayName,
-              phone: '',
-              password: hashedPw,
-              role: userRole,
-              onboardingComplete: true,
-              referralCode: `SWIFT-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
-            },
-          });
-        } else if (role && role !== user.role && ['customer', 'vendor', 'rider'].includes(role)) {
-          // Update role if user is logging in with a different role
-          user = await db.user.update({
-            where: { id: user.id },
-            data: { role },
-          });
+        // MIGRATED (Phase 10): credential check + token generation delegated
+        // to `authService.loginUser`. To preserve the route's specific error
+        // messages (which the service collapses into a single `null`), we
+        // pre-check the failure modes the service hides:
+        //   1. User not found → "Invalid email or password" (matches prior).
+        //   2. Demo account without recent OTP → "OTP verification required..."
+        //      (matches prior; the service would otherwise return null here).
+        //   3. Real account with missing password → "Password is required"
+        //      (matches prior).
+        // After these pre-checks, the service handles the bcrypt compare
+        // (real account) and the demo-account-verified path, and issues the
+        // JWT + opaque token.
+        const existingUser = await db.user.findUnique({ where: { email } });
+        if (!existingUser) {
+          return NextResponse.json(
+            { success: false, message: 'Invalid email or password' },
+            { status: 401 },
+          );
         }
 
-        const hasRealPassword = typeof user.password === 'string' && user.password.length > 0;
+        const hasRealPassword =
+          typeof existingUser.password === 'string' && existingUser.password.length > 0;
 
         if (hasRealPassword) {
-          // Real password account — require a matching password.
           if (typeof password !== 'string' || password.length === 0) {
             return NextResponse.json(
               { success: false, message: 'Password is required' },
               { status: 401 },
             );
           }
-          // Use bcrypt comparison with legacy plain-text fallback
-          const isValid = await verifyPassword(password, user.password);
-          if (!isValid) {
-            return NextResponse.json(
-              { success: false, message: 'Invalid email or password' },
-              { status: 401 },
-            );
-          }
         } else {
-          // Demo account (empty password in DB) — require a recent OTP
-          // verification for this email, otherwise anyone could log in.
+          // Demo account — require recent OTP verification
           if (!(await isEmailVerifiedAsync(email))) {
             return NextResponse.json(
               {
@@ -116,15 +103,35 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        const token = `sr_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        // Pre-checks passed → delegate the actual credential verify + token
+        // issuance to the service. The service re-fetches the user (one
+        // redundant query — acceptable) and applies the same bcrypt/OTP
+        // rules. Returns null only on wrong password (the other failure
+        // modes are pre-checked above).
+        const result = await authService.loginUser(email, password || '');
+        if (!result) {
+          return NextResponse.json(
+            { success: false, message: 'Invalid email or password' },
+            { status: 401 },
+          );
+        }
 
         const response = NextResponse.json({
           success: true,
           message: 'Login successful',
-          user: publicUserFields(user),
-          token,
+          user: result.user,
+          token: result.token,
         });
-        await setSessionCookie(response, { userId: user.id, email: user.email, role: user.role });
+        // `result.user` is a `PublicUser` whose fields are typed as `unknown`
+        // (because `publicUserFields` accepts `Record<string, unknown>`); we
+        // coerce the three fields the cookie needs to strings. The values
+        // come from a freshly-fetched Prisma User row so they are guaranteed
+        // to be strings at runtime.
+        await setSessionCookie(response, {
+          userId: String(result.user.id),
+          email: String(result.user.email),
+          role: String(result.user.role),
+        });
         return response;
       }
 
@@ -139,56 +146,70 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        const existing = await db.user.findUnique({ where: { email } });
-        if (existing) {
-          return NextResponse.json(
-            { success: false, message: 'An account with this email already exists' },
-            { status: 409 },
-          );
-        }
-
-        // Hash password with bcrypt before storing
-        const hashedPassword = password ? await hashPassword(password) : '';
-
-        const user = await db.user.create({
-          data: {
+        // MIGRATED (Phase 10): inline user creation (findUnique → check →
+        // hashPassword → user.create → generateOtp → setOtpAsync →
+        // clearVerifiedAsync) replaced with `authService.signupCustomer`,
+        // which performs the same steps internally and returns a
+        // `SignupResult` with the OTP code. The service ALWAYS assigns role
+        // `customer` (audit B2 — vendor/rider require admin approval via
+        // switchRole), matching the previous inline behaviour. The client-
+        // supplied `role` field is IGNORED.
+        //
+        // The service does NOT send the OTP notification — that remains the
+        // route's responsibility (graceful degradation: notification failure
+        // must not fail the signup).
+        let signupResult;
+        try {
+          signupResult = await authService.signupCustomer({
             name,
             email,
-            phone: phone || '',
-            password: hashedPassword,
-            role: role || 'customer',
-            area: area || '',
-            avatar: avatar || '',
-            referralCode: `SWIFT-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
-            storeName: storeName || null,
-            businessCategory: businessCategory || null,
-            businessAddress: businessAddress || null,
-            bankName: bankName || null,
-            accountNumber: accountNumber || null,
-            openTime: openTime || '08:00',
-            closeTime: closeTime || '22:00',
-            vehicleType: vehicleType || null,
-            plateNumber: plateNumber || null,
-            licenseNumber: licenseNumber || null,
-            vehicleColor: vehicleColor || null,
-            riderBankName: riderBankName || null,
-            riderAccountNumber: riderAccountNumber || null,
-          },
-        });
+            phone,
+            password,
+            area,
+            avatar,
+            storeName,
+            businessCategory,
+            businessAddress,
+            bankName,
+            accountNumber,
+            openTime,
+            closeTime,
+            vehicleType,
+            plateNumber,
+            licenseNumber,
+            vehicleColor,
+            riderBankName,
+            riderAccountNumber,
+          });
+        } catch (err) {
+          if (err instanceof Error && err.message === 'EMAIL_TAKEN') {
+            return NextResponse.json(
+              { success: false, message: 'An account with this email already exists' },
+              { status: 409 },
+            );
+          }
+          if (err instanceof Error && err.message === 'INVALID_EMAIL') {
+            return NextResponse.json(
+              { success: false, message: 'A valid email is required' },
+              { status: 400 },
+            );
+          }
+          if (err instanceof Error && err.message === 'NAME_AND_EMAIL_REQUIRED') {
+            return NextResponse.json(
+              { success: false, message: 'Name and email are required' },
+              { status: 400 },
+            );
+          }
+          throw err;
+        }
 
-        // Issue an OTP for the newly-created account so the subsequent
-        // verify-otp call has something to verify against.
-        const otpCode = generateOtp();
-        await setOtpAsync(email, otpCode);
-        // A brand-new account is not "verified" yet.
-        await clearVerifiedAsync(email);
-
-        // Try to send the OTP via SMS + Email (graceful degradation)
+        // Try to send the OTP via SMS + Email (graceful degradation).
+        // The service has already stored the OTP code; we just dispatch it.
         try {
           await sendOTP({
             email,
             phone: phone || undefined,
-            code: otpCode,
+            code: signupResult.otpCode,
             name,
           });
         } catch (err) {
@@ -196,15 +217,42 @@ export async function POST(request: NextRequest) {
           console.error('[Auth] OTP notification error:', err);
         }
 
-        const token = `sr_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+        // PHASE-10: also enqueue via BullMQ for durable, retry-able
+        // delivery. The direct `sendOTP` above is the primary path; the
+        // queue is a backup channel that survives a transient Resend /
+        // Termii outage (the worker retries with exponential backoff —
+        // see `src/lib/queues/processors.ts`). The enqueue helpers fail
+        // open (no throw) when Redis is unavailable, so this is safe to
+        // call unconditionally.
+        try {
+          await enqueueEmail({
+            to: email,
+            subject: 'Your SwiftRamadan OTP',
+            html: `<p>Welcome to SwiftRamadan, ${name}!</p><p>Your verification code is <strong>${signupResult.otpCode}</strong>.</p><p>It expires in 5 minutes. If you didn't sign up, you can safely ignore this email.</p>`,
+          });
+          if (typeof phone === 'string' && phone) {
+            await enqueueSMS({
+              to: phone,
+              message: `Your SwiftRamadan code is ${signupResult.otpCode}`,
+            });
+          }
+        } catch (err) {
+          console.error('[Auth] OTP queue enqueue error (signup):', err);
+        }
 
         const signupResponse = NextResponse.json({
           success: true,
           message: 'Account created. Please verify your phone number.',
-          user: publicUserFields(user),
-          token,
+          user: signupResult.user,
+          token: signupResult.token,
         });
-        await setSessionCookie(signupResponse, { userId: user.id, email: user.email, role: user.role });
+        // Coerce `unknown`-typed PublicUser fields to strings for the cookie
+        // (see the login case above for the same pattern).
+        await setSessionCookie(signupResponse, {
+          userId: String(signupResult.user.id),
+          email: String(signupResult.user.email),
+          role: String(signupResult.user.role),
+        });
         return signupResponse;
       }
 
@@ -229,9 +277,12 @@ export async function POST(request: NextRequest) {
         const code = generateOtp();
         await setOtpAsync(lookupEmail, code);
 
+        // Look up the user once — used both for the direct send (needs
+        // `name` and the canonical `phone`) and the SMS enqueue below.
+        const otpUser = await db.user.findUnique({ where: { email: lookupEmail } });
+
         // Try to send the OTP via SMS + Email (graceful degradation)
         try {
-          const otpUser = await db.user.findUnique({ where: { email: lookupEmail } });
           if (otpUser) {
             await sendOTP({
               email: lookupEmail,
@@ -243,6 +294,33 @@ export async function POST(request: NextRequest) {
         } catch (err) {
           // Don't fail the auth flow if notification sending fails
           console.error('[Auth] OTP notification error (send-otp):', err);
+        }
+
+        // PHASE-10: also enqueue via BullMQ for durable, retry-able
+        // delivery. The direct `sendOTP` above is the primary path; the
+        // queue is a backup channel that survives a transient Resend /
+        // Termii outage (the worker retries with exponential backoff —
+        // see `src/lib/queues/processors.ts`). The enqueue helpers fail
+        // open (no throw) when Redis is unavailable. SMS is enqueued only
+        // when we have a phone — either from the user record or from the
+        // request body (the latter covers demo-account flows where the
+        // user row doesn't exist yet).
+        try {
+          await enqueueEmail({
+            to: lookupEmail,
+            subject: 'Your SwiftRamadan OTP',
+            html: `<p>Your SwiftRamadan verification code is <strong>${code}</strong>.</p><p>It expires in 5 minutes. If you didn't request this, you can safely ignore this email.</p>`,
+          });
+          const phoneForSMS =
+            otpUser?.phone ?? (typeof phone === 'string' && phone ? phone : undefined);
+          if (phoneForSMS) {
+            await enqueueSMS({
+              to: String(phoneForSMS),
+              message: `Your SwiftRamadan code is ${code}`,
+            });
+          }
+        } catch (err) {
+          console.error('[Auth] OTP queue enqueue error (send-otp):', err);
         }
 
         return NextResponse.json({
@@ -446,22 +524,59 @@ export async function POST(request: NextRequest) {
           );
         }
 
-        // Update user role in DB
-        const updatedUser = await db.user.update({
-          where: { id: authUser.userId },
-          data: { role },
-        });
+        // MIGRATED (Phase 10 Alpha): inline role validation + admin-approval
+        // check + `db.user.update` replaced with `authService.switchRole`,
+        // which performs the same validation and update internally. The
+        // service throws `FORBIDDEN` (non-admin upgrade to vendor/rider) /
+        // `USER_NOT_FOUND` / `INVALID_ROLE` — mapped to HTTP responses
+        // below. The admin-approval enforcement (audit B2/B3) is now
+        // unified between this route and `/api/user` PUT switch-role (which
+        // was also migrated to the same service in this phase, closing
+        // the previous inconsistency where /api/user allowed non-admin
+        // upgrades).
+        let updatedUser;
+        try {
+          updatedUser = await authService.switchRole(
+            authUser.userId,
+            role as 'customer' | 'vendor' | 'rider',
+            authUser.role,
+          );
+        } catch (err) {
+          if (err instanceof Error && err.message === 'FORBIDDEN') {
+            return NextResponse.json(
+              {
+                success: false,
+                message:
+                  'Role upgrade requires admin approval. Please submit a vendor/rider application via your profile settings.',
+              },
+              { status: 403 },
+            );
+          }
+          if (err instanceof Error && err.message === 'USER_NOT_FOUND') {
+            return NextResponse.json(
+              { success: false, message: 'User not found' },
+              { status: 404 },
+            );
+          }
+          if (err instanceof Error && err.message === 'INVALID_ROLE') {
+            return NextResponse.json(
+              { success: false, message: 'Valid role is required (customer, vendor, rider)' },
+              { status: 400 },
+            );
+          }
+          throw err;
+        }
 
         // Issue new session cookie with updated role
         const switchResponse = NextResponse.json({
           success: true,
           message: 'Role switched',
-          user: publicUserFields(updatedUser),
+          user: updatedUser,
         });
         await setSessionCookie(switchResponse, {
-          userId: updatedUser.id,
-          email: updatedUser.email,
-          role: updatedUser.role,
+          userId: String(updatedUser.id),
+          email: String(updatedUser.email),
+          role: String(updatedUser.role),
         });
         return switchResponse;
       }

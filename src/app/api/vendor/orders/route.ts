@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
+import * as ordersService from '@/services/orders/orders.service';
 
 /* ──────────── helpers ──────────── */
 
@@ -196,10 +197,25 @@ export async function PUT(request: NextRequest) {
       message = 'Order marked as ready for pickup.';
     }
 
-    const updated = await db.order.update({
-      where: { id: orderId },
-      data: { status, progress },
-    });
+    // MIGRATED (Phase 10): the `db.order.update` for status + progress is
+    // delegated to `ordersService.updateOrderStatus`. We pass `userId = null`
+    // to skip the service's own ownership check (it would check
+    // `order.userId === callerUserId`, which is the customer, not the
+    // vendor — irrelevant here). The vendor-specific ownership check
+    // (order must contain the vendor's products) was performed inline
+    // above and is the correct authorisation for this endpoint.
+    let updated;
+    try {
+      updated = await ordersService.updateOrderStatus(orderId, status, null, progress);
+    } catch (err) {
+      if (err instanceof Error && err.message === 'ORDER_NOT_FOUND') {
+        return NextResponse.json(
+          { success: false, error: 'Order not found' },
+          { status: 404 }
+        );
+      }
+      throw err;
+    }
 
     return NextResponse.json({
       success: true,

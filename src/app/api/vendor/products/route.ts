@@ -5,13 +5,18 @@ import { captureException } from '@/lib/monitoring/sentry';
 import { cacheInvalidate } from '@/lib/redis';
 import { validateInput, productCreateSchema, checkBodySize } from '@/lib/validation';
 import { requireAuth } from '@/lib/session';
+import * as usersService from '@/services/users/users.service';
 
 /* ──────────── helpers ──────────── */
 
+// MIGRATED (Phase 10): the `by id` lookup path is delegated to
+// `usersService.getUserById` (returns `PublicUser | null`). The `by email`
+// fallback stays inline because the service only supports userId-keyed
+// lookups.
 async function resolveVendorId(vendorId?: string | null, vendorEmail?: string | null) {
   if (vendorId) {
-    const byId = await db.user.findUnique({ where: { id: vendorId }, select: { id: true } });
-    if (byId) return byId.id;
+    const byId = await usersService.getUserById(vendorId);
+    if (byId) return String(byId.id);
   }
   if (vendorEmail) {
     const byEmail = await db.user.findUnique({ where: { email: vendorEmail }, select: { id: true } });
@@ -73,6 +78,7 @@ export async function GET(request: NextRequest) {
     const products = await db.product.findMany({
       where: { vendorId: resolvedId },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     return NextResponse.json({

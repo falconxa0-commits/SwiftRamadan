@@ -15,7 +15,7 @@ import {
   Plus,
   Loader2,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useCart } from '@/lib/store-selectors';
 import { formatNaira } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -65,7 +65,8 @@ function compressImage(file: File): Promise<string> {
 }
 
 export default function FridgeScanner() {
-  const { addToCart, setActiveModal, activeModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { addToCart } = useCart();
   const isOpen = activeModal === 'fridge-scanner';
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);

@@ -13,7 +13,7 @@ import {
   Sparkles,
   ChevronRight,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ───────── Types ───────── */
@@ -176,7 +176,7 @@ const TYPE_BORDER: Record<string, string> = {
    ══════════════════════════════════════════════════════════════════ */
 
 function IftarRadarInner() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'iftar-radar';
 

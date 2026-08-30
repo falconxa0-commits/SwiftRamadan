@@ -5,6 +5,7 @@ import { validateInput, orderCreateSchema, orderUpdateSchema } from '@/lib/valid
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
 import { assertUserExists } from '@/lib/db-helpers';
+import * as ordersService from '@/services/orders/orders.service';
 
 // Extended order schema that accepts optional coupon code
 const orderWithCouponSchema = orderCreateSchema.extend({
@@ -136,9 +137,19 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // MIGRATED (Phase 6.1): the user-scoped `db.order.findMany` is now delegated
+    // to `ordersService.listUserOrders`, which parses the JSON `items` payload
+    // and applies pagination. The admin "all orders" path (userId === null)
+    // is NOT supported by the service and remains inline below.
+    if (userId) {
+      const result = await ordersService.listUserOrders(userId, 1, 50);
+      return NextResponse.json({ orders: result.orders });
+    }
+
     const orders = await db.order.findMany({
-      where: userId ? { userId } : undefined,
+      where: undefined,
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
 
     // Parse items JSON string for each order
@@ -214,25 +225,34 @@ export async function POST(request: NextRequest) {
 
     const finalTotal = total - discountApplied;
 
-    const order = await db.$transaction(async (tx) => {
-      return tx.order.create({
-        data: {
-          status: status || 'Preparing',
-          total: finalTotal,
-          riderName: riderName || null,
-          items: JSON.stringify(items || []),
-          progress: progress || 0,
-          userId: userId || null,
-        },
+    // MIGRATED (Phase 10): inline `db.$transaction` (create order row) replaced
+    // with `ordersService.createOrder`, which performs the same atomic create
+    // inside its own `$transaction` and pre-validates the user FK. The service
+    // does NOT accept `riderName` (riders are typically assigned later by the
+    // dispatch flow), so when a riderName is supplied we follow up with a
+    // single `db.order.update` to set it. This preserves the previous
+    // behaviour without duplicating the create logic.
+    const { order } = await ordersService.createOrder(
+      userId,
+      items || [],
+      finalTotal,
+      undefined,
+      status || 'Preparing',
+      progress || 0,
+    );
+
+    let finalOrder = order;
+    if (riderName) {
+      const updated = await db.order.update({
+        where: { id: order.id },
+        data: { riderName },
       });
-    });
+      finalOrder = { ...order, riderName: updated.riderName };
+    }
 
     return NextResponse.json({
       success: true,
-      order: {
-        ...order,
-        items: JSON.parse(order.items),
-      },
+      order: finalOrder,
     }, { status: 201 });
   } catch (error) {
     console.error('Orders API POST error:', error);
@@ -261,23 +281,6 @@ export async function PUT(request: NextRequest) {
     if (!v.success) return v.response;
     const { id, status, progress, riderName } = v.data;
 
-    // Verify the order belongs to the authenticated user (or user is admin)
-    if (id) {
-      const existingOrder = await db.order.findUnique({ where: { id } });
-      if (!existingOrder) {
-        return NextResponse.json(
-          { success: false, message: 'Order not found' },
-          { status: 404 },
-        );
-      }
-      if (auth.role !== 'admin' && existingOrder.userId !== auth.userId) {
-        return NextResponse.json(
-          { success: false, message: 'You do not have permission to update this order' },
-          { status: 403 },
-        );
-      }
-    }
-
     if (!id) {
       return NextResponse.json(
         { success: false, message: 'Order id is required' },
@@ -285,8 +288,74 @@ export async function PUT(request: NextRequest) {
       );
     }
 
+    // MIGRATED (Phase 10): ownership check + status/progress update delegated
+    // to `ordersService.updateOrderStatus`. The service does NOT accept
+    // `riderName`, so when riderName is provided we follow up with a single
+    // `db.order.update` to set it (the service has already verified ownership
+    // by this point, so the follow-up is safe).
+    //
+    // The service requires a `status` argument. When the caller only passes
+    // `progress` or `riderName` (no status), we fall back to the inline path
+    // (below) which preserves the partial-update behaviour.
+    if (status !== undefined) {
+      const userIdForCheck = auth.role === 'admin' ? null : auth.userId;
+      let order;
+      try {
+        order = await ordersService.updateOrderStatus(
+          id,
+          status,
+          userIdForCheck,
+          progress,
+        );
+      } catch (err) {
+        if (err instanceof Error && err.message === 'ORDER_NOT_FOUND') {
+          return NextResponse.json(
+            { success: false, message: 'Order not found' },
+            { status: 404 },
+          );
+        }
+        if (err instanceof Error && err.message === 'FORBIDDEN') {
+          return NextResponse.json(
+            { success: false, message: 'You do not have permission to update this order' },
+            { status: 403 },
+          );
+        }
+        throw err;
+      }
+
+      // Follow-up: set riderName if provided (service doesn't support it).
+      if (riderName !== undefined) {
+        const updated = await db.order.update({
+          where: { id },
+          data: { riderName },
+        });
+        order = { ...order, riderName: updated.riderName };
+      }
+
+      return NextResponse.json({
+        success: true,
+        order,
+      });
+    }
+
+    // Partial update path: only progress and/or riderName (no status).
+    // The service's `updateOrderStatus` requires a status, so we keep this
+    // narrow branch inline. Ownership check is still performed inline.
+    const existingOrder = await db.order.findUnique({ where: { id } });
+    if (!existingOrder) {
+      return NextResponse.json(
+        { success: false, message: 'Order not found' },
+        { status: 404 },
+      );
+    }
+    if (auth.role !== 'admin' && existingOrder.userId !== auth.userId) {
+      return NextResponse.json(
+        { success: false, message: 'You do not have permission to update this order' },
+        { status: 403 },
+      );
+    }
+
     const updateData: Record<string, unknown> = {};
-    if (status !== undefined) updateData.status = status;
     if (progress !== undefined) updateData.progress = progress;
     if (riderName !== undefined) updateData.riderName = riderName;
 

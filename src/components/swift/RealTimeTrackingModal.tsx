@@ -19,7 +19,7 @@ import {
   Wifi,
   WifiOff,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useOrders, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { formatNaira } from '@/lib/data';
 import { useSocket } from '@/hooks/use-socket';
@@ -159,7 +159,9 @@ function statusMessage(status: DeliveryStatus, riderName: string): string {
    ────────────────────────────────────────────────────────── */
 
 export default function RealTimeTrackingModal() {
-  const { activeModal, setActiveModal, orders, userEmail } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const { orders } = useOrders();
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
   const isOpen = activeModal === 'live-tracking';
 
@@ -228,7 +230,7 @@ export default function RealTimeTrackingModal() {
           prevLoc?.lng ?? storeLng + (custLng - storeLng) * t;
 
         const next: DeliveryState = {
-          orderId: payload.orderId,
+          orderId: payload.orderId ?? '',
           rider: prev?.rider ?? {
             name: riderName,
             phone: '+234 800 000 0000',
@@ -266,7 +268,7 @@ export default function RealTimeTrackingModal() {
           lastStatusRef.current = status;
           if (prevStatus !== null) {
             const msg: UpdateMessage = {
-              orderId: payload.orderId,
+              orderId: payload.orderId ?? '',
               from: 'system',
               text: statusMessage(status, next.rider.name),
               timestamp: Date.now(),

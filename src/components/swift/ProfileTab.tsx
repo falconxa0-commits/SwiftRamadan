@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { charityItems, formatNaira, vendorSalesInsights, ecoImpactData } from '@/lib/data';
 import { useAppStore, type TabId } from '@/lib/store';
+import { useAuth, useCart, useNavigation, useLoyalty, useOrders, useVendor, useRider, useReferralCount } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
@@ -205,16 +206,14 @@ export default function ProfileTab() {
   const [redeeming, setRedeeming] = useState<string | null>(null);
 
   const { toast } = useToast();
-  const {
-    userName, userArea, userEmail, logout, setShowAuth,
-    hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints,
-    userRole, setUserRole, setActiveTab,
-    vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance,
-    vendorTotalEarnings, vendorPendingSettlement,
-    riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType,
-    orders, cartItems, referralCount,
-    setSwiftPoints,
-  } = useAppStore();
+  const { userName, userArea, userEmail, logout, setShowAuth, userRole, setUserRole } = useAuth();
+  const { hasanatPoints, swiftPoints, loyaltyTier, dailyStreak, claimDailyPoints, setSwiftPoints } = useLoyalty();
+  const { setActiveTab } = useNavigation();
+  const { cartItems } = useCart();
+  const { orders } = useOrders();
+  const { vendorStoreName, vendorBusinessCategory, vendorOnline, vendorBalance, vendorTotalEarnings, vendorPendingSettlement } = useVendor();
+  const { riderOnline, riderEarnings, riderCompletedToday, riderRating, riderVehicleType } = useRider();
+  const referralCount = useReferralCount();
 
   /* ── Cooking Journey state (ref-guarded fetch, no setState in effect body) ── */
   const [cookingStats, setCookingStats] = useState<CookingStats | null>(null);

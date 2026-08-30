@@ -27,7 +27,6 @@ async function importTable(tableName: string) {
 
   try {
     // Use createMany for batch insert
-    // @ts-expect-error - dynamic table access
     await db[getTableAccessor(tableName)].createMany({
       data: data.map((row: Record<string, unknown>) => {
         // Convert SQLite date strings to Date objects

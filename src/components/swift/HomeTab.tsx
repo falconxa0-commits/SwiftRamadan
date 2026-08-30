@@ -3,6 +3,10 @@
 import { Star, Clock, ChevronRight, Zap, BadgeCheck, ShoppingCart, Flame, Users, Gift, BookOpen, Landmark, MapPin, RotateCcw, X, SlidersHorizontal, ChefHat, TrendingUp, Sparkles, Navigation, Radio, CalendarDays, Clapperboard, Play } from 'lucide-react';
 import { heroSlides, categories, ramadanBox, trendingMeals, flashSales, quickActions, allProducts, formatNaira } from '@/lib/data';
 import { useAppStore } from '@/lib/store';
+import {
+  useNavigation, useCart, useSetActiveCategory, useSetSelectedProduct,
+  useActiveCategory, useLastSpinDate,
+} from '@/lib/store-selectors';
 import { motion } from 'framer-motion';
 import { useState, useEffect, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -19,7 +23,12 @@ const quickActionConfig: Record<string, { icon: React.ComponentType<{ className?
 };
 
 export default function HomeTab() {
-  const { setActiveModal, setSelectedProduct, setActiveTab, setActiveCategory, addToCart, activeCategory, lastSpinDate } = useAppStore();
+  const { setActiveModal, setActiveTab } = useNavigation();
+  const { addToCart } = useCart();
+  const setSelectedProduct = useSetSelectedProduct();
+  const setActiveCategory = useSetActiveCategory();
+  const activeCategory = useActiveCategory();
+  const lastSpinDate = useLastSpinDate();
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);

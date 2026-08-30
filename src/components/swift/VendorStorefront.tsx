@@ -7,7 +7,7 @@ import {
   Heart, ChevronRight, MessageSquare, Tag, Eye, TrendingUp, Crown
 } from 'lucide-react';
 import { formatNaira } from '@/lib/data';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 interface StorefrontProduct {
@@ -101,7 +101,7 @@ const themes = [
 ];
 
 export default function VendorStorefront() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'vendorStorefront';
 

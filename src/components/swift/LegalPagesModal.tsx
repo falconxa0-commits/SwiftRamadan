@@ -8,7 +8,7 @@ import {
   Shield,
   Info,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 
 type Tab = 'terms' | 'privacy' | 'about';
 
@@ -206,7 +206,7 @@ const ABOUT_CONTENT = (
 );
 
 export default function LegalPagesModal() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const isOpen = activeModal === 'legal';
   const [activeTab, setActiveTab] = useState<Tab>('terms');
 

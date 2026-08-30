@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Phone, MessageCircle, Plus, Minus, Navigation, Clock, Bike } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 export default function LiveTrackingMap() {
-  const { activeModal, setActiveModal, setActiveTab } = useAppStore();
+  const { activeModal, setActiveModal, setActiveTab } = useNavigation();
   const { toast } = useToast();
 
   const isOpen = activeModal === 'live-tracking-map';

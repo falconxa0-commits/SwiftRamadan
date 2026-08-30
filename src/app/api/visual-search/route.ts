@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 
@@ -108,6 +109,10 @@ export async function POST(request: NextRequest) {
   const rateLimited = await checkRateLimit(request, RATE_LIMITS.ai);
   if (rateLimited) return rateLimited;
 
+  // Auth required — AI route (Phase 3 — secure AI routes)
+  const auth = await requireAuth(request);
+  if (auth instanceof NextResponse) return auth;
+
   let image: string | undefined;
   try {
     const body = await request.json();
@@ -125,6 +130,8 @@ export async function POST(request: NextRequest) {
     const ZAI = (await import('z-ai-web-dev-sdk')).default;
     const zai = await ZAI.create();
 
+    // @ts-expect-error — `CreateChatCompletionVisionBody.model` is required
+    // by the SDK type but the backend selects a default model when omitted.
     const response = await zai.chat.completions.createVision({
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },

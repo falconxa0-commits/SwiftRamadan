@@ -13,7 +13,7 @@ import {
   Flame,
   Clock,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { communityPosts } from '@/lib/data';
 import { useToast } from '@/hooks/use-toast';
 
@@ -164,7 +164,9 @@ function seedToApiPosts(): ApiPost[] {
 }
 
 export default function CommunityForum() {
-  const { activeModal, setActiveModal, userEmail, userName } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userEmail = useAppStore(s => s.userEmail);
+  const userName = useAppStore(s => s.userName);
   const { toast } = useToast();
 
   const isOpen = activeModal === 'community';

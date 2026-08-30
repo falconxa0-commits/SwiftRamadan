@@ -16,7 +16,7 @@ import {
   AlertCircle,
   ShoppingCart,
 } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 /* ───────── Types ───────── */
@@ -134,7 +134,7 @@ function formatNaira(amount: number): string {
    ══════════════════════════════════════════════════════════════════ */
 
 function MosquePartnershipInner() {
-  const { activeModal, setActiveModal } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
   const { toast } = useToast();
   const isOpen = activeModal === 'mosque-partnership';
 

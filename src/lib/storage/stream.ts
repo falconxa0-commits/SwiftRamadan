@@ -34,7 +34,8 @@ export async function uploadVideo({
 
   try {
     const formData = new FormData();
-    formData.append('file', new Blob([file]), name);
+    // Wrap Buffer in a Uint8Array view so DOM's Blob accepts it across TS lib versions.
+    formData.append('file', new Blob([new Uint8Array(file)]), name);
     if (meta) {
       formData.append('meta', JSON.stringify(meta));
     }

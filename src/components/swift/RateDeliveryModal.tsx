@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, X, Loader2, Bike } from 'lucide-react';
-import { useAppStore } from '@/lib/store';
+import { useNavigation, useAppStore } from '@/lib/store-selectors';
 import { useToast } from '@/hooks/use-toast';
 
 // ─────────────────────────────────────────────────────────────
@@ -50,7 +50,9 @@ const STAR_LABELS: Record<number, string> = {
 };
 
 export default function RateDeliveryModal() {
-  const { activeModal, setActiveModal, userName, userEmail } = useAppStore();
+  const { activeModal, setActiveModal } = useNavigation();
+  const userName = useAppStore(s => s.userName);
+  const userEmail = useAppStore(s => s.userEmail);
   const { toast } = useToast();
 
   const isOpen = activeModal === 'rate-delivery';

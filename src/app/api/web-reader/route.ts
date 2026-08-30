@@ -129,6 +129,9 @@ export async function POST(request: NextRequest) {
       const ZAI = (await import('z-ai-web-dev-sdk')).default;
       const zai = await ZAI.create();
 
+      // @ts-expect-error — `FunctionMap` only declares `web_search` and
+      // `page_reader`, but the route invokes `web_reader` directly. Changing
+      // the function name would alter runtime behaviour, so suppress.
       const response = await zai.functions.invoke('web_reader', { url });
 
       if (response) {

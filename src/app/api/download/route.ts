@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { requireAdmin } from '@/lib/admin-auth';
@@ -8,10 +8,12 @@ import { requireAdmin } from '@/lib/admin-auth';
  * Serves the pre-built source code ZIP file.
  * ADMIN ONLY - This endpoint provides access to source code.
  */
-export async function GET() {
-  // Note: For GET requests without request object, admin auth should be
-  // enforced at the middleware level. In production, consider moving this
-  // to a POST endpoint with explicit authentication check.
+export async function GET(request: NextRequest) {
+  // SECURITY FIX: Actually enforce admin authentication (audit B7).
+  // Previously requireAdmin was imported but NEVER called, allowing any
+  // authenticated user to download the entire source code ZIP.
+  const adminCheck = await requireAdmin(request);
+  if (adminCheck instanceof NextResponse) return adminCheck;
 
   try {
     const filePath = join(process.cwd(), 'public', 'swiftramadan-source.zip');
