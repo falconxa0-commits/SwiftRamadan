@@ -97,7 +97,7 @@ export default function MoodFeedModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -113,7 +113,7 @@ export default function MoodFeedModal() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -135,7 +135,7 @@ export default function MoodFeedModal() {
                     className={`flex flex-col items-center gap-1.5 px-4 py-3 rounded-2xl border transition-all shrink-0 min-w-[80px] ${
                       isSelected
                         ? 'border-white/20 bg-white/10'
-                        : 'border-white/5 bg-[#1A1D26] hover:border-white/10'
+                        : 'border-white/5 bg-[var(--sr-surface-elevated)] hover:border-white/10'
                     }`}
                     style={isSelected ? { boxShadow: `0 0 20px ${mood.color}20` } : {}}
                   >
@@ -209,7 +209,7 @@ export default function MoodFeedModal() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08, duration: 0.4 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
                     >
                       {/* Food image placeholder */}
                       <div className="h-28 bg-gradient-to-br from-white/5 to-white/[0.02] flex items-center justify-center">
@@ -244,7 +244,7 @@ export default function MoodFeedModal() {
                             onClick={() => handleAddToCart(product)}
                             className="w-8 h-8 rounded-lg bg-[var(--sr-customer)] flex items-center justify-center hover:bg-[var(--sr-customer)]/80 active:scale-95 transition-all"
                           >
-                            <ShoppingCart className="w-4 h-4 text-[#05070A]" />
+                            <ShoppingCart className="w-4 h-4 text-[var(--sr-surface-base)]" />
                           </button>
                         </div>
                       </div>

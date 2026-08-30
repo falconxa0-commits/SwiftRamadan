@@ -87,7 +87,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
         style={{ backgroundImage: `url("${sale.image}")` }}
         onClick={handleViewDetails}
       >
-        <div className="absolute top-2 left-2 bg-[#FB7185] text-white text-[10px] font-bold px-2 py-1 rounded-full">
+        <div className="absolute top-2 left-2 bg-[var(--sr-error)] text-white text-[10px] font-bold px-2 py-1 rounded-full">
           -{sale.discount}%
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#0F1118] via-transparent to-transparent opacity-60" />
@@ -100,21 +100,21 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
         </div>
         {/* Real Countdown */}
         <div className="flex items-center gap-1 mt-2">
-          <Timer className="w-3 h-3 text-[#FB7185]" />
+          <Timer className="w-3 h-3 text-[var(--sr-error)]" />
           <div className="flex gap-1">
-            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.hours)}</span>
-            <span className="text-[#FB7185] text-[10px]">:</span>
-            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.minutes)}</span>
-            <span className="text-[#FB7185] text-[10px]">:</span>
-            <span className="bg-[#FB7185]/20 text-[#FB7185] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.seconds)}</span>
+            <span className="bg-[var(--sr-error)]/20 text-[var(--sr-error)] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.hours)}</span>
+            <span className="text-[var(--sr-error)] text-[10px]">:</span>
+            <span className="bg-[var(--sr-error)]/20 text-[var(--sr-error)] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.minutes)}</span>
+            <span className="text-[var(--sr-error)] text-[10px]">:</span>
+            <span className="bg-[var(--sr-error)]/20 text-[var(--sr-error)] text-[10px] font-bold px-1.5 py-0.5 rounded">{pad(countdown.seconds)}</span>
           </div>
-          {isExpired && <span className="text-[#FB7185] text-[10px] font-bold ml-1">ENDED</span>}
+          {isExpired && <span className="text-[var(--sr-error)] text-[10px] font-bold ml-1">ENDED</span>}
         </div>
         {/* Claimed progress */}
         <div className="mt-2">
           <div className="w-full bg-white/5 rounded-full h-1.5 mb-1">
             <div
-              className="bg-gradient-to-r from-[#F5C451] to-[#10E07A] h-1.5 rounded-full transition-all"
+              className="bg-gradient-to-r from-[var(--sr-vendor)] to-[var(--sr-customer)] h-1.5 rounded-full transition-all"
               style={{ width: `${sale.claimed}%` }}
             />
           </div>
@@ -362,7 +362,7 @@ export default function OffersTab() {
             </p>
           </div>
           {!dailyClaimed && (
-            <span className="bg-[var(--sr-vendor)] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full uppercase gold-glow">
+            <span className="bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-[10px] font-black px-3 py-1.5 rounded-full uppercase gold-glow">
               Claim
             </span>
           )}
@@ -429,13 +429,13 @@ export default function OffersTab() {
       <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#FB7185]/15 flex items-center justify-center border border-[#FB7185]/30 icon-tile">
-              <Timer className="w-4 h-4 text-[#FB7185] relative z-10" />
+            <div className="w-7 h-7 rounded-lg bg-[var(--sr-error)]/15 flex items-center justify-center border border-[var(--sr-error)]/30 icon-tile">
+              <Timer className="w-4 h-4 text-[var(--sr-error)] relative z-10" />
             </div>
             <h3 className="text-white text-lg font-extrabold heading-accent">Flash Sales</h3>
           </div>
-          <span className="soft-chip text-[#FB7185] border-[#FB7185]/30 bg-[#FB7185]/10">
-            <span className="size-1.5 rounded-full bg-[#FB7185] pulse-soft" />
+          <span className="soft-chip text-[var(--sr-error)] border-[var(--sr-error)]/30 bg-[var(--sr-error)]/10">
+            <span className="size-1.5 rounded-full bg-[var(--sr-error)] pulse-soft" />
             LIVE
           </span>
         </div>
@@ -495,8 +495,8 @@ export default function OffersTab() {
       {/* Limited-time offers grid */}
       <div className="px-5 mt-8">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg bg-[#A78BFA]/15 flex items-center justify-center border border-[#A78BFA]/30 icon-tile">
-            <Sparkles className="w-4 h-4 text-[#A78BFA] relative z-10" />
+          <div className="w-7 h-7 rounded-lg bg-[var(--sr-ai)]/15 flex items-center justify-center border border-[var(--sr-ai)]/30 icon-tile">
+            <Sparkles className="w-4 h-4 text-[var(--sr-ai)] relative z-10" />
           </div>
           <h3 className="text-white text-lg font-extrabold heading-accent">Limited-Time Offers</h3>
         </div>
@@ -517,7 +517,7 @@ export default function OffersTab() {
                   className="w-full aspect-video bg-center bg-cover relative"
                   style={{ backgroundImage: `url("${offer.image}")` }}
                 >
-                  <span className="absolute top-2 left-2 bg-[#A78BFA] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="absolute top-2 left-2 bg-[var(--sr-ai)] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                     -{discount}%
                   </span>
                   <span className="absolute top-2 right-2 soft-chip bg-black/40">{offer.tag}</span>
@@ -617,7 +617,7 @@ export default function OffersTab() {
                     <div className="mt-2">
                       <div className="w-full bg-white/5 rounded-full h-1.5">
                         <div
-                          className="bg-gradient-to-r from-[#10E07A] to-[#F5C451] h-1.5 rounded-full transition-all"
+                          className="bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] h-1.5 rounded-full transition-all"
                           style={{ width: `${fillPercent}%` }}
                         />
                       </div>
@@ -637,7 +637,7 @@ export default function OffersTab() {
                   className={`w-full mt-3 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 ${
                     hasJoined
                       ? 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)]'
-                      : 'bg-[var(--sr-customer)] text-[#06070B] hover:bg-[var(--sr-customer)]/90 green-glow'
+                      : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 green-glow'
                   }`}
                 >
                   {hasJoined ? '✓ Joined - View Details' : 'Join Group Buy'}
@@ -664,7 +664,7 @@ export default function OffersTab() {
                 <p className="text-white font-bold text-sm tracking-tight">Refer &amp; Earn</p>
                 <p className="text-white/50 text-xs mt-0.5">Get ₦2,000 per friend who joins SwiftRamadan</p>
               </div>
-              <span className="bg-[var(--sr-rider)] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full">
+              <span className="bg-[var(--sr-rider)] text-[var(--sr-surface-base)] text-[10px] font-black px-3 py-1.5 rounded-full">
                 ₦2,000
               </span>
               <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
@@ -680,10 +680,10 @@ export default function OffersTab() {
           className="w-full text-left active:scale-[0.99] transition-transform"
         >
           <div className="relative overflow-hidden rounded-2xl aurora-card p-5 hover:border-white/15 transition-colors">
-            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#FB7185]/10 blur-[44px] pointer-events-none" />
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-error)]/10 blur-[44px] pointer-events-none" />
             <div className="relative flex items-center gap-3 sm:gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#FB7185]/15 flex items-center justify-center border border-[#FB7185]/30 icon-tile shrink-0">
-                <Heart className="w-6 h-6 text-[#FB7185] relative z-10" />
+              <div className="w-12 h-12 rounded-xl bg-[var(--sr-error)]/15 flex items-center justify-center border border-[var(--sr-error)]/30 icon-tile shrink-0">
+                <Heart className="w-6 h-6 text-[var(--sr-error)] relative z-10" />
               </div>
               <div className="flex-1">
                 <p className="text-white font-bold text-sm tracking-tight">Charity &amp; Zakat</p>

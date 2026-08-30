@@ -200,7 +200,7 @@ export default function PayoutModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[90vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/5"
+            className="fixed bottom-0 left-0 right-0 max-h-[90vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/5"
           >
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">

@@ -155,12 +155,12 @@ export default function SearchOverlay() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[90] bg-[#05070A] flex flex-col"
+          className="fixed inset-0 z-[90] bg-[var(--sr-surface-base)] flex flex-col"
         >
           {/* Search Header */}
           <div className="p-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="flex-1 flex items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
+              <div className="flex-1 flex items-center rounded-full h-12 bg-[var(--sr-surface-elevated)] border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
                 <Search className="w-5 h-5 text-[var(--sr-customer)]/70 ml-4 shrink-0" />
                 <input
                   ref={inputRef}
@@ -220,7 +220,7 @@ export default function SearchOverlay() {
                         <button
                           key={product.id}
                           onClick={() => handleProductClick(product)}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-[#1A1D26]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-elevated)]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
                         >
                           {product.image && (
                             <div
@@ -250,7 +250,7 @@ export default function SearchOverlay() {
                         <button
                           key={cat.id}
                           onClick={() => handleCategoryClick(cat)}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-[#1A1D26]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-elevated)]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
                         >
                           {cat.image && (
                             <div
@@ -277,7 +277,7 @@ export default function SearchOverlay() {
                         <button
                           key={retailer.id}
                           onClick={() => handleRetailerClick(retailer)}
-                          className="flex items-center gap-3 p-3 rounded-xl bg-[#1A1D26]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-elevated)]/40 border border-white/5 hover:border-white/10 transition-colors w-full text-left"
                         >
                           {retailer.image && (
                             <div
@@ -312,14 +312,14 @@ export default function SearchOverlay() {
                 {recentSearches.length > 0 && (
                   <div>
                     <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-[#A78BFA]" />
+                      <Clock className="w-4 h-4 text-[var(--sr-ai)]" />
                       Recent Searches
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {recentSearches.map((s) => (
                         <div
                           key={s}
-                          className="group flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 hover:border-[#A78BFA]/30 transition-colors"
+                          className="group flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 hover:border-[var(--sr-ai)]/30 transition-colors"
                         >
                           <button
                             onClick={() => handleSearchClick(s)}
@@ -329,10 +329,10 @@ export default function SearchOverlay() {
                           </button>
                           <button
                             onClick={() => removeFromHistory(s)}
-                            className="ml-0.5 w-5 h-5 flex items-center justify-center rounded-full bg-white/5 hover:bg-[#FB7185]/20 transition-colors"
+                            className="ml-0.5 w-5 h-5 flex items-center justify-center rounded-full bg-white/5 hover:bg-[var(--sr-error)]/20 transition-colors"
                             aria-label={`Remove ${s} from history`}
                           >
-                            <X className="w-3 h-3 text-white/60 group-hover:text-[#FB7185]" />
+                            <X className="w-3 h-3 text-white/60 group-hover:text-[var(--sr-error)]" />
                           </button>
                         </div>
                       ))}

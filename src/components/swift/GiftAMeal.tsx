@@ -139,7 +139,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Gift a Meal"

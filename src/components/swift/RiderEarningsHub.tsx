@@ -39,7 +39,7 @@ function HourlyTooltip({ active, payload }: HourlyTooltipProps) {
   if (!active || !payload || !payload.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 shadow-xl">
+    <div className="bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2 shadow-xl">
       <p className="text-white text-xs font-bold">{d.hour}</p>
       <p className={d.isIftar ? 'text-[var(--sr-vendor)] text-sm font-black' : 'text-[var(--sr-customer)] text-sm font-black'}>
         {formatNaira(d.amount)}
@@ -98,7 +98,7 @@ export default function RiderEarningsHub() {
       {/* Onboarding Guidance — only when no earnings */}
       {riderEarnings === 0 && data.today === 0 && (
         <motion.div variants={staggerItem} className="mb-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#10E07A]/15 via-[#10E07A]/5 to-[#1A1D26] border border-[var(--sr-customer)]/20 p-5">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-customer)]/15 via-[var(--sr-customer)]/5 to-[#1A1D26] border border-[var(--sr-customer)]/20 p-5">
             <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-customer)]/5 blur-[60px]" />
             <div className="relative z-10">
               <h3 className="text-white text-lg font-black mb-1">Start Earning 🏍️</h3>
@@ -130,7 +130,7 @@ export default function RiderEarningsHub() {
 
       {/* Hero Stats Card */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#F5C451]/20 via-[#F5C451]/5 to-[#1A1D26] border border-[var(--sr-vendor)]/20 p-5 gold-glow">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-vendor)]/20 via-[var(--sr-vendor)]/5 to-[#1A1D26] border border-[var(--sr-vendor)]/20 p-5 gold-glow">
           <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--sr-vendor)]/10 blur-[80px]" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--sr-vendor)]/5 blur-[60px]" />
           <div className="relative z-10">
@@ -155,7 +155,7 @@ export default function RiderEarningsHub() {
           <Clock className="w-4 h-4 text-white/65" />
           Hourly Performance
         </h3>
-        <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4">
           <div ref={chartContainerRef} style={{ width: '100%', height: 200 }}>
             {chartReady ? (
               <ResponsiveContainer width="100%" height="100%">
@@ -207,7 +207,7 @@ export default function RiderEarningsHub() {
         <h3 className="text-white text-sm font-extrabold mb-3">Earnings Breakdown</h3>
         <div className="space-y-2">
           {/* Base Pay */}
-          <div className="bg-[#1A1D26] rounded-xl p-3 sm:p-4 border border-white/5 flex items-center justify-between">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 sm:p-4 border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center">
                 <DollarSign className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -221,7 +221,7 @@ export default function RiderEarningsHub() {
           </div>
 
           {/* Iftar Bonuses - highlighted */}
-          <div className="bg-[#1A1D26] rounded-xl p-3 sm:p-4 border border-[var(--sr-vendor)]/20 flex items-center justify-between relative overflow-hidden">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 sm:p-4 border border-[var(--sr-vendor)]/20 flex items-center justify-between relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--sr-vendor)]/5 blur-[40px]" />
             <div className="flex items-center gap-3 relative z-10">
               <div className="w-10 h-10 bg-[var(--sr-vendor)]/15 rounded-xl flex items-center justify-center">
@@ -241,7 +241,7 @@ export default function RiderEarningsHub() {
           </div>
 
           {/* Customer Tips */}
-          <div className="bg-[#1A1D26] rounded-xl p-3 sm:p-4 border border-white/5 flex items-center justify-between">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 sm:p-4 border border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center">
                 <Star className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -261,7 +261,7 @@ export default function RiderEarningsHub() {
         <h3 className="text-white text-sm font-extrabold mb-3">Performance</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* On-Time Rate - Circular Progress */}
-          <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center">
             <div className="relative w-20 h-20">
               <svg className="w-20 h-20 -rotate-90" viewBox="0 0 100 100">
                 <circle
@@ -295,7 +295,7 @@ export default function RiderEarningsHub() {
           </div>
 
           {/* Average Rating */}
-          <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center justify-center">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center justify-center">
             <div className="w-14 h-14 bg-[var(--sr-vendor)]/10 rounded-2xl flex items-center justify-center mb-2">
               <Star className="w-7 h-7 text-[var(--sr-vendor)]" />
             </div>
@@ -308,7 +308,7 @@ export default function RiderEarningsHub() {
 
       {/* Incentive Progress */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="bg-[#1A1D26] rounded-2xl border border-[var(--sr-vendor)]/10 p-3 sm:p-4">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-[var(--sr-vendor)]/10 p-3 sm:p-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-[var(--sr-vendor)]" />
@@ -318,7 +318,7 @@ export default function RiderEarningsHub() {
           </div>
           <div className="w-full bg-white/5 rounded-full h-3 mb-2">
             <motion.div
-              className="bg-gradient-to-r from-[#F5C451] to-[#f4c025] h-3 rounded-full"
+              className="bg-gradient-to-r from-[var(--sr-vendor)] to-[#f4c025] h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${perf.incentiveProgress}%` }}
               transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -341,7 +341,7 @@ export default function RiderEarningsHub() {
             <motion.div
               key={comp.title}
               variants={staggerItem}
-              className="bg-[#1A1D26] rounded-xl p-3 border border-white/5 flex items-start gap-3"
+              className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 border border-white/5 flex items-start gap-3"
             >
               <div className="w-9 h-9 bg-[var(--sr-customer)]/10 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
                 <span className="material-symbols-outlined text-[var(--sr-customer)] text-base">{comp.icon}</span>
@@ -359,7 +359,7 @@ export default function RiderEarningsHub() {
       <motion.div variants={staggerItem} className="mb-4">
         <button
           onClick={handleCashOut}
-          className="w-full bg-[var(--sr-customer)] text-[#05070A] py-4 rounded-2xl font-black text-sm hover:bg-[var(--sr-customer)]/90 transition-colors flex items-center justify-center gap-2 green-glow"
+          className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] py-4 rounded-2xl font-black text-sm hover:bg-[var(--sr-customer)]/90 transition-colors flex items-center justify-center gap-2 green-glow"
         >
           <DollarSign className="w-5 h-5" />
           Cash Out {formatNaira(riderEarnings)}

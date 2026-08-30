@@ -110,7 +110,7 @@ export function ShimmerCard({
     <div
       role="status"
       aria-label={ariaLabel}
-      className={`bg-[#1A1D26] border border-white/5 rounded-2xl overflow-hidden ${className}`}
+      className={`bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl overflow-hidden ${className}`}
     >
       {/* Image block */}
       <div
@@ -166,7 +166,7 @@ export function ShimmerList({
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="bg-[#1A1D26] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4"
+          className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4"
           style={{ animationDelay: `${i * stagger}s` }}
         >
           {/* Thumbnail */}

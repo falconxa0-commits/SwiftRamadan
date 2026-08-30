@@ -271,7 +271,7 @@ function MosquePartnershipInner() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[#0B0D14] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
+            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
             role="dialog"
             aria-modal="true"
             aria-label="Mosque Partnership Hub"
@@ -320,7 +320,7 @@ function MosquePartnershipInner() {
                   </div>
                   <div className="w-px h-10 bg-white/8" />
                   <div className="flex-1 text-center">
-                    <p className="text-[#A78BFA] text-xl font-black">
+                    <p className="text-[var(--sr-ai)] text-xl font-black">
                       {orders.filter((o) => o.isJoined).length}
                     </p>
                     <p className="text-white/35 text-[10px] uppercase tracking-wider mt-0.5">You Joined</p>
@@ -504,7 +504,7 @@ function MosquePartnershipInner() {
                                 style={{ backgroundColor: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
                               >
                                 <CheckCircle2 className="w-4 h-4" style={{ color: '#A78BFA' }} />
-                                <span className="text-[#A78BFA] text-xs font-semibold">
+                                <span className="text-[var(--sr-ai)] text-xs font-semibold">
                                   Order fulfilled — {order.totalPacks} packs will be delivered before Maghrib, insha Allah
                                 </span>
                               </div>
@@ -532,7 +532,7 @@ function MosquePartnershipInner() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-[#0B0D14]/95 z-[90] flex flex-col"
+                  className="absolute inset-0 bg-[var(--sr-surface-base)]/95 z-[90] flex flex-col"
                 >
                   <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8 shrink-0">
                     <h3 className="text-white font-bold text-base">Join Mosque Order</h3>

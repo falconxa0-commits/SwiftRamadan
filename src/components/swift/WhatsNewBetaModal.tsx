@@ -48,7 +48,7 @@ export default function WhatsNewBetaModal() {
         <>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[110]" onClick={() => setActiveModal(null)} />
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#FFD700]/20">
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#FFD700]/20">
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#FFD700]/8 to-[#13ec13]/5">
               <div className="flex items-center gap-3">
@@ -89,7 +89,7 @@ export default function WhatsNewBetaModal() {
                       const color = CATEGORY_COLOR[item.category];
                       return (
                         <motion.div key={i} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
-                          className="flex gap-3 p-3 rounded-2xl bg-[#0F1117] border border-white/5">
+                          className="flex gap-3 p-3 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5">
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${color}15`, border: `1px solid ${color}30` }}>
                             <Icon className="w-5 h-5" style={{ color }} />
                           </div>
@@ -121,7 +121,7 @@ export default function WhatsNewBetaModal() {
                   <h3 className="text-white font-bold text-sm">You're a Beta Tester 🎉</h3>
                   <p className="text-white/50 text-xs mt-1 mb-3">Thanks for helping shape SwiftRamadan. Your feedback makes the app better for the whole ummah.</p>
                   <button onClick={() => setActiveModal('beta-feedback')}
-                    className="bg-[#13ec13] text-[#05070A] font-bold text-sm py-2.5 px-5 rounded-xl inline-flex items-center gap-2 active:scale-[0.98] transition-transform">
+                    className="bg-[#13ec13] text-[var(--sr-surface-base)] font-bold text-sm py-2.5 px-5 rounded-xl inline-flex items-center gap-2 active:scale-[0.98] transition-transform">
                     <MessageSquare className="w-4 h-4" /> Send Feedback
                   </button>
                 </div>

@@ -406,10 +406,10 @@ function IftarStoriesInner() {
                 className={`w-16 h-16 rounded-full p-[2px] ${
                   story.viewed
                     ? 'bg-white/20'
-                    : 'bg-gradient-to-br from-[#10E07A] via-[#F5C451] to-[#A78BFA]'
+                    : 'bg-gradient-to-br from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]'
                 }`}
               >
-                <div className="w-full h-full rounded-full bg-[#0B0D14] flex items-center justify-center text-lg font-bold overflow-hidden">
+                <div className="w-full h-full rounded-full bg-[var(--sr-surface-base)] flex items-center justify-center text-lg font-bold overflow-hidden">
                   {story.avatar ? (
                     <img
                       src={story.avatar}
@@ -436,7 +436,7 @@ function IftarStoriesInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14] flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)] flex items-center justify-center"
             role="dialog"
             aria-modal="true"
             aria-label={`Viewing ${viewingStory.authorName}'s story`}
@@ -463,7 +463,7 @@ function IftarStoriesInner() {
             {/* Header */}
             <div className="absolute top-6 left-0 right-0 z-10 flex items-center justify-between px-4">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center text-sm font-bold text-black">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center text-sm font-bold text-black">
                   {viewingStory.authorInitial}
                 </div>
                 <div>
@@ -608,7 +608,7 @@ function IftarStoriesInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Create a new story"

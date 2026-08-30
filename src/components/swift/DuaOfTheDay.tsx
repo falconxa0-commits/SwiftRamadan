@@ -170,8 +170,8 @@ export default function DuaOfTheDay() {
             {/* Header */}
             <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
-                <div className="icon-tile w-10 h-10 border border-[#A78BFA]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
-                  <BookOpen className="w-5 h-5 text-[#A78BFA]" />
+                <div className="icon-tile w-10 h-10 border border-[var(--sr-ai)]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
+                  <BookOpen className="w-5 h-5 text-[var(--sr-ai)]" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">Du&apos;a of the Day</h2>
@@ -249,7 +249,7 @@ export default function DuaOfTheDay() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.2 }}
                         >
-                          <p className="text-xs font-bold text-[#A78BFA] mb-1 uppercase tracking-wider">Transliteration</p>
+                          <p className="text-xs font-bold text-[var(--sr-ai)] mb-1 uppercase tracking-wider">Transliteration</p>
                           <p className="text-sm text-white/70 italic">{currentDua?.transliteration}</p>
                         </motion.div>
 

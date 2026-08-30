@@ -219,16 +219,16 @@ export default function VendorWallet() {
         </div>
 
         <div className="relative z-10">
-          <p className="text-[#06070B]/60 text-xs font-bold uppercase tracking-widest">
+          <p className="text-[var(--sr-surface-base)]/60 text-xs font-bold uppercase tracking-widest">
             Available Balance
           </p>
           {loading ? (
             <div className="mt-1 h-9 w-40 bg-[var(--sr-surface-base)]/20 rounded-lg animate-pulse" />
           ) : (
-            <p className="text-[#06070B] text-3xl font-black mt-1">{formatNaira(vendorBalance)}</p>
+            <p className="text-[var(--sr-surface-base)] text-3xl font-black mt-1">{formatNaira(vendorBalance)}</p>
           )}
           <div className="flex items-center gap-2 mt-4">
-            <p className="text-[#06070B]/50 text-xs font-semibold">
+            <p className="text-[var(--sr-surface-base)]/50 text-xs font-semibold">
               {formatNaira(vendorBalance)} available
             </p>
           </div>
@@ -243,7 +243,7 @@ export default function VendorWallet() {
             </button>
             <button
               onClick={() => setActiveModal('vendor-insights')}
-              className="px-6 py-2.5 rounded-xl bg-[var(--sr-surface-base)]/20 text-[#06070B]/70 text-xs font-bold hover:bg-[var(--sr-surface-base)]/30 active:scale-[0.98] transition-all flex items-center gap-1.5"
+              className="px-6 py-2.5 rounded-xl bg-[var(--sr-surface-base)]/20 text-[var(--sr-surface-base)]/70 text-xs font-bold hover:bg-[var(--sr-surface-base)]/30 active:scale-[0.98] transition-all flex items-center gap-1.5"
             >
               <BarChart3 className="w-3.5 h-3.5" />
               Sales Insights
@@ -322,7 +322,7 @@ export default function VendorWallet() {
                 <button
                   onClick={handleWithdraw}
                   disabled={submittingPayout}
-                  className="flex-1 py-3 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
+                  className="flex-1 py-3 rounded-xl bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
                 >
                   {submittingPayout ? (
                     <>

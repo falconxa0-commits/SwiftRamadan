@@ -326,7 +326,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
             transition={{ duration: 0.4 }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
-            <Heart className="w-28 h-28 text-[#FB7185] fill-[#FB7185] drop-shadow-[0_0_30px_rgba(251,113,133,0.6)]" />
+            <Heart className="w-28 h-28 text-[var(--sr-error)] fill-[#FB7185] drop-shadow-[0_0_30px_rgba(251,113,133,0.6)]" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -373,7 +373,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
         >
           <motion.div animate={video.liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
             <Heart
-              className={`w-8 h-8 ${video.liked ? 'text-[#FB7185] fill-[#FB7185]' : 'text-white'}`}
+              className={`w-8 h-8 ${video.liked ? 'text-[var(--sr-error)] fill-[#FB7185]' : 'text-white'}`}
               strokeWidth={2}
             />
           </motion.div>
@@ -421,7 +421,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
 
         {/* Shop link (rotating disc) */}
         <button
-          className="size-11 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center active:scale-90 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
+          className="size-11 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center active:scale-90 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
           aria-label="Shop this"
         >
           <ShoppingBag className="w-5 h-5 text-black" strokeWidth={2.5} />

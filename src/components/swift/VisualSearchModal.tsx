@@ -261,10 +261,10 @@ export default function VisualSearchModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
           >
             {/* Sticky Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-[#05070A]/95 backdrop-blur z-10">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-[var(--sr-surface-base)]/95 backdrop-blur z-10">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/30 relative">
                   <ScanLine className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -335,7 +335,7 @@ export default function VisualSearchModal() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       onClick={() => cameraInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-bold active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
+                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold active:scale-[0.98] transition-transform shadow-lg shadow-[var(--sr-customer)]/20"
                     >
                       <Camera className="w-6 h-6" />
                       <span className="text-sm">Take Photo 📷</span>
@@ -350,7 +350,7 @@ export default function VisualSearchModal() {
                   </div>
 
                   {/* Tips */}
-                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4">
+                  <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-3 sm:p-4">
                     <h4 className="text-white font-bold text-xs mb-2 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
                       Tips for best results
@@ -391,7 +391,7 @@ export default function VisualSearchModal() {
 
                     {/* Animated scanner line */}
                     <motion.div
-                      className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#10E07A] to-transparent shadow-[0_0_18px_rgba(16,224,122,0.8)]"
+                      className="absolute left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[var(--sr-customer)] to-transparent shadow-[0_0_18px_rgba(16,224,122,0.8)]"
                       initial={{ top: '5%' }}
                       animate={{ top: ['5%', '92%', '5%'] }}
                       transition={{
@@ -409,7 +409,7 @@ export default function VisualSearchModal() {
                     </div>
 
                     {/* Loading label */}
-                    <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#05070A]/80 backdrop-blur border border-[var(--sr-customer)]/30 flex items-center gap-2">
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[var(--sr-surface-base)]/80 backdrop-blur border border-[var(--sr-customer)]/30 flex items-center gap-2">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
@@ -469,7 +469,7 @@ export default function VisualSearchModal() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--sr-customer)] text-[#05070A] text-[10px] font-black uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-[10px] font-black uppercase tracking-wide">
                           <Check className="w-3 h-3" />
                           Identified
                         </span>
@@ -484,7 +484,7 @@ export default function VisualSearchModal() {
                   </div>
 
                   {/* AI description + estimated price */}
-                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4 space-y-3">
+                  <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-3 sm:p-4 space-y-3">
                     <div>
                       <h4 className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
                         <Sparkles className="w-3 h-3 text-[var(--sr-vendor)]" />
@@ -535,9 +535,9 @@ export default function VisualSearchModal() {
                             initial={{ opacity: 0, y: 12 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.08 }}
-                            className="rounded-2xl bg-[#1A1D26] border border-white/5 overflow-hidden flex flex-col"
+                            className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 overflow-hidden flex flex-col"
                           >
-                            <div className="relative aspect-square bg-[#0F1117]">
+                            <div className="relative aspect-square bg-[var(--sr-surface-raised)]">
                               <img
                                 src={product.image}
                                 alt={product.name}
@@ -575,7 +575,7 @@ export default function VisualSearchModal() {
                                   className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
                                     inCart
                                       ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/40'
-                                      : 'bg-[var(--sr-customer)] text-[#05070A] active:scale-95 hover:shadow-md hover:shadow-[#10E07A]/30'
+                                      : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] active:scale-95 hover:shadow-md hover:shadow-[var(--sr-customer)]/30'
                                   }`}
                                 >
                                   {inCart ? (

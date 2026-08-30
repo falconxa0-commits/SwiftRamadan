@@ -249,7 +249,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col items-center overflow-hidden">
+    <div className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col items-center overflow-hidden">
       {/* Header */}
       <div className="w-full flex items-center justify-between px-4 pt-4 pb-2 relative z-20">
         <div className="flex items-center gap-2">
@@ -277,9 +277,9 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
             <span className="text-[var(--sr-vendor)] text-xs font-bold">{spinStreak} Day Streak</span>
           </div>
           {spinStreak >= 3 && (
-            <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-[#A78BFA]/10 border border-[#A78BFA]/20">
-              <Zap className="w-3 h-3 text-[#A78BFA]" />
-              <span className="text-[#A78BFA] text-[10px] font-bold">2x Bonus</span>
+            <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/20">
+              <Zap className="w-3 h-3 text-[var(--sr-ai)]" />
+              <span className="text-[var(--sr-ai)] text-[10px] font-bold">2x Bonus</span>
             </div>
           )}
         </div>
@@ -409,7 +409,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
             <button
               onClick={handleSpin}
               disabled={isSpinning || !canSpin}
-              className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#F5C451]/50"
+              className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-[var(--sr-vendor)]/50"
               style={{
                 background: canSpin
                   ? 'linear-gradient(135deg, #F5C451, #E5A830)'
@@ -537,7 +537,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               >
                 {/* Glow effect */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-[60px]" style={{ background: result.prize.jackpot ? '#F5C451' : '#10E07A', opacity: 0.2 }} />
-                <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full bg-[#A78BFA]/20 blur-[40px]" />
+                <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full bg-[var(--sr-ai)]/20 blur-[40px]" />
 
                 <div className="relative z-10 p-8 text-center">
                   {/* Prize icon */}
@@ -587,7 +587,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     <Flame className="w-4 h-4 text-orange-400" />
                     <span className="text-white/60 text-sm font-semibold">{result.streak} Day Spin Streak</span>
                     {result.streak >= 3 && (
-                      <span className="text-[#A78BFA] text-xs font-bold">(2x Active!)</span>
+                      <span className="text-[var(--sr-ai)] text-xs font-bold">(2x Active!)</span>
                     )}
                   </motion.div>
 

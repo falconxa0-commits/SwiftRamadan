@@ -100,14 +100,14 @@ export default function RecipeRemixModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F97316]/10 rounded-xl flex items-center justify-center border border-[#F97316]/20">
-                  <ChefHat className="w-5 h-5 text-[#F97316]" />
+                <div className="w-10 h-10 bg-[var(--sr-warning)]/10 rounded-xl flex items-center justify-center border border-[#F97316]/20">
+                  <ChefHat className="w-5 h-5 text-[var(--sr-warning)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">🍳 Recipe Remix</h2>
@@ -116,7 +116,7 @@ export default function RecipeRemixModal() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -129,10 +129,10 @@ export default function RecipeRemixModal() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5"
+              className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-5"
             >
               <div className="flex items-center gap-2 mb-4">
-                <Wand2 className="w-5 h-5 text-[#F97316]" />
+                <Wand2 className="w-5 h-5 text-[var(--sr-warning)]" />
                 <h3 className="text-white font-bold text-base">Create Your Remix</h3>
               </div>
 
@@ -144,7 +144,7 @@ export default function RecipeRemixModal() {
                   value={originalRecipe}
                   onChange={(e) => setOriginalRecipe(e.target.value)}
                   placeholder="e.g. Jollof Rice"
-                  className="w-full bg-[#05070A] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
+                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
                 />
               </div>
 
@@ -156,7 +156,7 @@ export default function RecipeRemixModal() {
                   value={twist}
                   onChange={(e) => setTwist(e.target.value)}
                   placeholder="e.g. make it healthier"
-                  className="w-full bg-[#05070A] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
+                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
                 />
               </div>
 
@@ -164,7 +164,7 @@ export default function RecipeRemixModal() {
               <motion.button
                 onClick={handleRemix}
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all bg-[#F97316] text-white hover:bg-[#F97316]/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all bg-[var(--sr-warning)] text-white hover:bg-[var(--sr-warning)]/90 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <>
@@ -194,7 +194,7 @@ export default function RecipeRemixModal() {
                 exit={{ opacity: 0, y: -10 }}
                 className="px-4 mt-6"
               >
-                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden">
                   {/* Result header */}
                   <div className="p-5 border-b border-white/5">
                     <div className="flex items-center justify-between mb-2">
@@ -209,7 +209,7 @@ export default function RecipeRemixModal() {
                   {/* Ingredients */}
                   <div className="p-5 border-b border-white/5">
                     <div className="flex items-center gap-2 mb-3">
-                      <List className="w-4 h-4 text-[#F97316]" />
+                      <List className="w-4 h-4 text-[var(--sr-warning)]" />
                       <h4 className="text-white font-bold text-sm">Ingredients</h4>
                     </div>
                     <div className="flex flex-wrap gap-2">
@@ -253,10 +253,10 @@ export default function RecipeRemixModal() {
 
                   {/* Twist Explanation */}
                   <div className="p-5">
-                    <div className="bg-[#F97316]/5 border border-[#F97316]/10 rounded-xl p-3 sm:p-4">
+                    <div className="bg-[var(--sr-warning)]/5 border border-[#F97316]/10 rounded-xl p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <Sparkles className="w-4 h-4 text-[#F97316]" />
-                        <h4 className="text-[#F97316] font-bold text-xs">Why This Twist Works</h4>
+                        <Sparkles className="w-4 h-4 text-[var(--sr-warning)]" />
+                        <h4 className="text-[var(--sr-warning)] font-bold text-xs">Why This Twist Works</h4>
                       </div>
                       <p className="text-white/60 text-sm leading-relaxed">{remix.twist_explanation}</p>
                     </div>
@@ -287,9 +287,9 @@ export default function RecipeRemixModal() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.08 }}
                     onClick={() => handlePopularRemix(item)}
-                    className="w-full bg-[#1A1D26] rounded-xl border border-white/5 p-3.5 flex items-center gap-3 hover:border-white/10 transition-colors text-left group"
+                    className="w-full bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3.5 flex items-center gap-3 hover:border-white/10 transition-colors text-left group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-[#F97316]/10 flex items-center justify-center border border-[#F97316]/20 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--sr-warning)]/10 flex items-center justify-center border border-[#F97316]/20 shrink-0">
                       <span className="text-lg">🍳</span>
                     </div>
                     <div className="flex-1 min-w-0">

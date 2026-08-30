@@ -185,7 +185,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Chef Battles"
@@ -300,7 +300,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                           setSelectedBattle(battle);
                           setUserVote(null);
                         }}
-                        className="bg-white/3 rounded-xl border border-white/5 p-3 text-center hover:border-[#A78BFA]/30 transition-colors relative overflow-hidden"
+                        className="bg-white/3 rounded-xl border border-white/5 p-3 text-center hover:border-[var(--sr-ai)]/30 transition-colors relative overflow-hidden"
                         aria-label={`Vote for ${battle.chefB.name}`}
                       >
                         <div className="text-3xl mb-2">{battle.chefB.image}</div>
@@ -310,7 +310,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                           <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
                           <span className="text-[var(--sr-vendor)] text-[9px] font-bold">{battle.chefB.rating}</span>
                         </div>
-                        <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#A78BFA] flex items-center justify-center">
+                        <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[var(--sr-ai)] flex items-center justify-center">
                           <span className="text-[8px] font-black text-white">B</span>
                         </div>
                       </motion.button>
@@ -359,10 +359,10 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-white/50 text-[9px]">{battle.chefB.name}</span>
-                            <span className="text-[#A78BFA] text-[9px] font-bold">{getVotePct(battle.votesB, battle.totalVotes)}%</span>
+                            <span className="text-[var(--sr-ai)] text-[9px] font-bold">{getVotePct(battle.votesB, battle.totalVotes)}%</span>
                           </div>
                           <div className="w-full bg-white/5 rounded-full h-1.5">
-                            <div className="h-full rounded-full bg-[#A78BFA]" style={{ width: `${getVotePct(battle.votesB, battle.totalVotes)}%` }} />
+                            <div className="h-full rounded-full bg-[var(--sr-ai)]" style={{ width: `${getVotePct(battle.votesB, battle.totalVotes)}%` }} />
                           </div>
                         </div>
                       </div>
@@ -477,15 +477,15 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   disabled={!!userVote || voting}
                   className={`relative rounded-2xl border p-5 text-center transition-all ${
                     userVote === 'B'
-                      ? 'bg-[#A78BFA]/10 border-[#A78BFA]/40'
-                      : 'bg-white/3 border-white/10 hover:border-[#A78BFA]/30'
+                      ? 'bg-[var(--sr-ai)]/10 border-[var(--sr-ai)]/40'
+                      : 'bg-white/3 border-white/10 hover:border-[var(--sr-ai)]/30'
                   }`}
                   aria-label={`Vote for Chef B: ${selectedBattle.chefB.name}`}
                 >
                   <div className="text-4xl mb-2">{selectedBattle.chefB.image}</div>
                   <p className="text-white text-sm font-bold">{selectedBattle.chefB.name}</p>
                   <p className="text-white/60 text-[10px]">{selectedBattle.chefB.restaurant}</p>
-                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#A78BFA] flex items-center justify-center">
+                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[var(--sr-ai)] flex items-center justify-center">
                     <span className="text-[10px] font-black text-white">B</span>
                   </div>
                 </motion.button>
@@ -511,10 +511,10 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%` }}
-                        className="h-full rounded-full bg-[#A78BFA]"
+                        className="h-full rounded-full bg-[var(--sr-ai)]"
                       />
                     </div>
-                    <span className="text-[#A78BFA] text-[10px] font-bold">{getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%</span>
+                    <span className="text-[var(--sr-ai)] text-[10px] font-bold">{getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%</span>
                   </div>
                 </div>
               )}
@@ -571,11 +571,11 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 <div className="bg-white/5 rounded-xl p-3 mb-5">
                   <div className="flex items-center justify-between text-xs mb-2">
                     <span className="text-[var(--sr-customer)] font-bold">{selectedBattle.chefA.name}: {getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%</span>
-                    <span className="text-[#A78BFA] font-bold">{selectedBattle.chefB.name}: {getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%</span>
+                    <span className="text-[var(--sr-ai)] font-bold">{selectedBattle.chefB.name}: {getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%</span>
                   </div>
                   <div className="flex gap-1 h-2 rounded-full overflow-hidden">
                     <div className="bg-[var(--sr-customer)] rounded-l-full" style={{ width: `${getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%` }} />
-                    <div className="bg-[#A78BFA] rounded-r-full" style={{ width: `${getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%` }} />
+                    <div className="bg-[var(--sr-ai)] rounded-r-full" style={{ width: `${getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%` }} />
                   </div>
                 </div>
 

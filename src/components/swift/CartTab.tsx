@@ -122,7 +122,7 @@ export default function CartTab() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={() => useAppStore.getState().setActiveTab('explore')}
-            className="bg-[var(--sr-customer)] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
+            className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
           >
             Browse Menu
             <ChevronRight className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function CartTab() {
             setAppliedCouponData(null);
             toast({ title: 'Cart Cleared', description: 'All items removed from cart' });
           }}
-          className="text-[#FB7185] text-xs font-bold uppercase tracking-wider hover:text-[#FB7185]/80 transition-colors"
+          className="text-[var(--sr-error)] text-xs font-bold uppercase tracking-wider hover:text-[var(--sr-error)]/80 transition-colors"
         >
           Clear All
         </button>
@@ -192,7 +192,7 @@ export default function CartTab() {
                     className="shrink-0 p-1 hover:bg-white/5 rounded-lg transition-colors"
                     aria-label={`Remove ${item.name} from cart`}
                   >
-                    <Trash2 className="w-4 h-4 text-[#FB7185]/60 hover:text-[#FB7185]" />
+                    <Trash2 className="w-4 h-4 text-[var(--sr-error)]/60 hover:text-[var(--sr-error)]" />
                   </button>
                 </div>
                 <p className="text-[var(--sr-customer)] font-bold text-sm mt-1">{formatNaira(item.price)}</p>
@@ -244,7 +244,7 @@ export default function CartTab() {
             </div>
             <button
               onClick={handleRemoveCoupon}
-              className="text-white/65 text-xs font-bold hover:text-[#FB7185] transition-colors"
+              className="text-white/65 text-xs font-bold hover:text-[var(--sr-error)] transition-colors"
             >
               Remove
             </button>
@@ -326,7 +326,7 @@ export default function CartTab() {
       <div className="px-5 mt-6 mb-6">
         <button
           onClick={handleCheckout}
-          className="w-full bg-[var(--sr-customer)] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="w-full bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           PROCEED TO CHECKOUT &bull; {formatNaira(total)}
           <ChevronRight className="w-4 h-4" />

@@ -169,7 +169,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Ramadan Challenge Board"
@@ -458,9 +458,9 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                   <span className="text-[var(--sr-vendor)] text-xs font-bold">+{selectedChallenge.points} pts</span>
                 </div>
                 {selectedChallenge.badge && (
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#A78BFA]/10 border border-[#A78BFA]/20">
-                    <Award className="w-3 h-3 text-[#A78BFA]" />
-                    <span className="text-[#A78BFA] text-xs font-bold">{selectedChallenge.badge}</span>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/20">
+                    <Award className="w-3 h-3 text-[var(--sr-ai)]" />
+                    <span className="text-[var(--sr-ai)] text-xs font-bold">{selectedChallenge.badge}</span>
                   </div>
                 )}
               </div>

@@ -337,7 +337,7 @@ export default function PostRamadanMode() {
                   {/* Eid Gift Bundles */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <Gift className="w-4 h-4 text-[#FB7185]" />
+                      <Gift className="w-4 h-4 text-[var(--sr-error)]" />
                       <p className="text-sm font-semibold text-white/70">Eid Gift Bundles</p>
                     </div>
                     <div className="space-y-3 max-h-64 overflow-y-auto custom-scrollbar">

@@ -308,13 +308,13 @@ function RamadanDiaryInner() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-[#A78BFA]" />
+          <BookOpen className="w-5 h-5 text-[var(--sr-ai)]" />
           <h2 className="text-white font-semibold text-lg">Ramadan Diary</h2>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowShareable(true)}
-            className="bg-[#A78BFA]/10 border border-[#A78BFA]/30 text-[#A78BFA] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[#A78BFA]/20 transition-colors"
+            className="bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/30 text-[var(--sr-ai)] text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[var(--sr-ai)]/20 transition-colors"
           >
             <Share2 className="w-3.5 h-3.5" /> My Ramadan
           </button>
@@ -341,7 +341,7 @@ function RamadanDiaryInner() {
           <p className="text-white/65 text-[10px]">Total Entries</p>
         </div>
         <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 text-center">
-          <p className="text-[#A78BFA] text-lg font-bold">{ramadanProgress}%</p>
+          <p className="text-[var(--sr-ai)] text-lg font-bold">{ramadanProgress}%</p>
           <p className="text-white/65 text-[10px]">Progress</p>
         </div>
       </div>
@@ -544,7 +544,7 @@ function RamadanDiaryInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Create diary entry"
@@ -557,7 +557,7 @@ function RamadanDiaryInner() {
             >
               <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold text-lg flex items-center gap-2">
-                  <PenLine className="w-5 h-5 text-[#A78BFA]" /> Diary Entry
+                  <PenLine className="w-5 h-5 text-[var(--sr-ai)]" /> Diary Entry
                 </h2>
                 <button
                   onClick={() => setShowCreate(false)}
@@ -619,7 +619,7 @@ function RamadanDiaryInner() {
                     onChange={(e) => setNewText(e.target.value)}
                     placeholder="How was your day of fasting? What are you grateful for?"
                     rows={4}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#A78BFA]/50 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-ai)]/50 resize-none"
                   />
                 </div>
 
@@ -633,7 +633,7 @@ function RamadanDiaryInner() {
                         onClick={() => toggleTag(tag)}
                         className={`px-3 py-1 rounded-full text-xs transition-all flex items-center gap-1 ${
                           newTags.includes(tag)
-                            ? 'bg-[#A78BFA]/20 text-[#A78BFA] border border-[#A78BFA]/30'
+                            ? 'bg-[var(--sr-ai)]/20 text-[var(--sr-ai)] border border-[var(--sr-ai)]/30'
                             : 'bg-white/5 text-white/65 hover:bg-white/10'
                         }`}
                       >
@@ -663,7 +663,7 @@ function RamadanDiaryInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="My Ramadan 2026 shareable card"
@@ -678,7 +678,7 @@ function RamadanDiaryInner() {
               <div className="relative bg-gradient-to-br from-[#0B0D14] via-[#0F1118] to-[#0B0D14] p-6 overflow-hidden">
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/5 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#A78BFA]/5 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-ai)]/5 rounded-full blur-3xl" />
                 <div className="absolute top-4 right-4 text-[var(--sr-vendor)]/20 text-6xl">🌙</div>
 
                 <div className="relative z-10 space-y-4">
@@ -709,7 +709,7 @@ function RamadanDiaryInner() {
                       <p className="text-white/65 text-[10px]">Entries Written</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
-                      <p className="text-[#A78BFA] text-xl font-bold">{totalTags}</p>
+                      <p className="text-[var(--sr-ai)] text-xl font-bold">{totalTags}</p>
                       <p className="text-white/65 text-[10px]">Tags Used</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
@@ -740,7 +740,7 @@ function RamadanDiaryInner() {
                         initial={{ width: 0 }}
                         animate={{ width: `${ramadanProgress}%` }}
                         transition={{ duration: 1, ease: 'easeOut' }}
-                        className="h-full bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#A78BFA] rounded-full"
+                        className="h-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)] rounded-full"
                       />
                     </div>
                   </div>

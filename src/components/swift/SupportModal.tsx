@@ -54,7 +54,7 @@ const PRIORITIES = [
   { value: 'low', label: 'Low', color: 'text-white/50' },
   { value: 'medium', label: 'Medium', color: 'text-[var(--sr-vendor)]' },
   { value: 'high', label: 'High', color: 'text-[#FB923C]' },
-  { value: 'urgent', label: 'Urgent', color: 'text-[#FB7185]' },
+  { value: 'urgent', label: 'Urgent', color: 'text-[var(--sr-error)]' },
 ];
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
@@ -314,11 +314,11 @@ export default function SupportModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] flex flex-col"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col"
           >
             {/* ─── Sticky Header ─── */}
             <div className="glass-effect border-b border-white/5 shrink-0">
-              <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#A78BFA]" />
+              <div className="h-[3px] bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]" />
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 {activeView === 'detail' ? (
                   <button
@@ -369,7 +369,7 @@ export default function SupportModal() {
                   <div className="px-4 pt-4 pb-2 shrink-0">
                     <button
                       onClick={() => setActiveView('create')}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-[#10E07A] to-[#0FB463] text-[#04140C] font-bold text-sm active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(16,224,122,0.25)]"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(16,224,122,0.25)]"
                     >
                       <Plus className="w-4 h-4" strokeWidth={2.5} />
                       Create Ticket
@@ -521,7 +521,7 @@ export default function SupportModal() {
                   <button
                     onClick={handleCreateTicket}
                     disabled={submitting || !subject.trim() || !message.trim()}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A] to-[#0FB463] text-[#04140C] font-bold text-sm active:scale-[0.98] transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(16,224,122,0.25)]"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(16,224,122,0.25)]"
                   >
                     {submitting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -606,14 +606,14 @@ export default function SupportModal() {
                               className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                                 isUser
                                   ? 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
-                                  : 'bg-gradient-to-br from-[#10E07A] to-[#0FB463] text-[#04140C] font-medium rounded-br-md'
+                                  : 'bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-medium rounded-br-md'
                               }`}
                             >
                               {isUser && (
                                 <span className="text-[10px] font-bold text-white/60 block mb-1">You</span>
                               )}
                               {!isUser && (
-                                <span className="text-[10px] font-bold text-[#04140C]/50 block mb-1">Support</span>
+                                <span className="text-[10px] font-bold text-[var(--sr-surface-base)]/50 block mb-1">Support</span>
                               )}
                               {msg.text}
                             </div>
@@ -652,10 +652,10 @@ export default function SupportModal() {
                         <button
                           onClick={handleSendMessage}
                           disabled={!message.trim()}
-                          className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[#10E07A] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
+                          className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
                           aria-label="Send message"
                         >
-                          <Send className="w-5 h-5 text-[#04140C]" strokeWidth={2.5} />
+                          <Send className="w-5 h-5 text-[var(--sr-surface-base)]" strokeWidth={2.5} />
                         </button>
                       </div>
                       <button

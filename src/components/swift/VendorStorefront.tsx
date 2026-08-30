@@ -62,7 +62,7 @@ const storefrontData: VendorStorefrontData = {
   tagline: 'Authentic Nigerian Iftar Since 2019',
   description: 'Handcrafted meals with love. Every dish tells a story of tradition and family. Our jollof rice has been voted #1 in Lagos 3 years running!',
   avatar: 'MAK',
-  coverGradient: 'from-[#10E07A]/20 via-[#F5C451]/10 to-[#A78BFA]/10',
+  coverGradient: 'from-[var(--sr-customer)]/20 via-[var(--sr-vendor)]/10 to-[var(--sr-ai)]/10',
   isPremium: true,
   theme: 'aurora',
   rating: 4.9,
@@ -150,18 +150,18 @@ export default function VendorStorefront() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#0B0D14] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-label={`${data.name} - Vendor Storefront`}
         >
           {/* Premium Gold Border */}
           {data.isPremium && (
-            <div className="h-1 bg-gradient-to-r from-[#F5C451] via-[#FFD700] to-[#F5C451]" />
+            <div className="h-1 bg-gradient-to-r from-[var(--sr-vendor)] via-[#FFD700] to-[var(--sr-vendor)]" />
           )}
 
           {/* Header */}
-          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
+          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--sr-surface-base)]/80 border-b border-white/8">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div
@@ -192,7 +192,7 @@ export default function VendorStorefront() {
 
           {/* Cover Section */}
           <div className={`relative h-40 bg-gradient-to-br ${data.coverGradient} flex items-center justify-center`}>
-            <div className="absolute inset-0 bg-[#0B0D14]/40" />
+            <div className="absolute inset-0 bg-[var(--sr-surface-base)]/40" />
             <div className="relative text-center">
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
@@ -295,14 +295,14 @@ export default function VendorStorefront() {
                     key={offer.id}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-gradient-to-br from-[#F5C451]/10 to-[#F5C451]/5 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex-shrink-0 min-w-[160px]"
+                    className="bg-gradient-to-br from-[var(--sr-vendor)]/10 to-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex-shrink-0 min-w-[160px]"
                   >
                     <div className="flex items-center gap-1.5 mb-1">
                       <Tag className="w-3 h-3 text-[var(--sr-vendor)]" />
                       <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{offer.discount}% OFF</span>
                     </div>
                     <p className="text-white font-bold text-xs mb-1">{offer.title}</p>
-                    <div className="bg-[#0B0D14]/50 rounded-md px-2 py-1">
+                    <div className="bg-[var(--sr-surface-base)]/50 rounded-md px-2 py-1">
                       <span className="text-[var(--sr-vendor)] text-[10px] font-mono font-bold">{offer.code}</span>
                     </div>
                   </motion.div>
@@ -373,7 +373,7 @@ export default function VendorStorefront() {
                   className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 p-3"
                 >
                   <div className="flex items-center gap-2.5 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-[#A78BFA]/20 flex items-center justify-center text-[#A78BFA] text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-[var(--sr-ai)]/20 flex items-center justify-center text-[var(--sr-ai)] text-xs font-bold">
                       {review.avatar}
                     </div>
                     <div className="flex-1">
@@ -402,8 +402,8 @@ export default function VendorStorefront() {
               className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 sm:p-4 flex items-center gap-3 hover:bg-white/5 transition-colors"
               aria-label="Change storefront theme"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#A78BFA]/10 flex items-center justify-center border border-[#A78BFA]/20">
-                <Palette className="w-5 h-5 text-[#A78BFA]" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--sr-ai)]/10 flex items-center justify-center border border-[var(--sr-ai)]/20">
+                <Palette className="w-5 h-5 text-[var(--sr-ai)]" />
               </div>
               <div className="flex-1 text-left">
                 <h4 className="text-white font-bold text-sm">Storefront Theme</h4>
@@ -445,7 +445,7 @@ export default function VendorStorefront() {
           {/* Premium Badge */}
           {data.isPremium && (
             <div className="px-4 mb-8">
-              <div className="bg-gradient-to-r from-[#F5C451]/10 to-transparent border border-[var(--sr-vendor)]/20 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+              <div className="bg-gradient-to-r from-[var(--sr-vendor)]/10 to-transparent border border-[var(--sr-vendor)]/20 rounded-xl p-3 sm:p-4 flex items-center gap-3">
                 <Shield className="w-5 h-5 text-[var(--sr-vendor)]" />
                 <div>
                   <p className="text-[var(--sr-vendor)] font-bold text-xs">Premium Storefront</p>

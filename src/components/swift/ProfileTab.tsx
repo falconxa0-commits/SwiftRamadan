@@ -52,16 +52,16 @@ const ROLE_DEFAULT_TAB: Record<string, TabId> = {
 
 const customerMenu = [
   { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
-  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[var(--sr-ai)]', action: 'meal-planner', section: 'SMART KITCHEN' },
   { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[var(--sr-customer)]', action: 'bnpl', section: 'REWARDS & GIVING' },
   { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[var(--sr-customer)]', action: 'wallet', section: 'REWARDS & GIVING' },
   { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'rewards', section: 'REWARDS & GIVING' },
   { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-[var(--sr-rider)]', action: 'refer', section: 'REWARDS & GIVING' },
-  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-[#FB7185]', action: 'charity', section: 'REWARDS & GIVING' },
+  { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-[var(--sr-error)]', action: 'charity', section: 'REWARDS & GIVING' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[var(--sr-customer)]', action: 'eco-impact', section: 'REWARDS & GIVING' },
   { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-[var(--sr-vendor)]', action: 'artisan-market', section: 'REWARDS & GIVING' },
-  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-[#A78BFA]', action: 'community', section: 'REWARDS & GIVING' },
-  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-[#A78BFA]', action: 'delivery-location', section: 'ACCOUNT' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-[var(--sr-ai)]', action: 'community', section: 'REWARDS & GIVING' },
+  { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-[var(--sr-ai)]', action: 'delivery-location', section: 'ACCOUNT' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[var(--sr-rider)]', action: 'prayer-times', section: 'ACCOUNT' },
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'notifications', section: 'ACCOUNT' },
   { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[var(--sr-rider)]', action: 'support', section: 'SUPPORT' },
@@ -69,13 +69,13 @@ const customerMenu = [
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-customer)]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
   { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
-  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[var(--sr-ai)]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const vendorMenu = [
   { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
-  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[var(--sr-ai)]', action: 'meal-planner', section: 'SMART KITCHEN' },
   { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[var(--sr-vendor)]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
   { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-[var(--sr-customer)]', action: 'vendor-stock', section: 'REWARDS & GIVING' },
   { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-[var(--sr-rider)]', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
@@ -84,7 +84,7 @@ const vendorMenu = [
   { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[var(--sr-rider)]', action: 'kyc', section: 'REWARDS & GIVING' },
   { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'rewards', section: 'REWARDS & GIVING' },
   { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[var(--sr-customer)]', action: 'eco-impact', section: 'REWARDS & GIVING' },
-  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-[#A78BFA]', action: 'community', section: 'REWARDS & GIVING' },
+  { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-[var(--sr-ai)]', action: 'community', section: 'REWARDS & GIVING' },
   { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[var(--sr-rider)]', action: 'prayer-times', section: 'ACCOUNT' },
   { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'notifications', section: 'ACCOUNT' },
   { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[var(--sr-rider)]', action: 'support', section: 'SUPPORT' },
@@ -92,13 +92,13 @@ const vendorMenu = [
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-vendor)]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
   { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
-  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[var(--sr-ai)]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const riderMenu = [
   { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
-  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
+  { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[var(--sr-ai)]', action: 'meal-planner', section: 'SMART KITCHEN' },
   { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[var(--sr-rider)]', action: 'rider-performance', section: 'REWARDS & GIVING' },
   { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-[var(--sr-rider)]', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
   { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[var(--sr-vendor)]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
@@ -114,7 +114,7 @@ const riderMenu = [
   { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-rider)]', action: 'switch-role', section: 'SUPPORT' },
   { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
   { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
-  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
+  { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[var(--sr-ai)]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
@@ -126,7 +126,7 @@ const TIER_STYLES: Record<string, { bg: string; border: string; text: string; gl
   bronze: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', glow: '0 0 12px rgba(245,158,11,0.25)' },
   silver: { bg: 'bg-slate-300/10', border: 'border-slate-300/30', text: 'text-slate-200', glow: '0 0 12px rgba(226,232,240,0.18)' },
   gold: { bg: 'bg-[var(--sr-vendor)]/10', border: 'border-[var(--sr-vendor)]/40', text: 'text-[var(--sr-vendor)]', glow: '0 0 14px rgba(245,196,81,0.35)' },
-  platinum: { bg: 'bg-[#A78BFA]/10', border: 'border-[#A78BFA]/40', text: 'text-[#A78BFA]', glow: '0 0 14px rgba(167,139,250,0.35)' },
+  platinum: { bg: 'bg-[var(--sr-ai)]/10', border: 'border-[var(--sr-ai)]/40', text: 'text-[var(--sr-ai)]', glow: '0 0 14px rgba(167,139,250,0.35)' },
 };
 
 /* ──────────────── Modal Content Interface ──────────────── */
@@ -518,7 +518,7 @@ export default function ProfileTab() {
                     style={{ boxShadow: '0 0 20px rgba(56,189,248,0.18)' }}>
                     <Bike className="w-8 h-8 text-[var(--sr-rider)]" />
                   </div>
-                  <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#06070B] ${
+                  <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[var(--sr-surface-base)] ${
                     riderOnline ? 'bg-[var(--sr-customer)] animate-pulse' : 'bg-white/30'
                   }`} />
                 </div>
@@ -675,7 +675,7 @@ export default function ProfileTab() {
           </div>
           <button
             onClick={handleClaimDaily}
-            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[#F5C451] to-[#10E07A] text-[#06070B] text-xs font-extrabold hover:opacity-90 transition-opacity shrink-0 active:scale-95"
+            className="px-3 py-2 rounded-xl bg-gradient-to-r from-[var(--sr-vendor)] to-[var(--sr-customer)] text-[var(--sr-surface-base)] text-xs font-extrabold hover:opacity-90 transition-opacity shrink-0 active:scale-95"
           >
             +50
           </button>
@@ -729,7 +729,7 @@ export default function ProfileTab() {
                   <p className="text-white/65 text-[10px] font-bold uppercase">Sessions Cooked</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
-                  <p className="text-[#A78BFA] text-lg font-black">{cookingStats.liveAIUses ?? 0}</p>
+                  <p className="text-[var(--sr-ai)] text-lg font-black">{cookingStats.liveAIUses ?? 0}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Live AI Sessions</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
@@ -748,7 +748,7 @@ export default function ProfileTab() {
                       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
                         {unlocked.map(a => (
                           <div key={a.id} className="flex flex-col items-center gap-1 shrink-0 w-16">
-                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#F5C451]/20 to-[#10E07A]/15 border border-[var(--sr-vendor)]/40 flex items-center justify-center text-2xl"
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[var(--sr-vendor)]/20 to-[var(--sr-customer)]/15 border border-[var(--sr-vendor)]/40 flex items-center justify-center text-2xl"
                               style={{ boxShadow: '0 0 12px rgba(245,196,81,0.18)' }}>
                               <span>{a.icon}</span>
                             </div>
@@ -768,7 +768,7 @@ export default function ProfileTab() {
                       </div>
                       <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all"
+                          className="h-full rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] transition-all"
                           style={{ width: `${(unlocked.length / total) * 100}%` }}
                         />
                       </div>
@@ -825,7 +825,7 @@ export default function ProfileTab() {
       {/* ─── Loyalty Redemption (Customer only) ─── */}
       {userRole === 'customer' && (
         <div className="px-5 mt-6">
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-vendor)]/25 bg-gradient-to-br from-[#F5C451]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-vendor)]/25 bg-gradient-to-br from-[var(--sr-vendor)]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
             <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-vendor)]/15 blur-[44px] pointer-events-none" />
             <div className="relative flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
@@ -928,14 +928,14 @@ export default function ProfileTab() {
       <div className="px-5 mt-4">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#FB7185]/5 rounded-2xl border border-[#FB7185]/10 hover:border-[#FB7185]/20 transition-colors w-full text-left active:scale-[0.99]"
+          className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-error)]/5 rounded-2xl border border-[var(--sr-error)]/10 hover:border-[var(--sr-error)]/20 transition-colors w-full text-left active:scale-[0.99]"
         >
-          <div className="w-10 h-10 bg-[#FB7185]/10 rounded-xl flex items-center justify-center shrink-0 icon-tile">
-            <LogOut className="w-5 h-5 text-[#FB7185] relative z-10" />
+          <div className="w-10 h-10 bg-[var(--sr-error)]/10 rounded-xl flex items-center justify-center shrink-0 icon-tile">
+            <LogOut className="w-5 h-5 text-[var(--sr-error)] relative z-10" />
           </div>
           <div className="flex-1">
-            <p className="text-[#FB7185] font-bold text-sm">Log Out</p>
-            <p className="text-[#FB7185]/40 text-xs">Sign out of your account</p>
+            <p className="text-[var(--sr-error)] font-bold text-sm">Log Out</p>
+            <p className="text-[var(--sr-error)]/40 text-xs">Sign out of your account</p>
           </div>
         </button>
       </div>
@@ -944,7 +944,7 @@ export default function ProfileTab() {
       {userRole === 'customer' && (
         <div className="px-5 mt-6 mb-6">
           <h3 className="text-white text-lg font-extrabold mb-4 flex items-center gap-2 heading-accent">
-            <Heart className="w-5 h-5 text-[#FB7185]" />
+            <Heart className="w-5 h-5 text-[var(--sr-error)]" />
             Give Back This Ramadan
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

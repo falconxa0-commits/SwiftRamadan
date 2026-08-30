@@ -70,7 +70,7 @@ export default function BetaFeedbackModal() {
         <>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[110]" onClick={handleClose} />
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#13ec13]/20">
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#13ec13]/20">
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
               <div className="flex items-center gap-3">
@@ -96,12 +96,12 @@ export default function BetaFeedbackModal() {
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10">
                   <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 12, stiffness: 200 }}
                     className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#13ec13] to-[#0ea30e] flex items-center justify-center green-glow">
-                    <CheckCircle2 className="w-10 h-10 text-[#05070A]" />
+                    <CheckCircle2 className="w-10 h-10 text-[var(--sr-surface-base)]" />
                   </motion.div>
                   <h3 className="text-white font-black text-xl">Shukran! 💚</h3>
                   <p className="text-white/50 text-sm mt-1">Your feedback has been received.</p>
                   <p className="text-white/65 text-xs mt-2 max-w-xs mx-auto">Our team reviews every submission. You're helping make SwiftRamadan better for the whole community.</p>
-                  <button onClick={handleClose} className="mt-5 bg-[#13ec13] text-[#05070A] font-bold text-sm py-2.5 px-6 rounded-xl active:scale-[0.98] transition-transform">
+                  <button onClick={handleClose} className="mt-5 bg-[#13ec13] text-[var(--sr-surface-base)] font-bold text-sm py-2.5 px-6 rounded-xl active:scale-[0.98] transition-transform">
                     Done
                   </button>
                 </motion.div>
@@ -143,7 +143,7 @@ export default function BetaFeedbackModal() {
                   <div>
                     <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Subject</p>
                     <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Brief summary of your feedback"
-                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none" />
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none" />
                   </div>
 
                   {/* Message */}
@@ -151,7 +151,7 @@ export default function BetaFeedbackModal() {
                     <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Message</p>
                     <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us more… What happened? What were you trying to do? Any ideas?"
                       rows={5}
-                      className="w-full bg-[#0F1117] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none resize-none custom-scrollbar" />
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none resize-none custom-scrollbar" />
                   </div>
 
                   {/* Context chip */}
@@ -166,9 +166,9 @@ export default function BetaFeedbackModal() {
 
               {/* Sticky footer */}
             {!submitted && (
-              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg">
+              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[var(--sr-surface-base)]/95 backdrop-blur-lg">
                 <button onClick={handleSubmit} disabled={submitting || !subject.trim() || !message.trim()}
-                  className="w-full bg-[#13ec13] text-[#05070A] font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-transform">
+                  className="w-full bg-[#13ec13] text-[var(--sr-surface-base)] font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-transform">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : <><Send className="w-4 h-4" /> Send Feedback</>}
                 </button>
               </div>

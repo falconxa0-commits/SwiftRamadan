@@ -186,7 +186,7 @@ export default function RateDeliveryModal() {
             </div>
 
             {/* Aurora accent bar */}
-            <div className="h-px mx-5 bg-gradient-to-r from-transparent via-[#F5C451]/40 to-transparent" />
+            <div className="h-px mx-5 bg-gradient-to-r from-transparent via-[var(--sr-vendor)]/40 to-transparent" />
 
             <div className="px-5 py-5 pb-7 space-y-5">
               {/* ── Star selector ── */}
@@ -269,7 +269,7 @@ export default function RateDeliveryModal() {
                 <button
                   onClick={handleSubmit}
                   disabled={rating < 1 || submitting}
-                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[#F5C451] to-[#E0A82E] text-[#1a1404] font-black text-sm active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(245,196,81,0.35)]"
+                  className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-[var(--sr-vendor)] to-[#E0A82E] text-[#1a1404] font-black text-sm active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(245,196,81,0.35)]"
                 >
                   {submitting ? (
                     <span className="flex items-center justify-center gap-2">

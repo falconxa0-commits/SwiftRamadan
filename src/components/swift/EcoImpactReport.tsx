@@ -55,7 +55,7 @@ export default function EcoImpactReport() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -107,7 +107,7 @@ export default function EcoImpactReport() {
                         initial={{ opacity: 0, y: 15 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.15 + i * 0.05 }}
-                        className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4"
+                        className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4"
                       >
                         <div className={`w-9 h-9 rounded-xl ${stat.bgColor} flex items-center justify-center border ${stat.borderColor} mb-2.5`}>
                           <Icon className={`w-4.5 h-4.5 ${stat.color}`} />
@@ -128,7 +128,7 @@ export default function EcoImpactReport() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Your Impact vs Average</h4>
-                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-5">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-5">
                   {comparisonBars.map((bar) => {
                     const maxVal = Math.max(bar.yours, bar.average);
                     const yourPct = (bar.yours / maxVal) * 100;
@@ -191,7 +191,7 @@ export default function EcoImpactReport() {
                       initial={{ opacity: 0, x: -15 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.55 + i * 0.08 }}
-                      className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4 flex items-start gap-3"
+                      className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4 flex items-start gap-3"
                     >
                       <div className="w-8 h-8 rounded-lg bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0 mt-0.5">
                         <Lightbulb className="w-4 h-4 text-[var(--sr-customer)]" />
@@ -214,7 +214,7 @@ export default function EcoImpactReport() {
               >
                 <button
                   onClick={handleShare}
-                  className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow flex items-center justify-center gap-2 active:scale-[0.98]"
+                  className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
                   <Share2 className="w-5 h-5" />
                   Share Your Impact

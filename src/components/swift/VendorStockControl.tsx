@@ -47,7 +47,7 @@ export default function VendorStockControl() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -93,12 +93,12 @@ export default function VendorStockControl() {
                     transition={{ delay: i * 0.05 }}
                     className={`flex items-center gap-3 p-3 sm:p-4 rounded-2xl border transition-all ${
                       item.available
-                        ? 'bg-[#1A1D26] border-white/5'
-                        : 'bg-[#1A1D26]/40 border-white/5 opacity-60'
+                        ? 'bg-[var(--sr-surface-elevated)] border-white/5'
+                        : 'bg-[var(--sr-surface-elevated)]/40 border-white/5 opacity-60'
                     }`}
                   >
                     {/* Item Image Placeholder */}
-                    <div className="w-12 h-12 rounded-xl bg-[#0F1117] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
                       {item.available ? (
                         <Package className="w-5 h-5 text-[var(--sr-vendor)]" />
                       ) : (

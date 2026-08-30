@@ -142,7 +142,7 @@ export default function VendorProfileTab() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
+            className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
           >
             <p className="text-[var(--sr-customer)] text-lg font-black">{formatNaira(vendorBalance)}</p>
             <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Available</p>
@@ -151,7 +151,7 @@ export default function VendorProfileTab() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
+            className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
           >
             <p className="text-[var(--sr-vendor)] text-lg font-black">{formatNaira(vendorTotalEarnings)}</p>
             <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Ramadan Revenue</p>
@@ -160,7 +160,7 @@ export default function VendorProfileTab() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
+            className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 text-center border border-white/5"
           >
             <p className="text-orange-400 text-lg font-black">{formatNaira(vendorPendingSettlement)}</p>
             <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Pending</p>
@@ -175,7 +175,7 @@ export default function VendorProfileTab() {
         transition={{ delay: 0.25 }}
         className="px-4 mt-5"
       >
-        <div className="bg-[#1A1D26] rounded-2xl p-5 border border-white/5">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-5 border border-white/5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-white font-bold text-sm">Store Information</h3>
             <button
@@ -237,22 +237,22 @@ export default function VendorProfileTab() {
           </button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5">
             <Star className="w-5 h-5 text-[var(--sr-vendor)] mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.topSellingItem}</p>
             <p className="text-white/65 text-[10px] mt-0.5">Top Selling Item</p>
           </div>
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5">
             <Clock className="w-5 h-5 text-cyan-400 mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.peakHour}</p>
             <p className="text-white/65 text-[10px] mt-0.5">Peak Hour</p>
           </div>
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5">
             <Users className="w-5 h-5 text-emerald-400 mb-2" />
             <p className="text-white text-sm font-bold">{vendorSalesInsights.customerRetention}%</p>
             <p className="text-white/65 text-[10px] mt-0.5">Customer Retention</p>
           </div>
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5">
             <Wallet className="w-5 h-5 text-orange-400 mb-2" />
             <p className="text-white text-sm font-bold">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
             <p className="text-white/65 text-[10px] mt-0.5">Avg Order Value</p>
@@ -275,7 +275,7 @@ export default function VendorProfileTab() {
                 key={menuItem.action}
                 variants={item}
                 onClick={() => handleMenuClick(menuItem.action)}
-                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-surface-elevated)]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
               >
                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
                   <Icon className={`w-5 h-5 ${menuItem.color}`} />
@@ -293,7 +293,7 @@ export default function VendorProfileTab() {
           <motion.button
             variants={item}
             onClick={handleLogout}
-            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1A1D26]/40 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
+            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-surface-elevated)]/40 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
           >
             <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center shrink-0">
               <LogOut className="w-5 h-5 text-red-400" />
@@ -328,7 +328,7 @@ export default function VendorProfileTab() {
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all ${
               vendorOnline
                 ? 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                : 'bg-[var(--sr-vendor)] text-[#05070A] hover:bg-[#FFE033] gold-glow'
+                : 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] hover:bg-[#FFE033] gold-glow'
             }`}
           >
             {vendorOnline ? (
@@ -338,7 +338,7 @@ export default function VendorProfileTab() {
               </>
             ) : (
               <>
-                <span className="w-2 h-2 rounded-full bg-[#05070A]" />
+                <span className="w-2 h-2 rounded-full bg-[var(--sr-surface-base)]" />
                 Go Online
               </>
             )}

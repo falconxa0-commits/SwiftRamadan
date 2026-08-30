@@ -101,7 +101,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 h-full w-full sm:w-96 bg-[#0F1117] z-[80] flex flex-col border-l border-white/5"
+            className="fixed top-0 right-0 h-full w-full sm:w-96 bg-[var(--sr-surface-raised)] z-[80] flex flex-col border-l border-white/5"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5">
@@ -109,7 +109,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                 <Bell className="w-5 h-5 text-[var(--sr-customer)]" />
                 <h2 className="text-white font-bold text-lg">Notifications</h2>
                 {unreadCount > 0 && (
-                  <span className="bg-[var(--sr-customer)] text-[#05070A] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <span className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-[10px] font-bold px-2 py-0.5 rounded-full">
                     {unreadCount}
                   </span>
                 )}
@@ -134,7 +134,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                   onClick={() => setFilter(f.value)}
                   className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
                     filter === f.value
-                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                       : 'bg-white/5 text-white/50 hover:text-white/70'
                   }`}
                 >
@@ -148,7 +148,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
               {isLoading ? (
                 <div className="space-y-3">
                   {[1, 2, 3].map(i => (
-                    <div key={i} className="animate-pulse h-20 bg-[#1A1D26]/40 rounded-xl" />
+                    <div key={i} className="animate-pulse h-20 bg-[var(--sr-surface-elevated)]/40 rounded-xl" />
                   ))}
                 </div>
               ) : filteredNotifications.length === 0 ? (
@@ -208,7 +208,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                       className={`flex items-start gap-3 p-3 rounded-xl border transition-colors w-full text-left ${
                         notification.read
                           ? 'bg-transparent border-white/5 opacity-60'
-                          : 'bg-[#1A1D26]/60 border-[var(--sr-customer)]/10'
+                          : 'bg-[var(--sr-surface-elevated)]/60 border-[var(--sr-customer)]/10'
                       }`}
                     >
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[var(--sr-customer)]/10'}`}>

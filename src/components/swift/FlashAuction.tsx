@@ -164,7 +164,7 @@ export default function FlashAuction() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#0B0D14] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-label="Flash Auction - grab deals before prices drop"
@@ -193,7 +193,7 @@ export default function FlashAuction() {
           )}
 
           {/* Header */}
-          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
+          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--sr-surface-base)]/80 border-b border-white/8">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
@@ -216,7 +216,7 @@ export default function FlashAuction() {
 
           {/* Hero */}
           <div className="relative overflow-hidden px-4 pt-6 pb-8">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#10E07A]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-customer)]/5 to-transparent pointer-events-none" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -268,7 +268,7 @@ export default function FlashAuction() {
                           initial={{ opacity: 0, scale: 0.8 }}
                           animate={{ opacity: 1, scale: 1 }}
                           exit={{ opacity: 0, scale: 1.1 }}
-                          className="absolute inset-0 z-20 bg-[#0B0D14]/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3"
+                          className="absolute inset-0 z-20 bg-[var(--sr-surface-base)]/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3"
                         >
                           <motion.div
                             initial={{ scale: 0 }}
@@ -285,7 +285,7 @@ export default function FlashAuction() {
                     </AnimatePresence>
 
                     {/* Top Image Area */}
-                    <div className="relative h-36 bg-gradient-to-br from-[#10E07A]/10 to-[#F5C451]/5 flex items-center justify-center">
+                    <div className="relative h-36 bg-gradient-to-br from-[var(--sr-customer)]/10 to-[var(--sr-vendor)]/5 flex items-center justify-center">
                       <Package className="w-16 h-16 text-white/10" />
                       <div className="absolute top-3 left-3">
                         <span className="bg-[var(--sr-vendor)]/90 text-[#0B0D14] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
@@ -298,7 +298,7 @@ export default function FlashAuction() {
                         </span>
                       </div>
                       {!isActive && (
-                        <div className="absolute inset-0 bg-[#0B0D14]/60 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-[var(--sr-surface-base)]/60 flex items-center justify-center">
                           <span className="text-white/80 font-black text-lg uppercase tracking-wider">
                             {isSoldOut ? 'Sold Out' : 'Ended'}
                           </span>
@@ -339,8 +339,8 @@ export default function FlashAuction() {
                         </div>
                         {/* Stock */}
                         <div className="flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2 flex-1">
-                          <Package className="w-3.5 h-3.5 text-[#A78BFA]" />
-                          <span className="text-[#A78BFA] font-bold text-sm">{auction.remainingStock}</span>
+                          <Package className="w-3.5 h-3.5 text-[var(--sr-ai)]" />
+                          <span className="text-[var(--sr-ai)] font-bold text-sm">{auction.remainingStock}</span>
                           <span className="text-white/60 text-xs">left</span>
                         </div>
                       </div>
@@ -348,7 +348,7 @@ export default function FlashAuction() {
                       {/* Stock Bar */}
                       <div className="w-full bg-white/5 rounded-full h-1.5 mb-4 overflow-hidden">
                         <motion.div
-                          className="h-1.5 rounded-full bg-gradient-to-r from-[#10E07A] to-[#F5C451]"
+                          className="h-1.5 rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)]"
                           style={{ width: `${((auction.totalStock - auction.remainingStock) / auction.totalStock) * 100}%` }}
                         />
                       </div>

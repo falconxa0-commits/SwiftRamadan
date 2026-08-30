@@ -82,7 +82,7 @@ export default function LiveTrackingMap() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-hidden flex flex-col"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-hidden flex flex-col"
           >
             {/* Simulated Map Background */}
             <div className="absolute inset-0">
@@ -238,7 +238,7 @@ export default function LiveTrackingMap() {
                     <h2 className="text-white text-sm font-bold">Live Iftar Tracking</h2>
                     <p className="text-white/65 text-[10px]">Real-time delivery updates</p>
                   </div>
-                  <div className="bg-[#1A1D26] border border-[var(--sr-vendor)]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                  <div className="bg-[var(--sr-surface-elevated)] border border-[var(--sr-vendor)]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
                     <Clock className="w-3 h-3 text-[var(--sr-vendor)]" />
                     <span className="text-[var(--sr-vendor)] text-xs font-bold">Maghrib in {countdown}</span>
                   </div>
@@ -249,19 +249,19 @@ export default function LiveTrackingMap() {
               <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 z-20">
                 <button
                   onClick={() => toast({ title: 'Zoom In 🔍' })}
-                  className="w-11 h-11 rounded-xl bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
+                  className="w-11 h-11 rounded-xl bg-[var(--sr-surface-elevated)]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
                 >
                   <Plus className="w-4 h-4 text-white" />
                 </button>
                 <button
                   onClick={() => toast({ title: 'Zoom Out 🔍' })}
-                  className="w-11 h-11 rounded-xl bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
+                  className="w-11 h-11 rounded-xl bg-[var(--sr-surface-elevated)]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
                 >
                   <Minus className="w-4 h-4 text-white" />
                 </button>
                 <button
                   onClick={() => toast({ title: 'Centering Map 📍' })}
-                  className="w-11 h-11 rounded-xl bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
+                  className="w-11 h-11 rounded-xl bg-[var(--sr-surface-elevated)]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
                 >
                   <Navigation className="w-4 h-4 text-[var(--sr-customer)]" />
                 </button>
@@ -269,7 +269,7 @@ export default function LiveTrackingMap() {
 
               {/* Legend (floating left) */}
               <div className="absolute left-4 top-[20%] z-20">
-                <div className="bg-[#1A1D26]/80 rounded-xl border border-white/5 p-2.5 glass-effect space-y-2">
+                <div className="bg-[var(--sr-surface-elevated)]/80 rounded-xl border border-white/5 p-2.5 glass-effect space-y-2">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-[var(--sr-vendor)]" />
                     <span className="text-white/50 text-[10px]">Rider</span>
@@ -290,7 +290,7 @@ export default function LiveTrackingMap() {
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3, type: 'spring', damping: 25 }}
-                className="mt-auto bg-[#0F1117] rounded-t-3xl border-t border-white/10"
+                className="mt-auto bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10"
               >
                 {/* Drag handle */}
                 <div className="flex justify-center pt-3 pb-1">
@@ -311,16 +311,16 @@ export default function LiveTrackingMap() {
                         <span className="text-[var(--sr-customer)] text-sm font-bold">Ready for Iftar</span>
                       </div>
                     </div>
-                    <div className="bg-[#1A1D26] border border-white/5 rounded-xl px-3 py-2 text-center">
+                    <div className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-xl px-3 py-2 text-center">
                       <p className="text-white/60 text-[10px]">Order</p>
                       <p className="text-white text-xs font-bold">#SWR-2847</p>
                     </div>
                   </div>
 
                   {/* Rider Details */}
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 mb-4">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--sr-vendor)]/30 to-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 shrink-0">
                         <Bike className="w-5 h-5 text-[var(--sr-vendor)]" />
                       </div>
                       <div className="flex-1">
@@ -345,7 +345,7 @@ export default function LiveTrackingMap() {
                   </div>
 
                   {/* Status Ticker */}
-                  <div className="bg-[#1A1D26]/60 rounded-xl border border-white/5 p-3 mb-4 overflow-hidden">
+                  <div className="bg-[var(--sr-surface-elevated)]/60 rounded-xl border border-white/5 p-3 mb-4 overflow-hidden">
                     <div className="flex items-center gap-2">
                       <motion.span
                         animate={{ opacity: [0.3, 1, 0.3] }}

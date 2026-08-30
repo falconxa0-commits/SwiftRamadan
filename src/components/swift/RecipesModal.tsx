@@ -85,7 +85,7 @@ export default function RecipesModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[92vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 h-[92vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0">
@@ -114,7 +114,7 @@ export default function RecipesModal() {
                   onClick={() => { setSelectedCategory(cat.id); setExpandedRecipe(null); }}
                   className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
                     selectedCategory === cat.id
-                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                       : 'bg-white/5 text-white/50 border border-white/10 hover:border-[var(--sr-customer)]/20 hover:text-white/70'
                   }`}
                 >
@@ -127,9 +127,9 @@ export default function RecipesModal() {
             <div className="px-4 pt-4 shrink-0">
               <button
                 onClick={() => setActiveModal('ai-recipe')}
-                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#F5C451]/10 border border-[var(--sr-customer)]/25 hover:border-[var(--sr-customer)]/50 transition-all text-left"
+                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)]/10 to-[var(--sr-vendor)]/10 border border-[var(--sr-customer)]/25 hover:border-[var(--sr-customer)]/50 transition-all text-left"
               >
-                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0">
+                <div className="relative w-10 h-10 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-vendor)]/20 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0">
                   <ChefHat className="w-5 h-5 text-[var(--sr-vendor)]" />
                   <Sparkles className="w-2.5 h-2.5 text-[var(--sr-customer)] absolute -top-0.5 -right-0.5" />
                 </div>
@@ -158,7 +158,7 @@ export default function RecipesModal() {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -15 }}
                       transition={{ delay: index * 0.08, duration: 0.3 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
                     >
                       {/* Recipe Card Header */}
                       <button
@@ -172,7 +172,7 @@ export default function RecipesModal() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                           <div className="absolute top-3 left-3">
-                            <span className="bg-[var(--sr-vendor)]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                            <span className="bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                               {recipe.category}
                             </span>
                           </div>
@@ -220,7 +220,7 @@ export default function RecipesModal() {
                                   {recipe.ingredients.map((ing, i) => (
                                     <div
                                       key={`${recipe.id}-ing-${i}`}
-                                      className="flex items-center justify-between p-2.5 bg-[#0F1117] rounded-xl border border-white/5"
+                                      className="flex items-center justify-between p-2.5 bg-[var(--sr-surface-raised)] rounded-xl border border-white/5"
                                     >
                                       <div className="flex items-center gap-2">
                                         {ing.productId ? (
@@ -245,7 +245,7 @@ export default function RecipesModal() {
                                   className={`w-full mt-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
                                     allIngredientsShopped(recipe.id)
                                       ? 'bg-white/5 text-white/60 border border-white/10 cursor-not-allowed'
-                                      : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
+                                      : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                                   }`}
                                 >
                                   {allIngredientsShopped(recipe.id) ? (
@@ -272,7 +272,7 @@ export default function RecipesModal() {
                                   {recipe.steps.map((step, i) => (
                                     <div
                                       key={`${recipe.id}-step-${i}`}
-                                      className="flex gap-3 p-2.5 bg-[#0F1117] rounded-xl border border-white/5"
+                                      className="flex gap-3 p-2.5 bg-[var(--sr-surface-raised)] rounded-xl border border-white/5"
                                     >
                                       <span className="w-6 h-6 shrink-0 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 flex items-center justify-center text-[var(--sr-vendor)] text-[10px] font-black">
                                         {i + 1}

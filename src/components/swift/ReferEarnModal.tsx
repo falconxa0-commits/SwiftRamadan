@@ -80,7 +80,7 @@ export default function ReferEarnModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -130,9 +130,9 @@ export default function ReferEarnModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Share Your Link</h4>
-                <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4">
                   <p className="text-white/65 text-xs mb-2">Your unique referral link</p>
-                  <div className="flex items-center gap-2 bg-[#0F1117] rounded-lg p-3 border border-white/5">
+                  <div className="flex items-center gap-2 bg-[var(--sr-surface-raised)] rounded-lg p-3 border border-white/5">
                     <p className="text-[var(--sr-customer)] text-sm font-mono flex-1 truncate">{referralLink}</p>
                     <button
                       onClick={handleCopyLink}
@@ -163,16 +163,16 @@ export default function ReferEarnModal() {
               >
                 <h4 className="text-white font-bold text-sm mb-3">Your Referral Stats</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
                     <p className="text-[var(--sr-customer)] text-3xl font-black">{referralCount}</p>
                     <p className="text-white/65 text-xs mt-1">Referrals</p>
                   </div>
-                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
                     <p className="text-[var(--sr-vendor)] text-3xl font-black">₦{earnedAmount.toLocaleString()}</p>
                     <p className="text-white/65 text-xs mt-1">Earned</p>
                   </div>
                 </div>
-                <div className="mt-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
+                <div className="mt-3 bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-white/60 text-xs">Next reward tier ({nextTier} referrals)</span>
                     <span className="text-[var(--sr-vendor)] text-xs font-bold">Gold Badge</span>
@@ -197,7 +197,7 @@ export default function ReferEarnModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Neighborhood Leaderboard</h4>
-                <div className="bg-[#1A1D26] rounded-xl border border-white/5 overflow-hidden">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 overflow-hidden">
                   {sortedLeaderboard.map((person, i) => (
                     <div
                       key={person.name}
@@ -206,7 +206,7 @@ export default function ReferEarnModal() {
                       <span className={`w-6 text-center text-xs font-black ${i === 0 ? 'text-[var(--sr-vendor)]' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-white/60'}`}>
                         {i + 1}
                       </span>
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A]/30 to-[#10E07A]/10 flex items-center justify-center border border-white/10 shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--sr-customer)]/30 to-[var(--sr-customer)]/10 flex items-center justify-center border border-white/10 shrink-0">
                         <span className="text-white text-xs font-bold">{person.avatar}</span>
                       </div>
                       <div className="flex-1">
@@ -231,7 +231,7 @@ export default function ReferEarnModal() {
                 transition={{ delay: 0.5 }}
                 className="mt-6"
               >
-                <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 overflow-hidden">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 overflow-hidden">
                   <div className="flex items-center gap-2">
                     <span className="shrink-0 w-2 h-2 bg-[var(--sr-customer)] rounded-full animate-pulse" />
                     <div className="relative overflow-hidden flex-1 h-5">
@@ -268,7 +268,7 @@ export default function ReferEarnModal() {
                   ].map((item) => {
                     const Icon = item.icon;
                     return (
-                      <div key={item.step} className="flex items-start gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
+                      <div key={item.step} className="flex items-start gap-3 bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 sm:p-4">
                         <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
                           <Icon className="w-5 h-5 text-[var(--sr-customer)]" />
                         </div>

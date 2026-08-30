@@ -14,8 +14,8 @@ const statusConfig: Record<string, { color: string; bgColor: string; icon: React
   'Preparing': { color: 'text-[var(--sr-vendor)]', bgColor: 'bg-[var(--sr-vendor)]/10', icon: Clock, label: 'Preparing' },
   'Delivered': { color: 'text-white/65', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
   'Confirmed': { color: 'text-[var(--sr-rider)]', bgColor: 'bg-[var(--sr-rider)]/10', icon: Package, label: 'Confirmed' },
-  'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
-  'Cancelled': { color: 'text-[#FB7185]', bgColor: 'bg-[#FB7185]/10', icon: XCircle, label: 'Cancelled' },
+  'Ready': { color: 'text-[var(--sr-ai)]', bgColor: 'bg-[var(--sr-ai)]/10', icon: CheckCircle, label: 'Ready for Pickup' },
+  'Cancelled': { color: 'text-[var(--sr-error)]', bgColor: 'bg-[var(--sr-error)]/10', icon: XCircle, label: 'Cancelled' },
 };
 
 const progressSteps = [
@@ -221,7 +221,7 @@ This is an electronic receipt — no signature required.
           </p>
           <button
             onClick={() => useAppStore.getState().setActiveTab('home')}
-            className="bg-[var(--sr-customer)] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
+            className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
           >
             Start Ordering
             <ShoppingBag className="w-4 h-4" />
@@ -245,7 +245,7 @@ This is an electronic receipt — no signature required.
             onClick={() => setActiveTab('active')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === 'active'
-                ? 'bg-[var(--sr-customer)] text-[#06070B] green-glow'
+                ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] green-glow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -253,7 +253,7 @@ This is an electronic receipt — no signature required.
             Active
             {activeOrders.length > 0 && (
               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
-                activeTab === 'active' ? 'bg-[var(--sr-surface-base)]/20 text-[#06070B]' : 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]'
+                activeTab === 'active' ? 'bg-[var(--sr-surface-base)]/20 text-[var(--sr-surface-base)]' : 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]'
               }`}>
                 {activeOrders.length}
               </span>
@@ -263,7 +263,7 @@ This is an electronic receipt — no signature required.
             onClick={() => setActiveTab('past')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
               activeTab === 'past'
-                ? 'bg-[var(--sr-customer)] text-[#06070B] green-glow'
+                ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] green-glow'
                 : 'text-white/60 hover:text-white'
             }`}
           >
@@ -271,7 +271,7 @@ This is an electronic receipt — no signature required.
             Past
             {pastOrders.length > 0 && (
               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
-                activeTab === 'past' ? 'bg-[var(--sr-surface-base)]/20 text-[#06070B]' : 'bg-white/10 text-white/60'
+                activeTab === 'past' ? 'bg-[var(--sr-surface-base)]/20 text-[var(--sr-surface-base)]' : 'bg-white/10 text-white/60'
               }`}>
                 {pastOrders.length}
               </span>
@@ -316,7 +316,7 @@ This is an electronic receipt — no signature required.
                     {/* Progress Bar */}
                     <div className="w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden">
                       <motion.div
-                        className="bg-gradient-to-r from-[#10E07A] to-[#F5C451] h-2 rounded-full"
+                        className="bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] h-2 rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${activeOrder.progress}%` }}
                         transition={{ duration: 1.5, ease: 'easeOut' }}
@@ -473,7 +473,7 @@ This is an electronic receipt — no signature required.
                                       e.stopPropagation();
                                       handleCancelOrder(order);
                                     }}
-                                    className="bg-[#FB7185]/10 border border-[#FB7185]/20 text-[#FB7185] py-2 rounded-lg text-[11px] font-bold hover:bg-[#FB7185]/20 transition-colors active:scale-95 flex items-center justify-center gap-1"
+                                    className="bg-[var(--sr-error)]/10 border border-[var(--sr-error)]/20 text-[var(--sr-error)] py-2 rounded-lg text-[11px] font-bold hover:bg-[var(--sr-error)]/20 transition-colors active:scale-95 flex items-center justify-center gap-1"
                                   >
                                     <XCircle className="w-3 h-3" />
                                     Cancel
@@ -511,7 +511,7 @@ This is an electronic receipt — no signature required.
                   <p className="text-white/65 text-xs mt-1">All your deliveries are complete. Browse past orders or start a new one.</p>
                   <button
                     onClick={() => useAppStore.getState().setActiveTab('home')}
-                    className="mt-4 bg-[var(--sr-customer)] text-[#06070B] font-bold py-2.5 px-6 rounded-xl text-xs active:scale-[0.98] transition-transform green-glow"
+                    className="mt-4 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-2.5 px-6 rounded-xl text-xs active:scale-[0.98] transition-transform green-glow"
                   >
                     Start New Order
                   </button>
@@ -575,8 +575,8 @@ This is an electronic receipt — no signature required.
             ) : (
               <div className="px-5 mt-8">
                 <div className="glass-card rounded-2xl p-6 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-[#A78BFA]/10 border border-[#A78BFA]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
-                    <Clock className="w-7 h-7 text-[#A78BFA] relative z-10" />
+                  <div className="w-14 h-14 rounded-2xl bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+                    <Clock className="w-7 h-7 text-[var(--sr-ai)] relative z-10" />
                   </div>
                   <p className="text-white font-bold text-sm">No past orders yet</p>
                   <p className="text-white/65 text-xs mt-1">Your completed orders will appear here for easy reordering.</p>

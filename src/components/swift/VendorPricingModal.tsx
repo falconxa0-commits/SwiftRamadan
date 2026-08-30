@@ -65,7 +65,7 @@ export default function VendorPricingModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -88,7 +88,7 @@ export default function VendorPricingModal() {
 
             {/* Peak Hours Toggle */}
             <div className="px-5 pt-4">
-              <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+              <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center">
                     <Clock className="w-5 h-5 text-[var(--sr-vendor)]" />
@@ -158,7 +158,7 @@ export default function VendorPricingModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4"
                     >
                       {/* Item Header */}
                       <div className="flex items-center justify-between mb-3">
@@ -225,7 +225,7 @@ export default function VendorPricingModal() {
               {/* Apply Button */}
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full mt-4 bg-[var(--sr-vendor)] py-3.5 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#F5C451]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full mt-4 bg-[var(--sr-vendor)] py-3.5 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-vendor)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <DollarSign className="w-4 h-4" />
                 Apply Pricing

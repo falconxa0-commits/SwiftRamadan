@@ -134,7 +134,7 @@ export default function HomeTab() {
           transition={{ duration: 0.4 }}
           className="flex items-center gap-2.5"
         >
-          <div className="icon-tile w-9 h-9 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_20px_rgba(16,224,122,0.28)]">
+          <div className="icon-tile w-9 h-9 bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] shadow-[0_0_20px_rgba(16,224,122,0.28)]">
             <Sparkles className="w-4 h-4 text-black relative z-10" />
           </div>
           <div className="flex items-center gap-1.5">
@@ -203,7 +203,7 @@ export default function HomeTab() {
             transition={{ duration: 4, repeat: Infinity }}
           />
           <motion.div
-            className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-[#A78BFA]/15 blur-3xl pointer-events-none"
+            className="absolute -bottom-16 -left-16 w-40 h-40 rounded-full bg-[var(--sr-ai)]/15 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 5, repeat: Infinity, delay: 1 }}
           />
@@ -215,7 +215,7 @@ export default function HomeTab() {
                 <motion.div
                   animate={{ rotate: [0, 8, -8, 0] }}
                   transition={{ duration: 4, repeat: Infinity }}
-                  className="icon-tile w-12 h-12 bg-gradient-to-br from-[#10E07A] to-[#F5C451] shadow-[0_0_24px_rgba(16,224,122,0.40)]"
+                  className="icon-tile w-12 h-12 bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] shadow-[0_0_24px_rgba(16,224,122,0.40)]"
                 >
                   <ChefHat className="w-6 h-6 text-black relative z-10" />
                 </motion.div>
@@ -279,10 +279,10 @@ export default function HomeTab() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => setActiveModal('meal-planner')}
-            className="flex flex-col items-center gap-2 min-w-[76px] p-3 bg-[#A78BFA]/10 rounded-2xl border border-[#A78BFA]/20 hover:border-[#A78BFA]/40 transition-colors"
+            className="flex flex-col items-center gap-2 min-w-[76px] p-3 bg-[var(--sr-ai)]/10 rounded-2xl border border-[var(--sr-ai)]/20 hover:border-[var(--sr-ai)]/40 transition-colors"
           >
-            <div className="icon-tile w-10 h-10 bg-[#A78BFA]/15">
-              <CalendarDays className="w-5 h-5 text-[#A78BFA] relative z-10" />
+            <div className="icon-tile w-10 h-10 bg-[var(--sr-ai)]/15">
+              <CalendarDays className="w-5 h-5 text-[var(--sr-ai)] relative z-10" />
             </div>
             <span className="text-[10px] font-bold text-white/70 whitespace-nowrap">Plan Meals</span>
           </motion.button>
@@ -318,20 +318,20 @@ export default function HomeTab() {
         >
           {/* Floating orbs */}
           <div className="absolute -top-6 -right-4 w-24 h-24 rounded-full bg-[var(--sr-customer)]/20 blur-2xl" />
-          <div className="absolute -bottom-8 -left-2 w-20 h-20 rounded-full bg-[#A78BFA]/20 blur-2xl" />
+          <div className="absolute -bottom-8 -left-2 w-20 h-20 rounded-full bg-[var(--sr-ai)]/20 blur-2xl" />
 
           <div className="relative flex items-center gap-3 p-3.5">
             {/* Animated clapper icon */}
             <div className="relative size-14 shrink-0 rounded-2xl bg-black/40 backdrop-blur-sm border border-white/15 flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-[#10E07A]/30 to-[#F5C451]/20" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[var(--sr-customer)]/30 to-[var(--sr-vendor)]/20" />
               <Clapperboard className="w-7 h-7 text-white relative z-10" />
-              <span className="absolute top-1 right-1 size-2 rounded-full bg-[#FB7185] animate-pulse" />
+              <span className="absolute top-1 right-1 size-2 rounded-full bg-[var(--sr-error)] animate-pulse" />
             </div>
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-1.5">
                 <h3 className="text-white font-black text-base tracking-tight">SwiftReel</h3>
-                <span className="px-1.5 h-4 rounded-full bg-[#FB7185] text-white text-[9px] font-black flex items-center">LIVE</span>
+                <span className="px-1.5 h-4 rounded-full bg-[var(--sr-error)] text-white text-[9px] font-black flex items-center">LIVE</span>
               </div>
               <p className="text-white/65 text-xs font-medium leading-tight mt-0.5">
                 Watch food shorts from Lagos chefs & creators
@@ -501,7 +501,7 @@ export default function HomeTab() {
               </button>
               <button
                 onClick={() => handleMealClick(100)}
-                className="flex-1 emerald-gradient py-3.5 rounded-2xl text-black font-black text-sm uppercase tracking-[0.16em] shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:brightness-110"
+                className="flex-1 emerald-gradient py-3.5 rounded-2xl text-black font-black text-sm uppercase tracking-[0.16em] shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform hover:brightness-110"
               >
                 Details
                 <ChevronRight className="w-4 h-4" />
@@ -670,7 +670,7 @@ export default function HomeTab() {
         >
           {/* Floating aurora glow orbs */}
           <motion.div
-            className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-[#A78BFA]/20 blur-3xl pointer-events-none"
+            className="absolute -top-12 -left-12 w-32 h-32 rounded-full bg-[var(--sr-ai)]/20 blur-3xl pointer-events-none"
             animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
             transition={{ duration: 4, repeat: Infinity }}
           />
@@ -684,7 +684,7 @@ export default function HomeTab() {
             <motion.div
               animate={{ rotate: [0, 8, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
-              className="icon-tile shrink-0 w-14 h-14 bg-gradient-to-br from-[#A78BFA] to-[#10E07A] shadow-[0_0_24px_rgba(167,139,250,0.40)]"
+              className="icon-tile shrink-0 w-14 h-14 bg-gradient-to-br from-[var(--sr-ai)] to-[var(--sr-customer)] shadow-[0_0_24px_rgba(167,139,250,0.40)]"
             >
               <Users className="w-7 h-7 text-white relative z-10" />
             </motion.div>
@@ -706,7 +706,7 @@ export default function HomeTab() {
       {/* ── ✨ Next-Gen Features ── */}
       <div className="px-5">
         <div className="flex items-center gap-2 mb-4">
-          <Sparkles className="w-5 h-5 text-[#A78BFA]" />
+          <Sparkles className="w-5 h-5 text-[var(--sr-ai)]" />
           <h2 className="text-white text-xl font-black tracking-tight">✨ Next-Gen Features</h2>
         </div>
 
@@ -719,7 +719,7 @@ export default function HomeTab() {
             { emoji: '😊', label: 'Mood Order', modal: 'mood-ordering' },
             { emoji: '🔮', label: 'Smart Reorder', modal: 'predictive-reorder' },
           ].map(f => (
-            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[var(--sr-ai)]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -800,7 +800,7 @@ export default function HomeTab() {
             { emoji: '🤲', label: "Du'a of Day", modal: 'dua-of-the-day' },
             { emoji: '🎊', label: 'Post-Ramadan', modal: 'post-ramadan' },
           ].map(f => (
-            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[#A78BFA]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[var(--sr-ai)]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>

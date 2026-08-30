@@ -335,7 +335,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+      className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Streak Shrine"
@@ -408,8 +408,8 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               </div>
               <div className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
-                  <Star className="w-3.5 h-3.5 text-[#A78BFA]" />
-                  <span className="text-[#A78BFA] text-lg font-black">{streak?.longest || 0}</span>
+                  <Star className="w-3.5 h-3.5 text-[var(--sr-ai)]" />
+                  <span className="text-[var(--sr-ai)] text-lg font-black">{streak?.longest || 0}</span>
                 </div>
                 <p className="text-white/60 text-[9px]">Longest Streak</p>
               </div>

@@ -49,7 +49,7 @@ export default function GroupBuyModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -65,7 +65,7 @@ export default function GroupBuyModal() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
                 aria-label="Close"
               >
                 <X className="w-5 h-5 text-white" />
@@ -75,7 +75,7 @@ export default function GroupBuyModal() {
 
           {/* Hero Section */}
           <div className="relative overflow-hidden px-4 pt-6 pb-8">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#10E07A]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-customer)]/5 to-transparent pointer-events-none" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,7 +114,7 @@ export default function GroupBuyModal() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.4 }}
-                    className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
+                    className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden hover:border-white/10 transition-colors"
                   >
                     {/* Deal Image + Category Badge */}
                     <div className="relative">
@@ -124,7 +124,7 @@ export default function GroupBuyModal() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
-                        <span className="bg-[var(--sr-vendor)]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                        <span className="bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {deal.category}
                         </span>
                       </div>
@@ -162,7 +162,7 @@ export default function GroupBuyModal() {
                         </div>
                         <div className="w-full bg-white/5 rounded-full h-2.5 overflow-hidden">
                           <motion.div
-                            className="h-2.5 rounded-full bg-gradient-to-r from-[#10E07A] to-[#10E07A]/70"
+                            className="h-2.5 rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer)]/70"
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
                             transition={{ duration: 1, delay: index * 0.1, ease: 'easeOut' }}
@@ -176,7 +176,7 @@ export default function GroupBuyModal() {
                           {Array.from({ length: Math.min(slots.filled, 6) }).map((_, i) => (
                             <div
                               key={`avatar-${i}`}
-                              className="w-7 h-7 rounded-full border-2 border-[#1A1D26] flex items-center justify-center text-[9px] font-bold"
+                              className="w-7 h-7 rounded-full border-2 border-[var(--sr-surface-elevated)] flex items-center justify-center text-[9px] font-bold"
                               style={{
                                 backgroundColor: ['#10E07A', '#F5C451', '#38BDF8', '#f59e0b', '#8b5cf6', '#ec4899'][i % 6],
                                 color: '#05070A',
@@ -186,7 +186,7 @@ export default function GroupBuyModal() {
                             </div>
                           ))}
                           {slots.filled > 6 && (
-                            <div className="w-7 h-7 rounded-full bg-white/10 border-2 border-[#1A1D26] flex items-center justify-center text-white/60 text-[9px] font-bold">
+                            <div className="w-7 h-7 rounded-full bg-white/10 border-2 border-[var(--sr-surface-elevated)] flex items-center justify-center text-white/60 text-[9px] font-bold">
                               +{slots.filled - 6}
                             </div>
                           )}
@@ -211,7 +211,7 @@ export default function GroupBuyModal() {
                           className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                             slots.joined
                               ? 'bg-white/5 border border-white/10 text-white/65 cursor-not-allowed'
-                              : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
+                              : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                           }`}
                         >
                           {slots.joined ? (
@@ -251,7 +251,7 @@ export default function GroupBuyModal() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 text-center"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-4 text-center"
                 >
                   <div className="w-12 h-12 mx-auto mb-3 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
                     <span className="material-symbols-outlined text-[var(--sr-customer)] text-xl">{item.icon}</span>
@@ -271,7 +271,7 @@ export default function GroupBuyModal() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
               onClick={() => toast({ title: 'Coming Soon! 🚀', description: 'Create your own Group Buy and invite your community.' })}
-              className="w-full bg-[#1A1D26] border border-dashed border-[var(--sr-customer)]/30 rounded-2xl p-6 flex items-center gap-4 hover:border-[var(--sr-customer)]/50 transition-colors group"
+              className="w-full bg-[var(--sr-surface-elevated)] border border-dashed border-[var(--sr-customer)]/30 rounded-2xl p-6 flex items-center gap-4 hover:border-[var(--sr-customer)]/50 transition-colors group"
             >
               <div className="w-14 h-14 bg-[var(--sr-customer)]/10 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/20 group-hover:bg-[var(--sr-customer)]/20 transition-colors">
                 <Plus className="w-6 h-6 text-[var(--sr-customer)]" />

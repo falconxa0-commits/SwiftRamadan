@@ -66,7 +66,7 @@ export default function BNPLModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -152,7 +152,7 @@ export default function BNPLModal() {
                         className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all text-left ${
                           isSelected
                             ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/40'
-                            : 'bg-[#1A1D26]/40 border-white/5 hover:border-white/10'
+                            : 'bg-[var(--sr-surface-elevated)]/40 border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
@@ -181,7 +181,7 @@ export default function BNPLModal() {
                             animate={{ scale: 1 }}
                             className="w-6 h-6 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shrink-0"
                           >
-                            <Check className="w-3.5 h-3.5 text-[#05070A]" strokeWidth={3} />
+                            <Check className="w-3.5 h-3.5 text-[var(--sr-surface-base)]" strokeWidth={3} />
                           </motion.div>
                         )}
                       </motion.button>
@@ -201,10 +201,10 @@ export default function BNPLModal() {
                   <Calculator className="w-4 h-4 text-[var(--sr-customer)]" />
                   Payment Calculator
                 </h4>
-                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-5">
                   <div className="mb-4">
                     <label className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">Purchase Amount</label>
-                    <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all px-4 py-3">
+                    <div className="flex items-center gap-2 bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all px-4 py-3">
                       <span className="text-white/65 text-lg font-bold">₦</span>
                       <input
                         type="number"
@@ -277,7 +277,7 @@ export default function BNPLModal() {
                   className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] ${
                     applied
                       ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20'
-                      : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
+                      : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90'
                   }`}
                 >
                   {applied ? (

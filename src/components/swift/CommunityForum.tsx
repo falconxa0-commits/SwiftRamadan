@@ -61,8 +61,8 @@ const COMPOSER_CATEGORIES = ['Reviews', 'Recipes', 'Tips', 'Questions', 'General
 // Cycle 5 palette gradients by initial letter
 // (A→green, B→gold, C→purple, D→cyan, E→red, F→green, …).
 const PALETTE = [
-  'from-[#10E07A]/40 to-[#10E07A]/10',
-  'from-[#F5C451]/40 to-[#F5C451]/10',
+  'from-[var(--sr-customer)]/40 to-[var(--sr-customer)]/10',
+  'from-[var(--sr-vendor)]/40 to-[var(--sr-vendor)]/10',
   'from-[#8b5cf6]/40 to-[#8b5cf6]/10',
   'from-[#06b6d4]/40 to-[#06b6d4]/10',
   'from-[#FF6B6B]/40 to-[#FF6B6B]/10',
@@ -77,10 +77,10 @@ const CATEGORY_BADGES: Record<string, string> = {
   Reviews: 'bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] border-[var(--sr-customer)]/20',
   Recipes: 'bg-[#06b6d4]/10 text-[#06b6d4] border-[#06b6d4]/20',
   Tips: 'bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/20',
-  Questions: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
+  Questions: 'bg-[var(--sr-ai)]/10 text-[var(--sr-ai)] border-[var(--sr-ai)]/20',
   General: 'bg-white/5 text-white/60 border-white/10',
   'Group Buy': 'bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/20',
-  Charity: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
+  Charity: 'bg-[var(--sr-ai)]/10 text-[var(--sr-ai)] border-[var(--sr-ai)]/20',
 };
 
 function formatRelativeTime(dateString: string): string {
@@ -501,7 +501,7 @@ export default function CommunityForum() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="fixed inset-0 z-[120] bg-[#05070A] flex flex-col overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[120] bg-[var(--sr-surface-base)] flex flex-col overflow-y-auto custom-scrollbar"
           >
             {/* Decorative top glow */}
             <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[320px] h-[200px] rounded-full bg-[var(--sr-customer)]/10 blur-3xl" />
@@ -509,7 +509,7 @@ export default function CommunityForum() {
             {/* ──── Sticky Header ──── */}
             <div className="sticky top-0 z-20 glass-effect border-b border-white/5">
               {/* Accent bar */}
-              <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
+              <div className="h-[3px] bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
 
               <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -517,7 +517,7 @@ export default function CommunityForum() {
                     initial={{ scale: 0.8, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-                    className="w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
+                    className="w-10 h-10 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
                   >
                     <Users className="w-5 h-5 text-[var(--sr-customer)]" />
                   </motion.div>
@@ -550,7 +550,7 @@ export default function CommunityForum() {
                     className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                       activeFilter === cat.id
                         ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/40 text-[var(--sr-customer)]'
-                        : 'bg-[#1A1D26] border border-white/5 text-white/50 hover:bg-white/5 hover:text-white/80'
+                        : 'bg-[var(--sr-surface-elevated)] border border-white/5 text-white/50 hover:bg-white/5 hover:text-white/80'
                     }`}
                   >
                     {cat.label}
@@ -561,7 +561,7 @@ export default function CommunityForum() {
 
             {/* ──── Sort toggle + error strip ──── */}
             <div className="px-4 pt-4 pb-2 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1 p-1 bg-[#0F1117] rounded-full border border-white/5">
+              <div className="flex items-center gap-1 p-1 bg-[var(--sr-surface-raised)] rounded-full border border-white/5">
                 <button
                   onClick={() => setSortMode('latest')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
@@ -599,7 +599,7 @@ export default function CommunityForum() {
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={`skeleton-${i}`}
-                      className="bg-[#0F1117] rounded-2xl border border-white/5 p-3 sm:p-4 animate-pulse"
+                      className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 p-3 sm:p-4 animate-pulse"
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-full bg-white/10" />
@@ -639,7 +639,7 @@ export default function CommunityForum() {
                       boxShadow: '0 0 24px rgba(167,139,250,0.18)',
                     }}
                   >
-                    <MessageCircle className="w-9 h-9 text-[#A78BFA]" />
+                    <MessageCircle className="w-9 h-9 text-[var(--sr-ai)]" />
                   </motion.div>
                   <motion.p
                     initial={{ opacity: 0, y: 8 }}
@@ -666,7 +666,7 @@ export default function CommunityForum() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
                     onClick={() => setComposerOpen(true)}
-                    className="mt-5 px-5 py-2.5 rounded-full bg-[#A78BFA] text-white font-bold text-sm active:scale-95 transition-transform"
+                    className="mt-5 px-5 py-2.5 rounded-full bg-[var(--sr-ai)] text-white font-bold text-sm active:scale-95 transition-transform"
                     style={{ boxShadow: '0 0 16px rgba(167,139,250,0.35)' }}
                   >
                     + Create a post
@@ -695,7 +695,7 @@ export default function CommunityForum() {
                           type: 'spring',
                           damping: 25,
                         }}
-                        className="bg-[#0F1117] rounded-2xl border border-white/5 hover:border-white/10 transition-colors p-3 sm:p-4"
+                        className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 hover:border-white/10 transition-colors p-3 sm:p-4"
                       >
                         {/* Author row */}
                         <div className="flex items-center gap-3 mb-3">
@@ -854,7 +854,7 @@ export default function CommunityForum() {
                                     onClick={() => handleSubmitComment(post)}
                                     disabled={!draft.trim() || sending}
                                     aria-label="Send comment"
-                                    className="w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center text-[#05070A] active:scale-90 transition-transform disabled:opacity-40 disabled:active:scale-100 shrink-0"
+                                    className="w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center text-[var(--sr-surface-base)] active:scale-90 transition-transform disabled:opacity-40 disabled:active:scale-100 shrink-0"
                                   >
                                     <Send className="w-4 h-4" />
                                   </button>
@@ -881,7 +881,7 @@ export default function CommunityForum() {
                 aria-label="Create a post"
                 className="fixed bottom-6 right-5 z-[130] w-14 h-14 rounded-full bg-[var(--sr-customer)] flex items-center justify-center green-glow active:scale-90 transition-transform"
               >
-                <Plus className="w-6 h-6 text-[#05070A]" strokeWidth={2.5} />
+                <Plus className="w-6 h-6 text-[var(--sr-surface-base)]" strokeWidth={2.5} />
               </motion.button>
             )}
 
@@ -901,7 +901,7 @@ export default function CommunityForum() {
                     animate={{ y: 0 }}
                     exit={{ y: '100%' }}
                     transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-                    className="fixed bottom-0 left-0 right-0 z-[150] bg-[#0F1117] rounded-t-3xl border-t border-white/10 p-5 pb-8 max-w-md mx-auto"
+                    className="fixed bottom-0 left-0 right-0 z-[150] bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 p-5 pb-8 max-w-md mx-auto"
                   >
                     {/* Drag handle */}
                     <div className="flex justify-center mb-4">
@@ -972,7 +972,7 @@ export default function CommunityForum() {
                     <button
                       onClick={handleCreatePost}
                       disabled={!composerContent.trim() || submittingPost}
-                      className="w-full py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-black text-sm green-glow active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100"
+                      className="w-full py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm green-glow active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100"
                     >
                       {submittingPost ? 'Posting…' : 'Post to Community'}
                     </button>

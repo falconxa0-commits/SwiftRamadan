@@ -141,8 +141,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 const MOOD_STYLES: Record<Mood, { border: string; bg: string; emoji: string; label: string }> = {
   praise: { border: 'border-[var(--sr-customer)]/60', bg: 'bg-[var(--sr-customer)]/8', emoji: '🎉', label: 'Praise' },
   guide: { border: 'border-[var(--sr-vendor)]/60', bg: 'bg-[var(--sr-vendor)]/8', emoji: '💡', label: 'Tip' },
-  correct: { border: 'border-[#ef4444]/60', bg: 'bg-[#ef4444]/8', emoji: '⚠️', label: 'Heads up' },
-  encourage: { border: 'border-[#8b5cf6]/60', bg: 'bg-[#8b5cf6]/8', emoji: '💪', label: 'Keep going' },
+  correct: { border: 'border-[var(--sr-error)]/60', bg: 'bg-[var(--sr-error)]/8', emoji: '⚠️', label: 'Heads up' },
+  encourage: { border: 'border-[var(--sr-ai)]/60', bg: 'bg-[var(--sr-ai)]/8', emoji: '💪', label: 'Keep going' },
 };
 
 const BADGE_ICONS: Record<string, typeof Trophy> = {
@@ -753,7 +753,7 @@ export default function SmartKitchenHub() {
 
           {/* Sheet */}
           <motion.div
-            className="relative mt-auto h-[100dvh] w-full bg-[#05070A] flex flex-col overflow-hidden sk-aura"
+            className="relative mt-auto h-[100dvh] w-full bg-[var(--sr-surface-base)] flex flex-col overflow-hidden sk-aura"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -761,12 +761,12 @@ export default function SmartKitchenHub() {
           >
             {/* ── Header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
-                    <ChefHat className="w-5 h-5 text-[#05070A]" />
-                    <span className="absolute -top-1 -right-1 size-2.5 bg-[#ef4444] rounded-full live-ring" />
+                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                    <ChefHat className="w-5 h-5 text-[var(--sr-surface-base)]" />
+                    <span className="absolute -top-1 -right-1 size-2.5 bg-[var(--sr-error)] rounded-full live-ring" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -780,7 +780,7 @@ export default function SmartKitchenHub() {
                 </div>
                 <button
                   onClick={handleClose}
-                  className="size-9 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:border-white/30 transition-colors"
+                  className="size-9 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:border-white/30 transition-colors"
                   aria-label="Close"
                 >
                   <X className="w-4 h-4 text-white" />
@@ -852,7 +852,7 @@ export default function SmartKitchenHub() {
             </div>
 
             {/* ── Bottom tab bar ── */}
-            <div className="absolute bottom-0 left-0 right-0 bg-[#0F1117]/95 backdrop-blur-lg border-t border-white/5 px-2 py-2 grid grid-cols-4 gap-1">
+            <div className="absolute bottom-0 left-0 right-0 bg-[var(--sr-surface-raised)]/95 backdrop-blur-lg border-t border-white/5 px-2 py-2 grid grid-cols-4 gap-1">
               <TabButton
                 active={activeTab === 'coach'}
                 onClick={() => setActiveTab('coach')}
@@ -956,7 +956,7 @@ function CoachTab(props: CoachTabProps) {
           onClick={props.onOpenScanner}
           className="gradient-border w-full p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
         >
-          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#10E07A] flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[var(--sr-customer)] flex items-center justify-center shrink-0">
             <ScanLine className="w-6 h-6 text-white" />
           </div>
           <div className="text-left flex-1 min-w-0">
@@ -977,9 +977,9 @@ function CoachTab(props: CoachTabProps) {
               <button
                 key={meal.id}
                 onClick={() => props.onSelectMeal(meal)}
-                className="bg-[#0F1117] border border-white/5 hover:border-[var(--sr-customer)]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
+                className="bg-[var(--sr-surface-raised)] border border-white/5 hover:border-[var(--sr-customer)]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
               >
-                <div className="aspect-square bg-[#1A1D26] overflow-hidden relative">
+                <div className="aspect-square bg-[var(--sr-surface-elevated)] overflow-hidden relative">
                   <Image src={meal.image} alt={meal.name} fill className="object-cover" />
                 </div>
                 <div className="p-2.5">
@@ -1018,8 +1018,8 @@ function CoachTab(props: CoachTabProps) {
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
-        <div className="bg-[#0F1117] rounded-3xl overflow-hidden border border-white/5">
-          <div className="aspect-[16/10] bg-[#1A1D26] overflow-hidden relative">
+        <div className="bg-[var(--sr-surface-raised)] rounded-3xl overflow-hidden border border-white/5">
+          <div className="aspect-[16/10] bg-[var(--sr-surface-elevated)] overflow-hidden relative">
             <Image src={r.image} alt={r.name} fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
@@ -1045,7 +1045,7 @@ function CoachTab(props: CoachTabProps) {
           </h4>
           <ol className="space-y-2">
             {props.steps.map((step, i) => (
-              <li key={`step-${i}`} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
+              <li key={`step-${i}`} className="flex gap-3 bg-[var(--sr-surface-raised)] border border-white/5 rounded-xl p-3">
                 <span className="size-6 rounded-full bg-[var(--sr-customer)]/15 text-[var(--sr-customer)] text-xs font-black flex items-center justify-center shrink-0">
                   {i + 1}
                 </span>
@@ -1057,7 +1057,7 @@ function CoachTab(props: CoachTabProps) {
 
         <button
           onClick={props.onStartLive}
-          className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           <Sparkles className="w-5 h-5" />
           ▶ Start Live Cooking with Chef Safa
@@ -1081,7 +1081,7 @@ function CoachTab(props: CoachTabProps) {
     return (
       <div className="p-4 space-y-4">
         {/* Current step card */}
-        <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+        <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[var(--sr-customer)] text-xs font-black tracking-wider">
               STEP {props.stepIndex + 1} OF {totalSteps}
@@ -1094,7 +1094,7 @@ function CoachTab(props: CoachTabProps) {
           {/* Overall step progress */}
           <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-500"
+              className="h-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] transition-all duration-500"
               style={{ width: `${((props.stepIndex + 1) / totalSteps) * 100}%` }}
             />
           </div>
@@ -1110,7 +1110,7 @@ function CoachTab(props: CoachTabProps) {
               {props.videoElement}
               {/* LIVE badge */}
               <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
-                <span className="relative size-2 bg-[#ef4444] rounded-full live-ring" />
+                <span className="relative size-2 bg-[var(--sr-error)] rounded-full live-ring" />
                 <span className="text-white text-[10px] font-black tracking-wider">LIVE</span>
               </div>
               {/* Loading pip */}
@@ -1145,7 +1145,7 @@ function CoachTab(props: CoachTabProps) {
                 </div>
                 <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-700"
+                    className="h-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] transition-all duration-700"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -1157,21 +1157,21 @@ function CoachTab(props: CoachTabProps) {
               <button
                 onClick={props.onPrevStep}
                 disabled={props.stepIndex === 0}
-                className="flex-1 bg-[#1A1D26] border border-white/10 text-white/80 font-bold py-3 rounded-xl flex items-center justify-center gap-1.5 disabled:opacity-30 active:scale-[0.97] transition"
+                className="flex-1 bg-[var(--sr-surface-elevated)] border border-white/10 text-white/80 font-bold py-3 rounded-xl flex items-center justify-center gap-1.5 disabled:opacity-30 active:scale-[0.97] transition"
               >
                 <ArrowLeft className="w-4 h-4" /> Prev
               </button>
               {isLast ? (
                 <button
                   onClick={props.onComplete}
-                  className="flex-[2] bg-[var(--sr-customer)] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                  className="flex-[2] bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Mark Complete & Log
                 </button>
               ) : (
                 <button
                   onClick={props.onNextStep}
-                  className="flex-[2] bg-[var(--sr-vendor)] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                  className="flex-[2] bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -1224,7 +1224,7 @@ function CoachTab(props: CoachTabProps) {
         <button
           onClick={props.onSnapAndIdentify}
           disabled={!!props.cameraError || props.scanLoading}
-          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[#10E07A] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
+          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[var(--sr-customer)] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
         >
           <Camera className="w-5 h-5" /> 📸 Snap & Identify
         </button>
@@ -1234,7 +1234,7 @@ function CoachTab(props: CoachTabProps) {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[var(--sr-customer)]/40 rounded-2xl p-4 space-y-3"
+            className="bg-[var(--sr-surface-raised)] border-2 border-[var(--sr-customer)]/40 rounded-2xl p-4 space-y-3"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
@@ -1260,13 +1260,13 @@ function CoachTab(props: CoachTabProps) {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={props.onAddScanToCart}
-                className="flex-1 bg-[var(--sr-customer)] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                className="flex-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
               >
                 <ShoppingCart className="w-4 h-4" /> Add to Cart
               </button>
               <button
                 onClick={props.onScanAnother}
-                className="flex-1 bg-[#1A1D26] border border-white/10 text-white/80 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                className="flex-1 bg-[var(--sr-surface-elevated)] border border-white/10 text-white/80 font-bold py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
               >
                 <RefreshCw className="w-4 h-4" /> Scan Another
               </button>
@@ -1297,12 +1297,12 @@ function CustomRecipeCard({
   const [expanded, setExpanded] = useState(false);
   const diffs: Difficulty[] = ['easy', 'medium', 'hard'];
   return (
-    <div className="bg-[#0F1117] border border-dashed border-[#8b5cf6]/40 rounded-2xl overflow-hidden">
+    <div className="bg-[var(--sr-surface-raised)] border border-dashed border-[var(--sr-ai)]/40 rounded-2xl overflow-hidden">
       <button
         onClick={() => setExpanded((v) => !v)}
         className="w-full p-3 flex flex-col items-center justify-center min-h-[140px] text-center"
       >
-        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[#10E07A] flex items-center justify-center mb-2">
+        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[var(--sr-customer)] flex items-center justify-center mb-2">
           <Plus className="w-5 h-5 text-white" />
         </div>
         <div className="text-white text-xs font-bold">Custom Recipe</div>
@@ -1314,7 +1314,7 @@ function CustomRecipeCard({
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="e.g. Egusi Soup"
-            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
+            className="w-full bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
           />
           <div className="flex gap-1.5">
             {diffs.map((d) => (
@@ -1323,8 +1323,8 @@ function CustomRecipeCard({
                 onClick={() => setCustomDifficulty(d)}
                 className={`flex-1 py-1.5 rounded-lg text-[11px] font-bold capitalize transition ${
                   customDifficulty === d
-                    ? 'text-[#05070A]'
-                    : 'bg-[#1A1D26] text-white/60 border border-white/10'
+                    ? 'text-[var(--sr-surface-base)]'
+                    : 'bg-[var(--sr-surface-elevated)] text-white/60 border border-white/10'
                 }`}
                 style={customDifficulty === d ? { background: difficultyColor(d) } : undefined}
               >
@@ -1334,7 +1334,7 @@ function CustomRecipeCard({
           </div>
           <button
             onClick={onStart}
-            className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
+            className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
           >
             Start Cooking →
           </button>
@@ -1348,9 +1348,9 @@ function CustomRecipeCard({
 function CameraErrorCard({ error, onRetry }: { error: string; onRetry: () => void }) {
   const isDenied = error === 'denied';
   return (
-    <div className="bg-[#0F1117] border-2 border-[#ef4444]/30 rounded-2xl p-6 text-center space-y-3">
-      <div className="size-14 rounded-full bg-[#ef4444]/15 flex items-center justify-center mx-auto">
-        <AlertCircle className="w-7 h-7 text-[#ef4444]" />
+    <div className="bg-[var(--sr-surface-raised)] border-2 border-[var(--sr-error)]/30 rounded-2xl p-6 text-center space-y-3">
+      <div className="size-14 rounded-full bg-[var(--sr-error)]/15 flex items-center justify-center mx-auto">
+        <AlertCircle className="w-7 h-7 text-[var(--sr-error)]" />
       </div>
       <div>
         <h4 className="text-white font-black text-base">
@@ -1364,7 +1364,7 @@ function CameraErrorCard({ error, onRetry }: { error: string; onRetry: () => voi
       </div>
       <button
         onClick={onRetry}
-        className="bg-[var(--sr-customer)] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
+        className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
       >
         <RefreshCw className="w-4 h-4" /> Retry
       </button>
@@ -1422,7 +1422,7 @@ function PantryTab({
         </div>
         <button
           onClick={() => setShowAddPantry(!showAddPantry)}
-          className="bg-[var(--sr-customer)] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
+          className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
         >
           <Plus className="w-4 h-4" /> Add Item
         </button>
@@ -1437,21 +1437,21 @@ function PantryTab({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 space-y-3">
+            <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4 space-y-3">
               <input
                 value={pantryForm.name}
                 onChange={(e) => setPantryForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Item name (e.g. Tomatoes)"
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
+                className="w-full bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <select
                   value={pantryForm.category}
                   onChange={(e) => setPantryForm((f) => ({ ...f, category: e.target.value }))}
-                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
+                  className="bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
                 >
                   {PANTRY_CATEGORIES.map((c) => (
-                    <option key={c} value={c} className="bg-[#1A1D26]">{c}</option>
+                    <option key={c} value={c} className="bg-[var(--sr-surface-elevated)]">{c}</option>
                   ))}
                 </select>
                 <div className="flex gap-2">
@@ -1459,13 +1459,13 @@ function PantryTab({
                     value={pantryForm.quantity}
                     onChange={(e) => setPantryForm((f) => ({ ...f, quantity: e.target.value }))}
                     placeholder="Qty"
-                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
+                    className="w-16 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
                   />
                   <input
                     value={pantryForm.unit}
                     onChange={(e) => setPantryForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder="unit"
-                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
+                    className="flex-1 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
                   />
                 </div>
               </div>
@@ -1473,11 +1473,11 @@ function PantryTab({
                 type="date"
                 value={pantryForm.expiresAt}
                 onChange={(e) => setPantryForm((f) => ({ ...f, expiresAt: e.target.value }))}
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
+                className="w-full bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
               />
               <button
                 onClick={onAdd}
-                className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
+                className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
               >
                 Save to Pantry
               </button>
@@ -1490,7 +1490,7 @@ function PantryTab({
       <button
         onClick={onRescue}
         disabled={rescueLoading}
-        className="w-full p-4 rounded-2xl bg-gradient-to-r from-[#F5C451] via-[#f5b800] to-[#F5C451] text-[#05070A] font-black flex items-center gap-3 active:scale-[0.98] transition disabled:opacity-50 gold-glow"
+        className="w-full p-4 rounded-2xl bg-gradient-to-r from-[var(--sr-vendor)] via-[#f5b800] to-[var(--sr-vendor)] text-[var(--sr-surface-base)] font-black flex items-center gap-3 active:scale-[0.98] transition disabled:opacity-50 gold-glow"
       >
         {rescueLoading ? (
           <RefreshCw className="w-6 h-6 animate-spin" />
@@ -1509,9 +1509,9 @@ function PantryTab({
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[var(--sr-vendor)]/40 rounded-2xl overflow-hidden"
+            className="bg-[var(--sr-surface-raised)] border-2 border-[var(--sr-vendor)]/40 rounded-2xl overflow-hidden"
           >
-            <div className="bg-gradient-to-r from-[#F5C451]/15 to-transparent p-4 border-b border-white/5">
+            <div className="bg-gradient-to-r from-[var(--sr-vendor)]/15 to-transparent p-4 border-b border-white/5">
               <div className="flex items-center gap-2 mb-1">
                 <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
                 <span className="text-[var(--sr-vendor)] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
@@ -1569,7 +1569,7 @@ function PantryTab({
               )}
               <button
                 onClick={onCookNow}
-                className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
               >
                 Cook This Now <ArrowRight className="w-4 h-4" />
               </button>
@@ -1599,7 +1599,7 @@ function PantryTab({
                   {items.map((item) => (
                     <div
                       key={item.id}
-                      className="bg-[#0F1117] border border-white/5 rounded-xl p-3 flex items-center gap-3"
+                      className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-xl p-3 flex items-center gap-3"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="text-white text-sm font-bold truncate">{item.name}</div>
@@ -1610,7 +1610,7 @@ function PantryTab({
                       </div>
                       <button
                         onClick={() => onDelete(item.id)}
-                        className="size-8 rounded-lg bg-[#ef4444]/10 text-[#ef4444] flex items-center justify-center hover:bg-[#ef4444]/20 transition"
+                        className="size-8 rounded-lg bg-[var(--sr-error)]/10 text-[var(--sr-error)] flex items-center justify-center hover:bg-[var(--sr-error)]/20 transition"
                         aria-label="Delete"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1643,9 +1643,9 @@ function InsightsTab({
   if (loading) {
     return (
       <div className="p-4 space-y-4">
-        <div className="h-32 bg-[#0F1117] rounded-2xl animate-pulse" />
-        <div className="h-48 bg-[#0F1117] rounded-2xl animate-pulse" />
-        <div className="h-48 bg-[#0F1117] rounded-2xl animate-pulse" />
+        <div className="h-32 bg-[var(--sr-surface-raised)] rounded-2xl animate-pulse" />
+        <div className="h-48 bg-[var(--sr-surface-raised)] rounded-2xl animate-pulse" />
+        <div className="h-48 bg-[var(--sr-surface-raised)] rounded-2xl animate-pulse" />
       </div>
     );
   }
@@ -1664,7 +1664,7 @@ function InsightsTab({
       {/* 2x2 stat cards */}
       <div className="grid grid-cols-2 gap-3">
         {stats.map((s) => (
-          <div key={s.label} className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+          <div key={s.label} className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
             <div
               className="size-8 rounded-lg flex items-center justify-center mb-2"
               style={{ background: `${s.color}22`, color: s.color }}
@@ -1678,7 +1678,7 @@ function InsightsTab({
       </div>
 
       {/* Weekly bar chart */}
-      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+      <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-white font-black text-sm">Weekly Activity</h4>
           <span className="text-white/65 text-[10px]">last 7 days</span>
@@ -1724,7 +1724,7 @@ function InsightsTab({
       </div>
 
       {/* Difficulty donut */}
-      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+      <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
         <h4 className="text-white font-black text-sm mb-3">Difficulty Breakdown</h4>
         <div className="flex items-center gap-4">
           <svg viewBox="0 0 100 100" className="w-28 h-28 -rotate-90">
@@ -1765,7 +1765,7 @@ function InsightsTab({
 
       {/* Last cooked */}
       {analytics.lastCooked && (
-        <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 flex items-center gap-3">
+        <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4 flex items-center gap-3">
           <div className="size-10 rounded-xl bg-[var(--sr-customer)]/15 flex items-center justify-center">
             <CookingPot className="w-5 h-5 text-[var(--sr-customer)]" />
           </div>
@@ -1798,9 +1798,9 @@ function BadgesTab({
   if (loading) {
     return (
       <div className="p-4 space-y-3">
-        <div className="h-8 bg-[#0F1117] rounded-xl animate-pulse" />
+        <div className="h-8 bg-[var(--sr-surface-raised)] rounded-xl animate-pulse" />
         {[...Array(8)].map((_, i) => (
-          <div key={`skel-${i}`} className="h-20 bg-[#0F1117] rounded-2xl animate-pulse" />
+          <div key={`skel-${i}`} className="h-20 bg-[var(--sr-surface-raised)] rounded-2xl animate-pulse" />
         ))}
       </div>
     );
@@ -1827,7 +1827,7 @@ function BadgesTab({
       </div>
 
       {/* Progress bar */}
-      <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
+      <div className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-white font-black text-sm">Progress</span>
           <span className="text-[var(--sr-customer)] font-black text-sm">
@@ -1836,7 +1836,7 @@ function BadgesTab({
         </div>
         <div className="h-2.5 bg-white/5 rounded-full overflow-hidden">
           <div
-            className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] transition-all duration-500"
+            className="h-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] transition-all duration-500"
             style={{ width: `${(unlockedCount / Math.max(1, achievements.length)) * 100}%` }}
           />
         </div>
@@ -1851,8 +1851,8 @@ function BadgesTab({
               key={a.id}
               className={`relative rounded-2xl p-4 border ${
                 a.unlocked
-                  ? 'border-[var(--sr-vendor)]/50 bg-gradient-to-br from-[#F5C451]/10 to-[#10E07A]/8 gold-glow'
-                  : 'border-white/5 bg-[#0F1117] opacity-50 grayscale'
+                  ? 'border-[var(--sr-vendor)]/50 bg-gradient-to-br from-[var(--sr-vendor)]/10 to-[var(--sr-customer)]/8 gold-glow'
+                  : 'border-white/5 bg-[var(--sr-surface-raised)] opacity-50 grayscale'
               }`}
             >
               <div
@@ -1870,7 +1870,7 @@ function BadgesTab({
               <div className="text-white/50 text-[11px] mt-0.5 leading-snug">{a.desc}</div>
               {a.unlocked && (
                 <div className="absolute top-2 right-2 size-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
-                  <CheckCircle2 className="w-3 h-3 text-[#05070A]" />
+                  <CheckCircle2 className="w-3 h-3 text-[var(--sr-surface-base)]" />
                 </div>
               )}
             </div>

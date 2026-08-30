@@ -102,7 +102,7 @@ export default function RiderPowerFinderModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -151,7 +151,7 @@ export default function RiderPowerFinderModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.05 + i * 0.06 }}
-                      className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border transition-all ${
+                      className={`bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border transition-all ${
                         station.availability !== null && station.availability > 0
                           ? 'border-[var(--sr-customer)]/20'
                           : 'border-white/5 opacity-50'
@@ -247,7 +247,7 @@ export default function RiderPowerFinderModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + i * 0.06 }}
-                      className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border transition-all ${
+                      className={`bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border transition-all ${
                         station.isOpen
                           ? 'border-[var(--sr-vendor)]/20'
                           : 'border-white/5 opacity-50'

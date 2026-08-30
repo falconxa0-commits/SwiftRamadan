@@ -62,7 +62,7 @@ export function HomeTabSkeleton() {
 
       {/* ── Smart Kitchen Hero Card ── */}
       <div className="px-5">
-        <div className="bg-[#1A1D26] border border-white/5 rounded-2xl overflow-hidden p-5 space-y-4">
+        <div className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl overflow-hidden p-5 space-y-4">
           {/* Top row: icon + LIVE badge */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
@@ -128,7 +128,7 @@ export function HomeTabSkeleton() {
 
       {/* ── SwiftReel link skeleton ── */}
       <div className="px-5">
-        <div className="bg-[#1A1D26] border border-white/5 rounded-2xl p-3.5 flex items-center gap-3">
+        <div className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl p-3.5 flex items-center gap-3">
           <div
             className="shimmer-sweep shrink-0"
             style={{ width: '56px', height: '56px', borderRadius: '16px' }}
@@ -180,7 +180,7 @@ export function HomeTabSkeleton() {
 
       {/* ── Featured Ramadan Box ── */}
       <div className="px-5">
-        <div className="bg-[#1A1D26] border border-white/5 rounded-2xl overflow-hidden p-5 space-y-4">
+        <div className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl overflow-hidden p-5 space-y-4">
           {/* Top section */}
           <div className="flex justify-between items-start">
             <div className="space-y-3">
@@ -238,7 +238,7 @@ export function HomeTabSkeleton() {
         <ShimmerSectionHeader width={120} />
         <div className="flex gap-3 overflow-hidden pb-2">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-[#1A1D26] border border-white/5 min-w-[200px] rounded-2xl overflow-hidden shrink-0">
+            <div key={i} className="bg-[var(--sr-surface-elevated)] border border-white/5 min-w-[200px] rounded-2xl overflow-hidden shrink-0">
               <div
                 className="shimmer-sweep aspect-[4/3]"
                 style={{ borderRadius: 0 }}
@@ -277,7 +277,7 @@ export function HomeTabSkeleton() {
         <ShimmerSectionHeader width={130} />
         <div className="space-y-3 max-h-96 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-[#1A1D26] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4">
+            <div key={i} className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4">
               <div
                 className="shimmer-sweep shrink-0"
                 style={{ width: '80px', height: '80px', borderRadius: '12px' }}
@@ -319,7 +319,7 @@ export function HomeTabSkeleton() {
 
       {/* ── Community CTA ── */}
       <div className="px-5">
-        <div className="bg-[#1A1D26] border border-white/5 rounded-3xl p-5 flex items-center gap-3 sm:gap-4">
+        <div className="bg-[var(--sr-surface-elevated)] border border-white/5 rounded-3xl p-5 flex items-center gap-3 sm:gap-4">
           <div
             className="shimmer-sweep shrink-0"
             style={{ width: '56px', height: '56px', borderRadius: '14px' }}

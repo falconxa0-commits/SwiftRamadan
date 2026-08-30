@@ -308,7 +308,7 @@ export default function VendorStoreTab() {
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-          className="w-full py-3 rounded-2xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 gold-glow"
+          className="w-full py-3 rounded-2xl bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 gold-glow"
         >
           <Plus className="w-4 h-4" strokeWidth={3} />
           Add New Product
@@ -354,7 +354,7 @@ export default function VendorStoreTab() {
             </p>
             <button
               onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-              className="mt-4 px-5 py-2.5 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-xs font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center gap-1.5"
+              className="mt-4 px-5 py-2.5 rounded-xl bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-xs font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" strokeWidth={3} />
               Add your first product
@@ -446,7 +446,7 @@ export default function VendorStoreTab() {
                         <button
                           onClick={() => saveEdit(item.id)}
                           disabled={isBusy}
-                          className="w-full py-3 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
+                          className="w-full py-3 rounded-xl bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
                         >
                           {isBusy ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -618,7 +618,7 @@ export default function VendorStoreTab() {
           className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-[var(--sr-vendor)] flex items-center justify-center shadow-lg z-40 gold-glow active:scale-95 transition-transform"
           aria-label="Add product"
         >
-          <Plus className="w-6 h-6 text-[#06070B]" strokeWidth={3} />
+          <Plus className="w-6 h-6 text-[var(--sr-surface-base)]" strokeWidth={3} />
         </motion.button>
 
         {/* Cancel-edit floating X (in case inline edit open + scroll) */}

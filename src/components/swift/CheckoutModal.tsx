@@ -387,7 +387,7 @@ export default function CheckoutModal() {
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+        className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
       >
         {/* Header with Progress Stepper */}
         <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -411,7 +411,7 @@ export default function CheckoutModal() {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                         i < currentStep
-                          ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                          ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                           : i === currentStep
                             ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/50 text-[var(--sr-customer)]'
                             : 'bg-white/5 text-white/20 border border-white/10'
@@ -462,7 +462,7 @@ export default function CheckoutModal() {
                     <p className="text-white/65 text-sm">Your cart is empty</p>
                     <button
                       onClick={handleClose}
-                      className="mt-4 px-6 py-2.5 bg-[var(--sr-customer)] text-[#05070A] font-bold text-sm rounded-xl"
+                      className="mt-4 px-6 py-2.5 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm rounded-xl"
                     >
                       Browse Menu
                     </button>
@@ -476,7 +476,7 @@ export default function CheckoutModal() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, x: -100 }}
-                        className="flex items-center gap-3 p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5"
+                        className="flex items-center gap-3 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5"
                       >
                         {/* Item image */}
                         <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-white/5 relative">
@@ -533,7 +533,7 @@ export default function CheckoutModal() {
 
                 {/* Cart Summary */}
                 {cartItems.length > 0 && (
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 mt-4">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 mt-4">
                     <div className="flex justify-between text-sm">
                       <span className="text-white/65">Subtotal</span>
                       <span className="text-white font-bold">{formatNaira(subtotal)}</span>
@@ -581,12 +581,12 @@ export default function CheckoutModal() {
                   <div className="space-y-2 mb-3">
                     <p className="text-white/65 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
                     {fetchingAddresses ? (
-                      <div className="flex items-center gap-2 p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                      <div className="flex items-center gap-2 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5">
                         <Loader2 className="w-4 h-4 text-[var(--sr-customer)] animate-spin" />
                         <span className="text-white/65 text-sm">Loading saved addresses…</span>
                       </div>
                     ) : savedAddresses.length === 0 ? (
-                      <div className="p-4 bg-[#1A1D26] rounded-2xl border border-white/5 text-center">
+                      <div className="p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 text-center">
                         <p className="text-white/65 text-sm">No saved addresses yet</p>
                         <p className="text-white/60 text-xs mt-1">Add one below or pick a default location</p>
                       </div>
@@ -601,7 +601,7 @@ export default function CheckoutModal() {
                             className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                               isSelected
                                 ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/40'
-                                : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                                : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                             }`}
                           >
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -630,7 +630,7 @@ export default function CheckoutModal() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-[var(--sr-customer)]/20 space-y-3"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-[var(--sr-customer)]/20 space-y-3"
                     >
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {['Home', 'Office', 'Partner', 'Other'].map(lbl => (
@@ -639,7 +639,7 @@ export default function CheckoutModal() {
                             onClick={() => setNewAddrLabel(lbl)}
                             className={`py-2 rounded-lg text-xs font-bold transition-colors ${
                               newAddrLabel === lbl
-                                ? 'bg-[var(--sr-customer)] text-[#06070B]'
+                                ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                                 : 'bg-white/5 text-white/60 hover:bg-white/10'
                             }`}
                           >
@@ -653,7 +653,7 @@ export default function CheckoutModal() {
                         value={newAddrText}
                         onChange={e => setNewAddrText(e.target.value)}
                         placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <label htmlFor="checkout-addr-area" className="sr-only">Area</label>
                       <input
@@ -661,7 +661,7 @@ export default function CheckoutModal() {
                         value={newAddrArea}
                         onChange={e => setNewAddrArea(e.target.value)}
                         placeholder="Area (e.g. Lekki)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <label htmlFor="checkout-addr-instructions" className="sr-only">Delivery instructions</label>
                       <input
@@ -669,13 +669,13 @@ export default function CheckoutModal() {
                         value={newAddrInstructions}
                         onChange={e => setNewAddrInstructions(e.target.value)}
                         placeholder="Delivery instructions (optional)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <div className="flex gap-2">
                         <button
                           onClick={handleSaveNewAddress}
                           disabled={!newAddrText.trim() || savingAddress}
-                          className="flex-1 bg-[var(--sr-customer)] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                          className="flex-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
                         >
                           {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                           Save Address
@@ -710,7 +710,7 @@ export default function CheckoutModal() {
                         className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           selectedLocation.id === loc.id
                             ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
-                            : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                            : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -732,19 +732,19 @@ export default function CheckoutModal() {
                   {/* Edit Address */}
                   <div className="mt-3 flex items-center gap-3 sm:gap-4">
                     {isEditingAddress ? (
-                      <div className="flex-1 bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 space-y-3">
+                      <div className="flex-1 bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 space-y-3">
                         <label htmlFor="checkout-edit-address" className="sr-only">Edit delivery address</label>
                         <input
                           id="checkout-edit-address"
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
-                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none"
+                          className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none"
                           placeholder="Enter delivery address"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={handleSaveAddress}
-                            className="flex-1 bg-[var(--sr-customer)] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
+                            className="flex-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-2.5 rounded-xl text-sm"
                           >
                             Save
                           </button>
@@ -786,7 +786,7 @@ export default function CheckoutModal() {
                     value={deliveryInstructions}
                     onChange={e => setDeliveryInstructions(e.target.value)}
                     placeholder="e.g., Gate code, landmark, leave at door..."
-                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                    className="w-full bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                   />
                 </div>
               </motion.div>
@@ -803,7 +803,7 @@ export default function CheckoutModal() {
                 className="space-y-6"
               >
                 {/* Iftar Precision Toggle */}
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center">
                       <Sun className="w-5 h-5 text-[var(--sr-vendor)]" />
@@ -826,7 +826,7 @@ export default function CheckoutModal() {
                 </div>
 
                 {/* Sahur Alarm Toggle */}
-                <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+                <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center">
                       <Bell className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -864,7 +864,7 @@ export default function CheckoutModal() {
                           className={`p-4 rounded-2xl border text-left transition-all relative ${
                             selectedTimeSlot === slot.id
                               ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
-                              : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                              : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
@@ -910,7 +910,7 @@ export default function CheckoutModal() {
                 )}
 
                 {/* Address Summary */}
-                <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4">
                   <p className="text-white/65 text-xs mb-1">Delivering to</p>
                   <p className="text-white font-bold text-sm">{effectiveAddress}</p>
                 </div>
@@ -940,7 +940,7 @@ export default function CheckoutModal() {
                         className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           paymentMethod === pm.id
                             ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
-                            : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                            : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -980,7 +980,7 @@ export default function CheckoutModal() {
                           className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                             selectedBnplPlan === plan.months
                               ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/30'
-                              : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                              : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                           }`}
                         >
                           <div>
@@ -1008,7 +1008,7 @@ export default function CheckoutModal() {
                 {/* Coupon Code */}
                 <div>
                   <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <Tag className="w-4 h-4 text-[#A78BFA]" />
+                    <Tag className="w-4 h-4 text-[var(--sr-ai)]" />
                     Promo Code
                   </h4>
                   {couponState === 'applied' ? (
@@ -1038,12 +1038,12 @@ export default function CheckoutModal() {
                           if (couponState === 'error') setCouponState('idle');
                         }}
                         placeholder="Enter code (e.g. RAMADAN)"
-                        className="flex-1 bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
+                        className="flex-1 bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
                       />
                       <button
                         onClick={handleApplyCoupon}
                         disabled={!couponCode.trim() || couponState === 'applying'}
-                        className="px-5 bg-[var(--sr-customer)] text-[#06070B] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+                        className="px-5 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
                       >
                         {couponState === 'applying' ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -1054,7 +1054,7 @@ export default function CheckoutModal() {
                     </div>
                   )}
                   {couponState === 'error' && couponMessage && (
-                    <p className="text-[#FB7185] text-xs mt-2 flex items-center gap-1">
+                    <p className="text-[var(--sr-error)] text-xs mt-2 flex items-center gap-1">
                       <X className="w-3 h-3" />
                       {couponMessage}
                     </p>
@@ -1067,7 +1067,7 @@ export default function CheckoutModal() {
                     <Package className="w-4 h-4 text-[var(--sr-vendor)]" />
                     Order Summary
                   </h4>
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3">
                     {cartItems.map(item => (
                       <div key={item.id} className="flex justify-between items-center">
                         <div className="flex-1 min-w-0">
@@ -1158,7 +1158,7 @@ export default function CheckoutModal() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
-                  className="w-full bg-[#1A1D26] rounded-2xl border border-white/5 p-5 space-y-3 text-left"
+                  className="w-full bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-5 space-y-3 text-left"
                 >
                   <div className="flex justify-between">
                     <span className="text-white/65 text-xs">Order Number</span>
@@ -1212,7 +1212,7 @@ export default function CheckoutModal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
                   onClick={handleTrackOrder}
-                  className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
+                  className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[var(--sr-customer)]/20"
                 >
                   <Truck className="w-5 h-5" />
                   Track Order
@@ -1232,7 +1232,7 @@ export default function CheckoutModal() {
 
         {/* Bottom Navigation Buttons */}
         {currentStep < 4 && (
-          <div className="fixed bottom-0 left-0 right-0 z-20 bg-[#05070A] border-t border-white/5 px-4 py-4 space-y-3">
+          <div className="fixed bottom-0 left-0 right-0 z-20 bg-[var(--sr-surface-base)] border-t border-white/5 px-4 py-4 space-y-3">
             {/* Order Total Bar */}
             <div className="flex items-center justify-between">
               <div>
@@ -1252,7 +1252,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={handleNext}
                     disabled={currentStep === 0 && cartItems.length === 0}
-                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
                   >
                     Continue
                   </button>
@@ -1260,7 +1260,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={handlePlaceOrder}
                     disabled={placing}
-                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#10E07A]/30 disabled:opacity-60 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[var(--sr-customer)]/30 disabled:opacity-60 disabled:pointer-events-none"
                   >
                     {placing ? (
                       <>

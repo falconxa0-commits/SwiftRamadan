@@ -155,7 +155,7 @@ export default function ReelsTab() {
           </div>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-[var(--sr-customer)] text-[#04140C] text-xs font-black active:scale-95 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
+            className="flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-xs font-black active:scale-95 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
             aria-label="Upload reel"
           >
             <Plus className="w-4 h-4" strokeWidth={3} />
@@ -204,7 +204,7 @@ export default function ReelsTab() {
           {!isSavedMode && (
             <button
               onClick={() => setShowUpload(true)}
-              className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[var(--sr-customer)] text-[#04140C] text-sm font-black active:scale-95 transition-transform"
+              className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-sm font-black active:scale-95 transition-transform"
             >
               <Plus className="w-4 h-4" strokeWidth={3} />
               Upload Reel

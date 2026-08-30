@@ -126,13 +126,13 @@ export default function TippingKiosk() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#0B0D14] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-label="Tipping Kiosk - tip your delivery rider"
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
+          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--sr-surface-base)]/80 border-b border-white/8">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
@@ -169,7 +169,7 @@ export default function TippingKiosk() {
                     transition={{ delay: 0.1, duration: 0.4 }}
                     className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-6 mb-6 text-center relative overflow-hidden"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-b from-[#10E07A]/5 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-customer)]/5 to-transparent pointer-events-none" />
 
                     {/* Avatar */}
                     <div className="relative z-10">
@@ -278,7 +278,7 @@ export default function TippingKiosk() {
                       onClick={handleCustomSelect}
                       className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                         isCustom
-                          ? 'bg-[#A78BFA]/10 border-2 border-[#A78BFA] text-[#A78BFA]'
+                          ? 'bg-[var(--sr-ai)]/10 border-2 border-[var(--sr-ai)] text-[var(--sr-ai)]'
                           : 'bg-[var(--sr-surface-raised)] border border-white/8 text-white/50 hover:bg-white/5'
                       }`}
                       aria-label="Enter custom tip amount"
@@ -302,7 +302,7 @@ export default function TippingKiosk() {
                               value={customAmount}
                               onChange={(e) => setCustomAmount(e.target.value)}
                               placeholder="Enter amount"
-                              className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl py-3 pl-10 pr-4 text-white font-bold text-lg focus:outline-none focus:border-[#A78BFA]/50 transition-colors"
+                              className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl py-3 pl-10 pr-4 text-white font-bold text-lg focus:outline-none focus:border-[var(--sr-ai)]/50 transition-colors"
                               min="50"
                               aria-label="Custom tip amount in Naira"
                             />

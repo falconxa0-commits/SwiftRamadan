@@ -89,7 +89,7 @@ export default function SahurWakeUpModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -114,7 +114,7 @@ export default function SahurWakeUpModal() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mt-6 bg-[#1A1D26] rounded-2xl border border-white/5 p-6 text-center"
+                className="mt-6 bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-6 text-center"
               >
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export default function SahurWakeUpModal() {
                     >
                       <Plus className="w-4 h-4 text-white/60" />
                     </button>
-                    <div className="w-20 h-20 rounded-xl bg-[#0F1117] border border-white/10 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 flex items-center justify-center">
                       <span className="text-white text-3xl font-black">{String(hours).padStart(2, '0')}</span>
                     </div>
                     <button
@@ -164,7 +164,7 @@ export default function SahurWakeUpModal() {
                     >
                       <Plus className="w-4 h-4 text-white/60" />
                     </button>
-                    <div className="w-20 h-20 rounded-xl bg-[#0F1117] border border-white/10 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 flex items-center justify-center">
                       <span className="text-white text-3xl font-black">{String(minutes).padStart(2, '0')}</span>
                     </div>
                     <button
@@ -202,7 +202,7 @@ export default function SahurWakeUpModal() {
                     <button
                       key={option.id}
                       onClick={() => setSelectedSound(option.id)}
-                      className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border transition-colors text-left ${selectedSound === option.id ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30' : 'bg-[#1A1D26] border-white/5 hover:border-white/10'}`}
+                      className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl border transition-colors text-left ${selectedSound === option.id ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30' : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'}`}
                     >
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${selectedSound === option.id ? 'bg-[var(--sr-customer)]/20' : 'bg-white/5'}`}>
                         <span className={`material-symbols-outlined text-lg ${selectedSound === option.id ? 'text-[var(--sr-customer)]' : 'text-white/65'}`}>{option.icon}</span>
@@ -229,7 +229,7 @@ export default function SahurWakeUpModal() {
                 <h4 className="text-white font-bold text-sm mb-3">Pre-order Sahur Meal</h4>
                 <div className="space-y-2">
                   {sahurMeals.length > 0 ? sahurMeals.map((meal) => (
-                    <div key={meal.id} className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 flex gap-3">
+                    <div key={meal.id} className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 flex gap-3">
                       <div
                         className="w-16 h-16 rounded-lg bg-cover bg-center shrink-0"
                         style={{ backgroundImage: `url(${meal.image})` }}
@@ -253,7 +253,7 @@ export default function SahurWakeUpModal() {
                       </div>
                     </div>
                   )) : (
-                    <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 flex gap-3">
+                    <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3 flex gap-3">
                       <div
                         className="w-16 h-16 rounded-lg bg-cover bg-center shrink-0"
                         style={{ backgroundImage: `url(${trendingMeals[2].image})` }}
@@ -309,7 +309,7 @@ export default function SahurWakeUpModal() {
               >
                 <button
                   onClick={handleSave}
-                  className="w-full py-4 bg-[var(--sr-customer)] text-[#05070A] font-bold text-base rounded-xl hover:bg-[#11d411] transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-base rounded-xl hover:bg-[#11d411] transition-colors flex items-center justify-center gap-2"
                 >
                   <AlarmClock className="w-5 h-5" />
                   Save Sahur Alarm

@@ -47,9 +47,9 @@ const ROLE_ACCENT = {
 } as const;
 
 const ROLE_BTN_CLASS = {
-  customer: 'bg-[var(--sr-customer)] text-[#05070A] shadow-[#10E07A]/20',
-  vendor: 'bg-[var(--sr-vendor)] text-[#05070A] shadow-[#F5C451]/20',
-  rider: 'bg-[var(--sr-rider)] text-white shadow-[#38BDF8]/20',
+  customer: 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] shadow-[var(--sr-customer)]/20',
+  vendor: 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] shadow-[var(--sr-vendor)]/20',
+  rider: 'bg-[var(--sr-rider)] text-white shadow-[var(--sr-rider)]/20',
 } as const;
 
 const ROLE_CTA = {
@@ -219,7 +219,7 @@ function CustomerStep1() {
             initial={{ x: -30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ delay: 0.6 + i * 0.1 }}
-            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1A1D26] border border-white/10 rounded-xl"
+            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl"
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
@@ -282,7 +282,7 @@ function CustomerStep2() {
                 className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full text-sm font-medium transition-all ${
                   isSelected
                     ? 'bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/40 text-[var(--sr-customer)]'
-                    : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:border-white/20'
+                    : 'bg-[var(--sr-surface-elevated)] border border-white/10 text-white/60 hover:border-white/20'
                 }`}
               >
                 <span className="text-base">{pref.emoji}</span>
@@ -308,7 +308,7 @@ function CustomerStep2() {
                 className={`flex flex-col items-center gap-2 p-3 sm:p-4 rounded-xl transition-all ${
                   isSelected
                     ? 'bg-[var(--sr-customer)]/10 border-2 border-[var(--sr-customer)]/40'
-                    : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
+                    : 'bg-[var(--sr-surface-elevated)] border border-white/10 hover:border-white/20'
                 }`}
               >
                 <span className="text-3xl">{cat.emoji}</span>
@@ -321,7 +321,7 @@ function CustomerStep2() {
                     animate={{ scale: 1 }}
                     className="w-4 h-4 rounded-full bg-[var(--sr-customer)] flex items-center justify-center"
                   >
-                    <Check className="w-2.5 h-2.5 text-[#05070A]" />
+                    <Check className="w-2.5 h-2.5 text-[var(--sr-surface-base)]" />
                   </motion.div>
                 )}
               </motion.button>
@@ -359,7 +359,7 @@ function CustomerStep3() {
             placeholder="Enter delivery address"
             value={deliveryAddress}
             onChange={(e) => setDeliveryAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-customer)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-customer)]/50 transition-colors"
           />
         </div>
 
@@ -367,7 +367,7 @@ function CustomerStep3() {
         <div className="relative">
           <button
             onClick={() => setAreaOpen(!areaOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/60'}`}
+            className={`w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${userArea ? 'text-white' : 'text-white/60'}`}
           >
             <MapPin className="w-4 h-4 mr-2 text-[var(--sr-customer)]/60" />
             {userArea || 'Select your area'}
@@ -381,7 +381,7 @@ function CustomerStep3() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                className="absolute top-16 left-0 right-0 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
               >
                 {LAGOS_AREAS.map((a) => (
                   <button
@@ -399,7 +399,7 @@ function CustomerStep3() {
         </div>
 
         {/* Deliver Before Iftar Toggle */}
-        <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+        <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center">
               <Moon className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -457,7 +457,7 @@ function VendorStep1() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => toast({ title: 'Coming soon', description: 'Logo upload will be available soon.' })}
-            className="w-24 h-24 rounded-2xl bg-[#1A1D26] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[var(--sr-vendor)]/40 transition-colors"
+            className="w-24 h-24 rounded-2xl bg-[var(--sr-surface-elevated)] border-2 border-dashed border-white/20 flex flex-col items-center justify-center gap-1 hover:border-[var(--sr-vendor)]/40 transition-colors"
           >
             <Camera className="w-6 h-6 text-white/60" />
             <span className="text-white/60 text-[10px] font-medium">Store Logo</span>
@@ -472,7 +472,7 @@ function VendorStep1() {
             placeholder="Store name"
             value={vendorStoreName}
             onChange={(e) => setVendorStoreName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
           />
         </div>
 
@@ -480,7 +480,7 @@ function VendorStep1() {
         <div className="relative">
           <button
             onClick={() => setCatOpen(!catOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/60'}`}
+            className={`w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${vendorBusinessCategory ? 'text-white' : 'text-white/60'}`}
           >
             <ShoppingBag className="w-4 h-4 mr-2 text-[var(--sr-vendor)]/60" />
             {vendorBusinessCategory || 'Business category'}
@@ -493,7 +493,7 @@ function VendorStep1() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                className="absolute top-16 left-0 right-0 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
               >
                 {VENDOR_CATEGORIES.map((cat) => (
                   <button
@@ -518,7 +518,7 @@ function VendorStep1() {
             placeholder="Business address"
             value={vendorBusinessAddress}
             onChange={(e) => setVendorBusinessAddress(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
           />
         </div>
 
@@ -528,7 +528,7 @@ function VendorStep1() {
           value={storeDesc}
           onChange={(e) => setStoreDesc(e.target.value)}
           rows={3}
-          className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors resize-none"
+          className="w-full bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors resize-none"
         />
       </div>
     </motion.div>
@@ -566,7 +566,7 @@ function VendorStep2() {
                 type="time"
                 value={vendorOpenTime}
                 onChange={(e) => setVendorOpenTime(e.target.value)}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+                className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
               />
             </div>
           </div>
@@ -578,14 +578,14 @@ function VendorStep2() {
                 type="time"
                 value={vendorCloseTime}
                 onChange={(e) => setVendorCloseTime(e.target.value)}
-                className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+                className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-11 pr-4 text-white text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
               />
             </div>
           </div>
         </div>
 
         {/* Sahur Orders Toggle */}
-        <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+        <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center">
               <Moon className="w-5 h-5 text-[var(--sr-vendor)]" />
@@ -608,7 +608,7 @@ function VendorStep2() {
         </div>
 
         {/* Iftar Rush Toggle */}
-        <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] border border-white/10 rounded-xl">
+        <div className="flex items-center justify-between p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center">
               <Zap className="w-5 h-5 text-[var(--sr-vendor)]" />
@@ -640,7 +640,7 @@ function VendorStep2() {
               placeholder="e.g., 50"
               value={maxOrders}
               onChange={(e) => setMaxOrders(e.target.value)}
-              className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+              className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-11 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
             />
           </div>
         </div>
@@ -686,7 +686,7 @@ function VendorStep3() {
             placeholder="Bank name"
             value={vendorBankName}
             onChange={(e) => setVendorBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
           />
         </div>
 
@@ -698,7 +698,7 @@ function VendorStep3() {
             placeholder="Account number"
             value={vendorAccountNumber}
             onChange={(e) => setVendorAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
           />
         </div>
 
@@ -710,12 +710,12 @@ function VendorStep3() {
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-vendor)]/50 transition-colors"
           />
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[#1A1D26] border border-[var(--sr-vendor)]/10 rounded-xl">
+        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-[var(--sr-vendor)]/10 rounded-xl">
           <ShieldCheck className="w-5 h-5 text-[var(--sr-vendor)] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your banking details are encrypted and secure. SwiftRamadan never stores raw account numbers.
@@ -766,7 +766,7 @@ function RiderStep1() {
                 className={`flex flex-col items-center gap-2 p-5 rounded-xl transition-all ${
                   isSelected
                     ? 'bg-[var(--sr-rider)]/10 border-2 border-[var(--sr-rider)]/50'
-                    : 'bg-[#1A1D26] border border-white/10 hover:border-white/20'
+                    : 'bg-[var(--sr-surface-elevated)] border border-white/10 hover:border-white/20'
                 }`}
                 style={{ boxShadow: isSelected ? '0 0 15px #38BDF820' : 'none' }}
               >
@@ -797,7 +797,7 @@ function RiderStep1() {
             placeholder="Vehicle color"
             value={riderVehicleColor}
             onChange={(e) => setRiderVehicleColor(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
@@ -809,7 +809,7 @@ function RiderStep1() {
             placeholder="Plate number (e.g., LSR 123 AB)"
             value={riderPlateNumber}
             onChange={(e) => setRiderPlateNumber(e.target.value.toUpperCase())}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors uppercase tracking-wider font-mono"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors uppercase tracking-wider font-mono"
           />
         </div>
       </div>
@@ -843,7 +843,7 @@ function RiderStep2() {
             placeholder="License number"
             value={riderLicenseNumber}
             onChange={(e) => setRiderLicenseNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
@@ -851,7 +851,7 @@ function RiderStep2() {
         <div className="relative">
           <button
             onClick={() => setIdOpen(!idOpen)}
-            className={`w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/60'}`}
+            className={`w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-4 pr-10 text-left text-sm focus:outline-none transition-colors flex items-center ${idType ? 'text-white' : 'text-white/60'}`}
           >
             <User className="w-4 h-4 mr-2 text-[var(--sr-rider)]/60" />
             {idType || 'ID type'}
@@ -864,7 +864,7 @@ function RiderStep2() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.15 }}
-                className="absolute top-16 left-0 right-0 bg-[#1A1D26] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
+                className="absolute top-16 left-0 right-0 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl overflow-hidden z-20 shadow-2xl"
               >
                 {ID_TYPES.map((type) => (
                   <button
@@ -889,7 +889,7 @@ function RiderStep2() {
             placeholder="ID number"
             value={idNumber}
             onChange={(e) => setIdNumber(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
@@ -902,7 +902,7 @@ function RiderStep2() {
                 key={doc}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => toast({ title: 'Coming soon', description: `${doc} upload will be available soon.` })}
-                className="flex flex-col items-center gap-2 p-5 bg-[#1A1D26] border border-dashed border-white/20 rounded-xl hover:border-[var(--sr-rider)]/30 transition-colors"
+                className="flex flex-col items-center gap-2 p-5 bg-[var(--sr-surface-elevated)] border border-dashed border-white/20 rounded-xl hover:border-[var(--sr-rider)]/30 transition-colors"
               >
                 <Camera className="w-6 h-6 text-white/25" />
                 <span className="text-white/65 text-[11px] font-medium text-center">{doc}</span>
@@ -912,7 +912,7 @@ function RiderStep2() {
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[#1A1D26] border border-[var(--sr-rider)]/10 rounded-xl">
+        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-[var(--sr-rider)]/10 rounded-xl">
           <ShieldCheck className="w-5 h-5 text-[var(--sr-rider)] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your documents are encrypted and used only for verification. Processing takes 24-48 hours.
@@ -960,7 +960,7 @@ function RiderStep3() {
             placeholder="Bank name"
             value={riderBankName}
             onChange={(e) => setRiderBankName(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
@@ -972,7 +972,7 @@ function RiderStep3() {
             placeholder="Account number"
             value={riderAccountNumber}
             onChange={(e) => setRiderAccountNumber(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
@@ -984,12 +984,12 @@ function RiderStep3() {
             placeholder="Account holder name"
             value={accountHolder}
             onChange={(e) => setAccountHolder(e.target.value)}
-            className="w-full h-14 bg-[#1A1D26] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/60 text-sm focus:outline-none focus:border-[var(--sr-rider)]/50 transition-colors"
           />
         </div>
 
         {/* Security Note */}
-        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[#1A1D26] border border-[var(--sr-rider)]/10 rounded-xl">
+        <div className="flex items-start gap-3 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] border border-[var(--sr-rider)]/10 rounded-xl">
           <ShieldCheck className="w-5 h-5 text-[var(--sr-rider)] shrink-0 mt-0.5" />
           <p className="text-white/50 text-xs leading-relaxed">
             Your banking details are encrypted and secure. Payments are settled daily.
@@ -1026,7 +1026,7 @@ function CelebrationScreen({ role, onDone }: { role: 'customer' | 'vendor' | 'ri
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[130] bg-[#05070A] flex flex-col items-center justify-center px-8"
+      className="fixed inset-0 z-[130] bg-[var(--sr-surface-base)] flex flex-col items-center justify-center px-8"
     >
       {/* Confetti Particles */}
       {confettiColors.map((color, i) => (
@@ -1212,7 +1212,7 @@ export default function OnboardingFlow() {
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.25 }}
-        className="fixed inset-0 z-[120] bg-[#05070A] flex flex-col"
+        className="fixed inset-0 z-[120] bg-[var(--sr-surface-base)] flex flex-col"
       >
         {/* Top Bar */}
         <div className="flex items-center justify-between px-4 h-14 shrink-0 border-b border-white/5">
@@ -1220,7 +1220,7 @@ export default function OnboardingFlow() {
             {onboardingStep > 0 ? (
               <button
                 onClick={handleBack}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:border-white/20 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:border-white/20 transition-colors"
                 aria-label="Go back"
               >
                 <ArrowLeft className="w-5 h-5 text-white" />
@@ -1252,7 +1252,7 @@ export default function OnboardingFlow() {
         </div>
 
         {/* Bottom Action Button */}
-        <div className="shrink-0 px-6 py-5 border-t border-white/5 bg-[#05070A]">
+        <div className="shrink-0 px-6 py-5 border-t border-white/5 bg-[var(--sr-surface-base)]">
           <motion.button
             onClick={handleNext}
             whileTap={{ scale: 0.97 }}
@@ -1273,7 +1273,7 @@ export default function OnboardingFlow() {
         </div>
 
         {/* Bottom Safe Area */}
-        <div className="shrink-0 h-2 bg-[#05070A]" />
+        <div className="shrink-0 h-2 bg-[var(--sr-surface-base)]" />
       </motion.div>
     </AnimatePresence>
   );

@@ -33,7 +33,7 @@ export default function RiderPerformanceHub() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -64,7 +64,7 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 }}
-                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Target className="w-4 h-4 text-[var(--sr-customer)]" />
@@ -82,7 +82,7 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Star className="w-4 h-4 text-[var(--sr-vendor)]" />
@@ -100,7 +100,7 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Heart className="w-4 h-4 text-rose-400" />
@@ -118,7 +118,7 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Trophy className="w-4 h-4 text-[var(--sr-rider)]" />
@@ -134,7 +134,7 @@ export default function RiderPerformanceHub() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
-                className="mt-4 bg-[#1A1D26] rounded-2xl p-5 border border-white/5"
+                className="mt-4 bg-[var(--sr-surface-elevated)] rounded-2xl p-5 border border-white/5"
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ export default function RiderPerformanceHub() {
                     initial={{ width: 0 }}
                     animate={{ width: `${m.incentiveProgress}%` }}
                     transition={{ duration: 1, delay: 0.5 }}
-                    className="h-3 rounded-full bg-gradient-to-r from-[#38BDF8] to-[#F5C451]"
+                    className="h-3 rounded-full bg-gradient-to-r from-[var(--sr-rider)] to-[var(--sr-vendor)]"
                   />
                 </div>
                 <p className="text-white/60 text-xs mt-2 text-center">{m.incentiveRemaining} to unlock bonus</p>
@@ -172,7 +172,7 @@ export default function RiderPerformanceHub() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.35 + i * 0.08 }}
-                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 flex items-center justify-center border border-[var(--sr-rider)]/20 shrink-0">

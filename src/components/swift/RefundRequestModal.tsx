@@ -328,7 +328,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
                   onClick={onClose}
-                  className="mt-8 px-8 py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-bold text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
+                  className="mt-8 px-8 py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
                 >
                   Done
                 </motion.button>
@@ -531,7 +531,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   <button
                     onClick={() => setStep(3)}
                     disabled={!reason.trim() || !refundAmount}
-                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Continue to Confirm
                     <ChevronRight className="w-4 h-4" />
@@ -603,7 +603,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? (
                       <>

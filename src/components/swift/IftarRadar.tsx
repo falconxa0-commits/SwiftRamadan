@@ -279,7 +279,7 @@ function IftarRadarInner() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[#0B0D14] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
+            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
             role="dialog"
             aria-modal="true"
             aria-label="Iftar Radar — Find nearby Iftar gatherings"
@@ -585,7 +585,7 @@ function IftarRadarInner() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-[#0B0D14]/95 z-[90] flex flex-col"
+                  className="absolute inset-0 bg-[var(--sr-surface-base)]/95 z-[90] flex flex-col"
                 >
                   <div className="flex items-center justify-between p-4 border-b border-white/8 shrink-0">
                     <h3 className="text-white font-bold text-base">Pin Free Iftar Here!</h3>

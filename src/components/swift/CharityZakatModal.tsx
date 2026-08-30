@@ -122,7 +122,7 @@ export default function CharityZakatModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[#05070A] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0">
@@ -178,7 +178,7 @@ export default function CharityZakatModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.6 }}
-                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 mb-4 w-full max-w-xs"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 mb-4 w-full max-w-xs"
                     >
                       <p className="text-[var(--sr-customer)] text-3xl font-black">{confirmedMeals}</p>
                       <p className="text-white/65 text-xs">Meal{confirmedMeals > 1 ? 's' : ''} Sponsored</p>
@@ -195,7 +195,7 @@ export default function CharityZakatModal() {
                     <div className="flex gap-3 w-full max-w-xs">
                       <button
                         onClick={handleShareImpact}
-                        className="flex-1 bg-[#1A1D26] text-white font-bold py-3 rounded-xl text-sm border border-white/10 flex items-center justify-center gap-2"
+                        className="flex-1 bg-[var(--sr-surface-elevated)] text-white font-bold py-3 rounded-xl text-sm border border-white/10 flex items-center justify-center gap-2"
                       >
                         <Share2 className="w-4 h-4" />
                         Share Impact
@@ -204,7 +204,7 @@ export default function CharityZakatModal() {
                         onClick={() => {
                           setShowConfirmed(false);
                         }}
-                        className="flex-1 bg-[var(--sr-customer)] text-[#05070A] font-bold py-3 rounded-xl text-sm"
+                        className="flex-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-3 rounded-xl text-sm"
                       >
                         Done
                       </button>
@@ -235,14 +235,14 @@ export default function CharityZakatModal() {
 
                     {/* Donation Type Tabs */}
                     <div className="px-4 mt-4">
-                      <div className="flex bg-[#1A1D26] rounded-xl p-1 border border-white/5">
+                      <div className="flex bg-[var(--sr-surface-elevated)] rounded-xl p-1 border border-white/5">
                         {(['single', 'box'] as DonationTab[]).map(tab => (
                           <button
                             key={tab}
                             onClick={() => setDonationTab(tab)}
                             className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                               donationTab === tab
-                                ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                                ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                                 : 'text-white/50 hover:text-white'
                             }`}
                           >
@@ -261,7 +261,7 @@ export default function CharityZakatModal() {
                             key={orphanage.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
+                            className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5"
                           >
                             <div className="flex items-start justify-between mb-3">
                               <div>
@@ -305,7 +305,7 @@ export default function CharityZakatModal() {
                           exit={{ opacity: 0, height: 0 }}
                           className="px-4 mt-4 overflow-hidden"
                         >
-                          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-[var(--sr-vendor)]/20">
+                          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-[var(--sr-vendor)]/20">
                             <h4 className="text-white font-bold text-sm mb-3">Select Amount</h4>
                             <div className="flex gap-2 mb-3">
                               {donationAmounts.map(amt => (
@@ -314,7 +314,7 @@ export default function CharityZakatModal() {
                                   onClick={() => { setSelectedAmount(amt); setCustomAmount(''); }}
                                   className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
                                     selectedAmount === amt && !customAmount
-                                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                                       : 'bg-white/5 text-white border border-white/10'
                                   }`}
                                 >
@@ -331,7 +331,7 @@ export default function CharityZakatModal() {
                             />
                             <button
                               onClick={handleConfirmDonation}
-                              className="w-full bg-[var(--sr-customer)] text-[#05070A] font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                              className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-3 rounded-xl text-sm flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                             >
                               Confirm Donation
                               <ChevronRight className="w-4 h-4" />
@@ -343,7 +343,7 @@ export default function CharityZakatModal() {
 
                     {/* Zakat Calculator */}
                     <div className="px-4 mt-6">
-                      <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border-2 border-[var(--sr-vendor)]/30 gold-glow">
+                      <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border-2 border-[var(--sr-vendor)]/30 gold-glow">
                         <div className="flex items-center gap-2 mb-4">
                           <span className="material-symbols-outlined text-[var(--sr-vendor)]">calculate</span>
                           <h3 className="text-[var(--sr-vendor)] font-bold text-base">Zakat Calculator</h3>
@@ -381,7 +381,7 @@ export default function CharityZakatModal() {
                           </div>
                           <button
                             onClick={handleCalculateZakat}
-                            className="w-full gold-gradient text-[#05070A] font-bold py-3 rounded-xl text-sm active:scale-[0.98] transition-transform"
+                            className="w-full gold-gradient text-[var(--sr-surface-base)] font-bold py-3 rounded-xl text-sm active:scale-[0.98] transition-transform"
                           >
                             Calculate Zakat
                           </button>
@@ -421,7 +421,7 @@ export default function CharityZakatModal() {
                             key={item.id}
                             onClick={() => handleQuickCharity(item)}
                             whileTap={{ scale: 0.97 }}
-                            className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-left hover:border-[var(--sr-customer)]/20 transition-colors"
+                            className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 text-left hover:border-[var(--sr-customer)]/20 transition-colors"
                           >
                             <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl mb-2">{item.icon}</span>
                             <p className="text-white font-bold text-sm">{item.name}</p>

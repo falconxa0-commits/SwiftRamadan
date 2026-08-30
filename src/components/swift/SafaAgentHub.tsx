@@ -29,12 +29,12 @@ interface Message {
 /* ──────────────────── Agent Color Map ──────────────────── */
 // Maps agent IDs to their accent colors for visual distinction
 const AGENT_ACCENTS: Record<string, { bg: string; text: string; border: string; glow: string; dot: string }> = {
-  support:   { bg: 'bg-[var(--sr-rider)]/20', text: 'text-[var(--sr-rider)]', border: 'border-[var(--sr-rider)]/30', glow: 'shadow-[#38BDF8]/20', dot: 'bg-[var(--sr-rider)]' },
-  marketing: { bg: 'bg-[#A78BFA]/20', text: 'text-[#A78BFA]', border: 'border-[#A78BFA]/30', glow: 'shadow-[#A78BFA]/20', dot: 'bg-[#A78BFA]' },
+  support:   { bg: 'bg-[var(--sr-rider)]/20', text: 'text-[var(--sr-rider)]', border: 'border-[var(--sr-rider)]/30', glow: 'shadow-[var(--sr-rider)]/20', dot: 'bg-[var(--sr-rider)]' },
+  marketing: { bg: 'bg-[var(--sr-ai)]/20', text: 'text-[var(--sr-ai)]', border: 'border-[var(--sr-ai)]/30', glow: 'shadow-[var(--sr-ai)]/20', dot: 'bg-[var(--sr-ai)]' },
   chef:      { bg: 'bg-[#FB923C]/20', text: 'text-[#FB923C]', border: 'border-[#FB923C]/30', glow: 'shadow-[#FB923C]/20', dot: 'bg-[#FB923C]' },
   rider:     { bg: 'bg-[#22D3EE]/20', text: 'text-[#22D3EE]', border: 'border-[#22D3EE]/30', glow: 'shadow-[#22D3EE]/20', dot: 'bg-[#22D3EE]' },
-  vendor:    { bg: 'bg-[var(--sr-vendor)]/20', text: 'text-[var(--sr-vendor)]', border: 'border-[var(--sr-vendor)]/30', glow: 'shadow-[#F5C451]/20', dot: 'bg-[var(--sr-vendor)]' },
-  analytics: { bg: 'bg-[var(--sr-customer)]/20', text: 'text-[var(--sr-customer)]', border: 'border-[var(--sr-customer)]/30', glow: 'shadow-[#10E07A]/20', dot: 'bg-[var(--sr-customer)]' },
+  vendor:    { bg: 'bg-[var(--sr-vendor)]/20', text: 'text-[var(--sr-vendor)]', border: 'border-[var(--sr-vendor)]/30', glow: 'shadow-[var(--sr-vendor)]/20', dot: 'bg-[var(--sr-vendor)]' },
+  analytics: { bg: 'bg-[var(--sr-customer)]/20', text: 'text-[var(--sr-customer)]', border: 'border-[var(--sr-customer)]/30', glow: 'shadow-[var(--sr-customer)]/20', dot: 'bg-[var(--sr-customer)]' },
 };
 
 const DEFAULT_ACCENT = AGENT_ACCENTS.support;
@@ -397,10 +397,10 @@ export default function SafaAgentHub() {
           className="relative w-full max-w-lg h-[90vh] sm:h-[80vh] bg-[#0a0b10] border border-white/10 rounded-t-2xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl"
         >
           {/* Gradient accent ring based on active agent */}
-          <div className={`pointer-events-none absolute inset-0 rounded-t-2xl sm:rounded-2xl p-px bg-gradient-to-br from-[#10E07A]/30 via-transparent to-[${activeAgent?.icon === '🎧' ? '#38BDF8' : '#F5C451'}]/30 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] opacity-50`} />
+          <div className={`pointer-events-none absolute inset-0 rounded-t-2xl sm:rounded-2xl p-px bg-gradient-to-br from-[var(--sr-customer)]/30 via-transparent to-[${activeAgent?.icon === '🎧' ? '#38BDF8' : '#F5C451'}]/30 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] opacity-50`} />
 
           {/* ═══════ Header ═══════ */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-[#0B0D14]/90 backdrop-blur-md shrink-0">
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-[var(--sr-surface-base)]/90 backdrop-blur-md shrink-0">
             <button
               onClick={() => setShowAgentList(!showAgentList)}
               className="flex items-center gap-2.5 flex-1 min-w-0 group"
@@ -621,7 +621,7 @@ export default function SafaAgentHub() {
           </AnimatePresence>
 
           {/* ═══════ Input Bar ═══════ */}
-          <div className="px-4 py-3 border-t border-white/10 bg-[#0B0D14]/90 backdrop-blur-md shrink-0">
+          <div className="px-4 py-3 border-t border-white/10 bg-[var(--sr-surface-base)]/90 backdrop-blur-md shrink-0">
             <div className="flex items-center gap-2">
               {/* Agent switcher shortcut */}
               {agents.length > 1 && (
@@ -648,7 +648,7 @@ export default function SafaAgentHub() {
                   }
                 }}
                 placeholder={`Ask ${activeAgent?.name || 'Safa'}...`}
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[var(--sr-customer)]/50 focus:ring-1 focus:ring-[#10E07A]/20 transition-all"
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[var(--sr-customer)]/50 focus:ring-1 focus:ring-[var(--sr-customer)]/20 transition-all"
                 disabled={isLoading}
               />
 

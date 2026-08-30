@@ -127,7 +127,7 @@ export default function AIChatWidget() {
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 320, damping: 28 }}
             style={{ height: minimized ? 'auto' : '70vh' }}
-            className="fixed bottom-24 left-4 w-[calc(100%-2rem)] sm:w-[400px] z-[60] flex flex-col rounded-3xl overflow-hidden border border-white/10 bg-[#0F1117]/95 backdrop-blur-md shadow-2xl shadow-black/50"
+            className="fixed bottom-24 left-4 w-[calc(100%-2rem)] sm:w-[400px] z-[60] flex flex-col rounded-3xl overflow-hidden border border-white/10 bg-[var(--sr-surface-raised)]/95 backdrop-blur-md shadow-2xl shadow-black/50"
           >
             {/* Gradient ring border */}
             <div className="pointer-events-none absolute inset-0 rounded-3xl p-px bg-gradient-to-br from-[#13ec13]/50 via-transparent to-[#FFD700]/50 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude]" />
@@ -137,13 +137,13 @@ export default function AIChatWidget() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[#FFD700] to-[#13ec13] flex items-center justify-center shadow-lg shadow-[#13ec13]/20">
-                    <ChefHat className="w-5 h-5 text-[#0F1117]" />
+                    <ChefHat className="w-5 h-5 text-[var(--sr-surface-raised)]" />
                     <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[#13ec13] rounded-full border-2 border-[#0F1117]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="text-white text-sm font-bold leading-tight">Chef Safa AI</p>
-                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#FFD700] to-[#13ec13] text-[#0F1117] flex items-center gap-0.5">
+                      <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-gradient-to-r from-[#FFD700] to-[#13ec13] text-[var(--sr-surface-raised)] flex items-center gap-0.5">
                         <Sparkles className="w-2.5 h-2.5" /> Beta
                       </span>
                     </div>
@@ -199,8 +199,8 @@ export default function AIChatWidget() {
                         </div>
                         <div className={`px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                           msg.from === 'user'
-                            ? 'bg-[#13ec13] text-[#05070A] font-semibold rounded-tr-sm'
-                            : 'bg-[#1A1D26] text-white/85 border-l-2 border-[#FFD700]/60 rounded-tl-sm'
+                            ? 'bg-[#13ec13] text-[var(--sr-surface-base)] font-semibold rounded-tr-sm'
+                            : 'bg-[var(--sr-surface-elevated)] text-white/85 border-l-2 border-[#FFD700]/60 rounded-tl-sm'
                         }`}>
                           {msg.text}
                         </div>
@@ -214,7 +214,7 @@ export default function AIChatWidget() {
                         <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-1 bg-gradient-to-br from-[#FFD700]/30 to-[#FFD700]/10">
                           <ChefHat className="w-3.5 h-3.5 text-[#FFD700]" />
                         </div>
-                        <div className="bg-[#1A1D26] px-4 py-3 rounded-2xl border-l-2 border-[#FFD700]/60 rounded-tl-sm">
+                        <div className="bg-[var(--sr-surface-elevated)] px-4 py-3 rounded-2xl border-l-2 border-[#FFD700]/60 rounded-tl-sm">
                           <div className="flex gap-1.5">
                             <div className="w-2 h-2 bg-[#FFD700] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                             <div className="w-2 h-2 bg-[#FFD700] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -237,7 +237,7 @@ export default function AIChatWidget() {
                       className="px-4 pb-2 space-y-1.5 overflow-hidden"
                     >
                       {PROACTIVE_TIPS.map((tip) => (
-                        <div key={tip.title} className="flex items-start gap-2 px-3 py-2 rounded-xl bg-[#1A1D26]/60 border border-white/5">
+                        <div key={tip.title} className="flex items-start gap-2 px-3 py-2 rounded-xl bg-[var(--sr-surface-elevated)]/60 border border-white/5">
                           <span className="text-sm leading-tight">{tip.emoji}</span>
                           <p className="text-[11px] text-white/70 leading-snug">
                             <span className="text-white font-semibold">{tip.title}:</span> {tip.text}
@@ -279,7 +279,7 @@ export default function AIChatWidget() {
                       onChange={(e) => setMessage(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                       placeholder="Ask Chef Safa anything…"
-                      className="flex-1 bg-[#1A1D26] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/60 focus:outline-none focus:border-[#13ec13]/30"
+                      className="flex-1 bg-[var(--sr-surface-elevated)] border border-white/5 rounded-full px-4 py-2.5 text-sm text-white placeholder:text-white/60 focus:outline-none focus:border-[#13ec13]/30"
                     />
                     <button
                       onClick={() => toast({ title: '🎤 Coming soon', description: 'Voice input coming soon' })}
@@ -294,7 +294,7 @@ export default function AIChatWidget() {
                       aria-label="Send message"
                       className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 disabled:opacity-40 transition-opacity bg-gradient-to-br from-[#13ec13] to-[#FFD700]"
                     >
-                      <Send className="w-4 h-4 text-[#05070A]" />
+                      <Send className="w-4 h-4 text-[var(--sr-surface-base)]" />
                     </button>
                   </div>
                 </div>
@@ -320,21 +320,21 @@ export default function AIChatWidget() {
         <span className="absolute -inset-2 rounded-full bg-gradient-to-br from-[#13ec13] to-[#FFD700] opacity-40 blur-xl group-hover:opacity-70 transition-opacity" />
         {/* Gradient orb */}
         <span className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#13ec13] via-[#13ec13] to-[#FFD700] flex items-center justify-center shadow-lg shadow-[#13ec13]/30">
-          {isOpen ? <X className="w-6 h-6 text-[#05070A]" /> : <ChefHat className="w-6 h-6 text-[#05070A]" />}
+          {isOpen ? <X className="w-6 h-6 text-[var(--sr-surface-base)]" /> : <ChefHat className="w-6 h-6 text-[var(--sr-surface-base)]" />}
           {/* Gold "new" notification dot */}
           {!isOpen && hasNew && (
             <span className="absolute -top-1 -right-1 w-4 h-4 bg-[#FFD700] rounded-full border-2 border-[#0F1117] flex items-center justify-center">
-              <span className="w-1.5 h-1.5 bg-[#0F1117] rounded-full" />
+              <span className="w-1.5 h-1.5 bg-[var(--sr-surface-raised)] rounded-full" />
             </span>
           )}
         </span>
         {/* Desktop hover label */}
-        <span className="absolute left-16 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[#1A1D26] border border-white/10 text-xs text-white font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+        <span className="absolute left-16 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 text-xs text-white font-medium whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
           <Sparkles className="w-3 h-3 text-[#FFD700]" />
           Chef Safa AI
         </span>
         {/* Mobile persistent AI badge */}
-        <span className="absolute -top-1 -left-1 sm:hidden bg-[#FFD700] text-[#0F1117] text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-[#0F1117]">
+        <span className="absolute -top-1 -left-1 sm:hidden bg-[#FFD700] text-[var(--sr-surface-raised)] text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-[#0F1117]">
           AI
         </span>
       </motion.button>

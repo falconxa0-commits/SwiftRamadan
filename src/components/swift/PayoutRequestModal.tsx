@@ -284,7 +284,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
   const accentBorder30 = isGold ? 'border-[var(--sr-vendor)]/30' : 'border-[var(--sr-rider)]/30';
   const gradientClass = isGold
     ? 'gold-gradient'
-    : 'bg-gradient-to-br from-[#38BDF8]/20 via-[#38BDF8]/5 to-[#1A1D26]';
+    : 'bg-gradient-to-br from-[var(--sr-rider)]/20 via-[var(--sr-rider)]/5 to-[#1A1D26]';
 
   return (
     <AnimatePresence>
@@ -430,7 +430,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                               <div
                                 className={`absolute bottom-0 w-full rounded-t-md transition-all duration-500 ${
                                   isToday
-                                    ? 'bg-gradient-to-t from-[#38BDF8] to-[#38BDF8]/60'
+                                    ? 'bg-gradient-to-t from-[var(--sr-rider)] to-[var(--sr-rider)]/60'
                                     : 'bg-white/10'
                                 }`}
                                 style={{ height: `${Math.max(pct, 4)}%` }}
@@ -538,8 +538,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       disabled={submitting || availableBalance === 0 || !hasBank}
                       className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${
                         isGold
-                          ? 'bg-[var(--sr-vendor)] text-[#06070B] hover:bg-[var(--sr-vendor)]/90'
-                          : 'bg-[var(--sr-rider)] text-[#06070B] hover:bg-[var(--sr-rider)]/90'
+                          ? 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-vendor)]/90'
+                          : 'bg-[var(--sr-rider)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-rider)]/90'
                       }`}
                     >
                       {submitting ? (
@@ -640,8 +640,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   onClick={onClose}
                   className={`mt-8 px-8 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-[0.98] ${
                     isGold
-                      ? 'bg-[var(--sr-vendor)] text-[#06070B] hover:bg-[var(--sr-vendor)]/90'
-                      : 'bg-[var(--sr-rider)] text-[#06070B] hover:bg-[var(--sr-rider)]/90'
+                      ? 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-vendor)]/90'
+                      : 'bg-[var(--sr-rider)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-rider)]/90'
                   }`}
                 >
                   Done

@@ -334,7 +334,7 @@ export default function RiderDashboard() {
       {/* Profile Header */}
       <motion.div variants={staggerItem} className="flex items-center gap-3 sm:gap-4 mb-6">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[var(--sr-rider)]/20">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sr-rider)]/30 to-[var(--sr-rider)]/5 flex items-center justify-center border border-[var(--sr-rider)]/20">
             <Bike className="w-7 h-7 text-[var(--sr-rider)]" />
           </div>
           {riderOnline && (
@@ -361,7 +361,7 @@ export default function RiderDashboard() {
       {/* Onboarding Welcome — shown when rider has 0 earnings and 0 deliveries */}
       {(data?.completedToday ?? 0) === 0 && (data?.earningsToday ?? 0) === 0 && (data?.totalEarnings ?? 0) === 0 && (
         <motion.div variants={staggerItem} className="mb-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#38BDF8]/15 to-[#38BDF8]/5 border border-[var(--sr-rider)]/20 p-5">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-rider)]/15 to-[var(--sr-rider)]/5 border border-[var(--sr-rider)]/20 p-5">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-rider)]/5 blur-[60px]" />
             <div className="relative z-10">
               <h3 className="text-white text-lg font-extrabold mb-1">Welcome, Rider! 🏍️</h3>
@@ -421,7 +421,7 @@ export default function RiderDashboard() {
 
       {/* Iftar Rush Legend Badge */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-vendor)]/10 to-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[80px]" />
           <div className="relative z-10 flex items-center gap-3">
             <div className="w-12 h-12 bg-[var(--sr-vendor)]/20 rounded-2xl flex items-center justify-center shrink-0">
@@ -510,7 +510,7 @@ export default function RiderDashboard() {
                 <button
                   onClick={() => handleComplete(activeDelivery.id)}
                   disabled={actionLoadingId === activeDelivery.id}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors disabled:opacity-60"
                 >
                   {actionLoadingId === activeDelivery.id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -530,7 +530,7 @@ export default function RiderDashboard() {
         <motion.div variants={staggerItem} className="mb-6">
           <button
             onClick={() => setActiveModal('new-delivery')}
-            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[var(--sr-rider)]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[var(--sr-rider)]/50 transition-all active:scale-[0.98]"
+            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-rider)]/20 to-[var(--sr-rider)]/5 border border-[var(--sr-rider)]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[var(--sr-rider)]/50 transition-all active:scale-[0.98]"
           >
             <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-rider)]/10 blur-[50px]" />
             <div className="w-12 h-12 bg-[var(--sr-rider)]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
@@ -581,7 +581,7 @@ export default function RiderDashboard() {
                       <p className="text-white font-bold text-sm">
                         #{shortId(req.id)}
                       </p>
-                      <span className="px-1.5 py-0.5 bg-[#A78BFA]/15 text-[#A78BFA] text-[8px] font-black rounded uppercase">
+                      <span className="px-1.5 py-0.5 bg-[var(--sr-ai)]/15 text-[var(--sr-ai)] text-[8px] font-black rounded uppercase">
                         Ready
                       </span>
                     </div>
@@ -609,7 +609,7 @@ export default function RiderDashboard() {
                   <button
                     onClick={() => handleAccept(req.id)}
                     disabled={actionLoadingId === req.id}
-                    className="flex-1 bg-[var(--sr-rider)] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-rider)]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="flex-1 bg-[var(--sr-rider)] text-[var(--sr-surface-base)] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-rider)]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                   >
                     {actionLoadingId === req.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -659,8 +659,8 @@ export default function RiderDashboard() {
                     transition={{ duration: 0.6, delay: i * 0.05 }}
                     className={`w-full rounded-t-md ${
                       isToday
-                        ? 'bg-gradient-to-t from-[#38BDF8] to-[#38BDF8]/60'
-                        : 'bg-gradient-to-t from-[#38BDF8]/40 to-[#38BDF8]/20'
+                        ? 'bg-gradient-to-t from-[var(--sr-rider)] to-[var(--sr-rider)]/60'
+                        : 'bg-gradient-to-t from-[var(--sr-rider)]/40 to-[var(--sr-rider)]/20'
                     }`}
                   />
                   <span

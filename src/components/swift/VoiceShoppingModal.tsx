@@ -218,7 +218,7 @@ export default function VoiceShoppingModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -265,9 +265,9 @@ export default function VoiceShoppingModal() {
                       />
                     </>
                   )}
-                  <div className={`relative w-28 h-28 rounded-full flex items-center justify-center ${isListening ? 'bg-[var(--sr-customer)]' : 'bg-[#1A1D26] border-2 border-[var(--sr-customer)]/30'}`}>
+                  <div className={`relative w-28 h-28 rounded-full flex items-center justify-center ${isListening ? 'bg-[var(--sr-customer)]' : 'bg-[var(--sr-surface-elevated)] border-2 border-[var(--sr-customer)]/30'}`}>
                     {isListening ? (
-                      <MicOff className="w-10 h-10 text-[#05070A]" />
+                      <MicOff className="w-10 h-10 text-[var(--sr-surface-base)]" />
                     ) : (
                       <Mic className="w-10 h-10 text-[var(--sr-customer)]" />
                     )}
@@ -291,7 +291,7 @@ export default function VoiceShoppingModal() {
               </div>
 
               {/* Transcript Display */}
-              <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5 mb-6 min-h-[60px]">
+              <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-5 mb-6 min-h-[60px]">
                 {voiceTranscript ? (
                   <p className="text-white text-base font-medium">&quot;{voiceTranscript}&quot;</p>
                 ) : (
@@ -309,7 +309,7 @@ export default function VoiceShoppingModal() {
                     <button
                       key={cmd}
                       onClick={() => handleCommandClick(cmd)}
-                      className="px-4 py-2 rounded-full bg-[#1A1D26] border border-white/10 text-white/70 text-xs font-medium hover:border-[var(--sr-customer)]/30 hover:text-[var(--sr-customer)] transition-colors"
+                      className="px-4 py-2 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 text-white/70 text-xs font-medium hover:border-[var(--sr-customer)]/30 hover:text-[var(--sr-customer)] transition-colors"
                     >
                       {cmd}
                     </button>
@@ -331,7 +331,7 @@ export default function VoiceShoppingModal() {
                       return (
                         <div
                           key={product.id}
-                          className={`bg-[#1A1D26] rounded-xl border ${confirmedProduct?.id === product.id ? 'border-[var(--sr-customer)]/30' : 'border-white/5'} overflow-hidden`}
+                          className={`bg-[var(--sr-surface-elevated)] rounded-xl border ${confirmedProduct?.id === product.id ? 'border-[var(--sr-customer)]/30' : 'border-white/5'} overflow-hidden`}
                         >
                           <div className="flex gap-3 p-3">
                             <div
@@ -349,7 +349,7 @@ export default function VoiceShoppingModal() {
                           {confirmedProduct?.id === product.id && (
                             <button
                               onClick={() => handleConfirmAdd(product)}
-                              className="w-full py-3 bg-[var(--sr-customer)] text-[#05070A] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#11d411] transition-colors"
+                              className="w-full py-3 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#11d411] transition-colors"
                             >
                               <ShoppingCart className="w-4 h-4" />
                               Confirm & Add to Cart
@@ -367,7 +367,7 @@ export default function VoiceShoppingModal() {
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-white/5 p-6 text-center mb-6"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-6 text-center mb-6"
                 >
                   <Volume2 className="w-10 h-10 text-white/20 mx-auto mb-3" />
                   <p className="text-white/50 text-sm">No products found for &quot;{voiceTranscript}&quot;</p>
@@ -377,7 +377,7 @@ export default function VoiceShoppingModal() {
 
               {/* Not supported fallback */}
               {!speechSupported && (
-                <div className="bg-[#1A1D26] rounded-2xl border border-amber-500/20 p-6 text-center mb-6">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-amber-500/20 p-6 text-center mb-6">
                   <MicOff className="w-10 h-10 text-amber-400 mx-auto mb-3" />
                   <p className="text-amber-400 font-bold text-sm">Voice Not Supported</p>
                   <p className="text-white/65 text-xs mt-1">Your browser doesn&apos;t support voice recognition. Please use Chrome or try the quick commands below.</p>

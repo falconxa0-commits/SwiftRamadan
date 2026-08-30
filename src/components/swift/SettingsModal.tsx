@@ -279,7 +279,7 @@ export default function SettingsModal() {
                         </div>
                         <div className="flex items-center justify-between p-3 glass-card rounded-xl">
                           <div className="flex items-center gap-3">
-                            <Bell className="w-5 h-5 text-[#A78BFA]" />
+                            <Bell className="w-5 h-5 text-[var(--sr-ai)]" />
                             <div>
                               <p className="text-white font-bold text-sm">Email Alerts</p>
                               <p className="text-white/65 text-xs">Receipts & promos</p>
@@ -303,7 +303,7 @@ export default function SettingsModal() {
                       <div className="flex items-center justify-between p-3 glass-card rounded-xl">
                         <div className="flex items-center gap-3">
                           {settings.theme === 'dark' ? (
-                            <Moon className="w-5 h-5 text-[#A78BFA]" />
+                            <Moon className="w-5 h-5 text-[var(--sr-ai)]" />
                           ) : (
                             <Sun className="w-5 h-5 text-[var(--sr-vendor)]" />
                           )}
@@ -415,7 +415,7 @@ export default function SettingsModal() {
                           onClick={() => toast({ title: 'Saved Addresses', description: 'Address management coming soon.' })}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <MapPin className="w-5 h-5 text-[#A78BFA]" />
+                          <MapPin className="w-5 h-5 text-[var(--sr-ai)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Saved Addresses</p>
                             <p className="text-white/65 text-xs">Manage delivery locations</p>
@@ -468,7 +468,7 @@ export default function SettingsModal() {
                           onClick={() => openModal('help-center')}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <Flag className="w-5 h-5 text-[#FB7185]" />
+                          <Flag className="w-5 h-5 text-[var(--sr-error)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Report a Problem</p>
                             <p className="text-white/65 text-xs">Bug, issue, or feedback</p>
@@ -500,7 +500,7 @@ export default function SettingsModal() {
                     <section className="pt-2">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center justify-center gap-2 w-full p-3.5 rounded-xl bg-[#FB7185]/10 border border-[#FB7185]/20 text-[#FB7185] font-bold text-sm hover:bg-[#FB7185]/15 transition-colors active:scale-[0.98]"
+                        className="flex items-center justify-center gap-2 w-full p-3.5 rounded-xl bg-[var(--sr-error)]/10 border border-[var(--sr-error)]/20 text-[var(--sr-error)] font-bold text-sm hover:bg-[var(--sr-error)]/15 transition-colors active:scale-[0.98]"
                       >
                         <LogOut className="w-4 h-4" />
                         Log Out

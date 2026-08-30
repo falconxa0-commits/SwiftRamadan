@@ -224,7 +224,7 @@ export default function ProductDetailModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[#0F1117] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
@@ -298,7 +298,7 @@ export default function ProductDetailModal() {
                         onClick={() => setActiveImageIdx(i)}
                         className={`shrink-0 w-16 h-16 rounded-xl bg-center bg-cover border-2 transition-all ${
                           i === activeImageIdx
-                            ? 'border-[var(--sr-customer)] ring-1 ring-[#10E07A]/30'
+                            ? 'border-[var(--sr-customer)] ring-1 ring-[var(--sr-customer)]/30'
                             : 'border-white/10 opacity-50 hover:opacity-80'
                         }`}
                         style={{ backgroundImage: `url("${img}")` }}
@@ -359,17 +359,17 @@ export default function ProductDetailModal() {
 
                 {/* Features */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-6 mb-6">
-                  <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 text-center border border-white/5">
                     <Truck className="w-5 h-5 text-[var(--sr-customer)] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Free Delivery</p>
                     <p className="text-white/60 text-[9px]">Orders ₦5K+</p>
                   </div>
-                  <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 text-center border border-white/5">
                     <Shield className="w-5 h-5 text-[var(--sr-vendor)] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Quality Assured</p>
                     <p className="text-white/60 text-[9px]">100% Fresh</p>
                   </div>
-                  <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-xl p-3 text-center border border-white/5">
                     <Clock className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Iftar Ready</p>
                     <p className="text-white/60 text-[9px]">Timed Delivery</p>
@@ -380,7 +380,7 @@ export default function ProductDetailModal() {
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-white font-bold text-sm flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-[#A78BFA]" />
+                      <MessageSquare className="w-4 h-4 text-[var(--sr-ai)]" />
                       Reviews ({reviewCount})
                     </h4>
                     <button
@@ -393,7 +393,7 @@ export default function ProductDetailModal() {
 
                   {/* Average rating summary */}
                   {reviewCount > 0 && (
-                    <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 mb-3 flex items-center gap-3 sm:gap-4">
+                    <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 mb-3 flex items-center gap-3 sm:gap-4">
                       <div className="text-center">
                         <p className="text-[var(--sr-vendor)] text-3xl font-black">{avgRating.toFixed(1)}</p>
                         <StarRow rating={avgRating} />
@@ -427,7 +427,7 @@ export default function ProductDetailModal() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="bg-[#1A1D26] rounded-2xl border border-[var(--sr-customer)]/20 p-3 sm:p-4 mb-3 space-y-3">
+                        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-[var(--sr-customer)]/20 p-3 sm:p-4 mb-3 space-y-3">
                           <div>
                             <p className="text-white/60 text-xs font-bold mb-2">Your rating</p>
                             <div className="flex items-center gap-2">
@@ -453,13 +453,13 @@ export default function ProductDetailModal() {
                               onChange={e => setNewComment(e.target.value)}
                               rows={3}
                               placeholder="Share your experience with this product..."
-                              className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 resize-none"
+                              className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 resize-none"
                             />
                           </div>
                           <button
                             onClick={handleSubmitReview}
                             disabled={submittingReview || !newComment.trim()}
-                            className="w-full bg-[var(--sr-customer)] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                            className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
                           >
                             {submittingReview ? (
                               <>
@@ -480,12 +480,12 @@ export default function ProductDetailModal() {
 
                   {/* Reviews list */}
                   {fetchingReviews ? (
-                    <div className="flex items-center gap-2 p-3 sm:p-4 bg-[#1A1D26] rounded-xl border border-white/5">
+                    <div className="flex items-center gap-2 p-3 sm:p-4 bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5">
                       <Loader2 className="w-4 h-4 text-[var(--sr-customer)] animate-spin" />
                       <span className="text-white/65 text-sm">Loading reviews...</span>
                     </div>
                   ) : reviews.length === 0 ? (
-                    <div className="p-4 bg-[#1A1D26] rounded-xl border border-white/5 text-center">
+                    <div className="p-4 bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 text-center">
                       <MessageSquare className="w-8 h-8 text-white/10 mx-auto mb-2" />
                       <p className="text-white/65 text-sm">No reviews yet</p>
                       <p className="text-white/60 text-xs mt-0.5">Be the first to share your experience!</p>
@@ -493,9 +493,9 @@ export default function ProductDetailModal() {
                   ) : (
                     <div className="space-y-3 max-h-96 overflow-y-auto custom-scrollbar pr-1">
                       {reviews.map(review => (
-                        <div key={review.id} className="bg-[#1A1D26] rounded-xl border border-white/5 p-3">
+                        <div key={review.id} className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3">
                           <div className="flex items-start gap-3">
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-[#06070B] font-black text-sm shrink-0 overflow-hidden relative">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-ai)] flex items-center justify-center text-[var(--sr-surface-base)] font-black text-sm shrink-0 overflow-hidden relative">
                               {review.authorAvatar ? (
                                 <Image src={review.authorAvatar} alt={review.authorName} fill unoptimized className="object-cover" />
                               ) : (
@@ -534,7 +534,7 @@ export default function ProductDetailModal() {
                             useAppStore.getState().setSelectedProduct(p.id);
                             setQuantity(1);
                           }}
-                          className="min-w-[120px] bg-[#1A1D26] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors text-left shrink-0"
+                          className="min-w-[120px] bg-[var(--sr-surface-elevated)] rounded-xl overflow-hidden border border-white/5 hover:border-white/10 transition-colors text-left shrink-0"
                         >
                           <div
                             className="w-full aspect-square bg-center bg-cover"
@@ -552,10 +552,10 @@ export default function ProductDetailModal() {
             </div>
 
             {/* Bottom Action Bar */}
-            <div className="border-t border-white/5 p-3 sm:p-4 bg-[#0F1117]/95 backdrop-blur-lg">
+            <div className="border-t border-white/5 p-3 sm:p-4 bg-[var(--sr-surface-raised)]/95 backdrop-blur-lg">
               <div className="flex items-center gap-3 sm:gap-4">
                 {/* Quantity Selector */}
-                <div className="flex items-center gap-3 bg-[#1A1D26] rounded-xl px-3 py-2 border border-white/5">
+                <div className="flex items-center gap-3 bg-[var(--sr-surface-elevated)] rounded-xl px-3 py-2 border border-white/5">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
@@ -574,7 +574,7 @@ export default function ProductDetailModal() {
                 {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-[var(--sr-customer)] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                  className="flex-1 bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                 >
                   ADD TO CART &bull; {formatNaira(totalPrice)}
                   <ChevronRight className="w-4 h-4" />

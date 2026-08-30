@@ -213,7 +213,7 @@ function NeighborAlertsInner() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-[#10E07A]/5 to-[#A78BFA]/5 border border-[var(--sr-customer)]/20 rounded-xl p-4"
+          className="bg-gradient-to-r from-[var(--sr-customer)]/5 to-[var(--sr-ai)]/5 border border-[var(--sr-customer)]/20 rounded-xl p-4"
         >
           <div className="flex items-start gap-3">
             <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
@@ -351,7 +351,7 @@ function NeighborAlertsInner() {
                   {/* Progress Bar */}
                   <div className="h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
                     <div
-                      className="h-full bg-gradient-to-r from-[#10E07A] to-[#F5C451] rounded-full transition-all"
+                      className="h-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] rounded-full transition-all"
                       style={{ width: `${(order.orderCount / order.maxOrders) * 100}%` }}
                     />
                   </div>
@@ -458,7 +458,7 @@ function NeighborAlertsInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Confirm combined delivery"
@@ -538,7 +538,7 @@ function NeighborAlertsInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-center justify-center p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Privacy information"
@@ -551,7 +551,7 @@ function NeighborAlertsInner() {
             >
               <div className="flex items-center justify-between p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-[#A78BFA]" /> Privacy First
+                  <Shield className="w-5 h-5 text-[var(--sr-ai)]" /> Privacy First
                 </h2>
                 <button
                   onClick={() => setShowPrivacyInfo(false)}

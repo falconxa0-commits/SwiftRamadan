@@ -95,7 +95,7 @@ export default function PredictiveReorderModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -111,7 +111,7 @@ export default function PredictiveReorderModal() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -120,7 +120,7 @@ export default function PredictiveReorderModal() {
 
           {/* Hero */}
           <div className="relative overflow-hidden px-4 pt-6 pb-4">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#10E07A]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-customer)]/5 to-transparent pointer-events-none" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -170,7 +170,7 @@ export default function PredictiveReorderModal() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08, duration: 0.4 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 hover:border-white/10 transition-colors"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 hover:border-white/10 transition-colors"
                     >
                       <div className="flex items-start gap-3">
                         {/* Item icon */}
@@ -224,7 +224,7 @@ export default function PredictiveReorderModal() {
                           className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                             isAdded
                               ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
-                              : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
+                              : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                           }`}
                         >
                           {isAdded ? (
@@ -250,7 +250,7 @@ export default function PredictiveReorderModal() {
           {/* Reorder All Button */}
           {!loading && items.length > 0 && (
             <div className="px-4 mb-32">
-              <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4">
+              <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/50 text-sm">Total for all items</span>
                   <span className="text-white font-bold text-lg">{formatNaira(total)}</span>
@@ -261,7 +261,7 @@ export default function PredictiveReorderModal() {
                   className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                     allAdded
                       ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
-                      : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
+                      : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                   }`}
                 >
                   {allAdded ? (

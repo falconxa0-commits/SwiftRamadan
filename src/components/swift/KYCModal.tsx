@@ -253,7 +253,7 @@ export default function KYCModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -359,7 +359,7 @@ export default function KYCModal() {
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.15 + i * 0.05 }}
-                            className="p-4 rounded-2xl bg-[#1A1D26]/40 border border-white/5"
+                            className="p-4 rounded-2xl bg-[var(--sr-surface-elevated)]/40 border border-white/5"
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex items-center gap-3">
@@ -450,13 +450,13 @@ export default function KYCModal() {
                         id="kyc-document-type"
                         value={documentType}
                         onChange={e => setDocumentType(e.target.value)}
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
                       >
-                        <option value="" disabled className="bg-[#0F1117]">
+                        <option value="" disabled className="bg-[var(--sr-surface-raised)]">
                           Select document type
                         </option>
                         {DOCUMENT_TYPES.map(dt => (
-                          <option key={dt.value} value={dt.value} className="bg-[#0F1117]">
+                          <option key={dt.value} value={dt.value} className="bg-[var(--sr-surface-raised)]">
                             {dt.label}
                           </option>
                         ))}
@@ -481,7 +481,7 @@ export default function KYCModal() {
                       value={documentNumber}
                       onChange={e => setDocumentNumber(e.target.value)}
                       placeholder="Enter your document number"
-                      className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
+                      className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
                     />
                   </motion.div>
 
@@ -505,7 +505,7 @@ export default function KYCModal() {
                     />
 
                     {documentImage ? (
-                      <div className="relative p-3 sm:p-4 rounded-2xl bg-[#1A1D26] border border-[var(--sr-customer)]/20">
+                      <div className="relative p-3 sm:p-4 rounded-2xl bg-[var(--sr-surface-elevated)] border border-[var(--sr-customer)]/20">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
                             <CheckCircle className="w-5 h-5 text-[var(--sr-customer)]" />
@@ -536,7 +536,7 @@ export default function KYCModal() {
                     ) : (
                       <label
                         htmlFor="kyc-document-upload"
-                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[var(--sr-customer)]/30 transition-all cursor-pointer"
+                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[var(--sr-surface-elevated)]/40 border-2 border-dashed border-white/10 hover:border-[var(--sr-customer)]/30 transition-all cursor-pointer"
                       >
                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
                           <Upload className="w-6 h-6 text-white/60" />
@@ -563,7 +563,7 @@ export default function KYCModal() {
                       className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
                         submitting
                           ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20 cursor-wait'
-                          : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
+                          : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90'
                       }`}
                     >
                       {submitting ? (

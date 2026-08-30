@@ -137,7 +137,7 @@ export default function RiderProfileTab() {
       variants={staggerContainer}
       initial="hidden"
       animate="show"
-      className="flex-1 overflow-y-auto pb-32 px-4 pt-4 bg-[#05070A]"
+      className="flex-1 overflow-y-auto pb-32 px-4 pt-4 bg-[var(--sr-surface-base)]"
     >
       {/* ─── 1. Profile Header ─── */}
       <motion.div variants={staggerItem} className="flex items-center gap-3 sm:gap-4 mb-6">
@@ -146,7 +146,7 @@ export default function RiderProfileTab() {
             <Bike className="w-8 h-8 text-[var(--sr-rider)]" />
           </div>
           {/* Online/Offline dot */}
-          <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#05070A] ${
+          <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[var(--sr-surface-base)] ${
             riderOnline ? 'bg-[var(--sr-customer)] animate-pulse' : 'bg-white/30'
           }`} />
         </div>
@@ -174,21 +174,21 @@ export default function RiderProfileTab() {
 
       {/* ─── 2. Stats Grid ─── */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-        <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
           <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <DollarSign className="w-5 h-5 text-[var(--sr-customer)]" />
           </div>
           <p className="text-white text-sm font-extrabold">{formatNaira(riderEarnings)}</p>
           <p className="text-white/65 text-[10px] mt-0.5">Today&apos;s Earnings</p>
         </div>
-        <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
           <div className="w-10 h-10 bg-[var(--sr-rider)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <CheckCircle className="w-5 h-5 text-[var(--sr-rider)]" />
           </div>
           <p className="text-white text-xl font-extrabold">{riderCompletedToday}</p>
           <p className="text-white/65 text-[10px] mt-0.5">Completed Today</p>
         </div>
-        <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 text-center">
           <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <Star className="w-5 h-5 text-[var(--sr-vendor)]" />
           </div>
@@ -199,7 +199,7 @@ export default function RiderProfileTab() {
 
       {/* ─── 3. Vehicle Info Card ─── */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5">
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-white text-sm font-extrabold flex items-center gap-2">
               {riderVehicleType.toLowerCase().includes('car') || riderVehicleType.toLowerCase().includes('auto')
@@ -256,7 +256,7 @@ export default function RiderProfileTab() {
         </div>
 
         {/* Ramadan Bonus Progress */}
-        <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 mb-3">
+        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 mb-3">
           <div className="flex items-center justify-between mb-2">
             <span className="text-white text-sm font-bold">Ramadan Bonus Progress</span>
             <span className="text-[var(--sr-vendor)] text-xs font-bold">{bonusProgress}%</span>
@@ -264,7 +264,7 @@ export default function RiderProfileTab() {
           {/* Progress bar */}
           <div className="w-full bg-white/5 rounded-full h-3 mb-2 overflow-hidden">
             <motion.div
-              className="bg-gradient-to-r from-[#38BDF8] to-[#F5C451] h-3 rounded-full"
+              className="bg-gradient-to-r from-[var(--sr-rider)] to-[var(--sr-vendor)] h-3 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${bonusProgress}%` }}
               transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -279,7 +279,7 @@ export default function RiderProfileTab() {
         {/* On-Time Rate & Grateful Customers */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {/* On-Time Rate with circular progress */}
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 flex items-center gap-3">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 flex items-center gap-3">
             <div className="relative shrink-0">
               <svg width="64" height="64" viewBox="0 0 64 64">
                 <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="5" />
@@ -302,7 +302,7 @@ export default function RiderProfileTab() {
           </div>
 
           {/* Grateful Customers */}
-          <div className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 flex items-center gap-3">
+          <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 flex items-center gap-3">
             <div className="w-14 h-14 bg-rose-500/10 rounded-2xl flex items-center justify-center shrink-0">
               <Heart className="w-7 h-7 text-rose-400" />
             </div>
@@ -324,7 +324,7 @@ export default function RiderProfileTab() {
                 key={item.action}
                 variants={staggerItem}
                 onClick={() => handleMenuClick(item.action)}
-                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1A1D26]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
+                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-surface-elevated)]/40 rounded-2xl border border-white/5 hover:border-white/10 transition-colors w-full text-left"
               >
                 <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center shrink-0">
                   <Icon className={`w-5 h-5 ${item.color}`} />
@@ -342,7 +342,7 @@ export default function RiderProfileTab() {
           <motion.button
             variants={staggerItem}
             onClick={handleLogout}
-            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[#1A1D26]/40 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
+            className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-[var(--sr-surface-elevated)]/40 rounded-2xl border border-red-500/10 hover:border-red-500/20 transition-colors w-full text-left"
           >
             <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center shrink-0">
               <LogOut className="w-5 h-5 text-red-500" />
@@ -366,7 +366,7 @@ export default function RiderProfileTab() {
             className={`flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm transition-all duration-300 ${
               riderOnline
                 ? 'bg-white/5 border border-white/10 text-white/60 hover:bg-white/10'
-                : 'bg-[var(--sr-rider)] text-white hover:bg-[var(--sr-rider)]/90 shadow-lg shadow-[#38BDF8]/20'
+                : 'bg-[var(--sr-rider)] text-white hover:bg-[var(--sr-rider)]/90 shadow-lg shadow-[var(--sr-rider)]/20'
             }`}
           >
             <Zap className="w-4 h-4" />
@@ -377,7 +377,7 @@ export default function RiderProfileTab() {
           <button
             onClick={() => toast({ title: 'Cash Out 💵', description: `Withdrawing ${formatNaira(riderEarnings)} to your bank account` })}
             aria-label="Cash Out"
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-[#1A1D26] border border-white/5 text-[var(--sr-customer)] hover:border-[var(--sr-customer)]/20 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl font-bold text-sm bg-[var(--sr-surface-elevated)] border border-white/5 text-[var(--sr-customer)] hover:border-[var(--sr-customer)]/20 transition-colors"
           >
             <Wallet className="w-4 h-4" />
             Cash Out

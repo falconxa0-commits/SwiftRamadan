@@ -10,7 +10,7 @@ const artisanCategories = [
   { id: 2, name: 'Local Spices', icon: '🌶️', color: 'from-red-600/20 to-red-800/10' },
   { id: 3, name: 'Traditional Fabrics', icon: '🧵', color: 'from-purple-600/20 to-purple-800/10' },
   { id: 4, name: 'Pottery', icon: '🫖', color: 'from-orange-600/20 to-orange-800/10' },
-  { id: 5, name: 'Jewelry', icon: '💍', color: 'from-[#F5C451]/20 to-[#F5C451]/5' },
+  { id: 5, name: 'Jewelry', icon: '💍', color: 'from-[var(--sr-vendor)]/20 to-[var(--sr-vendor)]/5' },
   { id: 6, name: 'Woodwork', icon: '🪵', color: 'from-yellow-800/20 to-yellow-900/10' },
 ];
 
@@ -69,7 +69,7 @@ export default function ArtisanMarketHub() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -102,7 +102,7 @@ export default function ArtisanMarketHub() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => toast({ title: `${cat.name} 🛍️`, description: `Browsing ${cat.name} collection` })}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center gap-2 hover:border-white/10 transition-all active:scale-95"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center gap-2 hover:border-white/10 transition-all active:scale-95"
                     >
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center border border-white/5`}>
                         <span className="text-xl">{cat.icon}</span>
@@ -132,7 +132,7 @@ export default function ArtisanMarketHub() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.15 + i * 0.08 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden"
                     >
                       {/* Image placeholder with gradient */}
                       <div className={`h-32 bg-gradient-to-br ${artisan.gradient} relative flex items-center justify-center`}>

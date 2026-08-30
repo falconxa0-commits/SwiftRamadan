@@ -152,7 +152,7 @@ function MetricCard({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className="relative overflow-hidden rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4"
+      className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4"
     >
       <div
         className="absolute top-0 right-0 w-20 h-20 blur-[40px] opacity-20"
@@ -295,7 +295,7 @@ function SearchBar({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full h-10 pl-10 pr-4 rounded-xl bg-[#0F1117] border border-white/10 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 focus:outline-none transition-all"
+        className="w-full h-10 pl-10 pr-4 rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 focus:outline-none transition-all"
       />
     </div>
   );
@@ -318,7 +318,7 @@ function FilterChips({
           onClick={() => onSelect(opt)}
           className={`shrink-0 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
             selected === opt
-              ? 'bg-[var(--sr-customer)] text-[#04140C]'
+              ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
               : 'bg-white/5 text-white/65 hover:bg-white/10 hover:text-white/60 border border-white/5'
           }`}
         >
@@ -333,7 +333,7 @@ function TableSkeleton({ cols = 5, rows = 4 }: { cols?: number; rows?: number })
   return (
     <div className="space-y-2">
       {Array.from({ length: rows }).map((_, i) => (
-        <div key={i} className="flex gap-3 sm:gap-4 p-3 rounded-xl bg-[#0F1117]/50">
+        <div key={i} className="flex gap-3 sm:gap-4 p-3 rounded-xl bg-[var(--sr-surface-raised)]/50">
           {Array.from({ length: cols }).map((_, j) => (
             <div
               key={j}
@@ -352,7 +352,7 @@ function TableSkeleton({ cols = 5, rows = 4 }: { cols?: number; rows?: number })
 function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] }) {
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 1);
   return (
-    <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4">
+    <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white text-sm font-bold">Revenue Trend (7 Days)</h3>
         <span className="text-[var(--sr-customer)] text-[10px] font-bold flex items-center gap-1">
@@ -698,13 +698,13 @@ export default function AdminDashboard() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="rounded-2xl bg-[#0F1117] border border-white/5 p-3 sm:p-4 space-y-2">
+            <div key={i} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4 space-y-2">
               <div className="h-3 w-16 bg-white/5 rounded animate-pulse" />
               <div className="h-6 w-24 bg-white/5 rounded animate-pulse" />
             </div>
           ))}
         </div>
-        <div className="h-40 bg-[#0F1117] rounded-2xl border border-white/5 animate-pulse" />
+        <div className="h-40 bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 animate-pulse" />
       </div>
     );
   }
@@ -732,7 +732,7 @@ export default function AdminDashboard() {
         <RevenueBarChart data={metrics.revenueTrend} />
 
         {/* Orders by Status */}
-        <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
           <h3 className="text-white text-sm font-bold mb-4">Orders by Status</h3>
           <div className="space-y-3">
             {metrics.ordersByStatus.map((s, i) => {
@@ -760,7 +760,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top 5 Vendors */}
-        <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
           <h3 className="text-white text-sm font-bold mb-4">Top Vendors by Revenue</h3>
           <div className="space-y-3">
             {metrics.topVendors.map((v, i) => (
@@ -808,7 +808,7 @@ export default function AdminDashboard() {
                 key={user.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-xl bg-[#0F1117] border border-white/10 p-3"
+                className="rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -890,7 +890,7 @@ export default function AdminDashboard() {
                 key={vendor.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-xl bg-[#0F1117] border border-white/10 p-3"
+                className="rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -974,7 +974,7 @@ export default function AdminDashboard() {
                 key={order.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-xl bg-[#0F1117] border border-white/10 p-3"
+                className="rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -1062,7 +1062,7 @@ export default function AdminDashboard() {
                 key={dispute.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-xl bg-[#0F1117] border border-white/10 p-3"
+                className="rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 p-3"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
@@ -1150,7 +1150,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-white text-sm font-bold">Recent Transactions</h3>
             <span className="text-white/60 text-[10px] font-semibold">{finance.transactions.length} entries</span>
@@ -1219,7 +1219,7 @@ export default function AdminDashboard() {
                 key={item.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="rounded-xl bg-[#0F1117] border border-white/10 p-3"
+                className="rounded-xl bg-[var(--sr-surface-raised)] border border-white/10 p-3"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 flex items-center justify-center shrink-0 overflow-hidden">
@@ -1271,7 +1271,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Banner Management (Coming Soon) */}
-        <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-6 text-center">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-6 text-center">
           <div className="w-14 h-14 rounded-2xl bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 flex items-center justify-center mx-auto mb-3">
             <ImageIcon className="w-7 h-7 text-[var(--sr-rider)]" />
           </div>
@@ -1318,7 +1318,7 @@ export default function AdminDashboard() {
 
       {/* Tab Navigation — horizontal scroll on mobile */}
       <div className="overflow-x-auto no-scrollbar -mx-4 px-4">
-        <div className="flex gap-1.5 p-1 rounded-2xl bg-[#0F1117]/60 border border-white/5 min-w-max">
+        <div className="flex gap-1.5 p-1 rounded-2xl bg-[var(--sr-surface-raised)]/60 border border-white/5 min-w-max">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
@@ -1327,7 +1327,7 @@ export default function AdminDashboard() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive ? 'text-[#06070B]' : 'text-white/65 hover:text-white/60'
+                  isActive ? 'text-[var(--sr-surface-base)]' : 'text-white/65 hover:text-white/60'
                 }`}
               >
                 {isActive && (

@@ -92,7 +92,7 @@ export default class ErrorBoundary extends React.Component<
           <div className="glass-card rounded-3xl p-4 sm:p-8 max-w-md w-full text-center space-y-6">
             {/* Aurora glow accent */}
             <div className="relative mx-auto w-20 h-20">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 blur-xl" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-vendor)]/20 blur-xl" />
               <div className="relative w-20 h-20 rounded-full bg-[var(--sr-surface-raised)] border border-white/10 flex items-center justify-center">
                 <svg
                   width="36"
@@ -167,7 +167,7 @@ export default class ErrorBoundary extends React.Component<
             <div className="flex flex-col gap-2 sm:gap-3 pt-2">
               <button
                 onClick={this.handleReload}
-                className="w-full h-12 rounded-2xl bg-[var(--sr-customer)] text-[#04140C] font-bold text-sm
+                className="w-full h-12 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm
                            hover:bg-[var(--sr-customer)]/90 active:scale-[0.97] transition-all duration-200"
                 aria-label="Reload the app"
               >

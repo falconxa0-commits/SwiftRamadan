@@ -422,7 +422,7 @@ export default function NewDeliveryRequestModal() {
                       <button
                         onClick={handleAccept}
                         disabled={submitting !== null}
-                        className="flex-1 bg-[var(--sr-rider)] text-[#06070B] py-4 rounded-2xl font-black text-sm hover:bg-[var(--sr-rider)]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                        className="flex-1 bg-[var(--sr-rider)] text-[var(--sr-surface-base)] py-4 rounded-2xl font-black text-sm hover:bg-[var(--sr-rider)]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                       >
                         {submitting === 'accept' ? (
                           <Loader2 className="w-4 h-4 animate-spin" />

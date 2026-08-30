@@ -163,13 +163,13 @@ export default function TrendingModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[120] flex flex-col overflow-hidden border-t border-white/10 max-w-md mx-auto"
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[120] flex flex-col overflow-hidden border-t border-white/10 max-w-md mx-auto"
           >
             {/* Decorative top glow */}
             <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[300px] h-[200px] rounded-full bg-[var(--sr-customer)]/10 blur-3xl" />
 
             {/* ──── Sticky Header ──── */}
-            <div className="relative shrink-0 z-10 bg-[#05070A]/95 backdrop-blur-md border-b border-white/5">
+            <div className="relative shrink-0 z-10 bg-[var(--sr-surface-base)]/95 backdrop-blur-md border-b border-white/5">
               {/* Drag handle */}
               <div className="flex justify-center pt-2.5 pb-1">
                 <div className="w-10 h-1.5 rounded-full bg-white/15" />
@@ -181,7 +181,7 @@ export default function TrendingModal() {
                     initial={{ scale: 0.8, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-                    className="w-11 h-11 bg-gradient-to-br from-[#10E07A]/20 to-[#10E07A]/5 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
+                    className="w-11 h-11 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-customer)]/5 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
                   >
                     <TrendingUp className="w-5 h-5 text-[var(--sr-customer)]" />
                   </motion.div>
@@ -257,7 +257,7 @@ export default function TrendingModal() {
                       onClick={() => setActiveCategory(cat.id)}
                       className={`shrink-0 px-3.5 py-2 rounded-full text-xs font-bold transition-all flex items-center gap-1.5 ${
                         isActive
-                          ? 'bg-[var(--sr-customer)] text-[#05070A] shadow-[0_0_16px_rgba(16,224,122,0.4)]'
+                          ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] shadow-[0_0_16px_rgba(16,224,122,0.4)]'
                           : 'bg-white/5 text-white/50 border border-white/10 hover:border-[var(--sr-customer)]/20 hover:text-white/80'
                       }`}
                     >
@@ -294,7 +294,7 @@ export default function TrendingModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden p-3 sm:p-4 space-y-3"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden p-3 sm:p-4 space-y-3"
                     >
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 rounded-full bg-white/5 luxury-shimmer" />
@@ -326,7 +326,7 @@ export default function TrendingModal() {
                   <p className="text-white/65 text-xs mb-4 max-w-[240px]">{error}</p>
                   <button
                     onClick={handleRefresh}
-                    className="px-4 py-2 rounded-full bg-[var(--sr-customer)] text-[#05070A] text-xs font-bold flex items-center gap-1.5 hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
+                    className="px-4 py-2 rounded-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-xs font-bold flex items-center gap-1.5 hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     Retry
@@ -365,7 +365,7 @@ export default function TrendingModal() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -12 }}
                         transition={{ delay: Math.min(index * 0.05, 0.4), duration: 0.3 }}
-                        className={`group block bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 hover:bg-[#1F2330] transition-all ${style.ring}`}
+                        className={`group block bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 hover:bg-[#1F2330] transition-all ${style.ring}`}
                       >
                         {/* Top row: source + date + category badge */}
                         <div className="flex items-center gap-2 mb-2">

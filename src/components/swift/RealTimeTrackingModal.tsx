@@ -536,7 +536,7 @@ export default function RealTimeTrackingModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-            className="fixed inset-0 z-[100] bg-[#0B0D14] flex flex-col overflow-hidden"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
           >
             {/* ─── Sticky Header ─── */}
             <div className="glass-effect border-b border-white/5 px-4 py-3 flex items-center justify-between shrink-0 z-20">
@@ -595,7 +595,7 @@ export default function RealTimeTrackingModal() {
                     exit={{ opacity: 0 }}
                     className="px-4 pt-4"
                   >
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#10E07A]/15 to-[#F5C451]/10 border border-[var(--sr-customer)]/30 p-4">
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-customer)]/15 to-[var(--sr-vendor)]/10 border border-[var(--sr-customer)]/30 p-4">
                       <div className="absolute -right-4 -top-4 w-32 h-32 bg-[var(--sr-customer)]/10 blur-3xl rounded-full" />
                       <div className="relative z-10 flex items-center gap-3">
                         <div className="w-12 h-12 rounded-2xl bg-[var(--sr-customer)]/20 flex items-center justify-center shrink-0">
@@ -612,7 +612,7 @@ export default function RealTimeTrackingModal() {
                       </div>
                       <button
                         onClick={handleRateRider}
-                        className="mt-3 w-full bg-[var(--sr-vendor)] text-[#06070B] py-3 rounded-xl font-black text-sm hover:bg-[var(--sr-vendor)]/90 transition-colors flex items-center justify-center gap-2"
+                        className="mt-3 w-full bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] py-3 rounded-xl font-black text-sm hover:bg-[var(--sr-vendor)]/90 transition-colors flex items-center justify-center gap-2"
                       >
                         <Star className="w-4 h-4 fill-[#06070B]" />
                         Rate your rider
@@ -647,11 +647,11 @@ export default function RealTimeTrackingModal() {
                                 ? 'bg-[var(--sr-rider)]/20 border-2 border-[var(--sr-rider)] scale-110'
                                 : isPast
                                   ? 'bg-[var(--sr-customer)] border-2 border-[var(--sr-customer)]'
-                                  : 'bg-[#1A1D26] border-2 border-white/10'
+                                  : 'bg-[var(--sr-surface-elevated)] border-2 border-white/10'
                             }`}
                           >
                             {isPast ? (
-                              <Check className="w-4 h-4 text-[#06070B]" strokeWidth={3} />
+                              <Check className="w-4 h-4 text-[var(--sr-surface-base)]" strokeWidth={3} />
                             ) : (
                               <Icon
                                 className={`w-4 h-4 ${
@@ -709,7 +709,7 @@ export default function RealTimeTrackingModal() {
               {/* ETA + Rider cards */}
               <section className="px-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* ETA card */}
-                <div className="bg-gradient-to-br from-[#38BDF8]/10 to-[#0F1118] rounded-2xl border border-[var(--sr-rider)]/20 p-4 relative overflow-hidden">
+                <div className="bg-gradient-to-br from-[var(--sr-rider)]/10 to-[#0F1118] rounded-2xl border border-[var(--sr-rider)]/20 p-4 relative overflow-hidden">
                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-[var(--sr-rider)]/5 blur-2xl rounded-full" />
                   <div className="flex items-center gap-2 mb-2 relative">
                     <Clock className="w-4 h-4 text-[var(--sr-rider)]" />
@@ -787,7 +787,7 @@ export default function RealTimeTrackingModal() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-[#1A1D26] border-2 border-white/10 flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-[var(--sr-surface-elevated)] border-2 border-white/10 flex items-center justify-center">
                         <User className="w-5 h-5 text-white/60" />
                       </div>
                       <div className="flex-1">
@@ -914,8 +914,8 @@ export default function RealTimeTrackingModal() {
                   ) : (
                     <>
                       <Loader2 className="w-3 h-3 animate-spin" />
-                      <WifiOff className="w-3 h-3 text-[#FB7185]" />
-                      <span className="text-[#FB7185]">Socket offline</span>
+                      <WifiOff className="w-3 h-3 text-[var(--sr-error)]" />
+                      <span className="text-[var(--sr-error)]">Socket offline</span>
                       <span className="text-white/60">• polling every 5s</span>
                     </>
                   )}

@@ -124,7 +124,7 @@ export default function PrayerTimesModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[#05070A] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0">
@@ -180,7 +180,7 @@ export default function PrayerTimesModal() {
                         className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all ${
                           isNext
                             ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/30 gold-glow'
-                            : 'bg-[#1A1D26]/40 border-white/5'
+                            : 'bg-[var(--sr-surface-elevated)]/40 border-white/5'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
@@ -214,7 +214,7 @@ export default function PrayerTimesModal() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setActiveModal('mosque')}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
+                    className="flex-1 bg-[var(--sr-surface-elevated)] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
                   >
                     <Compass className="w-5 h-5 text-[var(--sr-vendor)]" />
                     <div className="text-left">
@@ -230,13 +230,13 @@ export default function PrayerTimesModal() {
                         description: athanEnabled ? 'You won\'t receive prayer notifications' : 'You\'ll be notified at each prayer time',
                       });
                     }}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
+                    className="flex-1 bg-[var(--sr-surface-elevated)] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
                     aria-label={athanEnabled ? 'Disable Athan alerts' : 'Enable Athan alerts'}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
                       athanEnabled ? 'border-[var(--sr-customer)] bg-[var(--sr-customer)]' : 'border-white/20'
                     }`}>
-                      {athanEnabled && <div className="w-2 h-2 bg-[#05070A] rounded-full" />}
+                      {athanEnabled && <div className="w-2 h-2 bg-[var(--sr-surface-base)] rounded-full" />}
                     </div>
                     <div className="text-left">
                       <p className="text-white font-bold text-xs">Athan Alerts</p>
@@ -255,7 +255,7 @@ export default function PrayerTimesModal() {
                       key={item.name}
                       onClick={item.action}
                       whileTap={{ scale: 0.97 }}
-                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-left hover:border-[var(--sr-customer)]/20 transition-colors"
+                      className="bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border border-white/5 text-left hover:border-[var(--sr-customer)]/20 transition-colors"
                     >
                       <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl mb-2">{item.icon}</span>
                       <p className="text-white font-bold text-sm">{item.name}</p>
@@ -266,7 +266,7 @@ export default function PrayerTimesModal() {
 
               {/* Daily Dua Section */}
               <div className="px-4 mt-6 mb-6">
-                <div className="bg-[#1A1D26] rounded-2xl p-5 border-2 border-[var(--sr-vendor)]/20">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-5 border-2 border-[var(--sr-vendor)]/20">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <span className="material-symbols-outlined text-[var(--sr-vendor)]">menu_book</span>

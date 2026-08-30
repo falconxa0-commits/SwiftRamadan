@@ -179,12 +179,12 @@ export default function AIRecipeGeneratorModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[105] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[105] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
           >
             {/* Sticky Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#10E07A]/5 to-[#F5C451]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[var(--sr-customer)]/5 to-[var(--sr-vendor)]/5">
               <div className="flex items-center gap-3">
-                <div className="relative w-11 h-11 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30">
+                <div className="relative w-11 h-11 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-vendor)]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30">
                   <ChefHat className="w-6 h-6 text-[var(--sr-vendor)]" />
                   <Sparkles className="w-3 h-3 text-[var(--sr-customer)] absolute -top-1 -right-1" />
                 </div>
@@ -222,7 +222,7 @@ export default function AIRecipeGeneratorModal() {
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g. I'm craving something spicy with plantain for iftar..."
                   rows={3}
-                  className="w-full bg-[#05070A] text-white text-sm placeholder:text-white/60 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[var(--sr-customer)]/40 resize-none"
+                  className="w-full bg-[var(--sr-surface-base)] text-white text-sm placeholder:text-white/60 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[var(--sr-customer)]/40 resize-none"
                 />
                 {/* Quick prompts */}
                 <div className="flex flex-wrap gap-2">
@@ -239,7 +239,7 @@ export default function AIRecipeGeneratorModal() {
                 <button
                   onClick={() => generate()}
                   disabled={loading}
-                  className="w-full py-3.5 rounded-2xl font-bold text-[#05070A] bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl font-bold text-[var(--sr-surface-base)] bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -264,7 +264,7 @@ export default function AIRecipeGeneratorModal() {
                     exit={{ opacity: 0 }}
                     className="space-y-3"
                   >
-                    <div className="relative h-40 rounded-3xl bg-[#1A1D26] border border-white/5 overflow-hidden flex items-center justify-center">
+                    <div className="relative h-40 rounded-3xl bg-[var(--sr-surface-elevated)] border border-white/5 overflow-hidden flex items-center justify-center">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{
@@ -276,7 +276,7 @@ export default function AIRecipeGeneratorModal() {
                         <ChefHat className="w-14 h-14 text-[var(--sr-vendor)]/60" />
                       </motion.div>
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-transparent via-[#10E07A]/5 to-transparent"
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-[var(--sr-customer)]/5 to-transparent"
                         animate={{ x: ['-100%', '100%'] }}
                         transition={{
                           duration: 1.5,
@@ -288,7 +288,7 @@ export default function AIRecipeGeneratorModal() {
                     {[0, 1, 2].map((i) => (
                       <div
                         key={i}
-                        className="h-12 rounded-2xl bg-[#1A1D26] border border-white/5 overflow-hidden"
+                        className="h-12 rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 overflow-hidden"
                       >
                         <motion.div
                           className="h-full w-1/2 bg-gradient-to-r from-transparent via-white/5 to-transparent"
@@ -315,8 +315,8 @@ export default function AIRecipeGeneratorModal() {
                   className="space-y-4"
                 >
                   {/* Recipe Header */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-[var(--sr-customer)]/15 overflow-hidden">
-                    <div className="bg-gradient-to-br from-[#10E07A]/10 to-[#F5C451]/10 p-5">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-3xl border border-[var(--sr-customer)]/15 overflow-hidden">
+                    <div className="bg-gradient-to-br from-[var(--sr-customer)]/10 to-[var(--sr-vendor)]/10 p-5">
                       <span className="inline-block bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide border border-[var(--sr-vendor)]/20">
                         AI Generated Recipe
                       </span>
@@ -347,7 +347,7 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Ingredients */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="text-white font-bold text-sm flex items-center gap-2">
                         <ShoppingCart className="w-4 h-4 text-[var(--sr-customer)]" />
@@ -367,7 +367,7 @@ export default function AIRecipeGeneratorModal() {
                             className={`w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left ${
                               isChecked
                                 ? 'bg-[var(--sr-customer)]/8 border-[var(--sr-customer)]/25'
-                                : 'bg-[#0F1117] border-white/5 hover:border-white/15'
+                                : 'bg-[var(--sr-surface-raised)] border-white/5 hover:border-white/15'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
@@ -379,7 +379,7 @@ export default function AIRecipeGeneratorModal() {
                                 }`}
                               >
                                 {isChecked && (
-                                  <Check className="w-3.5 h-3.5 text-[#05070A]" />
+                                  <Check className="w-3.5 h-3.5 text-[var(--sr-surface-base)]" />
                                 )}
                               </span>
                               <div className="min-w-0">
@@ -410,7 +410,7 @@ export default function AIRecipeGeneratorModal() {
                       </button>
                       <button
                         onClick={addAllToCart}
-                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                       >
                         {addedAll ? (
                           <Check className="w-3.5 h-3.5" />
@@ -423,7 +423,7 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Steps */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
                     <h4 className="text-white font-bold text-sm flex items-center gap-2">
                       <ChefHat className="w-4 h-4 text-[var(--sr-vendor)]" />
                       Cooking Steps
@@ -432,7 +432,7 @@ export default function AIRecipeGeneratorModal() {
                       {recipe.steps.map((step, i) => (
                         <div
                           key={`${recipe.name}-step-${i}`}
-                          className="flex gap-3 p-3 bg-[#0F1117] rounded-2xl border border-white/5"
+                          className="flex gap-3 p-3 bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5"
                         >
                           <span className="w-7 h-7 shrink-0 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 flex items-center justify-center text-[var(--sr-vendor)] text-xs font-black">
                             {i + 1}
@@ -446,7 +446,7 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Chef Tips */}
-                  <div className="bg-gradient-to-br from-[#F5C451]/8 to-[#10E07A]/5 rounded-3xl border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
+                  <div className="bg-gradient-to-br from-[var(--sr-vendor)]/8 to-[var(--sr-customer)]/5 rounded-3xl border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
                     <h4 className="text-white font-bold text-sm flex items-center gap-2 mb-2">
                       <Lightbulb className="w-4 h-4 text-[var(--sr-vendor)]" />
                       Chef Safa&rsquo;s Tip
@@ -471,7 +471,7 @@ export default function AIRecipeGeneratorModal() {
 
             {/* Sticky Footer Buttons */}
             {recipe && !loading && (
-              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg flex gap-2">
+              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[var(--sr-surface-base)]/95 backdrop-blur-lg flex gap-2">
                 <button
                   onClick={() => setActiveModal(null)}
                   className="flex-1 py-3.5 rounded-2xl font-bold text-sm bg-white/5 text-white/70 border border-white/10 hover:text-white transition-all"
@@ -480,7 +480,7 @@ export default function AIRecipeGeneratorModal() {
                 </button>
                 <button
                   onClick={addAllToCart}
-                  className="flex-[2] py-3.5 rounded-2xl font-bold text-sm bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                  className="flex-[2] py-3.5 rounded-2xl font-bold text-sm bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   Add All to Cart 🛒 - {formatNaira(totalCost)}

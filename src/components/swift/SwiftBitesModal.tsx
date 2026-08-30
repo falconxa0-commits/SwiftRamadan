@@ -384,7 +384,7 @@ export default function SwiftBitesModal() {
     { label: 'WhatsApp', icon: '💬', color: 'bg-[#25D366]' },
     { label: 'Twitter / X', icon: '𝕏', color: 'bg-black' },
     { label: 'Copy Link', icon: '🔗', color: 'bg-[var(--sr-customer)]' },
-    { label: 'Save Video', icon: '⬇️', color: 'bg-[#A78BFA]' },
+    { label: 'Save Video', icon: '⬇️', color: 'bg-[var(--sr-ai)]' },
   ];
 
   const handleShareAction = (label: string) => {
@@ -414,7 +414,7 @@ export default function SwiftBitesModal() {
         >
           {isLoading ? (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-[#0B0D14] to-black">
-              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center animate-pulse">
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center animate-pulse">
                 <Sparkles className="w-8 h-8 text-black" />
               </div>
               <p className="text-white/60 text-sm tracking-widest uppercase">Loading SwiftBites…</p>
@@ -472,7 +472,7 @@ export default function SwiftBitesModal() {
                       transition={{ duration: 1, ease: 'easeOut' }}
                       className="absolute"
                     >
-                      <Heart className="w-16 h-16 fill-[#FB7185] text-[#FB7185] drop-shadow-[0_0_20px_rgba(251,113,133,0.8)]" />
+                      <Heart className="w-16 h-16 fill-[#FB7185] text-[var(--sr-error)] drop-shadow-[0_0_20px_rgba(251,113,133,0.8)]" />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -482,7 +482,7 @@ export default function SwiftBitesModal() {
               <div className="absolute top-0 left-0 right-0 z-30 pt-3 pb-2 px-4 bg-gradient-to-b from-black/80 to-transparent">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center">
                       <Sparkles className="w-4 h-4 text-black" />
                     </div>
                     <span className="text-white font-black text-lg tracking-tight">
@@ -520,7 +520,7 @@ export default function SwiftBitesModal() {
                 <div className="absolute right-2 sm:right-3 bottom-32 z-30 flex flex-col items-center gap-5">
                   {/* Creator avatar */}
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-white font-black text-lg border-2 border-white">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-ai)] flex items-center justify-center text-white font-black text-lg border-2 border-white">
                       {currentVideo.creatorAvatar ? (
                          
                         <img src={currentVideo.creatorAvatar} alt={currentVideo.creatorName} className="w-full h-full rounded-full object-cover" loading="lazy" decoding="async" />
@@ -528,7 +528,7 @@ export default function SwiftBitesModal() {
                         initialFromName(currentVideo.creatorName)
                       )}
                     </div>
-                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[#FB7185] flex items-center justify-center border-2 border-black">
+                    <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-5 h-5 rounded-full bg-[var(--sr-error)] flex items-center justify-center border-2 border-black">
                       <Plus className="w-3 h-3 text-white" strokeWidth={3} />
                     </div>
                   </div>
@@ -542,7 +542,7 @@ export default function SwiftBitesModal() {
                     <Heart
                       className={`w-9 h-9 transition-all ${
                         likedVideos.has(currentVideo.id)
-                          ? 'fill-[#FB7185] text-[#FB7185] drop-shadow-[0_0_12px_rgba(251,113,133,0.8)]'
+                          ? 'fill-[#FB7185] text-[var(--sr-error)] drop-shadow-[0_0_12px_rgba(251,113,133,0.8)]'
                           : 'text-white drop-shadow-lg'
                       }`}
                     />
@@ -656,7 +656,7 @@ export default function SwiftBitesModal() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                       onClick={() => handleOrderNow(currentVideo)}
-                      className="mt-3 flex items-center gap-2 bg-gradient-to-r from-[#10E07A] to-[#13ec13] text-black font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(16,224,122,0.5)] hover:brightness-110 active:scale-95 transition-all"
+                      className="mt-3 flex items-center gap-2 bg-gradient-to-r from-[var(--sr-customer)] to-[#13ec13] text-black font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(16,224,122,0.5)] hover:brightness-110 active:scale-95 transition-all"
                     >
                       <ShoppingBag className="w-4 h-4" />
                       {currentVideo.orderCtaText}
@@ -734,7 +734,7 @@ export default function SwiftBitesModal() {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 30, stiffness: 280 }}
-                  className="absolute bottom-0 left-0 right-0 z-50 h-[70%] bg-[#0B0D14] rounded-t-3xl border-t border-white/10 flex flex-col"
+                  className="absolute bottom-0 left-0 right-0 z-50 h-[70%] bg-[var(--sr-surface-base)] rounded-t-3xl border-t border-white/10 flex flex-col"
                 >
                   {/* Grabber */}
                   <div className="pt-3 pb-2 flex justify-center">
@@ -778,7 +778,7 @@ export default function SwiftBitesModal() {
                           animate={{ opacity: 1, y: 0 }}
                           className="flex gap-3"
                         >
-                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A] to-[#A78BFA] flex items-center justify-center text-white font-bold text-sm shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-ai)] flex items-center justify-center text-white font-bold text-sm shrink-0">
                             {c.authorInitial}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -788,7 +788,7 @@ export default function SwiftBitesModal() {
                             </div>
                             <p className="text-white text-sm leading-snug">{c.content}</p>
                             <div className="flex items-center gap-3 mt-1.5">
-                              <button className="flex items-center gap-1 text-white/65 text-xs hover:text-[#FB7185] transition-colors">
+                              <button className="flex items-center gap-1 text-white/65 text-xs hover:text-[var(--sr-error)] transition-colors">
                                 <Heart className="w-3 h-3" />
                                 {c.likes > 0 && formatCount(c.likes)}
                               </button>
@@ -803,9 +803,9 @@ export default function SwiftBitesModal() {
                   </div>
 
                   {/* Comment input */}
-                  <div className="p-3 border-t border-white/5 bg-[#0B0D14]">
+                  <div className="p-3 border-t border-white/5 bg-[var(--sr-surface-base)]">
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center text-black font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center text-black font-bold text-xs shrink-0">
                         {initialFromName(userName || 'G')}
                       </div>
                       <input
@@ -852,7 +852,7 @@ export default function SwiftBitesModal() {
                   animate={{ y: 0 }}
                   exit={{ y: '100%' }}
                   transition={{ type: 'spring', damping: 30, stiffness: 280 }}
-                  className="absolute bottom-0 left-0 right-0 z-50 bg-[#0B0D14] rounded-t-3xl border-t border-white/10 p-5 pb-8"
+                  className="absolute bottom-0 left-0 right-0 z-50 bg-[var(--sr-surface-base)] rounded-t-3xl border-t border-white/10 p-5 pb-8"
                 >
                   <div className="pt-2 pb-4 flex justify-center">
                     <div className="w-10 h-1 rounded-full bg-white/20" />

@@ -140,8 +140,8 @@ export default function ThemeTransition() {
             {/* Header */}
             <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
-                <div className="icon-tile w-10 h-10 border border-[#A78BFA]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
-                  <Sun className="w-5 h-5 text-[#A78BFA]" />
+                <div className="icon-tile w-10 h-10 border border-[var(--sr-ai)]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
+                  <Sun className="w-5 h-5 text-[var(--sr-ai)]" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">Time-of-Day Theme</h2>

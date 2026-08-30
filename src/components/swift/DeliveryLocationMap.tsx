@@ -71,7 +71,7 @@ export default function DeliveryLocationMap() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-hidden flex flex-col"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-hidden flex flex-col"
           >
             {/* Simulated Map Background */}
             <div className="absolute inset-0">
@@ -125,7 +125,7 @@ export default function DeliveryLocationMap() {
                     >
                       <X className="w-5 h-5 text-white/60" />
                     </button>
-                    <div className="flex-1 flex items-center gap-2 bg-[#0F1117] rounded-xl px-4 py-3 border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
+                    <div className="flex-1 flex items-center gap-2 bg-[var(--sr-surface-raised)] rounded-xl px-4 py-3 border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
                       <Search className="w-4 h-4 text-[var(--sr-customer)]/60 shrink-0" />
                       <input
                         type="text"
@@ -180,7 +180,7 @@ export default function DeliveryLocationMap() {
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={handleMyLocation}
-                  className="w-12 h-12 rounded-full bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect green-glow"
+                  className="w-12 h-12 rounded-full bg-[var(--sr-surface-elevated)]/90 border border-white/10 flex items-center justify-center glass-effect green-glow"
                 >
                   <Navigation className="w-5 h-5 text-[var(--sr-customer)]" />
                 </motion.button>
@@ -192,7 +192,7 @@ export default function DeliveryLocationMap() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-[#1A1D26]/90 border border-[var(--sr-vendor)]/20 rounded-xl px-3 py-2 glass-effect"
+                  className="bg-[var(--sr-surface-elevated)]/90 border border-[var(--sr-vendor)]/20 rounded-xl px-3 py-2 glass-effect"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🌙</span>
@@ -214,7 +214,7 @@ export default function DeliveryLocationMap() {
                     transition={{ delay: 0.2 }}
                     className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap"
                   >
-                    <div className="bg-[var(--sr-customer)] text-[#05070A] text-xs font-bold px-3 py-1.5 rounded-lg">
+                    <div className="bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-xs font-bold px-3 py-1.5 rounded-lg">
                       Delivery Point
                       <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--sr-customer)] rotate-45" />
                     </div>
@@ -227,8 +227,8 @@ export default function DeliveryLocationMap() {
                     transition={{ type: 'spring', damping: 12, stiffness: 150, delay: 0.1 }}
                     className="relative"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
-                      <MapPin className="w-5 h-5 text-[#05070A]" fill="#05070A" />
+                    <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shadow-lg shadow-[var(--sr-customer)]/30">
+                      <MapPin className="w-5 h-5 text-[var(--sr-surface-base)]" fill="#05070A" />
                     </div>
                     {/* Pin shadow */}
                     <motion.div
@@ -255,7 +255,7 @@ export default function DeliveryLocationMap() {
                 initial={{ y: 100, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.2, type: 'spring', damping: 25 }}
-                className="bg-[#0F1117] rounded-t-3xl border-t border-white/10 max-h-[55%] overflow-y-auto custom-scrollbar"
+                className="bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 max-h-[55%] overflow-y-auto custom-scrollbar"
               >
                 {/* Drag handle */}
                 <div className="flex justify-center pt-3 pb-2">
@@ -283,7 +283,7 @@ export default function DeliveryLocationMap() {
                       value={apartment}
                       onChange={(e) => setApartment(e.target.value)}
                       placeholder="e.g. Flat 4, Block B"
-                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 transition-colors"
+                      className="w-full bg-[var(--sr-surface-elevated)] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 transition-colors"
                     />
                   </div>
 
@@ -295,7 +295,7 @@ export default function DeliveryLocationMap() {
                       onChange={(e) => setDeliveryInstructions(e.target.value)}
                       placeholder="e.g. Ring the bell twice, leave at the gate..."
                       rows={2}
-                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 resize-none transition-colors"
+                      className="w-full bg-[var(--sr-surface-elevated)] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 resize-none transition-colors"
                     />
                   </div>
 
@@ -313,7 +313,7 @@ export default function DeliveryLocationMap() {
                             className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold transition-all ${
                               isActive
                                 ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
-                                : 'bg-[#1A1D26] border border-white/5 text-white/50 hover:bg-white/5'
+                                : 'bg-[var(--sr-surface-elevated)] border border-white/5 text-white/50 hover:bg-white/5'
                             }`}
                           >
                             <Icon className="w-3.5 h-3.5" />
@@ -327,7 +327,7 @@ export default function DeliveryLocationMap() {
                   {/* Confirm Button */}
                   <button
                     onClick={handleConfirm}
-                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow active:scale-[0.98]"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow active:scale-[0.98]"
                   >
                     CONFIRM LOCATION
                   </button>

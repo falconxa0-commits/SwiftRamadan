@@ -140,13 +140,13 @@ export default function SubscriptionBoxes() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#0B0D14] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
           role="dialog"
           aria-modal="true"
           aria-label="Subscription Boxes - weekly meal plans for Ramadan"
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
+          <div className="sticky top-0 z-10 backdrop-blur-xl bg-[var(--sr-surface-base)]/80 border-b border-white/8">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/20">
@@ -169,7 +169,7 @@ export default function SubscriptionBoxes() {
 
           {/* Hero */}
           <div className="relative overflow-hidden px-4 pt-6 pb-8">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#F5C451]/5 to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-vendor)]/5 to-transparent pointer-events-none" />
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -428,7 +428,7 @@ export default function SubscriptionBoxes() {
                 &ldquo;The Full Ramadan Plan saved me so much time! Every Iftar was a delight, and the Sahur was always delivered before I woke up. Highly recommend!&rdquo;
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#A78BFA]/20 flex items-center justify-center text-[#A78BFA] text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-[var(--sr-ai)]/20 flex items-center justify-center text-[var(--sr-ai)] text-xs font-bold">
                   FK
                 </div>
                 <div>

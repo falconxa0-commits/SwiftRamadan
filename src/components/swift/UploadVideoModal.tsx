@@ -137,7 +137,7 @@ export default function UploadVideoModal({
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
         transition={{ type: 'spring', damping: 30, stiffness: 320 }}
-        className="fixed bottom-0 left-0 right-0 z-[71] mx-auto max-w-lg max-h-[90vh] overflow-y-auto bg-[#0B0D14] rounded-t-3xl border-t border-white/10"
+        className="fixed bottom-0 left-0 right-0 z-[71] mx-auto max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--sr-surface-base)] rounded-t-3xl border-t border-white/10"
       >
         {/* Grabber */}
         <div className="flex justify-center pt-3 pb-1">
@@ -211,7 +211,7 @@ export default function UploadVideoModal({
                     onClick={() => setCategory(c.id)}
                     className={`px-3.5 h-8 rounded-full text-xs font-bold transition-all ${
                       category === c.id
-                        ? 'bg-[var(--sr-customer)] text-[#04140C]'
+                        ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                         : 'bg-white/5 text-white/60 border border-white/10'
                     }`}
                   >
@@ -330,8 +330,8 @@ export default function UploadVideoModal({
             </div>
 
             {/* Author note */}
-            <div className="flex items-center gap-2 p-2 sm:p-3 rounded-xl bg-[#A78BFA]/8 border border-[#A78BFA]/15">
-              <Sparkles className="w-4 h-4 text-[#A78BFA] shrink-0" />
+            <div className="flex items-center gap-2 p-2 sm:p-3 rounded-xl bg-[var(--sr-ai)]/8 border border-[var(--sr-ai)]/15">
+              <Sparkles className="w-4 h-4 text-[var(--sr-ai)] shrink-0" />
               <p className="text-white/60 text-[11px]">
                 Posting as <span className="text-white font-bold">{authorName}</span> ({authorHandle})
               </p>
@@ -341,7 +341,7 @@ export default function UploadVideoModal({
             <button
               onClick={handleSubmit}
               disabled={submitting || thumbUploading || !title.trim() || !videoUrl.trim()}
-              className="w-full h-12 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform shadow-[0_0_24px_rgba(16,224,122,0.35)]"
+              className="w-full h-12 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform shadow-[0_0_24px_rgba(16,224,122,0.35)]"
             >
               {submitting ? (
                 <>

@@ -167,7 +167,7 @@ const ABOUT_CONTENT = (
     </section>
 
     <section className="space-y-2">
-      <h3 className="text-[#A78BFA] font-bold text-base">Our Values</h3>
+      <h3 className="text-[var(--sr-ai)] font-bold text-base">Our Values</h3>
       <div className="grid grid-cols-1 gap-2">
         <div className="p-2.5 rounded-lg bg-white/[0.03] border border-white/5">
           <p className="text-white text-sm font-bold">🌿 Faith First</p>
@@ -244,8 +244,8 @@ export default function LegalPagesModal() {
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#A78BFA]/10 border border-[#A78BFA]/30 flex items-center justify-center icon-tile">
-                    <FileText className="w-5 h-5 text-[#A78BFA] relative z-10" />
+                  <div className="w-9 h-9 rounded-xl bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/30 flex items-center justify-center icon-tile">
+                    <FileText className="w-5 h-5 text-[var(--sr-ai)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Legal</h2>
@@ -272,7 +272,7 @@ export default function LegalPagesModal() {
                       onClick={() => setActiveTab(tab.id)}
                       className={`flex-1 flex flex-col items-center gap-1 py-2.5 rounded-xl text-[10px] font-bold transition-all border ${
                         isActive
-                          ? 'bg-[#A78BFA]/10 border-[#A78BFA]/40 text-[#A78BFA]'
+                          ? 'bg-[var(--sr-ai)]/10 border-[var(--sr-ai)]/40 text-[var(--sr-ai)]'
                           : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white/80'
                       }`}
                     >

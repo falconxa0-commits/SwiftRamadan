@@ -382,11 +382,11 @@ export default function ChatModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-            className="fixed inset-0 z-[150] bg-[#0B0D14] flex flex-col"
+            className="fixed inset-0 z-[150] bg-[var(--sr-surface-base)] flex flex-col"
           >
             {/* ─── Top bar ─── */}
             <div className="glass-effect border-b border-white/5">
-              <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#A78BFA]" />
+              <div className="h-[3px] bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]" />
               <div className="flex items-center gap-3 p-3 sm:p-4">
                 <button
                   onClick={handleClose}
@@ -423,7 +423,7 @@ export default function ChatModal() {
                   </div>
                   <p
                     className={`text-[11px] font-medium flex items-center gap-1 ${
-                      socketConnected ? 'text-[var(--sr-customer)]' : 'text-[#FB7185]'
+                      socketConnected ? 'text-[var(--sr-customer)]' : 'text-[var(--sr-error)]'
                     }`}
                   >
                     {socketConnected ? (
@@ -488,7 +488,7 @@ export default function ChatModal() {
                       <div
                         className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                           mine
-                            ? 'bg-gradient-to-br from-[#10E07A] to-[#0FB463] text-[#04140C] font-medium rounded-br-md'
+                            ? 'bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-medium rounded-br-md'
                             : 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
                         }`}
                       >
@@ -553,13 +553,13 @@ export default function ChatModal() {
                     handleSend();
                   }}
                   disabled={!draft.trim() || sending}
-                  className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[#10E07A] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
+                  className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
                   aria-label="Send message"
                 >
                   {sending ? (
-                    <Loader2 className="w-5 h-5 text-[#04140C] animate-spin" />
+                    <Loader2 className="w-5 h-5 text-[var(--sr-surface-base)] animate-spin" />
                   ) : (
-                    <Send className="w-5 h-5 text-[#04140C]" strokeWidth={2.5} />
+                    <Send className="w-5 h-5 text-[var(--sr-surface-base)]" strokeWidth={2.5} />
                   )}
                 </button>
               </div>

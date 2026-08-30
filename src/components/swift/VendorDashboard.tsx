@@ -753,7 +753,7 @@ export default function VendorDashboard() {
             key={filter.id}
             onClick={() => setActiveFilter(filter.id)}
             className={`relative flex-1 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center justify-center gap-1.5 ${
-              activeFilter === filter.id ? 'text-[#06070B]' : 'text-white/65 hover:text-white/60'
+              activeFilter === filter.id ? 'text-[var(--sr-surface-base)]' : 'text-white/65 hover:text-white/60'
             }`}
           >
             {activeFilter === filter.id && (
@@ -768,7 +768,7 @@ export default function VendorDashboard() {
               <span
                 className={`relative z-10 text-[10px] px-1.5 py-0.5 rounded-full font-black ${
                   activeFilter === filter.id
-                    ? 'bg-[var(--sr-surface-base)]/20 text-[#06070B]'
+                    ? 'bg-[var(--sr-surface-base)]/20 text-[var(--sr-surface-base)]'
                     : 'bg-white/10 text-white/65'
                 }`}
               >
@@ -880,7 +880,7 @@ export default function VendorDashboard() {
                       <button
                         onClick={() => handleAccept(order)}
                         disabled={processing[order.id] !== undefined}
-                        className="flex-1 py-2.5 rounded-xl bg-[var(--sr-customer)] text-[#06070B] text-xs font-bold hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="flex-1 py-2.5 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-xs font-bold hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {processing[order.id] === 'accept' ? (
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />

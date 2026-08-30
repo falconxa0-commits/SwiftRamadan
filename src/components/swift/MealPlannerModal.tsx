@@ -275,7 +275,7 @@ export default function MealPlannerModal() {
 
           {/* Full-screen sheet */}
           <motion.div
-            className="relative mt-auto h-[100dvh] w-full bg-[#05070A] flex flex-col overflow-hidden sk-aura"
+            className="relative mt-auto h-[100dvh] w-full bg-[var(--sr-surface-base)] flex flex-col overflow-hidden sk-aura"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
@@ -283,11 +283,11 @@ export default function MealPlannerModal() {
           >
             {/* ── Sticky header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
-              <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[#05070A]/95 backdrop-blur">
+              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
+              <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[var(--sr-surface-base)]/95 backdrop-blur">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-10 rounded-xl bg-gradient-to-br from-[#10E07A] to-[#0a8a0a] flex items-center justify-center shrink-0">
-                    <CalendarDays className="w-5 h-5 text-[#05070A]" />
+                  <div className="size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                    <CalendarDays className="w-5 h-5 text-[var(--sr-surface-base)]" />
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
@@ -303,7 +303,7 @@ export default function MealPlannerModal() {
                 </div>
                 <button
                   onClick={handleClose}
-                  className="size-9 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:border-white/30 transition-colors shrink-0"
+                  className="size-9 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:border-white/30 transition-colors shrink-0"
                   aria-label="Close meal planner"
                 >
                   <X className="w-4 h-4 text-white" />
@@ -326,8 +326,8 @@ export default function MealPlannerModal() {
                         onClick={() => handleSelectDay(d.key)}
                         className={`relative shrink-0 w-[68px] py-3 rounded-2xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'bg-[#1A1D26] border-[var(--sr-customer)]/60 shadow-[0_0_0_1px_rgba(16,224,122,0.25)]'
-                            : 'bg-[#0F1117] border-white/5 hover:border-white/15'
+                            ? 'bg-[var(--sr-surface-elevated)] border-[var(--sr-customer)]/60 shadow-[0_0_0_1px_rgba(16,224,122,0.25)]'
+                            : 'bg-[var(--sr-surface-raised)] border-white/5 hover:border-white/15'
                         }`}
                         aria-pressed={isSelected}
                       >
@@ -373,8 +373,8 @@ export default function MealPlannerModal() {
                     {prettyDate(selectedDayMeta.date)}
                   </h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#1A1D26] border border-white/5">
-                  <Sparkles className="w-3 h-3 text-[#8b5cf6]" />
+                <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[var(--sr-surface-elevated)] border border-white/5">
+                  <Sparkles className="w-3 h-3 text-[var(--sr-ai)]" />
                   <span className="text-white/60 text-[11px] font-bold">
                     {selectedDayPlan.iftar || selectedDayPlan.sahur
                       ? `${(selectedDayPlan.iftar ? 1 : 0) + (selectedDayPlan.sahur ? 1 : 0)} meal${(selectedDayPlan.iftar ? 1 : 0) + (selectedDayPlan.sahur ? 1 : 0) > 1 ? 's' : ''}`
@@ -414,9 +414,9 @@ export default function MealPlannerModal() {
               {/* Weekly summary card OR empty state */}
               {isWeekEmpty ? (
                 <div className="px-4 mt-6">
-                  <div className="rounded-3xl border border-dashed border-white/10 bg-[#0F1117] p-8 flex flex-col items-center text-center">
-                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[#10E07A]/15 border border-[#8b5cf6]/30 flex items-center justify-center mb-4">
-                      <CalendarPlus className="w-7 h-7 text-[#8b5cf6]" />
+                  <div className="rounded-3xl border border-dashed border-white/10 bg-[var(--sr-surface-raised)] p-8 flex flex-col items-center text-center">
+                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[var(--sr-customer)]/15 border border-[var(--sr-ai)]/30 flex items-center justify-center mb-4">
+                      <CalendarPlus className="w-7 h-7 text-[var(--sr-ai)]" />
                     </div>
                     <h4 className="text-white font-black text-lg">
                       Start planning your perfect Ramadan week
@@ -427,7 +427,7 @@ export default function MealPlannerModal() {
                     </p>
                     <button
                       onClick={jumpToToday}
-                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[#10E07A] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[#0a8a0a] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <CalendarDays className="w-4 h-4" />
                       Jump to Today
@@ -451,7 +451,7 @@ export default function MealPlannerModal() {
                     </div>
                     <button
                       onClick={handleAddAllToCart}
-                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[#10E07A] to-[#0a8a0a] text-[#05070A] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0a8a0a] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add All Ingredients to Cart
@@ -465,9 +465,9 @@ export default function MealPlannerModal() {
 
               {/* Tip card */}
               <div className="px-4 mt-4">
-                <div className="rounded-2xl border border-white/5 bg-[#0F1117] p-3 sm:p-4 flex items-start gap-3">
-                  <div className="size-8 rounded-lg bg-[#8b5cf6]/15 flex items-center justify-center shrink-0">
-                    <ChefHat className="w-4 h-4 text-[#8b5cf6]" />
+                <div className="rounded-2xl border border-white/5 bg-[var(--sr-surface-raised)] p-3 sm:p-4 flex items-start gap-3">
+                  <div className="size-8 rounded-lg bg-[var(--sr-ai)]/15 flex items-center justify-center shrink-0">
+                    <ChefHat className="w-4 h-4 text-[var(--sr-ai)]" />
                   </div>
                   <div className="min-w-0">
                     <p className="text-white text-xs font-bold">Smart Kitchen sync</p>
@@ -531,7 +531,7 @@ function MealSection({
 }: MealSectionProps) {
   return (
     <div
-      className="rounded-3xl border bg-[#0F1117] p-3 sm:p-4"
+      className="rounded-3xl border bg-[var(--sr-surface-raised)] p-3 sm:p-4"
       style={{ borderColor: meal ? accentColor : 'rgba(255,255,255,0.05)' }}
     >
       {/* Section header */}
@@ -558,9 +558,9 @@ function MealSection({
 
       {/* Meal card OR empty state */}
       {meal ? (
-        <div className="flex items-center gap-3 p-2 rounded-2xl bg-[#1A1D26] border border-white/5">
+        <div className="flex items-center gap-3 p-2 rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5">
           {/* Thumb */}
-          <div className="size-16 rounded-xl overflow-hidden bg-[#0F1117] shrink-0 border border-white/5">
+          <div className="size-16 rounded-xl overflow-hidden bg-[var(--sr-surface-raised)] shrink-0 border border-white/5">
             {meal.image ? (
               <img
                 src={meal.image}
@@ -618,7 +618,7 @@ function MealSection({
           </button>
           <button
             onClick={onRemove}
-            className="px-3 py-2.5 rounded-xl bg-[#1A1D26] border border-white/10 text-white/60 hover:text-red-400 hover:border-red-400/30 transition-colors"
+            className="px-3 py-2.5 rounded-xl bg-[var(--sr-surface-elevated)] border border-white/10 text-white/60 hover:text-red-400 hover:border-red-400/30 transition-colors"
             aria-label={`Remove ${label} meal`}
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -647,7 +647,7 @@ function UtensilsMini() {
 
 function SummaryStat({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="rounded-2xl bg-[#0F1117] border border-white/5 p-3 text-center">
+    <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 text-center">
       <div className="text-2xl font-black" style={{ color }}>
         {value}
       </div>
@@ -702,7 +702,7 @@ function AddMealSheet({
         aria-hidden
       />
       <motion.div
-        className="absolute left-0 right-0 bottom-0 z-20 bg-[#0F1117] rounded-t-3xl border-t border-white/10 max-h-[88%] overflow-y-auto custom-scrollbar"
+        className="absolute left-0 right-0 bottom-0 z-20 bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 max-h-[88%] overflow-y-auto custom-scrollbar"
         initial={{ y: '100%' }}
         animate={{ y: 0 }}
         exit={{ y: '100%' }}
@@ -726,7 +726,7 @@ function AddMealSheet({
           </div>
           <button
             onClick={onClose}
-            className="size-9 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center"
+            className="size-9 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center"
             aria-label="Close add meal sheet"
           >
             <X className="w-4 h-4 text-white/60" />
@@ -752,7 +752,7 @@ function AddMealSheet({
                   }`}
                   style={picked ? { borderColor: accentColor } : undefined}
                 >
-                  <div className="h-20 w-full bg-[#1A1D26] relative overflow-hidden">
+                  <div className="h-20 w-full bg-[var(--sr-surface-elevated)] relative overflow-hidden">
                     <img
                       src={m.image}
                       alt={m.name}
@@ -763,11 +763,11 @@ function AddMealSheet({
                         className="absolute top-1.5 right-1.5 size-5 rounded-full flex items-center justify-center"
                         style={{ backgroundColor: accentColor }}
                       >
-                        <Check className="w-3 h-3 text-[#05070A]" strokeWidth={3} />
+                        <Check className="w-3 h-3 text-[var(--sr-surface-base)]" strokeWidth={3} />
                       </div>
                     )}
                   </div>
-                  <div className="p-2 bg-[#0F1117]">
+                  <div className="p-2 bg-[var(--sr-surface-raised)]">
                     <p className="text-white text-xs font-bold leading-tight line-clamp-2">
                       {m.name}
                     </p>
@@ -795,7 +795,7 @@ function AddMealSheet({
               if (e.target.value && pickedRecipeId !== null) setPickedRecipeId(null);
             }}
             placeholder="e.g. Auntie&apos;s Pepper Soup"
-            className="w-full px-4 py-3 rounded-2xl bg-[#1A1D26] border border-white/10 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-white/30 transition-colors"
+            className="w-full px-4 py-3 rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/10 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-white/30 transition-colors"
           />
         </div>
 
@@ -804,11 +804,11 @@ function AddMealSheet({
           <p className="text-white/65 text-[11px] uppercase tracking-wider font-bold mb-2">
             Servings
           </p>
-          <div className="flex items-center justify-between bg-[#1A1D26] border border-white/10 rounded-2xl p-2">
+          <div className="flex items-center justify-between bg-[var(--sr-surface-elevated)] border border-white/10 rounded-2xl p-2">
             <button
               onClick={() => adjustServings(-1)}
               disabled={servings <= 1}
-              className="size-10 rounded-xl bg-[#0F1117] border border-white/5 flex items-center justify-center disabled:opacity-30 hover:border-white/20 transition-colors"
+              className="size-10 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5 flex items-center justify-center disabled:opacity-30 hover:border-white/20 transition-colors"
               aria-label="Decrease servings"
             >
               <Minus className="w-4 h-4 text-white" />
@@ -822,7 +822,7 @@ function AddMealSheet({
             <button
               onClick={() => adjustServings(1)}
               disabled={servings >= 10}
-              className="size-10 rounded-xl bg-[#0F1117] border border-white/5 flex items-center justify-center disabled:opacity-30 hover:border-white/20 transition-colors"
+              className="size-10 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5 flex items-center justify-center disabled:opacity-30 hover:border-white/20 transition-colors"
               aria-label="Increase servings"
             >
               <Plus className="w-4 h-4 text-white" />

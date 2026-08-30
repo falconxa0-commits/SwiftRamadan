@@ -303,7 +303,7 @@ export default function KYCVerificationModal() {
                     </p>
                   )}
                   {kycStatus === 'rejected' && (
-                    <p className="text-[#EF4444]/70 text-xs mt-1">
+                    <p className="text-[var(--sr-error)]/70 text-xs mt-1">
                       Some documents were rejected. Please re-submit with correct information.
                     </p>
                   )}
@@ -476,7 +476,7 @@ export default function KYCVerificationModal() {
                             {doc.documentNumber.replace(/(.{4})(.*)(.{4})/, '$1••••$3')}
                           </p>
                           {doc.rejectionReason && doc.status === 'rejected' && (
-                            <p className="text-[#EF4444]/80 text-[10px] mt-0.5">
+                            <p className="text-[var(--sr-error)]/80 text-[10px] mt-0.5">
                               Reason: {doc.rejectionReason}
                             </p>
                           )}

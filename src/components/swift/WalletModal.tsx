@@ -211,7 +211,7 @@ export default function WalletModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -341,7 +341,7 @@ export default function WalletModal() {
                               return (
                                 <div
                                   key={txn.id}
-                                  className="flex items-center gap-3 p-3 rounded-xl bg-[#1A1D26]/40 border border-white/5"
+                                  className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-elevated)]/40 border border-white/5"
                                 >
                                   <TxnIcon type={txn.type} />
                                   <div className="flex-1 min-w-0">
@@ -382,11 +382,11 @@ export default function WalletModal() {
                         transition={{ delay: 0.1 }}
                       >
                         <h4 className="text-white font-bold text-sm mb-3">Amount to Top Up</h4>
-                        <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-5">
+                        <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-5">
                           {/* Amount input */}
                           <div className="mb-4">
                             <label className="text-white/65 text-xs font-bold uppercase tracking-widest block mb-2">Amount (Naira)</label>
-                            <div className="flex items-center gap-2 bg-[#0F1117] rounded-xl border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all px-4 py-3">
+                            <div className="flex items-center gap-2 bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all px-4 py-3">
                               <span className="text-white/65 text-lg font-bold">₦</span>
                               <input
                                 type="number"
@@ -450,7 +450,7 @@ export default function WalletModal() {
                           className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] ${
                             processing || !topupAmount || parseFloat(topupAmount) <= 0
                               ? 'bg-white/5 text-white/20 cursor-not-allowed'
-                              : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
+                              : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90'
                           }`}
                         >
                           {processing ? (
@@ -458,7 +458,7 @@ export default function WalletModal() {
                               <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-                                className="w-5 h-5 border-2 border-[#05070A]/20 border-t-[#05070A] rounded-full"
+                                className="w-5 h-5 border-2 border-[var(--sr-surface-base)]/20 border-t-[#05070A] rounded-full"
                               />
                               Processing...
                             </span>
@@ -501,7 +501,7 @@ export default function WalletModal() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.04 }}
-                                className="flex items-center gap-3 p-3 sm:p-4 rounded-2xl bg-[#1A1D26]/40 border border-white/5 hover:bg-[#1A1D26]/60 transition-colors"
+                                className="flex items-center gap-3 p-3 sm:p-4 rounded-2xl bg-[var(--sr-surface-elevated)]/40 border border-white/5 hover:bg-[var(--sr-surface-elevated)]/60 transition-colors"
                               >
                                 <TxnIcon type={txn.type} />
                                 <div className="flex-1 min-w-0">

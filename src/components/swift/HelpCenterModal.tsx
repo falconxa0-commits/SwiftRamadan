@@ -155,8 +155,8 @@ const CATEGORIES: { id: Category | 'All'; label: string; icon: React.ComponentTy
   { id: 'Getting Started', label: 'Getting Started', icon: User, color: 'text-[var(--sr-customer)]' },
   { id: 'Orders & Delivery', label: 'Orders', icon: Truck, color: 'text-[var(--sr-rider)]' },
   { id: 'Payments', label: 'Payments', icon: CreditCard, color: 'text-[var(--sr-vendor)]' },
-  { id: 'Account', label: 'Account', icon: User, color: 'text-[#A78BFA]' },
-  { id: 'Ramadan Features', label: 'Ramadan', icon: Moon, color: 'text-[#FB7185]' },
+  { id: 'Account', label: 'Account', icon: User, color: 'text-[var(--sr-ai)]' },
+  { id: 'Ramadan Features', label: 'Ramadan', icon: Moon, color: 'text-[var(--sr-error)]' },
 ];
 
 export default function HelpCenterModal() {
@@ -353,14 +353,14 @@ export default function HelpCenterModal() {
               <div className="px-5 py-4 border-t border-white/5 shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   onClick={handleContactSupport}
-                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-customer)] text-[#06070B] font-bold text-xs hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-xs hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   Contact Support
                 </button>
                 <button
                   onClick={handleReportProblem}
-                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[#FB7185]/10 border border-[#FB7185]/20 text-[#FB7185] font-bold text-xs hover:bg-[#FB7185]/15 transition-colors active:scale-[0.98]"
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-error)]/10 border border-[var(--sr-error)]/20 text-[var(--sr-error)] font-bold text-xs hover:bg-[var(--sr-error)]/15 transition-colors active:scale-[0.98]"
                 >
                   <Flag className="w-3.5 h-3.5" />
                   Report a Problem

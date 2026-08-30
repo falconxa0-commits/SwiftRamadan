@@ -316,7 +316,7 @@ function RecipeRemixInner() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-[#F5C451]/10 to-[#A78BFA]/10 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex items-center gap-3"
+          className="bg-gradient-to-r from-[var(--sr-vendor)]/10 to-[var(--sr-ai)]/10 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex items-center gap-3"
         >
           <div className="w-10 h-10 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center shrink-0">
             <Award className="w-5 h-5 text-[var(--sr-vendor)]" />
@@ -361,7 +361,7 @@ function RecipeRemixInner() {
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center text-[10px] font-bold text-black shrink-0">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center text-[10px] font-bold text-black shrink-0">
                     {remix.authorInitial}
                   </div>
                   <span className="text-white/50 text-xs">{remix.authorName}</span>
@@ -403,7 +403,7 @@ function RecipeRemixInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label={`${selectedRemix.remixName} recipe details`}
@@ -433,7 +433,7 @@ function RecipeRemixInner() {
               <div className="p-4 space-y-4">
                 {/* Author */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#10E07A] to-[#F5C451] flex items-center justify-center text-sm font-bold text-black">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center text-sm font-bold text-black">
                     {selectedRemix.authorInitial}
                   </div>
                   <div>
@@ -610,7 +610,7 @@ function RecipeRemixInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[var(--sr-surface-base)]/95 backdrop-blur-sm flex items-center justify-center p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Create recipe remix"

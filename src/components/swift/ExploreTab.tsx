@@ -164,8 +164,8 @@ export default function ExploreTab() {
           onClick={() => useAppStore.getState().setActiveModal('visual-search')}
           className="mt-3 w-full flex items-center gap-3 aurora-card rounded-2xl px-4 py-3 text-left hover:border-white/15 transition-colors active:scale-[0.99]"
         >
-          <div className="w-9 h-9 rounded-xl bg-[#A78BFA]/15 flex items-center justify-center border border-[#A78BFA]/30 icon-tile shrink-0">
-            <Camera className="w-4 h-4 text-[#A78BFA] relative z-10" />
+          <div className="w-9 h-9 rounded-xl bg-[var(--sr-ai)]/15 flex items-center justify-center border border-[var(--sr-ai)]/30 icon-tile shrink-0">
+            <Camera className="w-4 h-4 text-[var(--sr-ai)] relative z-10" />
           </div>
           <div className="flex-1">
             <p className="text-white text-sm font-bold flex items-center gap-1.5">
@@ -209,7 +209,7 @@ export default function ExploreTab() {
                 transition={{ delay: i * 0.1 }}
                 onClick={() => handleCategoryClick(item)}
                 className={`relative group cursor-pointer overflow-hidden rounded-2xl aspect-square flex flex-col justify-end p-3 sm:p-4 border transition-colors text-left ${
-                  isActive ? 'border-[var(--sr-customer)]/40 ring-1 ring-[#10E07A]/20' : 'border-white/5 hover:border-[var(--sr-customer)]/20'
+                  isActive ? 'border-[var(--sr-customer)]/40 ring-1 ring-[var(--sr-customer)]/20' : 'border-white/5 hover:border-[var(--sr-customer)]/20'
                 }`}
                 style={{
                   backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 100%), url('${item.image}')`,
@@ -218,7 +218,7 @@ export default function ExploreTab() {
                 }}
               >
                 <span className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter ${
-                  isActive ? 'bg-[var(--sr-customer)] text-[#06070B]' : 'bg-[var(--sr-vendor)] text-[#06070B]'
+                  isActive ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]' : 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)]'
                 }`}>
                   {isActive ? '✓ Active' : item.badge}
                 </span>
@@ -251,7 +251,7 @@ export default function ExploreTab() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-[#06070B]/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <span className="inline-block bg-[var(--sr-vendor)]/90 text-[#06070B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase mb-2">Ramadan Kareem</span>
+                <span className="inline-block bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase mb-2">Ramadan Kareem</span>
                 <h3 className="text-2xl font-bold text-white leading-tight tracking-tight">Premium Ramadan Boxes</h3>
               </div>
             </div>
@@ -266,7 +266,7 @@ export default function ExploreTab() {
                 </div>
                 <button
                   onClick={handleShopNow}
-                  className="bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 text-[#06070B] font-bold py-2 px-6 rounded-xl transition-colors text-sm active:scale-[0.98] transform green-glow"
+                  className="bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 text-[var(--sr-surface-base)] font-bold py-2 px-6 rounded-xl transition-colors text-sm active:scale-[0.98] transform green-glow"
                 >
                   Shop Now
                 </button>
@@ -402,7 +402,7 @@ export default function ExploreTab() {
                 style={{ backgroundImage: `url("${product.image}")` }}
               >
                 {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
-                  <span className="absolute top-2 left-2 bg-[#FB7185] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                  <span className="absolute top-2 left-2 bg-[var(--sr-error)] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                     -{Math.round(((product.originalPrice - product.salePrice) / product.originalPrice) * 100)}%
                   </span>
                 )}

@@ -131,7 +131,7 @@ export default function PartyBulkModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto"
+          className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto"
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -147,7 +147,7 @@ export default function PartyBulkModal() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#1A1D26] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5 text-white" />
               </button>
@@ -161,8 +161,8 @@ export default function PartyBulkModal() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                     activeCategory === cat.id
-                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
-                      : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:text-white hover:border-white/20'
+                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
+                      : 'bg-[var(--sr-surface-elevated)] border border-white/10 text-white/60 hover:text-white hover:border-white/20'
                   }`}
                 >
                   {cat.name}
@@ -202,7 +202,7 @@ export default function PartyBulkModal() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.08, duration: 0.4 }}
-                    className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden flex"
+                    className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden flex"
                   >
                     <div
                       className="w-28 h-28 bg-center bg-no-repeat bg-cover shrink-0"
@@ -251,7 +251,7 @@ export default function PartyBulkModal() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: index * 0.06, duration: 0.3 }}
-                    className="min-w-[160px] bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden"
+                    className="min-w-[160px] bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden"
                   >
                     <div
                       className="w-full h-24 bg-center bg-no-repeat bg-cover"
@@ -290,7 +290,7 @@ export default function PartyBulkModal() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.06, duration: 0.3 }}
-                    className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden"
+                    className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden"
                   >
                     <div
                       className="w-full h-20 bg-center bg-no-repeat bg-cover"
@@ -329,13 +329,13 @@ export default function PartyBulkModal() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.06, duration: 0.3 }}
-                    className="bg-[#1A1D26] rounded-2xl border border-white/5 overflow-hidden"
+                    className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 overflow-hidden"
                   >
                     <div
                       className="w-full h-24 bg-center bg-no-repeat bg-cover relative"
                       style={{ backgroundImage: `url("${item.image}")` }}
                     >
-                      <div className="absolute top-2 right-2 bg-[var(--sr-vendor)]/90 text-[#05070A] text-[8px] font-black px-2 py-0.5 rounded-full">
+                      <div className="absolute top-2 right-2 bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[8px] font-black px-2 py-0.5 rounded-full">
                         {item.serves}
                       </div>
                     </div>
@@ -371,7 +371,7 @@ export default function PartyBulkModal() {
                     <motion.div
                       key={item.id}
                       whileTap={{ scale: 0.95 }}
-                      className="bg-[#1A1D26] rounded-xl border border-white/5 overflow-hidden relative"
+                      className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 overflow-hidden relative"
                     >
                       <div
                         className="w-full h-20 bg-center bg-no-repeat bg-cover"
@@ -382,7 +382,7 @@ export default function PartyBulkModal() {
                         <span className="text-[var(--sr-customer)] text-[10px] font-bold">{formatNaira(item.price)}</span>
                       </div>
                       {qty > 0 && (
-                        <div className="absolute top-1.5 right-1.5 bg-[var(--sr-customer)] text-[#05070A] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
+                        <div className="absolute top-1.5 right-1.5 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
                           {qty}
                         </div>
                       )}
@@ -413,7 +413,7 @@ export default function PartyBulkModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-[var(--sr-customer)]/20 p-4 mb-4"
+                  className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-[var(--sr-customer)]/20 p-4 mb-4"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-white/60 text-xs font-medium">Your Crate ({crateItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
@@ -428,7 +428,7 @@ export default function PartyBulkModal() {
                   </div>
                   <button
                     onClick={handleAddCrateToCart}
-                    className="w-full bg-[var(--sr-customer)] text-[#05070A] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
+                    className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add Crate to Cart
@@ -447,7 +447,7 @@ export default function PartyBulkModal() {
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
             onClick={() => setShowPartyForm(true)}
-            className="fixed bottom-8 right-4 z-20 bg-[var(--sr-vendor)] text-[#05070A] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#F5C451]/20 hover:shadow-[#F5C451]/30 transition-shadow active:scale-[0.98]"
+            className="fixed bottom-8 right-4 z-20 bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[var(--sr-vendor)]/20 hover:shadow-[var(--sr-vendor)]/30 transition-shadow active:scale-[0.98]"
           >
             <PartyPopper className="w-5 h-5" />
             Start a Party Order
@@ -469,7 +469,7 @@ export default function PartyBulkModal() {
                   exit={{ y: 300 }}
                   transition={{ type: 'spring', damping: 25 }}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full sm:max-w-md bg-[#1A1D26] rounded-t-3xl sm:rounded-3xl border border-white/10 p-6"
+                  className="w-full sm:max-w-md bg-[var(--sr-surface-elevated)] rounded-t-3xl sm:rounded-3xl border border-white/10 p-6"
                 >
                   <div className="flex items-center justify-between mb-6">
                     <h3 className="text-white font-bold text-lg">Start a Party Order</h3>
@@ -488,7 +488,7 @@ export default function PartyBulkModal() {
                           value={partyForm.eventName}
                           onChange={(e) => setPartyForm(p => ({ ...p, eventName: e.target.value }))}
                           placeholder="e.g., Amina's Iftar Party"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -501,7 +501,7 @@ export default function PartyBulkModal() {
                           type="date"
                           value={partyForm.date}
                           onChange={(e) => setPartyForm(p => ({ ...p, date: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors [color-scheme:dark]"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors [color-scheme:dark]"
                         />
                       </div>
                     </div>
@@ -515,7 +515,7 @@ export default function PartyBulkModal() {
                           value={partyForm.guestCount}
                           onChange={(e) => setPartyForm(p => ({ ...p, guestCount: e.target.value }))}
                           placeholder="e.g., 50"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -527,13 +527,13 @@ export default function PartyBulkModal() {
                         <select
                           value={partyForm.budgetRange}
                           onChange={(e) => setPartyForm(p => ({ ...p, budgetRange: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors appearance-none"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors appearance-none"
                         >
-                          <option value="" className="bg-[#1A1D26]">Select budget range</option>
-                          <option value="50k-100k" className="bg-[#1A1D26]">₦50,000 - ₦100,000</option>
-                          <option value="100k-250k" className="bg-[#1A1D26]">₦100,000 - ₦250,000</option>
-                          <option value="250k-500k" className="bg-[#1A1D26]">₦250,000 - ₦500,000</option>
-                          <option value="500k+" className="bg-[#1A1D26]">₦500,000+</option>
+                          <option value="" className="bg-[var(--sr-surface-elevated)]">Select budget range</option>
+                          <option value="50k-100k" className="bg-[var(--sr-surface-elevated)]">₦50,000 - ₦100,000</option>
+                          <option value="100k-250k" className="bg-[var(--sr-surface-elevated)]">₦100,000 - ₦250,000</option>
+                          <option value="250k-500k" className="bg-[var(--sr-surface-elevated)]">₦250,000 - ₦500,000</option>
+                          <option value="500k+" className="bg-[var(--sr-surface-elevated)]">₦500,000+</option>
                         </select>
                         <ChevronRight className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/60 rotate-90" />
                       </div>
@@ -544,7 +544,7 @@ export default function PartyBulkModal() {
                       disabled={!partyForm.eventName || !partyForm.guestCount}
                       className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                         partyForm.eventName && partyForm.guestCount
-                          ? 'bg-[var(--sr-vendor)] text-[#05070A] hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98]'
+                          ? 'bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98]'
                           : 'bg-white/5 text-white/60 cursor-not-allowed border border-white/10'
                       }`}
                     >

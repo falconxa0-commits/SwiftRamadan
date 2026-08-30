@@ -254,7 +254,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[130] bg-[#05070A] flex flex-col overflow-hidden"
+        className="fixed inset-0 z-[130] bg-[var(--sr-surface-base)] flex flex-col overflow-hidden"
       >
         {/* Hidden canvas for frame capture */}
         <canvas ref={canvasRef} className="hidden" />
@@ -296,7 +296,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <div className="flex flex-col gap-2.5 w-full max-w-xs">
                 <button
                   onClick={startCamera}
-                  className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[#05070A] hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[var(--sr-surface-base)] hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                 >
                   <Camera className="w-4 h-4" />
                   Turn on Camera
@@ -403,7 +403,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                       { }
                       <img src="/images/chef/safa-portrait.png" alt="Chef Safa" className="w-full h-full object-cover" />
                     </motion.div>
-                    <span className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[#05070A] flex items-center justify-center ${actionMeta?.bg}`}>
+                    <span className={`absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[var(--sr-surface-base)] flex items-center justify-center ${actionMeta?.bg}`}>
                       <ActionIcon className={`w-2.5 h-2.5 ${actionMeta?.color}`} />
                     </span>
                   </div>
@@ -431,11 +431,11 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                       <img src="/images/chef/safa-portrait.png" alt="Chef Safa" className="w-full h-full object-cover" />
                     </div>
                     <motion.span
-                      className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[#05070A] bg-[#FFD700] flex items-center justify-center"
+                      className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[var(--sr-surface-base)] bg-[#FFD700] flex items-center justify-center"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     >
-                      <Loader2 className="w-2.5 h-2.5 text-[#05070A]" />
+                      <Loader2 className="w-2.5 h-2.5 text-[var(--sr-surface-base)]" />
                     </motion.span>
                   </div>
                   <div className="flex-1 rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-3.5">
@@ -528,7 +528,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <button
                 onClick={() => analyze()}
                 disabled={analyzing}
-                className="px-6 h-14 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[#05070A] font-bold text-sm shadow-lg shadow-[#FFD700]/30 disabled:opacity-60 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                className="px-6 h-14 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[var(--sr-surface-base)] font-bold text-sm shadow-lg shadow-[#FFD700]/30 disabled:opacity-60 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2"
               >
                 {analyzing ? (
                   <>

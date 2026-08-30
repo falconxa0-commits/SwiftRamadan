@@ -72,7 +72,7 @@ export default function RewardsModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -171,7 +171,7 @@ export default function RewardsModal() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98] ${
                         dailyClaimed
                           ? 'bg-white/5 text-white/60 border border-white/5 cursor-not-allowed'
-                          : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
+                          : 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] hover:bg-[var(--sr-customer)]/90'
                       }`}
                     >
                       {dailyClaimed ? 'Claimed ✓' : 'Claim 50 pts'}
@@ -248,7 +248,7 @@ export default function RewardsModal() {
                         <Flame className="w-3 h-3 text-orange-400" />
                         <span className="text-white/50 text-[10px] font-semibold">{spinStreak} day spin streak</span>
                         {spinStreak >= 3 && (
-                          <span className="text-[#A78BFA] text-[10px] font-bold ml-1">• 2x bonus active!</span>
+                          <span className="text-[var(--sr-ai)] text-[10px] font-bold ml-1">• 2x bonus active!</span>
                         )}
                       </div>
                     )}
@@ -274,7 +274,7 @@ export default function RewardsModal() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.35 + i * 0.05 }}
-                      className="flex items-center gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3"
+                      className="flex items-center gap-3 bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3"
                     >
                       <div className="w-9 h-9 rounded-lg bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
                         <span className="material-symbols-outlined text-[var(--sr-customer)] text-lg">{activity.icon}</span>
@@ -309,8 +309,8 @@ export default function RewardsModal() {
                         animate={{ opacity: 1, y: 0 }}
                         className={`rounded-2xl p-3 sm:p-4 border transition-all ${
                           isCurrentTier
-                            ? 'bg-[#1A1D26] border-2'
-                            : 'bg-[#1A1D26]/40 border border-white/5'
+                            ? 'bg-[var(--sr-surface-elevated)] border-2'
+                            : 'bg-[var(--sr-surface-elevated)]/40 border border-white/5'
                         }`}
                         style={isCurrentTier ? { borderColor: tier.color + '60' } : {}}
                       >
@@ -373,7 +373,7 @@ export default function RewardsModal() {
                         animate={{ opacity: 1, scale: isRedeeming ? 0.95 : 1 }}
                         transition={{ delay: 0.55 + i * 0.05 }}
                         onClick={() => handleRedeem(reward)}
-                        className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border text-left transition-all ${
+                        className={`bg-[var(--sr-surface-elevated)] rounded-2xl p-3 sm:p-4 border text-left transition-all ${
                           canAfford
                             ? 'border-[var(--sr-customer)]/20 hover:border-[var(--sr-customer)]/40 active:scale-[0.98]'
                             : 'border-white/5 opacity-60'

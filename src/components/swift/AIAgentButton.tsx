@@ -17,7 +17,7 @@ export default function AIAgentButton() {
   return (
     <motion.button
       onClick={() => setActiveModal('agent-hub')}
-      className="fixed bottom-20 right-3 sm:right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-[#10E07A] to-[#0ea05a] shadow-lg shadow-[#10E07A]/25 flex items-center justify-center group"
+      className="fixed bottom-20 right-3 sm:right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[#0ea05a] shadow-lg shadow-[var(--sr-customer)]/25 flex items-center justify-center group"
       whileHover={{ scale: 1.08 }}
       whileTap={{ scale: 0.95 }}
       initial={{ scale: 0, opacity: 0 }}

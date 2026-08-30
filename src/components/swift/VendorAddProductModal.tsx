@@ -210,7 +210,7 @@ export default function VendorAddProductModal() {
                 <div
                   className={`relative h-44 flex items-center justify-center transition-all ${
                     dragOver
-                      ? 'bg-[var(--sr-vendor)]/10 ring-2 ring-[#F5C451]/40'
+                      ? 'bg-[var(--sr-vendor)]/10 ring-2 ring-[var(--sr-vendor)]/40'
                       : 'bg-white/5'
                   }`}
                   onDragOver={(e) => {
@@ -235,7 +235,7 @@ export default function VendorAddProductModal() {
                           <button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={uploading}
-                            className="px-2 py-1 rounded-md bg-[var(--sr-vendor)]/80 backdrop-blur-sm text-[#06070B] text-[10px] font-bold hover:bg-[var(--sr-vendor)] disabled:opacity-50"
+                            className="px-2 py-1 rounded-md bg-[var(--sr-vendor)]/80 backdrop-blur-sm text-[var(--sr-surface-base)] text-[10px] font-bold hover:bg-[var(--sr-vendor)] disabled:opacity-50"
                           >
                             Change
                           </button>
@@ -433,7 +433,7 @@ export default function VendorAddProductModal() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || uploading}
-                  className="w-full mt-2 py-3.5 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed gold-glow"
+                  className="w-full mt-2 py-3.5 rounded-xl bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed gold-glow"
                 >
                   {submitting ? (
                     <>

@@ -124,7 +124,7 @@ export default function GiftCardModal() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[60] bg-[#05070A]"
+        className="fixed inset-0 z-[60] bg-[var(--sr-surface-base)]"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 pt-4 pb-2">
@@ -154,7 +154,7 @@ export default function GiftCardModal() {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                     step === giftCardStep
-                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                       : step < giftCardStep
                       ? 'bg-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
                       : 'bg-white/5 text-white/60 border border-white/10'
@@ -239,7 +239,7 @@ export default function GiftCardModal() {
                         key={template.id}
                         onClick={() => handleSelectTheme(template.name)}
                         className={`relative rounded-2xl overflow-hidden border-2 transition-all duration-200 ${
-                          isSelected ? 'border-[var(--sr-customer)] shadow-lg shadow-[#10E07A]/20' : 'border-white/5 hover:border-white/20'
+                          isSelected ? 'border-[var(--sr-customer)] shadow-lg shadow-[var(--sr-customer)]/20' : 'border-white/5 hover:border-white/20'
                         }`}
                       >
                         <div
@@ -249,12 +249,12 @@ export default function GiftCardModal() {
                             {template.icon}
                           </span>
                         </div>
-                        <div className="px-3 py-2 bg-[#1A1D26]">
+                        <div className="px-3 py-2 bg-[var(--sr-surface-elevated)]">
                           <p className="text-white text-xs font-bold truncate">{template.name}</p>
                         </div>
                         {isSelected && (
                           <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
-                            <Check className="w-3 h-3 text-[#05070A]" />
+                            <Check className="w-3 h-3 text-[var(--sr-surface-base)]" />
                           </div>
                         )}
                       </button>
@@ -271,7 +271,7 @@ export default function GiftCardModal() {
                       onClick={() => handleAmountPreset(amount)}
                       className={`px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 ${
                         giftCardAmount === amount && !customAmount
-                          ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                          ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                           : 'bg-white/5 text-white border border-white/10 hover:border-[var(--sr-customer)]/30'
                       }`}
                     >
@@ -282,7 +282,7 @@ export default function GiftCardModal() {
 
                 {/* Custom Amount */}
                 <div className="mt-4 flex gap-2">
-                  <div className="flex-1 flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+                  <div className="flex-1 flex items-center bg-[var(--sr-surface-elevated)] rounded-xl border border-white/10 px-3">
                     <span className="text-white/60 text-sm">₦</span>
                     <input
                       type="number"
@@ -314,7 +314,7 @@ export default function GiftCardModal() {
                       className={`w-full text-left p-3 rounded-xl border transition-all duration-200 ${
                         selectedBlessing === idx
                           ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30 text-white'
-                          : 'bg-[#1A1D26] border-white/5 text-white/70 hover:border-white/10'
+                          : 'bg-[var(--sr-surface-elevated)] border-white/5 text-white/70 hover:border-white/10'
                       }`}
                     >
                       <p className="text-xs leading-relaxed">{blessing}</p>
@@ -325,7 +325,7 @@ export default function GiftCardModal() {
                 {/* Next Button */}
                 <button
                   onClick={handleNext}
-                  className="w-full mt-6 bg-[var(--sr-customer)] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                  className="w-full mt-6 bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
@@ -341,7 +341,7 @@ export default function GiftCardModal() {
               >
                 {/* Recipient Name */}
                 <h3 className="text-white font-bold text-sm mb-3 mt-2">Recipient Name</h3>
-                <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+                <div className="flex items-center bg-[var(--sr-surface-elevated)] rounded-xl border border-white/10 px-3">
                   <User className="w-4 h-4 text-white/60 shrink-0" />
                   <input
                     type="text"
@@ -354,7 +354,7 @@ export default function GiftCardModal() {
 
                 {/* From Field */}
                 <h3 className="text-white font-bold text-sm mb-3 mt-5">From</h3>
-                <div className="flex items-center bg-[#1A1D26] rounded-xl border border-white/10 px-3">
+                <div className="flex items-center bg-[var(--sr-surface-elevated)] rounded-xl border border-white/10 px-3">
                   <User className="w-4 h-4 text-white/60 shrink-0" />
                   <input
                     type="text"
@@ -371,7 +371,7 @@ export default function GiftCardModal() {
                     ({giftCardMessage.length}/200)
                   </span>
                 </h3>
-                <div className="bg-[#1A1D26] rounded-xl border border-white/10 p-3">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-xl border border-white/10 p-3">
                   <textarea
                     value={giftCardMessage}
                     onChange={(e) => {
@@ -393,7 +393,7 @@ export default function GiftCardModal() {
                       className={`flex-1 flex flex-col items-center gap-2 p-3 rounded-xl border transition-all duration-200 ${
                         giftCardMood === mood.id
                           ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30'
-                          : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                          : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                       }`}
                     >
                       <span className="material-symbols-outlined text-xl text-white/60">
@@ -414,7 +414,7 @@ export default function GiftCardModal() {
                     className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200 ${
                       giftCardDeliveryMethod === 'whatsapp'
                         ? 'bg-[#25D366]/10 border-[#25D366]/30 text-[#25D366]'
-                        : 'bg-[#1A1D26] border-white/5 text-white/50 hover:border-white/10'
+                        : 'bg-[var(--sr-surface-elevated)] border-white/5 text-white/50 hover:border-white/10'
                     }`}
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -425,7 +425,7 @@ export default function GiftCardModal() {
                     className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl border transition-all duration-200 ${
                       giftCardDeliveryMethod === 'email'
                         ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
-                        : 'bg-[#1A1D26] border-white/5 text-white/50 hover:border-white/10'
+                        : 'bg-[var(--sr-surface-elevated)] border-white/5 text-white/50 hover:border-white/10'
                     }`}
                   >
                     <Send className="w-4 h-4" />
@@ -447,7 +447,7 @@ export default function GiftCardModal() {
                     )}
                     <p className="text-white/65 text-xs mt-1">From: {userName}</p>
                   </div>
-                  <div className="bg-[#1A1D26] p-3 sm:p-4">
+                  <div className="bg-[var(--sr-surface-elevated)] p-3 sm:p-4">
                     {giftCardMessage && (
                       <p className="text-white/60 text-xs italic leading-relaxed">&ldquo;{giftCardMessage}&rdquo;</p>
                     )}
@@ -458,7 +458,7 @@ export default function GiftCardModal() {
                 <button
                   onClick={handleNext}
                   disabled={!giftCardRecipient.trim()}
-                  className="w-full mt-6 bg-[var(--sr-customer)] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full mt-6 bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   Proceed to Review
                   <ChevronRight className="w-4 h-4" />
@@ -492,7 +492,7 @@ export default function GiftCardModal() {
                       </p>
                     </div>
                   </div>
-                  <div className="bg-[#1A1D26] p-5 space-y-3">
+                  <div className="bg-[var(--sr-surface-elevated)] p-5 space-y-3">
                     {giftCardMessage && (
                       <div className="flex gap-2">
                         <MessageSquare className="w-4 h-4 text-white/20 shrink-0 mt-0.5" />
@@ -510,7 +510,7 @@ export default function GiftCardModal() {
                 </div>
 
                 {/* Order Summary */}
-                <div className="bg-[#1A1D26] rounded-2xl p-5 border border-white/5 mt-4 space-y-3">
+                <div className="bg-[var(--sr-surface-elevated)] rounded-2xl p-5 border border-white/5 mt-4 space-y-3">
                   <h3 className="text-white font-bold text-sm mb-2">Order Summary</h3>
                   <div className="flex justify-between text-sm">
                     <span className="text-white/50">Gift Card Amount</span>
@@ -547,7 +547,7 @@ export default function GiftCardModal() {
                       charityOptIn ? 'bg-[var(--sr-vendor)] border-[var(--sr-vendor)]' : 'border-white/20'
                     }`}
                   >
-                    {charityOptIn && <Check className="w-3 h-3 text-[#05070A]" />}
+                    {charityOptIn && <Check className="w-3 h-3 text-[var(--sr-surface-base)]" />}
                   </div>
                   <div>
                     <p className="text-white text-sm font-bold">Donate 10% to Charity 🤲</p>
@@ -565,7 +565,7 @@ export default function GiftCardModal() {
                       className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
                         selectedPayment === method.id
                           ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30'
-                          : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
+                          : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
                       }`}
                     >
                       <span className="material-symbols-outlined text-lg text-white/50">
@@ -584,7 +584,7 @@ export default function GiftCardModal() {
                 {/* Confirm Button */}
                 <button
                   onClick={handleConfirm}
-                  className="w-full mt-6 mb-4 bg-[var(--sr-customer)] py-4 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                  className="w-full mt-6 mb-4 bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                 >
                   <Send className="w-4 h-4" />
                   Confirm & Send &bull; {formatNaira(totalAmount)}

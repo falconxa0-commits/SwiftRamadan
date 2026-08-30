@@ -216,7 +216,7 @@ export default function RiderETAParty() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[#0B0D14] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
+            className="fixed bottom-0 left-0 right-0 h-[95vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/8"
             role="dialog"
             aria-modal="true"
             aria-label="Rider ETA Party Mode"
@@ -422,7 +422,7 @@ export default function RiderETAParty() {
                 <div className="rounded-2xl p-3 sm:p-4 border border-white/8" style={{ backgroundColor: '#0F1118' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-[#A78BFA]" />
+                      <Users className="w-4 h-4 text-[var(--sr-ai)]" />
                       <span className="text-white font-semibold text-sm">Group Order</span>
                     </div>
                     <span className="text-white/65 text-xs">{MOCK_GROUP_MEMBERS.length} members</span>

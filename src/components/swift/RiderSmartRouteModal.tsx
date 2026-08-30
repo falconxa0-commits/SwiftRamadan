@@ -83,7 +83,7 @@ export default function RiderSmartRouteModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[#0F1117] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+            className="fixed bottom-0 left-0 right-0 max-h-[85vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
@@ -158,7 +158,7 @@ export default function RiderSmartRouteModal() {
                       <div className={`relative flex gap-3 p-3 sm:p-4 rounded-2xl border transition-all ${
                         delivery.priority === 'iftar'
                           ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/20'
-                          : 'bg-[#1A1D26] border-white/5'
+                          : 'bg-[var(--sr-surface-elevated)] border-white/5'
                       }`}>
                         {/* Order Number Badge */}
                         <div className="shrink-0">
@@ -218,7 +218,7 @@ export default function RiderSmartRouteModal() {
               <button
                 onClick={() => setActiveModal(null)}
                 aria-label="Start Optimized Route"
-                className="w-full mt-5 bg-[var(--sr-rider)] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full mt-5 bg-[var(--sr-rider)] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-rider)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <Navigation className="w-4 h-4" />
                 Start Optimized Route

@@ -98,7 +98,7 @@ export default function BottomNav() {
                 style={isActive ? { color: accentColor, filter: `drop-shadow(0 0 6px ${accentColor}80)` } : { color: 'rgba(255,255,255,0.32)' }}
               />
               {tab.id === 'cart' && cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-[var(--sr-customer)] text-[#04140C] text-[9px] font-black rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(16,224,122,0.6)]">
+                <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-[9px] font-black rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(16,224,122,0.6)]">
                   {cartCount}
                 </span>
               )}

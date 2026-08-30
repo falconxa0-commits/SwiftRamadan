@@ -35,7 +35,7 @@ export default function VendorSalesInsights() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[100] bg-[#05070A] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
@@ -61,7 +61,7 @@ export default function VendorSalesInsights() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="relative overflow-hidden rounded-2xl bg-[#1A1D26] border border-white/5 p-6 mt-4"
+                className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-6 mt-4"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-vendor)]/5 blur-[60px]" />
                 <div className="relative z-10">
@@ -81,7 +81,7 @@ export default function VendorSalesInsights() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="mt-4 rounded-2xl bg-[#1A1D26] border border-white/5 p-5"
+                className="mt-4 rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-5"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -102,7 +102,7 @@ export default function VendorSalesInsights() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-4">Weekly Revenue</h4>
-                <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-5">
+                <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-5">
                   <div className="flex items-end justify-between gap-2" style={{ height: 180 }}>
                     {dailyTrend.map((day, i) => {
                       const heightPct = (day.revenue / maxRevenue) * 100;
@@ -130,9 +130,9 @@ export default function VendorSalesInsights() {
                               transition={{ duration: 0.6, delay: 0.3 + i * 0.06, ease: 'easeOut' }}
                               className={`w-full rounded-t-lg transition-colors ${
                                 isFriday
-                                  ? 'bg-gradient-to-t from-[#F5C451] to-[#F5C451]/60'
+                                  ? 'bg-gradient-to-t from-[var(--sr-vendor)] to-[var(--sr-vendor)]/60'
                                   : isToday
-                                    ? 'bg-gradient-to-t from-[#10E07A] to-[#10E07A]/40'
+                                    ? 'bg-gradient-to-t from-[var(--sr-customer)] to-[var(--sr-customer)]/40'
                                     : 'bg-gradient-to-t from-white/20 to-white/5'
                               }`}
                               style={{ minHeight: 8 }}
@@ -160,21 +160,21 @@ export default function VendorSalesInsights() {
                 transition={{ delay: 0.3 }}
                 className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"
               >
-                <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4 text-center">
+                <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-3 sm:p-4 text-center">
                   <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/20 flex items-center justify-center mx-auto mb-2 border border-[var(--sr-vendor)]/20">
                     <Star className="w-5 h-5 text-[var(--sr-vendor)]" />
                   </div>
                   <p className="text-white/60 text-[9px] uppercase tracking-widest font-bold">Top Seller</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.topSellingItem}</p>
                 </div>
-                <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4 text-center">
+                <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-3 sm:p-4 text-center">
                   <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/20 flex items-center justify-center mx-auto mb-2 border border-[var(--sr-customer)]/20">
                     <Clock className="w-5 h-5 text-[var(--sr-customer)]" />
                   </div>
                   <p className="text-white/60 text-[9px] uppercase tracking-widest font-bold">Peak Hour</p>
                   <p className="text-white text-[11px] font-bold mt-1 leading-tight">{vendorSalesInsights.peakHour}</p>
                 </div>
-                <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4 text-center">
+                <div className="rounded-2xl bg-[var(--sr-surface-elevated)] border border-white/5 p-3 sm:p-4 text-center">
                   <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center mx-auto mb-2 border border-blue-500/20">
                     <Users className="w-5 h-5 text-blue-400" />
                   </div>
