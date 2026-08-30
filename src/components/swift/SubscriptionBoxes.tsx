@@ -149,8 +149,8 @@ export default function SubscriptionBoxes() {
           <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center border border-[#F5C451]/20">
-                  <Gift className="w-5 h-5 text-[#F5C451]" />
+                <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/20">
+                  <Gift className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Subscription Boxes</h2>
@@ -159,7 +159,7 @@ export default function SubscriptionBoxes() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#0F1118] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
                 aria-label="Close subscription boxes"
               >
                 <X className="w-5 h-5 text-white" />
@@ -176,12 +176,12 @@ export default function SubscriptionBoxes() {
               transition={{ duration: 0.5 }}
               className="relative text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-full px-4 py-1.5 mb-4">
-                <Sparkles className="w-4 h-4 text-[#10E07A]" />
-                <span className="text-[#10E07A] text-xs font-bold">Never Miss a Meal</span>
+              <div className="inline-flex items-center gap-2 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 rounded-full px-4 py-1.5 mb-4">
+                <Sparkles className="w-4 h-4 text-[var(--sr-customer)]" />
+                <span className="text-[var(--sr-customer)] text-xs font-bold">Never Miss a Meal</span>
               </div>
               <h1 className="text-3xl font-black text-white mb-2">
-                Ramadan <span className="text-[#F5C451]">Meal Plans</span>
+                Ramadan <span className="text-[var(--sr-vendor)]">Meal Plans</span>
               </h1>
               <p className="text-white/50 text-sm max-w-md mx-auto">
                 Curated Sahur & Iftar meals delivered to your door every day. Subscribe and forget about meal prep.
@@ -191,14 +191,14 @@ export default function SubscriptionBoxes() {
 
           {/* Plan Toggle */}
           <div className="px-4 mb-6">
-            <div className="bg-[#0F1118] rounded-2xl border border-white/8 p-1.5 flex gap-1.5">
+            <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-1.5 flex gap-1.5">
               {plans.map((plan) => (
                 <button
                   key={plan.id}
                   onClick={() => setSelectedPlan(plan.id)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${
                     selectedPlan === plan.id
-                      ? 'bg-[#10E07A] text-[#0B0D14]'
+                      ? 'bg-[var(--sr-customer)] text-[#0B0D14]'
                       : 'text-white/50 hover:text-white/70'
                   }`}
                   aria-label={`Select ${plan.name}`}
@@ -222,7 +222,7 @@ export default function SubscriptionBoxes() {
               className="px-4 mb-6"
             >
               <div
-                className="bg-[#0F1118] rounded-2xl border overflow-hidden relative"
+                className="bg-[var(--sr-surface-raised)] rounded-2xl border overflow-hidden relative"
                 style={{ borderColor: currentPlan.popular ? `${currentPlan.color}30` : 'rgba(255,255,255,0.08)' }}
               >
                 {currentPlan.popular && (
@@ -373,11 +373,11 @@ export default function SubscriptionBoxes() {
           {/* Plan Comparison */}
           <div className="px-4 mb-8">
             <h3 className="text-white font-bold text-lg mb-4">Compare Plans</h3>
-            <div className="bg-[#0F1118] rounded-2xl border border-white/8 overflow-hidden">
+            <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 overflow-hidden">
               <div className="grid grid-cols-3 border-b border-white/8">
                 <div className="p-3 text-white/65 text-xs font-bold">Feature</div>
-                <div className="p-3 text-center text-[#F5C451] text-xs font-bold">Sahur Box</div>
-                <div className="p-3 text-center text-[#10E07A] text-xs font-bold">Full Plan</div>
+                <div className="p-3 text-center text-[var(--sr-vendor)] text-xs font-bold">Sahur Box</div>
+                <div className="p-3 text-center text-[var(--sr-customer)] text-xs font-bold">Full Plan</div>
               </div>
               {[
                 { feature: 'Sahur Meals', sahur: true, full: true },
@@ -397,31 +397,31 @@ export default function SubscriptionBoxes() {
                   </div>
                   <div className="p-3 flex items-center justify-center">
                     {row.sahur ? (
-                      <Check className="w-4 h-4 text-[#F5C451]" />
+                      <Check className="w-4 h-4 text-[var(--sr-vendor)]" />
                     ) : (
                       <X className="w-4 h-4 text-white/10" />
                     )}
                   </div>
                   <div className="p-3 flex items-center justify-center">
-                    <Check className="w-4 h-4 text-[#10E07A]" />
+                    <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                   </div>
                 </div>
               ))}
               {/* Price Row */}
               <div className="grid grid-cols-3 bg-white/3">
                 <div className="p-3 text-white/50 text-xs font-bold">Price</div>
-                <div className="p-3 text-center text-[#F5C451] text-xs font-black">{formatNaira(12000)}/wk</div>
-                <div className="p-3 text-center text-[#10E07A] text-xs font-black">{formatNaira(85000)}/30d</div>
+                <div className="p-3 text-center text-[var(--sr-vendor)] text-xs font-black">{formatNaira(12000)}/wk</div>
+                <div className="p-3 text-center text-[var(--sr-customer)] text-xs font-black">{formatNaira(85000)}/30d</div>
               </div>
             </div>
           </div>
 
           {/* Testimonial */}
           <div className="px-4 mb-8">
-            <div className="bg-[#0F1118] rounded-2xl border border-white/8 p-5">
+            <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-5">
               <div className="flex items-center gap-1.5 mb-3">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 text-[#F5C451] fill-[#F5C451]" />
+                  <Star key={s} className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451]" />
                 ))}
               </div>
               <p className="text-white/70 text-sm mb-3 italic">
@@ -445,16 +445,16 @@ export default function SubscriptionBoxes() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-2xl p-4 flex items-center gap-3"
+                className="bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 rounded-2xl p-4 flex items-center gap-3"
               >
-                <div className="w-10 h-10 bg-[#10E07A]/20 rounded-xl flex items-center justify-center">
-                  <Package className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/20 rounded-xl flex items-center justify-center">
+                  <Package className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-[#10E07A] font-bold text-sm">Active: {plans.find((p) => p.id === activeSubscription)?.name}</p>
+                  <p className="text-[var(--sr-customer)] font-bold text-sm">Active: {plans.find((p) => p.id === activeSubscription)?.name}</p>
                   <p className="text-white/65 text-xs">Your next delivery is scheduled</p>
                 </div>
-                <Check className="w-5 h-5 text-[#10E07A]" />
+                <Check className="w-5 h-5 text-[var(--sr-customer)]" />
               </motion.div>
             </div>
           )}

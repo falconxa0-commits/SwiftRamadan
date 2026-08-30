@@ -71,10 +71,10 @@ const refundableStatuses = ['Delivered', 'Cancelled', 'Preparing'];
 
 function StatusBadge({ status }: { status: string }) {
   const colorMap: Record<string, string> = {
-    Delivered: 'bg-[#10E07A]/20 text-[#10E07A] border-[#10E07A]/20',
+    Delivered: 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border-[var(--sr-customer)]/20',
     Cancelled: 'bg-red-500/20 text-red-400 border-red-500/20',
-    Preparing: 'bg-[#38BDF8]/20 text-[#38BDF8] border-[#38BDF8]/20',
-    Pending: 'bg-[#F5C451]/20 text-[#F5C451] border-[#F5C451]/20',
+    Preparing: 'bg-[var(--sr-rider)]/20 text-[var(--sr-rider)] border-[var(--sr-rider)]/20',
+    Pending: 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/20',
     Refunded: 'bg-purple-500/20 text-purple-400 border-purple-500/20',
   };
   const classes = colorMap[status] || 'bg-white/5 text-white/65 border-white/5';
@@ -197,7 +197,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-[#06070B] z-[100] flex flex-col"
+        className="fixed inset-0 bg-[var(--sr-surface-base)] z-[100] flex flex-col"
       >
         {/* Header */}
         <motion.div
@@ -215,8 +215,8 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 <ArrowLeft className="w-5 h-5 text-white/60" />
               </button>
             ) : (
-              <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/20">
-                <Receipt className="w-5 h-5 text-[#10E07A]" />
+              <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/20 flex items-center justify-center border border-[var(--sr-customer)]/20">
+                <Receipt className="w-5 h-5 text-[var(--sr-customer)]" />
               </div>
             )}
             <div>
@@ -243,7 +243,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 <div key={s} className="flex-1 flex items-center gap-1">
                   <div
                     className={`flex-1 h-1 rounded-full transition-all duration-300 ${
-                      s <= step ? 'bg-[#10E07A]' : 'bg-white/5'
+                      s <= step ? 'bg-[var(--sr-customer)]' : 'bg-white/5'
                     }`}
                   />
                 </div>
@@ -273,9 +273,9 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', stiffness: 300, damping: 20, delay: 0.2 }}
-                  className="w-20 h-20 rounded-full bg-[#10E07A]/20 flex items-center justify-center mb-6"
+                  className="w-20 h-20 rounded-full bg-[var(--sr-customer)]/20 flex items-center justify-center mb-6"
                 >
-                  <CheckCircle2 className="w-10 h-10 text-[#10E07A]" />
+                  <CheckCircle2 className="w-10 h-10 text-[var(--sr-customer)]" />
                 </motion.div>
 
                 <motion.h2
@@ -300,11 +300,11 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="w-full max-w-xs bg-[#0F1118] border border-white/5 rounded-2xl p-5 space-y-3"
+                  className="w-full max-w-xs bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-5 space-y-3"
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-white/65 text-xs">Amount</span>
-                    <span className="text-[#10E07A] font-bold">{formatNaira(successAmount)}</span>
+                    <span className="text-[var(--sr-customer)] font-bold">{formatNaira(successAmount)}</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
@@ -328,7 +328,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
                   onClick={onClose}
-                  className="mt-8 px-8 py-3.5 rounded-2xl bg-[#10E07A] text-[#06070B] font-bold text-sm hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all"
+                  className="mt-8 px-8 py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-bold text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
                 >
                   Done
                 </motion.button>
@@ -370,10 +370,10 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                         key={order.id}
                         variants={staggerItem}
                         onClick={() => handleSelectOrder(order)}
-                        className="w-full flex items-center gap-3 p-4 rounded-xl bg-[#0F1118] border border-white/5 hover:border-white/10 transition-all text-left group"
+                        className="w-full flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5 hover:border-white/10 transition-all text-left group"
                       >
-                        <div className="w-10 h-10 rounded-xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                          <Package className="w-5 h-5 text-[#10E07A]" />
+                        <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                          <Package className="w-5 h-5 text-[var(--sr-customer)]" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white text-sm font-semibold truncate">{order.item}</p>
@@ -401,7 +401,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                         {nonRefundableOrders.map((order) => (
                           <div
                             key={order.id}
-                            className="flex items-center gap-3 p-4 rounded-xl bg-[#0F1118]/50 border border-white/5 opacity-40 cursor-not-allowed"
+                            className="flex items-center gap-3 p-3 sm:p-4 rounded-xl bg-[var(--sr-surface-raised)]/50 border border-white/5 opacity-40 cursor-not-allowed"
                           >
                             <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center border border-white/5 shrink-0">
                               <Package className="w-5 h-5 text-white/20" />
@@ -434,10 +434,10 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 className="px-4 py-4 space-y-5"
               >
                 {/* Selected Order Summary */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                      <Package className="w-5 h-5 text-[#10E07A]" />
+                    <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                      <Package className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-semibold truncate">{selectedOrder?.item}</p>
@@ -451,9 +451,9 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 </motion.div>
 
                 {/* Refund Amount */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                   <h3 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-[#10E07A]" />
+                    <DollarSign className="w-4 h-4 text-[var(--sr-customer)]" />
                     Refund Amount
                   </h3>
                   <div className="relative mb-3">
@@ -464,7 +464,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                       placeholder={`Up to ${formatNaira(selectedOrder?.total ?? 0)}`}
                       value={refundAmount}
                       onChange={(e) => setRefundAmount(e.target.value.replace(/[^0-9]/g, ''))}
-                      className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white text-lg font-bold placeholder:text-white/20 focus:border-[#10E07A]/30 focus:outline-none transition-colors"
+                      className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white text-lg font-bold placeholder:text-white/20 focus:border-[var(--sr-customer)]/30 focus:outline-none transition-colors"
                     />
                   </div>
                   {/* Quick amount buttons */}
@@ -477,7 +477,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                           onClick={() => setRefundAmount(amt.toString())}
                           className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all ${
                             refundAmount === amt.toString()
-                              ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/30'
+                              ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/30'
                               : 'bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 hover:text-white/70'
                           }`}
                         >
@@ -492,9 +492,9 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 </motion.div>
 
                 {/* Reason */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                   <h3 className="text-white text-sm font-bold mb-3 flex items-center gap-2">
-                    <MessageSquare className="w-4 h-4 text-[#10E07A]" />
+                    <MessageSquare className="w-4 h-4 text-[var(--sr-customer)]" />
                     Reason for Refund
                   </h3>
 
@@ -506,9 +506,9 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                         onClick={() => handleQuickReason(r)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                           reason === r
-                            ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/30'
+                            ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/30'
                             : r === 'Other' && reason !== '' && !quickReasons.slice(0, -1).includes(reason)
-                              ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/30'
+                              ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/30'
                               : 'bg-white/5 border border-white/10 text-white/50 hover:bg-white/10 hover:text-white/70'
                         }`}
                       >
@@ -522,7 +522,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                     onChange={(e) => setReason(e.target.value)}
                     placeholder={quickReasons.includes(reason) ? reason : 'Describe why you need a refund...'}
                     rows={3}
-                    className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#10E07A]/30 focus:outline-none transition-colors resize-none"
+                    className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-customer)]/30 focus:outline-none transition-colors resize-none"
                   />
                 </motion.div>
 
@@ -531,7 +531,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   <button
                     onClick={() => setStep(3)}
                     disabled={!reason.trim() || !refundAmount}
-                    className="w-full py-4 rounded-2xl bg-[#10E07A] text-[#06070B] font-black text-sm hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Continue to Confirm
                     <ChevronRight className="w-4 h-4" />
@@ -548,9 +548,9 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 className="px-4 py-4 space-y-5"
               >
                 {/* Summary Card */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-5">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-5">
                   <h3 className="text-white text-sm font-bold mb-4 flex items-center gap-2">
-                    <Receipt className="w-4 h-4 text-[#10E07A]" />
+                    <Receipt className="w-4 h-4 text-[var(--sr-customer)]" />
                     Refund Summary
                   </h3>
 
@@ -572,7 +572,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-center">
                       <span className="text-white/65 text-xs">Refund Amount</span>
-                      <span className="text-[#10E07A] font-bold">{formatNaira(parseInt(refundAmount) || 0)}</span>
+                      <span className="text-[var(--sr-customer)] font-bold">{formatNaira(parseInt(refundAmount) || 0)}</span>
                     </div>
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between items-start">
@@ -588,10 +588,10 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                 </motion.div>
 
                 {/* Notice */}
-                <motion.div variants={staggerItem} className="flex items-start gap-3 p-3 rounded-xl bg-[#10E07A]/5 border border-[#10E07A]/10">
-                  <ShieldCheck className="w-5 h-5 text-[#10E07A] shrink-0 mt-0.5" />
+                <motion.div variants={staggerItem} className="flex items-start gap-3 p-3 rounded-xl bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/10">
+                  <ShieldCheck className="w-5 h-5 text-[var(--sr-customer)] shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-[#10E07A]/80 text-xs font-bold">Refund Protection</p>
+                    <p className="text-[var(--sr-customer)]/80 text-xs font-bold">Refund Protection</p>
                     <p className="text-white/60 text-[10px] mt-0.5">
                       Your refund will be credited to your Swift Wallet instantly. If you prefer a card refund, contact support.
                     </p>
@@ -603,7 +603,7 @@ export default function RefundRequestModal({ onClose }: RefundRequestModalProps)
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
-                    className="w-full py-4 rounded-2xl bg-[#10E07A] text-[#06070B] font-black text-sm hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#06070B] font-black text-sm hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {submitting ? (
                       <>

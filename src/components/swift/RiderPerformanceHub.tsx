@@ -38,8 +38,8 @@ export default function RiderPerformanceHub() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 flex items-center justify-center border border-[#38BDF8]/20">
-                  <BarChart3 className="w-5 h-5 text-[#38BDF8]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 flex items-center justify-center border border-[var(--sr-rider)]/20">
+                  <BarChart3 className="w-5 h-5 text-[var(--sr-rider)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Performance Hub</h2>
@@ -58,22 +58,22 @@ export default function RiderPerformanceHub() {
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto px-5 pb-8 custom-scrollbar">
               {/* Key Metrics Grid */}
-              <div className="grid grid-cols-2 gap-3 mt-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
                 {/* Completion Rate */}
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 }}
-                  className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Target className="w-4 h-4 text-[#10E07A]" />
+                    <Target className="w-4 h-4 text-[var(--sr-customer)]" />
                     <span className="text-white/65 text-[10px] font-bold uppercase">Completion</span>
                   </div>
-                  <p className="text-[#10E07A] text-2xl font-black">{m.completionRate}%</p>
+                  <p className="text-[var(--sr-customer)] text-2xl font-black">{m.completionRate}%</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3 text-[#10E07A]" />
-                    <span className="text-[#10E07A] text-[10px] font-bold">{m.completionTrend}</span>
+                    <TrendingUp className="w-3 h-3 text-[var(--sr-customer)]" />
+                    <span className="text-[var(--sr-customer)] text-[10px] font-bold">{m.completionTrend}</span>
                   </div>
                 </motion.div>
 
@@ -82,16 +82,16 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 text-[#F5C451]" />
+                    <Star className="w-4 h-4 text-[var(--sr-vendor)]" />
                     <span className="text-white/65 text-[10px] font-bold uppercase">Rating</span>
                   </div>
-                  <p className="text-[#F5C451] text-2xl font-black">{m.rating}</p>
+                  <p className="text-[var(--sr-vendor)] text-2xl font-black">{m.rating}</p>
                   <div className="flex items-center gap-1 mt-1">
-                    <TrendingUp className="w-3 h-3 text-[#F5C451]" />
-                    <span className="text-[#F5C451] text-[10px] font-bold">{m.ratingTrend}</span>
+                    <TrendingUp className="w-3 h-3 text-[var(--sr-vendor)]" />
+                    <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{m.ratingTrend}</span>
                   </div>
                 </motion.div>
 
@@ -100,7 +100,7 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.15 }}
-                  className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <Heart className="w-4 h-4 text-rose-400" />
@@ -118,13 +118,13 @@ export default function RiderPerformanceHub() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                  className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <Trophy className="w-4 h-4 text-[#38BDF8]" />
+                    <Trophy className="w-4 h-4 text-[var(--sr-rider)]" />
                     <span className="text-white/65 text-[10px] font-bold uppercase">Incentive</span>
                   </div>
-                  <p className="text-[#38BDF8] text-2xl font-black">{m.incentiveProgress}%</p>
+                  <p className="text-[var(--sr-rider)] text-2xl font-black">{m.incentiveProgress}%</p>
                   <p className="text-white/60 text-[10px] mt-1">{m.incentiveRemaining}</p>
                 </motion.div>
               </div>
@@ -138,10 +138,10 @@ export default function RiderPerformanceHub() {
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-[#F5C451]" />
+                    <Trophy className="w-5 h-5 text-[var(--sr-vendor)]" />
                     <span className="text-white font-bold text-sm">{m.incentiveGoal}</span>
                   </div>
-                  <span className="text-[#38BDF8] text-xs font-bold">{m.incentiveProgress}%</span>
+                  <span className="text-[var(--sr-rider)] text-xs font-bold">{m.incentiveProgress}%</span>
                 </div>
                 <div className="w-full bg-white/5 rounded-full h-3 overflow-hidden">
                   <motion.div
@@ -172,11 +172,11 @@ export default function RiderPerformanceHub() {
                       initial={{ opacity: 0, x: -10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.35 + i * 0.08 }}
-                      className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5"
+                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 flex items-center justify-center border border-[#38BDF8]/20 shrink-0">
-                          <span className="material-symbols-outlined text-[#38BDF8] text-lg">{compliment.icon}</span>
+                        <div className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 flex items-center justify-center border border-[var(--sr-rider)]/20 shrink-0">
+                          <span className="material-symbols-outlined text-[var(--sr-rider)] text-lg">{compliment.icon}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{compliment.title}</p>

@@ -137,8 +137,8 @@ export default function PartyBulkModal() {
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center border border-[#F5C451]/20">
-                  <PartyPopper className="w-5 h-5 text-[#F5C451]" />
+                <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/20">
+                  <PartyPopper className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Party & Bulk</h2>
@@ -161,7 +161,7 @@ export default function PartyBulkModal() {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${
                     activeCategory === cat.id
-                      ? 'bg-[#10E07A] text-[#05070A]'
+                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
                       : 'bg-[#1A1D26] border border-white/10 text-white/60 hover:text-white hover:border-white/20'
                   }`}
                 >
@@ -192,7 +192,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('livestock') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#F5C451] text-xl">pets</span>
+                <span className="material-symbols-outlined text-[var(--sr-vendor)] text-xl">pets</span>
                 <h3 className="text-white font-bold text-lg">Premium Livestock</h3>
               </div>
               <div className="space-y-4">
@@ -213,7 +213,7 @@ export default function PartyBulkModal() {
                         <div className="flex items-center gap-2 mb-1">
                           <h4 className="text-white font-bold text-sm">{item.name}</h4>
                           {item.badge && (
-                            <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full">
+                            <span className="bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] text-[9px] font-bold px-2 py-0.5 rounded-full">
                               {item.badge}
                             </span>
                           )}
@@ -221,10 +221,10 @@ export default function PartyBulkModal() {
                         <p className="text-white/65 text-[11px] line-clamp-1">{item.description}</p>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[#10E07A] font-black text-sm">{formatNaira(item.price)}</span>
+                        <span className="text-[var(--sr-customer)] font-black text-sm">{formatNaira(item.price)}</span>
                         <button
                           onClick={() => handleStartOrder(item.name, item.price, item.image, item.id)}
-                          className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors"
+                          className="bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                         >
                           Start Order
                         </button>
@@ -240,9 +240,9 @@ export default function PartyBulkModal() {
           {shouldShowSection('grains') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#10E07A] text-xl">grain</span>
+                <span className="material-symbols-outlined text-[var(--sr-customer)] text-xl">grain</span>
                 <h3 className="text-white font-bold text-lg">Grains & Staples</h3>
-                <span className="text-[#10E07A]/60 text-xs font-bold ml-auto">Bulk pricing</span>
+                <span className="text-[var(--sr-customer)]/60 text-xs font-bold ml-auto">Bulk pricing</span>
               </div>
               <div className="flex overflow-x-auto gap-3 pb-2 no-scrollbar">
                 {grainItems.map((item, index) => (
@@ -260,12 +260,12 @@ export default function PartyBulkModal() {
                     <div className="p-3">
                       <p className="text-white font-bold text-xs mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-[#10E07A] font-black text-xs">{formatNaira(item.bulkPrice)}</span>
+                        <span className="text-[var(--sr-customer)] font-black text-xs">{formatNaira(item.bulkPrice)}</span>
                         <span className="text-white/60 text-[10px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
-                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
+                        className="w-full bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                       >
                         Add to Cart
                       </button>
@@ -280,7 +280,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('drinks') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#38BDF8] text-xl">local_drink</span>
+                <span className="material-symbols-outlined text-[var(--sr-rider)] text-xl">local_drink</span>
                 <h3 className="text-white font-bold text-lg">Drinks & Beverages</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -299,12 +299,12 @@ export default function PartyBulkModal() {
                     <div className="p-2.5">
                       <p className="text-white font-bold text-[11px] mb-1 line-clamp-1">{item.name}</p>
                       <div className="flex items-center gap-1.5 mb-2">
-                        <span className="text-[#10E07A] font-black text-[11px]">{formatNaira(item.bulkPrice)}</span>
+                        <span className="text-[var(--sr-customer)] font-black text-[11px]">{formatNaira(item.bulkPrice)}</span>
                         <span className="text-white/60 text-[9px] line-through">{formatNaira(item.singlePrice)}</span>
                       </div>
                       <button
                         onClick={() => handleStartOrder(item.name, item.bulkPrice, item.image, item.id)}
-                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
+                        className="w-full bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                       >
                         Add to Cart
                       </button>
@@ -319,7 +319,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('party-packs') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#F5C451] text-xl">celebration</span>
+                <span className="material-symbols-outlined text-[var(--sr-vendor)] text-xl">celebration</span>
                 <h3 className="text-white font-bold text-lg">Party Packs</h3>
               </div>
               <div className="grid grid-cols-2 gap-3">
@@ -335,16 +335,16 @@ export default function PartyBulkModal() {
                       className="w-full h-24 bg-center bg-no-repeat bg-cover relative"
                       style={{ backgroundImage: `url("${item.image}")` }}
                     >
-                      <div className="absolute top-2 right-2 bg-[#F5C451]/90 text-[#05070A] text-[8px] font-black px-2 py-0.5 rounded-full">
+                      <div className="absolute top-2 right-2 bg-[var(--sr-vendor)]/90 text-[#05070A] text-[8px] font-black px-2 py-0.5 rounded-full">
                         {item.serves}
                       </div>
                     </div>
                     <div className="p-3">
                       <p className="text-white font-bold text-xs mb-1 line-clamp-1">{item.name}</p>
-                      <span className="text-[#10E07A] font-black text-sm block mb-2">{formatNaira(item.price)}</span>
+                      <span className="text-[var(--sr-customer)] font-black text-sm block mb-2">{formatNaira(item.price)}</span>
                       <button
                         onClick={() => handleStartOrder(item.name, item.price, item.image, item.id)}
-                        className="w-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[#10E07A]/20 transition-colors"
+                        className="w-full bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] py-1.5 rounded-lg text-[10px] font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                       >
                         Start Order
                       </button>
@@ -379,10 +379,10 @@ export default function PartyBulkModal() {
                       />
                       <div className="p-2">
                         <p className="text-white font-bold text-[10px] mb-0.5 line-clamp-1">{item.name}</p>
-                        <span className="text-[#10E07A] text-[10px] font-bold">{formatNaira(item.price)}</span>
+                        <span className="text-[var(--sr-customer)] text-[10px] font-bold">{formatNaira(item.price)}</span>
                       </div>
                       {qty > 0 && (
-                        <div className="absolute top-1.5 right-1.5 bg-[#10E07A] text-[#05070A] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
+                        <div className="absolute top-1.5 right-1.5 bg-[var(--sr-customer)] text-[#05070A] text-[9px] font-black w-5 h-5 rounded-full flex items-center justify-center">
                           {qty}
                         </div>
                       )}
@@ -398,7 +398,7 @@ export default function PartyBulkModal() {
                         <div className="w-px bg-white/5" />
                         <button
                           onClick={() => addToCrate(item)}
-                          className="flex-1 py-1.5 flex items-center justify-center text-[#10E07A] hover:bg-[#10E07A]/10 transition-colors"
+                          className="flex-1 py-1.5 flex items-center justify-center text-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/10 transition-colors"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
@@ -413,11 +413,11 @@ export default function PartyBulkModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-[#10E07A]/20 p-4 mb-4"
+                  className="bg-[#1A1D26] rounded-2xl border border-[var(--sr-customer)]/20 p-4 mb-4"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-white/60 text-xs font-medium">Your Crate ({crateItems.reduce((s, i) => s + i.quantity, 0)} items)</span>
-                    <span className="text-[#10E07A] font-black text-lg">{formatNaira(crateTotal)}</span>
+                    <span className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(crateTotal)}</span>
                   </div>
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {crateItems.map(item => (
@@ -428,7 +428,7 @@ export default function PartyBulkModal() {
                   </div>
                   <button
                     onClick={handleAddCrateToCart}
-                    className="w-full bg-[#10E07A] text-[#05070A] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all"
+                    className="w-full bg-[var(--sr-customer)] text-[#05070A] py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all"
                   >
                     <ShoppingCart className="w-4 h-4" />
                     Add Crate to Cart
@@ -447,7 +447,7 @@ export default function PartyBulkModal() {
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, type: 'spring' }}
             onClick={() => setShowPartyForm(true)}
-            className="fixed bottom-8 right-4 z-20 bg-[#F5C451] text-[#05070A] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#F5C451]/20 hover:shadow-[#F5C451]/30 transition-shadow active:scale-[0.98]"
+            className="fixed bottom-8 right-4 z-20 bg-[var(--sr-vendor)] text-[#05070A] px-5 py-3.5 rounded-2xl font-bold text-sm flex items-center gap-2 shadow-lg shadow-[#F5C451]/20 hover:shadow-[#F5C451]/30 transition-shadow active:scale-[0.98]"
           >
             <PartyPopper className="w-5 h-5" />
             Start a Party Order
@@ -488,7 +488,7 @@ export default function PartyBulkModal() {
                           value={partyForm.eventName}
                           onChange={(e) => setPartyForm(p => ({ ...p, eventName: e.target.value }))}
                           placeholder="e.g., Amina's Iftar Party"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -501,7 +501,7 @@ export default function PartyBulkModal() {
                           type="date"
                           value={partyForm.date}
                           onChange={(e) => setPartyForm(p => ({ ...p, date: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#F5C451]/30 focus:outline-none transition-colors [color-scheme:dark]"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors [color-scheme:dark]"
                         />
                       </div>
                     </div>
@@ -515,7 +515,7 @@ export default function PartyBulkModal() {
                           value={partyForm.guestCount}
                           onChange={(e) => setPartyForm(p => ({ ...p, guestCount: e.target.value }))}
                           placeholder="e.g., 50"
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                       </div>
                     </div>
@@ -527,7 +527,7 @@ export default function PartyBulkModal() {
                         <select
                           value={partyForm.budgetRange}
                           onChange={(e) => setPartyForm(p => ({ ...p, budgetRange: e.target.value }))}
-                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[#F5C451]/30 focus:outline-none transition-colors appearance-none"
+                          className="w-full bg-[#05070A] border border-white/10 rounded-xl pl-10 pr-4 py-3 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors appearance-none"
                         >
                           <option value="" className="bg-[#1A1D26]">Select budget range</option>
                           <option value="50k-100k" className="bg-[#1A1D26]">₦50,000 - ₦100,000</option>
@@ -544,7 +544,7 @@ export default function PartyBulkModal() {
                       disabled={!partyForm.eventName || !partyForm.guestCount}
                       className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                         partyForm.eventName && partyForm.guestCount
-                          ? 'bg-[#F5C451] text-[#05070A] hover:bg-[#F5C451]/90 active:scale-[0.98]'
+                          ? 'bg-[var(--sr-vendor)] text-[#05070A] hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98]'
                           : 'bg-white/5 text-white/60 cursor-not-allowed border border-white/10'
                       }`}
                     >

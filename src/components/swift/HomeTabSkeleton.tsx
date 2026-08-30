@@ -205,7 +205,7 @@ export function HomeTabSkeleton() {
             </div>
           </div>
           {/* 2x2 Image grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
@@ -277,7 +277,7 @@ export function HomeTabSkeleton() {
         <ShimmerSectionHeader width={130} />
         <div className="space-y-3 max-h-96 overflow-hidden">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-[#1A1D26] border border-white/5 rounded-2xl p-4 flex gap-4">
+            <div key={i} className="bg-[#1A1D26] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4">
               <div
                 className="shimmer-sweep shrink-0"
                 style={{ width: '80px', height: '80px', borderRadius: '12px' }}
@@ -319,7 +319,7 @@ export function HomeTabSkeleton() {
 
       {/* ── Community CTA ── */}
       <div className="px-5">
-        <div className="bg-[#1A1D26] border border-white/5 rounded-3xl p-5 flex items-center gap-4">
+        <div className="bg-[#1A1D26] border border-white/5 rounded-3xl p-5 flex items-center gap-3 sm:gap-4">
           <div
             className="shimmer-sweep shrink-0"
             style={{ width: '56px', height: '56px', borderRadius: '14px' }}

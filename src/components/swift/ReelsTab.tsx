@@ -145,8 +145,8 @@ export default function ReelsTab() {
       <div className="absolute top-0 left-0 right-0 z-30 px-4 pt-3 pb-2 bg-gradient-to-b from-black/70 to-transparent">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="size-8 rounded-xl bg-[#10E07A]/15 border border-[#10E07A]/30 flex items-center justify-center">
-              <Film className="w-4 h-4 text-[#10E07A]" />
+            <div className="size-8 rounded-xl bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 flex items-center justify-center">
+              <Film className="w-4 h-4 text-[var(--sr-customer)]" />
             </div>
             <div>
               <h1 className="text-white font-black text-base leading-tight tracking-tight">SwiftReels</h1>
@@ -155,7 +155,7 @@ export default function ReelsTab() {
           </div>
           <button
             onClick={() => setShowUpload(true)}
-            className="flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-[#10E07A] text-[#04140C] text-xs font-black active:scale-95 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
+            className="flex items-center gap-1.5 px-3.5 h-9 rounded-full bg-[var(--sr-customer)] text-[#04140C] text-xs font-black active:scale-95 transition-transform shadow-[0_0_20px_rgba(16,224,122,0.4)]"
             aria-label="Upload reel"
           >
             <Plus className="w-4 h-4" strokeWidth={3} />
@@ -188,7 +188,7 @@ export default function ReelsTab() {
         <div className="flex h-full flex-col items-center justify-center px-8 text-center">
           <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4">
             {isSavedMode ? (
-              <Bookmark className="w-7 h-7 text-[#F5C451]" />
+              <Bookmark className="w-7 h-7 text-[var(--sr-vendor)]" />
             ) : (
               <Film className="w-7 h-7 text-white/60" />
             )}
@@ -204,7 +204,7 @@ export default function ReelsTab() {
           {!isSavedMode && (
             <button
               onClick={() => setShowUpload(true)}
-              className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[#10E07A] text-[#04140C] text-sm font-black active:scale-95 transition-transform"
+              className="mt-5 flex items-center gap-1.5 px-5 h-10 rounded-full bg-[var(--sr-customer)] text-[#04140C] text-sm font-black active:scale-95 transition-transform"
             >
               <Plus className="w-4 h-4" strokeWidth={3} />
               Upload Reel

@@ -25,7 +25,7 @@ function StarRow({ rating, size = 'w-3.5 h-3.5' }: { rating: number; size?: stri
       {[1, 2, 3, 4, 5].map(n => (
         <Star
           key={n}
-          className={`${size} ${n <= Math.round(rating) ? 'text-[#F5C451] fill-[#F5C451]' : 'text-white/15'}`}
+          className={`${size} ${n <= Math.round(rating) ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white/15'}`}
         />
       ))}
     </div>
@@ -227,7 +227,7 @@ export default function ProductDetailModal() {
             className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[#0F1117] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
               <h2 className="text-white font-bold">Product Details</h2>
               <div className="flex items-center gap-2">
                 <button
@@ -298,7 +298,7 @@ export default function ProductDetailModal() {
                         onClick={() => setActiveImageIdx(i)}
                         className={`shrink-0 w-16 h-16 rounded-xl bg-center bg-cover border-2 transition-all ${
                           i === activeImageIdx
-                            ? 'border-[#10E07A] ring-1 ring-[#10E07A]/30'
+                            ? 'border-[var(--sr-customer)] ring-1 ring-[#10E07A]/30'
                             : 'border-white/10 opacity-50 hover:opacity-80'
                         }`}
                         style={{ backgroundImage: `url("${img}")` }}
@@ -313,15 +313,15 @@ export default function ProductDetailModal() {
                 {/* Badges */}
                 <div className="flex items-center gap-2 mb-3 flex-wrap">
                   {'salePrice' in product && product.salePrice && (
-                    <span className="px-2 py-0.5 bg-[#10E07A]/10 text-[#10E07A] text-[10px] font-bold rounded-full border border-[#10E07A]/20 uppercase">Sale</span>
+                    <span className="px-2 py-0.5 bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] text-[10px] font-bold rounded-full border border-[var(--sr-customer)]/20 uppercase">Sale</span>
                   )}
-                  <span className="px-2 py-0.5 bg-[#F5C451]/10 text-[#F5C451] text-[10px] font-bold rounded-full border border-[#F5C451]/20 uppercase">Ramadan Special</span>
+                  <span className="px-2 py-0.5 bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] text-[10px] font-bold rounded-full border border-[var(--sr-vendor)]/20 uppercase">Ramadan Special</span>
                 </div>
 
                 <h3 className="text-2xl font-black text-white tracking-tight">{product.name}</h3>
 
                 {/* Rating & Delivery */}
-                <div className="flex items-center gap-4 mt-3">
+                <div className="flex items-center gap-3 sm:gap-4 mt-3">
                   <div className="flex items-center gap-1.5">
                     <StarRow rating={avgRating} size="w-4 h-4" />
                     <span className="text-white font-bold text-sm">{avgRating.toFixed(1)}</span>
@@ -335,11 +335,11 @@ export default function ProductDetailModal() {
 
                 {/* Price */}
                 <div className="flex items-end gap-3 mt-4">
-                  <span className="text-[#10E07A] text-3xl font-black tracking-tighter">{formatNaira(salePrice)}</span>
+                  <span className="text-[var(--sr-customer)] text-3xl font-black tracking-tighter">{formatNaira(salePrice)}</span>
                   {(('salePrice' in product && product.salePrice) || ('originalPrice' in product && product.originalPrice)) && originalPrice > salePrice && (
                     <>
                       <span className="text-white/60 text-lg line-through mb-1">{formatNaira(originalPrice)}</span>
-                      <span className="bg-[#10E07A]/10 text-[#10E07A] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
+                      <span className="bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] text-xs font-bold px-2 py-0.5 rounded-full mb-1">
                         -{Math.round((1 - salePrice / originalPrice) * 100)}%
                       </span>
                     </>
@@ -349,7 +349,7 @@ export default function ProductDetailModal() {
                 {/* Contents */}
                 {'contents' in product && product.contents && (
                   <div className="flex items-center gap-2 mt-4 bg-black/30 p-3 rounded-xl border border-white/5">
-                    <BadgeCheck className="w-5 h-5 text-[#F5C451] shrink-0" />
+                    <BadgeCheck className="w-5 h-5 text-[var(--sr-vendor)] shrink-0" />
                     <p className="text-white/80 text-sm font-medium">{product.contents} Included</p>
                   </div>
                 )}
@@ -358,14 +358,14 @@ export default function ProductDetailModal() {
                 <p className="text-white/50 text-sm leading-relaxed mt-4">{product.description}</p>
 
                 {/* Features */}
-                <div className="grid grid-cols-3 gap-3 mt-6 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mt-6 mb-6">
                   <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
-                    <Truck className="w-5 h-5 text-[#10E07A] mx-auto mb-1" />
+                    <Truck className="w-5 h-5 text-[var(--sr-customer)] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Free Delivery</p>
                     <p className="text-white/60 text-[9px]">Orders ₦5K+</p>
                   </div>
                   <div className="bg-[#1A1D26] rounded-xl p-3 text-center border border-white/5">
-                    <Shield className="w-5 h-5 text-[#F5C451] mx-auto mb-1" />
+                    <Shield className="w-5 h-5 text-[var(--sr-vendor)] mx-auto mb-1" />
                     <p className="text-white text-[10px] font-bold">Quality Assured</p>
                     <p className="text-white/60 text-[9px]">100% Fresh</p>
                   </div>
@@ -385,7 +385,7 @@ export default function ProductDetailModal() {
                     </h4>
                     <button
                       onClick={() => setShowReviewForm(s => !s)}
-                      className="text-[#10E07A] text-xs font-bold hover:text-[#10E07A]/80 transition-colors"
+                      className="text-[var(--sr-customer)] text-xs font-bold hover:text-[var(--sr-customer)]/80 transition-colors"
                     >
                       {showReviewForm ? 'Cancel' : 'Write a review'}
                     </button>
@@ -393,9 +393,9 @@ export default function ProductDetailModal() {
 
                   {/* Average rating summary */}
                   {reviewCount > 0 && (
-                    <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 mb-3 flex items-center gap-4">
+                    <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 mb-3 flex items-center gap-3 sm:gap-4">
                       <div className="text-center">
-                        <p className="text-[#F5C451] text-3xl font-black">{avgRating.toFixed(1)}</p>
+                        <p className="text-[var(--sr-vendor)] text-3xl font-black">{avgRating.toFixed(1)}</p>
                         <StarRow rating={avgRating} />
                         <p className="text-white/65 text-[10px] mt-1">{reviewCount} review{reviewCount !== 1 ? 's' : ''}</p>
                       </div>
@@ -406,9 +406,9 @@ export default function ProductDetailModal() {
                           return (
                             <div key={star} className="flex items-center gap-2 text-[10px]">
                               <span className="text-white/50 w-3">{star}</span>
-                              <Star className="w-2.5 h-2.5 text-[#F5C451] fill-[#F5C451]" />
+                              <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)] fill-[#F5C451]" />
                               <div className="flex-1 bg-white/5 rounded-full h-1.5 overflow-hidden">
-                                <div className="bg-[#F5C451] h-1.5 rounded-full" style={{ width: `${pct}%` }} />
+                                <div className="bg-[var(--sr-vendor)] h-1.5 rounded-full" style={{ width: `${pct}%` }} />
                               </div>
                               <span className="text-white/65 w-5 text-right">{count}</span>
                             </div>
@@ -427,7 +427,7 @@ export default function ProductDetailModal() {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <div className="bg-[#1A1D26] rounded-2xl border border-[#10E07A]/20 p-4 mb-3 space-y-3">
+                        <div className="bg-[#1A1D26] rounded-2xl border border-[var(--sr-customer)]/20 p-3 sm:p-4 mb-3 space-y-3">
                           <div>
                             <p className="text-white/60 text-xs font-bold mb-2">Your rating</p>
                             <div className="flex items-center gap-2">
@@ -439,7 +439,7 @@ export default function ProductDetailModal() {
                                   aria-label={`Rate ${n} star${n !== 1 ? 's' : ''}`}
                                 >
                                   <Star
-                                    className={`w-7 h-7 ${n <= newRating ? 'text-[#F5C451] fill-[#F5C451]' : 'text-white/15'}`}
+                                    className={`w-7 h-7 ${n <= newRating ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white/15'}`}
                                   />
                                 </button>
                               ))}
@@ -453,13 +453,13 @@ export default function ProductDetailModal() {
                               onChange={e => setNewComment(e.target.value)}
                               rows={3}
                               placeholder="Share your experience with this product..."
-                              className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20 resize-none"
+                              className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 resize-none"
                             />
                           </div>
                           <button
                             onClick={handleSubmitReview}
                             disabled={submittingReview || !newComment.trim()}
-                            className="w-full bg-[#10E07A] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                            className="w-full bg-[var(--sr-customer)] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
                           >
                             {submittingReview ? (
                               <>
@@ -480,8 +480,8 @@ export default function ProductDetailModal() {
 
                   {/* Reviews list */}
                   {fetchingReviews ? (
-                    <div className="flex items-center gap-2 p-4 bg-[#1A1D26] rounded-xl border border-white/5">
-                      <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
+                    <div className="flex items-center gap-2 p-3 sm:p-4 bg-[#1A1D26] rounded-xl border border-white/5">
+                      <Loader2 className="w-4 h-4 text-[var(--sr-customer)] animate-spin" />
                       <span className="text-white/65 text-sm">Loading reviews...</span>
                     </div>
                   ) : reviews.length === 0 ? (
@@ -542,7 +542,7 @@ export default function ProductDetailModal() {
                           />
                           <div className="p-2">
                             <p className="text-white text-[10px] font-bold truncate">{p.name}</p>
-                            <p className="text-[#10E07A] text-xs font-black">{formatNaira(('salePrice' in p ? p.salePrice : p.price) || p.price || 0)}</p>
+                            <p className="text-[var(--sr-customer)] text-xs font-black">{formatNaira(('salePrice' in p ? p.salePrice : p.price) || p.price || 0)}</p>
                           </div>
                         </button>
                       ))}
@@ -552,8 +552,8 @@ export default function ProductDetailModal() {
             </div>
 
             {/* Bottom Action Bar */}
-            <div className="border-t border-white/5 p-4 bg-[#0F1117]/95 backdrop-blur-lg">
-              <div className="flex items-center gap-4">
+            <div className="border-t border-white/5 p-3 sm:p-4 bg-[#0F1117]/95 backdrop-blur-lg">
+              <div className="flex items-center gap-3 sm:gap-4">
                 {/* Quantity Selector */}
                 <div className="flex items-center gap-3 bg-[#1A1D26] rounded-xl px-3 py-2 border border-white/5">
                   <button
@@ -574,7 +574,7 @@ export default function ProductDetailModal() {
                 {/* Add to Cart */}
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 bg-[#10E07A] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                  className="flex-1 bg-[var(--sr-customer)] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
                 >
                   ADD TO CART &bull; {formatNaira(totalPrice)}
                   <ChevronRight className="w-4 h-4" />

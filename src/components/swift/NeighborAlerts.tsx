@@ -196,12 +196,12 @@ function NeighborAlertsInner() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-[#10E07A]" />
+          <Users className="w-5 h-5 text-[var(--sr-customer)]" />
           <h2 className="text-white font-semibold text-lg">Neighbor Alerts</h2>
         </div>
         <div className="flex items-center gap-2">
           {totalSavings > 0 && (
-            <span className="text-[#10E07A] text-xs font-semibold bg-[#10E07A]/10 px-2 py-1 rounded-full flex items-center gap-1">
+            <span className="text-[var(--sr-customer)] text-xs font-semibold bg-[var(--sr-customer)]/10 px-2 py-1 rounded-full flex items-center gap-1">
               <Wallet className="w-3 h-3" /> Saved {formatNaira(totalSavings)}
             </span>
           )}
@@ -213,11 +213,11 @@ function NeighborAlertsInner() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-[#10E07A]/5 to-[#A78BFA]/5 border border-[#10E07A]/20 rounded-xl p-4"
+          className="bg-gradient-to-r from-[#10E07A]/5 to-[#A78BFA]/5 border border-[var(--sr-customer)]/20 rounded-xl p-4"
         >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-              <AlertCircle className="w-5 h-5 text-[#10E07A]" />
+            <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+              <AlertCircle className="w-5 h-5 text-[var(--sr-customer)]" />
             </div>
             <div className="flex-1">
               <p className="text-white text-sm font-medium mb-1">Save on delivery with neighbors</p>
@@ -227,7 +227,7 @@ function NeighborAlertsInner() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setIsOptedIn(true)}
-                  className="bg-[#10E07A] text-black text-xs font-semibold px-4 py-2 rounded-full hover:bg-[#10E07A]/90 transition-colors"
+                  className="bg-[var(--sr-customer)] text-black text-xs font-semibold px-4 py-2 rounded-full hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   Opt In
                 </button>
@@ -242,8 +242,8 @@ function NeighborAlertsInner() {
           </div>
         </motion.div>
       ) : (
-        <div className="flex items-center justify-between bg-[#10E07A]/5 border border-[#10E07A]/10 rounded-xl px-4 py-2">
-          <span className="text-[#10E07A] text-xs flex items-center gap-1">
+        <div className="flex items-center justify-between bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/10 rounded-xl px-4 py-2">
+          <span className="text-[var(--sr-customer)] text-xs flex items-center gap-1">
             <Check className="w-3.5 h-3.5" /> Delivery sharing enabled
           </span>
           <button
@@ -264,7 +264,7 @@ function NeighborAlertsInner() {
               onClick={() => setSelectedArea(area)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium shrink-0 transition-all ${
                 selectedArea === area
-                  ? 'bg-[#10E07A] text-black'
+                  ? 'bg-[var(--sr-customer)] text-black'
                   : 'bg-white/5 text-white/50 hover:bg-white/10'
               }`}
             >
@@ -278,7 +278,7 @@ function NeighborAlertsInner() {
       {isOptedIn && (
         <div className="space-y-3">
           {filteredOrders.length === 0 ? (
-            <div className="bg-[#0F1118] border border-white/8 rounded-xl p-6 text-center">
+            <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-6 text-center">
               <Truck className="w-8 h-8 text-white/15 mx-auto mb-2" />
               <p className="text-white/60 text-sm">No nearby orders right now</p>
               <p className="text-white/20 text-xs mt-1">Check back in a few minutes</p>
@@ -290,8 +290,8 @@ function NeighborAlertsInner() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`bg-[#0F1118] border rounded-xl overflow-hidden transition-all ${
-                  order.isJoined ? 'border-[#10E07A]/30' : 'border-white/8'
+                className={`bg-[var(--sr-surface-raised)] border rounded-xl overflow-hidden transition-all ${
+                  order.isJoined ? 'border-[var(--sr-customer)]/30' : 'border-white/8'
                 }`}
               >
                 {/* Main Card */}
@@ -299,7 +299,7 @@ function NeighborAlertsInner() {
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <MapPin className="w-3.5 h-3.5 text-[#10E07A] shrink-0" />
+                        <MapPin className="w-3.5 h-3.5 text-[var(--sr-customer)] shrink-0" />
                         <span className="text-white/60 text-xs">{order.area}</span>
                         <span className="text-white/20 text-[10px]">•</span>
                         <span className="text-white/60 text-[10px]">{order.distance}</span>
@@ -307,7 +307,7 @@ function NeighborAlertsInner() {
                       <p className="text-white font-medium text-sm">{order.restaurant}</p>
                     </div>
                     <div className="text-right shrink-0 ml-3">
-                      <p className="text-[#10E07A] text-sm font-bold">Save {formatNaira(order.savedFee)}</p>
+                      <p className="text-[var(--sr-customer)] text-sm font-bold">Save {formatNaira(order.savedFee)}</p>
                       <p className="text-white/60 text-[10px]">on delivery</p>
                     </div>
                   </div>
@@ -358,15 +358,15 @@ function NeighborAlertsInner() {
 
                   {/* Join / Joined Button */}
                   {order.isJoined ? (
-                    <div className="bg-[#10E07A]/10 border border-[#10E07A]/30 rounded-xl py-2.5 text-center">
-                      <span className="text-[#10E07A] text-xs font-semibold flex items-center justify-center gap-1">
+                    <div className="bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 rounded-xl py-2.5 text-center">
+                      <span className="text-[var(--sr-customer)] text-xs font-semibold flex items-center justify-center gap-1">
                         <Check className="w-4 h-4" /> Joined — Saving {formatNaira(order.savedFee)}
                       </span>
                     </div>
                   ) : (
                     <button
                       onClick={() => setShowJoinConfirm(order)}
-                      className="w-full bg-[#10E07A] text-black text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                      className="w-full bg-[var(--sr-customer)] text-black text-sm font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                     >
                       <Sparkles className="w-4 h-4" /> Combine & Save {formatNaira(order.savedFee)}
                     </button>
@@ -392,11 +392,11 @@ function NeighborAlertsInner() {
                           </div>
                           <div className="flex justify-between text-xs">
                             <span className="text-white/50">Combined fee</span>
-                            <span className="text-[#10E07A]">{formatNaira(order.deliveryFee - order.savedFee)}</span>
+                            <span className="text-[var(--sr-customer)]">{formatNaira(order.deliveryFee - order.savedFee)}</span>
                           </div>
                           <div className="flex justify-between text-xs mt-1 pt-1 border-t border-white/5">
                             <span className="text-white/50">You save</span>
-                            <span className="text-[#10E07A] font-bold">{formatNaira(order.savedFee)}</span>
+                            <span className="text-[var(--sr-customer)] font-bold">{formatNaira(order.savedFee)}</span>
                           </div>
                         </div>
 
@@ -413,7 +413,7 @@ function NeighborAlertsInner() {
                           <p className="text-white/65 text-[10px] mb-1">Items in this order</p>
                           {order.items.map((item, i) => (
                             <div key={i} className="flex items-center gap-2 text-xs text-white/50">
-                              <span className="w-1 h-1 rounded-full bg-[#10E07A]/50" />
+                              <span className="w-1 h-1 rounded-full bg-[var(--sr-customer)]/50" />
                               {item}
                             </div>
                           ))}
@@ -437,14 +437,14 @@ function NeighborAlertsInner() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.1 }}
-              className="bg-[#0F1118] border border-white/8 rounded-xl p-4 opacity-50 blur-[2px] relative overflow-hidden"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-4 opacity-50 blur-[2px] relative overflow-hidden"
             >
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-3.5 h-3.5 text-white/60" />
                 <span className="text-white/60 text-xs">{order.area}</span>
               </div>
               <p className="text-white/60 text-sm">{order.restaurant}</p>
-              <p className="text-[#10E07A]/30 text-xs mt-1">Save ₦{order.savedFee}</p>
+              <p className="text-[var(--sr-customer)]/30 text-xs mt-1">Save ₦{order.savedFee}</p>
             </motion.div>
           ))}
           <p className="text-center text-white/20 text-xs">Opt in to see nearby orders</p>
@@ -468,12 +468,12 @@ function NeighborAlertsInner() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
-              className="bg-[#0F1118] border border-white/8 rounded-t-2xl sm:rounded-2xl w-full max-w-sm"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-t-2xl sm:rounded-2xl w-full max-w-sm"
             >
               <div className="p-5 space-y-4">
                 <div className="text-center">
-                  <div className="w-14 h-14 rounded-full bg-[#10E07A]/10 flex items-center justify-center mx-auto mb-3">
-                    <Truck className="w-7 h-7 text-[#10E07A]" />
+                  <div className="w-14 h-14 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center mx-auto mb-3">
+                    <Truck className="w-7 h-7 text-[var(--sr-customer)]" />
                   </div>
                   <h3 className="text-white font-semibold text-lg">Combine Delivery?</h3>
                   <p className="text-white/50 text-sm mt-1">
@@ -483,7 +483,7 @@ function NeighborAlertsInner() {
 
                 <div className="bg-white/5 rounded-xl p-3 space-y-2">
                   <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-[#10E07A]" />
+                    <MapPin className="w-4 h-4 text-[var(--sr-customer)]" />
                     <span className="text-white/70 text-sm">{showJoinConfirm.restaurant}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -495,8 +495,8 @@ function NeighborAlertsInner() {
                 </div>
 
                 {/* Savings Highlight */}
-                <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#10E07A] text-lg font-bold">
+                <div className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/20 rounded-xl p-3 text-center">
+                  <p className="text-[var(--sr-customer)] text-lg font-bold">
                     Save {formatNaira(showJoinConfirm.savedFee)}
                   </p>
                   <p className="text-white/65 text-xs">on delivery fee</p>
@@ -514,7 +514,7 @@ function NeighborAlertsInner() {
                 <div className="space-y-2">
                   <button
                     onClick={() => handleJoin(showJoinConfirm)}
-                    className="w-full bg-[#10E07A] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                    className="w-full bg-[var(--sr-customer)] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                   >
                     <Check className="w-4 h-4" /> Yes, Combine & Save
                   </button>
@@ -547,7 +547,7 @@ function NeighborAlertsInner() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0F1118] border border-white/8 rounded-2xl w-full max-w-md"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-md"
             >
               <div className="flex items-center justify-between p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold flex items-center gap-2">
@@ -565,8 +565,8 @@ function NeighborAlertsInner() {
               <div className="p-4 space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-                      <Check className="w-4 h-4 text-[#10E07A]" />
+                    <div className="w-8 h-8 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">Area only, not address</p>
@@ -575,8 +575,8 @@ function NeighborAlertsInner() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-                      <Check className="w-4 h-4 text-[#10E07A]" />
+                    <div className="w-8 h-8 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">No order details shared</p>
@@ -585,8 +585,8 @@ function NeighborAlertsInner() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-                      <Check className="w-4 h-4 text-[#10E07A]" />
+                    <div className="w-8 h-8 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">Opt out anytime</p>
@@ -595,8 +595,8 @@ function NeighborAlertsInner() {
                   </div>
 
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-                      <Check className="w-4 h-4 text-[#10E07A]" />
+                    <div className="w-8 h-8 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+                      <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                     </div>
                     <div>
                       <p className="text-white text-sm font-medium">No contact info shared</p>

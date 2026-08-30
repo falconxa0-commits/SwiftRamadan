@@ -194,10 +194,10 @@ export default function FlashAuction() {
 
           {/* Header */}
           <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/20">
-                  <Zap className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <Zap className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Flash Auction</h2>
@@ -206,7 +206,7 @@ export default function FlashAuction() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#0F1118] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
                 aria-label="Close auction"
               >
                 <X className="w-5 h-5 text-white" />
@@ -223,12 +223,12 @@ export default function FlashAuction() {
               transition={{ duration: 0.5 }}
               className="relative text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-full px-4 py-1.5 mb-4">
-                <Flame className="w-4 h-4 text-[#F5C451]" />
-                <span className="text-[#F5C451] text-xs font-bold">Live Now</span>
+              <div className="inline-flex items-center gap-2 bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 rounded-full px-4 py-1.5 mb-4">
+                <Flame className="w-4 h-4 text-[var(--sr-vendor)]" />
+                <span className="text-[var(--sr-vendor)] text-xs font-bold">Live Now</span>
               </div>
               <h1 className="text-3xl font-black text-white mb-2">
-                Price Drops <span className="text-[#10E07A]">Every Minute</span>
+                Price Drops <span className="text-[var(--sr-customer)]">Every Minute</span>
               </h1>
               <p className="text-white/50 text-sm max-w-md mx-auto">
                 Vendors list limited batches. The price keeps dropping — but stock runs out fast. First to grab wins!
@@ -241,8 +241,8 @@ export default function FlashAuction() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-bold text-lg">Live Auctions</h3>
               <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-[#10E07A] animate-pulse" />
-                <span className="text-[#10E07A] text-xs font-bold">{auctions.filter((a) => !a.grabbed && a.remainingStock > 0 && a.minutesLeft > 0).length} active</span>
+                <div className="w-2 h-2 rounded-full bg-[var(--sr-customer)] animate-pulse" />
+                <span className="text-[var(--sr-customer)] text-xs font-bold">{auctions.filter((a) => !a.grabbed && a.remainingStock > 0 && a.minutesLeft > 0).length} active</span>
               </div>
             </div>
 
@@ -259,7 +259,7 @@ export default function FlashAuction() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.4 }}
-                    className="bg-[#0F1118] rounded-2xl border border-white/8 overflow-hidden relative"
+                    className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 overflow-hidden relative"
                   >
                     {/* Celebration Overlay */}
                     <AnimatePresence>
@@ -275,10 +275,10 @@ export default function FlashAuction() {
                             animate={{ scale: [0, 1.3, 1] }}
                             transition={{ duration: 0.5 }}
                           >
-                            <PartyPopper className="w-16 h-16 text-[#F5C451]" />
+                            <PartyPopper className="w-16 h-16 text-[var(--sr-vendor)]" />
                           </motion.div>
                           <h3 className="text-white font-black text-xl text-center">You Grabbed It!</h3>
-                          <p className="text-[#10E07A] font-bold text-lg">{formatNaira(auction.currentPrice)}</p>
+                          <p className="text-[var(--sr-customer)] font-bold text-lg">{formatNaira(auction.currentPrice)}</p>
                           <p className="text-white/50 text-sm">Saving {discount}% off original price</p>
                         </motion.div>
                       )}
@@ -288,7 +288,7 @@ export default function FlashAuction() {
                     <div className="relative h-36 bg-gradient-to-br from-[#10E07A]/10 to-[#F5C451]/5 flex items-center justify-center">
                       <Package className="w-16 h-16 text-white/10" />
                       <div className="absolute top-3 left-3">
-                        <span className="bg-[#F5C451]/90 text-[#0B0D14] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                        <span className="bg-[var(--sr-vendor)]/90 text-[#0B0D14] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {auction.category}
                         </span>
                       </div>
@@ -325,7 +325,7 @@ export default function FlashAuction() {
                       </div>
 
                       <div className="flex items-center gap-2 mb-3">
-                        <TrendingDown className="w-3.5 h-3.5 text-[#10E07A]/70" />
+                        <TrendingDown className="w-3.5 h-3.5 text-[var(--sr-customer)]/70" />
                         <span className="text-white/65 text-xs">Drops {formatNaira(auction.dropRate)}/min</span>
                       </div>
 
@@ -333,8 +333,8 @@ export default function FlashAuction() {
                       <div className="flex items-center gap-3 mb-4">
                         {/* Timer */}
                         <div className="flex items-center gap-1.5 bg-white/5 rounded-lg px-3 py-2 flex-1">
-                          <Clock className="w-3.5 h-3.5 text-[#F5C451]" />
-                          <span className="text-[#F5C451] font-mono font-bold text-sm">{formatTime(auction.minutesLeft)}</span>
+                          <Clock className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
+                          <span className="text-[var(--sr-vendor)] font-mono font-bold text-sm">{formatTime(auction.minutesLeft)}</span>
                           <span className="text-white/60 text-xs">left</span>
                         </div>
                         {/* Stock */}
@@ -357,7 +357,7 @@ export default function FlashAuction() {
                       {isActive ? (
                         <motion.button
                           onClick={() => handleGrab(auction.id)}
-                          className="w-full py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 bg-[#10E07A] text-[#0B0D14] relative overflow-hidden"
+                          className="w-full py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[#0B0D14] relative overflow-hidden"
                           animate={{
                             boxShadow: [
                               '0 0 20px rgba(16,224,122,0.3)',
@@ -397,7 +397,7 @@ export default function FlashAuction() {
           {/* How It Works */}
           <div className="px-4 mb-8">
             <h3 className="text-white font-bold text-lg mb-4">How Flash Auction Works</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {[
                 { step: 1, title: 'Watch Prices Drop', icon: TrendingDown, color: '#10E07A' },
                 { step: 2, title: 'Grab Before Others', icon: Zap, color: '#F5C451' },
@@ -408,7 +408,7 @@ export default function FlashAuction() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + idx * 0.1, duration: 0.4 }}
-                  className="bg-[#0F1118] rounded-2xl border border-white/8 p-4 text-center"
+                  className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-3 sm:p-4 text-center"
                 >
                   <div
                     className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center border"

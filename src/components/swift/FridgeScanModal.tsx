@@ -53,10 +53,10 @@ function compressImage(file: File): Promise<string> {
 
 function FreshnessIndicator({ freshness }: { freshness: string }) {
   const config = {
-    fresh: { color: '#10E07A', bg: 'bg-[#10E07A]/10', border: 'border-[#10E07A]/20', icon: Leaf, label: 'Fresh' },
-    aging: { color: '#F5C451', bg: 'bg-[#F5C451]/10', border: 'border-[#F5C451]/20', icon: Snowflake, label: 'Aging' },
+    fresh: { color: '#10E07A', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' },
+    aging: { color: '#F5C451', bg: 'bg-[var(--sr-vendor)]/10', border: 'border-[var(--sr-vendor)]/20', icon: Snowflake, label: 'Aging' },
     expiring: { color: '#EF4444', bg: 'bg-[#EF4444]/10', border: 'border-[#EF4444]/20', icon: AlertTriangle, label: 'Expiring' },
-  }[freshness] || { color: '#10E07A', bg: 'bg-[#10E07A]/10', border: 'border-[#10E07A]/20', icon: Leaf, label: 'Fresh' };
+  }[freshness] || { color: '#10E07A', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' };
 
   const Icon = config.icon;
 
@@ -157,10 +157,10 @@ export default function FridgeScanModal() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center border border-[#38BDF8]/20">
-                  <Camera className="w-5 h-5 text-[#38BDF8]" />
+                <div className="w-10 h-10 bg-[var(--sr-rider)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-rider)]/20">
+                  <Camera className="w-5 h-5 text-[var(--sr-rider)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">📸 Fridge Scanner</h2>
@@ -185,8 +185,8 @@ export default function FridgeScanModal() {
                 transition={{ duration: 0.5 }}
                 className="bg-[#1A1D26] rounded-2xl border border-dashed border-white/10 p-8 flex flex-col items-center justify-center"
               >
-                <div className="w-16 h-16 bg-[#38BDF8]/10 rounded-2xl flex items-center justify-center border border-[#38BDF8]/20 mb-4">
-                  <Camera className="w-8 h-8 text-[#38BDF8]" />
+                <div className="w-16 h-16 bg-[var(--sr-rider)]/10 rounded-2xl flex items-center justify-center border border-[var(--sr-rider)]/20 mb-4">
+                  <Camera className="w-8 h-8 text-[var(--sr-rider)]" />
                 </div>
                 <h3 className="text-white font-bold text-base mb-1">Scan Your Fridge</h3>
                 <p className="text-white/65 text-xs text-center mb-6 max-w-[260px]">
@@ -195,7 +195,7 @@ export default function FridgeScanModal() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => cameraInputRef.current?.click()}
-                    className="px-5 py-3 rounded-xl bg-[#38BDF8] text-[#05070A] font-bold text-sm flex items-center gap-2 hover:bg-[#38BDF8]/90 active:scale-[0.98] transition-all"
+                    className="px-5 py-3 rounded-xl bg-[var(--sr-rider)] text-[#05070A] font-bold text-sm flex items-center gap-2 hover:bg-[var(--sr-rider)]/90 active:scale-[0.98] transition-all"
                   >
                     <Camera className="w-4 h-4" />
                     Camera
@@ -248,7 +248,7 @@ export default function FridgeScanModal() {
                           transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
                           className="w-full max-w-[200px] mx-auto"
                         >
-                          <ScanLine className="w-8 h-8 text-[#38BDF8] mx-auto" />
+                          <ScanLine className="w-8 h-8 text-[var(--sr-rider)] mx-auto" />
                         </motion.div>
                         <p className="text-white text-sm font-bold mt-4">Scanning...</p>
                         <p className="text-white/65 text-xs">Detecting ingredients</p>
@@ -331,20 +331,20 @@ export default function FridgeScanModal() {
                 </div>
 
                 {/* Freshness Summary */}
-                <div className="mt-4 bg-[#1A1D26] rounded-xl border border-white/5 p-4">
+                <div className="mt-4 bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <Sparkles className="w-4 h-4 text-[#38BDF8]" />
+                    <Sparkles className="w-4 h-4 text-[var(--sr-rider)]" />
                     <h4 className="text-white font-bold text-xs">Freshness Summary</h4>
                   </div>
-                  <div className="flex gap-4">
+                  <div className="flex gap-3 sm:gap-4">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-[#10E07A]" />
+                      <div className="w-2 h-2 rounded-full bg-[var(--sr-customer)]" />
                       <span className="text-white/50 text-[10px]">
                         {items.filter((i) => i.freshness === 'fresh').length} Fresh
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2 h-2 rounded-full bg-[#F5C451]" />
+                      <div className="w-2 h-2 rounded-full bg-[var(--sr-vendor)]" />
                       <span className="text-white/50 text-[10px]">
                         {items.filter((i) => i.freshness === 'aging').length} Aging
                       </span>
@@ -362,7 +362,7 @@ export default function FridgeScanModal() {
                 <div className="mt-4 mb-32">
                   <motion.button
                     onClick={handleGenerateRecipes}
-                    className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-[#38BDF8] text-[#05070A] hover:bg-[#38BDF8]/90 active:scale-[0.98] transition-all"
+                    className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 bg-[var(--sr-rider)] text-[#05070A] hover:bg-[var(--sr-rider)]/90 active:scale-[0.98] transition-all"
                   >
                     <ChefHat className="w-4 h-4" />
                     Generate Recipes

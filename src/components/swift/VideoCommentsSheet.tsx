@@ -136,7 +136,7 @@ export default function VideoCommentsSheet({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-white/8">
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-4 h-4 text-[#10E07A]" />
+            <MessageCircle className="w-4 h-4 text-[var(--sr-customer)]" />
             <h3 className="text-white font-black text-base tracking-tight">
               {video.comments} comments
             </h3>
@@ -154,7 +154,7 @@ export default function VideoCommentsSheet({
         <div ref={listRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3 custom-scrollbar">
           {loading ? (
             <div className="flex justify-center py-10">
-              <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
+              <Loader2 className="w-6 h-6 text-[var(--sr-customer)] animate-spin" />
             </div>
           ) : comments.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -183,7 +183,7 @@ export default function VideoCommentsSheet({
                       <span className="text-white/60 text-[10px]">{timeAgo(c.createdAt)}</span>
                     </div>
                     <p className="text-white text-sm leading-snug mt-0.5 break-words">{c.content}</p>
-                    <div className="flex items-center gap-4 mt-1.5">
+                    <div className="flex items-center gap-3 sm:gap-4 mt-1.5">
                       <button
                         onClick={() => toggleCommentLike(c.id)}
                         className="flex items-center gap-1 text-white/65 hover:text-[#FB7185] transition-colors"
@@ -209,7 +209,7 @@ export default function VideoCommentsSheet({
         {/* Composer */}
         <div className="px-4 py-3 border-t border-white/8 bg-[#0B0D14]">
           <div className="flex items-center gap-2">
-            <div className="size-8 shrink-0 rounded-full bg-[#10E07A] flex items-center justify-center text-[#04140C] font-black text-xs">
+            <div className="size-8 shrink-0 rounded-full bg-[var(--sr-customer)] flex items-center justify-center text-[#04140C] font-black text-xs">
               {viewerName.charAt(0).toUpperCase() || 'G'}
             </div>
             <input
@@ -222,12 +222,12 @@ export default function VideoCommentsSheet({
                 }
               }}
               placeholder="Add a comment..."
-              className="flex-1 h-10 rounded-full bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
+              className="flex-1 h-10 rounded-full bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors"
             />
             <button
               onClick={handleSubmit}
               disabled={!text.trim() || submitting}
-              className="size-10 rounded-full bg-[#10E07A] flex items-center justify-center text-[#04140C] disabled:opacity-30 disabled:cursor-not-allowed active:scale-90 transition-transform"
+              className="size-10 rounded-full bg-[var(--sr-customer)] flex items-center justify-center text-[#04140C] disabled:opacity-30 disabled:cursor-not-allowed active:scale-90 transition-transform"
               aria-label="Send comment"
             >
               {submitting ? (

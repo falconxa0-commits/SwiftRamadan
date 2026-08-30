@@ -233,7 +233,7 @@ export default function NewDeliveryRequestModal() {
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
             className="fixed bottom-0 left-0 right-0 z-[100] max-h-[85vh]"
           >
-            <div className="bg-[#0F1118] rounded-t-3xl border-t border-white/10 overflow-hidden">
+            <div className="bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 overflow-hidden">
               {/* Handle */}
               <div className="flex justify-center pt-3 pb-1">
                 <div className="w-10 h-1 bg-white/10 rounded-full" />
@@ -242,8 +242,8 @@ export default function NewDeliveryRequestModal() {
               {/* Header */}
               <div className="px-5 pb-3 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center">
-                    <Bike className="w-5 h-5 text-[#38BDF8]" />
+                  <div className="w-10 h-10 bg-[var(--sr-rider)]/10 rounded-xl flex items-center justify-center">
+                    <Bike className="w-5 h-5 text-[var(--sr-rider)]" />
                   </div>
                   <div>
                     <h2 className="text-white text-base font-extrabold">New Delivery Request</h2>
@@ -265,7 +265,7 @@ export default function NewDeliveryRequestModal() {
               <div className="px-5 pb-6 overflow-y-auto max-h-[65vh] custom-scrollbar">
                 {loading ? (
                   <div className="py-12 flex flex-col items-center justify-center">
-                    <Loader2 className="w-8 h-8 text-[#38BDF8] animate-spin mb-3" />
+                    <Loader2 className="w-8 h-8 text-[var(--sr-rider)] animate-spin mb-3" />
                     <p className="text-white/50 text-sm">Looking for delivery requests...</p>
                   </div>
                 ) : !delivery ? (
@@ -282,7 +282,7 @@ export default function NewDeliveryRequestModal() {
                     </p>
                     <button
                       onClick={handleClose}
-                      className="mt-5 px-6 py-2.5 bg-[#38BDF8]/10 border border-[#38BDF8]/30 text-[#38BDF8] rounded-xl text-xs font-bold hover:bg-[#38BDF8]/20 transition-colors"
+                      className="mt-5 px-6 py-2.5 bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/30 text-[var(--sr-rider)] rounded-xl text-xs font-bold hover:bg-[var(--sr-rider)]/20 transition-colors"
                     >
                       Got it
                     </button>
@@ -295,22 +295,22 @@ export default function NewDeliveryRequestModal() {
                   >
                     {/* Countdown Timer */}
                     <div
-                      className={`rounded-2xl p-4 mb-4 border ${
+                      className={`rounded-2xl p-3 sm:p-4 mb-4 border ${
                         isUrgent
                           ? 'bg-red-500/10 border-red-500/20'
-                          : 'bg-[#38BDF8]/5 border-[#38BDF8]/10'
+                          : 'bg-[var(--sr-rider)]/5 border-[var(--sr-rider)]/10'
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Clock
                             className={`w-4 h-4 ${
-                              isUrgent ? 'text-red-400' : 'text-[#38BDF8]'
+                              isUrgent ? 'text-red-400' : 'text-[var(--sr-rider)]'
                             }`}
                           />
                           <span
                             className={`text-xs font-bold uppercase tracking-wider ${
-                              isUrgent ? 'text-red-400' : 'text-[#38BDF8]'
+                              isUrgent ? 'text-red-400' : 'text-[var(--sr-rider)]'
                             }`}
                           >
                             {isUrgent ? 'Hurry — Expiring Soon' : 'Accept within'}
@@ -318,17 +318,17 @@ export default function NewDeliveryRequestModal() {
                         </div>
                         <div
                           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl ${
-                            isUrgent ? 'bg-red-500/15' : 'bg-[#38BDF8]/10'
+                            isUrgent ? 'bg-red-500/15' : 'bg-[var(--sr-rider)]/10'
                           }`}
                         >
                           <Clock
                             className={`w-3.5 h-3.5 ${
-                              isUrgent ? 'text-red-400' : 'text-[#38BDF8]'
+                              isUrgent ? 'text-red-400' : 'text-[var(--sr-rider)]'
                             }`}
                           />
                           <span
                             className={`text-sm font-black tabular-nums ${
-                              isUrgent ? 'text-red-400' : 'text-[#38BDF8]'
+                              isUrgent ? 'text-red-400' : 'text-[var(--sr-rider)]'
                             }`}
                           >
                             0:{countdown.toString().padStart(2, '0')}
@@ -341,10 +341,10 @@ export default function NewDeliveryRequestModal() {
                     </div>
 
                     {/* Customer / Drop-off Info */}
-                    <div className="glass-card rounded-2xl p-4 mb-3">
+                    <div className="glass-card rounded-2xl p-3 sm:p-4 mb-3">
                       <div className="flex items-center gap-3 mb-3">
-                        <div className="w-11 h-11 bg-[#38BDF8]/10 rounded-full flex items-center justify-center border border-[#38BDF8]/20">
-                          <span className="material-symbols-outlined text-[#38BDF8] text-lg">person</span>
+                        <div className="w-11 h-11 bg-[var(--sr-rider)]/10 rounded-full flex items-center justify-center border border-[var(--sr-rider)]/20">
+                          <span className="material-symbols-outlined text-[var(--sr-rider)] text-lg">person</span>
                         </div>
                         <div className="flex-1">
                           <p className="text-white text-sm font-bold">Customer Order</p>
@@ -357,7 +357,7 @@ export default function NewDeliveryRequestModal() {
                     </div>
 
                     {/* Items Ordered */}
-                    <div className="glass-card rounded-2xl p-4 mb-3">
+                    <div className="glass-card rounded-2xl p-3 sm:p-4 mb-3">
                       <div className="flex items-center gap-2 mb-2">
                         <Package className="w-4 h-4 text-white/60" />
                         <span className="text-white/50 text-xs font-bold uppercase tracking-wider">
@@ -368,9 +368,9 @@ export default function NewDeliveryRequestModal() {
                     </div>
 
                     {/* Pickup Address */}
-                    <div className="glass-card rounded-2xl p-4 mb-3">
+                    <div className="glass-card rounded-2xl p-3 sm:p-4 mb-3">
                       <div className="flex items-center gap-2 mb-2">
-                        <Navigation className="w-4 h-4 text-[#38BDF8]" />
+                        <Navigation className="w-4 h-4 text-[var(--sr-rider)]" />
                         <span className="text-white/50 text-xs font-bold uppercase tracking-wider">
                           Pickup
                         </span>
@@ -384,7 +384,7 @@ export default function NewDeliveryRequestModal() {
                     </div>
 
                     {/* Payment Summary */}
-                    <div className="glass-card rounded-2xl p-4 mb-5">
+                    <div className="glass-card rounded-2xl p-3 sm:p-4 mb-5">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white/65 text-xs">Order Total</span>
                         <span className="text-white text-sm font-bold">
@@ -400,7 +400,7 @@ export default function NewDeliveryRequestModal() {
                       <div className="h-px bg-white/5 my-2" />
                       <div className="flex items-center justify-between">
                         <span className="text-white/60 text-xs font-bold">You Earn (15%)</span>
-                        <span className="text-[#F5C451] text-lg font-black">
+                        <span className="text-[var(--sr-vendor)] text-lg font-black">
                           {formatNaira(estimatedEarnings)}
                         </span>
                       </div>
@@ -422,7 +422,7 @@ export default function NewDeliveryRequestModal() {
                       <button
                         onClick={handleAccept}
                         disabled={submitting !== null}
-                        className="flex-1 bg-[#38BDF8] text-[#06070B] py-4 rounded-2xl font-black text-sm hover:bg-[#38BDF8]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                        className="flex-1 bg-[var(--sr-rider)] text-[#06070B] py-4 rounded-2xl font-black text-sm hover:bg-[var(--sr-rider)]/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
                       >
                         {submitting === 'accept' ? (
                           <Loader2 className="w-4 h-4 animate-spin" />

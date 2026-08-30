@@ -414,7 +414,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
           aria-label={saved ? 'Remove from bookmarks' : 'Save to bookmarks'}
         >
           <Bookmark
-            className={`w-8 h-8 ${saved ? 'text-[#F5C451] fill-[#F5C451]' : 'text-white'}`}
+            className={`w-8 h-8 ${saved ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white'}`}
             strokeWidth={2}
           />
         </button>
@@ -438,7 +438,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
             disabled={followPending}
             className={`text-[11px] font-bold border px-2.5 h-6 rounded-full flex items-center gap-1 active:scale-95 transition-transform disabled:opacity-50 ${
               following
-                ? 'bg-[#10E07A]/15 text-[#10E07A] border-[#10E07A]/40'
+                ? 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)] border-[var(--sr-customer)]/40'
                 : 'text-white border-white/30 hover:border-white/50'
             }`}
           >

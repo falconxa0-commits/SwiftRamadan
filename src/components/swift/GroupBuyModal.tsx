@@ -55,8 +55,8 @@ export default function GroupBuyModal() {
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/20">
-                  <Users className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <Users className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Group Buy</h2>
@@ -82,13 +82,13 @@ export default function GroupBuyModal() {
               transition={{ duration: 0.5 }}
               className="relative text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-full px-4 py-1.5 mb-4">
-                <Sparkles className="w-4 h-4 text-[#F5C451]" />
-                <span className="text-[#F5C451] text-xs font-bold">Save up to 40%</span>
+              <div className="inline-flex items-center gap-2 bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 rounded-full px-4 py-1.5 mb-4">
+                <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
+                <span className="text-[var(--sr-vendor)] text-xs font-bold">Save up to 40%</span>
               </div>
               <h1 className="text-3xl font-black text-white mb-2">
                 Split & Save with{' '}
-                <span className="text-[#F5C451]">Your Neighbors</span>
+                <span className="text-[var(--sr-vendor)]">Your Neighbors</span>
               </h1>
               <p className="text-white/50 text-sm max-w-md mx-auto">
                 Join community bulk orders and get wholesale prices on groceries, livestock, and Ramadan essentials.
@@ -100,7 +100,7 @@ export default function GroupBuyModal() {
           <div className="px-4 mb-8">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-white font-bold text-lg">Active Deals</h3>
-              <span className="text-[#10E07A] text-xs font-bold">{groupBuyDeals.length} deals live</span>
+              <span className="text-[var(--sr-customer)] text-xs font-bold">{groupBuyDeals.length} deals live</span>
             </div>
             <div className="space-y-4">
               {groupBuyDeals.map((deal, index) => {
@@ -124,7 +124,7 @@ export default function GroupBuyModal() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
-                        <span className="bg-[#F5C451]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                        <span className="bg-[var(--sr-vendor)]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {deal.category}
                         </span>
                       </div>
@@ -143,13 +143,13 @@ export default function GroupBuyModal() {
                       {/* Pricing */}
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-white/60 text-sm line-through">{formatNaira(deal.originalPrice)}</span>
-                        <span className="text-[#10E07A] font-black text-lg">{formatNaira(deal.perPersonPrice)}</span>
+                        <span className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(deal.perPersonPrice)}</span>
                         <span className="text-white/65 text-[10px]">per person</span>
                       </div>
                       <div className="flex items-center gap-2 mb-4 text-white/60 text-xs">
                         <span>Group price: {formatNaira(deal.salePrice)}</span>
                         <span>•</span>
-                        <span className="text-[#10E07A]/70 font-bold">{Math.round((1 - deal.salePrice / deal.originalPrice) * 100)}% off</span>
+                        <span className="text-[var(--sr-customer)]/70 font-bold">{Math.round((1 - deal.salePrice / deal.originalPrice) * 100)}% off</span>
                       </div>
 
                       {/* Progress Bar */}
@@ -158,7 +158,7 @@ export default function GroupBuyModal() {
                           <span className="text-white/50 text-xs font-medium">
                             {slots.filled} of {slots.total} slots filled
                           </span>
-                          <span className="text-[#10E07A] text-xs font-bold">{Math.round(progress)}%</span>
+                          <span className="text-[var(--sr-customer)] text-xs font-bold">{Math.round(progress)}%</span>
                         </div>
                         <div className="w-full bg-white/5 rounded-full h-2.5 overflow-hidden">
                           <motion.div
@@ -198,7 +198,7 @@ export default function GroupBuyModal() {
 
                       {/* Delivery Date */}
                       <div className="flex items-center gap-2 mb-4 bg-white/5 rounded-lg px-3 py-2">
-                        <Truck className="w-4 h-4 text-[#10E07A]/70" />
+                        <Truck className="w-4 h-4 text-[var(--sr-customer)]/70" />
                         <span className="text-white/50 text-xs">Guaranteed delivery:</span>
                         <span className="text-white text-xs font-bold">{deal.guaranteedDelivery}</span>
                       </div>
@@ -211,7 +211,7 @@ export default function GroupBuyModal() {
                           className={`flex-1 py-3 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                             slots.joined
                               ? 'bg-white/5 border border-white/10 text-white/65 cursor-not-allowed'
-                              : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
+                              : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                           }`}
                         >
                           {slots.joined ? (
@@ -253,10 +253,10 @@ export default function GroupBuyModal() {
                   transition={{ delay: 0.3 + index * 0.1, duration: 0.4 }}
                   className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 text-center"
                 >
-                  <div className="w-12 h-12 mx-auto mb-3 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/20">
-                    <span className="material-symbols-outlined text-[#10E07A] text-xl">{item.icon}</span>
+                  <div className="w-12 h-12 mx-auto mb-3 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
+                    <span className="material-symbols-outlined text-[var(--sr-customer)] text-xl">{item.icon}</span>
                   </div>
-                  <div className="text-[#10E07A] text-[10px] font-black mb-1">STEP {item.step}</div>
+                  <div className="text-[var(--sr-customer)] text-[10px] font-black mb-1">STEP {item.step}</div>
                   <h4 className="text-white font-bold text-xs mb-1">{item.title}</h4>
                   <p className="text-white/65 text-[10px] leading-tight">{item.description}</p>
                 </motion.div>
@@ -271,16 +271,16 @@ export default function GroupBuyModal() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.4 }}
               onClick={() => toast({ title: 'Coming Soon! 🚀', description: 'Create your own Group Buy and invite your community.' })}
-              className="w-full bg-[#1A1D26] border border-dashed border-[#10E07A]/30 rounded-2xl p-6 flex items-center gap-4 hover:border-[#10E07A]/50 transition-colors group"
+              className="w-full bg-[#1A1D26] border border-dashed border-[var(--sr-customer)]/30 rounded-2xl p-6 flex items-center gap-4 hover:border-[var(--sr-customer)]/50 transition-colors group"
             >
-              <div className="w-14 h-14 bg-[#10E07A]/10 rounded-2xl flex items-center justify-center border border-[#10E07A]/20 group-hover:bg-[#10E07A]/20 transition-colors">
-                <Plus className="w-6 h-6 text-[#10E07A]" />
+              <div className="w-14 h-14 bg-[var(--sr-customer)]/10 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/20 group-hover:bg-[var(--sr-customer)]/20 transition-colors">
+                <Plus className="w-6 h-6 text-[var(--sr-customer)]" />
               </div>
               <div className="text-left flex-1">
                 <h4 className="text-white font-bold text-sm">Start Your Own Split</h4>
                 <p className="text-white/65 text-xs">Create a Group Buy and invite your community</p>
               </div>
-              <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-[#10E07A] transition-colors" />
+              <ChevronRight className="w-5 h-5 text-white/20 group-hover:text-[var(--sr-customer)] transition-colors" />
             </motion.button>
           </div>
         </motion.div>

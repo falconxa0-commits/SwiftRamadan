@@ -102,8 +102,8 @@ export default function DeliveryLocationMap() {
 
               {/* Gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/80 via-transparent to-[#05070A]" />
-              <div className="absolute top-0 left-0 w-64 h-64 bg-[#10E07A]/5 blur-[100px] rounded-full" />
-              <div className="absolute bottom-40 right-0 w-48 h-48 bg-[#F5C451]/5 blur-[80px] rounded-full" />
+              <div className="absolute top-0 left-0 w-64 h-64 bg-[var(--sr-customer)]/5 blur-[100px] rounded-full" />
+              <div className="absolute bottom-40 right-0 w-48 h-48 bg-[var(--sr-vendor)]/5 blur-[80px] rounded-full" />
 
               {/* Block shapes */}
               <div className="absolute top-[25%] left-[15%] w-20 h-16 border border-white/[0.03] bg-white/[0.01] rounded-sm" />
@@ -125,8 +125,8 @@ export default function DeliveryLocationMap() {
                     >
                       <X className="w-5 h-5 text-white/60" />
                     </button>
-                    <div className="flex-1 flex items-center gap-2 bg-[#0F1117] rounded-xl px-4 py-3 border border-white/5 focus-within:border-[#10E07A]/30 transition-all">
-                      <Search className="w-4 h-4 text-[#10E07A]/60 shrink-0" />
+                    <div className="flex-1 flex items-center gap-2 bg-[#0F1117] rounded-xl px-4 py-3 border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
+                      <Search className="w-4 h-4 text-[var(--sr-customer)]/60 shrink-0" />
                       <input
                         type="text"
                         value={searchQuery}
@@ -158,8 +158,8 @@ export default function DeliveryLocationMap() {
                               onClick={() => handleSelectLocation(loc)}
                               className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
                             >
-                              <div className="w-9 h-9 rounded-full bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                                <MapPin className="w-4 h-4 text-[#10E07A]" />
+                              <div className="w-9 h-9 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                                <MapPin className="w-4 h-4 text-[var(--sr-customer)]" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <p className="text-white text-sm font-semibold">{loc.name}</p>
@@ -182,7 +182,7 @@ export default function DeliveryLocationMap() {
                   onClick={handleMyLocation}
                   className="w-12 h-12 rounded-full bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect green-glow"
                 >
-                  <Navigation className="w-5 h-5 text-[#10E07A]" />
+                  <Navigation className="w-5 h-5 text-[var(--sr-customer)]" />
                 </motion.button>
               </div>
 
@@ -192,12 +192,12 @@ export default function DeliveryLocationMap() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="bg-[#1A1D26]/90 border border-[#F5C451]/20 rounded-xl px-3 py-2 glass-effect"
+                  className="bg-[#1A1D26]/90 border border-[var(--sr-vendor)]/20 rounded-xl px-3 py-2 glass-effect"
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-lg">🌙</span>
                     <div>
-                      <p className="text-[#F5C451] text-xs font-bold">Deliver before Iftar</p>
+                      <p className="text-[var(--sr-vendor)] text-xs font-bold">Deliver before Iftar</p>
                       <p className="text-white/65 text-[10px]">Maghrib 6:45 PM</p>
                     </div>
                   </div>
@@ -214,9 +214,9 @@ export default function DeliveryLocationMap() {
                     transition={{ delay: 0.2 }}
                     className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap"
                   >
-                    <div className="bg-[#10E07A] text-[#05070A] text-xs font-bold px-3 py-1.5 rounded-lg">
+                    <div className="bg-[var(--sr-customer)] text-[#05070A] text-xs font-bold px-3 py-1.5 rounded-lg">
                       Delivery Point
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#10E07A] rotate-45" />
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-[var(--sr-customer)] rotate-45" />
                     </div>
                   </motion.div>
 
@@ -227,7 +227,7 @@ export default function DeliveryLocationMap() {
                     transition={{ type: 'spring', damping: 12, stiffness: 150, delay: 0.1 }}
                     className="relative"
                   >
-                    <div className="w-10 h-10 rounded-full bg-[#10E07A] flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
+                    <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
                       <MapPin className="w-5 h-5 text-[#05070A]" fill="#05070A" />
                     </div>
                     {/* Pin shadow */}
@@ -241,12 +241,12 @@ export default function DeliveryLocationMap() {
                         repeat: Infinity,
                         ease: 'easeInOut',
                       }}
-                      className="absolute top-0 left-0 w-10 h-10 rounded-full bg-[#10E07A]/20"
+                      className="absolute top-0 left-0 w-10 h-10 rounded-full bg-[var(--sr-customer)]/20"
                     />
                   </motion.div>
 
                   {/* Pin stick */}
-                  <div className="w-0.5 h-4 bg-[#10E07A] mx-auto" />
+                  <div className="w-0.5 h-4 bg-[var(--sr-customer)] mx-auto" />
                 </div>
               </div>
 
@@ -265,8 +265,8 @@ export default function DeliveryLocationMap() {
                 <div className="px-5 pb-8">
                   {/* Current Address */}
                   <div className="flex items-start gap-3 mb-4">
-                    <div className="w-10 h-10 rounded-full bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0 mt-0.5">
-                      <MapPin className="w-5 h-5 text-[#10E07A]" />
+                    <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0 mt-0.5">
+                      <MapPin className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white/65 text-xs mb-0.5">Current Address</p>
@@ -283,7 +283,7 @@ export default function DeliveryLocationMap() {
                       value={apartment}
                       onChange={(e) => setApartment(e.target.value)}
                       placeholder="e.g. Flat 4, Block B"
-                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#10E07A]/30 placeholder:text-white/20 transition-colors"
+                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 transition-colors"
                     />
                   </div>
 
@@ -295,7 +295,7 @@ export default function DeliveryLocationMap() {
                       onChange={(e) => setDeliveryInstructions(e.target.value)}
                       placeholder="e.g. Ring the bell twice, leave at the gate..."
                       rows={2}
-                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[#10E07A]/30 placeholder:text-white/20 resize-none transition-colors"
+                      className="w-full bg-[#1A1D26] border border-white/5 rounded-xl px-4 py-3 text-white text-sm outline-none focus:border-[var(--sr-customer)]/30 placeholder:text-white/20 resize-none transition-colors"
                     />
                   </div>
 
@@ -312,7 +312,7 @@ export default function DeliveryLocationMap() {
                             onClick={() => handleSelectLocation({ id: shortcuts.indexOf(sc) + 1, name: sc.label, address: sc.address, lat: 0, lng: 0 })}
                             className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold transition-all ${
                               isActive
-                                ? 'bg-[#10E07A]/20 border border-[#10E07A]/30 text-[#10E07A]'
+                                ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
                                 : 'bg-[#1A1D26] border border-white/5 text-white/50 hover:bg-white/5'
                             }`}
                           >
@@ -327,7 +327,7 @@ export default function DeliveryLocationMap() {
                   {/* Confirm Button */}
                   <button
                     onClick={handleConfirm}
-                    className="w-full py-4 rounded-2xl bg-[#10E07A] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow active:scale-[0.98]"
+                    className="w-full py-4 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-black text-base tracking-wide hover:brightness-110 transition-all green-glow active:scale-[0.98]"
                   >
                     CONFIRM LOCATION
                   </button>

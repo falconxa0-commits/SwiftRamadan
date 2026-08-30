@@ -276,12 +276,12 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
 
   const isGold = role === 'vendor';
   const accentColor = isGold ? '#F5C451' : '#38BDF8';
-  const accentBg = isGold ? 'bg-[#F5C451]' : 'bg-[#38BDF8]';
-  const accentText = isGold ? 'text-[#F5C451]' : 'text-[#38BDF8]';
-  const accentBg20 = isGold ? 'bg-[#F5C451]/20' : 'bg-[#38BDF8]/20';
-  const accentBorder20 = isGold ? 'border-[#F5C451]/20' : 'border-[#38BDF8]/20';
-  const accentBg10 = isGold ? 'bg-[#F5C451]/10' : 'bg-[#38BDF8]/10';
-  const accentBorder30 = isGold ? 'border-[#F5C451]/30' : 'border-[#38BDF8]/30';
+  const accentBg = isGold ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-rider)]';
+  const accentText = isGold ? 'text-[var(--sr-vendor)]' : 'text-[var(--sr-rider)]';
+  const accentBg20 = isGold ? 'bg-[var(--sr-vendor)]/20' : 'bg-[var(--sr-rider)]/20';
+  const accentBorder20 = isGold ? 'border-[var(--sr-vendor)]/20' : 'border-[var(--sr-rider)]/20';
+  const accentBg10 = isGold ? 'bg-[var(--sr-vendor)]/10' : 'bg-[var(--sr-rider)]/10';
+  const accentBorder30 = isGold ? 'border-[var(--sr-vendor)]/30' : 'border-[var(--sr-rider)]/30';
   const gradientClass = isGold
     ? 'gold-gradient'
     : 'bg-gradient-to-br from-[#38BDF8]/20 via-[#38BDF8]/5 to-[#1A1D26]';
@@ -293,7 +293,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
         initial="hidden"
         animate="show"
         exit="exit"
-        className="fixed inset-0 bg-[#06070B] z-[100] flex flex-col"
+        className="fixed inset-0 bg-[var(--sr-surface-base)] z-[100] flex flex-col"
       >
         {/* Header */}
         <motion.div
@@ -351,8 +351,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       <p className="text-white text-3xl font-black mt-1">{formatNaira(availableBalance)}</p>
                     )}
                     <div className="flex items-center gap-2 mt-3">
-                      <TrendingUp className="w-3.5 h-3.5 text-[#10E07A]" />
-                      <span className="text-[#10E07A] text-xs font-bold">
+                      <TrendingUp className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
+                      <span className="text-[var(--sr-customer)] text-xs font-bold">
                         +{formatNaira(todayEarnings)} today
                       </span>
                     </div>
@@ -360,8 +360,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                 </motion.div>
 
                 {/* Stats Grid 2x2 */}
-                <motion.div variants={staggerItem} className="grid grid-cols-2 gap-3">
-                  <div className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                     <div className={`w-8 h-8 rounded-lg ${accentBg20} flex items-center justify-center mb-2 border ${accentBorder20}`}>
                       <Wallet className={`w-4 h-4 ${accentText}`} />
                     </div>
@@ -372,9 +372,9 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       <p className="text-white font-black text-lg mt-0.5">{formatNaira(availableBalance)}</p>
                     )}
                   </div>
-                  <div className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#38BDF8]/20 flex items-center justify-center mb-2 border border-[#38BDF8]/20">
-                      <Clock className="w-4 h-4 text-[#38BDF8]" />
+                  <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--sr-rider)]/20 flex items-center justify-center mb-2 border border-[var(--sr-rider)]/20">
+                      <Clock className="w-4 h-4 text-[var(--sr-rider)]" />
                     </div>
                     <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
                       {role === 'rider' ? 'Withdrawn' : 'Pending'}
@@ -382,25 +382,25 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     {loading ? (
                       <div className="mt-0.5 h-5 w-20 bg-white/5 rounded animate-pulse" />
                     ) : (
-                      <p className="text-[#38BDF8] font-black text-lg mt-0.5">
+                      <p className="text-[var(--sr-rider)] font-black text-lg mt-0.5">
                         {formatNaira(role === 'rider' ? totalWithdrawn : pendingAmount)}
                       </p>
                     )}
                   </div>
-                  <div className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#10E07A]/20 flex items-center justify-center mb-2 border border-[#10E07A]/20">
-                      <TrendingUp className="w-4 h-4 text-[#10E07A]" />
+                  <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--sr-customer)]/20 flex items-center justify-center mb-2 border border-[var(--sr-customer)]/20">
+                      <TrendingUp className="w-4 h-4 text-[var(--sr-customer)]" />
                     </div>
                     <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">Total Earned</p>
                     {loading ? (
                       <div className="mt-0.5 h-5 w-20 bg-white/5 rounded animate-pulse" />
                     ) : (
-                      <p className="text-[#10E07A] font-black text-lg mt-0.5">{formatNaira(totalEarned)}</p>
+                      <p className="text-[var(--sr-customer)] font-black text-lg mt-0.5">{formatNaira(totalEarned)}</p>
                     )}
                   </div>
-                  <div className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
-                    <div className="w-8 h-8 rounded-lg bg-[#F5C451]/20 flex items-center justify-center mb-2 border border-[#F5C451]/20">
-                      <ArrowDownLeft className="w-4 h-4 text-[#F5C451]" />
+                  <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
+                    <div className="w-8 h-8 rounded-lg bg-[var(--sr-vendor)]/20 flex items-center justify-center mb-2 border border-[var(--sr-vendor)]/20">
+                      <ArrowDownLeft className="w-4 h-4 text-[var(--sr-vendor)]" />
                     </div>
                     <p className="text-white/65 text-[10px] uppercase tracking-widest font-bold">
                       {role === 'rider' ? 'Today' : 'Revenue'}
@@ -408,14 +408,14 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                     {loading ? (
                       <div className="mt-0.5 h-5 w-20 bg-white/5 rounded animate-pulse" />
                     ) : (
-                      <p className="text-[#F5C451] font-black text-lg mt-0.5">{formatNaira(todayEarnings)}</p>
+                      <p className="text-[var(--sr-vendor)] font-black text-lg mt-0.5">{formatNaira(todayEarnings)}</p>
                     )}
                   </div>
                 </motion.div>
 
                 {/* Weekly Earnings Mini Chart (rider only) */}
                 {role === 'rider' && weeklyEarnings.length > 0 && (
-                  <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                  <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <BarChart3 className="w-4 h-4 text-white/65" />
                       <h3 className="text-white text-sm font-bold">Weekly Earnings</h3>
@@ -436,7 +436,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                                 style={{ height: `${Math.max(pct, 4)}%` }}
                               />
                             </div>
-                            <span className={`text-[9px] font-bold ${isToday ? 'text-[#38BDF8]' : 'text-white/60'}`}>
+                            <span className={`text-[9px] font-bold ${isToday ? 'text-[var(--sr-rider)]' : 'text-white/60'}`}>
                               {day.day}
                             </span>
                           </div>
@@ -447,7 +447,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                 )}
 
                 {/* Amount Input Section */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                   <h3 className="text-white text-sm font-bold mb-3">Payout Amount</h3>
 
                   <div className="relative mb-3">
@@ -459,7 +459,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       value={payoutAmount}
                       onChange={(e) => setPayoutAmount(e.target.value.replace(/[^0-9]/g, ''))}
                       disabled={loading || availableBalance === 0}
-                      className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white text-lg font-bold placeholder:text-white/20 focus:border-[#38BDF8]/30 focus:outline-none transition-colors disabled:opacity-50"
+                      className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl pl-10 pr-4 py-3.5 text-white text-lg font-bold placeholder:text-white/20 focus:border-[var(--sr-rider)]/30 focus:outline-none transition-colors disabled:opacity-50"
                     />
                   </div>
 
@@ -486,18 +486,18 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                 </motion.div>
 
                 {/* Bank Account Section */}
-                <motion.div variants={staggerItem} className="rounded-2xl bg-[#0F1118] border border-white/5 p-4">
+                <motion.div variants={staggerItem} className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4">
                   <h3 className="text-white text-sm font-bold mb-3">Destination Account</h3>
                   {hasBank ? (
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/20 flex items-center justify-center border border-[#38BDF8]/20">
-                        <Building2 className="w-5 h-5 text-[#38BDF8]" />
+                      <div className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/20 flex items-center justify-center border border-[var(--sr-rider)]/20">
+                        <Building2 className="w-5 h-5 text-[var(--sr-rider)]" />
                       </div>
                       <div className="flex-1">
                         <p className="text-white text-sm font-semibold">{bankDisplay}</p>
                         <p className="text-white/60 text-[10px]">Primary account</p>
                       </div>
-                      <CheckCircle2 className="w-5 h-5 text-[#10E07A]" />
+                      <CheckCircle2 className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>
                   ) : (
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
@@ -538,8 +538,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                       disabled={submitting || availableBalance === 0 || !hasBank}
                       className={`w-full py-4 rounded-2xl font-black text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] ${
                         isGold
-                          ? 'bg-[#F5C451] text-[#06070B] hover:bg-[#F5C451]/90'
-                          : 'bg-[#38BDF8] text-[#06070B] hover:bg-[#38BDF8]/90'
+                          ? 'bg-[var(--sr-vendor)] text-[#06070B] hover:bg-[var(--sr-vendor)]/90'
+                          : 'bg-[var(--sr-rider)] text-[#06070B] hover:bg-[var(--sr-rider)]/90'
                       }`}
                     >
                       {submitting ? (
@@ -605,7 +605,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 }}
-                  className="w-full max-w-xs bg-[#0F1118] border border-white/5 rounded-2xl p-5 space-y-3"
+                  className="w-full max-w-xs bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-5 space-y-3"
                 >
                   <div className="flex justify-between items-center">
                     <span className="text-white/65 text-xs">Amount</span>
@@ -624,7 +624,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
                     <span className="text-white/65 text-xs">Status</span>
-                    <span className="text-[#38BDF8] text-xs font-bold">Processing</span>
+                    <span className="text-[var(--sr-rider)] text-xs font-bold">Processing</span>
                   </div>
                   <div className="h-px bg-white/5" />
                   <div className="flex justify-between items-center">
@@ -640,8 +640,8 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
                   onClick={onClose}
                   className={`mt-8 px-8 py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-[0.98] ${
                     isGold
-                      ? 'bg-[#F5C451] text-[#06070B] hover:bg-[#F5C451]/90'
-                      : 'bg-[#38BDF8] text-[#06070B] hover:bg-[#38BDF8]/90'
+                      ? 'bg-[var(--sr-vendor)] text-[#06070B] hover:bg-[var(--sr-vendor)]/90'
+                      : 'bg-[var(--sr-rider)] text-[#06070B] hover:bg-[var(--sr-rider)]/90'
                   }`}
                 >
                   Done

@@ -159,7 +159,7 @@ export default function ThemeTransition() {
 
             <div className="px-6 pb-8 space-y-6">
               {/* Auto-detect toggle */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8">
                 <div>
                   <p className="text-sm font-semibold text-white">Auto-Detect Time</p>
                   <p className="text-xs text-white/65">Theme shifts based on prayer schedule</p>
@@ -167,7 +167,7 @@ export default function ThemeTransition() {
                 <button
                   onClick={() => setAutoDetect(!autoDetect)}
                   className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
-                    autoDetect ? 'bg-[#10E07A]' : 'bg-white/10'
+                    autoDetect ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                   }`}
                   role="switch"
                   aria-checked={autoDetect}
@@ -276,7 +276,7 @@ export default function ThemeTransition() {
                   ].map((schedule) => (
                     <div
                       key={schedule.time}
-                      className="flex items-center justify-between p-3 rounded-xl bg-[#0F1118] border border-white/5"
+                      className="flex items-center justify-between p-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5"
                     >
                       <div className="flex items-center gap-3">
                         <div

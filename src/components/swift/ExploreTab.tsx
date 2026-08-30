@@ -114,7 +114,7 @@ export default function ExploreTab() {
           <Skeleton className="h-12 w-full rounded-2xl" />
           {/* Category grid skeleton */}
           <Skeleton className="h-6 w-40 rounded-md" />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="aspect-square w-full rounded-2xl" />
             ))}
@@ -124,14 +124,14 @@ export default function ExploreTab() {
           <Skeleton className="h-56 w-full rounded-2xl" />
           {/* Retailers skeleton */}
           <Skeleton className="h-6 w-40 rounded-md" />
-          <div className="flex gap-4 overflow-hidden">
+          <div className="flex gap-3 sm:gap-4 overflow-hidden">
             {Array.from({ length: 3 }).map((_, i) => (
               <Skeleton key={i} className="min-w-[160px] h-48 rounded-2xl" />
             ))}
           </div>
           {/* Products skeleton */}
           <Skeleton className="h-6 w-32 rounded-md" />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className="glass-card rounded-2xl p-3 space-y-2">
                 <Skeleton className="aspect-square w-full rounded-xl" />
@@ -170,7 +170,7 @@ export default function ExploreTab() {
           <div className="flex-1">
             <p className="text-white text-sm font-bold flex items-center gap-1.5">
               Visual Search
-              <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
+              <Sparkles className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
             </p>
             <p className="text-white/65 text-[11px]">Snap a photo, find similar meals instantly</p>
           </div>
@@ -198,7 +198,7 @@ export default function ExploreTab() {
       {/* Category Grid */}
       <div className="px-5 py-4">
         <h2 className="text-white text-lg font-extrabold mb-3 heading-accent">Browse Categories</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {categoryHubItems.map((item, i) => {
             const isActive = activeCategory === item.name;
             return (
@@ -208,7 +208,7 @@ export default function ExploreTab() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: i * 0.1 }}
                 onClick={() => handleCategoryClick(item)}
-                className={`relative group cursor-pointer overflow-hidden rounded-2xl aspect-square flex flex-col justify-end p-4 border transition-colors text-left ${
+                className={`relative group cursor-pointer overflow-hidden rounded-2xl aspect-square flex flex-col justify-end p-3 sm:p-4 border transition-colors text-left ${
                   isActive ? 'border-[var(--sr-customer)]/40 ring-1 ring-[#10E07A]/20' : 'border-white/5 hover:border-[var(--sr-customer)]/20'
                 }`}
                 style={{
@@ -218,7 +218,7 @@ export default function ExploreTab() {
                 }}
               >
                 <span className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter ${
-                  isActive ? 'bg-[var(--sr-customer)] text-[#06070B]' : 'bg-[#F5C451] text-[#06070B]'
+                  isActive ? 'bg-[var(--sr-customer)] text-[#06070B]' : 'bg-[var(--sr-vendor)] text-[#06070B]'
                 }`}>
                   {isActive ? '✓ Active' : item.badge}
                 </span>
@@ -251,7 +251,7 @@ export default function ExploreTab() {
             >
               <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-[#06070B]/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
-                <span className="inline-block bg-[#F5C451]/90 text-[#06070B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase mb-2">Ramadan Kareem</span>
+                <span className="inline-block bg-[var(--sr-vendor)]/90 text-[#06070B] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase mb-2">Ramadan Kareem</span>
                 <h3 className="text-2xl font-bold text-white leading-tight tracking-tight">Premium Ramadan Boxes</h3>
               </div>
             </div>
@@ -262,7 +262,7 @@ export default function ExploreTab() {
               <div className="flex items-center justify-between">
                 <div className="flex flex-col">
                   <span className="text-[10px] text-white/50 uppercase tracking-wider">Starting from</span>
-                  <span className="text-[#F5C451] font-bold text-lg">{formatNaira(15000)}</span>
+                  <span className="text-[var(--sr-vendor)] font-bold text-lg">{formatNaira(15000)}</span>
                 </div>
                 <button
                   onClick={handleShopNow}
@@ -287,7 +287,7 @@ export default function ExploreTab() {
             Explore All
           </button>
         </div>
-        <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
+        <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 no-scrollbar">
           {popularRetailers.map((retailer) => (
             <motion.button
               key={retailer.id}
@@ -304,8 +304,8 @@ export default function ExploreTab() {
               <h4 className="text-white text-sm font-bold tracking-tight">{retailer.name}</h4>
               <p className="text-white/65 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
               <div className="flex items-center gap-1 mt-1">
-                <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
-                <span className="text-[#F5C451] text-[10px] font-bold">{retailer.rating}</span>
+                <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{retailer.rating}</span>
                 {retailer.verified && (
                   <CheckCircle className="w-3 h-3 text-[var(--sr-customer)] ml-1" />
                 )}
@@ -318,7 +318,7 @@ export default function ExploreTab() {
       {/* Retailer Detail Card */}
       {selectedRetailer && (
         <div className="px-5 mt-2">
-          <div className="glass-card rounded-2xl p-4">
+          <div className="glass-card rounded-2xl p-3 sm:p-4">
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h4 className="text-white font-bold tracking-tight">{selectedRetailer.name}</h4>
@@ -360,7 +360,7 @@ export default function ExploreTab() {
       {/* Quick Actions */}
       <div className="px-5 py-8">
         <h2 className="text-xl font-bold mb-4 heading-accent">Your Favorites</h2>
-        <div className="flex gap-4 overflow-x-auto pb-4 no-scrollbar">
+        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 no-scrollbar">
           {quickActions.map((action) => (
             <button
               key={action.id}
@@ -368,7 +368,7 @@ export default function ExploreTab() {
               className="flex-shrink-0 w-20 flex flex-col items-center gap-2 cursor-pointer group"
             >
               <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[var(--sr-customer)]/20 transition-colors group-active:scale-95 icon-tile">
-                <span className="material-symbols-outlined text-[#F5C451] text-2xl relative z-10">{action.icon}</span>
+                <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl relative z-10">{action.icon}</span>
               </div>
               <span className="text-[10px] font-medium text-center text-white/70">{action.name}</span>
             </button>
@@ -389,7 +389,7 @@ export default function ExploreTab() {
             See All
           </button>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {filteredProducts.slice(0, 6).map(product => (
             <motion.div
               key={product.id}
@@ -410,8 +410,8 @@ export default function ExploreTab() {
               <div className="p-3">
                 <p className="text-white text-xs font-bold truncate tracking-tight">{product.name}</p>
                 <div className="flex items-center gap-1 mt-1">
-                  <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
-                  <span className="text-[#F5C451] text-[10px] font-bold">{product.rating}</span>
+                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                  <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{product.rating}</span>
                   <span className="text-white/20 text-[10px]">({product.reviews})</span>
                 </div>
                 <div className="flex items-center justify-between mt-1.5">

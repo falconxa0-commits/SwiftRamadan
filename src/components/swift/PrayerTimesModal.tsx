@@ -127,9 +127,9 @@ export default function PrayerTimesModal() {
             className="fixed bottom-0 left-0 right-0 h-[90vh] bg-[#05070A] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0">
               <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-[#F5C451]">mosque</span>
+                <span className="material-symbols-outlined text-[var(--sr-vendor)]">mosque</span>
                 <h2 className="text-white font-bold text-lg">Prayer Times</h2>
               </div>
               <button
@@ -145,11 +145,11 @@ export default function PrayerTimesModal() {
             <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* Next Prayer Countdown */}
               <div className="px-4 pt-4">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[#10E07A]/20 p-6 text-center green-glow">
-                  <div className="absolute top-0 left-0 w-full h-full bg-[#10E07A]/5 blur-[80px]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[var(--sr-customer)]/20 p-6 text-center green-glow">
+                  <div className="absolute top-0 left-0 w-full h-full bg-[var(--sr-customer)]/5 blur-[80px]" />
                   <div className="relative">
                     <p className="text-white/65 text-xs uppercase tracking-widest mb-1">Next Prayer</p>
-                    <p className="text-[#10E07A] text-2xl font-black">{countdown.label}</p>
+                    <p className="text-[var(--sr-customer)] text-2xl font-black">{countdown.label}</p>
                     <motion.div
                       key={`${countdown.hours}-${countdown.minutes}`}
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -177,29 +177,29 @@ export default function PrayerTimesModal() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className={`flex items-center gap-4 p-4 rounded-2xl border transition-all ${
+                        className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-all ${
                           isNext
-                            ? 'bg-[#F5C451]/5 border-[#F5C451]/30 gold-glow'
+                            ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/30 gold-glow'
                             : 'bg-[#1A1D26]/40 border-white/5'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          isNext ? 'bg-[#F5C451]/20' : 'bg-white/5'
+                          isNext ? 'bg-[var(--sr-vendor)]/20' : 'bg-white/5'
                         }`}>
                           <span className={`material-symbols-outlined text-lg ${
-                            isNext ? 'text-[#F5C451]' : 'text-white/65'
+                            isNext ? 'text-[var(--sr-vendor)]' : 'text-white/65'
                           }`}>{prayer.icon}</span>
                         </div>
                         <div className="flex-1">
-                          <p className={`font-bold text-sm ${isNext ? 'text-[#F5C451]' : 'text-white'}`}>
+                          <p className={`font-bold text-sm ${isNext ? 'text-[var(--sr-vendor)]' : 'text-white'}`}>
                             {prayer.name}
                           </p>
                         </div>
-                        <p className={`text-sm font-bold ${isNext ? 'text-[#F5C451]' : 'text-white/50'}`}>
+                        <p className={`text-sm font-bold ${isNext ? 'text-[var(--sr-vendor)]' : 'text-white/50'}`}>
                           {prayer.time}
                         </p>
                         {isNext && (
-                          <span className="text-[#F5C451] text-[10px] font-bold uppercase bg-[#F5C451]/10 px-2 py-0.5 rounded-full">
+                          <span className="text-[var(--sr-vendor)] text-[10px] font-bold uppercase bg-[var(--sr-vendor)]/10 px-2 py-0.5 rounded-full">
                             Next
                           </span>
                         )}
@@ -214,9 +214,9 @@ export default function PrayerTimesModal() {
                 <div className="flex gap-3">
                   <button
                     onClick={() => setActiveModal('mosque')}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#10E07A]/20 transition-colors"
+                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
                   >
-                    <Compass className="w-5 h-5 text-[#F5C451]" />
+                    <Compass className="w-5 h-5 text-[var(--sr-vendor)]" />
                     <div className="text-left">
                       <p className="text-white font-bold text-xs">Qibla Finder</p>
                       <p className="text-white/60 text-[10px]">NE 56°</p>
@@ -230,11 +230,11 @@ export default function PrayerTimesModal() {
                         description: athanEnabled ? 'You won\'t receive prayer notifications' : 'You\'ll be notified at each prayer time',
                       });
                     }}
-                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[#10E07A]/20 transition-colors"
+                    className="flex-1 bg-[#1A1D26] rounded-2xl p-3 border border-white/5 flex items-center gap-3 hover:border-[var(--sr-customer)]/20 transition-colors"
                     aria-label={athanEnabled ? 'Disable Athan alerts' : 'Enable Athan alerts'}
                   >
                     <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors ${
-                      athanEnabled ? 'border-[#10E07A] bg-[#10E07A]' : 'border-white/20'
+                      athanEnabled ? 'border-[var(--sr-customer)] bg-[var(--sr-customer)]' : 'border-white/20'
                     }`}>
                       {athanEnabled && <div className="w-2 h-2 bg-[#05070A] rounded-full" />}
                     </div>
@@ -249,15 +249,15 @@ export default function PrayerTimesModal() {
               {/* Ramadan Essentials Grid */}
               <div className="px-4 mt-6">
                 <h3 className="text-white font-bold text-base mb-3">Ramadan Essentials</h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {ramadanEssentials.map((item) => (
                     <motion.button
                       key={item.name}
                       onClick={item.action}
                       whileTap={{ scale: 0.97 }}
-                      className="bg-[#1A1D26] rounded-2xl p-4 border border-white/5 text-left hover:border-[#10E07A]/20 transition-colors"
+                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-white/5 text-left hover:border-[var(--sr-customer)]/20 transition-colors"
                     >
-                      <span className="material-symbols-outlined text-[#F5C451] text-2xl mb-2">{item.icon}</span>
+                      <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl mb-2">{item.icon}</span>
                       <p className="text-white font-bold text-sm">{item.name}</p>
                     </motion.button>
                   ))}
@@ -266,11 +266,11 @@ export default function PrayerTimesModal() {
 
               {/* Daily Dua Section */}
               <div className="px-4 mt-6 mb-6">
-                <div className="bg-[#1A1D26] rounded-2xl p-5 border-2 border-[#F5C451]/20">
+                <div className="bg-[#1A1D26] rounded-2xl p-5 border-2 border-[var(--sr-vendor)]/20">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <span className="material-symbols-outlined text-[#F5C451]">menu_book</span>
-                      <h4 className="text-[#F5C451] font-bold text-sm">Daily Dua</h4>
+                      <span className="material-symbols-outlined text-[var(--sr-vendor)]">menu_book</span>
+                      <h4 className="text-[var(--sr-vendor)] font-bold text-sm">Daily Dua</h4>
                     </div>
                     <button
                       onClick={handleShareDua}

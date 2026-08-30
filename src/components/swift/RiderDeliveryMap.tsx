@@ -46,7 +46,7 @@ export default function RiderDeliveryMap() {
       <div className="absolute top-4 left-4 right-4 z-30">
         <div className="glass-effect rounded-2xl border border-white/10 p-1">
           <div className="flex items-center gap-3 px-3 py-2">
-            <Search className="w-4 h-4 text-[#10E07A] shrink-0" />
+            <Search className="w-4 h-4 text-[var(--sr-customer)] shrink-0" />
             <span className="text-white/60 text-sm flex-1 truncate">{destAddress}</span>
             <MapPin className="w-4 h-4 text-white/20 shrink-0" />
           </div>
@@ -149,7 +149,7 @@ export default function RiderDeliveryMap() {
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.5 }}
             className="relative"
           >
-            <div className="w-8 h-8 bg-[#F5C451] rounded-full flex items-center justify-center shadow-lg shadow-[#F5C451]/30">
+            <div className="w-8 h-8 bg-[var(--sr-vendor)] rounded-full flex items-center justify-center shadow-lg shadow-[#F5C451]/30">
               <MapPin className="w-4 h-4 text-[#05070A]" />
             </div>
             <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#F5C451]" />
@@ -168,12 +168,12 @@ export default function RiderDeliveryMap() {
             transition={{ type: 'spring', stiffness: 200, damping: 15, delay: 0.3 }}
             className="relative"
           >
-            <div className="w-8 h-8 bg-[#10E07A] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
+            <div className="w-8 h-8 bg-[var(--sr-customer)] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/30">
               <Package className="w-4 h-4 text-[#05070A]" />
             </div>
             {/* Pickup label */}
-            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[#1A1D26] border border-[#10E07A]/20 rounded-lg">
-              <span className="text-[#10E07A] text-[8px] font-bold">Pickup</span>
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[#1A1D26] border border-[var(--sr-customer)]/20 rounded-lg">
+              <span className="text-[var(--sr-customer)] text-[8px] font-bold">Pickup</span>
             </div>
           </motion.div>
         </div>
@@ -188,17 +188,17 @@ export default function RiderDeliveryMap() {
           >
             {/* Pulse rings */}
             <motion.div
-              className="absolute -inset-4 bg-[#10E07A]/10 rounded-full"
+              className="absolute -inset-4 bg-[var(--sr-customer)]/10 rounded-full"
               animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             />
             <motion.div
-              className="absolute -inset-2 bg-[#10E07A]/15 rounded-full"
+              className="absolute -inset-2 bg-[var(--sr-customer)]/15 rounded-full"
               animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0, 0.4] }}
               transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
             />
             {/* Main dot */}
-            <div className="w-10 h-10 bg-[#10E07A] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/40 relative z-10">
+            <div className="w-10 h-10 bg-[var(--sr-customer)] rounded-full flex items-center justify-center shadow-lg shadow-[#10E07A]/40 relative z-10">
               <span className="material-symbols-outlined text-[#05070A] text-lg">moped</span>
             </div>
           </motion.div>
@@ -213,10 +213,10 @@ export default function RiderDeliveryMap() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.8 }}
-          className="bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-xl px-3 py-1.5 flex items-center gap-1.5 gold-glow"
+          className="bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 rounded-xl px-3 py-1.5 flex items-center gap-1.5 gold-glow"
         >
-          <span className="material-symbols-outlined text-[#F5C451] text-sm">bedtime</span>
-          <span className="text-[#F5C451] text-[10px] font-black">Deliver before Iftar</span>
+          <span className="material-symbols-outlined text-[var(--sr-vendor)] text-sm">bedtime</span>
+          <span className="text-[var(--sr-vendor)] text-[10px] font-black">Deliver before Iftar</span>
         </motion.div>
       </div>
       )}
@@ -240,7 +240,7 @@ export default function RiderDeliveryMap() {
           onClick={() => setZoom(1)}
           className="w-10 h-10 glass-effect rounded-xl border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
         >
-          <Navigation className="w-4 h-4 text-[#10E07A]" />
+          <Navigation className="w-4 h-4 text-[var(--sr-customer)]" />
         </button>
       </div>
       )}
@@ -260,9 +260,9 @@ export default function RiderDeliveryMap() {
                 <h3 className="text-white text-lg font-extrabold">
                   Arriving in {activeDelivery.eta}
                 </h3>
-                <div className="flex items-center gap-1.5 bg-[#10E07A]/10 px-2.5 py-1 rounded-full">
-                  <span className="size-2 bg-[#10E07A] rounded-full animate-pulse" />
-                  <span className="text-[#10E07A] text-[10px] font-bold">
+                <div className="flex items-center gap-1.5 bg-[var(--sr-customer)]/10 px-2.5 py-1 rounded-full">
+                  <span className="size-2 bg-[var(--sr-customer)] rounded-full animate-pulse" />
+                  <span className="text-[var(--sr-customer)] text-[10px] font-bold">
                     {activeDelivery.status === 'picked_up' ? 'Picked Up' : 'In Transit'}
                   </span>
                 </div>
@@ -271,7 +271,7 @@ export default function RiderDeliveryMap() {
               {/* Progress Bar */}
               <div className="w-full bg-white/5 rounded-full h-2 mb-3">
                 <motion.div
-                  className="bg-[#10E07A] h-2 rounded-full"
+                  className="bg-[var(--sr-customer)] h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${activeDelivery.progress}%` }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -280,8 +280,8 @@ export default function RiderDeliveryMap() {
 
               {/* Delivery Info */}
               <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/5">
-                <div className="w-12 h-12 bg-[#10E07A]/15 rounded-full flex items-center justify-center border border-[#10E07A]/20">
-                  <span className="material-symbols-outlined text-[#10E07A] text-xl">person</span>
+                <div className="w-12 h-12 bg-[var(--sr-customer)]/15 rounded-full flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <span className="material-symbols-outlined text-[var(--sr-customer)] text-xl">person</span>
                 </div>
                 <div className="flex-1">
                   <p className="text-white text-sm font-bold">{activeDelivery.customer}</p>
@@ -290,28 +290,28 @@ export default function RiderDeliveryMap() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[#10E07A] text-xs font-bold">{activeDelivery.id}</p>
+                  <p className="text-[var(--sr-customer)] text-xs font-bold">{activeDelivery.id}</p>
                   <p className="text-white/60 text-[10px]">{activeDelivery.progress}% complete</p>
                 </div>
               </div>
 
               {/* Quick Status Ticker */}
               <div className="flex items-center gap-2 mb-4">
-                <Clock className="w-3.5 h-3.5 text-[#F5C451] shrink-0" />
+                <Clock className="w-3.5 h-3.5 text-[var(--sr-vendor)] shrink-0" />
                 <div className="flex-1 overflow-hidden">
                   <motion.div
-                    className="flex gap-4 whitespace-nowrap"
+                    className="flex gap-3 sm:gap-4 whitespace-nowrap"
                     animate={{ x: [0, -200] }}
                     transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
                   >
                     <span className="text-white/50 text-[10px]">{activeDelivery.items}</span>
-                    <span className="text-[#F5C451] text-[10px]">•</span>
+                    <span className="text-[var(--sr-vendor)] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Handle with care</span>
-                    <span className="text-[#F5C451] text-[10px]">•</span>
+                    <span className="text-[var(--sr-vendor)] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Iftar delivery</span>
-                    <span className="text-[#F5C451] text-[10px]">•</span>
+                    <span className="text-[var(--sr-vendor)] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">Customer waiting</span>
-                    <span className="text-[#F5C451] text-[10px]">•</span>
+                    <span className="text-[var(--sr-vendor)] text-[10px]">•</span>
                     <span className="text-white/50 text-[10px]">{activeDelivery.items}</span>
                   </motion.div>
                 </div>
@@ -321,7 +321,7 @@ export default function RiderDeliveryMap() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleCall}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#05070A] py-3 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[#05070A] py-3 rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   Call Customer
@@ -354,7 +354,7 @@ export default function RiderDeliveryMap() {
                   <p className="text-white/65 text-sm">Waiting for delivery requests...</p>
                   <button
                     onClick={() => useAppStore.getState().setActiveModal('new-delivery')}
-                    className="mt-3 px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors"
+                    className="mt-3 px-6 py-2.5 bg-[var(--sr-customer)] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors"
                   >
                     View Available Deliveries
                   </button>
@@ -364,7 +364,7 @@ export default function RiderDeliveryMap() {
                   <p className="text-white/65 text-sm">Go online to start receiving delivery requests</p>
                   <button
                     onClick={() => useAppStore.getState().setRiderOnline(true)}
-                    className="px-6 py-2.5 bg-[#10E07A] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors flex items-center gap-2"
+                    className="px-6 py-2.5 bg-[var(--sr-customer)] text-[#05070A] rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors flex items-center gap-2"
                   >
                     <span className="size-2 bg-[#05070A] rounded-full animate-pulse" />
                     Go Online

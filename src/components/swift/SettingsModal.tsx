@@ -75,7 +75,7 @@ function GoldToggle({
       aria-checked={enabled}
       aria-label={label}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-40 ${
-        enabled ? 'bg-[#F5C451]' : 'bg-white/10'
+        enabled ? 'bg-[var(--sr-vendor)]' : 'bg-white/10'
       }`}
       style={enabled ? { boxShadow: '0 0 12px rgba(245,196,81,0.35)' } : undefined}
     >
@@ -195,7 +195,7 @@ export default function SettingsModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={() => setActiveModal(null)}
           />
 
@@ -205,7 +205,7 @@ export default function SettingsModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[90vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -215,8 +215,8 @@ export default function SettingsModal() {
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center icon-tile">
-                    <SettingsIcon className="w-5 h-5 text-[#F5C451] relative z-10" />
+                  <div className="w-9 h-9 rounded-xl bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/30 flex items-center justify-center icon-tile">
+                    <SettingsIcon className="w-5 h-5 text-[var(--sr-vendor)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Settings</h2>
@@ -236,7 +236,7 @@ export default function SettingsModal() {
               <div className="flex-1 overflow-y-auto custom-scrollbar px-5 py-4 space-y-6">
                 {loading ? (
                   <div className="flex flex-col items-center justify-center py-12 gap-3">
-                    <Loader2 className="w-7 h-7 text-[#F5C451] animate-spin" />
+                    <Loader2 className="w-7 h-7 text-[var(--sr-vendor)] animate-spin" />
                     <p className="text-white/65 text-sm">Loading settings…</p>
                   </div>
                 ) : (
@@ -249,7 +249,7 @@ export default function SettingsModal() {
                       <div className="space-y-2">
                         <div className="flex items-center justify-between p-3 glass-card rounded-xl">
                           <div className="flex items-center gap-3">
-                            <Bell className="w-5 h-5 text-[#10E07A]" />
+                            <Bell className="w-5 h-5 text-[var(--sr-customer)]" />
                             <div>
                               <p className="text-white font-bold text-sm">Push Notifications</p>
                               <p className="text-white/65 text-xs">Order updates & alerts</p>
@@ -264,7 +264,7 @@ export default function SettingsModal() {
                         </div>
                         <div className="flex items-center justify-between p-3 glass-card rounded-xl">
                           <div className="flex items-center gap-3">
-                            <MessageSquare className="w-5 h-5 text-[#38BDF8]" />
+                            <MessageSquare className="w-5 h-5 text-[var(--sr-rider)]" />
                             <div>
                               <p className="text-white font-bold text-sm">In-App Notifications</p>
                               <p className="text-white/65 text-xs">Show inside the app</p>
@@ -305,7 +305,7 @@ export default function SettingsModal() {
                           {settings.theme === 'dark' ? (
                             <Moon className="w-5 h-5 text-[#A78BFA]" />
                           ) : (
-                            <Sun className="w-5 h-5 text-[#F5C451]" />
+                            <Sun className="w-5 h-5 text-[var(--sr-vendor)]" />
                           )}
                           <div>
                             <p className="text-white font-bold text-sm">Theme</p>
@@ -332,7 +332,7 @@ export default function SettingsModal() {
                       </p>
                       <div className="p-3 glass-card rounded-xl">
                         <div className="flex items-center gap-3 mb-3">
-                          <Globe className="w-5 h-5 text-[#10E07A]" />
+                          <Globe className="w-5 h-5 text-[var(--sr-customer)]" />
                           <p className="text-white font-bold text-sm">App Language</p>
                         </div>
                         <div className="grid grid-cols-1 gap-2">
@@ -342,18 +342,18 @@ export default function SettingsModal() {
                               onClick={() => saveField('language', lang.code, `Language: ${lang.label}`)}
                               className={`flex items-center justify-between p-2.5 rounded-lg border transition-all text-left ${
                                 settings.language === lang.code
-                                  ? 'bg-[#F5C451]/10 border-[#F5C451]/30'
+                                  ? 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/30'
                                   : 'bg-white/[0.02] border-white/5 hover:border-white/15'
                               }`}
                             >
                               <span className="flex items-center gap-2.5">
                                 <span className="text-lg">{lang.flag}</span>
-                                <span className={`text-sm font-bold ${settings.language === lang.code ? 'text-[#F5C451]' : 'text-white/80'}`}>
+                                <span className={`text-sm font-bold ${settings.language === lang.code ? 'text-[var(--sr-vendor)]' : 'text-white/80'}`}>
                                   {lang.label}
                                 </span>
                               </span>
                               {settings.language === lang.code && (
-                                <span className="w-2 h-2 rounded-full bg-[#F5C451] shadow-[0_0_8px_#F5C451]" />
+                                <span className="w-2 h-2 rounded-full bg-[var(--sr-vendor)] shadow-[0_0_8px_#F5C451]" />
                               )}
                             </button>
                           ))}
@@ -368,24 +368,24 @@ export default function SettingsModal() {
                       </p>
                       <div className="p-3 glass-card rounded-xl">
                         <div className="flex items-center gap-3 mb-3">
-                          <DollarSign className="w-5 h-5 text-[#F5C451]" />
+                          <DollarSign className="w-5 h-5 text-[var(--sr-vendor)]" />
                           <p className="text-white font-bold text-sm">Display Currency</p>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                           {CURRENCIES.map(c => (
                             <button
                               key={c.code}
                               onClick={() => saveField('currency', c.code, `Currency: ${c.code}`)}
                               className={`flex flex-col items-center gap-1 p-3 rounded-lg border transition-all ${
                                 settings.currency === c.code
-                                  ? 'bg-[#F5C451]/10 border-[#F5C451]/30'
+                                  ? 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/30'
                                   : 'bg-white/[0.02] border-white/5 hover:border-white/15'
                               }`}
                             >
-                              <span className={`text-xl font-black ${settings.currency === c.code ? 'text-[#F5C451]' : 'text-white/80'}`}>
+                              <span className={`text-xl font-black ${settings.currency === c.code ? 'text-[var(--sr-vendor)]' : 'text-white/80'}`}>
                                 {c.symbol}
                               </span>
-                              <span className={`text-[10px] font-bold ${settings.currency === c.code ? 'text-[#F5C451]' : 'text-white/60'}`}>
+                              <span className={`text-[10px] font-bold ${settings.currency === c.code ? 'text-[var(--sr-vendor)]' : 'text-white/60'}`}>
                                 {c.code}
                               </span>
                             </button>
@@ -404,7 +404,7 @@ export default function SettingsModal() {
                           onClick={() => openModal('edit-profile')}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <User className="w-5 h-5 text-[#10E07A]" />
+                          <User className="w-5 h-5 text-[var(--sr-customer)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Edit Profile</p>
                             <p className="text-white/65 text-xs">Name, phone, area, avatar</p>
@@ -426,7 +426,7 @@ export default function SettingsModal() {
                           onClick={() => toast({ title: 'Payment Methods', description: 'Payment management coming soon.' })}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <CreditCard className="w-5 h-5 text-[#F5C451]" />
+                          <CreditCard className="w-5 h-5 text-[var(--sr-vendor)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Payment Methods</p>
                             <p className="text-white/65 text-xs">Cards, bank, BNPL</p>
@@ -446,7 +446,7 @@ export default function SettingsModal() {
                           onClick={() => openModal('help-center')}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <HelpCircle className="w-5 h-5 text-[#10E07A]" />
+                          <HelpCircle className="w-5 h-5 text-[var(--sr-customer)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Help Center</p>
                             <p className="text-white/65 text-xs">FAQs & guides</p>
@@ -457,7 +457,7 @@ export default function SettingsModal() {
                           onClick={() => toast({ title: 'Contact Us', description: 'Our support team will reach out via WhatsApp.' })}
                           className="flex items-center gap-3 p-3 glass-card rounded-xl hover:border-white/15 transition-colors w-full text-left"
                         >
-                          <MessageSquare className="w-5 h-5 text-[#38BDF8]" />
+                          <MessageSquare className="w-5 h-5 text-[var(--sr-rider)]" />
                           <div className="flex-1">
                             <p className="text-white font-bold text-sm">Contact Us</p>
                             <p className="text-white/65 text-xs">Chat on WhatsApp</p>

@@ -99,10 +99,10 @@ export default function PredictiveReorderModal() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/20">
-                  <Sparkles className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <Sparkles className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">🔮 Smart Reorder</h2>
@@ -127,12 +127,12 @@ export default function PredictiveReorderModal() {
               transition={{ duration: 0.5 }}
               className="relative text-center"
             >
-              <div className="inline-flex items-center gap-2 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-full px-4 py-1.5 mb-3">
-                <TrendingUp className="w-4 h-4 text-[#10E07A]" />
-                <span className="text-[#10E07A] text-xs font-bold">AI Powered</span>
+              <div className="inline-flex items-center gap-2 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 rounded-full px-4 py-1.5 mb-3">
+                <TrendingUp className="w-4 h-4 text-[var(--sr-customer)]" />
+                <span className="text-[var(--sr-customer)] text-xs font-bold">AI Powered</span>
               </div>
               <h1 className="text-2xl font-black text-white mb-1">
-                We know what you <span className="text-[#10E07A]">crave</span>
+                We know what you <span className="text-[var(--sr-customer)]">crave</span>
               </h1>
               <p className="text-white/65 text-sm">
                 Based on your order patterns and Ramadan habits
@@ -170,7 +170,7 @@ export default function PredictiveReorderModal() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.08, duration: 0.4 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 hover:border-white/10 transition-colors"
+                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 hover:border-white/10 transition-colors"
                     >
                       <div className="flex items-start gap-3">
                         {/* Item icon */}
@@ -181,7 +181,7 @@ export default function PredictiveReorderModal() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2">
                             <h4 className="text-white font-bold text-sm">{item.name}</h4>
-                            <span className="text-[#10E07A] text-sm font-bold shrink-0">
+                            <span className="text-[var(--sr-customer)] text-sm font-bold shrink-0">
                               {formatNaira(item.price)}
                             </span>
                           </div>
@@ -224,7 +224,7 @@ export default function PredictiveReorderModal() {
                           className={`px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
                             isAdded
                               ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
-                              : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
+                              : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                           }`}
                         >
                           {isAdded ? (
@@ -250,7 +250,7 @@ export default function PredictiveReorderModal() {
           {/* Reorder All Button */}
           {!loading && items.length > 0 && (
             <div className="px-4 mb-32">
-              <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4">
+              <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-white/50 text-sm">Total for all items</span>
                   <span className="text-white font-bold text-lg">{formatNaira(total)}</span>
@@ -261,7 +261,7 @@ export default function PredictiveReorderModal() {
                   className={`w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${
                     allAdded
                       ? 'bg-white/5 border border-white/10 text-white/60 cursor-not-allowed'
-                      : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
+                      : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                   }`}
                 >
                   {allAdded ? (

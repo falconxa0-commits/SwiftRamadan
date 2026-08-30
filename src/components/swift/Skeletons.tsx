@@ -4,7 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 /* ─────────── Product Card Skeleton ─────────── */
 export function ProductCardSkeleton() {
   return (
-    <div className="glass-card rounded-2xl p-4 space-y-3">
+    <div className="glass-card rounded-2xl p-3 sm:p-4 space-y-3">
       <Skeleton className="h-32 w-full rounded-xl" />
       <Skeleton className="h-4 w-3/4" />
       <Skeleton className="h-3 w-1/2" />
@@ -38,7 +38,7 @@ export function HomeTabSkeleton() {
       {/* Section heading */}
       <Skeleton className="h-6 w-40 rounded-lg" />
       {/* Product grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
           <ProductCardSkeleton key={i} />
         ))}
@@ -55,7 +55,7 @@ export function OrdersTabSkeleton() {
       <Skeleton className="h-9 w-48 rounded-full" />
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card rounded-2xl p-4 space-y-3">
+          <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 space-y-3">
             <div className="flex justify-between">
               <Skeleton className="h-5 w-32" />
               <Skeleton className="h-5 w-20 rounded-full" />
@@ -79,7 +79,7 @@ export function CartTabSkeleton() {
     <div className="space-y-4 p-5">
       <Skeleton className="h-8 w-24 rounded-lg" />
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="glass-card rounded-2xl p-4 flex gap-3">
+        <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 flex gap-3">
           <Skeleton className="h-16 w-16 rounded-xl" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-4 w-3/4" />
@@ -105,9 +105,9 @@ export function VendorDashboardSkeleton() {
         <Skeleton className="h-10 w-10 rounded-full" />
       </div>
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="glass-card rounded-2xl p-4 space-y-2">
+          <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 space-y-2">
             <Skeleton className="h-3 w-16" />
             <Skeleton className="h-6 w-24" />
           </div>
@@ -118,7 +118,7 @@ export function VendorDashboardSkeleton() {
       {/* Incoming order cards */}
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="glass-card rounded-2xl p-4 space-y-2">
+          <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 space-y-2">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
             <div className="flex gap-2">
@@ -148,7 +148,7 @@ export function RiderDashboardSkeleton() {
         <Skeleton className="h-6 w-24 rounded-full" />
       </div>
       {/* Stats grid */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="glass-card rounded-2xl p-3 space-y-2">
             <Skeleton className="h-3 w-12" />
@@ -162,7 +162,7 @@ export function RiderDashboardSkeleton() {
       {/* Delivery cards */}
       <div className="space-y-3">
         {Array.from({ length: 2 }).map((_, i) => (
-          <div key={i} className="glass-card rounded-2xl p-4 space-y-2">
+          <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 space-y-2">
             <Skeleton className="h-4 w-2/3" />
             <Skeleton className="h-3 w-1/3" />
             <Skeleton className="h-8 w-24 rounded-lg" />

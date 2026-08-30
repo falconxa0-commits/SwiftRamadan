@@ -326,14 +326,14 @@ export default function MealPlannerModal() {
                         onClick={() => handleSelectDay(d.key)}
                         className={`relative shrink-0 w-[68px] py-3 rounded-2xl border flex flex-col items-center gap-1 transition-all ${
                           isSelected
-                            ? 'bg-[#1A1D26] border-[#10E07A]/60 shadow-[0_0_0_1px_rgba(16,224,122,0.25)]'
+                            ? 'bg-[#1A1D26] border-[var(--sr-customer)]/60 shadow-[0_0_0_1px_rgba(16,224,122,0.25)]'
                             : 'bg-[#0F1117] border-white/5 hover:border-white/15'
                         }`}
                         aria-pressed={isSelected}
                       >
                         <span
                           className={`text-[10px] uppercase tracking-wider font-bold ${
-                            d.isToday ? 'text-[#10E07A]' : 'text-white/65'
+                            d.isToday ? 'text-[var(--sr-customer)]' : 'text-white/65'
                           }`}
                         >
                           {d.isToday ? 'Today' : d.dayName}
@@ -349,13 +349,13 @@ export default function MealPlannerModal() {
                           className={`h-1.5 w-1.5 rounded-full transition-all ${
                             hasMeals
                               ? d.isToday
-                                ? 'bg-[#10E07A]'
-                                : 'bg-[#F5C451]'
+                                ? 'bg-[var(--sr-customer)]'
+                                : 'bg-[var(--sr-vendor)]'
                               : 'bg-transparent'
                           }`}
                         />
                         {d.isToday && !isSelected && (
-                          <span className="absolute top-1 right-1 size-1.5 rounded-full bg-[#10E07A]/80" />
+                          <span className="absolute top-1 right-1 size-1.5 rounded-full bg-[var(--sr-customer)]/80" />
                         )}
                       </button>
                     );
@@ -439,12 +439,12 @@ export default function MealPlannerModal() {
                   <div className="rounded-3xl border border-white/5 bg-gradient-to-br from-[#1A1D26] to-[#0F1117] p-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4 text-[#F5C451]" />
+                        <CalendarDays className="w-4 h-4 text-[var(--sr-vendor)]" />
                         <h4 className="text-white font-black text-sm">This Week</h4>
                       </div>
                       <span className="text-white/65 text-[11px] font-bold">7 days</span>
                     </div>
-                    <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-4">
                       <SummaryStat label="Meals" value={summary.total} color="#FFFFFF" />
                       <SummaryStat label="Iftar" value={summary.iftar} color="#10E07A" />
                       <SummaryStat label="Sahur" value={summary.sahur} color="#F5C451" />
@@ -465,7 +465,7 @@ export default function MealPlannerModal() {
 
               {/* Tip card */}
               <div className="px-4 mt-4">
-                <div className="rounded-2xl border border-white/5 bg-[#0F1117] p-4 flex items-start gap-3">
+                <div className="rounded-2xl border border-white/5 bg-[#0F1117] p-3 sm:p-4 flex items-start gap-3">
                   <div className="size-8 rounded-lg bg-[#8b5cf6]/15 flex items-center justify-center shrink-0">
                     <ChefHat className="w-4 h-4 text-[#8b5cf6]" />
                   </div>
@@ -531,7 +531,7 @@ function MealSection({
 }: MealSectionProps) {
   return (
     <div
-      className="rounded-3xl border bg-[#0F1117] p-4"
+      className="rounded-3xl border bg-[#0F1117] p-3 sm:p-4"
       style={{ borderColor: meal ? accentColor : 'rgba(255,255,255,0.05)' }}
     >
       {/* Section header */}
@@ -593,7 +593,7 @@ function MealSection({
       ) : (
         <button
           onClick={onAdd}
-          className="w-full p-4 rounded-2xl border border-dashed flex items-center justify-center gap-2 text-sm font-bold transition-colors hover:bg-white/5"
+          className="w-full p-3 sm:p-4 rounded-2xl border border-dashed flex items-center justify-center gap-2 text-sm font-bold transition-colors hover:bg-white/5"
           style={{
             borderColor: `${accentColor}40`,
             color: accentColor,

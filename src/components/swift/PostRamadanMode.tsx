@@ -89,7 +89,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: typeof Star; labe
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="flex items-center gap-3 p-3 rounded-xl bg-[#0F1118] border border-white/5"
+      className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5"
     >
       <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}15` }}>
         <Icon className="w-4 h-4" style={{ color }} />
@@ -215,8 +215,8 @@ export default function PostRamadanMode() {
             <div className="sticky top-0 z-10 px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="icon-tile w-10 h-10 border border-[#F5C451]/20" style={{ background: 'rgba(245,196,81,0.12)' }}>
-                    <PartyPopper className="w-5 h-5 text-[#F5C451]" />
+                  <div className="icon-tile w-10 h-10 border border-[var(--sr-vendor)]/20" style={{ background: 'rgba(245,196,81,0.12)' }}>
+                    <PartyPopper className="w-5 h-5 text-[var(--sr-vendor)]" />
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">Post-Ramadan</h2>
@@ -261,9 +261,9 @@ export default function PostRamadanMode() {
 
             <div className="px-6 pb-8 space-y-6">
               {/* Post-Ramadan toggle */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8">
                 <div className="flex items-center gap-3">
-                  <Sparkles className="w-5 h-5 text-[#10E07A]" />
+                  <Sparkles className="w-5 h-5 text-[var(--sr-customer)]" />
                   <div>
                     <p className="text-sm font-semibold text-white">Post-Ramadan Mode</p>
                     <p className="text-xs text-white/65">Enable Eid celebration theme</p>
@@ -272,7 +272,7 @@ export default function PostRamadanMode() {
                 <button
                   onClick={() => setIsPostRamadan(!isPostRamadan)}
                   className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
-                    isPostRamadan ? 'bg-[#10E07A]' : 'bg-white/10'
+                    isPostRamadan ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                   }`}
                   role="switch"
                   aria-checked={isPostRamadan}
@@ -318,7 +318,7 @@ export default function PostRamadanMode() {
 
                       <div className="mt-4 p-3 rounded-xl bg-white/3 border border-white/5">
                         <p className="text-xs text-white/65 mb-1">Total Spent</p>
-                        <p className="text-xl font-bold text-[#F5C451]">{formatNaira(data.ramadanReview.totalSpent)}</p>
+                        <p className="text-xl font-bold text-[var(--sr-vendor)]">{formatNaira(data.ramadanReview.totalSpent)}</p>
                       </div>
 
                       <div className="mt-3 flex items-center justify-between">
@@ -328,7 +328,7 @@ export default function PostRamadanMode() {
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-white/60">Hasanat Earned</p>
-                          <p className="text-sm font-bold text-[#10E07A]">{data.ramadanReview.totalHasanatEarned.toLocaleString()}</p>
+                          <p className="text-sm font-bold text-[var(--sr-customer)]">{data.ramadanReview.totalHasanatEarned.toLocaleString()}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -347,19 +347,19 @@ export default function PostRamadanMode() {
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.1 }}
-                          className="p-4 rounded-2xl bg-[#0F1118] border border-white/8 hover:border-[#10E07A]/20 transition-colors"
+                          className="p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8 hover:border-[var(--sr-customer)]/20 transition-colors"
                         >
                           <div className="flex items-start gap-3">
-                            <div className="w-14 h-14 rounded-xl bg-[#10E07A]/10 flex items-center justify-center flex-shrink-0">
-                              <Gift className="w-6 h-6 text-[#10E07A]" />
+                            <div className="w-14 h-14 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center flex-shrink-0">
+                              <Gift className="w-6 h-6 text-[var(--sr-customer)]" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-bold text-white">{bundle.name}</p>
                               <p className="text-xs text-white/65 mt-0.5">{bundle.description}</p>
                               <div className="flex items-center gap-2 mt-2">
-                                <span className="text-sm font-bold text-[#10E07A]">{formatNaira(bundle.price)}</span>
+                                <span className="text-sm font-bold text-[var(--sr-customer)]">{formatNaira(bundle.price)}</span>
                                 <span className="text-xs text-white/60 line-through">{formatNaira(bundle.originalPrice)}</span>
-                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#10E07A]/15 text-[#10E07A]">
+                                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]">
                                   {Math.round((1 - bundle.price / bundle.originalPrice) * 100)}% OFF
                                 </span>
                               </div>

@@ -158,13 +158,13 @@ export default function KYCModal() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-5 rounded-2xl bg-[#10E07A]/5 border border-[#10E07A]/20"
+          className="flex items-center gap-3 sm:gap-4 p-5 rounded-2xl bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/20"
         >
-          <div className="w-12 h-12 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30 shrink-0">
-            <CheckCircle className="w-6 h-6 text-[#10E07A]" />
+          <div className="w-12 h-12 rounded-full bg-[var(--sr-customer)]/20 flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0">
+            <CheckCircle className="w-6 h-6 text-[var(--sr-customer)]" />
           </div>
           <div>
-            <h3 className="text-[#10E07A] font-bold text-sm">Identity Verified</h3>
+            <h3 className="text-[var(--sr-customer)] font-bold text-sm">Identity Verified</h3>
             <p className="text-white/65 text-xs mt-0.5">Your identity has been successfully verified</p>
           </div>
         </motion.div>
@@ -176,13 +176,13 @@ export default function KYCModal() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-4 p-5 rounded-2xl bg-[#F5C451]/5 border border-[#F5C451]/20"
+          className="flex items-center gap-3 sm:gap-4 p-5 rounded-2xl bg-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20"
         >
-          <div className="w-12 h-12 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30 shrink-0">
-            <Clock className="w-6 h-6 text-[#F5C451]" />
+          <div className="w-12 h-12 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center border border-[var(--sr-vendor)]/30 shrink-0">
+            <Clock className="w-6 h-6 text-[var(--sr-vendor)]" />
           </div>
           <div>
-            <h3 className="text-[#F5C451] font-bold text-sm">Verification In Progress</h3>
+            <h3 className="text-[var(--sr-vendor)] font-bold text-sm">Verification In Progress</h3>
             <p className="text-white/65 text-xs mt-0.5">Your documents are being reviewed. This usually takes 24-48 hours.</p>
           </div>
         </motion.div>
@@ -193,7 +193,7 @@ export default function KYCModal() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center gap-4 p-5 rounded-2xl bg-white/5 border border-white/10"
+        className="flex items-center gap-3 sm:gap-4 p-5 rounded-2xl bg-white/5 border border-white/10"
       >
         <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center border border-white/10 shrink-0">
           <Shield className="w-6 h-6 text-white/65" />
@@ -210,14 +210,14 @@ export default function KYCModal() {
     switch (status) {
       case 'verified':
         return (
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20">
             <CheckCircle className="w-3 h-3" />
             Verified
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20">
+          <span className="inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/20">
             <Clock className="w-3 h-3" />
             Pending
           </span>
@@ -257,10 +257,10 @@ export default function KYCModal() {
           >
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30">
-                    <Shield className="w-5 h-5 text-[#10E07A]" />
+                  <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/20 flex items-center justify-center border border-[var(--sr-customer)]/30">
+                    <Shield className="w-5 h-5 text-[var(--sr-customer)]" />
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">KYC Verification</h2>
@@ -290,7 +290,7 @@ export default function KYCModal() {
                   onClick={() => setActiveTab('status')}
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'status'
-                      ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
+                      ? 'bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20'
                       : 'text-white/65 hover:text-white/60'
                   }`}
                 >
@@ -300,7 +300,7 @@ export default function KYCModal() {
                   onClick={() => setActiveTab('submit')}
                   className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${
                     activeTab === 'submit'
-                      ? 'bg-[#10E07A]/10 text-[#10E07A] border border-[#10E07A]/20'
+                      ? 'bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20'
                       : 'text-white/65 hover:text-white/60'
                   }`}
                 >
@@ -319,7 +319,7 @@ export default function KYCModal() {
                   <div className="mt-4">
                     {loading ? (
                       <div className="flex items-center justify-center p-8 rounded-2xl bg-white/5 border border-white/5">
-                        <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
+                        <Loader2 className="w-6 h-6 text-[var(--sr-customer)] animate-spin" />
                         <span className="text-white/65 text-sm ml-3">Loading verification status...</span>
                       </div>
                     ) : (
@@ -330,7 +330,7 @@ export default function KYCModal() {
                   {/* Document List */}
                   <div className="mt-6">
                     <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-[#10E07A]" />
+                      <FileText className="w-4 h-4 text-[var(--sr-customer)]" />
                       Submitted Documents
                     </h4>
 
@@ -346,7 +346,7 @@ export default function KYCModal() {
                         <p className="text-white/60 text-sm">No documents submitted yet</p>
                         <button
                           onClick={() => setActiveTab('submit')}
-                          className="mt-3 text-[#10E07A] text-xs font-bold hover:underline"
+                          className="mt-3 text-[var(--sr-customer)] text-xs font-bold hover:underline"
                         >
                           Submit your first document →
                         </button>
@@ -365,16 +365,16 @@ export default function KYCModal() {
                               <div className="flex items-center gap-3">
                                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
                                   doc.status === 'verified'
-                                    ? 'bg-[#10E07A]/10 border-[#10E07A]/20'
+                                    ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/20'
                                     : doc.status === 'pending'
-                                    ? 'bg-[#F5C451]/10 border-[#F5C451]/20'
+                                    ? 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/20'
                                     : 'bg-red-500/10 border-red-500/20'
                                 }`}>
                                   <FileText className={`w-5 h-5 ${
                                     doc.status === 'verified'
-                                      ? 'text-[#10E07A]'
+                                      ? 'text-[var(--sr-customer)]'
                                       : doc.status === 'pending'
-                                      ? 'text-[#F5C451]'
+                                      ? 'text-[var(--sr-vendor)]'
                                       : 'text-red-400'
                                   }`} />
                                 </div>
@@ -424,9 +424,9 @@ export default function KYCModal() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.15 }}
-                    className="mt-4 flex items-start gap-3 p-4 rounded-2xl bg-white/[0.03] border border-white/5"
+                    className="mt-4 flex items-start gap-3 p-3 sm:p-4 rounded-2xl bg-white/[0.03] border border-white/5"
                   >
-                    <AlertCircle className="w-5 h-5 text-[#F5C451] shrink-0 mt-0.5" />
+                    <AlertCircle className="w-5 h-5 text-[var(--sr-vendor)] shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white/60 text-xs font-bold">Requirements</p>
                       <p className="text-white/60 text-xs mt-1 leading-relaxed">
@@ -450,7 +450,7 @@ export default function KYCModal() {
                         id="kyc-document-type"
                         value={documentType}
                         onChange={e => setDocumentType(e.target.value)}
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#10E07A]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 appearance-none focus:outline-none"
                       >
                         <option value="" disabled className="bg-[#0F1117]">
                           Select document type
@@ -481,7 +481,7 @@ export default function KYCModal() {
                       value={documentNumber}
                       onChange={e => setDocumentNumber(e.target.value)}
                       placeholder="Enter your document number"
-                      className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[#10E07A]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
+                      className="w-full bg-[#0F1117] text-white text-sm rounded-xl border border-white/5 focus:border-[var(--sr-customer)]/30 transition-all px-4 py-3.5 focus:outline-none placeholder:text-white/20"
                     />
                   </motion.div>
 
@@ -505,14 +505,14 @@ export default function KYCModal() {
                     />
 
                     {documentImage ? (
-                      <div className="relative p-4 rounded-2xl bg-[#1A1D26] border border-[#10E07A]/20">
+                      <div className="relative p-3 sm:p-4 rounded-2xl bg-[#1A1D26] border border-[var(--sr-customer)]/20">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                            <CheckCircle className="w-5 h-5 text-[#10E07A]" />
+                          <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                            <CheckCircle className="w-5 h-5 text-[var(--sr-customer)]" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-white font-bold text-sm truncate">{imageFileName}</p>
-                            <p className="text-[#10E07A] text-xs mt-0.5">File selected</p>
+                            <p className="text-[var(--sr-customer)] text-xs mt-0.5">File selected</p>
                           </div>
                           <button
                             onClick={() => {
@@ -536,7 +536,7 @@ export default function KYCModal() {
                     ) : (
                       <label
                         htmlFor="kyc-document-upload"
-                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[#10E07A]/30 transition-all cursor-pointer"
+                        className="flex flex-col items-center justify-center gap-3 p-8 rounded-2xl bg-[#1A1D26]/40 border-2 border-dashed border-white/10 hover:border-[var(--sr-customer)]/30 transition-all cursor-pointer"
                       >
                         <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center border border-white/10">
                           <Upload className="w-6 h-6 text-white/60" />
@@ -562,8 +562,8 @@ export default function KYCModal() {
                       disabled={submitting}
                       className={`w-full py-4 rounded-2xl font-bold text-base transition-all active:scale-[0.98] flex items-center justify-center gap-2 ${
                         submitting
-                          ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/20 cursor-wait'
-                          : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
+                          ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/20 cursor-wait'
+                          : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
                       }`}
                     >
                       {submitting ? (

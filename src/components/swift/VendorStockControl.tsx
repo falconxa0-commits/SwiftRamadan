@@ -52,8 +52,8 @@ export default function VendorStockControl() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20">
-                  <Package className="w-5 h-5 text-[#F5C451]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20">
+                  <Package className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Stock Control</h2>
@@ -70,9 +70,9 @@ export default function VendorStockControl() {
 
             {/* Summary Stats */}
             <div className="px-5 pt-4 pb-2">
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#10E07A] text-xl font-black">{availableCount}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/20 rounded-xl p-3 text-center">
+                  <p className="text-[var(--sr-customer)] text-xl font-black">{availableCount}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Available</p>
                 </div>
                 <div className="bg-red-500/5 border border-red-500/20 rounded-xl p-3 text-center">
@@ -91,7 +91,7 @@ export default function VendorStockControl() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`flex items-center gap-3 p-4 rounded-2xl border transition-all ${
+                    className={`flex items-center gap-3 p-3 sm:p-4 rounded-2xl border transition-all ${
                       item.available
                         ? 'bg-[#1A1D26] border-white/5'
                         : 'bg-[#1A1D26]/40 border-white/5 opacity-60'
@@ -100,7 +100,7 @@ export default function VendorStockControl() {
                     {/* Item Image Placeholder */}
                     <div className="w-12 h-12 rounded-xl bg-[#0F1117] border border-white/5 flex items-center justify-center shrink-0 overflow-hidden">
                       {item.available ? (
-                        <Package className="w-5 h-5 text-[#F5C451]" />
+                        <Package className="w-5 h-5 text-[var(--sr-vendor)]" />
                       ) : (
                         <EyeOff className="w-5 h-5 text-white/20" />
                       )}
@@ -112,14 +112,14 @@ export default function VendorStockControl() {
                         {item.name}
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className={`text-xs font-bold ${item.available ? 'text-[#F5C451]' : 'text-white/20'}`}>
+                        <span className={`text-xs font-bold ${item.available ? 'text-[var(--sr-vendor)]' : 'text-white/20'}`}>
                           {formatNaira(item.price)}
                         </span>
                         <span className="text-white/10 text-xs">•</span>
                         <span className="text-white/60 text-xs">{item.category}</span>
                       </div>
                       <div className="flex items-center gap-1 mt-1">
-                        <TrendingUp className="w-3 h-3 text-[#10E07A]/50" />
+                        <TrendingUp className="w-3 h-3 text-[var(--sr-customer)]/50" />
                         <span className="text-white/60 text-[10px]">{item.orders} orders</span>
                       </div>
                     </div>
@@ -128,7 +128,7 @@ export default function VendorStockControl() {
                     <button
                       onClick={() => handleToggle(item.id)}
                       className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 shrink-0 ${
-                        item.available ? 'bg-[#10E07A]' : 'bg-white/10'
+                        item.available ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                       }`}
                     >
                       <motion.div
@@ -145,7 +145,7 @@ export default function VendorStockControl() {
               <div className="mt-4 flex gap-2">
                 <button
                   onClick={() => setItems(prev => prev.map(item => ({ ...item, available: true })))}
-                  className="flex-1 py-3 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-sm font-bold hover:bg-[#10E07A]/20 transition-colors"
+                  className="flex-1 py-3 rounded-xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] text-sm font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                 >
                   Enable All
                 </button>
@@ -158,8 +158,8 @@ export default function VendorStockControl() {
               </div>
 
               {/* Tip */}
-              <div className="mt-4 flex items-start gap-2 bg-[#F5C451]/5 border border-[#F5C451]/10 rounded-xl p-3">
-                <AlertCircle className="w-4 h-4 text-[#F5C451] shrink-0 mt-0.5" />
+              <div className="mt-4 flex items-start gap-2 bg-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/10 rounded-xl p-3">
+                <AlertCircle className="w-4 h-4 text-[var(--sr-vendor)] shrink-0 mt-0.5" />
                 <p className="text-white/65 text-xs leading-relaxed">
                   Unavailable items won&apos;t show to customers. Toggle them back on when stock is replenished.
                 </p>

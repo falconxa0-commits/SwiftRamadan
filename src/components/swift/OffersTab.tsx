@@ -95,7 +95,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
       <div className="p-3">
         <p className="text-white font-bold text-sm tracking-tight">{sale.name}</p>
         <div className="flex items-center gap-2 mt-1">
-          <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
+          <span className="text-[var(--sr-customer)] font-black text-sm">{formatNaira(sale.salePrice)}</span>
           <span className="text-white/60 text-xs line-through">{formatNaira(sale.originalPrice)}</span>
         </div>
         {/* Real Countdown */}
@@ -124,7 +124,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
           <button
             onClick={() => handleAddToCart()}
             disabled={isExpired}
-            className="flex-1 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-lg text-xs font-bold hover:bg-[#10E07A]/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+            className="flex-1 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] py-2 rounded-lg text-xs font-bold hover:bg-[var(--sr-customer)]/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
           >
             + Cart
           </button>
@@ -310,9 +310,9 @@ export default function OffersTab() {
           </div>
           {/* Coupons skeleton */}
           <Skeleton className="h-6 w-40 rounded-md" />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="glass-card rounded-2xl p-4 space-y-2">
+              <div key={i} className="glass-card rounded-2xl p-3 sm:p-4 space-y-2">
                 <Skeleton className="h-4 w-20" />
                 <Skeleton className="h-6 w-16" />
                 <Skeleton className="h-3 w-full" />
@@ -339,19 +339,19 @@ export default function OffersTab() {
           animate={{ opacity: 1, y: 0 }}
           onClick={handleClaimDaily}
           disabled={dailyClaimed}
-          className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-colors text-left active:scale-[0.99] ${
+          className={`w-full flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-colors text-left active:scale-[0.99] ${
             dailyClaimed
-              ? 'bg-[#10E07A]/5 border-[#10E07A]/10'
-              : 'aurora-card border-[#F5C451]/20 hover:border-[#F5C451]/40 cursor-pointer'
+              ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/10'
+              : 'aurora-card border-[var(--sr-vendor)]/20 hover:border-[var(--sr-vendor)]/40 cursor-pointer'
           }`}
         >
           <div className={`w-12 h-12 rounded-xl flex items-center justify-center icon-tile ${
-            dailyClaimed ? 'bg-[#10E07A]/10' : 'bg-[#F5C451]/10'
+            dailyClaimed ? 'bg-[var(--sr-customer)]/10' : 'bg-[var(--sr-vendor)]/10'
           }`}>
-            <Zap className={`w-6 h-6 relative z-10 ${dailyClaimed ? 'text-[#10E07A]' : 'text-[#F5C451]'}`} />
+            <Zap className={`w-6 h-6 relative z-10 ${dailyClaimed ? 'text-[var(--sr-customer)]' : 'text-[var(--sr-vendor)]'}`} />
           </div>
           <div className="flex-1">
-            <p className={`font-bold text-sm tracking-tight ${dailyClaimed ? 'text-[#10E07A]' : 'text-white'}`}>
+            <p className={`font-bold text-sm tracking-tight ${dailyClaimed ? 'text-[var(--sr-customer)]' : 'text-white'}`}>
               {dailyClaimed ? '✓ Claimed Today!' : 'Claim Daily Points'}
             </p>
             <p className="text-white/65 text-xs">
@@ -362,7 +362,7 @@ export default function OffersTab() {
             </p>
           </div>
           {!dailyClaimed && (
-            <span className="bg-[#F5C451] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full uppercase gold-glow">
+            <span className="bg-[var(--sr-vendor)] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full uppercase gold-glow">
               Claim
             </span>
           )}
@@ -378,13 +378,13 @@ export default function OffersTab() {
         className="px-5 mt-4 w-full text-left"
       >
         <div className="relative overflow-hidden rounded-2xl premium-card p-6">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/10 blur-[60px]" />
+          <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-vendor)]/10 blur-[60px]" />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
-                <Crown className="w-4 h-4 text-[#F5C451] fill-[#F5C451] relative z-10" />
+              <div className="w-7 h-7 rounded-lg bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/30 icon-tile">
+                <Crown className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451] relative z-10" />
               </div>
-              <span className="text-[#F5C451] text-xs font-black uppercase tracking-widest">{currentTierInfo.name} Member</span>
+              <span className="text-[var(--sr-vendor)] text-xs font-black uppercase tracking-widest">{currentTierInfo.name} Member</span>
             </div>
             <div className="flex items-center justify-between mb-4">
               <div>
@@ -400,8 +400,8 @@ export default function OffersTab() {
             {nextTierInfo && (
               <>
                 <div className="flex justify-between text-xs mb-1">
-                  <span className="text-[#F5C451]/60">{currentTierInfo.name}</span>
-                  <span className="text-[#F5C451]/60">{nextTierInfo.name} - {nextTierInfo.minPoints.toLocaleString()} pts</span>
+                  <span className="text-[var(--sr-vendor)]/60">{currentTierInfo.name}</span>
+                  <span className="text-[var(--sr-vendor)]/60">{nextTierInfo.name} - {nextTierInfo.minPoints.toLocaleString()} pts</span>
                 </div>
                 <div className="w-full bg-white/5 rounded-full h-3 mb-4 overflow-hidden">
                   <motion.div
@@ -416,7 +416,7 @@ export default function OffersTab() {
             <div className="space-y-2">
               {currentTierInfo.benefits.slice(0, 3).map((benefit, i) => (
                 <div key={benefit} className="flex items-center gap-2">
-                  <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
+                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
                   <p className="text-white/60 text-xs">{benefit}</p>
                 </div>
               ))}
@@ -439,7 +439,7 @@ export default function OffersTab() {
             LIVE
           </span>
         </div>
-        <div className="flex overflow-x-auto gap-4 pb-4 no-scrollbar">
+        <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 no-scrollbar">
           {flashSales.map((sale) => (
             <FlashSaleCard key={sale.id} sale={sale} />
           ))}
@@ -449,8 +449,8 @@ export default function OffersTab() {
       {/* Active Coupons */}
       <div className="px-5 mt-8">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile">
-            <Gift className="w-4 h-4 text-[#10E07A] relative z-10" />
+          <div className="w-7 h-7 rounded-lg bg-[var(--sr-customer)]/15 flex items-center justify-center border border-[var(--sr-customer)]/30 icon-tile">
+            <Gift className="w-4 h-4 text-[var(--sr-customer)] relative z-10" />
           </div>
           <h3 className="text-white text-lg font-extrabold heading-accent">Active Coupons</h3>
         </div>
@@ -458,7 +458,7 @@ export default function OffersTab() {
           {coupons.map((coupon) => {
             const isCopied = copiedCode === coupon.code;
             return (
-              <div key={coupon.code} className="glass-card rounded-2xl p-4 flex items-center gap-3">
+              <div key={coupon.code} className="glass-card rounded-2xl p-3 sm:p-4 flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 icon-tile border"
                   style={{ backgroundColor: `${coupon.color}15`, borderColor: `${coupon.color}30` }}
@@ -478,7 +478,7 @@ export default function OffersTab() {
                   onClick={() => handleCopyCoupon(coupon.code)}
                   className={`shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 ${
                     isCopied
-                      ? 'bg-[#10E07A]/15 border border-[#10E07A]/30 text-[#10E07A]'
+                      ? 'bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
                       : 'bg-white/5 border border-white/10 text-white/70 hover:bg-white/10'
                   }`}
                   aria-label={`Copy coupon ${coupon.code}`}
@@ -500,7 +500,7 @@ export default function OffersTab() {
           </div>
           <h3 className="text-white text-lg font-extrabold heading-accent">Limited-Time Offers</h3>
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {limitedOffers.map((offer) => {
             const discount = Math.round(((offer.originalPrice - offer.price) / offer.originalPrice) * 100);
             return (
@@ -526,7 +526,7 @@ export default function OffersTab() {
                   <p className="text-white text-xs font-bold truncate tracking-tight">{offer.title}</p>
                   <p className="text-white/65 text-[10px]">{offer.desc}</p>
                   <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className="text-[#10E07A] text-sm font-black">{formatNaira(offer.price)}</span>
+                    <span className="text-[var(--sr-customer)] text-sm font-black">{formatNaira(offer.price)}</span>
                     <span className="text-white/60 text-[10px] line-through">{formatNaira(offer.originalPrice)}</span>
                   </div>
                 </div>
@@ -540,8 +540,8 @@ export default function OffersTab() {
       <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
-              <Gift className="w-4 h-4 text-[#F5C451] relative z-10" />
+            <div className="w-7 h-7 rounded-lg bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/30 icon-tile">
+              <Gift className="w-4 h-4 text-[var(--sr-vendor)] relative z-10" />
             </div>
             <h3 className="text-white text-lg font-extrabold heading-accent">Gift Cards</h3>
           </div>
@@ -550,7 +550,7 @@ export default function OffersTab() {
               useAppStore.getState().setGiftCardStep(0);
               setActiveModal('giftcard');
             }}
-            className="text-[#10E07A] text-xs font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
+            className="text-[var(--sr-customer)] text-xs font-bold cursor-pointer hover:text-[var(--sr-customer)]/80 transition-colors"
           >
             Design Yours
           </button>
@@ -560,7 +560,7 @@ export default function OffersTab() {
             <button
               key={card.id}
               onClick={() => handleGiftCardClick(card)}
-              className={`min-w-[180px] h-28 rounded-2xl bg-gradient-to-br ${card.color} p-4 flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition-transform border border-white/10 active:scale-[0.98]`}
+              className={`min-w-[180px] h-28 rounded-2xl bg-gradient-to-br ${card.color} p-3 sm:p-4 flex flex-col justify-between cursor-pointer hover:scale-[1.02] transition-transform border border-white/10 active:scale-[0.98]`}
             >
               <span className="material-symbols-outlined text-white/80 text-2xl">{card.icon}</span>
               <div>
@@ -576,14 +576,14 @@ export default function OffersTab() {
       <div className="px-5 mt-8">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile">
-              <TrendingUp className="w-4 h-4 text-[#10E07A] relative z-10" />
+            <div className="w-7 h-7 rounded-lg bg-[var(--sr-customer)]/15 flex items-center justify-center border border-[var(--sr-customer)]/30 icon-tile">
+              <TrendingUp className="w-4 h-4 text-[var(--sr-customer)] relative z-10" />
             </div>
             <h3 className="text-white text-lg font-extrabold heading-accent">Group Buy Deals</h3>
           </div>
           <button
             onClick={handleGroupBuy}
-            className="text-[#10E07A] text-xs font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
+            className="text-[var(--sr-customer)] text-xs font-bold cursor-pointer hover:text-[var(--sr-customer)]/80 transition-colors"
           >
             See All
           </button>
@@ -601,7 +601,7 @@ export default function OffersTab() {
             return (
               <motion.div
                 key={deal.id}
-                className="glass-card rounded-2xl p-4"
+                className="glass-card rounded-2xl p-3 sm:p-4"
               >
                 <div className="flex gap-3">
                   <div
@@ -611,7 +611,7 @@ export default function OffersTab() {
                   <div className="flex-1 min-w-0">
                     <h4 className="text-white font-bold text-sm truncate tracking-tight">{deal.name}</h4>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[#10E07A] font-black text-sm">{formatNaira(deal.perPersonPrice)}</span>
+                      <span className="text-[var(--sr-customer)] font-black text-sm">{formatNaira(deal.perPersonPrice)}</span>
                       <span className="text-white/60 text-xs">per person</span>
                     </div>
                     <div className="mt-2">
@@ -636,8 +636,8 @@ export default function OffersTab() {
                   }}
                   className={`w-full mt-3 py-2 rounded-xl text-xs font-bold transition-colors active:scale-95 ${
                     hasJoined
-                      ? 'bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A]'
-                      : 'bg-[#10E07A] text-[#06070B] hover:bg-[#10E07A]/90 green-glow'
+                      ? 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)]'
+                      : 'bg-[var(--sr-customer)] text-[#06070B] hover:bg-[var(--sr-customer)]/90 green-glow'
                   }`}
                 >
                   {hasJoined ? '✓ Joined - View Details' : 'Join Group Buy'}
@@ -655,16 +655,16 @@ export default function OffersTab() {
           className="w-full text-left active:scale-[0.99] transition-transform"
         >
           <div className="relative overflow-hidden rounded-2xl aurora-card p-5 hover:border-white/15 transition-colors">
-            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#38BDF8]/10 blur-[44px] pointer-events-none" />
-            <div className="relative flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#38BDF8]/15 flex items-center justify-center border border-[#38BDF8]/30 icon-tile shrink-0">
-                <Users className="w-6 h-6 text-[#38BDF8] relative z-10" />
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-rider)]/10 blur-[44px] pointer-events-none" />
+            <div className="relative flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[var(--sr-rider)]/15 flex items-center justify-center border border-[var(--sr-rider)]/30 icon-tile shrink-0">
+                <Users className="w-6 h-6 text-[var(--sr-rider)] relative z-10" />
               </div>
               <div className="flex-1">
                 <p className="text-white font-bold text-sm tracking-tight">Refer &amp; Earn</p>
                 <p className="text-white/50 text-xs mt-0.5">Get ₦2,000 per friend who joins SwiftRamadan</p>
               </div>
-              <span className="bg-[#38BDF8] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full">
+              <span className="bg-[var(--sr-rider)] text-[#06070B] text-[10px] font-black px-3 py-1.5 rounded-full">
                 ₦2,000
               </span>
               <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
@@ -681,7 +681,7 @@ export default function OffersTab() {
         >
           <div className="relative overflow-hidden rounded-2xl aurora-card p-5 hover:border-white/15 transition-colors">
             <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#FB7185]/10 blur-[44px] pointer-events-none" />
-            <div className="relative flex items-center gap-4">
+            <div className="relative flex items-center gap-3 sm:gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#FB7185]/15 flex items-center justify-center border border-[#FB7185]/30 icon-tile shrink-0">
                 <Heart className="w-6 h-6 text-[#FB7185] relative z-10" />
               </div>
@@ -702,10 +702,10 @@ export default function OffersTab() {
           className="w-full text-left active:scale-[0.99] transition-transform"
         >
           <div className="relative overflow-hidden rounded-2xl premium-card p-5">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/10 blur-[60px]" />
-            <div className="relative flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile shrink-0">
-                <CreditCard className="w-6 h-6 text-[#10E07A] relative z-10" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/10 blur-[60px]" />
+            <div className="relative flex items-center gap-3 sm:gap-4">
+              <div className="w-12 h-12 rounded-xl bg-[var(--sr-customer)]/15 flex items-center justify-center border border-[var(--sr-customer)]/30 icon-tile shrink-0">
+                <CreditCard className="w-6 h-6 text-[var(--sr-customer)] relative z-10" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2">

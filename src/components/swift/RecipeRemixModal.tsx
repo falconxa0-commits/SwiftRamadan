@@ -104,7 +104,7 @@ export default function RecipeRemixModal() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#F97316]/10 rounded-xl flex items-center justify-center border border-[#F97316]/20">
                   <ChefHat className="w-5 h-5 text-[#F97316]" />
@@ -230,7 +230,7 @@ export default function RecipeRemixModal() {
                   {/* Steps */}
                   <div className="p-5 border-b border-white/5">
                     <div className="flex items-center gap-2 mb-3">
-                      <BookOpen className="w-4 h-4 text-[#10E07A]" />
+                      <BookOpen className="w-4 h-4 text-[var(--sr-customer)]" />
                       <h4 className="text-white font-bold text-sm">Steps</h4>
                     </div>
                     <div className="space-y-2.5">
@@ -242,7 +242,7 @@ export default function RecipeRemixModal() {
                           transition={{ delay: i * 0.1 }}
                           className="flex gap-3"
                         >
-                          <span className="w-6 h-6 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="w-6 h-6 rounded-full bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
                             {i + 1}
                           </span>
                           <p className="text-white/60 text-sm leading-relaxed">{step}</p>
@@ -253,7 +253,7 @@ export default function RecipeRemixModal() {
 
                   {/* Twist Explanation */}
                   <div className="p-5">
-                    <div className="bg-[#F97316]/5 border border-[#F97316]/10 rounded-xl p-4">
+                    <div className="bg-[#F97316]/5 border border-[#F97316]/10 rounded-xl p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Sparkles className="w-4 h-4 text-[#F97316]" />
                         <h4 className="text-[#F97316] font-bold text-xs">Why This Twist Works</h4>

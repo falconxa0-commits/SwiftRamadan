@@ -139,8 +139,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const MOOD_STYLES: Record<Mood, { border: string; bg: string; emoji: string; label: string }> = {
-  praise: { border: 'border-[#10E07A]/60', bg: 'bg-[#10E07A]/8', emoji: '🎉', label: 'Praise' },
-  guide: { border: 'border-[#F5C451]/60', bg: 'bg-[#F5C451]/8', emoji: '💡', label: 'Tip' },
+  praise: { border: 'border-[var(--sr-customer)]/60', bg: 'bg-[var(--sr-customer)]/8', emoji: '🎉', label: 'Praise' },
+  guide: { border: 'border-[var(--sr-vendor)]/60', bg: 'bg-[var(--sr-vendor)]/8', emoji: '💡', label: 'Tip' },
   correct: { border: 'border-[#ef4444]/60', bg: 'bg-[#ef4444]/8', emoji: '⚠️', label: 'Heads up' },
   encourage: { border: 'border-[#8b5cf6]/60', bg: 'bg-[#8b5cf6]/8', emoji: '💪', label: 'Keep going' },
 };
@@ -907,7 +907,7 @@ function TabButton({
     <button
       onClick={onClick}
       className={`flex flex-col items-center gap-1 py-2 rounded-xl transition-colors ${
-        active ? 'bg-[#10E07A]/12 text-[#10E07A]' : 'text-white/50 hover:text-white/80'
+        active ? 'bg-[var(--sr-customer)]/12 text-[var(--sr-customer)]' : 'text-white/50 hover:text-white/80'
       }`}
     >
       {icon}
@@ -977,7 +977,7 @@ function CoachTab(props: CoachTabProps) {
               <button
                 key={meal.id}
                 onClick={() => props.onSelectMeal(meal)}
-                className="bg-[#0F1117] border border-white/5 hover:border-[#10E07A]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
+                className="bg-[#0F1117] border border-white/5 hover:border-[var(--sr-customer)]/40 rounded-2xl overflow-hidden text-left active:scale-[0.97] transition-all"
               >
                 <div className="aspect-square bg-[#1A1D26] overflow-hidden relative">
                   <Image src={meal.image} alt={meal.name} fill className="object-cover" />
@@ -1041,12 +1041,12 @@ function CoachTab(props: CoachTabProps) {
 
         <div>
           <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-            <Utensils className="w-4 h-4 text-[#10E07A]" /> Cooking Plan
+            <Utensils className="w-4 h-4 text-[var(--sr-customer)]" /> Cooking Plan
           </h4>
           <ol className="space-y-2">
             {props.steps.map((step, i) => (
               <li key={`step-${i}`} className="flex gap-3 bg-[#0F1117] border border-white/5 rounded-xl p-3">
-                <span className="size-6 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-xs font-black flex items-center justify-center shrink-0">
+                <span className="size-6 rounded-full bg-[var(--sr-customer)]/15 text-[var(--sr-customer)] text-xs font-black flex items-center justify-center shrink-0">
                   {i + 1}
                 </span>
                 <span className="text-white/80 text-sm leading-snug">{step}</span>
@@ -1057,7 +1057,7 @@ function CoachTab(props: CoachTabProps) {
 
         <button
           onClick={props.onStartLive}
-          className="w-full bg-[#10E07A] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           <Sparkles className="w-5 h-5" />
           ▶ Start Live Cooking with Chef Safa
@@ -1083,7 +1083,7 @@ function CoachTab(props: CoachTabProps) {
         {/* Current step card */}
         <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[#10E07A] text-xs font-black tracking-wider">
+            <span className="text-[var(--sr-customer)] text-xs font-black tracking-wider">
               STEP {props.stepIndex + 1} OF {totalSteps}
             </span>
             <span className="text-white/65 text-xs flex items-center gap-1">
@@ -1116,7 +1116,7 @@ function CoachTab(props: CoachTabProps) {
               {/* Loading pip */}
               {props.visionLoading && (
                 <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-1 rounded-full">
-                  <RefreshCw className="w-3 h-3 text-[#F5C451] animate-spin" />
+                  <RefreshCw className="w-3 h-3 text-[var(--sr-vendor)] animate-spin" />
                   <span className="text-white text-[10px] font-bold">Safa analyzing…</span>
                 </div>
               )}
@@ -1164,14 +1164,14 @@ function CoachTab(props: CoachTabProps) {
               {isLast ? (
                 <button
                   onClick={props.onComplete}
-                  className="flex-[2] bg-[#10E07A] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                  className="flex-[2] bg-[var(--sr-customer)] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
                 >
                   <CheckCircle2 className="w-4 h-4" /> Mark Complete & Log
                 </button>
               ) : (
                 <button
                   onClick={props.onNextStep}
-                  className="flex-[2] bg-[#F5C451] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                  className="flex-[2] bg-[var(--sr-vendor)] text-[#05070A] font-black py-3 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
                 >
                   Next <ArrowRight className="w-4 h-4" />
                 </button>
@@ -1209,12 +1209,12 @@ function CoachTab(props: CoachTabProps) {
           <div className="relative rounded-2xl overflow-hidden border border-white/10 bg-black">
             {props.videoElement}
             <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full">
-              <Camera className="w-3 h-3 text-[#F5C451]" />
+              <Camera className="w-3 h-3 text-[var(--sr-vendor)]" />
               <span className="text-white text-[10px] font-black tracking-wider">SCANNER</span>
             </div>
             {props.scanLoading && (
               <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
-                <RefreshCw className="w-6 h-6 text-[#F5C451] animate-spin" />
+                <RefreshCw className="w-6 h-6 text-[var(--sr-vendor)] animate-spin" />
                 <span className="text-white text-xs font-bold">Identifying…</span>
               </div>
             )}
@@ -1234,19 +1234,19 @@ function CoachTab(props: CoachTabProps) {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[#10E07A]/40 rounded-2xl p-4 space-y-3"
+            className="bg-[#0F1117] border-2 border-[var(--sr-customer)]/40 rounded-2xl p-4 space-y-3"
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="text-[#10E07A] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
+                <div className="text-[var(--sr-customer)] text-[10px] font-black tracking-wider mb-0.5">IDENTIFIED</div>
                 <h3 className="text-white text-lg font-black leading-tight truncate">{props.scanResult.foodName}</h3>
-                <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#F5C451]/15 text-[#F5C451]">
+                <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)]">
                   {props.scanResult.category}
                 </span>
               </div>
               <div className="text-right shrink-0">
                 <div className="text-white/65 text-[10px]">Est. price</div>
-                <div className="text-[#F5C451] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
+                <div className="text-[var(--sr-vendor)] font-black text-lg">{formatNaira(props.scanResult.estimatedPriceNGN)}</div>
               </div>
             </div>
             <p className="text-white/70 text-xs leading-snug">{props.scanResult.description}</p>
@@ -1260,7 +1260,7 @@ function CoachTab(props: CoachTabProps) {
             <div className="flex gap-2 pt-1">
               <button
                 onClick={props.onAddScanToCart}
-                className="flex-1 bg-[#10E07A] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
+                className="flex-1 bg-[var(--sr-customer)] text-[#05070A] font-black py-2.5 rounded-xl flex items-center justify-center gap-1.5 active:scale-[0.97] transition"
               >
                 <ShoppingCart className="w-4 h-4" /> Add to Cart
               </button>
@@ -1314,7 +1314,7 @@ function CustomRecipeCard({
             value={customName}
             onChange={(e) => setCustomName(e.target.value)}
             placeholder="e.g. Egusi Soup"
-            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
+            className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
           />
           <div className="flex gap-1.5">
             {diffs.map((d) => (
@@ -1334,7 +1334,7 @@ function CustomRecipeCard({
           </div>
           <button
             onClick={onStart}
-            className="w-full bg-[#10E07A] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
+            className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-2 rounded-xl text-sm active:scale-[0.97] transition"
           >
             Start Cooking →
           </button>
@@ -1364,7 +1364,7 @@ function CameraErrorCard({ error, onRetry }: { error: string; onRetry: () => voi
       </div>
       <button
         onClick={onRetry}
-        className="bg-[#10E07A] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
+        className="bg-[var(--sr-customer)] text-[#05070A] font-black px-5 py-2.5 rounded-xl text-sm inline-flex items-center gap-1.5 active:scale-[0.97] transition"
       >
         <RefreshCw className="w-4 h-4" /> Retry
       </button>
@@ -1422,7 +1422,7 @@ function PantryTab({
         </div>
         <button
           onClick={() => setShowAddPantry(!showAddPantry)}
-          className="bg-[#10E07A] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
+          className="bg-[var(--sr-customer)] text-[#05070A] font-bold text-sm px-3 py-2 rounded-xl flex items-center gap-1.5 active:scale-[0.97] transition"
         >
           <Plus className="w-4 h-4" /> Add Item
         </button>
@@ -1442,13 +1442,13 @@ function PantryTab({
                 value={pantryForm.name}
                 onChange={(e) => setPantryForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Item name (e.g. Tomatoes)"
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
+                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
               />
               <div className="grid grid-cols-2 gap-2">
                 <select
                   value={pantryForm.category}
                   onChange={(e) => setPantryForm((f) => ({ ...f, category: e.target.value }))}
-                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#10E07A]/40 outline-none"
+                  className="bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
                 >
                   {PANTRY_CATEGORIES.map((c) => (
                     <option key={c} value={c} className="bg-[#1A1D26]">{c}</option>
@@ -1459,13 +1459,13 @@ function PantryTab({
                     value={pantryForm.quantity}
                     onChange={(e) => setPantryForm((f) => ({ ...f, quantity: e.target.value }))}
                     placeholder="Qty"
-                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
+                    className="w-16 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
                   />
                   <input
                     value={pantryForm.unit}
                     onChange={(e) => setPantryForm((f) => ({ ...f, unit: e.target.value }))}
                     placeholder="unit"
-                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[#10E07A]/40 outline-none"
+                    className="flex-1 bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 outline-none"
                   />
                 </div>
               </div>
@@ -1473,11 +1473,11 @@ function PantryTab({
                 type="date"
                 value={pantryForm.expiresAt}
                 onChange={(e) => setPantryForm((f) => ({ ...f, expiresAt: e.target.value }))}
-                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[#10E07A]/40 outline-none"
+                className="w-full bg-[#1A1D26] border border-white/10 rounded-xl px-3 py-2.5 text-white text-sm focus:border-[var(--sr-customer)]/40 outline-none"
               />
               <button
                 onClick={onAdd}
-                className="w-full bg-[#10E07A] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
+                className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-2.5 rounded-xl text-sm active:scale-[0.97] transition"
               >
                 Save to Pantry
               </button>
@@ -1509,12 +1509,12 @@ function PantryTab({
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-[#0F1117] border-2 border-[#F5C451]/40 rounded-2xl overflow-hidden"
+            className="bg-[#0F1117] border-2 border-[var(--sr-vendor)]/40 rounded-2xl overflow-hidden"
           >
             <div className="bg-gradient-to-r from-[#F5C451]/15 to-transparent p-4 border-b border-white/5">
               <div className="flex items-center gap-2 mb-1">
-                <Sparkles className="w-4 h-4 text-[#F5C451]" />
-                <span className="text-[#F5C451] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
+                <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
+                <span className="text-[var(--sr-vendor)] text-[10px] font-black tracking-wider">CHEF SAFA SUGGESTS</span>
               </div>
               <h4 className="text-white text-lg font-black leading-tight">{rescueRecipe.recipeName}</h4>
               <p className="text-white/70 text-xs mt-1 leading-snug">{rescueRecipe.description}</p>
@@ -1536,7 +1536,7 @@ function PantryTab({
                 <ul className="space-y-1.5">
                   {rescueRecipe.ingredients?.map((ing, i) => (
                     <li key={`rescue-ing-${i}`} className="flex gap-2 text-xs">
-                      <span className="text-[#10E07A]">•</span>
+                      <span className="text-[var(--sr-customer)]">•</span>
                       <span className="text-white/80">
                         <span className="font-bold">{ing.name}</span>
                         <span className="text-white/50"> — {ing.use}</span>
@@ -1550,7 +1550,7 @@ function PantryTab({
                 <ol className="space-y-1.5">
                   {rescueRecipe.steps?.map((s, i) => (
                     <li key={`rescue-step-${i}`} className="flex gap-2 text-xs">
-                      <span className="size-5 rounded-full bg-[#10E07A]/15 text-[#10E07A] text-[10px] font-black flex items-center justify-center shrink-0">
+                      <span className="size-5 rounded-full bg-[var(--sr-customer)]/15 text-[var(--sr-customer)] text-[10px] font-black flex items-center justify-center shrink-0">
                         {i + 1}
                       </span>
                       <span className="text-white/80 leading-snug">{s}</span>
@@ -1559,17 +1559,17 @@ function PantryTab({
                 </ol>
               </div>
               {rescueRecipe.chefTip && (
-                <div className="bg-[#F5C451]/8 border border-[#F5C451]/30 rounded-xl p-3 flex gap-2">
-                  <Lightbulb className="w-4 h-4 text-[#F5C451] shrink-0 mt-0.5" />
+                <div className="bg-[var(--sr-vendor)]/8 border border-[var(--sr-vendor)]/30 rounded-xl p-3 flex gap-2">
+                  <Lightbulb className="w-4 h-4 text-[var(--sr-vendor)] shrink-0 mt-0.5" />
                   <div>
-                    <div className="text-[#F5C451] text-[10px] font-black tracking-wider mb-0.5">CHEF TIP</div>
+                    <div className="text-[var(--sr-vendor)] text-[10px] font-black tracking-wider mb-0.5">CHEF TIP</div>
                     <p className="text-white/80 text-xs leading-snug">{rescueRecipe.chefTip}</p>
                   </div>
                 </div>
               )}
               <button
                 onClick={onCookNow}
-                className="w-full bg-[#10E07A] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
+                className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-3 rounded-xl text-sm flex items-center justify-center gap-1.5 active:scale-[0.97] transition green-glow"
               >
                 Cook This Now <ArrowRight className="w-4 h-4" />
               </button>
@@ -1766,8 +1766,8 @@ function InsightsTab({
       {/* Last cooked */}
       {analytics.lastCooked && (
         <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4 flex items-center gap-3">
-          <div className="size-10 rounded-xl bg-[#10E07A]/15 flex items-center justify-center">
-            <CookingPot className="w-5 h-5 text-[#10E07A]" />
+          <div className="size-10 rounded-xl bg-[var(--sr-customer)]/15 flex items-center justify-center">
+            <CookingPot className="w-5 h-5 text-[var(--sr-customer)]" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-white/50 text-[10px] font-black tracking-wider">LAST COOKED</div>
@@ -1830,7 +1830,7 @@ function BadgesTab({
       <div className="bg-[#0F1117] border border-white/5 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-white font-black text-sm">Progress</span>
-          <span className="text-[#10E07A] font-black text-sm">
+          <span className="text-[var(--sr-customer)] font-black text-sm">
             {unlockedCount} / {achievements.length}
           </span>
         </div>
@@ -1851,17 +1851,17 @@ function BadgesTab({
               key={a.id}
               className={`relative rounded-2xl p-4 border ${
                 a.unlocked
-                  ? 'border-[#F5C451]/50 bg-gradient-to-br from-[#F5C451]/10 to-[#10E07A]/8 gold-glow'
+                  ? 'border-[var(--sr-vendor)]/50 bg-gradient-to-br from-[#F5C451]/10 to-[#10E07A]/8 gold-glow'
                   : 'border-white/5 bg-[#0F1117] opacity-50 grayscale'
               }`}
             >
               <div
                 className={`size-12 rounded-xl flex items-center justify-center mb-2 ${
-                  a.unlocked ? 'bg-[#F5C451]/15' : 'bg-white/5'
+                  a.unlocked ? 'bg-[var(--sr-vendor)]/15' : 'bg-white/5'
                 }`}
               >
                 {a.unlocked ? (
-                  <IconComp className="w-6 h-6 text-[#F5C451]" />
+                  <IconComp className="w-6 h-6 text-[var(--sr-vendor)]" />
                 ) : (
                   <IconComp className="w-6 h-6 text-white/60" />
                 )}
@@ -1869,7 +1869,7 @@ function BadgesTab({
               <div className="text-white font-black text-sm leading-tight">{a.title}</div>
               <div className="text-white/50 text-[11px] mt-0.5 leading-snug">{a.desc}</div>
               {a.unlocked && (
-                <div className="absolute top-2 right-2 size-5 rounded-full bg-[#10E07A] flex items-center justify-center">
+                <div className="absolute top-2 right-2 size-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
                   <CheckCircle2 className="w-3 h-3 text-[#05070A]" />
                 </div>
               )}
@@ -1933,7 +1933,7 @@ function Confetti() {
       >
         <div className="text-5xl mb-2">🎉</div>
         <div className="text-white font-black text-xl">Session Logged!</div>
-        <div className="text-[#F5C451] text-sm font-bold">Keep cooking, keep leveling up.</div>
+        <div className="text-[var(--sr-vendor)] text-sm font-bold">Keep cooking, keep leveling up.</div>
       </motion.div>
     </motion.div>
   );

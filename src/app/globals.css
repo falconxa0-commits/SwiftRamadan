@@ -613,3 +613,252 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   AUREN KINGDOM DESIGN SYSTEM — Phase 15
+   The official visual language for SwiftRamadan's premium transformation.
+   ══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Obsidian Kingdom Foundation ── */
+  --auren-void: #050505;
+  --auren-night: #0A0A0F;
+  --auren-shadow: #11111A;
+  --auren-surface: #15151F;
+  --auren-elevated: #1A1A26;
+  --auren-hover: #1F1F2E;
+
+  /* ── Royal Purple Identity ── */
+  --auren-royal: #7C3AED;
+  --auren-imperial: #9333EA;
+  --auren-mystic: #C084FC;
+  --auren-royal-glow: rgba(124, 58, 237, 0.25);
+  --auren-royal-light: rgba(124, 58, 237, 0.12);
+  --auren-royal-border: rgba(124, 58, 237, 0.30);
+
+  /* ── Royal Gold Accent ── */
+  --auren-gold: #D4AF37;
+  --auren-gold-glow: rgba(212, 175, 55, 0.20);
+  --auren-gold-light: rgba(212, 175, 55, 0.08);
+  --auren-gold-border: rgba(212, 175, 55, 0.25);
+
+  /* ── AI Intelligence ── */
+  --auren-indigo: #6366F1;
+  --auren-ai-glow: #818CF8;
+  --auren-ai-light: rgba(99, 102, 241, 0.12);
+  --auren-ai-border: rgba(99, 102, 241, 0.25);
+
+  /* ── Ramadan Warmth ── */
+  --auren-amber: #F59E0B;
+  --auren-amber-glow: rgba(245, 158, 11, 0.20);
+  --auren-amber-light: rgba(245, 158, 11, 0.08);
+
+  /* ── Faith Emerald ── */
+  --auren-emerald: #10B981;
+  --auren-emerald-glow: rgba(16, 185, 129, 0.20);
+
+  /* ── Delivery Sky ── */
+  --auren-sky: #38BDF8;
+  --auren-sky-glow: rgba(56, 189, 248, 0.20);
+
+  /* ── Semantic ── */
+  --auren-danger: #EF4444;
+  --auren-danger-light: rgba(239, 68, 68, 0.08);
+  --auren-success: #10B981;
+  --auren-warning: #F59E0B;
+  --auren-info: #3B82F6;
+
+  /* ── Glass ── */
+  --auren-glass: rgba(255, 255, 255, 0.03);
+  --auren-glass-hover: rgba(255, 255, 255, 0.06);
+  --auren-glass-border: rgba(255, 255, 255, 0.08);
+  --auren-glass-blur: 16px;
+
+  /* ── Text (WCAG AA on #050505) ── */
+  --auren-text-primary: #FFFFFF;
+  --auren-text-secondary: rgba(255, 255, 255, 0.70);
+  --auren-text-tertiary: rgba(255, 255, 255, 0.50);
+  --auren-text-muted: rgba(255, 255, 255, 0.30);
+
+  /* ── Radius ── */
+  --auren-radius-sm: 8px;
+  --auren-radius-md: 12px;
+  --auren-radius-lg: 16px;
+  --auren-radius-xl: 24px;
+  --auren-radius-2xl: 32px;
+
+  /* ── Shadows ── */
+  --auren-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --auren-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --auren-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --auren-shadow-royal: 0 0 24px rgba(124, 58, 237, 0.3);
+  --auren-shadow-gold: 0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+/* ── Auren Kingdom Utility Classes ── */
+
+/* Obsidian surfaces */
+.auren-void { background-color: var(--auren-void); }
+.auren-night { background-color: var(--auren-night); }
+.auren-shadow-bg { background-color: var(--auren-shadow); }
+.auren-surface-bg { background-color: var(--auren-surface); }
+.auren-elevated-bg { background-color: var(--auren-elevated); }
+
+/* Royal purple */
+.auren-text-royal { color: var(--auren-royal); }
+.auren-text-mystic { color: var(--auren-mystic); }
+.auren-bg-royal { background-color: var(--auren-royal); }
+.auren-border-royal { border-color: var(--auren-royal-border); }
+.auren-glow-royal { box-shadow: var(--auren-shadow-royal); }
+
+/* Gold */
+.auren-text-gold { color: var(--auren-gold); }
+.auren-bg-gold { background-color: var(--auren-gold); }
+.auren-border-gold { border-color: var(--auren-gold-border); }
+.auren-glow-gold { box-shadow: var(--auren-shadow-gold); }
+
+/* AI */
+.auren-text-ai { color: var(--auren-indigo); }
+.auren-text-ai-glow { color: var(--auren-ai-glow); }
+.auren-bg-ai { background-color: var(--auren-indigo); }
+.auren-border-ai { border-color: var(--auren-ai-border); }
+
+/* Glass */
+.auren-glass {
+  background: var(--auren-glass);
+  backdrop-filter: blur(var(--auren-glass-blur));
+  -webkit-backdrop-filter: blur(var(--auren-glass-blur));
+  border: 1px solid var(--auren-glass-border);
+}
+
+/* Text colors (WCAG AA) */
+.auren-text-primary { color: var(--auren-text-primary); }
+.auren-text-secondary { color: var(--auren-text-secondary); }
+.auren-text-tertiary { color: var(--auren-text-tertiary); }
+
+/* Premium button */
+.auren-btn-royal {
+  background: linear-gradient(135deg, var(--auren-royal), var(--auren-imperial));
+  color: white;
+  font-weight: 600;
+  border-radius: var(--auren-radius-lg);
+  padding: 14px 28px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: var(--auren-shadow-royal);
+}
+.auren-btn-royal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(124, 58, 237, 0.4);
+}
+.auren-btn-royal:active {
+  transform: scale(0.98);
+}
+
+.auren-btn-gold {
+  background: linear-gradient(135deg, var(--auren-gold), #E8C547);
+  color: var(--auren-void);
+  font-weight: 600;
+  border-radius: var(--auren-radius-lg);
+  padding: 14px 28px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: var(--auren-shadow-gold);
+}
+.auren-btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(212, 175, 55, 0.3);
+}
+
+/* Premium card */
+.auren-card {
+  background: var(--auren-glass);
+  backdrop-filter: blur(var(--auren-glass-blur));
+  -webkit-backdrop-filter: blur(var(--auren-glass-blur));
+  border: 1px solid var(--auren-glass-border);
+  border-radius: var(--auren-radius-xl);
+  transition: all 0.3s ease;
+}
+.auren-card-hover:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--auren-shadow-md);
+  transform: translateY(-2px);
+}
+
+/* AI orb glow */
+.auren-ai-orb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--auren-mystic), var(--auren-royal), var(--auren-imperial));
+  box-shadow: 0 0 24px var(--auren-royal-glow), 0 0 48px rgba(124, 58, 237, 0.15);
+  animation: auren-breathe 4s ease-in-out infinite;
+}
+
+@keyframes auren-breathe {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* AI thinking dots */
+.auren-thinking {
+  display: inline-flex;
+  gap: 4px;
+}
+.auren-thinking span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--auren-ai-glow);
+  animation: auren-think 1.4s ease-in-out infinite;
+}
+.auren-thinking span:nth-child(2) { animation-delay: 0.2s; }
+.auren-thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes auren-think {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Premium entrance animation */
+.auren-enter {
+  animation: auren-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+}
+@keyframes auren-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Stagger children */
+.auren-stagger > * {
+  opacity: 0;
+  animation: auren-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.auren-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.auren-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.auren-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.auren-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.auren-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.auren-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* Skeleton */
+.auren-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%);
+  background-size: 200% 100%;
+  animation: auren-shimmer 2s infinite;
+}
+@keyframes auren-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .auren-ai-orb,
+  .auren-thinking span,
+  .auren-enter,
+  .auren-stagger > *,
+  .auren-skeleton {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}

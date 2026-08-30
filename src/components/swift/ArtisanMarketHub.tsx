@@ -73,7 +73,7 @@ export default function ArtisanMarketHub() {
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">🏪</span>
                   <div>
@@ -94,7 +94,7 @@ export default function ArtisanMarketHub() {
               {/* Category Grid */}
               <div className="mt-4 mb-6">
                 <h3 className="text-white font-bold text-sm mb-3">Browse Categories</h3>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {artisanCategories.map((cat, i) => (
                     <motion.button
                       key={cat.id}
@@ -102,7 +102,7 @@ export default function ArtisanMarketHub() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => toast({ title: `${cat.name} 🛍️`, description: `Browsing ${cat.name} collection` })}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 flex flex-col items-center gap-2 hover:border-white/10 transition-all active:scale-95"
+                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 flex flex-col items-center gap-2 hover:border-white/10 transition-all active:scale-95"
                     >
                       <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${cat.color} flex items-center justify-center border border-white/5`}>
                         <span className="text-xl">{cat.icon}</span>
@@ -119,7 +119,7 @@ export default function ArtisanMarketHub() {
                   <h3 className="text-white font-bold text-sm">Featured Artisans</h3>
                   <button
                     onClick={() => toast({ title: 'All Artisans', description: 'Browse all artisans' })}
-                    className="text-[#10E07A] text-xs font-bold"
+                    className="text-[var(--sr-customer)] text-xs font-bold"
                   >
                     See All
                   </button>
@@ -154,16 +154,16 @@ export default function ArtisanMarketHub() {
                             <h4 className="text-white font-bold text-sm">{artisan.name}</h4>
                             <p className="text-white/65 text-xs mt-0.5">{artisan.specialty}</p>
                           </div>
-                          <div className="flex items-center gap-1 bg-[#F5C451]/10 border border-[#F5C451]/20 rounded-lg px-2 py-1">
-                            <Star className="w-3 h-3 text-[#F5C451]" fill="#F5C451" />
-                            <span className="text-[#F5C451] text-xs font-bold">{artisan.rating}</span>
+                          <div className="flex items-center gap-1 bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 rounded-lg px-2 py-1">
+                            <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="#F5C451" />
+                            <span className="text-[var(--sr-vendor)] text-xs font-bold">{artisan.rating}</span>
                             <span className="text-white/60 text-[10px]">({artisan.reviews})</span>
                           </div>
                         </div>
 
                         <button
                           onClick={() => toast({ title: `Visiting ${artisan.name} 🏪`, description: 'Opening artisan shop' })}
-                          className="w-full mt-2 py-2.5 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#10E07A]/20 transition-colors active:scale-[0.98]"
+                          className="w-full mt-2 py-2.5 rounded-xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-[0.98]"
                         >
                           <ExternalLink className="w-3.5 h-3.5" />
                           Visit Shop
@@ -179,19 +179,19 @@ export default function ArtisanMarketHub() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 bg-gradient-to-r from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[#F5C451]/10 p-4"
+                className="mt-6 bg-gradient-to-r from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[var(--sr-vendor)]/10 p-3 sm:p-4"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 shrink-0">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 shrink-0">
                     <span className="text-2xl">🌙</span>
                   </div>
                   <div className="flex-1">
-                    <p className="text-[#F5C451] text-sm font-bold">Ramadan Artisan Fair</p>
+                    <p className="text-[var(--sr-vendor)] text-sm font-bold">Ramadan Artisan Fair</p>
                     <p className="text-white/65 text-xs mt-0.5">Special collections for the holy month</p>
                   </div>
                   <button
                     onClick={() => toast({ title: 'Ramadan Fair 🎪', description: 'Exploring Ramadan artisan collections' })}
-                    className="px-3 py-1.5 rounded-lg bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] text-xs font-bold"
+                    className="px-3 py-1.5 rounded-lg bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] text-xs font-bold"
                   >
                     Explore
                   </button>

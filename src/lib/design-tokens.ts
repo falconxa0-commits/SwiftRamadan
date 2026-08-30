@@ -69,6 +69,24 @@ export const colors = {
     error: '#EF4444',
     info: '#3B82F6',
   },
+  // Auren Kingdom — Phase 15 premium visual language
+  auren: {
+    void: '#050505',
+    night: '#0A0A0F',
+    shadow: '#11111A',
+    surface: '#15151F',
+    elevated: '#1A1A26',
+    hover: '#1F1F2E',
+    royal: '#7C3AED',
+    imperial: '#9333EA',
+    mystic: '#C084FC',
+    gold: '#D4AF37',
+    indigo: '#6366F1',
+    aiGlow: '#818CF8',
+    amber: '#F59E0B',
+    emerald: '#10B981',
+    sky: '#38BDF8',
+  } as const,
 } as const;
 
 // ═════════════════════════════════════════════════════════════════

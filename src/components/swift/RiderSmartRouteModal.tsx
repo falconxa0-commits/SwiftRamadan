@@ -115,7 +115,7 @@ export default function RiderSmartRouteModal() {
                 className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-900/30 to-[#0F1117] border border-cyan-500/20 p-5"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 blur-[40px]" />
-                <div className="relative z-10 flex items-center gap-4">
+                <div className="relative z-10 flex items-center gap-3 sm:gap-4">
                   <div className="w-14 h-14 rounded-2xl bg-cyan-400/10 flex items-center justify-center border border-cyan-400/20">
                     <Sparkles className="w-7 h-7 text-cyan-400" />
                   </div>
@@ -155,17 +155,17 @@ export default function RiderSmartRouteModal() {
                       )}
 
                       {/* Delivery Card */}
-                      <div className={`relative flex gap-3 p-4 rounded-2xl border transition-all ${
+                      <div className={`relative flex gap-3 p-3 sm:p-4 rounded-2xl border transition-all ${
                         delivery.priority === 'iftar'
-                          ? 'bg-[#F5C451]/5 border-[#F5C451]/20'
+                          ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/20'
                           : 'bg-[#1A1D26] border-white/5'
                       }`}>
                         {/* Order Number Badge */}
                         <div className="shrink-0">
                           <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${
                             delivery.priority === 'iftar'
-                              ? 'bg-[#F5C451]/20 text-[#F5C451] border border-[#F5C451]/30'
-                              : 'bg-[#38BDF8]/20 text-[#38BDF8] border border-[#38BDF8]/30'
+                              ? 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/30'
+                              : 'bg-[var(--sr-rider)]/20 text-[var(--sr-rider)] border border-[var(--sr-rider)]/30'
                           }`}>
                             {delivery.order}
                           </div>
@@ -176,7 +176,7 @@ export default function RiderSmartRouteModal() {
                           <div className="flex items-center gap-2">
                             <p className="text-white font-bold text-sm truncate">{delivery.customer}</p>
                             {delivery.priority === 'iftar' && (
-                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20 shrink-0">
+                              <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/20 shrink-0">
                                 IFTAR
                               </span>
                             )}
@@ -203,7 +203,7 @@ export default function RiderSmartRouteModal() {
 
                         {/* ETA */}
                         <div className="text-right shrink-0">
-                          <p className={`text-sm font-black ${delivery.priority === 'iftar' ? 'text-[#F5C451]' : 'text-white/60'}`}>
+                          <p className={`text-sm font-black ${delivery.priority === 'iftar' ? 'text-[var(--sr-vendor)]' : 'text-white/60'}`}>
                             {delivery.eta}
                           </p>
                           <p className="text-white/20 text-[9px]">ETA</p>
@@ -218,7 +218,7 @@ export default function RiderSmartRouteModal() {
               <button
                 onClick={() => setActiveModal(null)}
                 aria-label="Start Optimized Route"
-                className="w-full mt-5 bg-[#38BDF8] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full mt-5 bg-[var(--sr-rider)] py-3.5 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-lg shadow-[#38BDF8]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <Navigation className="w-4 h-4" />
                 Start Optimized Route

@@ -162,7 +162,7 @@ export default function VendorStorefront() {
 
           {/* Header */}
           <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div
                   className="w-10 h-10 rounded-xl flex items-center justify-center border"
@@ -174,7 +174,7 @@ export default function VendorStorefront() {
                   <div className="flex items-center gap-2">
                     <h2 className="text-white font-bold text-lg">{data.name}</h2>
                     {data.isPremium && (
-                      <Crown className="w-4 h-4 text-[#F5C451]" />
+                      <Crown className="w-4 h-4 text-[var(--sr-vendor)]" />
                     )}
                   </div>
                   <p className="text-white/65 text-xs">{data.tagline}</p>
@@ -182,7 +182,7 @@ export default function VendorStorefront() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#0F1118] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
                 aria-label="Close vendor storefront"
               >
                 <X className="w-5 h-5 text-white" />
@@ -197,15 +197,15 @@ export default function VendorStorefront() {
               <motion.div
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="w-20 h-20 rounded-2xl bg-[#0F1118] border-2 flex items-center justify-center text-2xl font-black mx-auto mb-3"
+                className="w-20 h-20 rounded-2xl bg-[var(--sr-surface-raised)] border-2 flex items-center justify-center text-2xl font-black mx-auto mb-3"
                 style={{ borderColor: data.isPremium ? '#F5C451' : 'rgba(255,255,255,0.08)' }}
               >
                 <span style={{ color: currentTheme.color }}>{data.avatar}</span>
               </motion.div>
               {data.isPremium && (
-                <div className="inline-flex items-center gap-1.5 bg-[#F5C451]/20 border border-[#F5C451]/30 rounded-full px-3 py-1">
-                  <Award className="w-3 h-3 text-[#F5C451]" />
-                  <span className="text-[#F5C451] text-[10px] font-bold">Premium Vendor</span>
+                <div className="inline-flex items-center gap-1.5 bg-[var(--sr-vendor)]/20 border border-[var(--sr-vendor)]/30 rounded-full px-3 py-1">
+                  <Award className="w-3 h-3 text-[var(--sr-vendor)]" />
+                  <span className="text-[var(--sr-vendor)] text-[10px] font-bold">Premium Vendor</span>
                 </div>
               )}
             </div>
@@ -213,17 +213,17 @@ export default function VendorStorefront() {
 
           {/* Stats Bar */}
           <div className="px-4 -mt-4 relative z-10 mb-6">
-            <div className="bg-[#0F1118] rounded-2xl border border-white/8 p-4 grid grid-cols-3 gap-3">
+            <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-3 sm:p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               <div className="text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
-                  <Star className="w-3.5 h-3.5 text-[#F5C451] fill-[#F5C451]" />
+                  <Star className="w-3.5 h-3.5 text-[var(--sr-vendor)] fill-[#F5C451]" />
                   <span className="text-white font-black text-lg">{data.rating}</span>
                 </div>
                 <p className="text-white/65 text-[10px]">{data.reviewCount} reviews</p>
               </div>
               <div className="text-center border-x border-white/8">
                 <div className="flex items-center justify-center gap-1 mb-1">
-                  <TrendingUp className="w-3.5 h-3.5 text-[#10E07A]" />
+                  <TrendingUp className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                   <span className="text-white font-black text-lg">{(data.totalSales / 1000).toFixed(1)}k</span>
                 </div>
                 <p className="text-white/65 text-[10px]">orders</p>
@@ -257,7 +257,7 @@ export default function VendorStorefront() {
                 >
                   <div
                     className={`w-16 h-16 rounded-full flex items-center justify-center border-2 ${
-                      activeHighlight === highlight.id ? 'border-[#F5C451]' : 'border-white/10'
+                      activeHighlight === highlight.id ? 'border-[var(--sr-vendor)]' : 'border-white/10'
                     }`}
                     style={{
                       background: `linear-gradient(135deg, ${currentTheme.color}20, ${currentTheme.color}5)`,
@@ -279,7 +279,7 @@ export default function VendorStorefront() {
 
           {/* About */}
           <div className="px-4 mb-6">
-            <div className="bg-[#0F1118] rounded-2xl border border-white/8 p-4">
+            <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-3 sm:p-4">
               <h3 className="text-white font-bold text-sm mb-2">About</h3>
               <p className="text-white/50 text-xs leading-relaxed">{data.description}</p>
             </div>
@@ -295,15 +295,15 @@ export default function VendorStorefront() {
                     key={offer.id}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-gradient-to-br from-[#F5C451]/10 to-[#F5C451]/5 border border-[#F5C451]/20 rounded-xl p-3 flex-shrink-0 min-w-[160px]"
+                    className="bg-gradient-to-br from-[#F5C451]/10 to-[#F5C451]/5 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex-shrink-0 min-w-[160px]"
                   >
                     <div className="flex items-center gap-1.5 mb-1">
-                      <Tag className="w-3 h-3 text-[#F5C451]" />
-                      <span className="text-[#F5C451] text-[10px] font-bold">{offer.discount}% OFF</span>
+                      <Tag className="w-3 h-3 text-[var(--sr-vendor)]" />
+                      <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{offer.discount}% OFF</span>
                     </div>
                     <p className="text-white font-bold text-xs mb-1">{offer.title}</p>
                     <div className="bg-[#0B0D14]/50 rounded-md px-2 py-1">
-                      <span className="text-[#F5C451] text-[10px] font-mono font-bold">{offer.code}</span>
+                      <span className="text-[var(--sr-vendor)] text-[10px] font-mono font-bold">{offer.code}</span>
                     </div>
                   </motion.div>
                 ))}
@@ -317,19 +317,19 @@ export default function VendorStorefront() {
               <h3 className="text-white font-bold text-sm">Featured Products</h3>
               <ChevronRight className="w-4 h-4 text-white/20" />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {data.featuredProducts.map((product, i) => (
                 <motion.div
                   key={product.id}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="bg-[#0F1118] rounded-xl border border-white/8 overflow-hidden"
+                  className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 overflow-hidden"
                 >
                   <div className="relative h-28 bg-gradient-to-br from-white/5 to-white/0 flex items-center justify-center">
                     <Store className="w-10 h-10 text-white/5" />
                     {product.badge && (
-                      <span className="absolute top-2 left-2 bg-[#10E07A]/90 text-[#0B0D14] text-[8px] font-black px-2 py-0.5 rounded-full uppercase">
+                      <span className="absolute top-2 left-2 bg-[var(--sr-customer)]/90 text-[#0B0D14] text-[8px] font-black px-2 py-0.5 rounded-full uppercase">
                         {product.badge}
                       </span>
                     )}
@@ -342,7 +342,7 @@ export default function VendorStorefront() {
                   <div className="p-3">
                     <h4 className="text-white font-bold text-xs mb-1 line-clamp-1">{product.name}</h4>
                     <div className="flex items-center gap-1 mb-1.5">
-                      <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
+                      <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
                       <span className="text-white/50 text-[10px]">{product.rating} · {product.sold.toLocaleString()} sold</span>
                     </div>
                     <div className="flex items-center gap-2">
@@ -370,7 +370,7 @@ export default function VendorStorefront() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
-                  className="bg-[#0F1118] rounded-xl border border-white/8 p-3"
+                  className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 p-3"
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <div className="w-8 h-8 rounded-full bg-[#A78BFA]/20 flex items-center justify-center text-[#A78BFA] text-xs font-bold">
@@ -382,7 +382,7 @@ export default function VendorStorefront() {
                         {Array.from({ length: 5 }).map((_, s) => (
                           <Star
                             key={s}
-                            className={`w-2.5 h-2.5 ${s < review.rating ? 'text-[#F5C451] fill-[#F5C451]' : 'text-white/10'}`}
+                            className={`w-2.5 h-2.5 ${s < review.rating ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white/10'}`}
                           />
                         ))}
                       </div>
@@ -399,7 +399,7 @@ export default function VendorStorefront() {
           <div className="px-4 mb-6">
             <button
               onClick={() => setShowThemePicker(!showThemePicker)}
-              className="w-full bg-[#0F1118] border border-white/8 rounded-xl p-4 flex items-center gap-3 hover:bg-white/5 transition-colors"
+              className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 sm:p-4 flex items-center gap-3 hover:bg-white/5 transition-colors"
               aria-label="Change storefront theme"
             >
               <div className="w-10 h-10 rounded-xl bg-[#A78BFA]/10 flex items-center justify-center border border-[#A78BFA]/20">
@@ -419,7 +419,7 @@ export default function VendorStorefront() {
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="grid grid-cols-4 gap-2 mt-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mt-3">
                     {themes.map((theme) => (
                       <button
                         key={theme.id}
@@ -445,10 +445,10 @@ export default function VendorStorefront() {
           {/* Premium Badge */}
           {data.isPremium && (
             <div className="px-4 mb-8">
-              <div className="bg-gradient-to-r from-[#F5C451]/10 to-transparent border border-[#F5C451]/20 rounded-xl p-4 flex items-center gap-3">
-                <Shield className="w-5 h-5 text-[#F5C451]" />
+              <div className="bg-gradient-to-r from-[#F5C451]/10 to-transparent border border-[var(--sr-vendor)]/20 rounded-xl p-3 sm:p-4 flex items-center gap-3">
+                <Shield className="w-5 h-5 text-[var(--sr-vendor)]" />
                 <div>
-                  <p className="text-[#F5C451] font-bold text-xs">Premium Storefront</p>
+                  <p className="text-[var(--sr-vendor)] font-bold text-xs">Premium Storefront</p>
                   <p className="text-white/65 text-[10px]">Priority placement · Custom themes · Story highlights</p>
                 </div>
               </div>
@@ -469,7 +469,7 @@ export default function VendorStorefront() {
               </motion.button>
               <motion.button
                 whileTap={{ scale: 0.97 }}
-                className="flex-1 py-3 rounded-xl bg-[#0F1118] border border-white/8 font-bold text-sm flex items-center justify-center gap-2 text-white/70 hover:bg-white/5 transition-colors"
+                className="flex-1 py-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8 font-bold text-sm flex items-center justify-center gap-2 text-white/70 hover:bg-white/5 transition-colors"
                 aria-label="Message vendor"
               >
                 <MessageSquare className="w-4 h-4" />

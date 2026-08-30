@@ -383,7 +383,7 @@ export default function SwiftBitesModal() {
   const shareActions = [
     { label: 'WhatsApp', icon: '💬', color: 'bg-[#25D366]' },
     { label: 'Twitter / X', icon: '𝕏', color: 'bg-black' },
-    { label: 'Copy Link', icon: '🔗', color: 'bg-[#10E07A]' },
+    { label: 'Copy Link', icon: '🔗', color: 'bg-[var(--sr-customer)]' },
     { label: 'Save Video', icon: '⬇️', color: 'bg-[#A78BFA]' },
   ];
 
@@ -572,7 +572,7 @@ export default function SwiftBitesModal() {
                     <Bookmark
                       className={`w-9 h-9 transition-all ${
                         savedVideos.has(currentVideo.id)
-                          ? 'fill-[#F5C451] text-[#F5C451] drop-shadow-[0_0_12px_rgba(245,196,81,0.8)]'
+                          ? 'fill-[#F5C451] text-[var(--sr-vendor)] drop-shadow-[0_0_12px_rgba(245,196,81,0.8)]'
                           : 'text-white drop-shadow-lg'
                       }`}
                     />
@@ -613,7 +613,7 @@ export default function SwiftBitesModal() {
                       {currentVideo.creatorHandle}
                     </span>
                     {currentVideo.verified && (
-                      <Verified className="w-4 h-4 text-[#38BDF8] fill-[#38BDF8]/30" />
+                      <Verified className="w-4 h-4 text-[var(--sr-rider)] fill-[#38BDF8]/30" />
                     )}
                     <span className="text-white/60 text-xs">·</span>
                     <span className="text-white/80 text-xs">{currentVideo.creatorName}</span>
@@ -819,12 +819,12 @@ export default function SwiftBitesModal() {
                           }
                         }}
                         placeholder="Add a comment…"
-                        className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40"
+                        className="flex-1 bg-white/5 border border-white/10 rounded-full px-4 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40"
                       />
                       <button
                         onClick={handlePostComment}
                         disabled={!commentInput.trim() || isPostingComment}
-                        className="w-9 h-9 rounded-full bg-[#10E07A] flex items-center justify-center disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all"
+                        className="w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center disabled:opacity-30 hover:brightness-110 active:scale-95 transition-all"
                         aria-label="Post comment"
                       >
                         <Send className="w-4 h-4 text-black" />

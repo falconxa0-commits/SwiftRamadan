@@ -74,12 +74,12 @@ function gradientFor(initial: string): string {
 }
 
 const CATEGORY_BADGES: Record<string, string> = {
-  Reviews: 'bg-[#10E07A]/10 text-[#10E07A] border-[#10E07A]/20',
+  Reviews: 'bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] border-[var(--sr-customer)]/20',
   Recipes: 'bg-[#06b6d4]/10 text-[#06b6d4] border-[#06b6d4]/20',
-  Tips: 'bg-[#F5C451]/10 text-[#F5C451] border-[#F5C451]/20',
+  Tips: 'bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/20',
   Questions: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
   General: 'bg-white/5 text-white/60 border-white/10',
-  'Group Buy': 'bg-[#F5C451]/10 text-[#F5C451] border-[#F5C451]/20',
+  'Group Buy': 'bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/20',
   Charity: 'bg-[#8b5cf6]/10 text-[#8b5cf6] border-[#8b5cf6]/20',
 };
 
@@ -504,22 +504,22 @@ export default function CommunityForum() {
             className="fixed inset-0 z-[120] bg-[#05070A] flex flex-col overflow-y-auto custom-scrollbar"
           >
             {/* Decorative top glow */}
-            <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[320px] h-[200px] rounded-full bg-[#10E07A]/10 blur-3xl" />
+            <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[320px] h-[200px] rounded-full bg-[var(--sr-customer)]/10 blur-3xl" />
 
             {/* ──── Sticky Header ──── */}
             <div className="sticky top-0 z-20 glass-effect border-b border-white/5">
               {/* Accent bar */}
               <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#8b5cf6]" />
 
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
                   <motion.div
                     initial={{ scale: 0.8, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-                    className="w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[#10E07A]/30 shrink-0"
+                    className="w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
                   >
-                    <Users className="w-5 h-5 text-[#10E07A]" />
+                    <Users className="w-5 h-5 text-[var(--sr-customer)]" />
                   </motion.div>
                   <div className="min-w-0">
                     <h2 className="text-white font-black text-lg leading-tight flex items-center gap-2">
@@ -549,7 +549,7 @@ export default function CommunityForum() {
                     onClick={() => setActiveFilter(cat.id)}
                     className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all ${
                       activeFilter === cat.id
-                        ? 'bg-[#10E07A]/20 border border-[#10E07A]/40 text-[#10E07A]'
+                        ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/40 text-[var(--sr-customer)]'
                         : 'bg-[#1A1D26] border border-white/5 text-white/50 hover:bg-white/5 hover:text-white/80'
                     }`}
                   >
@@ -566,7 +566,7 @@ export default function CommunityForum() {
                   onClick={() => setSortMode('latest')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     sortMode === 'latest'
-                      ? 'bg-[#10E07A]/20 text-[#10E07A]'
+                      ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)]'
                       : 'text-white/65 hover:text-white/70'
                   }`}
                 >
@@ -577,7 +577,7 @@ export default function CommunityForum() {
                   onClick={() => setSortMode('trending')}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${
                     sortMode === 'trending'
-                      ? 'bg-[#F5C451]/20 text-[#F5C451]'
+                      ? 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)]'
                       : 'text-white/65 hover:text-white/70'
                   }`}
                 >
@@ -599,7 +599,7 @@ export default function CommunityForum() {
                   {Array.from({ length: 4 }).map((_, i) => (
                     <div
                       key={`skeleton-${i}`}
-                      className="bg-[#0F1117] rounded-2xl border border-white/5 p-4 animate-pulse"
+                      className="bg-[#0F1117] rounded-2xl border border-white/5 p-3 sm:p-4 animate-pulse"
                     >
                       <div className="flex items-center gap-3 mb-3">
                         <div className="w-10 h-10 rounded-full bg-white/10" />
@@ -695,7 +695,7 @@ export default function CommunityForum() {
                           type: 'spring',
                           damping: 25,
                         }}
-                        className="bg-[#0F1117] rounded-2xl border border-white/5 hover:border-white/10 transition-colors p-4"
+                        className="bg-[#0F1117] rounded-2xl border border-white/5 hover:border-white/10 transition-colors p-3 sm:p-4"
                       >
                         {/* Author row */}
                         <div className="flex items-center gap-3 mb-3">
@@ -770,8 +770,8 @@ export default function CommunityForum() {
                             aria-label="Comments"
                             className={`flex items-center gap-1.5 transition-all active:scale-90 ${
                               expanded
-                                ? 'text-[#10E07A]'
-                                : 'text-white/65 hover:text-[#10E07A]'
+                                ? 'text-[var(--sr-customer)]'
+                                : 'text-white/65 hover:text-[var(--sr-customer)]'
                             }`}
                           >
                             <MessageCircle className="w-4 h-4" />
@@ -781,7 +781,7 @@ export default function CommunityForum() {
                           <button
                             onClick={() => handleShare(post)}
                             aria-label="Share"
-                            className="flex items-center gap-1.5 text-white/65 hover:text-[#F5C451] transition-all active:scale-90"
+                            className="flex items-center gap-1.5 text-white/65 hover:text-[var(--sr-vendor)] transition-all active:scale-90"
                           >
                             <Share2 className="w-4 h-4" />
                             <span className="text-xs font-semibold">Share</span>
@@ -848,13 +848,13 @@ export default function CommunityForum() {
                                       }
                                     }}
                                     placeholder="Write a comment…"
-                                    className="flex-1 bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-full px-3.5 py-2 text-white text-xs placeholder:text-white/60 outline-none transition-colors"
+                                    className="flex-1 bg-white/5 border border-white/5 focus:border-[var(--sr-customer)]/30 rounded-full px-3.5 py-2 text-white text-xs placeholder:text-white/60 outline-none transition-colors"
                                   />
                                   <button
                                     onClick={() => handleSubmitComment(post)}
                                     disabled={!draft.trim() || sending}
                                     aria-label="Send comment"
-                                    className="w-9 h-9 rounded-full bg-[#10E07A] flex items-center justify-center text-[#05070A] active:scale-90 transition-transform disabled:opacity-40 disabled:active:scale-100 shrink-0"
+                                    className="w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center text-[#05070A] active:scale-90 transition-transform disabled:opacity-40 disabled:active:scale-100 shrink-0"
                                   >
                                     <Send className="w-4 h-4" />
                                   </button>
@@ -879,7 +879,7 @@ export default function CommunityForum() {
                 transition={{ delay: 0.2, type: 'spring', damping: 15, stiffness: 250 }}
                 onClick={() => setComposerOpen(true)}
                 aria-label="Create a post"
-                className="fixed bottom-6 right-5 z-[130] w-14 h-14 rounded-full bg-[#10E07A] flex items-center justify-center green-glow active:scale-90 transition-transform"
+                className="fixed bottom-6 right-5 z-[130] w-14 h-14 rounded-full bg-[var(--sr-customer)] flex items-center justify-center green-glow active:scale-90 transition-transform"
               >
                 <Plus className="w-6 h-6 text-[#05070A]" strokeWidth={2.5} />
               </motion.button>
@@ -960,7 +960,7 @@ export default function CommunityForum() {
                       placeholder="Share your Ramadan cooking story, a recipe, or ask the community…"
                       rows={4}
                       maxLength={1000}
-                      className="w-full bg-white/5 border border-white/5 focus:border-[#10E07A]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
+                      className="w-full bg-white/5 border border-white/5 focus:border-[var(--sr-customer)]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
                     />
                     <div className="flex justify-end mb-3">
                       <span className="text-[10px] text-white/60">
@@ -972,7 +972,7 @@ export default function CommunityForum() {
                     <button
                       onClick={handleCreatePost}
                       disabled={!composerContent.trim() || submittingPost}
-                      className="w-full py-3.5 rounded-2xl bg-[#10E07A] text-[#05070A] font-black text-sm green-glow active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100"
+                      className="w-full py-3.5 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-black text-sm green-glow active:scale-[0.98] transition-transform disabled:opacity-40 disabled:active:scale-100"
                     >
                       {submittingPost ? 'Posting…' : 'Post to Community'}
                     </button>

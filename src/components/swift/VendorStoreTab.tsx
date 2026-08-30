@@ -245,7 +245,7 @@ export default function VendorStoreTab() {
               initial={{ opacity: 0, y: -10, height: 0 }}
               animate={{ opacity: 1, y: 0, height: 'auto' }}
               exit={{ opacity: 0, y: -10, height: 0 }}
-              className="rounded-2xl bg-red-500/10 border border-red-500/20 p-4"
+              className="rounded-2xl bg-red-500/10 border border-red-500/20 p-3 sm:p-4"
             >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl bg-red-500/20 flex items-center justify-center border border-red-500/20 shrink-0">
@@ -267,17 +267,17 @@ export default function VendorStoreTab() {
         <motion.div
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-3 gap-3"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"
         >
-          <div className="bg-[#0F1118] rounded-xl p-3 border border-white/5 text-center">
-            <p className="text-[#F5C451] text-lg font-black">{products.length}</p>
+          <div className="bg-[var(--sr-surface-raised)] rounded-xl p-3 border border-white/5 text-center">
+            <p className="text-[var(--sr-vendor)] text-lg font-black">{products.length}</p>
             <p className="text-white/60 text-[9px] font-bold uppercase">Menu Items</p>
           </div>
-          <div className="bg-[#0F1118] rounded-xl p-3 border border-white/5 text-center">
-            <p className="text-[#10E07A] text-lg font-black">{products.filter((i) => i.inStock).length}</p>
+          <div className="bg-[var(--sr-surface-raised)] rounded-xl p-3 border border-white/5 text-center">
+            <p className="text-[var(--sr-customer)] text-lg font-black">{products.filter((i) => i.inStock).length}</p>
             <p className="text-white/60 text-[9px] font-bold uppercase">Available</p>
           </div>
-          <div className="bg-[#0F1118] rounded-xl p-3 border border-white/5 text-center">
+          <div className="bg-[var(--sr-surface-raised)] rounded-xl p-3 border border-white/5 text-center">
             <p className="text-white text-lg font-black">{totalOrders.toLocaleString()}</p>
             <p className="text-white/60 text-[9px] font-bold uppercase">Total Orders</p>
           </div>
@@ -291,13 +291,13 @@ export default function VendorStoreTab() {
         >
           <div className="flex items-center gap-2">
             <h2 className="text-white text-lg font-black">Menu Items</h2>
-            <span className="px-2 py-0.5 rounded-full bg-[#F5C451]/20 text-[#F5C451] text-[10px] font-black border border-[#F5C451]/20">
+            <span className="px-2 py-0.5 rounded-full bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] text-[10px] font-black border border-[var(--sr-vendor)]/20">
               {products.length}
             </span>
           </div>
           <button
             onClick={() => setActiveModal('vendor-stock')}
-            className="text-[#F5C451] text-xs font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
+            className="text-[var(--sr-vendor)] text-xs font-bold flex items-center gap-1 hover:opacity-80 transition-opacity"
           >
             Stock Control <Package className="w-3.5 h-3.5" />
           </button>
@@ -308,7 +308,7 @@ export default function VendorStoreTab() {
           initial={{ opacity: 0, y: 5 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-          className="w-full py-3 rounded-2xl bg-[#F5C451] text-[#06070B] text-sm font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 gold-glow"
+          className="w-full py-3 rounded-2xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 gold-glow"
         >
           <Plus className="w-4 h-4" strokeWidth={3} />
           Add New Product
@@ -327,8 +327,8 @@ export default function VendorStoreTab() {
               onClick={() => setActiveCategory(cat)}
               className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 capitalize ${
                 activeCategory === cat
-                  ? 'bg-[#F5C451]/20 text-[#F5C451] border border-[#F5C451]/30'
-                  : 'bg-[#0F1118] text-white/65 border border-white/5 hover:bg-white/10'
+                  ? 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/30'
+                  : 'bg-[var(--sr-surface-raised)] text-white/65 border border-white/5 hover:bg-white/10'
               }`}
             >
               {cat}
@@ -339,14 +339,14 @@ export default function VendorStoreTab() {
         {/* Loading state */}
         {loading ? (
           <div className="flex flex-col items-center py-16 text-center">
-            <Loader2 className="w-8 h-8 text-[#F5C451] animate-spin mb-3" />
+            <Loader2 className="w-8 h-8 text-[var(--sr-vendor)] animate-spin mb-3" />
             <p className="text-white/65 text-sm font-semibold">Loading your menu...</p>
           </div>
         ) : filteredItems.length === 0 ? (
           /* Empty state */
           <div className="flex flex-col items-center py-16 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#F5C451]/10 flex items-center justify-center mb-4 border border-[#F5C451]/20">
-              <ShoppingBag className="w-8 h-8 text-[#F5C451]/50" />
+            <div className="w-16 h-16 rounded-2xl bg-[var(--sr-vendor)]/10 flex items-center justify-center mb-4 border border-[var(--sr-vendor)]/20">
+              <ShoppingBag className="w-8 h-8 text-[var(--sr-vendor)]/50" />
             </div>
             <p className="text-white/50 text-sm font-bold">No products yet</p>
             <p className="text-white/25 text-xs mt-1">
@@ -354,7 +354,7 @@ export default function VendorStoreTab() {
             </p>
             <button
               onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-              className="mt-4 px-5 py-2.5 rounded-xl bg-[#F5C451] text-[#06070B] text-xs font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center gap-1.5"
+              className="mt-4 px-5 py-2.5 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-xs font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" strokeWidth={3} />
               Add your first product
@@ -377,7 +377,7 @@ export default function VendorStoreTab() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ delay: i * 0.05 }}
-                    className={`rounded-2xl bg-[#0F1118] border p-4 transition-all ${
+                    className={`rounded-2xl bg-[var(--sr-surface-raised)] border p-3 sm:p-4 transition-all ${
                       item.inStock ? 'border-white/5' : 'border-red-500/20 opacity-70'
                     }`}
                   >
@@ -385,7 +385,7 @@ export default function VendorStoreTab() {
                       /* ── Inline Edit Form ── */
                       <div className="space-y-3">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className="text-[#F5C451] text-sm font-bold">Edit Item</h3>
+                          <h3 className="text-[var(--sr-vendor)] text-sm font-bold">Edit Item</h3>
                           <button
                             onClick={cancelEdit}
                             className="text-white/60 text-xs hover:text-white/50 transition-colors"
@@ -398,16 +398,16 @@ export default function VendorStoreTab() {
                           placeholder="Item name"
                           value={editForm.name || ''}
                           onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
-                          className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                         <textarea
                           placeholder="Description"
                           value={editForm.description || ''}
                           onChange={(e) => setEditForm((f) => ({ ...f, description: e.target.value }))}
                           rows={2}
-                          className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors resize-none"
+                          className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors resize-none"
                         />
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <input
                             type="number"
                             placeholder="Price (₦)"
@@ -415,15 +415,15 @@ export default function VendorStoreTab() {
                             onChange={(e) =>
                               setEditForm((f) => ({ ...f, price: Number(e.target.value) }))
                             }
-                            className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                            className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                           />
                           <select
                             value={editForm.category || 'meals'}
                             onChange={(e) => setEditForm((f) => ({ ...f, category: e.target.value }))}
-                            className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                            className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                           >
                             {categories.filter((c) => c !== 'All').map((c) => (
-                              <option key={c} value={c} className="bg-[#0F1118]">
+                              <option key={c} value={c} className="bg-[var(--sr-surface-raised)]">
                                 {c}
                               </option>
                             ))}
@@ -434,19 +434,19 @@ export default function VendorStoreTab() {
                           placeholder="Image URL"
                           value={editForm.image || ''}
                           onChange={(e) => setEditForm((f) => ({ ...f, image: e.target.value }))}
-                          className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                         <input
                           type="text"
                           placeholder="Delivery time (e.g. 25 min)"
                           value={editForm.deliveryTime || ''}
                           onChange={(e) => setEditForm((f) => ({ ...f, deliveryTime: e.target.value }))}
-                          className="w-full bg-[#06070B]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/30 focus:outline-none transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)]/50 border border-white/10 rounded-xl px-4 py-2.5 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/30 focus:outline-none transition-colors"
                         />
                         <button
                           onClick={() => saveEdit(item.id)}
                           disabled={isBusy}
-                          className="w-full py-3 rounded-xl bg-[#F5C451] text-[#06070B] text-sm font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
+                          className="w-full py-3 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60"
                         >
                           {isBusy ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -487,7 +487,7 @@ export default function VendorStoreTab() {
                                 >
                                   {item.name}
                                 </p>
-                                <p className="text-[#F5C451] text-xs font-black mt-0.5">
+                                <p className="text-[var(--sr-vendor)] text-xs font-black mt-0.5">
                                   {formatNaira(item.price)}
                                 </p>
                               </div>
@@ -511,14 +511,14 @@ export default function VendorStoreTab() {
                                 </span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <TrendingUp className="w-3 h-3 text-[#10E07A]/40" />
-                                <span className="text-[#10E07A]/40 text-[10px] font-semibold">
+                                <TrendingUp className="w-3 h-3 text-[var(--sr-customer)]/40" />
+                                <span className="text-[var(--sr-customer)]/40 text-[10px] font-semibold">
                                   ⭐ {item.rating.toFixed(1)}
                                 </span>
                               </div>
                               <div className="flex items-center gap-1">
-                                <Star className="w-3 h-3 text-[#F5C451]/40" />
-                                <span className="text-[#F5C451]/40 text-[10px] font-semibold">
+                                <Star className="w-3 h-3 text-[var(--sr-vendor)]/40" />
+                                <span className="text-[var(--sr-vendor)]/40 text-[10px] font-semibold">
                                   {item.deliveryTime}
                                 </span>
                               </div>
@@ -530,7 +530,7 @@ export default function VendorStoreTab() {
                                 {item.category}
                               </span>
                               {item.inStock && (
-                                <span className="flex items-center gap-1 text-[#10E07A]/50 text-[9px]">
+                                <span className="flex items-center gap-1 text-[var(--sr-customer)]/50 text-[9px]">
                                   <Eye className="w-2.5 h-2.5" />
                                   Visible
                                 </span>
@@ -542,7 +542,7 @@ export default function VendorStoreTab() {
                               <div className="flex items-center gap-2">
                                 <span
                                   className={`text-xs font-bold ${
-                                    item.inStock ? 'text-[#10E07A]' : 'text-red-400'
+                                    item.inStock ? 'text-[var(--sr-customer)]' : 'text-red-400'
                                   }`}
                                 >
                                   {item.inStock ? 'Available' : 'Unavailable'}
@@ -551,7 +551,7 @@ export default function VendorStoreTab() {
                                   onClick={() => toggleAvailability(item)}
                                   disabled={isBusy}
                                   className={`relative w-12 h-6 rounded-full transition-all duration-300 disabled:opacity-60 ${
-                                    item.inStock ? 'bg-[#10E07A]' : 'bg-white/10'
+                                    item.inStock ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                                   }`}
                                   aria-label="Toggle availability"
                                 >
@@ -615,7 +615,7 @@ export default function VendorStoreTab() {
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 300, delay: 0.3 }}
           onClick={() => useAppStore.getState().setActiveModal('vendor-add-product')}
-          className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-[#F5C451] flex items-center justify-center shadow-lg z-40 gold-glow active:scale-95 transition-transform"
+          className="fixed bottom-24 right-6 w-14 h-14 rounded-full bg-[var(--sr-vendor)] flex items-center justify-center shadow-lg z-40 gold-glow active:scale-95 transition-transform"
           aria-label="Add product"
         >
           <Plus className="w-6 h-6 text-[#06070B]" strokeWidth={3} />

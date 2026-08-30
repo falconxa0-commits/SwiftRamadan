@@ -98,7 +98,7 @@ export default function CookAlongMode() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[110]" onClick={handleClose} />
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
             className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#13ec13]/20">
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
               <div className="flex items-center gap-3">
                 <div className="relative w-11 h-11 bg-gradient-to-br from-[#13ec13]/20 to-[#FFD700]/20 rounded-2xl flex items-center justify-center border border-[#13ec13]/30">
                   <ChefHat className="w-6 h-6 text-[#13ec13]" />
@@ -128,7 +128,7 @@ export default function CookAlongMode() {
                 <CompletionView recipeName={recipe.name} cuisine={cuisine} elapsed={elapsed} totalSteps={total} onRestart={handleRestart} onClose={handleClose} />
               ) : (
                 <div className="space-y-4">
-                  <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-4">
+                  <div className="rounded-2xl bg-[#0F1117] border border-white/10 p-3 sm:p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4 text-[#FFD700]" />
@@ -191,7 +191,7 @@ export default function CookAlongMode() {
             </div>
 
             {!done && (
-              <div className="shrink-0 p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg">
+              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg">
                 <div className="flex gap-2">
                   <button onClick={() => setIsPlaying((p) => !p)} className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors shrink-0" aria-label={isPlaying ? 'Pause timer' : 'Start timer'}>
                     {isPlaying ? <Pause className="w-5 h-5 text-[#FFD700]" /> : <Play className="w-5 h-5 text-[#13ec13] fill-current" />}
@@ -222,7 +222,7 @@ function CompletionView({ recipeName, cuisine, elapsed, totalSteps, onRestart, o
       <h2 className="text-white font-black text-2xl">Bismillah, bon appetit! 🎉</h2>
       <p className="text-white/50 text-sm mt-1">You just cooked</p>
       <p className="text-[#13ec13] font-bold text-lg mt-0.5">{recipeName}</p>
-      <div className="grid grid-cols-3 gap-2 mt-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mt-5">
         <div className="rounded-xl bg-[#0F1117] border border-white/10 p-3">
           <Clock className="w-4 h-4 text-[#FFD700] mx-auto mb-1" />
           <p className="text-white font-black text-lg leading-none">{mins}:{secs.toString().padStart(2, '0')}</p>

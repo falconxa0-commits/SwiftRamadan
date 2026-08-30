@@ -204,7 +204,7 @@ export default function PayoutModal() {
           >
             {/* Sticky Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-green-500/15 flex items-center justify-center border border-green-500/30">
                     <Banknote className="w-5 h-5 text-green-400" />
@@ -223,7 +223,7 @@ export default function PayoutModal() {
               </div>
 
               {/* Wallet Balance */}
-              <div className="mx-4 mb-4 p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
+              <div className="mx-4 mb-4 p-3 sm:p-4 rounded-2xl bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-white/50 text-xs">Available Balance</p>

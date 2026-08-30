@@ -253,8 +253,8 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
       {/* Header */}
       <div className="w-full flex items-center justify-between px-4 pt-4 pb-2 relative z-20">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30">
-            <Sparkles className="w-4 h-4 text-[#F5C451]" />
+          <div className="w-8 h-8 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center border border-[var(--sr-vendor)]/30">
+            <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
           </div>
           <h2 className="text-white text-lg font-bold">Daily Spin & Win</h2>
         </div>
@@ -272,9 +272,9 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
       {/* Streak Badge */}
       {spinStreak > 0 && (
         <div className="flex items-center gap-2 mt-2 mb-2">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20">
             <Flame className="w-3.5 h-3.5 text-orange-400" />
-            <span className="text-[#F5C451] text-xs font-bold">{spinStreak} Day Streak</span>
+            <span className="text-[var(--sr-vendor)] text-xs font-bold">{spinStreak} Day Streak</span>
           </div>
           {spinStreak >= 3 && (
             <div className="flex items-center gap-1 px-2 py-1.5 rounded-full bg-[#A78BFA]/10 border border-[#A78BFA]/20">
@@ -319,7 +319,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
 
           {/* Gold Border Ring */}
           <div
-            className="absolute rounded-full border-2 border-[#F5C451]/40"
+            className="absolute rounded-full border-2 border-[var(--sr-vendor)]/40"
             style={{
               inset: '6px',
               boxShadow: isSpinning
@@ -376,10 +376,10 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                       {prize.label}
                     </span>
                     {prize.rare && (
-                      <span className="text-[7px] font-bold text-[#F5C451] block mt-0.5">RARE</span>
+                      <span className="text-[7px] font-bold text-[var(--sr-vendor)] block mt-0.5">RARE</span>
                     )}
                     {prize.jackpot && (
-                      <span className="text-[7px] font-bold text-[#F5C451] block mt-0.5 animate-pulse">JACKPOT</span>
+                      <span className="text-[7px] font-bold text-[var(--sr-vendor)] block mt-0.5 animate-pulse">JACKPOT</span>
                     )}
                   </div>
                 </div>
@@ -392,7 +392,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               return (
                 <div
                   key={`line-${i}`}
-                  className="absolute top-1/2 left-1/2 bg-[#F5C451]/30"
+                  className="absolute top-1/2 left-1/2 bg-[var(--sr-vendor)]/30"
                   style={{
                     width: '1px',
                     height: '50%',
@@ -443,14 +443,14 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               animate={{ opacity: 1 }}
               className="text-white/60 text-sm"
             >
-              Tap <span className="text-[#F5C451] font-bold">SPIN</span> to win a prize!
+              Tap <span className="text-[var(--sr-vendor)] font-bold">SPIN</span> to win a prize!
             </motion.p>
           )}
           {isSpinning && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-[#F5C451] text-sm font-bold animate-pulse"
+              className="text-[var(--sr-vendor)] text-sm font-bold animate-pulse"
             >
               Spinning... 🎰
             </motion.p>
@@ -459,8 +459,8 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
             <div className="text-center">
               <p className="text-white/65 text-sm mb-1">You&apos;ve already spun today!</p>
               <div className="flex items-center justify-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-[#F5C451]/60" />
-                <span className="text-[#F5C451] text-sm font-mono font-bold">{countdown}</span>
+                <Clock className="w-3.5 h-3.5 text-[var(--sr-vendor)]/60" />
+                <span className="text-[var(--sr-vendor)] text-sm font-mono font-bold">{countdown}</span>
               </div>
               <p className="text-white/60 text-xs mt-1">until next free spin</p>
             </div>
@@ -532,7 +532,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.5, opacity: 0, y: 40 }}
                 transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-                className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[#F5C451]/30"
+                className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-vendor)]/30"
                 style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
               >
                 {/* Glow effect */}

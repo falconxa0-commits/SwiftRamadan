@@ -51,69 +51,69 @@ const ROLE_DEFAULT_TAB: Record<string, TabId> = {
 /* ──────────────── Menu Items per Role ──────────────── */
 
 const customerMenu = [
-  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#10E07A]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
   { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
-  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[#10E07A]', action: 'bnpl', section: 'REWARDS & GIVING' },
-  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#F5C451]', action: 'rewards', section: 'REWARDS & GIVING' },
-  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-[#38BDF8]', action: 'refer', section: 'REWARDS & GIVING' },
+  { icon: CreditCard, label: 'Pay Small-Small (BNPL)', subtitle: 'Buy now, pay later', color: 'text-[var(--sr-customer)]', action: 'bnpl', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[var(--sr-customer)]', action: 'wallet', section: 'REWARDS & GIVING' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'rewards', section: 'REWARDS & GIVING' },
+  { icon: Users, label: 'Refer & Earn', subtitle: 'Get ₦2,000 per referral', color: 'text-[var(--sr-rider)]', action: 'refer', section: 'REWARDS & GIVING' },
   { icon: Heart, label: 'Charity & Zakat', subtitle: 'Make a difference', color: 'text-[#FB7185]', action: 'charity', section: 'REWARDS & GIVING' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[#10E07A]', action: 'eco-impact', section: 'REWARDS & GIVING' },
-  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-[#F5C451]', action: 'artisan-market', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[var(--sr-customer)]', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: Palette, label: 'Artisan Market', subtitle: 'Local crafts & goods', color: 'text-[var(--sr-vendor)]', action: 'artisan-market', section: 'REWARDS & GIVING' },
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Discussion & reviews', color: 'text-[#A78BFA]', action: 'community', section: 'REWARDS & GIVING' },
   { icon: MapPin, label: 'Delivery Location', subtitle: 'Set on map', color: 'text-[#A78BFA]', action: 'delivery-location', section: 'ACCOUNT' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
-  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#10E07A]', action: 'switch-role', section: 'SUPPORT' },
-  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
-  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[var(--sr-rider)]', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[var(--sr-rider)]', action: 'support', section: 'SUPPORT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[var(--sr-rider)]', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-customer)]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
   { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const vendorMenu = [
-  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#10E07A]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
   { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
-  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[#F5C451]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
-  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-[#10E07A]', action: 'vendor-stock', section: 'REWARDS & GIVING' },
-  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-[#38BDF8]', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
-  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[#F5C451]', action: 'payout', section: 'REWARDS & GIVING' },
-  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
-  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[#38BDF8]', action: 'kyc', section: 'REWARDS & GIVING' },
-  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[#F5C451]', action: 'rewards', section: 'REWARDS & GIVING' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[#10E07A]', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: BarChart3, label: 'Sales Insights', subtitle: 'View analytics & trends', color: 'text-[var(--sr-vendor)]', action: 'vendor-insights', section: 'REWARDS & GIVING' },
+  { icon: Package, label: 'Quick Stock Control', subtitle: 'Manage inventory', color: 'text-[var(--sr-customer)]', action: 'vendor-stock', section: 'REWARDS & GIVING' },
+  { icon: TrendingUp, label: 'Dynamic Pricing', subtitle: 'Optimize your prices', color: 'text-[var(--sr-rider)]', action: 'vendor-pricing', section: 'REWARDS & GIVING' },
+  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[var(--sr-vendor)]', action: 'payout', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[var(--sr-customer)]', action: 'wallet', section: 'REWARDS & GIVING' },
+  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[var(--sr-rider)]', action: 'kyc', section: 'REWARDS & GIVING' },
+  { icon: Gift, label: 'SwiftRewards', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'rewards', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[var(--sr-customer)]', action: 'eco-impact', section: 'REWARDS & GIVING' },
   { icon: MessageSquare, label: 'SwiftCommunity', subtitle: 'Connect with vendors', color: 'text-[#A78BFA]', action: 'community', section: 'REWARDS & GIVING' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
-  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#F5C451]', action: 'switch-role', section: 'SUPPORT' },
-  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
-  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[var(--sr-rider)]', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[var(--sr-rider)]', action: 'support', section: 'SUPPORT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[var(--sr-rider)]', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-vendor)]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
   { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
 
 const riderMenu = [
-  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[#10E07A]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
+  { icon: ChefHat, label: 'Smart Kitchen', subtitle: 'Live AI cooking coach', color: 'text-[var(--sr-customer)]', action: 'smart-kitchen', section: 'SMART KITCHEN' },
   { icon: CalendarDays, label: 'Meal Planner', subtitle: 'Plan your Iftar & Sahur week', color: 'text-[#A78BFA]', action: 'meal-planner', section: 'SMART KITCHEN' },
-  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[#38BDF8]', action: 'rider-performance', section: 'REWARDS & GIVING' },
-  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-[#38BDF8]', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
-  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[#F5C451]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
-  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[#38BDF8]', action: 'payout', section: 'REWARDS & GIVING' },
-  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[#10E07A]', action: 'wallet', section: 'REWARDS & GIVING' },
-  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[#38BDF8]', action: 'kyc', section: 'REWARDS & GIVING' },
-  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-[#38BDF8]', action: 'refer', section: 'REWARDS & GIVING' },
-  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[#10E07A]', action: 'eco-impact', section: 'REWARDS & GIVING' },
-  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[#38BDF8]', action: 'prayer-times', section: 'ACCOUNT' },
-  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[#F5C451]', action: 'notifications', section: 'ACCOUNT' },
-  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[#38BDF8]', action: 'support', section: 'SUPPORT' },
-  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[#38BDF8]', action: 'security', section: 'SUPPORT' },
-  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[#38BDF8]', action: 'switch-role', section: 'SUPPORT' },
-  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[#10E07A]', action: 'edit-profile', section: 'SUPPORT' },
-  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[#10E07A]', action: 'help-center', section: 'SUPPORT' },
+  { icon: BarChart3, label: 'Performance Hub', subtitle: 'Track your metrics', color: 'text-[var(--sr-rider)]', action: 'rider-performance', section: 'REWARDS & GIVING' },
+  { icon: Navigation, label: 'AI Smart Route', subtitle: 'Optimized deliveries', color: 'text-[var(--sr-rider)]', action: 'rider-smart-route', section: 'REWARDS & GIVING' },
+  { icon: Zap, label: 'Power Finder', subtitle: 'Find charging stations', color: 'text-[var(--sr-vendor)]', action: 'rider-power-finder', section: 'REWARDS & GIVING' },
+  { icon: Banknote, label: 'Payouts', subtitle: 'Withdraw to bank', color: 'text-[var(--sr-rider)]', action: 'payout', section: 'REWARDS & GIVING' },
+  { icon: Wallet, label: 'My Wallet', subtitle: 'Balance & top-up', color: 'text-[var(--sr-customer)]', action: 'wallet', section: 'REWARDS & GIVING' },
+  { icon: Shield, label: 'KYC Verification', subtitle: 'Verify your identity', color: 'text-[var(--sr-rider)]', action: 'kyc', section: 'REWARDS & GIVING' },
+  { icon: Users, label: 'Refer a Driver', subtitle: 'Earn ₦2,000 per referral', color: 'text-[var(--sr-rider)]', action: 'refer', section: 'REWARDS & GIVING' },
+  { icon: Leaf, label: 'Eco-Impact Report', subtitle: 'Your green footprint', color: 'text-[var(--sr-customer)]', action: 'eco-impact', section: 'REWARDS & GIVING' },
+  { icon: Moon, label: 'Prayer Times', subtitle: 'Salah & Qibla', color: 'text-[var(--sr-rider)]', action: 'prayer-times', section: 'ACCOUNT' },
+  { icon: Bell, label: 'Notifications', subtitle: '', color: 'text-[var(--sr-vendor)]', action: 'notifications', section: 'ACCOUNT' },
+  { icon: Headphones, label: 'Support', subtitle: 'Get help & tickets', color: 'text-[var(--sr-rider)]', action: 'support', section: 'SUPPORT' },
+  { icon: Shield, label: 'Security & Privacy', subtitle: 'Biometric access', color: 'text-[var(--sr-rider)]', action: 'security', section: 'SUPPORT' },
+  { icon: ArrowLeftRight, label: 'Switch Role', subtitle: 'Customer / Vendor / Rider', color: 'text-[var(--sr-rider)]', action: 'switch-role', section: 'SUPPORT' },
+  { icon: User, label: 'Edit Profile', subtitle: 'Update your personal info', color: 'text-[var(--sr-customer)]', action: 'edit-profile', section: 'SUPPORT' },
+  { icon: HelpCircle, label: 'Help Center', subtitle: 'FAQs & guides', color: 'text-[var(--sr-customer)]', action: 'help-center', section: 'SUPPORT' },
   { icon: FileText, label: 'Legal', subtitle: 'Terms, privacy & about', color: 'text-[#A78BFA]', action: 'legal', section: 'SUPPORT' },
   { icon: Settings, label: 'Settings', subtitle: 'App preferences', color: 'text-white/50', action: 'settings', section: 'SUPPORT' },
 ];
@@ -125,7 +125,7 @@ const MENU_SECTION_ORDER = ['SMART KITCHEN', 'REWARDS & GIVING', 'ACCOUNT', 'SUP
 const TIER_STYLES: Record<string, { bg: string; border: string; text: string; glow: string }> = {
   bronze: { bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400', glow: '0 0 12px rgba(245,158,11,0.25)' },
   silver: { bg: 'bg-slate-300/10', border: 'border-slate-300/30', text: 'text-slate-200', glow: '0 0 12px rgba(226,232,240,0.18)' },
-  gold: { bg: 'bg-[#F5C451]/10', border: 'border-[#F5C451]/40', text: 'text-[#F5C451]', glow: '0 0 14px rgba(245,196,81,0.35)' },
+  gold: { bg: 'bg-[var(--sr-vendor)]/10', border: 'border-[var(--sr-vendor)]/40', text: 'text-[var(--sr-vendor)]', glow: '0 0 14px rgba(245,196,81,0.35)' },
   platinum: { bg: 'bg-[#A78BFA]/10', border: 'border-[#A78BFA]/40', text: 'text-[#A78BFA]', glow: '0 0 14px rgba(167,139,250,0.35)' },
 };
 
@@ -145,8 +145,8 @@ const roleCards = [
     title: 'Customer',
     description: 'Order iftar meals, groceries & more',
     accent: '#10E07A',
-    bgClass: 'bg-[#10E07A]/10 border-[#10E07A]/30',
-    iconColor: 'text-[#10E07A]',
+    bgClass: 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30',
+    iconColor: 'text-[var(--sr-customer)]',
   },
   {
     role: 'vendor' as const,
@@ -154,8 +154,8 @@ const roleCards = [
     title: 'Vendor',
     description: 'Manage your store & accept orders',
     accent: '#F5C451',
-    bgClass: 'bg-[#F5C451]/10 border-[#F5C451]/30',
-    iconColor: 'text-[#F5C451]',
+    bgClass: 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/30',
+    iconColor: 'text-[var(--sr-vendor)]',
   },
   {
     role: 'rider' as const,
@@ -163,8 +163,8 @@ const roleCards = [
     title: 'Rider',
     description: 'Deliver orders & earn money',
     accent: '#38BDF8',
-    bgClass: 'bg-[#38BDF8]/10 border-[#38BDF8]/30',
-    iconColor: 'text-[#38BDF8]',
+    bgClass: 'bg-[var(--sr-rider)]/10 border-[var(--sr-rider)]/30',
+    iconColor: 'text-[var(--sr-rider)]',
   },
 ];
 
@@ -174,7 +174,7 @@ function ToggleSwitch({ enabled, onToggle, label }: { enabled: boolean; onToggle
   return (
     <button
       onClick={onToggle}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-[#10E07A]' : 'bg-white/10'}`}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${enabled ? 'bg-[var(--sr-customer)]' : 'bg-white/10'}`}
       role="switch"
       aria-checked={enabled}
       aria-label={label}
@@ -349,7 +349,7 @@ export default function ProfileTab() {
             <div className="space-y-3">
               <div className="flex justify-between items-center p-3 glass-card rounded-xl">
                 <div className="flex items-center gap-3">
-                  <Fingerprint className="w-5 h-5 text-[#10E07A]" />
+                  <Fingerprint className="w-5 h-5 text-[var(--sr-customer)]" />
                   <div>
                     <p className="text-white font-bold text-sm">Biometric Login</p>
                     <p className="text-white/65 text-xs">Use fingerprint or Face ID</p>
@@ -366,7 +366,7 @@ export default function ProfileTab() {
               </div>
               <div className="flex justify-between items-center p-3 glass-card rounded-xl">
                 <div className="flex items-center gap-3">
-                  <Lock className="w-5 h-5 text-[#10E07A]" />
+                  <Lock className="w-5 h-5 text-[var(--sr-customer)]" />
                   <div>
                     <p className="text-white font-bold text-sm">Two-Factor Auth</p>
                     <p className="text-white/65 text-xs">Extra security for your account</p>
@@ -383,13 +383,13 @@ export default function ProfileTab() {
               </div>
               <div className="flex justify-between items-center p-3 glass-card rounded-xl">
                 <div className="flex items-center gap-3">
-                  <Eye className="w-5 h-5 text-[#10E07A]" />
+                  <Eye className="w-5 h-5 text-[var(--sr-customer)]" />
                   <div>
                     <p className="text-white font-bold text-sm">Data Encryption</p>
                     <p className="text-white/65 text-xs">End-to-end encryption</p>
                   </div>
                 </div>
-                <span className="text-[#10E07A] text-xs font-bold">Active</span>
+                <span className="text-[var(--sr-customer)] text-xs font-bold">Active</span>
               </div>
             </div>
           ),
@@ -507,25 +507,25 @@ export default function ProfileTab() {
             >
               {userRole === 'vendor' ? (
                 /* Vendor Header */
-                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#06070B] border border-[#F5C451]/30"
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--sr-surface-base)] border border-[var(--sr-vendor)]/30"
                   style={{ boxShadow: '0 0 20px rgba(245,196,81,0.18)' }}>
-                  <Store className="w-8 h-8 text-[#F5C451]" />
+                  <Store className="w-8 h-8 text-[var(--sr-vendor)]" />
                 </div>
               ) : userRole === 'rider' ? (
                 /* Rider Header */
                 <div className="relative">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#06070B] border border-[#38BDF8]/30"
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--sr-surface-base)] border border-[var(--sr-rider)]/30"
                     style={{ boxShadow: '0 0 20px rgba(56,189,248,0.18)' }}>
-                    <Bike className="w-8 h-8 text-[#38BDF8]" />
+                    <Bike className="w-8 h-8 text-[var(--sr-rider)]" />
                   </div>
                   <span className={`absolute bottom-0 right-0 size-4 rounded-full border-2 border-[#06070B] ${
-                    riderOnline ? 'bg-[#10E07A] animate-pulse' : 'bg-white/30'
+                    riderOnline ? 'bg-[var(--sr-customer)] animate-pulse' : 'bg-white/30'
                   }`} />
                 </div>
               ) : (
                 /* Customer Header */
-                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[#06070B] border border-[#10E07A]/30 green-glow">
-                  <User className="w-8 h-8 text-[#10E07A]" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--sr-surface-base)] border border-[var(--sr-customer)]/30 green-glow">
+                  <User className="w-8 h-8 text-[var(--sr-customer)]" />
                 </div>
               )}
             </div>
@@ -535,14 +535,14 @@ export default function ProfileTab() {
                 <h2 className="text-white text-xl font-bold truncate tracking-tight">{displayName}</h2>
                 <span className="beta-badge">Beta</span>
                 {userRole === 'vendor' && (
-                  <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[#10E07A] shadow-[0_0_8px_rgba(16,224,122,0.5)]' : 'bg-white/30'}`} />
+                  <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[var(--sr-customer)] shadow-[0_0_8px_rgba(16,224,122,0.5)]' : 'bg-white/30'}`} />
                 )}
               </div>
 
               {userRole === 'vendor' ? (
                 <>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <span className="text-[#F5C451] text-[10px] font-bold bg-[#F5C451]/10 px-2 py-0.5 rounded-full border border-[#F5C451]/20">
+                    <span className="text-[var(--sr-vendor)] text-[10px] font-bold bg-[var(--sr-vendor)]/10 px-2 py-0.5 rounded-full border border-[var(--sr-vendor)]/20">
                       {vendorBusinessCategory || 'General'}
                     </span>
                     <span className="text-white/60 text-xs">•</span>
@@ -553,12 +553,12 @@ export default function ProfileTab() {
               ) : userRole === 'rider' ? (
                 <>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#10E07A]' : 'bg-white/30'}`} />
-                    <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/65'}`}>
+                    <span className={`size-2 rounded-full ${riderOnline ? 'bg-[var(--sr-customer)]' : 'bg-white/30'}`} />
+                    <span className={`text-xs font-bold ${riderOnline ? 'text-[var(--sr-customer)]' : 'text-white/65'}`}>
                       {riderOnline ? 'Online' : 'Offline'}
                     </span>
                     <span className="text-white/20 text-xs">•</span>
-                    <span className="text-[#F5C451] text-xs font-bold">⭐ Elite Rider</span>
+                    <span className="text-[var(--sr-vendor)] text-xs font-bold">⭐ Elite Rider</span>
                   </div>
                   <p className="text-white/50 text-[11px] mt-0.5">{riderVehicleType || 'Motorcycle'}</p>
                 </>
@@ -595,50 +595,50 @@ export default function ProfileTab() {
           {userRole === 'vendor' ? (
             <>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[#10E07A] text-lg font-black">{formatNaira(vendorBalance)}</p>
+                <p className="text-[var(--sr-customer)] text-lg font-black">{formatNaira(vendorBalance)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Revenue</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[#F5C451] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
+                <p className="text-[var(--sr-vendor)] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Orders Today</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[#38BDF8] text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
+                <p className="text-[var(--sr-rider)] text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Avg Order</p>
               </div>
             </>
           ) : userRole === 'rider' ? (
             <>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <div className="w-8 h-8 bg-[#10E07A]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
-                  <DollarSign className="w-4 h-4 text-[#10E07A]" />
+                <div className="w-8 h-8 bg-[var(--sr-customer)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <DollarSign className="w-4 h-4 text-[var(--sr-customer)]" />
                 </div>
-                <p className="text-[#10E07A] text-lg font-black">{formatNaira(riderEarnings)}</p>
+                <p className="text-[var(--sr-customer)] text-lg font-black">{formatNaira(riderEarnings)}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <div className="w-8 h-8 bg-[#38BDF8]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
-                  <Zap className="w-4 h-4 text-[#38BDF8]" />
+                <div className="w-8 h-8 bg-[var(--sr-rider)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <Zap className="w-4 h-4 text-[var(--sr-rider)]" />
                 </div>
-                <p className="text-[#38BDF8] text-lg font-black">{riderCompletedToday}</p>
+                <p className="text-[var(--sr-rider)] text-lg font-black">{riderCompletedToday}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Completed</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <div className="w-8 h-8 bg-[#F5C451]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
-                  <Star className="w-4 h-4 text-[#F5C451]" />
+                <div className="w-8 h-8 bg-[var(--sr-vendor)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
+                  <Star className="w-4 h-4 text-[var(--sr-vendor)]" />
                 </div>
-                <p className="text-[#F5C451] text-lg font-black">{riderRating}</p>
+                <p className="text-[var(--sr-vendor)] text-lg font-black">{riderRating}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Rating</p>
               </div>
             </>
           ) : (
             <>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[#F5C451] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
+                <p className="text-[var(--sr-vendor)] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase">Hasanat Pts</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[#10E07A] text-xl font-black">{swiftPoints.toLocaleString()}</p>
+                <p className="text-[var(--sr-customer)] text-xl font-black">{swiftPoints.toLocaleString()}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase">Swift Pts</p>
               </div>
               <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
@@ -684,13 +684,13 @@ export default function ProfileTab() {
 
       {/* ─── My Cooking Journey (achievement showcase) ─── */}
       <div className="px-5 mt-6">
-        <div className="relative overflow-hidden rounded-2xl border border-[#10E07A]/20 bg-[#0F1118] p-5 aurora-soft">
-          <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#10E07A]/10 blur-[44px] pointer-events-none" />
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-customer)]/20 bg-[var(--sr-surface-raised)] p-5 aurora-soft">
+          <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-customer)]/10 blur-[44px] pointer-events-none" />
           {/* Header row */}
           <div className="relative flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/30 icon-tile">
-                <ChefHat className="w-5 h-5 text-[#10E07A] relative z-10" />
+              <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/15 flex items-center justify-center border border-[var(--sr-customer)]/30 icon-tile">
+                <ChefHat className="w-5 h-5 text-[var(--sr-customer)] relative z-10" />
               </div>
               <div>
                 <h3 className="text-white font-extrabold text-sm leading-tight heading-accent">My Cooking Journey</h3>
@@ -699,7 +699,7 @@ export default function ProfileTab() {
             </div>
             <button
               onClick={() => useAppStore.getState().setActiveModal('smart-kitchen')}
-              className="text-[#10E07A] text-xs font-bold hover:underline shrink-0"
+              className="text-[var(--sr-customer)] text-xs font-bold hover:underline shrink-0"
             >
               View Smart Kitchen →
             </button>
@@ -725,7 +725,7 @@ export default function ProfileTab() {
               {/* 3-stat row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                 <div className="glass-card rounded-xl p-3 text-center">
-                  <p className="text-[#10E07A] text-lg font-black">{cookingStats.totalSessions ?? 0}</p>
+                  <p className="text-[var(--sr-customer)] text-lg font-black">{cookingStats.totalSessions ?? 0}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Sessions Cooked</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
@@ -733,7 +733,7 @@ export default function ProfileTab() {
                   <p className="text-white/65 text-[10px] font-bold uppercase">Live AI Sessions</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
-                  <p className="text-[#F5C451] text-lg font-black">{cookingStats.totalCookTimeMins ?? 0}<span className="text-xs">m</span></p>
+                  <p className="text-[var(--sr-vendor)] text-lg font-black">{cookingStats.totalCookTimeMins ?? 0}<span className="text-xs">m</span></p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Total Cook Time</p>
                 </div>
               </div>
@@ -748,7 +748,7 @@ export default function ProfileTab() {
                       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1">
                         {unlocked.map(a => (
                           <div key={a.id} className="flex flex-col items-center gap-1 shrink-0 w-16">
-                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#F5C451]/20 to-[#10E07A]/15 border border-[#F5C451]/40 flex items-center justify-center text-2xl"
+                            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#F5C451]/20 to-[#10E07A]/15 border border-[var(--sr-vendor)]/40 flex items-center justify-center text-2xl"
                               style={{ boxShadow: '0 0 12px rgba(245,196,81,0.18)' }}>
                               <span>{a.icon}</span>
                             </div>
@@ -761,7 +761,7 @@ export default function ProfileTab() {
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
                         <span className="text-white/60 text-[11px] font-bold flex items-center gap-1">
-                          <Trophy className="w-3 h-3 text-[#F5C451]" />
+                          <Trophy className="w-3 h-3 text-[var(--sr-vendor)]" />
                           Achievements unlocked
                         </span>
                         <span className="text-white font-extrabold text-xs">{unlocked.length} / {total}</span>
@@ -780,8 +780,8 @@ export default function ProfileTab() {
           ) : (
             /* Empty / error state */
             <div className="relative text-center py-4">
-              <div className="w-14 h-14 rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
-                <ChefHat className="w-7 h-7 text-[#10E07A] relative z-10" />
+              <div className="w-14 h-14 rounded-2xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
+                <ChefHat className="w-7 h-7 text-[var(--sr-customer)] relative z-10" />
               </div>
               <p className="text-white/70 text-sm font-bold">No cooking sessions yet</p>
               <p className="text-white/65 text-xs mt-1">Cook with Chef Safa to unlock achievements</p>
@@ -825,12 +825,12 @@ export default function ProfileTab() {
       {/* ─── Loyalty Redemption (Customer only) ─── */}
       {userRole === 'customer' && (
         <div className="px-5 mt-6">
-          <div className="relative overflow-hidden rounded-2xl border border-[#F5C451]/25 bg-gradient-to-br from-[#F5C451]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
-            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[#F5C451]/15 blur-[44px] pointer-events-none" />
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-vendor)]/25 bg-gradient-to-br from-[#F5C451]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
+            <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-vendor)]/15 blur-[44px] pointer-events-none" />
             <div className="relative flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/30 icon-tile">
-                  <Gift className="w-5 h-5 text-[#F5C451] relative z-10" />
+                <div className="w-9 h-9 rounded-xl bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/30 icon-tile">
+                  <Gift className="w-5 h-5 text-[var(--sr-vendor)] relative z-10" />
                 </div>
                 <div>
                   <h3 className="text-white font-extrabold text-sm leading-tight heading-accent">Redeem Points</h3>
@@ -838,7 +838,7 @@ export default function ProfileTab() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-[#10E07A] text-lg font-black leading-tight">{swiftPoints.toLocaleString()}</p>
+                <p className="text-[var(--sr-customer)] text-lg font-black leading-tight">{swiftPoints.toLocaleString()}</p>
                 <p className="text-white/65 text-[10px] font-bold uppercase leading-tight">Swift Pts</p>
               </div>
             </div>
@@ -855,7 +855,7 @@ export default function ProfileTab() {
                     onClick={() => handleRedeem(reward.id, reward.label, reward.cost)}
                     className={`relative flex flex-col items-start p-3 rounded-xl border transition-all text-left ${
                       affordable
-                        ? 'bg-white/[0.03] border-white/10 hover:border-[#F5C451]/40'
+                        ? 'bg-white/[0.03] border-white/10 hover:border-[var(--sr-vendor)]/40'
                         : 'bg-white/[0.01] border-white/5 opacity-50 cursor-not-allowed'
                     }`}
                   >
@@ -868,10 +868,10 @@ export default function ProfileTab() {
                       )}
                     </div>
                     <p className="text-white font-bold text-xs">{reward.label}</p>
-                    <p className="text-[#F5C451] text-[10px] font-bold mt-0.5">{reward.cost.toLocaleString()} pts</p>
+                    <p className="text-[var(--sr-vendor)] text-[10px] font-bold mt-0.5">{reward.cost.toLocaleString()} pts</p>
                     {isRedeeming && (
-                      <div className="absolute inset-0 bg-[#06070B]/70 rounded-xl flex items-center justify-center">
-                        <Loader2 className="w-4 h-4 text-[#F5C451] animate-spin" />
+                      <div className="absolute inset-0 bg-[var(--sr-surface-base)]/70 rounded-xl flex items-center justify-center">
+                        <Loader2 className="w-4 h-4 text-[var(--sr-vendor)] animate-spin" />
                       </div>
                     )}
                   </motion.button>
@@ -954,11 +954,11 @@ export default function ProfileTab() {
                 onClick={() => handleCharityClick(item)}
                 className="glass-card rounded-2xl p-3 sm:p-4 cursor-pointer hover:border-white/15 transition-colors text-left active:scale-[0.98]"
               >
-                <span className="material-symbols-outlined text-[#F5C451] text-2xl mb-2">{item.icon}</span>
+                <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl mb-2">{item.icon}</span>
                 <p className="text-white font-bold text-sm">{item.name}</p>
                 <p className="text-white/65 text-[10px] mt-0.5">{item.description}</p>
                 {item.amount > 0 && (
-                  <p className="text-[#10E07A] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
+                  <p className="text-[var(--sr-customer)] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
                 )}
               </button>
             ))}
@@ -982,7 +982,7 @@ export default function ProfileTab() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 max-h-[70vh] bg-[#0F1118] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
+              className="fixed bottom-0 left-0 right-0 max-h-[70vh] bg-[var(--sr-surface-raised)] rounded-t-3xl z-[80] flex flex-col overflow-hidden border-t border-white/10"
             >
               <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5">
                 <h2 className="text-white font-bold tracking-tight">{modalContent.title}</h2>
@@ -1017,7 +1017,7 @@ export default function ProfileTab() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 bg-[#0F1118] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
+              className="fixed bottom-0 left-0 right-0 bg-[var(--sr-surface-raised)] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
             >
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-white/5">

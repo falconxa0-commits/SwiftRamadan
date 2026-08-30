@@ -101,7 +101,7 @@ export default function MoodFeedModal() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#F59E0B]/10 rounded-xl flex items-center justify-center border border-[#F59E0B]/20">
                   <Smile className="w-5 h-5 text-[#F59E0B]" />
@@ -202,7 +202,7 @@ export default function MoodFeedModal() {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {products.map((product, i) => (
                     <motion.div
                       key={product.name}
@@ -239,10 +239,10 @@ export default function MoodFeedModal() {
 
                         {/* Price + Add */}
                         <div className="flex items-center justify-between">
-                          <span className="text-[#10E07A] text-sm font-bold">{formatNaira(product.price)}</span>
+                          <span className="text-[var(--sr-customer)] text-sm font-bold">{formatNaira(product.price)}</span>
                           <button
                             onClick={() => handleAddToCart(product)}
-                            className="w-8 h-8 rounded-lg bg-[#10E07A] flex items-center justify-center hover:bg-[#10E07A]/80 active:scale-95 transition-all"
+                            className="w-8 h-8 rounded-lg bg-[var(--sr-customer)] flex items-center justify-center hover:bg-[var(--sr-customer)]/80 active:scale-95 transition-all"
                           >
                             <ShoppingCart className="w-4 h-4 text-[#05070A]" />
                           </button>

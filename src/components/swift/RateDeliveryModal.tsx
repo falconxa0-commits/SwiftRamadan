@@ -157,7 +157,7 @@ export default function RateDeliveryModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-            className="fixed bottom-0 left-0 right-0 z-[150] bg-[#0F1118] rounded-t-3xl border-t border-white/10 max-w-md mx-auto"
+            className="fixed bottom-0 left-0 right-0 z-[150] bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 max-w-md mx-auto"
           >
             {/* Drag handle */}
             <div className="flex justify-center pt-3">
@@ -166,8 +166,8 @@ export default function RateDeliveryModal() {
 
             <div className="flex items-center justify-between px-5 pt-3 pb-2">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="size-10 rounded-2xl bg-[#F5C451]/15 border border-[#F5C451]/30 flex items-center justify-center shrink-0">
-                  <Bike className="w-5 h-5 text-[#F5C451]" />
+                <div className="size-10 rounded-2xl bg-[var(--sr-vendor)]/15 border border-[var(--sr-vendor)]/30 flex items-center justify-center shrink-0">
+                  <Bike className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-white font-black text-lg leading-tight">Rate your delivery</h2>
@@ -208,7 +208,7 @@ export default function RateDeliveryModal() {
                           transition={{ duration: 0.28 }}
                         >
                           <Star
-                            className={`w-10 h-10 ${filled ? 'text-[#F5C451] fill-[#F5C451] drop-shadow-[0_0_12px_rgba(245,196,81,0.5)]' : 'text-white/20'}`}
+                            className={`w-10 h-10 ${filled ? 'text-[var(--sr-vendor)] fill-[#F5C451] drop-shadow-[0_0_12px_rgba(245,196,81,0.5)]' : 'text-white/20'}`}
                             strokeWidth={2}
                           />
                         </motion.div>
@@ -216,7 +216,7 @@ export default function RateDeliveryModal() {
                     );
                   })}
                 </div>
-                <p className="mt-2 text-sm font-bold text-[#F5C451] min-h-[20px]">
+                <p className="mt-2 text-sm font-bold text-[var(--sr-vendor)] min-h-[20px]">
                   {STAR_LABELS[displayRating] || STAR_LABELS[0]}
                 </p>
               </div>
@@ -235,7 +235,7 @@ export default function RateDeliveryModal() {
                         onClick={() => toggleTag(tag)}
                         className={`px-3 py-1.5 rounded-full text-xs font-bold border transition-all active:scale-95 ${
                           active
-                            ? 'bg-[#F5C451]/15 text-[#F5C451] border-[#F5C451]/40'
+                            ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/40'
                             : 'bg-white/5 text-white/60 border-white/8 hover:border-white/15'
                         }`}
                       >
@@ -257,7 +257,7 @@ export default function RateDeliveryModal() {
                   placeholder="Share details about your delivery experience…"
                   rows={3}
                   maxLength={500}
-                  className="w-full bg-white/5 border border-white/8 focus:border-[#F5C451]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
+                  className="w-full bg-white/5 border border-white/8 focus:border-[var(--sr-vendor)]/30 rounded-2xl px-4 py-3 text-white text-sm placeholder:text-white/60 outline-none resize-none transition-colors custom-scrollbar"
                 />
                 <div className="flex justify-end">
                   <span className="text-[10px] text-white/60 mt-0.5">{comment.length}/500</span>

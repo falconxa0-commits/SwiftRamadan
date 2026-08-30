@@ -193,8 +193,8 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/8">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/25">
-            <Swords className="w-4 h-4 text-[#F5C451]" />
+          <div className="w-8 h-8 rounded-lg bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/25">
+            <Swords className="w-4 h-4 text-[var(--sr-vendor)]" />
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Chef Battles</h2>
@@ -216,7 +216,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
           onClick={() => setActiveTab('active')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'active'
-              ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/25'
+              ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/25'
               : 'bg-white/3 text-white/65 border border-white/5'
           }`}
           aria-label="Active battles"
@@ -228,7 +228,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
           onClick={() => setActiveTab('leaderboard')}
           className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
             activeTab === 'leaderboard'
-              ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/25'
+              ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/25'
               : 'bg-white/3 text-white/65 border border-white/5'
           }`}
           aria-label="Leaderboard"
@@ -242,7 +242,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#F5C451]/30 border-t-[#F5C451] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-vendor)]/30 border-t-[#F5C451] rounded-full animate-spin" />
           </div>
         ) : activeTab === 'active' ? (
           <>
@@ -254,7 +254,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="bg-[#0F1118] rounded-2xl border border-white/5 overflow-hidden"
+                  className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 overflow-hidden"
                 >
                   {/* Dish Header */}
                   <div className="px-4 pt-3 pb-2 flex items-center justify-between">
@@ -262,7 +262,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                       <span className="text-lg">⚔️</span>
                       <span className="text-white text-sm font-bold">{battle.dish}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[#F5C451]">
+                    <div className="flex items-center gap-1.5 text-[var(--sr-vendor)]">
                       <Timer className="w-3 h-3" />
                       <span className="text-[10px] font-bold">{battle.totalVotes} votes</span>
                     </div>
@@ -270,7 +270,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
 
                   {/* VS Cards */}
                   <div className="px-3 pb-3">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {/* Chef A */}
                       <motion.button
                         whileTap={{ scale: 0.97 }}
@@ -278,17 +278,17 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                           setSelectedBattle(battle);
                           setUserVote(null);
                         }}
-                        className="bg-white/3 rounded-xl border border-white/5 p-3 text-center hover:border-[#10E07A]/30 transition-colors relative overflow-hidden"
+                        className="bg-white/3 rounded-xl border border-white/5 p-3 text-center hover:border-[var(--sr-customer)]/30 transition-colors relative overflow-hidden"
                         aria-label={`Vote for ${battle.chefA.name}`}
                       >
                         <div className="text-3xl mb-2">{battle.chefA.image}</div>
                         <p className="text-white text-xs font-bold">{battle.chefA.name}</p>
                         <p className="text-white/60 text-[9px]">{battle.chefA.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
-                          <Star className="w-2.5 h-2.5 text-[#F5C451]" fill="#F5C451" />
-                          <span className="text-[#F5C451] text-[9px] font-bold">{battle.chefA.rating}</span>
+                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <span className="text-[var(--sr-vendor)] text-[9px] font-bold">{battle.chefA.rating}</span>
                         </div>
-                        <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-[#10E07A] flex items-center justify-center">
+                        <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
                           <span className="text-[8px] font-black text-[#0B0D14]">A</span>
                         </div>
                       </motion.button>
@@ -307,8 +307,8 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                         <p className="text-white text-xs font-bold">{battle.chefB.name}</p>
                         <p className="text-white/60 text-[9px]">{battle.chefB.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
-                          <Star className="w-2.5 h-2.5 text-[#F5C451]" fill="#F5C451" />
-                          <span className="text-[#F5C451] text-[9px] font-bold">{battle.chefB.rating}</span>
+                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <span className="text-[var(--sr-vendor)] text-[9px] font-bold">{battle.chefB.rating}</span>
                         </div>
                         <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#A78BFA] flex items-center justify-center">
                           <span className="text-[8px] font-black text-white">B</span>
@@ -322,7 +322,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                         setSelectedBattle(battle);
                         setUserVote(null);
                       }}
-                      className="w-full mt-2 py-2.5 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[#F5C451]/15 transition-colors"
+                      className="w-full mt-2 py-2.5 rounded-xl bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-[var(--sr-vendor)]/15 transition-colors"
                       aria-label={`Vote now for ${battle.dish}`}
                     >
                       <Vote className="w-3.5 h-3.5" />
@@ -340,19 +340,19 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 <p className="text-white/65 text-xs font-bold uppercase tracking-wider mb-3">Recent Results</p>
                 <div className="space-y-2">
                   {pastBattles.map(battle => (
-                    <div key={battle.id} className="bg-[#0F1118] rounded-xl border border-white/5 p-3">
+                    <div key={battle.id} className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white text-xs font-bold">{battle.dish}</span>
-                        <span className="text-[#10E07A] text-[10px] font-bold">Winner: {battle.winner === 'A' ? battle.chefA.name : battle.chefB.name}</span>
+                        <span className="text-[var(--sr-customer)] text-[10px] font-bold">Winner: {battle.winner === 'A' ? battle.chefA.name : battle.chefB.name}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="flex-1">
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-white/50 text-[9px]">{battle.chefA.name}</span>
-                            <span className="text-[#10E07A] text-[9px] font-bold">{getVotePct(battle.votesA, battle.totalVotes)}%</span>
+                            <span className="text-[var(--sr-customer)] text-[9px] font-bold">{getVotePct(battle.votesA, battle.totalVotes)}%</span>
                           </div>
                           <div className="w-full bg-white/5 rounded-full h-1.5">
-                            <div className="h-full rounded-full bg-[#10E07A]" style={{ width: `${getVotePct(battle.votesA, battle.totalVotes)}%` }} />
+                            <div className="h-full rounded-full bg-[var(--sr-customer)]" style={{ width: `${getVotePct(battle.votesA, battle.totalVotes)}%` }} />
                           </div>
                         </div>
                         <span className="text-white/20 text-[8px]">VS</span>
@@ -381,12 +381,12 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.06 }}
-                className={`bg-[#0F1118] rounded-xl border p-3.5 flex items-center gap-3 ${
-                  i === 0 ? 'border-[#F5C451]/30' : i === 1 ? 'border-white/10' : 'border-white/5'
+                className={`bg-[var(--sr-surface-raised)] rounded-xl border p-3.5 flex items-center gap-3 ${
+                  i === 0 ? 'border-[var(--sr-vendor)]/30' : i === 1 ? 'border-white/10' : 'border-white/5'
                 }`}
               >
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${
-                  i === 0 ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/20' :
+                  i === 0 ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/20' :
                   i === 1 ? 'bg-white/10 text-white/70 border border-white/10' :
                   i === 2 ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
                   'bg-white/5 text-white/65 border border-white/5'
@@ -399,11 +399,11 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                 </div>
                 <div className="text-right shrink-0">
                   <div className="flex items-center gap-1">
-                    <Trophy className="w-3 h-3 text-[#F5C451]" />
-                    <span className="text-[#F5C451] text-xs font-bold">{entry.wins}</span>
+                    <Trophy className="w-3 h-3 text-[var(--sr-vendor)]" />
+                    <span className="text-[var(--sr-vendor)] text-xs font-bold">{entry.wins}</span>
                   </div>
                   <div className="flex items-center gap-1 justify-end mt-0.5">
-                    <Star className="w-2.5 h-2.5 text-[#F5C451]" fill="#F5C451" />
+                    <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
                     <span className="text-white/50 text-[9px]">{entry.rating}</span>
                   </div>
                 </div>
@@ -429,7 +429,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 z-[120] bg-[#0F1118] rounded-t-3xl border-t border-white/10 p-6 pb-8"
+              className="fixed bottom-0 left-0 right-0 z-[120] bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 p-6 pb-8"
               role="dialog"
               aria-modal="true"
               aria-label={`Vote for ${selectedBattle.dish} battle`}
@@ -438,8 +438,8 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
 
               {/* Timer */}
               <div className="flex items-center justify-center gap-2 mb-4">
-                <Timer className="w-4 h-4 text-[#F5C451]" />
-                <span className="text-[#F5C451] text-sm font-bold">{countdown}</span>
+                <Timer className="w-4 h-4 text-[var(--sr-vendor)]" />
+                <span className="text-[var(--sr-vendor)] text-sm font-bold">{countdown}</span>
                 <span className="text-white/60 text-xs">remaining</span>
               </div>
 
@@ -449,7 +449,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
               <p className="text-white/65 text-center text-xs mb-5">Pick your winner — blind taste test!</p>
 
               {/* VS Selection */}
-              <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                 {/* Chef A */}
                 <motion.button
                   whileTap={{ scale: 0.95 }}
@@ -457,15 +457,15 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   disabled={!!userVote || voting}
                   className={`relative rounded-2xl border p-5 text-center transition-all ${
                     userVote === 'A'
-                      ? 'bg-[#10E07A]/10 border-[#10E07A]/40'
-                      : 'bg-white/3 border-white/10 hover:border-[#10E07A]/30'
+                      ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/40'
+                      : 'bg-white/3 border-white/10 hover:border-[var(--sr-customer)]/30'
                   }`}
                   aria-label={`Vote for Chef A: ${selectedBattle.chefA.name}`}
                 >
                   <div className="text-4xl mb-2">{selectedBattle.chefA.image}</div>
                   <p className="text-white text-sm font-bold">{selectedBattle.chefA.name}</p>
                   <p className="text-white/60 text-[10px]">{selectedBattle.chefA.restaurant}</p>
-                  <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-[#10E07A] flex items-center justify-center">
+                  <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
                     <span className="text-[10px] font-black text-[#0B0D14]">A</span>
                   </div>
                 </motion.button>
@@ -500,10 +500,10 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%` }}
-                        className="h-full rounded-full bg-[#10E07A]"
+                        className="h-full rounded-full bg-[var(--sr-customer)]"
                       />
                     </div>
-                    <span className="text-[#10E07A] text-[10px] font-bold">{getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%</span>
+                    <span className="text-[var(--sr-customer)] text-[10px] font-bold">{getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-white/50 text-[10px] w-16">{selectedBattle.chefB.name}</span>
@@ -538,13 +538,13 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-              className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[#F5C451]/30"
+              className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-vendor)]/30"
               style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
               role="dialog"
               aria-modal="true"
               aria-label="Vote result"
             >
-              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#F5C451]/20 blur-[60px]" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[var(--sr-vendor)]/20 blur-[60px]" />
 
               <div className="relative z-10 p-8 text-center">
                 <motion.div
@@ -560,7 +560,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   <Swords className="w-7 h-7" style={{ color: userVote === 'A' ? '#10E07A' : '#A78BFA' }} />
                 </motion.div>
 
-                <h3 className="text-2xl font-black text-[#F5C451] mb-1">Vote Cast! ⚔️</h3>
+                <h3 className="text-2xl font-black text-[var(--sr-vendor)] mb-1">Vote Cast! ⚔️</h3>
                 <p className="text-white text-sm mb-1">
                   You chose {userVote === 'A' ? selectedBattle.chefA.name : selectedBattle.chefB.name}
                 </p>
@@ -570,11 +570,11 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
 
                 <div className="bg-white/5 rounded-xl p-3 mb-5">
                   <div className="flex items-center justify-between text-xs mb-2">
-                    <span className="text-[#10E07A] font-bold">{selectedBattle.chefA.name}: {getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%</span>
+                    <span className="text-[var(--sr-customer)] font-bold">{selectedBattle.chefA.name}: {getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%</span>
                     <span className="text-[#A78BFA] font-bold">{selectedBattle.chefB.name}: {getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%</span>
                   </div>
                   <div className="flex gap-1 h-2 rounded-full overflow-hidden">
-                    <div className="bg-[#10E07A] rounded-l-full" style={{ width: `${getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%` }} />
+                    <div className="bg-[var(--sr-customer)] rounded-l-full" style={{ width: `${getVotePct(selectedBattle.votesA, selectedBattle.totalVotes)}%` }} />
                     <div className="bg-[#A78BFA] rounded-r-full" style={{ width: `${getVotePct(selectedBattle.votesB, selectedBattle.totalVotes)}%` }} />
                   </div>
                 </div>

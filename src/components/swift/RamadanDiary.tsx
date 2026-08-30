@@ -323,7 +323,7 @@ function RamadanDiaryInner() {
               setSelectedDate(todayStr);
               setShowCreate(true);
             }}
-            className="bg-[#10E07A] text-black text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[#10E07A]/90 transition-colors"
+            className="bg-[var(--sr-customer)] text-black text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[var(--sr-customer)]/90 transition-colors"
           >
             <Plus className="w-3.5 h-3.5" /> Entry
           </button>
@@ -331,23 +331,23 @@ function RamadanDiaryInner() {
       </div>
 
       {/* ── Quick Stats ── */}
-      <div className="grid grid-cols-3 gap-2">
-        <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
-          <p className="text-[#10E07A] text-lg font-bold">{daysWithEntry}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
+        <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 text-center">
+          <p className="text-[var(--sr-customer)] text-lg font-bold">{daysWithEntry}</p>
           <p className="text-white/65 text-[10px]">Days Logged</p>
         </div>
-        <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
-          <p className="text-[#F5C451] text-lg font-bold">{totalEntries}</p>
+        <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 text-center">
+          <p className="text-[var(--sr-vendor)] text-lg font-bold">{totalEntries}</p>
           <p className="text-white/65 text-[10px]">Total Entries</p>
         </div>
-        <div className="bg-[#0F1118] border border-white/8 rounded-xl p-3 text-center">
+        <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 text-center">
           <p className="text-[#A78BFA] text-lg font-bold">{ramadanProgress}%</p>
           <p className="text-white/65 text-[10px]">Progress</p>
         </div>
       </div>
 
       {/* ── Calendar View ── */}
-      <div className="bg-[#0F1118] border border-white/8 rounded-xl p-4">
+      <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 sm:p-4">
         {/* Month Navigation */}
         <div className="flex items-center justify-between mb-4">
           <button
@@ -406,9 +406,9 @@ function RamadanDiaryInner() {
               onClick={() => setSelectedDate(day.date)}
               className={`aspect-square rounded-lg flex flex-col items-center justify-center relative transition-all ${
                 selectedDate === day.date
-                  ? 'bg-[#10E07A]/20 border border-[#10E07A]/50'
+                  ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/50'
                   : day.isToday
-                    ? 'bg-[#F5C451]/10 border border-[#F5C451]/30'
+                    ? 'bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/30'
                     : day.isRamadan && day.hasEntry
                       ? 'bg-white/5 hover:bg-white/10'
                       : day.isRamadan
@@ -420,7 +420,7 @@ function RamadanDiaryInner() {
               <span
                 className={`text-xs ${
                   day.isToday
-                    ? 'text-[#F5C451] font-bold'
+                    ? 'text-[var(--sr-vendor)] font-bold'
                     : day.hasEntry
                       ? 'text-white'
                       : 'text-white/60'
@@ -474,19 +474,19 @@ function RamadanDiaryInner() {
                 onClick={() => {
                   setShowCreate(true);
                 }}
-                className="text-[#10E07A] text-xs flex items-center gap-1 hover:text-[#10E07A]/80"
+                className="text-[var(--sr-customer)] text-xs flex items-center gap-1 hover:text-[var(--sr-customer)]/80"
               >
                 <Plus className="w-3 h-3" /> Add Entry
               </button>
             </div>
 
             {selectedEntries.length === 0 ? (
-              <div className="bg-[#0F1118] border border-white/8 rounded-xl p-6 text-center">
+              <div className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-6 text-center">
                 <Moon className="w-8 h-8 text-white/15 mx-auto mb-2" />
                 <p className="text-white/60 text-sm">No entries for this day</p>
                 <button
                   onClick={() => setShowCreate(true)}
-                  className="mt-2 text-[#10E07A] text-xs hover:underline"
+                  className="mt-2 text-[var(--sr-customer)] text-xs hover:underline"
                 >
                   Write one now →
                 </button>
@@ -498,14 +498,14 @@ function RamadanDiaryInner() {
                     key={entry.id}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="bg-[#0F1118] border border-white/8 rounded-xl p-4"
+                    className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-3 sm:p-4"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         {getMoodIcon(entry.mood)}
                         <span className="text-white/60 text-xs capitalize">{entry.mood}</span>
                         {entry.autoGenerated && (
-                          <span className="text-[10px] text-[#38BDF8] bg-[#38BDF8]/10 px-1.5 py-0.5 rounded-full">
+                          <span className="text-[10px] text-[var(--sr-rider)] bg-[var(--sr-rider)]/10 px-1.5 py-0.5 rounded-full">
                             Auto
                           </span>
                         )}
@@ -544,7 +544,7 @@ function RamadanDiaryInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Create diary entry"
@@ -553,9 +553,9 @@ function RamadanDiaryInner() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0F1118] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between p-4 border-b border-white/8">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold text-lg flex items-center gap-2">
                   <PenLine className="w-5 h-5 text-[#A78BFA]" /> Diary Entry
                 </h2>
@@ -646,7 +646,7 @@ function RamadanDiaryInner() {
 
                 <button
                   onClick={handleCreateEntry}
-                  className="w-full bg-[#10E07A] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                  className="w-full bg-[var(--sr-customer)] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   <BookOpen className="w-4 h-4" /> Save Entry
                 </button>
@@ -663,7 +663,7 @@ function RamadanDiaryInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="My Ramadan 2026 shareable card"
@@ -672,19 +672,19 @@ function RamadanDiaryInner() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0F1118] border border-white/8 rounded-2xl w-full max-w-sm overflow-hidden"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-sm overflow-hidden"
             >
               {/* Shareable Card */}
               <div className="relative bg-gradient-to-br from-[#0B0D14] via-[#0F1118] to-[#0B0D14] p-6 overflow-hidden">
                 {/* Decorative elements */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#10E07A]/5 rounded-full blur-3xl" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#A78BFA]/5 rounded-full blur-3xl" />
-                <div className="absolute top-4 right-4 text-[#F5C451]/20 text-6xl">🌙</div>
+                <div className="absolute top-4 right-4 text-[var(--sr-vendor)]/20 text-6xl">🌙</div>
 
                 <div className="relative z-10 space-y-4">
                   {/* Title */}
                   <div className="text-center">
-                    <h3 className="text-[#F5C451] text-xs font-semibold tracking-widest uppercase mb-1">
+                    <h3 className="text-[var(--sr-vendor)] text-xs font-semibold tracking-widest uppercase mb-1">
                       My Ramadan
                     </h3>
                     <h2 className="text-white text-2xl font-bold">Ramadan 2026</h2>
@@ -693,19 +693,19 @@ function RamadanDiaryInner() {
 
                   {/* Crescent + Stars decoration */}
                   <div className="flex justify-center items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#F5C451]/40" />
-                    <Moon className="w-8 h-8 text-[#F5C451]" />
-                    <Sparkles className="w-4 h-4 text-[#F5C451]/40" />
+                    <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]/40" />
+                    <Moon className="w-8 h-8 text-[var(--sr-vendor)]" />
+                    <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]/40" />
                   </div>
 
                   {/* Stats Grid */}
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="bg-white/5 rounded-xl p-3 text-center">
-                      <p className="text-[#10E07A] text-xl font-bold">{daysWithEntry}</p>
+                      <p className="text-[var(--sr-customer)] text-xl font-bold">{daysWithEntry}</p>
                       <p className="text-white/65 text-[10px]">Days Journaled</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
-                      <p className="text-[#F5C451] text-xl font-bold">{totalEntries}</p>
+                      <p className="text-[var(--sr-vendor)] text-xl font-bold">{totalEntries}</p>
                       <p className="text-white/65 text-[10px]">Entries Written</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
@@ -713,7 +713,7 @@ function RamadanDiaryInner() {
                       <p className="text-white/65 text-[10px]">Tags Used</p>
                     </div>
                     <div className="bg-white/5 rounded-xl p-3 text-center">
-                      <p className="text-[#38BDF8] text-xl font-bold">{ramadanProgress}%</p>
+                      <p className="text-[var(--sr-rider)] text-xl font-bold">{ramadanProgress}%</p>
                       <p className="text-white/65 text-[10px]">Consistency</p>
                     </div>
                   </div>
@@ -759,7 +759,7 @@ function RamadanDiaryInner() {
                     toast({ title: 'Card saved! 🌙', description: 'Share your Ramadan journey with friends' });
                     setShowShareable(false);
                   }}
-                  className="w-full bg-[#10E07A] text-black font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                  className="w-full bg-[var(--sr-customer)] text-black font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   <Share2 className="w-4 h-4" /> Share Card
                 </button>

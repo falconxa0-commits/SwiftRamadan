@@ -72,7 +72,7 @@ export default function BetaFeedbackModal() {
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
             className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#13ec13]/20">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
               <div className="flex items-center gap-3">
                 <div className="relative w-11 h-11 bg-gradient-to-br from-[#13ec13]/20 to-[#FFD700]/20 rounded-2xl flex items-center justify-center border border-[#13ec13]/30">
                   <MessageSquare className="w-6 h-6 text-[#13ec13]" />
@@ -110,7 +110,7 @@ export default function BetaFeedbackModal() {
                   {/* Type selector */}
                   <div>
                     <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">What kind of feedback?</p>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2">
                       {TYPES.map((t) => {
                         const Icon = t.icon; const active = type === t.id;
                         return (
@@ -166,7 +166,7 @@ export default function BetaFeedbackModal() {
 
               {/* Sticky footer */}
             {!submitted && (
-              <div className="shrink-0 p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg">
+              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg">
                 <button onClick={handleSubmit} disabled={submitting || !subject.trim() || !message.trim()}
                   className="w-full bg-[#13ec13] text-[#05070A] font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-transform">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : <><Send className="w-4 h-4" /> Send Feedback</>}

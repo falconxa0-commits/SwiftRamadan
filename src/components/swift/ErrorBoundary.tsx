@@ -93,7 +93,7 @@ export default class ErrorBoundary extends React.Component<
             {/* Aurora glow accent */}
             <div className="relative mx-auto w-20 h-20">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 blur-xl" />
-              <div className="relative w-20 h-20 rounded-full bg-[#0F1118] border border-white/10 flex items-center justify-center">
+              <div className="relative w-20 h-20 rounded-full bg-[var(--sr-surface-raised)] border border-white/10 flex items-center justify-center">
                 <svg
                   width="36"
                   height="36"
@@ -132,7 +132,7 @@ export default class ErrorBoundary extends React.Component<
                   aria-expanded={this.state.showDetails}
                   aria-label="Toggle error details"
                 >
-                  <span className="text-[#10E07A] text-xs font-semibold uppercase tracking-wider">
+                  <span className="text-[var(--sr-customer)] text-xs font-semibold uppercase tracking-wider">
                     Error Details
                   </span>
                   <svg
@@ -150,7 +150,7 @@ export default class ErrorBoundary extends React.Component<
                 </button>
                 {this.state.showDetails && (
                   <div className="px-4 pb-3 text-left">
-                    <p className="text-[#F5C451] text-xs font-mono break-all leading-relaxed">
+                    <p className="text-[var(--sr-vendor)] text-xs font-mono break-all leading-relaxed">
                       {this.state.error.message}
                     </p>
                     {this.state.error.stack && (
@@ -167,15 +167,15 @@ export default class ErrorBoundary extends React.Component<
             <div className="flex flex-col gap-3 pt-2">
               <button
                 onClick={this.handleReload}
-                className="w-full h-12 rounded-2xl bg-[#10E07A] text-[#04140C] font-bold text-sm
-                           hover:bg-[#10E07A]/90 active:scale-[0.97] transition-all duration-200"
+                className="w-full h-12 rounded-2xl bg-[var(--sr-customer)] text-[#04140C] font-bold text-sm
+                           hover:bg-[var(--sr-customer)]/90 active:scale-[0.97] transition-all duration-200"
                 aria-label="Reload the app"
               >
                 Reload App
               </button>
               <button
                 onClick={this.handleReport}
-                className="w-full h-12 rounded-2xl bg-[#0F1118] border border-white/10 text-white/70
+                className="w-full h-12 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 text-white/70
                            font-semibold text-sm hover:border-white/20 hover:text-white
                            active:scale-[0.97] transition-all duration-200"
                 aria-label="Copy error details to clipboard"

@@ -125,8 +125,8 @@ export default function LiveTrackingMap() {
 
               {/* Gradient overlays */}
               <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/60 via-transparent to-[#05070A]" />
-              <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[#F5C451]/5 blur-[80px] rounded-full" />
-              <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[#10E07A]/5 blur-[70px] rounded-full" />
+              <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[80px] rounded-full" />
+              <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[var(--sr-customer)]/5 blur-[70px] rounded-full" />
             </div>
 
             {/* SVG Route Overlay */}
@@ -226,7 +226,7 @@ export default function LiveTrackingMap() {
             {/* Content Layer */}
             <div className="relative z-10 flex flex-col h-full">
               {/* Top Bar */}
-              <div className="glass-effect border-b border-white/5 p-4">
+              <div className="glass-effect border-b border-white/5 p-3 sm:p-4">
                 <div className="flex items-center justify-between">
                   <button
                     onClick={handleClose}
@@ -238,9 +238,9 @@ export default function LiveTrackingMap() {
                     <h2 className="text-white text-sm font-bold">Live Iftar Tracking</h2>
                     <p className="text-white/65 text-[10px]">Real-time delivery updates</p>
                   </div>
-                  <div className="bg-[#1A1D26] border border-[#F5C451]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
-                    <Clock className="w-3 h-3 text-[#F5C451]" />
-                    <span className="text-[#F5C451] text-xs font-bold">Maghrib in {countdown}</span>
+                  <div className="bg-[#1A1D26] border border-[var(--sr-vendor)]/20 rounded-full px-3 py-1.5 flex items-center gap-1.5">
+                    <Clock className="w-3 h-3 text-[var(--sr-vendor)]" />
+                    <span className="text-[var(--sr-vendor)] text-xs font-bold">Maghrib in {countdown}</span>
                   </div>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function LiveTrackingMap() {
                   onClick={() => toast({ title: 'Centering Map 📍' })}
                   className="w-11 h-11 rounded-xl bg-[#1A1D26]/90 border border-white/10 flex items-center justify-center glass-effect hover:bg-white/10 transition-colors"
                 >
-                  <Navigation className="w-4 h-4 text-[#10E07A]" />
+                  <Navigation className="w-4 h-4 text-[var(--sr-customer)]" />
                 </button>
               </div>
 
@@ -271,15 +271,15 @@ export default function LiveTrackingMap() {
               <div className="absolute left-4 top-[20%] z-20">
                 <div className="bg-[#1A1D26]/80 rounded-xl border border-white/5 p-2.5 glass-effect space-y-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#F5C451]" />
+                    <div className="w-3 h-3 rounded-full bg-[var(--sr-vendor)]" />
                     <span className="text-white/50 text-[10px]">Rider</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-[#10E07A]" />
+                    <div className="w-3 h-3 rounded-full bg-[var(--sr-customer)]" />
                     <span className="text-white/50 text-[10px]">Your Home</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-1 bg-[#F5C451] rounded-full" />
+                    <div className="w-3 h-1 bg-[var(--sr-vendor)] rounded-full" />
                     <span className="text-white/50 text-[10px]">Route</span>
                   </div>
                 </div>
@@ -306,9 +306,9 @@ export default function LiveTrackingMap() {
                         <motion.span
                           animate={{ scale: [1, 1.3, 1] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="w-2 h-2 bg-[#10E07A] rounded-full"
+                          className="w-2 h-2 bg-[var(--sr-customer)] rounded-full"
                         />
-                        <span className="text-[#10E07A] text-sm font-bold">Ready for Iftar</span>
+                        <span className="text-[var(--sr-customer)] text-sm font-bold">Ready for Iftar</span>
                       </div>
                     </div>
                     <div className="bg-[#1A1D26] border border-white/5 rounded-xl px-3 py-2 text-center">
@@ -318,10 +318,10 @@ export default function LiveTrackingMap() {
                   </div>
 
                   {/* Rider Details */}
-                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 mb-4">
+                  <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 mb-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 shrink-0">
-                        <Bike className="w-5 h-5 text-[#F5C451]" />
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F5C451]/30 to-[#F5C451]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 shrink-0">
+                        <Bike className="w-5 h-5 text-[var(--sr-vendor)]" />
                       </div>
                       <div className="flex-1">
                         <p className="text-white font-bold text-sm">Musa</p>
@@ -330,9 +330,9 @@ export default function LiveTrackingMap() {
                       <div className="flex gap-2">
                         <button
                           onClick={handleCallRider}
-                          className="w-11 h-11 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/20 flex items-center justify-center hover:bg-[#F5C451]/20 transition-colors"
+                          className="w-11 h-11 rounded-xl bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 flex items-center justify-center hover:bg-[var(--sr-vendor)]/20 transition-colors"
                         >
-                          <Phone className="w-4.5 h-4.5 text-[#F5C451]" />
+                          <Phone className="w-4.5 h-4.5 text-[var(--sr-vendor)]" />
                         </button>
                         <button
                           onClick={handleChatRider}
@@ -350,7 +350,7 @@ export default function LiveTrackingMap() {
                       <motion.span
                         animate={{ opacity: [0.3, 1, 0.3] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className="shrink-0 w-1.5 h-1.5 bg-[#F5C451] rounded-full"
+                        className="shrink-0 w-1.5 h-1.5 bg-[var(--sr-vendor)] rounded-full"
                       />
                       <AnimatePresence mode="wait">
                         <motion.p

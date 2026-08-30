@@ -15,8 +15,8 @@ interface Notification {
 }
 
 const typeIcons: Record<string, { icon: React.ComponentType<{ className?: string }>; color: string }> = {
-  order: { icon: Truck, color: 'text-[#10E07A]' },
-  promo: { icon: ShoppingBag, color: 'text-[#F5C451]' },
+  order: { icon: Truck, color: 'text-[var(--sr-customer)]' },
+  promo: { icon: ShoppingBag, color: 'text-[var(--sr-vendor)]' },
   reminder: { icon: Clock, color: 'text-cyan-400' },
   reward: { icon: Gift, color: 'text-amber-400' },
   social: { icon: Users, color: 'text-purple-400' },
@@ -106,17 +106,17 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/5">
               <div className="flex items-center gap-2">
-                <Bell className="w-5 h-5 text-[#10E07A]" />
+                <Bell className="w-5 h-5 text-[var(--sr-customer)]" />
                 <h2 className="text-white font-bold text-lg">Notifications</h2>
                 {unreadCount > 0 && (
-                  <span className="bg-[#10E07A] text-[#05070A] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                  <span className="bg-[var(--sr-customer)] text-[#05070A] text-[10px] font-bold px-2 py-0.5 rounded-full">
                     {unreadCount}
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-3">
                 {unreadCount > 0 && (
-                  <button onClick={markAllRead} className="text-[#10E07A] text-xs font-bold">
+                  <button onClick={markAllRead} className="text-[var(--sr-customer)] text-xs font-bold">
                     Mark all read
                   </button>
                 )}
@@ -134,7 +134,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                   onClick={() => setFilter(f.value)}
                   className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition-colors ${
                     filter === f.value
-                      ? 'bg-[#10E07A] text-[#05070A]'
+                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
                       : 'bg-white/5 text-white/50 hover:text-white/70'
                   }`}
                 >
@@ -169,7 +169,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                       boxShadow: '0 0 24px rgba(16,224,122,0.15)',
                     }}
                   >
-                    <Bell className="w-9 h-9 text-[#10E07A]" />
+                    <Bell className="w-9 h-9 text-[var(--sr-customer)]" />
                   </motion.div>
                   <motion.p
                     initial={{ opacity: 0, y: 8 }}
@@ -208,10 +208,10 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                       className={`flex items-start gap-3 p-3 rounded-xl border transition-colors w-full text-left ${
                         notification.read
                           ? 'bg-transparent border-white/5 opacity-60'
-                          : 'bg-[#1A1D26]/60 border-[#10E07A]/10'
+                          : 'bg-[#1A1D26]/60 border-[var(--sr-customer)]/10'
                       }`}
                     >
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[#10E07A]/10'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${notification.read ? 'bg-white/5' : 'bg-[var(--sr-customer)]/10'}`}>
                         <Icon className={`w-5 h-5 ${config.color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
@@ -219,7 +219,7 @@ export default function NotificationCenter({ isOpen, onClose }: NotificationCent
                           <p className={`text-sm font-bold truncate ${notification.read ? 'text-white/60' : 'text-white'}`}>
                             {notification.title}
                           </p>
-                          {!notification.read && <span className="w-2 h-2 bg-[#10E07A] rounded-full shrink-0" />}
+                          {!notification.read && <span className="w-2 h-2 bg-[var(--sr-customer)] rounded-full shrink-0" />}
                         </div>
                         <p className="text-white/65 text-xs mt-0.5 line-clamp-2">{notification.message}</p>
                         <p className="text-white/20 text-[10px] mt-1">{notification.time}</p>

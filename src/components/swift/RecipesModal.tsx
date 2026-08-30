@@ -62,8 +62,8 @@ export default function RecipesModal() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Easy': return 'text-[#10E07A] bg-[#10E07A]/10 border-[#10E07A]/20';
-      case 'Medium': return 'text-[#F5C451] bg-[#F5C451]/10 border-[#F5C451]/20';
+      case 'Easy': return 'text-[var(--sr-customer)] bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/20';
+      case 'Medium': return 'text-[var(--sr-vendor)] bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/20';
       case 'Hard': return 'text-red-400 bg-red-400/10 border-red-400/20';
       default: return 'text-white/50 bg-white/5 border-white/10';
     }
@@ -88,10 +88,10 @@ export default function RecipesModal() {
             className="fixed bottom-0 left-0 right-0 h-[92vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-white/10"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center border border-[#F5C451]/20">
-                  <ChefHat className="w-5 h-5 text-[#F5C451]" />
+                <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/20">
+                  <ChefHat className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Ramadan Kitchen</h2>
@@ -114,8 +114,8 @@ export default function RecipesModal() {
                   onClick={() => { setSelectedCategory(cat.id); setExpandedRecipe(null); }}
                   className={`shrink-0 px-4 py-2 rounded-full text-xs font-bold transition-all ${
                     selectedCategory === cat.id
-                      ? 'bg-[#10E07A] text-[#05070A]'
-                      : 'bg-white/5 text-white/50 border border-white/10 hover:border-[#10E07A]/20 hover:text-white/70'
+                      ? 'bg-[var(--sr-customer)] text-[#05070A]'
+                      : 'bg-white/5 text-white/50 border border-white/10 hover:border-[var(--sr-customer)]/20 hover:text-white/70'
                   }`}
                 >
                   {cat.name}
@@ -127,16 +127,16 @@ export default function RecipesModal() {
             <div className="px-4 pt-4 shrink-0">
               <button
                 onClick={() => setActiveModal('ai-recipe')}
-                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#F5C451]/10 border border-[#10E07A]/25 hover:border-[#10E07A]/50 transition-all text-left"
+                className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-[#10E07A]/10 to-[#F5C451]/10 border border-[var(--sr-customer)]/25 hover:border-[var(--sr-customer)]/50 transition-all text-left"
               >
-                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-xl flex items-center justify-center border border-[#10E07A]/30 shrink-0">
-                  <ChefHat className="w-5 h-5 text-[#F5C451]" />
-                  <Sparkles className="w-2.5 h-2.5 text-[#10E07A] absolute -top-0.5 -right-0.5" />
+                <div className="relative w-10 h-10 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0">
+                  <ChefHat className="w-5 h-5 text-[var(--sr-vendor)]" />
+                  <Sparkles className="w-2.5 h-2.5 text-[var(--sr-customer)] absolute -top-0.5 -right-0.5" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white font-bold text-sm flex items-center gap-1.5">
                     Try AI Chef Safa
-                    <span className="text-[10px] font-black bg-[#F5C451]/15 text-[#F5C451] px-1.5 py-0.5 rounded-full border border-[#F5C451]/20">NEW</span>
+                    <span className="text-[10px] font-black bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] px-1.5 py-0.5 rounded-full border border-[var(--sr-vendor)]/20">NEW</span>
                   </p>
                   <p className="text-white/50 text-xs">Describe your craving & get a custom AI recipe ✨</p>
                 </div>
@@ -172,7 +172,7 @@ export default function RecipesModal() {
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
                           <div className="absolute top-3 left-3">
-                            <span className="bg-[#F5C451]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                            <span className="bg-[var(--sr-vendor)]/90 text-[#05070A] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                               {recipe.category}
                             </span>
                           </div>
@@ -182,7 +182,7 @@ export default function RecipesModal() {
                         </div>
 
                         {/* Meta Row */}
-                        <div className="flex items-center gap-4 px-4 py-3">
+                        <div className="flex items-center gap-3 sm:gap-4 px-4 py-3">
                           <div className="flex items-center gap-1.5 text-white/50 text-xs">
                             <Clock className="w-3.5 h-3.5" />
                             <span>{recipe.prepTime}</span>
@@ -212,7 +212,7 @@ export default function RecipesModal() {
                               {/* Ingredients */}
                               <div>
                                 <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
-                                  <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
+                                  <ShoppingCart className="w-4 h-4 text-[var(--sr-customer)]" />
                                   Ingredients
                                   <span className="text-white/60 text-xs font-normal">({formatNaira(totalIngredientCost)} total)</span>
                                 </h4>
@@ -224,7 +224,7 @@ export default function RecipesModal() {
                                     >
                                       <div className="flex items-center gap-2">
                                         {ing.productId ? (
-                                          <span className="w-2 h-2 rounded-full bg-[#10E07A] shrink-0" />
+                                          <span className="w-2 h-2 rounded-full bg-[var(--sr-customer)] shrink-0" />
                                         ) : (
                                           <span className="w-2 h-2 rounded-full bg-white/20 shrink-0" />
                                         )}
@@ -233,7 +233,7 @@ export default function RecipesModal() {
                                       <div className="flex items-center gap-2">
                                         <span className="text-white/65 text-xs">{formatNaira(ing.price)}</span>
                                         {ing.productId && shoppedIngredients.has(ing.productId) && (
-                                          <Check className="w-3.5 h-3.5 text-[#10E07A]" />
+                                          <Check className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                                         )}
                                       </div>
                                     </div>
@@ -245,7 +245,7 @@ export default function RecipesModal() {
                                   className={`w-full mt-3 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all ${
                                     allIngredientsShopped(recipe.id)
                                       ? 'bg-white/5 text-white/60 border border-white/10 cursor-not-allowed'
-                                      : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98]'
+                                      : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98]'
                                   }`}
                                 >
                                   {allIngredientsShopped(recipe.id) ? (
@@ -265,7 +265,7 @@ export default function RecipesModal() {
                               {/* Steps */}
                               <div>
                                 <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2">
-                                  <ChefHat className="w-4 h-4 text-[#F5C451]" />
+                                  <ChefHat className="w-4 h-4 text-[var(--sr-vendor)]" />
                                   Steps
                                 </h4>
                                 <div className="space-y-2">
@@ -274,7 +274,7 @@ export default function RecipesModal() {
                                       key={`${recipe.id}-step-${i}`}
                                       className="flex gap-3 p-2.5 bg-[#0F1117] rounded-xl border border-white/5"
                                     >
-                                      <span className="w-6 h-6 shrink-0 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20 flex items-center justify-center text-[#F5C451] text-[10px] font-black">
+                                      <span className="w-6 h-6 shrink-0 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 flex items-center justify-center text-[var(--sr-vendor)] text-[10px] font-black">
                                         {i + 1}
                                       </span>
                                       <p className="text-white/70 text-xs leading-relaxed pt-0.5">{step}</p>

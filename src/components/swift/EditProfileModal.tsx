@@ -179,7 +179,7 @@ export default function EditProfileModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={handleClose}
           />
 
@@ -189,7 +189,7 @@ export default function EditProfileModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[90vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -199,8 +199,8 @@ export default function EditProfileModal() {
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/30 flex items-center justify-center icon-tile">
-                    <User className="w-5 h-5 text-[#10E07A] relative z-10" />
+                  <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 flex items-center justify-center icon-tile">
+                    <User className="w-5 h-5 text-[var(--sr-customer)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Edit Profile</h2>
@@ -248,7 +248,7 @@ export default function EditProfileModal() {
                         )}
                       </div>
                       <label
-                        className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#10E07A] flex items-center justify-center border-2 border-[#06070B] cursor-pointer hover:bg-[#0eB060] transition-colors active:scale-95"
+                        className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center border-2 border-[#06070B] cursor-pointer hover:bg-[#0eB060] transition-colors active:scale-95"
                         title="Change avatar"
                       >
                         {avatarUploading ? (
@@ -269,12 +269,12 @@ export default function EditProfileModal() {
                   </div>
                   <div className="flex flex-col items-center gap-1.5">
                     {avatarUploading ? (
-                      <p className="text-[#10E07A] text-xs font-bold flex items-center gap-1.5">
+                      <p className="text-[var(--sr-customer)] text-xs font-bold flex items-center gap-1.5">
                         <Loader2 className="w-3 h-3 animate-spin" />
                         Uploading avatar…
                       </p>
                     ) : avatar.startsWith('/uploads/') ? (
-                      <p className="text-[#10E07A] text-xs font-bold flex items-center gap-1">
+                      <p className="text-[var(--sr-customer)] text-xs font-bold flex items-center gap-1">
                         <Check className="w-3 h-3" />
                         Avatar uploaded
                       </p>
@@ -284,7 +284,7 @@ export default function EditProfileModal() {
                         type="button"
                         onClick={handleAvatarClick}
                         disabled={avatarUploading}
-                        className="flex items-center gap-1.5 text-[#10E07A] text-xs font-bold hover:underline disabled:opacity-50"
+                        className="flex items-center gap-1.5 text-[var(--sr-customer)] text-xs font-bold hover:underline disabled:opacity-50"
                       >
                         <UploadCloud className="w-3 h-3" />
                         Upload photo
@@ -293,7 +293,7 @@ export default function EditProfileModal() {
                       <button
                         onClick={handleGenerateFromInitials}
                         disabled={avatarUploading}
-                        className="flex items-center gap-1.5 text-white/60 text-xs font-bold hover:text-[#10E07A] hover:underline disabled:opacity-50"
+                        className="flex items-center gap-1.5 text-white/60 text-xs font-bold hover:text-[var(--sr-customer)] hover:underline disabled:opacity-50"
                       >
                         <RefreshCw className="w-3 h-3" />
                         Use initials
@@ -313,7 +313,7 @@ export default function EditProfileModal() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Enter your name"
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-[#10E07A]/50 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-[var(--sr-customer)]/50 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -328,7 +328,7 @@ export default function EditProfileModal() {
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="e.g., +234 801 234 5678"
                     inputMode="tel"
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-[#10E07A]/50 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-[var(--sr-customer)]/50 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -338,14 +338,14 @@ export default function EditProfileModal() {
                     <MapPin className="w-3.5 h-3.5" />
                     Area (Lagos)
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {LAGOS_AREAS.map(a => (
                       <button
                         key={a}
                         onClick={() => setArea(a)}
                         className={`p-2.5 rounded-xl border text-xs font-bold transition-all ${
                           area === a
-                            ? 'bg-[#10E07A]/10 border-[#10E07A]/40 text-[#10E07A]'
+                            ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/40 text-[var(--sr-customer)]'
                             : 'bg-white/[0.02] border-white/5 text-white/60 hover:border-white/15'
                         }`}
                       >
@@ -360,7 +360,7 @@ export default function EditProfileModal() {
                   <button
                     onClick={handleSave}
                     disabled={saving || avatarUploading || !name.trim()}
-                    className="w-full py-3.5 rounded-xl bg-[#10E07A] text-[#06070B] font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
+                    className="w-full py-3.5 rounded-xl bg-[var(--sr-customer)] text-[#06070B] font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
                   >
                     {saving ? (
                       <>

@@ -628,7 +628,7 @@ function IftarRadarInner() {
                         value={pinName}
                         onChange={(e) => setPinName(e.target.value)}
                         placeholder="e.g. My Street Iftar Table"
-                        className="w-full h-11 px-4 rounded-xl bg-[#0F1118] border border-white/8 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 placeholder:text-white/25 transition-colors"
+                        className="w-full h-11 px-4 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8 text-white text-sm focus:outline-none focus:border-[var(--sr-customer)]/40 placeholder:text-white/25 transition-colors"
                       />
                     </div>
 
@@ -640,12 +640,12 @@ function IftarRadarInner() {
                         onChange={(e) => setPinDescription(e.target.value)}
                         placeholder="What's available? e.g. Dates, zobo, jollof rice"
                         rows={3}
-                        className="w-full px-4 py-3 rounded-xl bg-[#0F1118] border border-white/8 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 placeholder:text-white/25 resize-none transition-colors"
+                        className="w-full px-4 py-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8 text-white text-sm focus:outline-none focus:border-[var(--sr-customer)]/40 placeholder:text-white/25 resize-none transition-colors"
                       />
                     </div>
 
                     {/* Location hint */}
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-[#0F1118] border border-white/8">
+                    <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)' }}>
                         <MapPin className="w-4 h-4" style={{ color: '#38BDF8' }} />
                       </div>

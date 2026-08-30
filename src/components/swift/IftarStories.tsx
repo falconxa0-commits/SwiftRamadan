@@ -383,8 +383,8 @@ function IftarStoriesInner() {
             className="flex flex-col items-center gap-1 shrink-0"
             aria-label="Create a new story"
           >
-            <div className="w-16 h-16 rounded-full border-2 border-dashed border-[#10E07A]/50 flex items-center justify-center bg-[#0F1118]">
-              <Plus className="w-6 h-6 text-[#10E07A]" />
+            <div className="w-16 h-16 rounded-full border-2 border-dashed border-[var(--sr-customer)]/50 flex items-center justify-center bg-[var(--sr-surface-raised)]">
+              <Plus className="w-6 h-6 text-[var(--sr-customer)]" />
             </div>
             <span className="text-[10px] text-white/50">Your Story</span>
           </motion.button>
@@ -417,7 +417,7 @@ function IftarStoriesInner() {
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    <span className="text-[#10E07A]">{story.authorInitial}</span>
+                    <span className="text-[var(--sr-customer)]">{story.authorInitial}</span>
                   )}
                 </div>
               </div>
@@ -446,7 +446,7 @@ function IftarStoriesInner() {
               {viewingStory.items.map((_, i) => (
                 <div key={i} className="flex-1 h-[3px] rounded-full bg-white/20 overflow-hidden">
                   <motion.div
-                    className="h-full bg-[#10E07A] rounded-full"
+                    className="h-full bg-[var(--sr-customer)] rounded-full"
                     style={{
                       width:
                         i < currentItemIndex
@@ -507,7 +507,7 @@ function IftarStoriesInner() {
                     <motion.div
                       initial={{ scale: 0, rotate: -10 }}
                       animate={{ scale: 1, rotate: 0 }}
-                      className="absolute bottom-16 left-4 bg-[#0F1118]/90 backdrop-blur-sm border border-[#10E07A]/30 rounded-full px-4 py-2"
+                      className="absolute bottom-16 left-4 bg-[var(--sr-surface-raised)]/90 backdrop-blur-sm border border-[var(--sr-customer)]/30 rounded-full px-4 py-2"
                     >
                       <span className="text-sm text-white font-medium">
                         {viewingStory.items[currentItemIndex].sticker}
@@ -608,7 +608,7 @@ function IftarStoriesInner() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-4"
+            className="fixed inset-0 z-50 bg-[#0B0D14]/95 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4"
             role="dialog"
             aria-modal="true"
             aria-label="Create a new story"
@@ -617,10 +617,10 @@ function IftarStoriesInner() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0F1118] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="flex items-center justify-between p-4 border-b border-white/8">
+              <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold text-lg">New Story</h2>
                 <button
                   onClick={() => setShowCreate(false)}
@@ -635,7 +635,7 @@ function IftarStoriesInner() {
                 {/* Image Upload */}
                 <div
                   onClick={handleImageSelect}
-                  className="aspect-[9/16] max-h-64 rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[#10E07A]/50 transition-colors overflow-hidden"
+                  className="aspect-[9/16] max-h-64 rounded-xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-[var(--sr-customer)]/50 transition-colors overflow-hidden"
                 >
                   {imagePreview ? (
                     <img
@@ -661,7 +661,7 @@ function IftarStoriesInner() {
                         onClick={() => setSelectedSticker(sticker)}
                         className={`px-3 py-1.5 rounded-full text-xs transition-all ${
                           selectedSticker === sticker
-                            ? 'bg-[#10E07A] text-black font-semibold'
+                            ? 'bg-[var(--sr-customer)] text-black font-semibold'
                             : 'bg-white/8 text-white/60 hover:bg-white/15'
                         }`}
                       >
@@ -679,7 +679,7 @@ function IftarStoriesInner() {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     placeholder="What's your iftar moment?"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50"
                     maxLength={120}
                   />
                 </div>
@@ -687,7 +687,7 @@ function IftarStoriesInner() {
                 {/* Post Button */}
                 <button
                   onClick={handleCreateStory}
-                  className="w-full bg-[#10E07A] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                  className="w-full bg-[var(--sr-customer)] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   <Send className="w-4 h-4" />
                   Post Story

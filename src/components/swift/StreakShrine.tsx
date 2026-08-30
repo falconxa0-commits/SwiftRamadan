@@ -373,7 +373,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -397,24 +397,24 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="mt-4 grid grid-cols-3 gap-2"
+              className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2"
             >
-              <div className="bg-[#0F1118] rounded-xl border border-white/5 p-3 text-center">
+              <div className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
-                  <Flame className="w-3.5 h-3.5 text-[#F5C451]" />
-                  <span className="text-[#F5C451] text-lg font-black">{dailyStreak}</span>
+                  <Flame className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
+                  <span className="text-[var(--sr-vendor)] text-lg font-black">{dailyStreak}</span>
                 </div>
                 <p className="text-white/60 text-[9px]">Current Streak</p>
               </div>
-              <div className="bg-[#0F1118] rounded-xl border border-white/5 p-3 text-center">
+              <div className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 text-center">
                 <div className="flex items-center justify-center gap-1 mb-1">
                   <Star className="w-3.5 h-3.5 text-[#A78BFA]" />
                   <span className="text-[#A78BFA] text-lg font-black">{streak?.longest || 0}</span>
                 </div>
                 <p className="text-white/60 text-[9px]">Longest Streak</p>
               </div>
-              <div className="bg-[#0F1118] rounded-xl border border-white/5 p-3 text-center">
-                <span className="text-[#10E07A] text-lg font-black">{shrine?.overallProgress || 0}%</span>
+              <div className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 text-center">
+                <span className="text-[var(--sr-customer)] text-lg font-black">{shrine?.overallProgress || 0}%</span>
                 <p className="text-white/60 text-[9px]">Complete</p>
               </div>
             </motion.div>
@@ -424,7 +424,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="mt-4 rounded-2xl border p-4"
+              className="mt-4 rounded-2xl border p-3 sm:p-4"
               style={{
                 background: `linear-gradient(135deg, ${currentStageColor}10, #0F1118)`,
                 borderColor: `${currentStageColor}25`,
@@ -461,7 +461,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="mt-3 bg-[#0F1118] rounded-xl border border-white/5 p-3 flex items-center gap-3"
+                className="mt-3 bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 flex items-center gap-3"
               >
                 <ChevronRight className="w-4 h-4 text-white/20" />
                 <div className="flex-1">
@@ -574,7 +574,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-              className="w-full max-w-xs relative overflow-hidden rounded-3xl border border-[#10E07A]/30"
+              className="w-full max-w-xs relative overflow-hidden rounded-3xl border border-[var(--sr-customer)]/30"
               style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
               role="dialog"
               aria-modal="true"
@@ -589,7 +589,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                   />
                 </div>
                 <h3 className="text-white text-lg font-bold mb-1">My Streak Shrine 🕌</h3>
-                <p className="text-[#10E07A] text-sm font-bold">{dailyStreak} Day Fasting Streak</p>
+                <p className="text-[var(--sr-customer)] text-sm font-bold">{dailyStreak} Day Fasting Streak</p>
                 <p className="text-white/65 text-xs mt-1">{shrine.currentStage.name} Stage • {shrine.overallProgress}% Complete</p>
 
                 <motion.button

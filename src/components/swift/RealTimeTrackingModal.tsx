@@ -541,8 +541,8 @@ export default function RealTimeTrackingModal() {
             {/* ─── Sticky Header ─── */}
             <div className="glass-effect border-b border-white/5 px-4 py-3 flex items-center justify-between shrink-0 z-20">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/30 flex items-center justify-center shrink-0">
-                  <MapPin className="w-5 h-5 text-[#38BDF8]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/30 flex items-center justify-center shrink-0">
+                  <MapPin className="w-5 h-5 text-[var(--sr-rider)]" />
                 </div>
                 <div className="min-w-0">
                   <h2 className="text-white text-base font-bold leading-tight flex items-center gap-2">
@@ -551,14 +551,14 @@ export default function RealTimeTrackingModal() {
                       <motion.span
                         animate={{ opacity: [1, 0.4, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
-                        className="w-2 h-2 rounded-full bg-[#10E07A] inline-block"
+                        className="w-2 h-2 rounded-full bg-[var(--sr-customer)] inline-block"
                         title="Realtime connected"
                       />
                     ) : isPolling ? (
                       <motion.span
                         animate={{ opacity: [1, 0.4, 1] }}
                         transition={{ duration: 1.5, repeat: Infinity }}
-                        className="w-2 h-2 rounded-full bg-[#38BDF8] inline-block"
+                        className="w-2 h-2 rounded-full bg-[var(--sr-rider)] inline-block"
                         title="Polling (socket offline)"
                       />
                     ) : (
@@ -595,11 +595,11 @@ export default function RealTimeTrackingModal() {
                     exit={{ opacity: 0 }}
                     className="px-4 pt-4"
                   >
-                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#10E07A]/15 to-[#F5C451]/10 border border-[#10E07A]/30 p-4">
-                      <div className="absolute -right-4 -top-4 w-32 h-32 bg-[#10E07A]/10 blur-3xl rounded-full" />
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#10E07A]/15 to-[#F5C451]/10 border border-[var(--sr-customer)]/30 p-4">
+                      <div className="absolute -right-4 -top-4 w-32 h-32 bg-[var(--sr-customer)]/10 blur-3xl rounded-full" />
                       <div className="relative z-10 flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-2xl bg-[#10E07A]/20 flex items-center justify-center shrink-0">
-                          <PartyPopper className="w-6 h-6 text-[#10E07A]" />
+                        <div className="w-12 h-12 rounded-2xl bg-[var(--sr-customer)]/20 flex items-center justify-center shrink-0">
+                          <PartyPopper className="w-6 h-6 text-[var(--sr-customer)]" />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-white font-extrabold text-sm">
@@ -612,7 +612,7 @@ export default function RealTimeTrackingModal() {
                       </div>
                       <button
                         onClick={handleRateRider}
-                        className="mt-3 w-full bg-[#F5C451] text-[#06070B] py-3 rounded-xl font-black text-sm hover:bg-[#F5C451]/90 transition-colors flex items-center justify-center gap-2"
+                        className="mt-3 w-full bg-[var(--sr-vendor)] text-[#06070B] py-3 rounded-xl font-black text-sm hover:bg-[var(--sr-vendor)]/90 transition-colors flex items-center justify-center gap-2"
                       >
                         <Star className="w-4 h-4 fill-[#06070B]" />
                         Rate your rider
@@ -627,7 +627,7 @@ export default function RealTimeTrackingModal() {
                 <h3 className="text-white/80 text-xs font-bold uppercase tracking-wider mb-3">
                   Delivery Status
                 </h3>
-                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+                <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 p-4">
                   <div className="relative">
                     {STATUS_STAGES.map((stage, idx) => {
                       const isPast = idx < currentStageIndex;
@@ -644,9 +644,9 @@ export default function RealTimeTrackingModal() {
                           <div
                             className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${
                               isActive
-                                ? 'bg-[#38BDF8]/20 border-2 border-[#38BDF8] scale-110'
+                                ? 'bg-[var(--sr-rider)]/20 border-2 border-[var(--sr-rider)] scale-110'
                                 : isPast
-                                  ? 'bg-[#10E07A] border-2 border-[#10E07A]'
+                                  ? 'bg-[var(--sr-customer)] border-2 border-[var(--sr-customer)]'
                                   : 'bg-[#1A1D26] border-2 border-white/10'
                             }`}
                           >
@@ -655,7 +655,7 @@ export default function RealTimeTrackingModal() {
                             ) : (
                               <Icon
                                 className={`w-4 h-4 ${
-                                  isActive ? 'text-[#38BDF8]' : 'text-white/60'
+                                  isActive ? 'text-[var(--sr-rider)]' : 'text-white/60'
                                 }`}
                               />
                             )}
@@ -663,7 +663,7 @@ export default function RealTimeTrackingModal() {
                               <motion.div
                                 animate={{ scale: [1, 1.6], opacity: [0.5, 0] }}
                                 transition={{ duration: 1.6, repeat: Infinity }}
-                                className="absolute inset-0 rounded-full bg-[#38BDF8]"
+                                className="absolute inset-0 rounded-full bg-[var(--sr-rider)]"
                               />
                             )}
                           </div>
@@ -675,7 +675,7 @@ export default function RealTimeTrackingModal() {
                                   isActive
                                     ? 'text-white'
                                     : isPast
-                                      ? 'text-[#10E07A]'
+                                      ? 'text-[var(--sr-customer)]'
                                       : 'text-white/65'
                                 }`}
                               >
@@ -685,7 +685,7 @@ export default function RealTimeTrackingModal() {
                                 <motion.span
                                   animate={{ opacity: [1, 0.5, 1] }}
                                   transition={{ duration: 1.4, repeat: Infinity }}
-                                  className="text-[10px] text-[#38BDF8] font-bold uppercase"
+                                  className="text-[10px] text-[var(--sr-rider)] font-bold uppercase"
                                 >
                                   Live
                                 </motion.span>
@@ -709,10 +709,10 @@ export default function RealTimeTrackingModal() {
               {/* ETA + Rider cards */}
               <section className="px-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* ETA card */}
-                <div className="bg-gradient-to-br from-[#38BDF8]/10 to-[#0F1118] rounded-2xl border border-[#38BDF8]/20 p-4 relative overflow-hidden">
-                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[#38BDF8]/5 blur-2xl rounded-full" />
+                <div className="bg-gradient-to-br from-[#38BDF8]/10 to-[#0F1118] rounded-2xl border border-[var(--sr-rider)]/20 p-4 relative overflow-hidden">
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-[var(--sr-rider)]/5 blur-2xl rounded-full" />
                   <div className="flex items-center gap-2 mb-2 relative">
-                    <Clock className="w-4 h-4 text-[#38BDF8]" />
+                    <Clock className="w-4 h-4 text-[var(--sr-rider)]" />
                     <span className="text-white/50 text-[11px] uppercase tracking-wider font-bold">
                       Estimated arrival
                     </span>
@@ -747,7 +747,7 @@ export default function RealTimeTrackingModal() {
                 </div>
 
                 {/* Rider card */}
-                <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+                <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 p-4">
                   {delivery ? (
                     <div className="flex items-center gap-3">
                       <div
@@ -765,8 +765,8 @@ export default function RealTimeTrackingModal() {
                           {delivery.rider.name}
                         </p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-[#F5C451] text-[#F5C451]" />
-                          <span className="text-[#F5C451] text-[11px] font-bold">
+                          <Star className="w-3 h-3 fill-[#F5C451] text-[var(--sr-vendor)]" />
+                          <span className="text-[var(--sr-vendor)] text-[11px] font-bold">
                             {delivery.rider.rating}
                           </span>
                           <span className="text-white/60 text-[11px]">•</span>
@@ -778,10 +778,10 @@ export default function RealTimeTrackingModal() {
                       <div className="flex gap-2 shrink-0">
                         <button
                           onClick={handleCallRider}
-                          className="w-10 h-10 rounded-xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center hover:bg-[#F5C451]/20 transition-colors"
+                          className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/30 flex items-center justify-center hover:bg-[var(--sr-vendor)]/20 transition-colors"
                           aria-label="Call rider"
                         >
-                          <Phone className="w-4 h-4 text-[#F5C451]" />
+                          <Phone className="w-4 h-4 text-[var(--sr-vendor)]" />
                         </button>
                       </div>
                     </div>
@@ -808,7 +808,7 @@ export default function RealTimeTrackingModal() {
               {/* Order summary */}
               {delivery && (
                 <section className="px-4 pt-4">
-                  <div className="bg-[#0F1118] rounded-2xl border border-white/5 p-4">
+                  <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <Package className="w-4 h-4 text-white/65" />
                       <span className="text-white/60 text-xs font-bold uppercase tracking-wider">
@@ -840,9 +840,9 @@ export default function RealTimeTrackingModal() {
 
               {/* Live updates feed (system messages only) */}
               <section className="px-4 pt-4 pb-6">
-                <div className="bg-[#0F1118] rounded-2xl border border-white/5 overflow-hidden">
+                <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/5 overflow-hidden">
                   <div className="px-4 py-3 border-b border-white/5 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#38BDF8]" />
+                    <Clock className="w-4 h-4 text-[var(--sr-rider)]" />
                     <span className="text-white text-sm font-bold">Delivery Updates</span>
                     <span className="ml-auto text-white/60 text-[10px]">
                       {messages.length} updates
@@ -873,12 +873,12 @@ export default function RealTimeTrackingModal() {
             </div>
 
             {/* ─── Bottom progress bar ─── */}
-            <div className="border-t border-white/5 bg-[#0F1118] px-4 py-3 shrink-0">
+            <div className="border-t border-white/5 bg-[var(--sr-surface-raised)] px-4 py-3 shrink-0">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-white/50 text-[11px] font-bold uppercase tracking-wider">
                   Delivery progress
                 </span>
-                <span className="text-[#38BDF8] text-sm font-black">
+                <span className="text-[var(--sr-rider)] text-sm font-black">
                   {delivery ? Math.round(delivery.progress) : 0}%
                 </span>
               </div>
@@ -907,8 +907,8 @@ export default function RealTimeTrackingModal() {
                 <p className="text-white/60 text-[10px] mt-2 flex items-center gap-1">
                   {socketConnected ? (
                     <>
-                      <Wifi className="w-3 h-3 text-[#10E07A]" />
-                      <span className="text-[#10E07A]">Realtime</span>
+                      <Wifi className="w-3 h-3 text-[var(--sr-customer)]" />
+                      <span className="text-[var(--sr-customer)]">Realtime</span>
                       <span className="text-white/60">• fallback poll every 5s</span>
                     </>
                   ) : (
@@ -978,8 +978,8 @@ function MapPanel({
 
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D14]/40 via-transparent to-[#0B0D14]" />
-      <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[#F5C451]/5 blur-[60px] rounded-full" />
-      <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[#38BDF8]/5 blur-[60px] rounded-full" />
+      <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[var(--sr-vendor)]/5 blur-[60px] rounded-full" />
+      <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[var(--sr-rider)]/5 blur-[60px] rounded-full" />
 
       {/* Route line + markers */}
       {layout && delivery && (
@@ -1027,7 +1027,7 @@ function MapPanel({
             position={layout.store}
             color="#F5C451"
             label={delivery.store.name}
-            icon={<Store className="w-3.5 h-3.5 text-[#F5C451]" />}
+            icon={<Store className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />}
           />
 
           {/* Customer marker */}
@@ -1035,7 +1035,7 @@ function MapPanel({
             position={layout.customer}
             color="#38BDF8"
             label="Your location"
-            icon={<MapPin className="w-3.5 h-3.5 text-[#38BDF8]" />}
+            icon={<MapPin className="w-3.5 h-3.5 text-[var(--sr-rider)]" />}
             pulseColor="rgba(56,189,248,0.4)"
           />
 
@@ -1053,9 +1053,9 @@ function MapPanel({
             <motion.div
               animate={{ scale: [1, 2.4], opacity: [0.4, 0] }}
               transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
-              className="absolute inset-0 rounded-full bg-[#38BDF8]"
+              className="absolute inset-0 rounded-full bg-[var(--sr-rider)]"
             />
-            <div className="relative w-9 h-9 rounded-full bg-[#38BDF8] border-2 border-[#0B0D14] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+            <div className="relative w-9 h-9 rounded-full bg-[var(--sr-rider)] border-2 border-[#0B0D14] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
               <Bike className="w-4 h-4 text-[#0B0D14]" />
             </div>
           </motion.div>
@@ -1064,17 +1064,17 @@ function MapPanel({
 
       {/* Legend */}
       {layout && delivery && (
-        <div className="absolute top-3 left-3 bg-[#0F1118]/80 backdrop-blur rounded-xl border border-white/10 p-2 space-y-1.5">
+        <div className="absolute top-3 left-3 bg-[var(--sr-surface-raised)]/80 backdrop-blur rounded-xl border border-white/10 p-2 space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#F5C451]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[var(--sr-vendor)]" />
             <span className="text-white/60 text-[10px] font-medium">Restaurant</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#38BDF8]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[var(--sr-rider)]" />
             <span className="text-white/60 text-[10px] font-medium">Rider</span>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#10E07A]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[var(--sr-customer)]" />
             <span className="text-white/60 text-[10px] font-medium">You</span>
           </div>
         </div>
@@ -1087,7 +1087,7 @@ function MapPanel({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="w-10 h-10 border-2 border-[#38BDF8]/30 border-t-[#38BDF8] rounded-full mx-auto mb-3"
+              className="w-10 h-10 border-2 border-[var(--sr-rider)]/30 border-t-[#38BDF8] rounded-full mx-auto mb-3"
             />
             <p className="text-white/50 text-sm">Locating your rider...</p>
           </div>

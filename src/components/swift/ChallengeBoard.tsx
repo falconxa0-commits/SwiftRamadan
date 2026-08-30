@@ -177,8 +177,8 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/8">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#F5C451]/15 flex items-center justify-center border border-[#F5C451]/25">
-            <Trophy className="w-4 h-4 text-[#F5C451]" />
+          <div className="w-8 h-8 rounded-lg bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/25">
+            <Trophy className="w-4 h-4 text-[var(--sr-vendor)]" />
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Challenge Board</h2>
@@ -191,7 +191,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
             className="w-8 h-8 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
             aria-label="View badges"
           >
-            <Award className="w-4 h-4 text-[#F5C451]" />
+            <Award className="w-4 h-4 text-[var(--sr-vendor)]" />
           </button>
           <button
             onClick={() => { if (onClose) onClose(); else setActiveModal(null); }}
@@ -207,12 +207,12 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
       <div className="shrink-0 px-4 py-3">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Flame className="w-4 h-4 text-[#F5C451]" />
+            <Flame className="w-4 h-4 text-[var(--sr-vendor)]" />
             <span className="text-white/60 text-xs font-semibold">Day {currentDay} of 30</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Star className="w-3.5 h-3.5 text-[#F5C451]" />
-            <span className="text-[#F5C451] text-xs font-bold">{stats?.pointsEarned || 0} pts</span>
+            <Star className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
+            <span className="text-[var(--sr-vendor)] text-xs font-bold">{stats?.pointsEarned || 0} pts</span>
           </div>
         </div>
         {/* Progress bar */}
@@ -227,7 +227,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
         </div>
         <div className="flex items-center justify-between mt-1.5">
           <span className="text-white/60 text-[10px]">{completedCount}/30 completed</span>
-          <span className="text-[#10E07A] text-[10px] font-bold">{stats?.percentage || 0}%</span>
+          <span className="text-[var(--sr-customer)] text-[10px] font-bold">{stats?.percentage || 0}%</span>
         </div>
       </div>
 
@@ -252,7 +252,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: i * 0.05 }}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20"
                     >
                       <span className="text-sm">{b.badge}</span>
                       <span className="text-white/70 text-[10px] font-semibold">{b.title}</span>
@@ -269,7 +269,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -301,8 +301,8 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                           : isCompleted
                           ? 'border-transparent cursor-pointer'
                           : isCurrent
-                          ? 'bg-white/5 border-[#F5C451]/30 cursor-pointer'
-                          : 'bg-[#0F1118] border-white/8 cursor-pointer hover:border-white/15'
+                          ? 'bg-white/5 border-[var(--sr-vendor)]/30 cursor-pointer'
+                          : 'bg-[var(--sr-surface-raised)] border-white/8 cursor-pointer hover:border-white/15'
                       }`}
                       style={isCompleted ? {
                         background: `linear-gradient(135deg, ${catColor}25, ${catColor}10)`,
@@ -326,7 +326,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#10E07A] flex items-center justify-center"
+                          className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--sr-customer)] flex items-center justify-center"
                         >
                           <Check className="w-2.5 h-2.5 text-[#0B0D14]" />
                         </motion.div>
@@ -335,7 +335,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                       {/* Current day pulse */}
                       {isCurrent && !isCompleted && (
                         <motion.div
-                          className="absolute inset-0 rounded-xl border-2 border-[#F5C451]/50"
+                          className="absolute inset-0 rounded-xl border-2 border-[var(--sr-vendor)]/50"
                           animate={{ opacity: [0.3, 0.8, 0.3] }}
                           transition={{ duration: 2, repeat: Infinity }}
                         />
@@ -354,10 +354,10 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                   key={challenge.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-[#0F1118] rounded-2xl border border-[#F5C451]/20 p-4 mb-3"
+                  className="bg-[var(--sr-surface-raised)] rounded-2xl border border-[var(--sr-vendor)]/20 p-3 sm:p-4 mb-3"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 text-2xl shrink-0">
+                    <div className="w-12 h-12 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 text-2xl shrink-0">
                       {challenge.icon}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -382,7 +382,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.05 }}
                       onClick={() => setSelectedChallenge(challenge)}
-                      className="w-full bg-[#0F1118] rounded-xl border border-white/5 p-3 flex items-center gap-3 hover:border-white/15 transition-colors text-left"
+                      className="w-full bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 flex items-center gap-3 hover:border-white/15 transition-colors text-left"
                       aria-label={`View challenge: ${challenge.title}`}
                     >
                       <span className="text-lg shrink-0">{challenge.icon}</span>
@@ -418,7 +418,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed bottom-0 left-0 right-0 z-[120] bg-[#0F1118] rounded-t-3xl border-t border-white/10 p-6 pb-8"
+              className="fixed bottom-0 left-0 right-0 z-[120] bg-[var(--sr-surface-raised)] rounded-t-3xl border-t border-white/10 p-6 pb-8"
               role="dialog"
               aria-modal="true"
               aria-label={`Challenge: ${selectedChallenge.title}`}
@@ -426,7 +426,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
               {/* Handle */}
               <div className="w-10 h-1 rounded-full bg-white/20 mx-auto mb-5" />
 
-              <div className="flex items-start gap-4 mb-5">
+              <div className="flex items-start gap-3 sm:gap-4 mb-5">
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 border"
                   style={{
@@ -453,9 +453,9 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
 
               {/* Points and badge */}
               <div className="flex items-center gap-3 mb-6">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20">
-                  <Star className="w-3 h-3 text-[#F5C451]" />
-                  <span className="text-[#F5C451] text-xs font-bold">+{selectedChallenge.points} pts</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20">
+                  <Star className="w-3 h-3 text-[var(--sr-vendor)]" />
+                  <span className="text-[var(--sr-vendor)] text-xs font-bold">+{selectedChallenge.points} pts</span>
                 </div>
                 {selectedChallenge.badge && (
                   <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#A78BFA]/10 border border-[#A78BFA]/20">
@@ -467,9 +467,9 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
 
               {/* Action button */}
               {selectedChallenge.completed ? (
-                <div className="w-full py-3.5 rounded-2xl bg-[#10E07A]/15 border border-[#10E07A]/30 flex items-center justify-center gap-2">
-                  <Check className="w-4 h-4 text-[#10E07A]" />
-                  <span className="text-[#10E07A] text-sm font-bold">Completed!</span>
+                <div className="w-full py-3.5 rounded-2xl bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 flex items-center justify-center gap-2">
+                  <Check className="w-4 h-4 text-[var(--sr-customer)]" />
+                  <span className="text-[var(--sr-customer)] text-sm font-bold">Completed!</span>
                 </div>
               ) : (
                 <motion.button

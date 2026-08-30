@@ -147,8 +147,8 @@ export default function UploadVideoModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3">
           <div className="flex items-center gap-2">
-            <div className="size-8 rounded-xl bg-[#10E07A]/15 border border-[#10E07A]/30 flex items-center justify-center">
-              <Film className="w-4 h-4 text-[#10E07A]" />
+            <div className="size-8 rounded-xl bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 flex items-center justify-center">
+              <Film className="w-4 h-4 text-[var(--sr-customer)]" />
             </div>
             <h3 className="text-white font-black text-base tracking-tight">Upload a Reel</h3>
           </div>
@@ -167,9 +167,9 @@ export default function UploadVideoModal({
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', damping: 12 }}
-              className="size-16 rounded-full bg-[#10E07A]/15 border-2 border-[#10E07A] flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(16,224,122,0.4)]"
+              className="size-16 rounded-full bg-[var(--sr-customer)]/15 border-2 border-[var(--sr-customer)] flex items-center justify-center mb-4 shadow-[0_0_30px_rgba(16,224,122,0.4)]"
             >
-              <Check className="w-8 h-8 text-[#10E07A]" strokeWidth={3} />
+              <Check className="w-8 h-8 text-[var(--sr-customer)]" strokeWidth={3} />
             </motion.div>
             <p className="text-white font-black text-lg">Reel Published!</p>
             <p className="text-white/50 text-sm mt-1">Loading your reel into the feed...</p>
@@ -184,7 +184,7 @@ export default function UploadVideoModal({
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="e.g. Smoky Jollof in 90 seconds"
                 maxLength={120}
-                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
+                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors"
               />
             </div>
 
@@ -197,7 +197,7 @@ export default function UploadVideoModal({
                 placeholder="Tell viewers about your reel... #iftar #ramadan"
                 maxLength={500}
                 rows={3}
-                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors resize-none"
+                className="mt-1.5 w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors resize-none"
               />
             </div>
 
@@ -211,7 +211,7 @@ export default function UploadVideoModal({
                     onClick={() => setCategory(c.id)}
                     className={`px-3.5 h-8 rounded-full text-xs font-bold transition-all ${
                       category === c.id
-                        ? 'bg-[#10E07A] text-[#04140C]'
+                        ? 'bg-[var(--sr-customer)] text-[#04140C]'
                         : 'bg-white/5 text-white/60 border border-white/10'
                     }`}
                   >
@@ -230,7 +230,7 @@ export default function UploadVideoModal({
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
                 placeholder="https://...mp4"
-                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors font-mono"
+                className="mt-1.5 w-full h-11 rounded-xl bg-white/5 border border-white/10 px-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors font-mono"
               />
               {/* Quick pick sample clips */}
               <div className="mt-2">
@@ -242,7 +242,7 @@ export default function UploadVideoModal({
                       onClick={() => setVideoUrl(url)}
                       className={`flex-1 h-9 rounded-lg border text-[10px] font-bold transition-all flex items-center justify-center gap-1 ${
                         videoUrl === url
-                          ? 'border-[#10E07A] bg-[#10E07A]/10 text-[#10E07A]'
+                          ? 'border-[var(--sr-customer)] bg-[var(--sr-customer)]/10 text-[var(--sr-customer)]'
                           : 'border-white/10 bg-white/5 text-white/50'
                       }`}
                     >
@@ -279,7 +279,7 @@ export default function UploadVideoModal({
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-2 left-2 right-2 flex items-center justify-between">
                       <span className="px-2 py-0.5 rounded-md bg-black/60 text-white/80 text-[9px] font-bold flex items-center gap-1">
-                        <Check className="w-3 h-3 text-[#10E07A]" />
+                        <Check className="w-3 h-3 text-[var(--sr-customer)]" />
                         Uploaded
                       </span>
                       <button
@@ -295,13 +295,13 @@ export default function UploadVideoModal({
                   </>
                 ) : thumbUploading ? (
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin mb-1" />
+                    <Loader2 className="w-6 h-6 text-[var(--sr-customer)] animate-spin mb-1" />
                     <p className="text-white/60 text-[10px] font-bold">Uploading…</p>
                   </div>
                 ) : (
                   <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-                    <div className="w-9 h-9 rounded-xl bg-[#10E07A]/15 border border-[#10E07A]/30 flex items-center justify-center mb-1">
-                      <UploadCloud className="w-5 h-5 text-[#10E07A]" />
+                    <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 flex items-center justify-center mb-1">
+                      <UploadCloud className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>
                     <p className="text-white/80 text-[11px] font-bold">Tap to upload thumbnail</p>
                     <p className="text-white/65 text-[9px] mt-0.5">JPG, PNG, WEBP, GIF · max 5 MB</p>
@@ -324,7 +324,7 @@ export default function UploadVideoModal({
                   onChange={(e) => setThumbnailUrl(e.target.value)}
                   placeholder="…or paste a thumbnail URL"
                   disabled={thumbUploading}
-                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/40 transition-colors disabled:opacity-50 font-mono"
+                  className="w-full h-10 rounded-xl bg-white/5 border border-white/10 pl-9 pr-4 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors disabled:opacity-50 font-mono"
                 />
               </div>
             </div>
@@ -341,7 +341,7 @@ export default function UploadVideoModal({
             <button
               onClick={handleSubmit}
               disabled={submitting || thumbUploading || !title.trim() || !videoUrl.trim()}
-              className="w-full h-12 rounded-xl bg-[#10E07A] text-[#04140C] font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform shadow-[0_0_24px_rgba(16,224,122,0.35)]"
+              className="w-full h-12 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-black text-sm uppercase tracking-wide flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-transform shadow-[0_0_24px_rgba(16,224,122,0.35)]"
             >
               {submitting ? (
                 <>

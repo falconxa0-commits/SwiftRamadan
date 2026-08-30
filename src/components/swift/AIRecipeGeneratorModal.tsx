@@ -47,9 +47,9 @@ const QUICK_PROMPTS = [
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
     case 'Easy':
-      return 'text-[#10E07A] bg-[#10E07A]/10 border-[#10E07A]/20';
+      return 'text-[var(--sr-customer)] bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/20';
     case 'Medium':
-      return 'text-[#F5C451] bg-[#F5C451]/10 border-[#F5C451]/20';
+      return 'text-[var(--sr-vendor)] bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/20';
     case 'Hard':
       return 'text-red-400 bg-red-400/10 border-red-400/20';
     default:
@@ -179,14 +179,14 @@ export default function AIRecipeGeneratorModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[105] flex flex-col overflow-hidden border-t border-[#10E07A]/20"
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[105] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
           >
             {/* Sticky Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#10E07A]/5 to-[#F5C451]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#10E07A]/5 to-[#F5C451]/5">
               <div className="flex items-center gap-3">
-                <div className="relative w-11 h-11 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-2xl flex items-center justify-center border border-[#10E07A]/30">
-                  <ChefHat className="w-6 h-6 text-[#F5C451]" />
-                  <Sparkles className="w-3 h-3 text-[#10E07A] absolute -top-1 -right-1" />
+                <div className="relative w-11 h-11 bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30">
+                  <ChefHat className="w-6 h-6 text-[var(--sr-vendor)]" />
+                  <Sparkles className="w-3 h-3 text-[var(--sr-customer)] absolute -top-1 -right-1" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg flex items-center gap-2">
@@ -211,7 +211,7 @@ export default function AIRecipeGeneratorModal() {
               {/* Hero / Prompt */}
               <div className="bg-gradient-to-br from-[#1A1D26] to-[#0F1117] rounded-3xl border border-white/5 p-5 space-y-4">
                 <div className="flex items-start gap-2">
-                  <Flame className="w-4 h-4 text-[#F5C451] mt-0.5 shrink-0" />
+                  <Flame className="w-4 h-4 text-[var(--sr-vendor)] mt-0.5 shrink-0" />
                   <p className="text-white/70 text-sm leading-relaxed">
                     Describe what you&rsquo;re craving and Chef Safa will craft a
                     halal Ramadan recipe with a shoppable ingredient list.
@@ -222,7 +222,7 @@ export default function AIRecipeGeneratorModal() {
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="e.g. I'm craving something spicy with plantain for iftar..."
                   rows={3}
-                  className="w-full bg-[#05070A] text-white text-sm placeholder:text-white/60 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[#10E07A]/40 resize-none"
+                  className="w-full bg-[#05070A] text-white text-sm placeholder:text-white/60 rounded-2xl border border-white/10 px-4 py-3 focus:outline-none focus:border-[var(--sr-customer)]/40 resize-none"
                 />
                 {/* Quick prompts */}
                 <div className="flex flex-wrap gap-2">
@@ -230,7 +230,7 @@ export default function AIRecipeGeneratorModal() {
                     <button
                       key={q}
                       onClick={() => setPrompt(q)}
-                      className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/5 text-white/60 border border-white/10 hover:border-[#10E07A]/30 hover:text-white transition-all"
+                      className="px-3 py-1.5 rounded-full text-xs font-medium bg-white/5 text-white/60 border border-white/10 hover:border-[var(--sr-customer)]/30 hover:text-white transition-all"
                     >
                       {q}
                     </button>
@@ -239,7 +239,7 @@ export default function AIRecipeGeneratorModal() {
                 <button
                   onClick={() => generate()}
                   disabled={loading}
-                  className="w-full py-3.5 rounded-2xl font-bold text-[#05070A] bg-[#10E07A] hover:bg-[#10E07A]/90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl font-bold text-[#05070A] bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
@@ -273,7 +273,7 @@ export default function AIRecipeGeneratorModal() {
                           ease: 'linear',
                         }}
                       >
-                        <ChefHat className="w-14 h-14 text-[#F5C451]/60" />
+                        <ChefHat className="w-14 h-14 text-[var(--sr-vendor)]/60" />
                       </motion.div>
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-transparent via-[#10E07A]/5 to-transparent"
@@ -315,9 +315,9 @@ export default function AIRecipeGeneratorModal() {
                   className="space-y-4"
                 >
                   {/* Recipe Header */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-[#10E07A]/15 overflow-hidden">
+                  <div className="bg-[#1A1D26] rounded-3xl border border-[var(--sr-customer)]/15 overflow-hidden">
                     <div className="bg-gradient-to-br from-[#10E07A]/10 to-[#F5C451]/10 p-5">
-                      <span className="inline-block bg-[#F5C451]/15 text-[#F5C451] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide border border-[#F5C451]/20">
+                      <span className="inline-block bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide border border-[var(--sr-vendor)]/20">
                         AI Generated Recipe
                       </span>
                       <h3 className="text-white font-bold text-xl mt-3 leading-tight">
@@ -327,13 +327,13 @@ export default function AIRecipeGeneratorModal() {
                         {recipe.description}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4 px-5 py-3 border-t border-white/5 flex-wrap">
+                    <div className="flex items-center gap-3 sm:gap-4 px-5 py-3 border-t border-white/5 flex-wrap">
                       <div className="flex items-center gap-1.5 text-white/60 text-xs">
-                        <Clock className="w-3.5 h-3.5 text-[#10E07A]" />
+                        <Clock className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                         <span>{recipe.prepTime}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-white/60 text-xs">
-                        <Users className="w-3.5 h-3.5 text-[#10E07A]" />
+                        <Users className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                         <span>{recipe.servings} servings</span>
                       </div>
                       <span
@@ -347,10 +347,10 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Ingredients */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-4 space-y-3">
+                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
                     <div className="flex items-center justify-between">
                       <h4 className="text-white font-bold text-sm flex items-center gap-2">
-                        <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
+                        <ShoppingCart className="w-4 h-4 text-[var(--sr-customer)]" />
                         Ingredients
                       </h4>
                       <span className="text-white/65 text-xs">
@@ -366,7 +366,7 @@ export default function AIRecipeGeneratorModal() {
                             onClick={() => toggleIngredient(i)}
                             className={`w-full flex items-center justify-between p-3 rounded-2xl border transition-all text-left ${
                               isChecked
-                                ? 'bg-[#10E07A]/8 border-[#10E07A]/25'
+                                ? 'bg-[var(--sr-customer)]/8 border-[var(--sr-customer)]/25'
                                 : 'bg-[#0F1117] border-white/5 hover:border-white/15'
                             }`}
                           >
@@ -374,7 +374,7 @@ export default function AIRecipeGeneratorModal() {
                               <span
                                 className={`w-5 h-5 shrink-0 rounded-md border flex items-center justify-center transition-all ${
                                   isChecked
-                                    ? 'bg-[#10E07A] border-[#10E07A]'
+                                    ? 'bg-[var(--sr-customer)] border-[var(--sr-customer)]'
                                     : 'border-white/20'
                                 }`}
                               >
@@ -391,7 +391,7 @@ export default function AIRecipeGeneratorModal() {
                                 </p>
                               </div>
                             </div>
-                            <span className="text-[#F5C451] text-sm font-semibold shrink-0 ml-2">
+                            <span className="text-[var(--sr-vendor)] text-sm font-semibold shrink-0 ml-2">
                               {formatNaira(ing.price)}
                             </span>
                           </button>
@@ -402,7 +402,7 @@ export default function AIRecipeGeneratorModal() {
                       <button
                         onClick={addCheckedToCart}
                         disabled={checked.size === 0}
-                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-white/5 text-white border border-white/10 hover:border-[#10E07A]/30 hover:text-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-white/5 text-white border border-white/10 hover:border-[var(--sr-customer)]/30 hover:text-white/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                       >
                         <ShoppingCart className="w-3.5 h-3.5" />
                         Add {checked.size > 0 ? `(${checked.size})` : ''} -{' '}
@@ -410,7 +410,7 @@ export default function AIRecipeGeneratorModal() {
                       </button>
                       <button
                         onClick={addAllToCart}
-                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+                        className="flex-1 py-2.5 rounded-xl font-bold text-xs bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
                       >
                         {addedAll ? (
                           <Check className="w-3.5 h-3.5" />
@@ -423,9 +423,9 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Steps */}
-                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-4 space-y-3">
+                  <div className="bg-[#1A1D26] rounded-3xl border border-white/5 p-3 sm:p-4 space-y-3">
                     <h4 className="text-white font-bold text-sm flex items-center gap-2">
-                      <ChefHat className="w-4 h-4 text-[#F5C451]" />
+                      <ChefHat className="w-4 h-4 text-[var(--sr-vendor)]" />
                       Cooking Steps
                     </h4>
                     <div className="space-y-2">
@@ -434,7 +434,7 @@ export default function AIRecipeGeneratorModal() {
                           key={`${recipe.name}-step-${i}`}
                           className="flex gap-3 p-3 bg-[#0F1117] rounded-2xl border border-white/5"
                         >
-                          <span className="w-7 h-7 shrink-0 rounded-full bg-[#F5C451]/10 border border-[#F5C451]/20 flex items-center justify-center text-[#F5C451] text-xs font-black">
+                          <span className="w-7 h-7 shrink-0 rounded-full bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 flex items-center justify-center text-[var(--sr-vendor)] text-xs font-black">
                             {i + 1}
                           </span>
                           <p className="text-white/70 text-sm leading-relaxed pt-1">
@@ -446,9 +446,9 @@ export default function AIRecipeGeneratorModal() {
                   </div>
 
                   {/* Chef Tips */}
-                  <div className="bg-gradient-to-br from-[#F5C451]/8 to-[#10E07A]/5 rounded-3xl border border-[#F5C451]/20 p-4">
+                  <div className="bg-gradient-to-br from-[#F5C451]/8 to-[#10E07A]/5 rounded-3xl border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
                     <h4 className="text-white font-bold text-sm flex items-center gap-2 mb-2">
-                      <Lightbulb className="w-4 h-4 text-[#F5C451]" />
+                      <Lightbulb className="w-4 h-4 text-[var(--sr-vendor)]" />
                       Chef Safa&rsquo;s Tip
                     </h4>
                     <p className="text-white/70 text-sm leading-relaxed">
@@ -460,7 +460,7 @@ export default function AIRecipeGeneratorModal() {
                   <button
                     onClick={() => generate()}
                     disabled={loading}
-                    className="w-full py-3 rounded-2xl font-bold text-sm bg-white/5 text-white border border-white/10 hover:border-[#10E07A]/30 hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-3 rounded-2xl font-bold text-sm bg-white/5 text-white border border-white/10 hover:border-[var(--sr-customer)]/30 hover:text-white disabled:opacity-50 transition-all flex items-center justify-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Regenerate Recipe
@@ -471,7 +471,7 @@ export default function AIRecipeGeneratorModal() {
 
             {/* Sticky Footer Buttons */}
             {recipe && !loading && (
-              <div className="shrink-0 p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg flex gap-2">
+              <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[#05070A]/95 backdrop-blur-lg flex gap-2">
                 <button
                   onClick={() => setActiveModal(null)}
                   className="flex-1 py-3.5 rounded-2xl font-bold text-sm bg-white/5 text-white/70 border border-white/10 hover:text-white transition-all"
@@ -480,7 +480,7 @@ export default function AIRecipeGeneratorModal() {
                 </button>
                 <button
                   onClick={addAllToCart}
-                  className="flex-[2] py-3.5 rounded-2xl font-bold text-sm bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                  className="flex-[2] py-3.5 rounded-2xl font-bold text-sm bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-4 h-4" />
                   Add All to Cart 🛒 - {formatNaira(totalCost)}

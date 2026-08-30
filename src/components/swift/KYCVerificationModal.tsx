@@ -226,7 +226,7 @@ export default function KYCVerificationModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={handleClose}
           />
 
@@ -236,7 +236,7 @@ export default function KYCVerificationModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[85vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -253,7 +253,7 @@ export default function KYCVerificationModal() {
                       border: '1px solid rgba(16,224,122,0.30)',
                     }}
                   >
-                    <Shield className="w-5 h-5 text-[#10E07A] relative z-10" />
+                    <Shield className="w-5 h-5 text-[var(--sr-customer)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">KYC Verification</h2>
@@ -275,7 +275,7 @@ export default function KYCVerificationModal() {
                 <motion.div
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl bg-[#0F1118] border border-white/5 p-4"
+                  className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-white/50 text-xs font-medium uppercase tracking-wider">Verification Status</span>
@@ -293,12 +293,12 @@ export default function KYCVerificationModal() {
                   </div>
 
                   {kycStatus === 'verified' && (
-                    <p className="text-[#10E07A]/70 text-xs mt-1">
+                    <p className="text-[var(--sr-customer)]/70 text-xs mt-1">
                       Your identity has been verified. You can now operate as a {userRole}.
                     </p>
                   )}
                   {kycStatus === 'pending' && (
-                    <p className="text-[#F5C451]/70 text-xs mt-1">
+                    <p className="text-[var(--sr-vendor)]/70 text-xs mt-1">
                       Your documents are being reviewed. This usually takes 24-48 hours.
                     </p>
                   )}
@@ -340,7 +340,7 @@ export default function KYCVerificationModal() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.05 }}
-                    className="rounded-2xl bg-[#0F1118] border border-white/5 p-4 space-y-3"
+                    className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4 space-y-3"
                   >
                     <h3 className="text-white font-semibold text-sm">Submit Document</h3>
 
@@ -356,7 +356,7 @@ export default function KYCVerificationModal() {
                             onClick={() => setDocumentType(doc.value)}
                             className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-left transition-all text-sm ${
                               documentType === doc.value
-                                ? 'bg-[#10E07A]/10 border border-[#10E07A]/30 text-[#10E07A]'
+                                ? 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
                                 : 'bg-white/[0.03] border border-white/5 text-white/70 hover:bg-white/[0.06] hover:border-white/10'
                             }`}
                           >
@@ -377,7 +377,7 @@ export default function KYCVerificationModal() {
                         value={documentNumber}
                         onChange={(e) => setDocumentNumber(e.target.value)}
                         placeholder="e.g., 12345678901"
-                        className="w-full bg-[#06070B] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#10E07A]/40 transition-colors"
+                        className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors"
                       />
                     </div>
 
@@ -396,16 +396,16 @@ export default function KYCVerificationModal() {
                         />
                         <label
                           htmlFor="kyc-doc-upload"
-                          className="flex items-center gap-3 w-full bg-[#06070B] border border-white/10 rounded-xl px-3.5 py-3 cursor-pointer hover:border-[#10E07A]/30 transition-colors"
+                          className="flex items-center gap-3 w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-3.5 py-3 cursor-pointer hover:border-[var(--sr-customer)]/30 transition-colors"
                         >
                           {documentImage ? (
                             <>
-                              <div className="w-10 h-10 rounded-lg bg-[#10E07A]/10 border border-[#10E07A]/20 flex items-center justify-center shrink-0">
-                                <CheckCircle2 className="w-5 h-5 text-[#10E07A]" />
+                              <div className="w-10 h-10 rounded-lg bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 flex items-center justify-center shrink-0">
+                                <CheckCircle2 className="w-5 h-5 text-[var(--sr-customer)]" />
                               </div>
                               <div className="min-w-0 flex-1">
                                 <p className="text-white text-xs font-medium truncate">{fileName}</p>
-                                <p className="text-[#10E07A]/60 text-[10px]">Uploaded</p>
+                                <p className="text-[var(--sr-customer)]/60 text-[10px]">Uploaded</p>
                               </div>
                             </>
                           ) : (
@@ -457,7 +457,7 @@ export default function KYCVerificationModal() {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
-                    className="rounded-2xl bg-[#0F1118] border border-white/5 p-4 space-y-2"
+                    className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 p-3 sm:p-4 space-y-2"
                   >
                     <h3 className="text-white font-semibold text-sm mb-2">Submitted Documents</h3>
                     {documents.map((doc) => (

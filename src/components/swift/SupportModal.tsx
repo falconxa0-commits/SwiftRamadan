@@ -52,7 +52,7 @@ const CATEGORIES = [
 
 const PRIORITIES = [
   { value: 'low', label: 'Low', color: 'text-white/50' },
-  { value: 'medium', label: 'Medium', color: 'text-[#F5C451]' },
+  { value: 'medium', label: 'Medium', color: 'text-[var(--sr-vendor)]' },
   { value: 'high', label: 'High', color: 'text-[#FB923C]' },
   { value: 'urgent', label: 'Urgent', color: 'text-[#FB7185]' },
 ];
@@ -319,7 +319,7 @@ export default function SupportModal() {
             {/* ─── Sticky Header ─── */}
             <div className="glass-effect border-b border-white/5 shrink-0">
               <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#A78BFA]" />
-              <div className="flex items-center gap-3 p-4">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
                 {activeView === 'detail' ? (
                   <button
                     onClick={() => { setActiveView('list'); setSelectedTicket(null); }}
@@ -329,8 +329,8 @@ export default function SupportModal() {
                     <ChevronRight className="w-5 h-5 text-white rotate-180" />
                   </button>
                 ) : (
-                  <div className="size-10 flex items-center justify-center rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/30 shrink-0">
-                    <Headphones className="w-5 h-5 text-[#10E07A]" />
+                  <div className="size-10 flex items-center justify-center rounded-2xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 shrink-0">
+                    <Headphones className="w-5 h-5 text-[var(--sr-customer)]" />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
@@ -380,13 +380,13 @@ export default function SupportModal() {
                   <div className="flex-1 overflow-y-auto custom-scrollbar px-4 pb-4 space-y-3">
                     {loading ? (
                       <div className="flex flex-col items-center justify-center py-16 gap-2">
-                        <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
+                        <Loader2 className="w-6 h-6 text-[var(--sr-customer)] animate-spin" />
                         <p className="text-white/65 text-xs">Loading tickets…</p>
                       </div>
                     ) : tickets.length === 0 ? (
                       <div className="flex flex-col items-center justify-center py-16 text-center">
-                        <div className="size-16 rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/20 flex items-center justify-center mb-4">
-                          <Headphones className="w-7 h-7 text-[#10E07A]" />
+                        <div className="size-16 rounded-2xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 flex items-center justify-center mb-4">
+                          <Headphones className="w-7 h-7 text-[var(--sr-customer)]" />
                         </div>
                         <p className="text-white font-bold text-base">No support tickets</p>
                         <p className="text-white/65 text-sm mt-1 max-w-[240px]">
@@ -405,7 +405,7 @@ export default function SupportModal() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: Math.min(i * 0.04, 0.3) }}
                             onClick={() => openTicketDetail(ticket)}
-                            className="w-full text-left glass-card rounded-2xl border border-white/[0.06] p-4 hover:border-white/10 transition-colors"
+                            className="w-full text-left glass-card rounded-2xl border border-white/[0.06] p-3 sm:p-4 hover:border-white/10 transition-colors"
                           >
                             <div className="flex items-start justify-between gap-2 mb-2">
                               <h3 className="text-white font-bold text-sm leading-tight line-clamp-1 flex-1">
@@ -462,11 +462,11 @@ export default function SupportModal() {
                       id="support-category"
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 transition-colors appearance-none cursor-pointer"
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors appearance-none cursor-pointer"
                       style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 12px center' }}
                     >
                       {CATEGORIES.map(c => (
-                        <option key={c.value} value={c.value} className="bg-[#0F1118]">{c.label}</option>
+                        <option key={c.value} value={c.value} className="bg-[var(--sr-surface-raised)]">{c.label}</option>
                       ))}
                     </select>
                   </div>
@@ -474,7 +474,7 @@ export default function SupportModal() {
                   {/* Priority */}
                   <div>
                     <label className="text-white/50 text-xs font-bold mb-1.5 block">Priority</label>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                       {PRIORITIES.map(p => (
                         <button
                           key={p.value}
@@ -500,7 +500,7 @@ export default function SupportModal() {
                       value={subject}
                       onChange={(e) => setSubject(e.target.value)}
                       placeholder="Brief description of your issue"
-                      className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 transition-colors placeholder:text-white/25"
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors placeholder:text-white/25"
                     />
                   </div>
 
@@ -513,7 +513,7 @@ export default function SupportModal() {
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Describe your issue in detail…"
                       rows={5}
-                      className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[#10E07A]/40 transition-colors placeholder:text-white/25 resize-none custom-scrollbar"
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-[var(--sr-customer)]/40 transition-colors placeholder:text-white/25 resize-none custom-scrollbar"
                     />
                   </div>
 
@@ -552,7 +552,7 @@ export default function SupportModal() {
                 >
                   {/* Ticket Info Header */}
                   <div className="px-4 pt-4 pb-3 shrink-0">
-                    <div className="glass-card rounded-2xl border border-white/[0.06] p-4 space-y-3">
+                    <div className="glass-card rounded-2xl border border-white/[0.06] p-3 sm:p-4 space-y-3">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span
                           className="text-[10px] font-bold px-2 h-5 rounded-full flex items-center"
@@ -605,7 +605,7 @@ export default function SupportModal() {
                             <div
                               className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                                 isUser
-                                  ? 'bg-[#0F1118] border border-white/5 text-white/90 rounded-bl-md'
+                                  ? 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
                                   : 'bg-gradient-to-br from-[#10E07A] to-[#0FB463] text-[#04140C] font-medium rounded-br-md'
                               }`}
                             >
@@ -631,7 +631,7 @@ export default function SupportModal() {
                   {(selectedTicket.status === 'open' || selectedTicket.status === 'in_progress') && (
                     <div className="glass-effect border-t border-white/5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shrink-0">
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 flex items-center rounded-2xl bg-[#0F1118] border border-white/8 focus-within:border-[#10E07A]/30 transition-all">
+                        <div className="flex-1 flex items-center rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8 focus-within:border-[var(--sr-customer)]/30 transition-all">
                           <label htmlFor="support-chat-message" className="sr-only">Type a message</label>
                           <input
                             id="support-chat-message"
@@ -672,7 +672,7 @@ export default function SupportModal() {
                   {(selectedTicket.status === 'resolved' || selectedTicket.status === 'closed') && (
                     <div className="px-4 py-3 border-t border-white/5 shrink-0">
                       <div className="flex items-center gap-2 bg-white/[0.03] rounded-xl p-3">
-                        <CheckCircle className="w-4 h-4 text-[#38BDF8] shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-[var(--sr-rider)] shrink-0" />
                         <p className="text-white/65 text-xs">
                           This ticket is {selectedTicket.status}. Create a new ticket if you need more help.
                         </p>

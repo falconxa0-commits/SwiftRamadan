@@ -260,7 +260,7 @@ export default function DuaOfTheDay() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.3 }}
                         >
-                          <p className="text-xs font-bold text-[#10E07A] mb-1 uppercase tracking-wider">Translation</p>
+                          <p className="text-xs font-bold text-[var(--sr-customer)] mb-1 uppercase tracking-wider">Translation</p>
                           <p className="text-sm text-white/80 leading-relaxed">{currentDua?.translation}</p>
                         </motion.div>
 

@@ -277,7 +277,7 @@ function MosquePartnershipInner() {
             aria-label="Mosque Partnership Hub"
           >
             {/* ── Header ── */}
-            <div className="flex items-center justify-between p-4 border-b border-white/8 shrink-0">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8 shrink-0">
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -301,21 +301,21 @@ function MosquePartnershipInner() {
 
             {/* ── Stats Banner ── */}
             <div className="px-4 pt-4 shrink-0">
-              <div className="rounded-2xl p-4 border border-white/8 relative overflow-hidden" style={{ backgroundColor: '#0F1118' }}>
+              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 relative overflow-hidden" style={{ backgroundColor: '#0F1118' }}>
                 {/* Decorative glow */}
                 <div
                   className="absolute top-0 right-0 w-24 h-24 rounded-full blur-[40px]"
                   style={{ backgroundColor: 'rgba(245,196,81,0.1)' }}
                 />
 
-                <div className="relative flex items-center gap-4">
+                <div className="relative flex items-center gap-3 sm:gap-4">
                   <div className="flex-1 text-center">
-                    <p className="text-[#F5C451] text-xl font-black">{totalCommunityPacks}</p>
+                    <p className="text-[var(--sr-vendor)] text-xl font-black">{totalCommunityPacks}</p>
                     <p className="text-white/35 text-[10px] uppercase tracking-wider mt-0.5">Packs Ordered</p>
                   </div>
                   <div className="w-px h-10 bg-white/8" />
                   <div className="flex-1 text-center">
-                    <p className="text-[#10E07A] text-xl font-black">{totalPartnerMosques}</p>
+                    <p className="text-[var(--sr-customer)] text-xl font-black">{totalPartnerMosques}</p>
                     <p className="text-white/35 text-[10px] uppercase tracking-wider mt-0.5">Partner Mosques</p>
                   </div>
                   <div className="w-px h-10 bg-white/8" />
@@ -363,7 +363,7 @@ function MosquePartnershipInner() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="rounded-2xl p-4 border transition-all"
+                    className="rounded-2xl p-3 sm:p-4 border transition-all"
                     style={{
                       backgroundColor: '#0F1118',
                       borderColor: isSelected ? statusBorder : 'rgba(255,255,255,0.08)',
@@ -438,7 +438,7 @@ function MosquePartnershipInner() {
                     <div className="mt-3 p-2.5 rounded-xl bg-black/30 border border-white/5">
                       <p className="text-white/50 text-xs">{order.menuDescription}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className="text-[#F5C451] text-xs font-bold">{formatNaira(order.pricePerPack)}/pack</span>
+                        <span className="text-[var(--sr-vendor)] text-xs font-bold">{formatNaira(order.pricePerPack)}/pack</span>
                         <span className="text-white/60 text-[10px] flex items-center gap-1">
                           <Users className="w-2.5 h-2.5" />
                           {order.partners} partners
@@ -458,7 +458,7 @@ function MosquePartnershipInner() {
                           <div className="mt-3 pt-3 border-t border-white/8 space-y-3">
                             {/* Delivery time */}
                             <div className="flex items-center gap-2">
-                              <Package className="w-3.5 h-3.5 text-[#10E07A]" />
+                              <Package className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                               <span className="text-white/50 text-xs">Delivery: {order.deliveryTime}</span>
                             </div>
 
@@ -467,9 +467,9 @@ function MosquePartnershipInner() {
                               <div className="flex items-center justify-between p-3 rounded-xl" style={{ backgroundColor: 'rgba(16,224,122,0.06)', border: '1px solid rgba(16,224,122,0.15)' }}>
                                 <div>
                                   <p className="text-white/65 text-[10px] uppercase tracking-wider">Your Contribution</p>
-                                  <p className="text-[#10E07A] text-lg font-black">{order.myPacks} packs</p>
+                                  <p className="text-[var(--sr-customer)] text-lg font-black">{order.myPacks} packs</p>
                                 </div>
-                                <p className="text-[#10E07A] text-sm font-bold">{formatNaira(order.myPacks * order.pricePerPack)}</p>
+                                <p className="text-[var(--sr-customer)] text-sm font-bold">{formatNaira(order.myPacks * order.pricePerPack)}</p>
                               </div>
                             )}
 
@@ -534,7 +534,7 @@ function MosquePartnershipInner() {
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 bg-[#0B0D14]/95 z-[90] flex flex-col"
                 >
-                  <div className="flex items-center justify-between p-4 border-b border-white/8 shrink-0">
+                  <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8 shrink-0">
                     <h3 className="text-white font-bold text-base">Join Mosque Order</h3>
                     <button
                       onClick={() => {
@@ -548,7 +548,7 @@ function MosquePartnershipInner() {
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-4 space-y-5">
+                  <div className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-5">
                     {/* Mosque info */}
                     {(() => {
                       const order = orders.find((o) => o.id === showJoinForm);
@@ -609,7 +609,7 @@ function MosquePartnershipInner() {
                           </div>
 
                           {/* Cost summary */}
-                          <div className="rounded-2xl p-4 border border-white/8 space-y-2" style={{ backgroundColor: '#0F1118' }}>
+                          <div className="rounded-2xl p-3 sm:p-4 border border-white/8 space-y-2" style={{ backgroundColor: '#0F1118' }}>
                             <div className="flex items-center justify-between">
                               <span className="text-white/65 text-xs">Price per pack</span>
                               <span className="text-white text-xs font-medium">{formatNaira(order.pricePerPack)}</span>
@@ -621,7 +621,7 @@ function MosquePartnershipInner() {
                             <div className="h-px bg-white/8 my-1" />
                             <div className="flex items-center justify-between">
                               <span className="text-white font-semibold text-sm">Total</span>
-                              <span className="text-[#F5C451] text-lg font-black">
+                              <span className="text-[var(--sr-vendor)] text-lg font-black">
                                 {formatNaira(joinPacks * order.pricePerPack)}
                               </span>
                             </div>
@@ -631,7 +631,7 @@ function MosquePartnershipInner() {
                           <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(16,224,122,0.06)', border: '1px solid rgba(16,224,122,0.15)' }}>
                             <Sparkles className="w-5 h-5 shrink-0" style={{ color: '#10E07A' }} />
                             <p className="text-white/50 text-xs">
-                              Joining this order feeds <span className="text-[#10E07A] font-bold">{joinPacks} people</span> at your mosque. Community buying power = lower prices for everyone!
+                              Joining this order feeds <span className="text-[var(--sr-customer)] font-bold">{joinPacks} people</span> at your mosque. Community buying power = lower prices for everyone!
                             </p>
                           </div>
 

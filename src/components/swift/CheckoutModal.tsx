@@ -411,9 +411,9 @@ export default function CheckoutModal() {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                         i < currentStep
-                          ? 'bg-[#10E07A] text-[#05070A]'
+                          ? 'bg-[var(--sr-customer)] text-[#05070A]'
                           : i === currentStep
-                            ? 'bg-[#10E07A]/20 border border-[#10E07A]/50 text-[#10E07A]'
+                            ? 'bg-[var(--sr-customer)]/20 border border-[var(--sr-customer)]/50 text-[var(--sr-customer)]'
                             : 'bg-white/5 text-white/20 border border-white/10'
                       }`}
                     >
@@ -427,7 +427,7 @@ export default function CheckoutModal() {
                   </div>
                   {i < stepLabels.length - 1 && (
                     <div className={`flex-1 h-0.5 mx-2 rounded-full ${
-                      i < currentStep ? 'bg-[#10E07A]' : 'bg-white/5'
+                      i < currentStep ? 'bg-[var(--sr-customer)]' : 'bg-white/5'
                     }`} />
                   )}
                 </div>
@@ -451,7 +451,7 @@ export default function CheckoutModal() {
                 className="space-y-4"
               >
                 <h3 className="text-white font-bold text-base flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-[#10E07A]" />
+                  <ShoppingBag className="w-5 h-5 text-[var(--sr-customer)]" />
                   Your Cart
                   <span className="text-white/65 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
                 </h3>
@@ -462,7 +462,7 @@ export default function CheckoutModal() {
                     <p className="text-white/65 text-sm">Your cart is empty</p>
                     <button
                       onClick={handleClose}
-                      className="mt-4 px-6 py-2.5 bg-[#10E07A] text-[#05070A] font-bold text-sm rounded-xl"
+                      className="mt-4 px-6 py-2.5 bg-[var(--sr-customer)] text-[#05070A] font-bold text-sm rounded-xl"
                     >
                       Browse Menu
                     </button>
@@ -492,7 +492,7 @@ export default function CheckoutModal() {
                         {/* Item info */}
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm truncate">{item.name}</p>
-                          <p className="text-[#10E07A] font-bold text-sm">{formatNaira(item.price)}</p>
+                          <p className="text-[var(--sr-customer)] font-bold text-sm">{formatNaira(item.price)}</p>
                         </div>
 
                         {/* Quantity controls */}
@@ -540,7 +540,7 @@ export default function CheckoutModal() {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-white/65">Delivery Fee</span>
-                      <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
+                      <span className={deliveryFee === 0 ? 'text-[var(--sr-customer)] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
@@ -549,12 +549,12 @@ export default function CheckoutModal() {
                       <span className="text-white font-bold">{formatNaira(serviceFee)}</span>
                     </div>
                     {deliveryFee > 0 && (
-                      <p className="text-[#10E07A]/60 text-[10px]">Free delivery on orders above ₦5,000</p>
+                      <p className="text-[var(--sr-customer)]/60 text-[10px]">Free delivery on orders above ₦5,000</p>
                     )}
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between">
                       <span className="text-white font-bold text-sm">Total</span>
-                      <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
+                      <span className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(total)}</span>
                     </div>
                   </div>
                 )}
@@ -573,7 +573,7 @@ export default function CheckoutModal() {
               >
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <MapPin className="w-5 h-5 text-[#10E07A]" />
+                    <MapPin className="w-5 h-5 text-[var(--sr-customer)]" />
                     Delivery Address
                   </h3>
 
@@ -582,7 +582,7 @@ export default function CheckoutModal() {
                     <p className="text-white/65 text-[11px] uppercase tracking-widest font-bold">Your Saved Addresses</p>
                     {fetchingAddresses ? (
                       <div className="flex items-center gap-2 p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
-                        <Loader2 className="w-4 h-4 text-[#10E07A] animate-spin" />
+                        <Loader2 className="w-4 h-4 text-[var(--sr-customer)] animate-spin" />
                         <span className="text-white/65 text-sm">Loading saved addresses…</span>
                       </div>
                     ) : savedAddresses.length === 0 ? (
@@ -600,25 +600,25 @@ export default function CheckoutModal() {
                             onClick={() => handleSelectAddress(addr)}
                             className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                               isSelected
-                                ? 'bg-[#10E07A]/5 border-[#10E07A]/40'
+                                ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/40'
                                 : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                             }`}
                           >
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                              isSelected ? 'bg-[#10E07A]/20' : 'bg-white/5'
+                              isSelected ? 'bg-[var(--sr-customer)]/20' : 'bg-white/5'
                             }`}>
-                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[#10E07A]' : 'text-white/60'}`} />
+                              <Icon className={`w-5 h-5 ${isSelected ? 'text-[var(--sr-customer)]' : 'text-white/60'}`} />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <p className="text-white font-bold text-sm">{addr.label}</p>
                                 {addr.isDefault && (
-                                  <span className="bg-[#F5C451]/10 text-[#F5C451] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#F5C451]/20 uppercase">Default</span>
+                                  <span className="bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[var(--sr-vendor)]/20 uppercase">Default</span>
                                 )}
                               </div>
                               <p className="text-white/65 text-xs truncate">{addr.address}{addr.area ? `, ${addr.area}` : ''}</p>
                             </div>
-                            {isSelected && <Check className="w-5 h-5 text-[#10E07A] shrink-0" />}
+                            {isSelected && <Check className="w-5 h-5 text-[var(--sr-customer)] shrink-0" />}
                           </button>
                         );
                       })
@@ -630,7 +630,7 @@ export default function CheckoutModal() {
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
-                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-[#10E07A]/20 space-y-3"
+                      className="bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border border-[var(--sr-customer)]/20 space-y-3"
                     >
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {['Home', 'Office', 'Partner', 'Other'].map(lbl => (
@@ -639,7 +639,7 @@ export default function CheckoutModal() {
                             onClick={() => setNewAddrLabel(lbl)}
                             className={`py-2 rounded-lg text-xs font-bold transition-colors ${
                               newAddrLabel === lbl
-                                ? 'bg-[#10E07A] text-[#06070B]'
+                                ? 'bg-[var(--sr-customer)] text-[#06070B]'
                                 : 'bg-white/5 text-white/60 hover:bg-white/10'
                             }`}
                           >
@@ -653,7 +653,7 @@ export default function CheckoutModal() {
                         value={newAddrText}
                         onChange={e => setNewAddrText(e.target.value)}
                         placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <label htmlFor="checkout-addr-area" className="sr-only">Area</label>
                       <input
@@ -661,7 +661,7 @@ export default function CheckoutModal() {
                         value={newAddrArea}
                         onChange={e => setNewAddrArea(e.target.value)}
                         placeholder="Area (e.g. Lekki)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <label htmlFor="checkout-addr-instructions" className="sr-only">Delivery instructions</label>
                       <input
@@ -669,13 +669,13 @@ export default function CheckoutModal() {
                         value={newAddrInstructions}
                         onChange={e => setNewAddrInstructions(e.target.value)}
                         placeholder="Delivery instructions (optional)"
-                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                       />
                       <div className="flex gap-2">
                         <button
                           onClick={handleSaveNewAddress}
                           disabled={!newAddrText.trim() || savingAddress}
-                          className="flex-1 bg-[#10E07A] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
+                          className="flex-1 bg-[var(--sr-customer)] text-[#06070B] font-bold py-2.5 rounded-xl text-sm disabled:opacity-40 flex items-center justify-center gap-2"
                         >
                           {savingAddress ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
                           Save Address
@@ -691,7 +691,7 @@ export default function CheckoutModal() {
                   ) : (
                     <button
                       onClick={() => setShowAddAddressForm(true)}
-                      className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-white/15 text-white/60 hover:text-white hover:border-[#10E07A]/40 transition-colors text-sm font-bold"
+                      className="w-full flex items-center justify-center gap-2 p-3 rounded-2xl border border-dashed border-white/15 text-white/60 hover:text-white hover:border-[var(--sr-customer)]/40 transition-colors text-sm font-bold"
                     >
                       <PlusIcon className="w-4 h-4" />
                       Add New Address
@@ -709,21 +709,21 @@ export default function CheckoutModal() {
                         onClick={() => { setSelectedLocation(loc); setDeliveryAddress(loc.address); }}
                         className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           selectedLocation.id === loc.id
-                            ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
+                            ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          selectedLocation.id === loc.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
+                          selectedLocation.id === loc.id ? 'bg-[var(--sr-customer)]/20' : 'bg-white/5'
                         }`}>
-                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[#10E07A]' : 'text-white/60'}`} />
+                          <MapPin className={`w-5 h-5 ${selectedLocation.id === loc.id ? 'text-[var(--sr-customer)]' : 'text-white/60'}`} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-white font-bold text-sm">{loc.name}</p>
                           <p className="text-white/65 text-xs truncate">{loc.address}</p>
                         </div>
                         {selectedLocation.id === loc.id && (
-                          <Check className="w-5 h-5 text-[#10E07A] shrink-0" />
+                          <Check className="w-5 h-5 text-[var(--sr-customer)] shrink-0" />
                         )}
                       </button>
                     ))}
@@ -738,13 +738,13 @@ export default function CheckoutModal() {
                           id="checkout-edit-address"
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
-                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none"
+                          className="w-full bg-[#0F1117] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none"
                           placeholder="Enter delivery address"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={handleSaveAddress}
-                            className="flex-1 bg-[#10E07A] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
+                            className="flex-1 bg-[var(--sr-customer)] text-[#05070A] font-bold py-2.5 rounded-xl text-sm"
                           >
                             Save
                           </button>
@@ -760,14 +760,14 @@ export default function CheckoutModal() {
                       <>
                         <button
                           onClick={() => { setEditAddressValue(effectiveAddress); setIsEditingAddress(true); }}
-                          className="flex items-center gap-2 text-[#10E07A] text-xs font-bold hover:text-[#10E07A]/80 transition-colors"
+                          className="flex items-center gap-2 text-[var(--sr-customer)] text-xs font-bold hover:text-[var(--sr-customer)]/80 transition-colors"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
                           Edit address
                         </button>
                         <button
                           onClick={() => setActiveModal('delivery-location')}
-                          className="flex items-center gap-2 text-[#F5C451] text-xs font-bold hover:text-[#F5C451]/80 transition-colors"
+                          className="flex items-center gap-2 text-[var(--sr-vendor)] text-xs font-bold hover:text-[var(--sr-vendor)]/80 transition-colors"
                         >
                           <MapPin className="w-3.5 h-3.5" />
                           Set on map
@@ -786,7 +786,7 @@ export default function CheckoutModal() {
                     value={deliveryInstructions}
                     onChange={e => setDeliveryInstructions(e.target.value)}
                     placeholder="e.g., Gate code, landmark, leave at door..."
-                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20"
+                    className="w-full bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
                   />
                 </div>
               </motion.div>
@@ -805,8 +805,8 @@ export default function CheckoutModal() {
                 {/* Iftar Precision Toggle */}
                 <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center">
-                      <Sun className="w-5 h-5 text-[#F5C451]" />
+                    <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center">
+                      <Sun className="w-5 h-5 text-[var(--sr-vendor)]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Iftar Precision</p>
@@ -816,7 +816,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={() => setIftarPrecision(!iftarPrecision)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
-                      iftarPrecision ? 'bg-[#10E07A]' : 'bg-white/10'
+                      iftarPrecision ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                     }`}
                   >
                     <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
@@ -828,8 +828,8 @@ export default function CheckoutModal() {
                 {/* Sahur Alarm Toggle */}
                 <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center">
-                      <Bell className="w-5 h-5 text-[#10E07A]" />
+                    <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center">
+                      <Bell className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">Sahur Alarm</p>
@@ -839,7 +839,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={() => setSahurAlarm(!sahurAlarm)}
                     className={`w-12 h-7 rounded-full transition-all relative ${
-                      sahurAlarm ? 'bg-[#10E07A]' : 'bg-white/10'
+                      sahurAlarm ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                     }`}
                   >
                     <div className={`absolute top-1 w-5 h-5 rounded-full bg-white transition-all ${
@@ -851,7 +851,7 @@ export default function CheckoutModal() {
                 {/* Time Slot Selection */}
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <Clock className="w-5 h-5 text-[#10E07A]" />
+                    <Clock className="w-5 h-5 text-[var(--sr-customer)]" />
                     Delivery Time Slot
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -863,19 +863,19 @@ export default function CheckoutModal() {
                           onClick={() => setSelectedTimeSlot(slot.id)}
                           className={`p-4 rounded-2xl border text-left transition-all relative ${
                             selectedTimeSlot === slot.id
-                              ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
+                              ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
                               : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                           }`}
                         >
                           <div className="flex items-center gap-2 mb-2">
-                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white/60'}`} />
-                            <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[#10E07A]' : 'text-white'}`}>
+                            <Icon className={`w-4 h-4 ${selectedTimeSlot === slot.id ? 'text-[var(--sr-customer)]' : 'text-white/60'}`} />
+                            <span className={`font-bold text-sm ${selectedTimeSlot === slot.id ? 'text-[var(--sr-customer)]' : 'text-white'}`}>
                               {slot.label}
                             </span>
                           </div>
                           <p className="text-white/65 text-xs">{slot.time}</p>
                           {selectedTimeSlot === slot.id && (
-                            <Check className="w-4 h-4 text-[#10E07A] absolute top-3 right-3" />
+                            <Check className="w-4 h-4 text-[var(--sr-customer)] absolute top-3 right-3" />
                           )}
                         </button>
                       );
@@ -885,10 +885,10 @@ export default function CheckoutModal() {
 
                 {/* Iftar Timing Option */}
                 {iftarPrecision && (
-                  <div className="bg-[#F5C451]/5 rounded-2xl border border-[#F5C451]/20 p-3 sm:p-4">
+                  <div className="bg-[var(--sr-vendor)]/5 rounded-2xl border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <Sun className="w-5 h-5 text-[#F5C451]" />
-                      <span className="text-[#F5C451] font-bold text-sm">Iftar Delivery</span>
+                      <Sun className="w-5 h-5 text-[var(--sr-vendor)]" />
+                      <span className="text-[var(--sr-vendor)] font-bold text-sm">Iftar Delivery</span>
                     </div>
                     <p className="text-white/50 text-xs">
                       Your order will arrive 15 minutes before Maghrib (6:30 PM) so it&apos;s fresh for Iftar.
@@ -898,10 +898,10 @@ export default function CheckoutModal() {
 
                 {/* Sahur Timing Option */}
                 {sahurAlarm && (
-                  <div className="bg-[#10E07A]/5 rounded-2xl border border-[#10E07A]/20 p-3 sm:p-4">
+                  <div className="bg-[var(--sr-customer)]/5 rounded-2xl border border-[var(--sr-customer)]/20 p-3 sm:p-4">
                     <div className="flex items-center gap-3 mb-2">
-                      <Moon className="w-5 h-5 text-[#10E07A]" />
-                      <span className="text-[#10E07A] font-bold text-sm">Sahur Delivery</span>
+                      <Moon className="w-5 h-5 text-[var(--sr-customer)]" />
+                      <span className="text-[var(--sr-customer)] font-bold text-sm">Sahur Delivery</span>
                     </div>
                     <p className="text-white/50 text-xs">
                       Pre-dawn delivery between 3:00 - 4:30 AM so your Sahur meal is ready.
@@ -929,7 +929,7 @@ export default function CheckoutModal() {
               >
                 <div>
                   <h3 className="text-white font-bold text-base mb-3 flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-[#10E07A]" />
+                    <CreditCard className="w-5 h-5 text-[var(--sr-customer)]" />
                     Payment Method
                   </h3>
                   <div className="space-y-2">
@@ -939,15 +939,15 @@ export default function CheckoutModal() {
                         onClick={() => setPaymentMethod(pm.id)}
                         className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                           paymentMethod === pm.id
-                            ? 'bg-[#10E07A]/5 border-[#10E07A]/30'
+                            ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
                             : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                          paymentMethod === pm.id ? 'bg-[#10E07A]/20' : 'bg-white/5'
+                          paymentMethod === pm.id ? 'bg-[var(--sr-customer)]/20' : 'bg-white/5'
                         }`}>
                           <span className={`material-symbols-outlined text-lg ${
-                            paymentMethod === pm.id ? 'text-[#10E07A]' : 'text-white/60'
+                            paymentMethod === pm.id ? 'text-[var(--sr-customer)]' : 'text-white/60'
                           }`}>{pm.icon}</span>
                         </div>
                         <div className="flex-1">
@@ -957,7 +957,7 @@ export default function CheckoutModal() {
                           )}
                         </div>
                         {paymentMethod === pm.id && (
-                          <Check className="w-5 h-5 text-[#10E07A] shrink-0" />
+                          <Check className="w-5 h-5 text-[var(--sr-customer)] shrink-0" />
                         )}
                       </button>
                     ))}
@@ -979,7 +979,7 @@ export default function CheckoutModal() {
                           onClick={() => setSelectedBnplPlan(plan.months)}
                           className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border text-left transition-all ${
                             selectedBnplPlan === plan.months
-                              ? 'bg-[#F5C451]/5 border-[#F5C451]/30'
+                              ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/30'
                               : 'bg-[#1A1D26] border-white/5 hover:border-white/10'
                           }`}
                         >
@@ -987,7 +987,7 @@ export default function CheckoutModal() {
                             <div className="flex items-center gap-2">
                               <p className="text-white font-bold text-sm">{plan.label}</p>
                               {plan.ramadanOffer && (
-                                <span className="bg-[#10E07A]/10 text-[#10E07A] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[#10E07A]/20">
+                                <span className="bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] text-[9px] font-bold px-2 py-0.5 rounded-full border border-[var(--sr-customer)]/20">
                                   0% RAMADAN
                                 </span>
                               )}
@@ -997,7 +997,7 @@ export default function CheckoutModal() {
                             </p>
                           </div>
                           {selectedBnplPlan === plan.months && (
-                            <Check className="w-5 h-5 text-[#F5C451] shrink-0" />
+                            <Check className="w-5 h-5 text-[var(--sr-vendor)] shrink-0" />
                           )}
                         </button>
                       ))}
@@ -1012,13 +1012,13 @@ export default function CheckoutModal() {
                     Promo Code
                   </h4>
                   {couponState === 'applied' ? (
-                    <div className="bg-[#10E07A]/5 border border-[#10E07A]/30 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#10E07A]/20 flex items-center justify-center">
-                        <Check className="w-5 h-5 text-[#10E07A]" />
+                    <div className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/30 rounded-2xl p-3 sm:p-4 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-[var(--sr-customer)]/20 flex items-center justify-center">
+                        <Check className="w-5 h-5 text-[var(--sr-customer)]" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm font-mono">{appliedCouponCode}</p>
-                        <p className="text-[#10E07A] text-xs">{couponMessage}</p>
+                        <p className="text-[var(--sr-customer)] text-xs">{couponMessage}</p>
                       </div>
                       <button
                         onClick={handleRemoveCoupon}
@@ -1038,12 +1038,12 @@ export default function CheckoutModal() {
                           if (couponState === 'error') setCouponState('idle');
                         }}
                         placeholder="Enter code (e.g. RAMADAN)"
-                        className="flex-1 bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[#10E07A]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
+                        className="flex-1 bg-[#1A1D26] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
                       />
                       <button
                         onClick={handleApplyCoupon}
                         disabled={!couponCode.trim() || couponState === 'applying'}
-                        className="px-5 bg-[#10E07A] text-[#06070B] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+                        className="px-5 bg-[var(--sr-customer)] text-[#06070B] font-bold text-sm rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
                       >
                         {couponState === 'applying' ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -1064,7 +1064,7 @@ export default function CheckoutModal() {
                 {/* Order Summary */}
                 <div>
                   <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <Package className="w-4 h-4 text-[#F5C451]" />
+                    <Package className="w-4 h-4 text-[var(--sr-vendor)]" />
                     Order Summary
                   </h4>
                   <div className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3">
@@ -1083,7 +1083,7 @@ export default function CheckoutModal() {
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-white/65">Delivery Fee</span>
-                      <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
+                      <span className={deliveryFee === 0 ? 'text-[var(--sr-customer)] font-bold' : 'text-white font-bold'}>
                         {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
                       </span>
                     </div>
@@ -1093,14 +1093,14 @@ export default function CheckoutModal() {
                     </div>
                     {discount > 0 && (
                       <div className="flex justify-between text-xs">
-                        <span className="text-[#10E07A]">Discount ({appliedCouponCode})</span>
-                        <span className="text-[#10E07A] font-bold">-{formatNaira(discount)}</span>
+                        <span className="text-[var(--sr-customer)]">Discount ({appliedCouponCode})</span>
+                        <span className="text-[var(--sr-customer)] font-bold">-{formatNaira(discount)}</span>
                       </div>
                     )}
                     <div className="h-px bg-white/5" />
                     <div className="flex justify-between">
                       <span className="text-white font-bold text-sm">Total</span>
-                      <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
+                      <span className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(total)}</span>
                     </div>
                   </div>
                 </div>
@@ -1123,14 +1123,14 @@ export default function CheckoutModal() {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'spring', damping: 10, stiffness: 100, delay: 0.2 }}
-                  className="w-24 h-24 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
+                  className="w-24 h-24 bg-[var(--sr-customer)]/20 rounded-full flex items-center justify-center border border-[var(--sr-customer)]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
                 >
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.5, type: 'spring', damping: 10 }}
                   >
-                    <PartyPopper className="w-12 h-12 text-[#10E07A]" />
+                    <PartyPopper className="w-12 h-12 text-[var(--sr-customer)]" />
                   </motion.div>
                 </motion.div>
 
@@ -1166,7 +1166,7 @@ export default function CheckoutModal() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/65 text-xs">Estimated Delivery</span>
-                    <span className="text-[#10E07A] font-bold text-xs">
+                    <span className="text-[var(--sr-customer)] font-bold text-xs">
                       {selectedTimeSlot === 'morning' ? '8:00 - 11:00 AM' :
                        selectedTimeSlot === 'afternoon' ? '12:00 - 3:00 PM' :
                        selectedTimeSlot === 'evening' ? '4:00 - 7:00 PM' : '8:00 - 10:00 PM'}
@@ -1178,12 +1178,12 @@ export default function CheckoutModal() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-white/65 text-xs">Total</span>
-                    <span className="text-[#10E07A] font-black text-sm">{formatNaira(placedTotal)}</span>
+                    <span className="text-[var(--sr-customer)] font-black text-sm">{formatNaira(placedTotal)}</span>
                   </div>
                   {appliedCouponCode && (
                     <div className="flex justify-between">
                       <span className="text-white/65 text-xs">Promo Code</span>
-                      <span className="text-[#10E07A] font-bold text-xs font-mono">{appliedCouponCode}</span>
+                      <span className="text-[var(--sr-customer)] font-bold text-xs font-mono">{appliedCouponCode}</span>
                     </div>
                   )}
                   {paymentReference && (
@@ -1193,15 +1193,15 @@ export default function CheckoutModal() {
                     </div>
                   )}
                   {iftarPrecision && (
-                    <div className="flex items-center gap-2 bg-[#F5C451]/5 rounded-lg px-3 py-2 border border-[#F5C451]/10">
-                      <Sun className="w-3.5 h-3.5 text-[#F5C451]" />
-                      <span className="text-[#F5C451] text-[10px] font-bold">Iftar Precision enabled - delivery before Maghrib</span>
+                    <div className="flex items-center gap-2 bg-[var(--sr-vendor)]/5 rounded-lg px-3 py-2 border border-[var(--sr-vendor)]/10">
+                      <Sun className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
+                      <span className="text-[var(--sr-vendor)] text-[10px] font-bold">Iftar Precision enabled - delivery before Maghrib</span>
                     </div>
                   )}
                   {sahurAlarm && (
-                    <div className="flex items-center gap-2 bg-[#10E07A]/5 rounded-lg px-3 py-2 border border-[#10E07A]/10">
-                      <Bell className="w-3.5 h-3.5 text-[#10E07A]" />
-                      <span className="text-[#10E07A] text-[10px] font-bold">Sahur alarm set - you&apos;ll be reminded before Fajr</span>
+                    <div className="flex items-center gap-2 bg-[var(--sr-customer)]/5 rounded-lg px-3 py-2 border border-[var(--sr-customer)]/10">
+                      <Bell className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
+                      <span className="text-[var(--sr-customer)] text-[10px] font-bold">Sahur alarm set - you&apos;ll be reminded before Fajr</span>
                     </div>
                   )}
                 </motion.div>
@@ -1212,7 +1212,7 @@ export default function CheckoutModal() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1 }}
                   onClick={handleTrackOrder}
-                  className="w-full bg-[#10E07A] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
+                  className="w-full bg-[var(--sr-customer)] text-[#05070A] font-black py-4 rounded-2xl text-sm uppercase tracking-widest flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
                 >
                   <Truck className="w-5 h-5" />
                   Track Order
@@ -1237,7 +1237,7 @@ export default function CheckoutModal() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-white/65 text-[10px] uppercase">Total</p>
-                <p className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</p>
+                <p className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(total)}</p>
               </div>
               <div className="flex gap-2">
                 {currentStep > 0 && (
@@ -1252,7 +1252,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={handleNext}
                     disabled={currentStep === 0 && cartItems.length === 0}
-                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-bold text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:pointer-events-none"
                   >
                     Continue
                   </button>
@@ -1260,7 +1260,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={handlePlaceOrder}
                     disabled={placing}
-                    className="px-8 py-3 rounded-xl bg-[#10E07A] text-[#04140C] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#10E07A]/30 disabled:opacity-60 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[#04140C] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[#10E07A]/30 disabled:opacity-60 disabled:pointer-events-none"
                   >
                     {placing ? (
                       <>

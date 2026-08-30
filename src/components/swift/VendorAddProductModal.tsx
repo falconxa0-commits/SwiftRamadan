@@ -175,14 +175,14 @@ export default function VendorAddProductModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-            className="fixed inset-0 z-[100] bg-[#06070B] overflow-y-auto custom-scrollbar"
+            className="fixed inset-0 z-[100] bg-[var(--sr-surface-base)] overflow-y-auto custom-scrollbar"
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30">
-                    <Plus className="w-5 h-5 text-[#F5C451]" />
+                  <div className="w-10 h-10 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center border border-[var(--sr-vendor)]/30">
+                    <Plus className="w-5 h-5 text-[var(--sr-vendor)]" />
                   </div>
                   <div>
                     <h2 className="text-white text-lg font-bold">Add Product</h2>
@@ -205,12 +205,12 @@ export default function VendorAddProductModal() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="rounded-2xl border border-white/5 overflow-hidden bg-[#0F1118] mb-4"
+                className="rounded-2xl border border-white/5 overflow-hidden bg-[var(--sr-surface-raised)] mb-4"
               >
                 <div
                   className={`relative h-44 flex items-center justify-center transition-all ${
                     dragOver
-                      ? 'bg-[#F5C451]/10 ring-2 ring-[#F5C451]/40'
+                      ? 'bg-[var(--sr-vendor)]/10 ring-2 ring-[#F5C451]/40'
                       : 'bg-white/5'
                   }`}
                   onDragOver={(e) => {
@@ -235,7 +235,7 @@ export default function VendorAddProductModal() {
                           <button
                             onClick={() => fileInputRef.current?.click()}
                             disabled={uploading}
-                            className="px-2 py-1 rounded-md bg-[#F5C451]/80 backdrop-blur-sm text-[#06070B] text-[10px] font-bold hover:bg-[#F5C451] disabled:opacity-50"
+                            className="px-2 py-1 rounded-md bg-[var(--sr-vendor)]/80 backdrop-blur-sm text-[#06070B] text-[10px] font-bold hover:bg-[var(--sr-vendor)] disabled:opacity-50"
                           >
                             Change
                           </button>
@@ -251,7 +251,7 @@ export default function VendorAddProductModal() {
                     </>
                   ) : uploading ? (
                     <div className="flex flex-col items-center text-center px-4">
-                      <Loader2 className="w-10 h-10 text-[#F5C451] animate-spin mb-2" />
+                      <Loader2 className="w-10 h-10 text-[var(--sr-vendor)] animate-spin mb-2" />
                       <p className="text-white/60 text-xs font-bold">Uploading…</p>
                       <p className="text-white/60 text-[10px] mt-0.5">Saving to /uploads</p>
                     </div>
@@ -261,8 +261,8 @@ export default function VendorAddProductModal() {
                       className="flex flex-col items-center text-center px-4 group"
                       type="button"
                     >
-                      <div className="w-12 h-12 rounded-2xl bg-[#F5C451]/10 border border-[#F5C451]/30 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
-                        <UploadCloud className="w-6 h-6 text-[#F5C451]" />
+                      <div className="w-12 h-12 rounded-2xl bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/30 flex items-center justify-center mb-2 group-hover:scale-105 transition-transform">
+                        <UploadCloud className="w-6 h-6 text-[var(--sr-vendor)]" />
                       </div>
                       <p className="text-white text-xs font-bold">Tap to upload</p>
                       <p className="text-white/60 text-[10px] mt-0.5">
@@ -293,7 +293,7 @@ export default function VendorAddProductModal() {
                         onClick={() => setImage(img.url)}
                         className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                           image === img.url
-                            ? 'border-[#F5C451] shadow-[0_0_10px_rgba(245,196,81,0.4)]'
+                            ? 'border-[var(--sr-vendor)] shadow-[0_0_10px_rgba(245,196,81,0.4)]'
                             : 'border-transparent hover:border-white/20'
                         }`}
                         aria-label={img.label}
@@ -303,8 +303,8 @@ export default function VendorAddProductModal() {
                           style={{ backgroundImage: `url(${img.url})` }}
                         />
                         {image === img.url && (
-                          <div className="absolute inset-0 bg-[#F5C451]/20 flex items-center justify-center">
-                            <Check className="w-4 h-4 text-[#F5C451]" strokeWidth={3} />
+                          <div className="absolute inset-0 bg-[var(--sr-vendor)]/20 flex items-center justify-center">
+                            <Check className="w-4 h-4 text-[var(--sr-vendor)]" strokeWidth={3} />
                           </div>
                         )}
                       </button>
@@ -330,7 +330,7 @@ export default function VendorAddProductModal() {
                     placeholder="e.g. Jollof Rice & Chicken"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors"
+                    className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/40 focus:outline-none transition-colors"
                   />
                 </div>
 
@@ -344,18 +344,18 @@ export default function VendorAddProductModal() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     rows={3}
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors resize-none"
+                    className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/40 focus:outline-none transition-colors resize-none"
                   />
                 </div>
 
                 {/* Price + Delivery Time */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-white/50 text-[10px] font-bold uppercase tracking-widest mb-1.5 block">
                       Price (₦)
                     </label>
                     <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F5C451] text-sm font-bold pointer-events-none">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--sr-vendor)] text-sm font-bold pointer-events-none">
                         ₦
                       </span>
                       <input
@@ -364,7 +364,7 @@ export default function VendorAddProductModal() {
                         placeholder="4500"
                         value={price}
                         onChange={(e) => setPrice(e.target.value.replace(/[^0-9]/g, ''))}
-                        className="w-full bg-[#0F1118] border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors"
+                        className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl pl-8 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/40 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -378,7 +378,7 @@ export default function VendorAddProductModal() {
                       placeholder="30 min"
                       value={deliveryTime}
                       onChange={(e) => setDeliveryTime(e.target.value)}
-                      className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors"
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/40 focus:outline-none transition-colors"
                     />
                   </div>
                 </div>
@@ -397,8 +397,8 @@ export default function VendorAddProductModal() {
                         onClick={() => setCategory(cat.id)}
                         className={`py-2.5 rounded-xl text-[10px] font-bold transition-all flex flex-col items-center gap-0.5 border ${
                           category === cat.id
-                            ? 'bg-[#F5C451]/20 text-[#F5C451] border-[#F5C451]/30'
-                            : 'bg-[#0F1118] text-white/65 border-white/5 hover:bg-white/5'
+                            ? 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] border-[var(--sr-vendor)]/30'
+                            : 'bg-[var(--sr-surface-raised)] text-white/65 border-white/5 hover:bg-white/5'
                         }`}
                       >
                         <span className="text-base">{cat.emoji}</span>
@@ -419,10 +419,10 @@ export default function VendorAddProductModal() {
                     value={image.startsWith('/uploads/') ? '' : image}
                     onChange={(e) => setImage(e.target.value)}
                     disabled={uploading}
-                    className="w-full bg-[#0F1118] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[#F5C451]/40 focus:outline-none transition-colors disabled:opacity-50"
+                    className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/20 focus:border-[var(--sr-vendor)]/40 focus:outline-none transition-colors disabled:opacity-50"
                   />
                   {image.startsWith('/uploads/') && (
-                    <p className="text-[#10E07A] text-[10px] mt-1 flex items-center gap-1">
+                    <p className="text-[var(--sr-customer)] text-[10px] mt-1 flex items-center gap-1">
                       <Check className="w-3 h-3" />
                       Uploaded image will be used — clear the URL field to override
                     </p>
@@ -433,7 +433,7 @@ export default function VendorAddProductModal() {
                 <button
                   onClick={handleSubmit}
                   disabled={submitting || uploading}
-                  className="w-full mt-2 py-3.5 rounded-xl bg-[#F5C451] text-[#06070B] text-sm font-bold hover:bg-[#F5C451]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed gold-glow"
+                  className="w-full mt-2 py-3.5 rounded-xl bg-[var(--sr-vendor)] text-[#06070B] text-sm font-bold hover:bg-[var(--sr-vendor)]/90 active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed gold-glow"
                 >
                   {submitting ? (
                     <>

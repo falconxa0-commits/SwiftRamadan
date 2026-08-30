@@ -141,14 +141,14 @@ export default function OrderCelebration({
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: 'spring', damping: 10, stiffness: 100, delay: 0.2 }}
-        className="w-24 h-24 bg-[#10E07A]/20 rounded-full flex items-center justify-center border border-[#10E07A]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
+        className="w-24 h-24 bg-[var(--sr-customer)]/20 rounded-full flex items-center justify-center border border-[var(--sr-customer)]/30 shadow-[0_0_32px_rgba(16,224,122,0.25)]"
       >
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.5, type: 'spring', damping: 10 }}
         >
-          <PartyPopper className="w-12 h-12 text-[#10E07A]" />
+          <PartyPopper className="w-12 h-12 text-[var(--sr-customer)]" />
         </motion.div>
       </motion.div>
 
@@ -174,7 +174,7 @@ export default function OrderCelebration({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            className="text-[#10E07A]/60 text-xs font-mono mt-1"
+            className="text-[var(--sr-customer)]/60 text-xs font-mono mt-1"
           >
             {orderNumber}
           </motion.p>

@@ -261,15 +261,15 @@ export default function VisualSearchModal() {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-[#10E07A]/20"
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[100] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20"
           >
             {/* Sticky Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0 bg-[#05070A]/95 backdrop-blur z-10">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-[#05070A]/95 backdrop-blur z-10">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/30 relative">
-                  <ScanLine className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/30 relative">
+                  <ScanLine className="w-5 h-5 text-[var(--sr-customer)]" />
                   <motion.span
-                    className="absolute inset-0 rounded-xl border border-[#10E07A]/40"
+                    className="absolute inset-0 rounded-xl border border-[var(--sr-customer)]/40"
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   />
@@ -277,7 +277,7 @@ export default function VisualSearchModal() {
                 <div>
                   <h2 className="text-white font-bold text-lg flex items-center gap-1.5">
                     Snap to Shop
-                    <Sparkles className="w-4 h-4 text-[#F5C451]" />
+                    <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
                   </h2>
                   <p className="text-white/65 text-xs">
                     AI-powered visual food search
@@ -302,7 +302,7 @@ export default function VisualSearchModal() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-5"
                 >
-                  <div className="rounded-3xl border-2 border-dashed border-[#10E07A]/30 bg-[#10E07A]/[0.03] p-8 flex flex-col items-center text-center">
+                  <div className="rounded-3xl border-2 border-dashed border-[var(--sr-customer)]/30 bg-[var(--sr-customer)]/[0.03] p-8 flex flex-col items-center text-center">
                     <motion.div
                       animate={{
                         boxShadow: [
@@ -312,9 +312,9 @@ export default function VisualSearchModal() {
                         ],
                       }}
                       transition={{ duration: 2.4, repeat: Infinity }}
-                      className="w-20 h-20 rounded-full bg-[#10E07A]/10 flex items-center justify-center mb-4 border border-[#10E07A]/30"
+                      className="w-20 h-20 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center mb-4 border border-[var(--sr-customer)]/30"
                     >
-                      <Camera className="w-9 h-9 text-[#10E07A]" />
+                      <Camera className="w-9 h-9 text-[var(--sr-customer)]" />
                     </motion.div>
                     <h3 className="text-white font-bold text-base mb-1">
                       Snap any food, shop instantly
@@ -332,17 +332,17 @@ export default function VisualSearchModal() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       onClick={() => cameraInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-[#10E07A] text-[#05070A] font-bold active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
+                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-[var(--sr-customer)] text-[#05070A] font-bold active:scale-[0.98] transition-transform shadow-lg shadow-[#10E07A]/20"
                     >
                       <Camera className="w-6 h-6" />
                       <span className="text-sm">Take Photo 📷</span>
                     </button>
                     <button
                       onClick={() => fileInputRef.current?.click()}
-                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-white/5 text-white font-bold border border-white/10 active:scale-[0.98] transition-transform hover:border-[#10E07A]/30"
+                      className="flex flex-col items-center justify-center gap-2 py-5 rounded-2xl bg-white/5 text-white font-bold border border-white/10 active:scale-[0.98] transition-transform hover:border-[var(--sr-customer)]/30"
                     >
                       <Upload className="w-6 h-6" />
                       <span className="text-sm">Upload Image</span>
@@ -350,22 +350,22 @@ export default function VisualSearchModal() {
                   </div>
 
                   {/* Tips */}
-                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4">
+                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4">
                     <h4 className="text-white font-bold text-xs mb-2 flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
+                      <Sparkles className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
                       Tips for best results
                     </h4>
                     <ul className="space-y-1.5 text-white/50 text-xs">
                       <li className="flex gap-2">
-                        <Check className="w-3.5 h-3.5 text-[#10E07A] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-[var(--sr-customer)] shrink-0 mt-0.5" />
                         Good lighting & center the food in frame
                       </li>
                       <li className="flex gap-2">
-                        <Check className="w-3.5 h-3.5 text-[#10E07A] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-[var(--sr-customer)] shrink-0 mt-0.5" />
                         One dish per photo works best
                       </li>
                       <li className="flex gap-2">
-                        <Check className="w-3.5 h-3.5 text-[#10E07A] shrink-0 mt-0.5" />
+                        <Check className="w-3.5 h-3.5 text-[var(--sr-customer)] shrink-0 mt-0.5" />
                         Works great with restaurant menus too!
                       </li>
                     </ul>
@@ -380,7 +380,7 @@ export default function VisualSearchModal() {
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-4"
                 >
-                  <div className="relative rounded-3xl overflow-hidden border border-[#10E07A]/30 bg-black">
+                  <div className="relative rounded-3xl overflow-hidden border border-[var(--sr-customer)]/30 bg-black">
                     <img
                       src={previewUrl}
                       alt="Uploaded food preview"
@@ -402,21 +402,21 @@ export default function VisualSearchModal() {
                     />
                     {/* Grid overlay corners */}
                     <div className="absolute inset-4 pointer-events-none">
-                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#10E07A]/70 rounded-tl-lg" />
-                      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#10E07A]/70 rounded-tr-lg" />
-                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#10E07A]/70 rounded-bl-lg" />
-                      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#10E07A]/70 rounded-br-lg" />
+                      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[var(--sr-customer)]/70 rounded-tl-lg" />
+                      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[var(--sr-customer)]/70 rounded-tr-lg" />
+                      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[var(--sr-customer)]/70 rounded-bl-lg" />
+                      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[var(--sr-customer)]/70 rounded-br-lg" />
                     </div>
 
                     {/* Loading label */}
-                    <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#05070A]/80 backdrop-blur border border-[#10E07A]/30 flex items-center gap-2">
+                    <div className="absolute top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-[#05070A]/80 backdrop-blur border border-[var(--sr-customer)]/30 flex items-center gap-2">
                       <motion.div
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
                       >
-                        <RefreshCw className="w-3.5 h-3.5 text-[#10E07A]" />
+                        <RefreshCw className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
                       </motion.div>
-                      <span className="text-[#10E07A] text-[11px] font-bold tracking-wide">
+                      <span className="text-[var(--sr-customer)] text-[11px] font-bold tracking-wide">
                         ANALYZING WITH AI...
                       </span>
                     </div>
@@ -442,7 +442,7 @@ export default function VisualSearchModal() {
                             repeat: Infinity,
                             delay: i * 0.2,
                           }}
-                          className="w-1.5 h-1.5 rounded-full bg-[#10E07A]"
+                          className="w-1.5 h-1.5 rounded-full bg-[var(--sr-customer)]"
                         />
                         {label}
                       </motion.div>
@@ -459,7 +459,7 @@ export default function VisualSearchModal() {
                   className="space-y-5"
                 >
                   {/* Preview thumbnail + result overlay */}
-                  <div className="relative rounded-3xl overflow-hidden border border-[#10E07A]/30 bg-black">
+                  <div className="relative rounded-3xl overflow-hidden border border-[var(--sr-customer)]/30 bg-black">
                     <img
                       src={previewUrl}
                       alt="Identified food"
@@ -467,13 +467,13 @@ export default function VisualSearchModal() {
                       style={{ maxHeight: `${PREVIEW_MAX_HEIGHT}px` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#10E07A] text-[#05070A] text-[10px] font-black uppercase tracking-wide">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--sr-customer)] text-[#05070A] text-[10px] font-black uppercase tracking-wide">
                           <Check className="w-3 h-3" />
                           Identified
                         </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#F5C451]/15 text-[#F5C451] text-[10px] font-bold border border-[#F5C451]/30">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] text-[10px] font-bold border border-[var(--sr-vendor)]/30">
                           {result.category}
                         </span>
                       </div>
@@ -484,10 +484,10 @@ export default function VisualSearchModal() {
                   </div>
 
                   {/* AI description + estimated price */}
-                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-4 space-y-3">
+                  <div className="rounded-2xl bg-[#1A1D26] border border-white/5 p-3 sm:p-4 space-y-3">
                     <div>
                       <h4 className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3 text-[#F5C451]" />
+                        <Sparkles className="w-3 h-3 text-[var(--sr-vendor)]" />
                         AI Description
                       </h4>
                       <p className="text-white/80 text-sm leading-relaxed">
@@ -498,7 +498,7 @@ export default function VisualSearchModal() {
                       <span className="text-white/65 text-xs">
                         Estimated price
                       </span>
-                      <span className="text-[#10E07A] font-black text-lg">
+                      <span className="text-[var(--sr-customer)] font-black text-lg">
                         {formatNaira(result.estimatedPriceNGN)}
                       </span>
                     </div>
@@ -519,13 +519,13 @@ export default function VisualSearchModal() {
                   {/* Similar products */}
                   <div>
                     <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <ShoppingCart className="w-4 h-4 text-[#10E07A]" />
+                      <ShoppingCart className="w-4 h-4 text-[var(--sr-customer)]" />
                       Found Similar Products
                       <span className="text-white/60 text-xs font-normal">
                         ({similarProducts.length})
                       </span>
                     </h4>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {similarProducts.map((product, i) => {
                         const price = product.salePrice ?? product.price ?? 0;
                         const inCart = addedIds.has(product.id);
@@ -566,7 +566,7 @@ export default function VisualSearchModal() {
                                 <span>{product.deliveryTime ?? '20 min'}</span>
                               </div>
                               <div className="flex items-center justify-between gap-2 mt-auto pt-1">
-                                <span className="text-[#10E07A] font-black text-sm">
+                                <span className="text-[var(--sr-customer)] font-black text-sm">
                                   {formatNaira(price)}
                                 </span>
                                 <button
@@ -574,8 +574,8 @@ export default function VisualSearchModal() {
                                   aria-label={`Add ${product.name} to cart`}
                                   className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
                                     inCart
-                                      ? 'bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/40'
-                                      : 'bg-[#10E07A] text-[#05070A] active:scale-95 hover:shadow-md hover:shadow-[#10E07A]/30'
+                                      ? 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/40'
+                                      : 'bg-[var(--sr-customer)] text-[#05070A] active:scale-95 hover:shadow-md hover:shadow-[#10E07A]/30'
                                   }`}
                                 >
                                   {inCart ? (
@@ -595,9 +595,9 @@ export default function VisualSearchModal() {
                   {/* Try another photo */}
                   <button
                     onClick={reset}
-                    className="w-full py-3.5 rounded-2xl bg-white/5 text-white font-bold text-sm flex items-center justify-center gap-2 border border-white/10 hover:border-[#10E07A]/30 hover:bg-white/10 transition-colors"
+                    className="w-full py-3.5 rounded-2xl bg-white/5 text-white font-bold text-sm flex items-center justify-center gap-2 border border-white/10 hover:border-[var(--sr-customer)]/30 hover:bg-white/10 transition-colors"
                   >
-                    <RefreshCw className="w-4 h-4 text-[#10E07A]" />
+                    <RefreshCw className="w-4 h-4 text-[var(--sr-customer)]" />
                     Try Another Photo
                   </button>
                 </motion.div>

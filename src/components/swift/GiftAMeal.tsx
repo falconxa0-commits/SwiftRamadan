@@ -147,8 +147,8 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/8">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#10E07A]/15 flex items-center justify-center border border-[#10E07A]/25">
-            <Gift className="w-4 h-4 text-[#10E07A]" />
+          <div className="w-8 h-8 rounded-lg bg-[var(--sr-customer)]/15 flex items-center justify-center border border-[var(--sr-customer)]/25">
+            <Gift className="w-4 h-4 text-[var(--sr-customer)]" />
           </div>
           <div>
             <h2 className="text-white text-lg font-bold">Gift-a-Meal</h2>
@@ -168,7 +168,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -176,17 +176,17 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 relative overflow-hidden rounded-2xl border border-[#10E07A]/20 p-5"
+              className="mt-4 relative overflow-hidden rounded-2xl border border-[var(--sr-customer)]/20 p-5"
               style={{ background: 'linear-gradient(135deg, #10E07A15, #0F1118)' }}
             >
-              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[#10E07A]/10 blur-[60px]" />
-              <div className="relative z-10 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20">
-                  <Heart className="w-7 h-7 text-[#10E07A]" />
+              <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[var(--sr-customer)]/10 blur-[60px]" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <Heart className="w-7 h-7 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <p className="text-white/50 text-xs">Community meals gifted</p>
-                  <p className="text-[#10E07A] text-2xl font-black">{totalStats.gifts.toLocaleString()}</p>
+                  <p className="text-[var(--sr-customer)] text-2xl font-black">{totalStats.gifts.toLocaleString()}</p>
                   <p className="text-white/60 text-[10px]">across {totalStats.cities} cities</p>
                 </div>
               </div>
@@ -202,10 +202,10 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.06 }}
-                    className="bg-[#0F1118] rounded-xl border border-white/5 p-3 flex items-center gap-3"
+                    className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/5 p-3 flex items-center gap-3"
                   >
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black ${
-                      i === 0 ? 'bg-[#F5C451]/15 text-[#F5C451] border border-[#F5C451]/20' :
+                      i === 0 ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/20' :
                       i === 1 ? 'bg-white/10 text-white/70 border border-white/10' :
                       i === 2 ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' :
                       'bg-white/5 text-white/65 border border-white/5'
@@ -246,8 +246,8 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     onClick={() => setSelectedMeal(meal.id)}
                     className={`w-full rounded-xl border p-3.5 flex items-center gap-3 transition-all text-left ${
                       selectedMeal === meal.id
-                        ? 'bg-[#10E07A]/10 border-[#10E07A]/30'
-                        : 'bg-[#0F1118] border-white/5 hover:border-white/15'
+                        ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30'
+                        : 'bg-[var(--sr-surface-raised)] border-white/5 hover:border-white/15'
                     }`}
                     aria-label={`Select ${meal.name} - ${FORMAT_NAIRA(meal.price)}`}
                   >
@@ -257,13 +257,13 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                       <p className="text-white/65 text-[10px] mt-0.5">{meal.description}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-[#10E07A] text-sm font-black">{FORMAT_NAIRA(meal.price)}</p>
+                      <p className="text-[var(--sr-customer)] text-sm font-black">{FORMAT_NAIRA(meal.price)}</p>
                     </div>
                     {selectedMeal === meal.id && (
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="w-5 h-5 rounded-full bg-[#10E07A] flex items-center justify-center shrink-0"
+                        className="w-5 h-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shrink-0"
                       >
                         <svg className="w-3 h-3 text-[#0B0D14]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -285,7 +285,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     onClick={() => setCity(c)}
                     className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
                       city === c
-                        ? 'bg-[#10E07A]/15 border border-[#10E07A]/30 text-[#10E07A]'
+                        ? 'bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 text-[var(--sr-customer)]'
                         : 'bg-white/5 border border-white/5 text-white/50 hover:border-white/15'
                     }`}
                     aria-label={`Select ${c}`}
@@ -307,7 +307,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="A fellow Muslim gifted you Iftar 🌙"
                   maxLength={120}
-                  className="w-full bg-[#0F1118] border border-white/8 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#10E07A]/30 resize-none h-20"
+                  className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[var(--sr-customer)]/30 resize-none h-20"
                   aria-label="Gift message"
                 />
                 <span className="absolute bottom-2 right-3 text-white/20 text-[10px]">{message.length}/120</span>
@@ -367,15 +367,15 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-              className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[#10E07A]/30"
+              className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-customer)]/30"
               style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
               role="dialog"
               aria-modal="true"
               aria-label="Gift sent successfully"
             >
               {/* Glow */}
-              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[#10E07A]/20 blur-[60px]" />
-              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-[#F5C451]/10 blur-[40px]" />
+              <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-[var(--sr-customer)]/20 blur-[60px]" />
+              <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-[var(--sr-vendor)]/10 blur-[40px]" />
 
               <div className="relative z-10 p-8 text-center">
                 {/* Animated heart */}
@@ -393,7 +393,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
                   >
-                    <Heart className="w-10 h-10 text-[#10E07A]" fill="#10E07A" />
+                    <Heart className="w-10 h-10 text-[var(--sr-customer)]" fill="#10E07A" />
                   </motion.div>
                 </motion.div>
 
@@ -401,7 +401,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-2xl font-black text-[#10E07A] mb-1"
+                  className="text-2xl font-black text-[var(--sr-customer)] mb-1"
                 >
                   Gift Sent! 🌙
                 </motion.h3>
@@ -430,8 +430,8 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   transition={{ delay: 0.6 }}
                   className="flex items-center justify-center gap-2 mb-6"
                 >
-                  <Sparkles className="w-4 h-4 text-[#F5C451]" />
-                  <span className="text-[#F5C451] text-xs font-bold">
+                  <Sparkles className="w-4 h-4 text-[var(--sr-vendor)]" />
+                  <span className="text-[var(--sr-vendor)] text-xs font-bold">
                     {city} chain: {giftChainCount + 1} meals gifted!
                   </span>
                 </motion.div>

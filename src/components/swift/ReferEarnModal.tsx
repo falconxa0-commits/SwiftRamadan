@@ -84,7 +84,7 @@ export default function ReferEarnModal() {
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <h2 className="text-white text-lg font-bold">Refer & Earn</h2>
                 <button
                   onClick={handleClose}
@@ -103,20 +103,20 @@ export default function ReferEarnModal() {
                 transition={{ delay: 0.1 }}
                 className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 mt-4 text-center"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/10 blur-[60px]" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#10E07A]/10 blur-[40px]" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-vendor)]/10 blur-[60px]" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-customer)]/10 blur-[40px]" />
                 <div className="relative z-10">
                   <div className="flex items-center justify-center gap-3 mb-4">
-                    <div className="w-14 h-14 rounded-full bg-[#10E07A]/20 flex items-center justify-center border border-[#10E07A]/30">
-                      <Users className="w-7 h-7 text-[#10E07A]" />
+                    <div className="w-14 h-14 rounded-full bg-[var(--sr-customer)]/20 flex items-center justify-center border border-[var(--sr-customer)]/30">
+                      <Users className="w-7 h-7 text-[var(--sr-customer)]" />
                     </div>
-                    <div className="text-[#F5C451] text-3xl font-black">+</div>
-                    <div className="w-14 h-14 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30">
-                      <Gift className="w-7 h-7 text-[#F5C451]" />
+                    <div className="text-[var(--sr-vendor)] text-3xl font-black">+</div>
+                    <div className="w-14 h-14 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center border border-[var(--sr-vendor)]/30">
+                      <Gift className="w-7 h-7 text-[var(--sr-vendor)]" />
                     </div>
                   </div>
                   <h3 className="text-white text-2xl font-black mb-1">
-                    Give <span className="text-[#F5C451]">₦1,000</span>, Get <span className="text-[#F5C451]">₦1,000</span>
+                    Give <span className="text-[var(--sr-vendor)]">₦1,000</span>, Get <span className="text-[var(--sr-vendor)]">₦1,000</span>
                   </h3>
                   <p className="text-white/50 text-sm">Share SwiftRamadan with friends. Both of you earn ₦1,000!</p>
                 </div>
@@ -130,13 +130,13 @@ export default function ReferEarnModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Share Your Link</h4>
-                <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4">
+                <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
                   <p className="text-white/65 text-xs mb-2">Your unique referral link</p>
                   <div className="flex items-center gap-2 bg-[#0F1117] rounded-lg p-3 border border-white/5">
-                    <p className="text-[#10E07A] text-sm font-mono flex-1 truncate">{referralLink}</p>
+                    <p className="text-[var(--sr-customer)] text-sm font-mono flex-1 truncate">{referralLink}</p>
                     <button
                       onClick={handleCopyLink}
-                      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] text-xs font-bold hover:bg-[#10E07A]/20 transition-colors"
+                      className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] text-xs font-bold hover:bg-[var(--sr-customer)]/20 transition-colors"
                     >
                       {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                       {copied ? 'Copied!' : 'Copy'}
@@ -162,20 +162,20 @@ export default function ReferEarnModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Your Referral Stats</h4>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4 text-center">
-                    <p className="text-[#10E07A] text-3xl font-black">{referralCount}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
+                    <p className="text-[var(--sr-customer)] text-3xl font-black">{referralCount}</p>
                     <p className="text-white/65 text-xs mt-1">Referrals</p>
                   </div>
-                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-4 text-center">
-                    <p className="text-[#F5C451] text-3xl font-black">₦{earnedAmount.toLocaleString()}</p>
+                  <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4 text-center">
+                    <p className="text-[var(--sr-vendor)] text-3xl font-black">₦{earnedAmount.toLocaleString()}</p>
                     <p className="text-white/65 text-xs mt-1">Earned</p>
                   </div>
                 </div>
-                <div className="mt-3 bg-[#1A1D26] rounded-xl border border-white/5 p-4">
+                <div className="mt-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-white/60 text-xs">Next reward tier ({nextTier} referrals)</span>
-                    <span className="text-[#F5C451] text-xs font-bold">Gold Badge</span>
+                    <span className="text-[var(--sr-vendor)] text-xs font-bold">Gold Badge</span>
                   </div>
                   <div className="w-full bg-white/5 rounded-full h-2.5">
                     <motion.div
@@ -201,9 +201,9 @@ export default function ReferEarnModal() {
                   {sortedLeaderboard.map((person, i) => (
                     <div
                       key={person.name}
-                      className={`flex items-center gap-3 p-3.5 ${i < sortedLeaderboard.length - 1 ? 'border-b border-white/5' : ''} ${person.isYou ? 'bg-[#10E07A]/5' : ''}`}
+                      className={`flex items-center gap-3 p-3.5 ${i < sortedLeaderboard.length - 1 ? 'border-b border-white/5' : ''} ${person.isYou ? 'bg-[var(--sr-customer)]/5' : ''}`}
                     >
-                      <span className={`w-6 text-center text-xs font-black ${i === 0 ? 'text-[#F5C451]' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-white/60'}`}>
+                      <span className={`w-6 text-center text-xs font-black ${i === 0 ? 'text-[var(--sr-vendor)]' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600' : 'text-white/60'}`}>
                         {i + 1}
                       </span>
                       <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#10E07A]/30 to-[#10E07A]/10 flex items-center justify-center border border-white/10 shrink-0">
@@ -212,7 +212,7 @@ export default function ReferEarnModal() {
                       <div className="flex-1">
                         <p className="text-white text-sm font-bold">
                           {person.name}
-                          {person.isYou && <span className="text-[#10E07A] text-xs ml-1.5">(You)</span>}
+                          {person.isYou && <span className="text-[var(--sr-customer)] text-xs ml-1.5">(You)</span>}
                         </p>
                       </div>
                       <div className="text-right">
@@ -233,7 +233,7 @@ export default function ReferEarnModal() {
               >
                 <div className="bg-[#1A1D26] rounded-xl border border-white/5 p-3 overflow-hidden">
                   <div className="flex items-center gap-2">
-                    <span className="shrink-0 w-2 h-2 bg-[#10E07A] rounded-full animate-pulse" />
+                    <span className="shrink-0 w-2 h-2 bg-[var(--sr-customer)] rounded-full animate-pulse" />
                     <div className="relative overflow-hidden flex-1 h-5">
                       <AnimatePresence mode="wait">
                         <motion.p
@@ -268,13 +268,13 @@ export default function ReferEarnModal() {
                   ].map((item) => {
                     const Icon = item.icon;
                     return (
-                      <div key={item.step} className="flex items-start gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-4">
-                        <div className="w-10 h-10 rounded-full bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                          <Icon className="w-5 h-5 text-[#10E07A]" />
+                      <div key={item.step} className="flex items-start gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3 sm:p-4">
+                        <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                          <Icon className="w-5 h-5 text-[var(--sr-customer)]" />
                         </div>
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="text-[#10E07A] text-xs font-black">Step {item.step}</span>
+                            <span className="text-[var(--sr-customer)] text-xs font-black">Step {item.step}</span>
                             <ChevronRight className="w-3 h-3 text-white/20" />
                             <span className="text-white font-bold text-sm">{item.title}</span>
                           </div>

@@ -315,7 +315,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
         </div>
 
         {/* Top bar */}
-        <div className="relative z-10 flex items-center justify-between p-4 shrink-0">
+        <div className="relative z-10 flex items-center justify-between p-3 sm:p-4 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center backdrop-blur-md">
               <Eye className="w-4 h-4 text-[#FFD700]" />
@@ -492,7 +492,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
 
         {/* Bottom controls */}
         {(cameraOn || uploadedImage) && (
-          <div className="relative z-10 p-4 pb-6 shrink-0 bg-gradient-to-t from-black/80 to-transparent">
+          <div className="relative z-10 p-3 sm:p-4 pb-6 shrink-0 bg-gradient-to-t from-black/80 to-transparent">
             {/* Auto-coach toggle */}
             <div className="flex justify-center mb-3">
               <button

@@ -140,7 +140,7 @@ export default function TasteDNAModal() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-[#A855F7]/10 rounded-xl flex items-center justify-center border border-[#A855F7]/20">
                   <Dna className="w-5 h-5 text-[#A855F7]" />
@@ -320,21 +320,21 @@ export default function TasteDNAModal() {
           <div className="px-4 mb-32">
             <h3 className="text-white font-bold text-base mb-1">Based on your taste profile, you&apos;d love...</h3>
             <p className="text-white/60 text-xs mb-3">Personalized picks for your unique palate</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {recommendations.map((rec, i) => (
                 <motion.div
                   key={rec.name}
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 + i * 0.1, duration: 0.4 }}
-                  className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4 hover:border-white/10 transition-colors"
+                  className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4 hover:border-white/10 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-[#10E07A]/10 rounded-lg flex items-center justify-center mb-2">
-                    <ChefHat className="w-4 h-4 text-[#10E07A]" />
+                  <div className="w-8 h-8 bg-[var(--sr-customer)]/10 rounded-lg flex items-center justify-center mb-2">
+                    <ChefHat className="w-4 h-4 text-[var(--sr-customer)]" />
                   </div>
                   <h4 className="text-white font-bold text-sm mb-1">{rec.name}</h4>
                   <p className="text-white/65 text-[10px] leading-tight mb-2">{rec.reason}</p>
-                  <span className="text-[#10E07A] text-xs font-bold">
+                  <span className="text-[var(--sr-customer)] text-xs font-bold">
                     ₦{rec.price.toLocaleString()}
                   </span>
                 </motion.div>

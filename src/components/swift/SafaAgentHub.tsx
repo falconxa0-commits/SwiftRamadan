@@ -29,12 +29,12 @@ interface Message {
 /* ──────────────────── Agent Color Map ──────────────────── */
 // Maps agent IDs to their accent colors for visual distinction
 const AGENT_ACCENTS: Record<string, { bg: string; text: string; border: string; glow: string; dot: string }> = {
-  support:   { bg: 'bg-[#38BDF8]/20', text: 'text-[#38BDF8]', border: 'border-[#38BDF8]/30', glow: 'shadow-[#38BDF8]/20', dot: 'bg-[#38BDF8]' },
+  support:   { bg: 'bg-[var(--sr-rider)]/20', text: 'text-[var(--sr-rider)]', border: 'border-[var(--sr-rider)]/30', glow: 'shadow-[#38BDF8]/20', dot: 'bg-[var(--sr-rider)]' },
   marketing: { bg: 'bg-[#A78BFA]/20', text: 'text-[#A78BFA]', border: 'border-[#A78BFA]/30', glow: 'shadow-[#A78BFA]/20', dot: 'bg-[#A78BFA]' },
   chef:      { bg: 'bg-[#FB923C]/20', text: 'text-[#FB923C]', border: 'border-[#FB923C]/30', glow: 'shadow-[#FB923C]/20', dot: 'bg-[#FB923C]' },
   rider:     { bg: 'bg-[#22D3EE]/20', text: 'text-[#22D3EE]', border: 'border-[#22D3EE]/30', glow: 'shadow-[#22D3EE]/20', dot: 'bg-[#22D3EE]' },
-  vendor:    { bg: 'bg-[#F5C451]/20', text: 'text-[#F5C451]', border: 'border-[#F5C451]/30', glow: 'shadow-[#F5C451]/20', dot: 'bg-[#F5C451]' },
-  analytics: { bg: 'bg-[#10E07A]/20', text: 'text-[#10E07A]', border: 'border-[#10E07A]/30', glow: 'shadow-[#10E07A]/20', dot: 'bg-[#10E07A]' },
+  vendor:    { bg: 'bg-[var(--sr-vendor)]/20', text: 'text-[var(--sr-vendor)]', border: 'border-[var(--sr-vendor)]/30', glow: 'shadow-[#F5C451]/20', dot: 'bg-[var(--sr-vendor)]' },
+  analytics: { bg: 'bg-[var(--sr-customer)]/20', text: 'text-[var(--sr-customer)]', border: 'border-[var(--sr-customer)]/30', glow: 'shadow-[#10E07A]/20', dot: 'bg-[var(--sr-customer)]' },
 };
 
 const DEFAULT_ACCENT = AGENT_ACCENTS.support;
@@ -412,7 +412,7 @@ export default function SafaAgentHub() {
               <div className="min-w-0 text-left">
                 <div className="flex items-center gap-1.5">
                   <h3 className="text-sm font-semibold text-white truncate">{activeAgent?.name || 'Safa AI'}</h3>
-                  <span className="flex items-center gap-0.5 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[#10E07A]/15 text-[#10E07A]">
+                  <span className="flex items-center gap-0.5 text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]">
                     <Sparkles className="w-2.5 h-2.5" /> AI
                   </span>
                 </div>
@@ -422,9 +422,9 @@ export default function SafaAgentHub() {
             </button>
 
             {/* Online indicator */}
-            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-[#10E07A]/10">
-              <span className="w-1.5 h-1.5 bg-[#10E07A] rounded-full animate-pulse" />
-              <span className="text-[9px] text-[#10E07A] font-medium">Online</span>
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-[var(--sr-customer)]/10">
+              <span className="w-1.5 h-1.5 bg-[var(--sr-customer)] rounded-full animate-pulse" />
+              <span className="text-[9px] text-[var(--sr-customer)] font-medium">Online</span>
             </div>
 
             {/* Close button */}
@@ -468,7 +468,7 @@ export default function SafaAgentHub() {
                           <span>{agent.name}</span>
                           {/* Unread badge */}
                           {unread > 0 && !isActive && (
-                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-[#10E07A] rounded-full border border-[#0a0b10]" />
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-[var(--sr-customer)] rounded-full border border-[#0a0b10]" />
                           )}
                         </button>
                       );
@@ -521,7 +521,7 @@ export default function SafaAgentHub() {
                   {/* Message bubble */}
                   <div className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                     msg.role === 'user'
-                      ? 'bg-[#10E07A] text-black font-medium rounded-br-md'
+                      ? 'bg-[var(--sr-customer)] text-black font-medium rounded-br-md'
                       : `bg-white/[0.06] text-white/90 rounded-bl-md border-l-2 ${accent.border}`
                   }`}>
                     {msg.content.split('\n').map((line, i) => (
@@ -648,7 +648,7 @@ export default function SafaAgentHub() {
                   }
                 }}
                 placeholder={`Ask ${activeAgent?.name || 'Safa'}...`}
-                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[#10E07A]/50 focus:ring-1 focus:ring-[#10E07A]/20 transition-all"
+                className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-white/30 focus:outline-none focus:border-[var(--sr-customer)]/50 focus:ring-1 focus:ring-[#10E07A]/20 transition-all"
                 disabled={isLoading}
               />
 
@@ -656,7 +656,7 @@ export default function SafaAgentHub() {
               <button
                 onClick={() => sendMessage(input)}
                 disabled={isLoading || !input.trim()}
-                className="p-2.5 rounded-xl bg-[#10E07A] text-black disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#10E07A]/80 active:scale-95 transition-all shrink-0"
+                className="p-2.5 rounded-xl bg-[var(--sr-customer)] text-black disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[var(--sr-customer)]/80 active:scale-95 transition-all shrink-0"
                 aria-label="Send message"
               >
                 {isLoading ? (

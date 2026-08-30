@@ -50,7 +50,7 @@ export default function WhatsNewBetaModal() {
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
             className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[#05070A] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#FFD700]/20">
             {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#FFD700]/8 to-[#13ec13]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#FFD700]/8 to-[#13ec13]/5">
               <div className="flex items-center gap-3">
                 <div className="relative w-11 h-11 bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/20 rounded-2xl flex items-center justify-center border border-[#FFD700]/30">
                   <Rocket className="w-6 h-6 text-[#FFD700]" />
@@ -116,7 +116,7 @@ export default function WhatsNewBetaModal() {
                 style={{ background: 'linear-gradient(135deg, rgba(19,236,19,0.08) 0%, rgba(255,215,0,0.06) 100%)' }}>
                 <motion.div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[#13ec13]/20 blur-2xl"
                   animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.6, 0.4] }} transition={{ duration: 4, repeat: Infinity }} />
-                <div className="relative z-10 p-4 text-center">
+                <div className="relative z-10 p-3 sm:p-4 text-center">
                   <Award className="w-8 h-8 text-[#FFD700] mx-auto mb-2" />
                   <h3 className="text-white font-bold text-sm">You're a Beta Tester 🎉</h3>
                   <p className="text-white/50 text-xs mt-1 mb-3">Thanks for helping shape SwiftRamadan. Your feedback makes the app better for the whole ummah.</p>

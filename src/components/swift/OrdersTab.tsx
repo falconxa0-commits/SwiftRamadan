@@ -11,9 +11,9 @@ import { OrdersTabSkeleton } from './Skeletons';
 
 const statusConfig: Record<string, { color: string; bgColor: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
   'In Transit': { color: 'text-[var(--sr-customer)]', bgColor: 'bg-[var(--sr-customer)]/10', icon: Truck, label: 'In Transit' },
-  'Preparing': { color: 'text-[#F5C451]', bgColor: 'bg-[#F5C451]/10', icon: Clock, label: 'Preparing' },
+  'Preparing': { color: 'text-[var(--sr-vendor)]', bgColor: 'bg-[var(--sr-vendor)]/10', icon: Clock, label: 'Preparing' },
   'Delivered': { color: 'text-white/65', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
-  'Confirmed': { color: 'text-[#38BDF8]', bgColor: 'bg-[#38BDF8]/10', icon: Package, label: 'Confirmed' },
+  'Confirmed': { color: 'text-[var(--sr-rider)]', bgColor: 'bg-[var(--sr-rider)]/10', icon: Package, label: 'Confirmed' },
   'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
   'Cancelled': { color: 'text-[#FB7185]', bgColor: 'bg-[#FB7185]/10', icon: XCircle, label: 'Cancelled' },
 };
@@ -48,7 +48,7 @@ function OrderProgressTracker({ progress, status }: { progress: number; status: 
                     : 'border-white/10 bg-[var(--sr-surface-raised)]'
                 }`}>
                   {isActive && (
-                    <div className={`w-1.5 h-1.5 rounded-full ${isCurrentStep ? 'bg-[#06070B]' : 'bg-[var(--sr-customer)]'}`} />
+                    <div className={`w-1.5 h-1.5 rounded-full ${isCurrentStep ? 'bg-[var(--sr-surface-base)]' : 'bg-[var(--sr-customer)]'}`} />
                   )}
                 </div>
                 <span className={`text-[8px] mt-1 font-bold whitespace-nowrap ${
@@ -253,7 +253,7 @@ This is an electronic receipt — no signature required.
             Active
             {activeOrders.length > 0 && (
               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
-                activeTab === 'active' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]'
+                activeTab === 'active' ? 'bg-[var(--sr-surface-base)]/20 text-[#06070B]' : 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]'
               }`}>
                 {activeOrders.length}
               </span>
@@ -271,7 +271,7 @@ This is an electronic receipt — no signature required.
             Past
             {pastOrders.length > 0 && (
               <span className={`px-1.5 py-0.5 rounded-full text-[9px] font-black ${
-                activeTab === 'past' ? 'bg-[#06070B]/20 text-[#06070B]' : 'bg-white/10 text-white/60'
+                activeTab === 'past' ? 'bg-[var(--sr-surface-base)]/20 text-[#06070B]' : 'bg-white/10 text-white/60'
               }`}>
                 {pastOrders.length}
               </span>
@@ -361,10 +361,10 @@ This is an electronic receipt — no signature required.
                               e.stopPropagation();
                               useAppStore.getState().setActiveModal('live-tracking');
                             }}
-                            className="flex items-center gap-2 px-4 h-10 bg-[#F5C451]/10 rounded-full border border-[#F5C451]/20 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
+                            className="flex items-center gap-2 px-4 h-10 bg-[var(--sr-vendor)]/10 rounded-full border border-[var(--sr-vendor)]/20 hover:bg-[var(--sr-vendor)]/20 transition-colors active:scale-95"
                           >
-                            <MapPin className="w-4 h-4 text-[#F5C451]" />
-                            <span className="text-[#F5C451] text-xs font-bold">Track</span>
+                            <MapPin className="w-4 h-4 text-[var(--sr-vendor)]" />
+                            <span className="text-[var(--sr-vendor)] text-xs font-bold">Track</span>
                           </button>
                         </div>
                       </div>
@@ -403,7 +403,7 @@ This is an electronic receipt — no signature required.
                                 {order.status === 'In Transit' && (
                                   <button
                                     onClick={(e) => { e.stopPropagation(); useAppStore.getState().setActiveModal('live-tracking-map'); }}
-                                    className="block ml-auto mt-0.5 text-[10px] font-bold text-[#38BDF8] hover:text-[#38BDF8]/80 transition-colors"
+                                    className="block ml-auto mt-0.5 text-[10px] font-bold text-[var(--sr-rider)] hover:text-[var(--sr-rider)]/80 transition-colors"
                                   >
                                     View Map →
                                   </button>
@@ -416,7 +416,7 @@ This is an electronic receipt — no signature required.
                               <div
                                 className={`h-1 rounded-full transition-all ${
                                   order.status === 'In Transit' ? 'bg-[var(--sr-customer)]' :
-                                  order.status === 'Preparing' ? 'bg-[#F5C451]' : 'bg-[#38BDF8]'
+                                  order.status === 'Preparing' ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-rider)]'
                                 }`}
                                 style={{ width: `${order.progress}%` }}
                               />
@@ -590,7 +590,7 @@ This is an electronic receipt — no signature required.
       {/* Prayer Times Widget */}
       <div className="px-5 mt-8 mb-6">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#06070B] border border-emerald-500/20 p-5 aurora-soft">
-          <h3 className="text-[#F5C451] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
+          <h3 className="text-[var(--sr-vendor)] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
             <span className="material-symbols-outlined text-lg">mosque</span>
             Prayer Times - Lagos
           </h3>
@@ -605,20 +605,20 @@ This is an electronic receipt — no signature required.
                 <div
                   key={prayer.name}
                   className={`bg-black/30 p-3 rounded-xl border text-center transition-colors ${
-                    isNext ? 'border-[#F5C451]/30 bg-[#F5C451]/5' : 'border-white/5'
+                    isNext ? 'border-[var(--sr-vendor)]/30 bg-[var(--sr-vendor)]/5' : 'border-white/5'
                   }`}
                 >
-                  <span className="material-symbols-outlined text-[#F5C451] text-lg">{prayer.icon}</span>
+                  <span className="material-symbols-outlined text-[var(--sr-vendor)] text-lg">{prayer.icon}</span>
                   <p className="text-white text-xs font-bold mt-1">{prayer.name}</p>
                   <p className="text-white/50 text-[10px]">{prayer.time}</p>
-                  {isNext && <span className="text-[#F5C451] text-[8px] font-bold uppercase">Next</span>}
+                  {isNext && <span className="text-[var(--sr-vendor)] text-[8px] font-bold uppercase">Next</span>}
                 </div>
               );
             })}
           </div>
           <button
             onClick={() => useAppStore.getState().setActiveModal('prayer-times')}
-            className="w-full mt-4 bg-[#F5C451]/10 border border-[#F5C451]/20 text-[#F5C451] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[#F5C451]/20 transition-colors active:scale-95"
+            className="w-full mt-4 bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 text-[var(--sr-vendor)] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-[var(--sr-vendor)]/20 transition-colors active:scale-95"
           >
             <span className="material-symbols-outlined text-sm">schedule</span>
             View Full Schedule

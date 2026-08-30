@@ -166,7 +166,7 @@ export function ShimmerList({
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className="bg-[#1A1D26] border border-white/5 rounded-2xl p-4 flex gap-4"
+          className="bg-[#1A1D26] border border-white/5 rounded-2xl p-3 sm:p-4 flex gap-3 sm:gap-4"
           style={{ animationDelay: `${i * stagger}s` }}
         >
           {/* Thumbnail */}

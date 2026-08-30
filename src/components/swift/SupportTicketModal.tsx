@@ -262,7 +262,7 @@ export default function SupportTicketModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={handleClose}
           />
 
@@ -272,7 +272,7 @@ export default function SupportTicketModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[85vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -298,7 +298,7 @@ export default function SupportTicketModal() {
                       border: '1px solid rgba(56,189,248,0.30)',
                     }}
                   >
-                    <Headphones className="w-5 h-5 text-[#38BDF8] relative z-10" />
+                    <Headphones className="w-5 h-5 text-[var(--sr-rider)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">
@@ -338,7 +338,7 @@ export default function SupportTicketModal() {
                       {/* Create ticket button */}
                       <button
                         onClick={() => setView('create')}
-                        className="w-full flex items-center gap-3 p-4 rounded-2xl bg-[#0F1118] border border-white/5 hover:border-[#38BDF8]/20 transition-all group"
+                        className="w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 hover:border-[var(--sr-rider)]/20 transition-all group"
                       >
                         <div
                           className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -347,7 +347,7 @@ export default function SupportTicketModal() {
                             border: '1px solid rgba(56,189,248,0.25)',
                           }}
                         >
-                          <Plus className="w-5 h-5 text-[#38BDF8]" />
+                          <Plus className="w-5 h-5 text-[var(--sr-rider)]" />
                         </div>
                         <div className="text-left">
                           <p className="text-white text-sm font-semibold">Create New Ticket</p>
@@ -375,7 +375,7 @@ export default function SupportTicketModal() {
                               <motion.button
                                 key={ticket.id}
                                 onClick={() => handleTicketClick(ticket)}
-                                className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-[#0F1118] border border-white/5 hover:border-white/10 transition-all text-left"
+                                className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5 hover:border-white/10 transition-all text-left"
                                 whileHover={{ scale: 1.01 }}
                                 whileTap={{ scale: 0.99 }}
                               >
@@ -419,7 +419,7 @@ export default function SupportTicketModal() {
                         <label className="text-white/50 text-[11px] font-medium uppercase tracking-wider block mb-2">
                           Category
                         </label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                           {CATEGORIES.map((cat) => {
                             const CatIcon = cat.icon;
                             return (
@@ -428,7 +428,7 @@ export default function SupportTicketModal() {
                                 onClick={() => setCategory(cat.value)}
                                 className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-left transition-all text-xs ${
                                   category === cat.value
-                                    ? 'bg-[#38BDF8]/10 border border-[#38BDF8]/30 text-[#38BDF8]'
+                                    ? 'bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/30 text-[var(--sr-rider)]'
                                     : 'bg-white/[0.03] border border-white/5 text-white/70 hover:bg-white/[0.06]'
                                 }`}
                               >
@@ -450,7 +450,7 @@ export default function SupportTicketModal() {
                           value={subject}
                           onChange={(e) => setSubject(e.target.value)}
                           placeholder="Brief description of your issue"
-                          className="w-full bg-[#06070B] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#38BDF8]/40 transition-colors"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[var(--sr-rider)]/40 transition-colors"
                         />
                       </div>
 
@@ -464,7 +464,7 @@ export default function SupportTicketModal() {
                           onChange={(e) => setMessage(e.target.value)}
                           placeholder="Describe your issue in detail…"
                           rows={4}
-                          className="w-full bg-[#06070B] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#38BDF8]/40 transition-colors resize-none"
+                          className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[var(--sr-rider)]/40 transition-colors resize-none"
                         />
                       </div>
 
@@ -526,11 +526,11 @@ export default function SupportTicketModal() {
                                 className={`max-w-[85%] rounded-2xl px-3.5 py-2.5 ${
                                   msg.isAdmin
                                     ? 'bg-white/[0.05] border border-white/5 rounded-bl-md'
-                                    : 'bg-[#38BDF8]/10 border border-[#38BDF8]/20 rounded-br-md'
+                                    : 'bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 rounded-br-md'
                                 }`}
                               >
                                 {msg.isAdmin && (
-                                  <p className="text-[#38BDF8] text-[10px] font-semibold mb-1">Support Team</p>
+                                  <p className="text-[var(--sr-rider)] text-[10px] font-semibold mb-1">Support Team</p>
                                 )}
                                 <p className="text-white/85 text-xs leading-relaxed">{msg.message}</p>
                                 <p className="text-white/25 text-[9px] mt-1.5 text-right">
@@ -557,7 +557,7 @@ export default function SupportTicketModal() {
                                 }
                               }}
                               placeholder="Type a message…"
-                              className="flex-1 bg-[#06070B] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[#38BDF8]/40 transition-colors"
+                              className="flex-1 bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder:text-white/25 focus:outline-none focus:border-[var(--sr-rider)]/40 transition-colors"
                             />
                             <button
                               onClick={handleReply}
@@ -569,9 +569,9 @@ export default function SupportTicketModal() {
                               }}
                             >
                               {sending ? (
-                                <Loader2 className="w-4 h-4 text-[#38BDF8] animate-spin" />
+                                <Loader2 className="w-4 h-4 text-[var(--sr-rider)] animate-spin" />
                               ) : (
-                                <Send className="w-4 h-4 text-[#38BDF8]" />
+                                <Send className="w-4 h-4 text-[var(--sr-rider)]" />
                               )}
                             </button>
                           </div>

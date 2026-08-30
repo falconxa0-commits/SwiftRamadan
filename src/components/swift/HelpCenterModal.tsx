@@ -152,9 +152,9 @@ const FAQS: FAQ[] = [
 
 const CATEGORIES: { id: Category | 'All'; label: string; icon: React.ComponentType<{ className?: string }>; color: string }[] = [
   { id: 'All', label: 'All', icon: HelpCircle, color: 'text-white/60' },
-  { id: 'Getting Started', label: 'Getting Started', icon: User, color: 'text-[#10E07A]' },
-  { id: 'Orders & Delivery', label: 'Orders', icon: Truck, color: 'text-[#38BDF8]' },
-  { id: 'Payments', label: 'Payments', icon: CreditCard, color: 'text-[#F5C451]' },
+  { id: 'Getting Started', label: 'Getting Started', icon: User, color: 'text-[var(--sr-customer)]' },
+  { id: 'Orders & Delivery', label: 'Orders', icon: Truck, color: 'text-[var(--sr-rider)]' },
+  { id: 'Payments', label: 'Payments', icon: CreditCard, color: 'text-[var(--sr-vendor)]' },
   { id: 'Account', label: 'Account', icon: User, color: 'text-[#A78BFA]' },
   { id: 'Ramadan Features', label: 'Ramadan', icon: Moon, color: 'text-[#FB7185]' },
 ];
@@ -205,7 +205,7 @@ export default function HelpCenterModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={handleClose}
           />
 
@@ -215,7 +215,7 @@ export default function HelpCenterModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[90vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -225,8 +225,8 @@ export default function HelpCenterModal() {
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/5 shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 border border-[#10E07A]/30 flex items-center justify-center icon-tile">
-                    <HelpCircle className="w-5 h-5 text-[#10E07A] relative z-10" />
+                  <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 flex items-center justify-center icon-tile">
+                    <HelpCircle className="w-5 h-5 text-[var(--sr-customer)] relative z-10" />
                   </div>
                   <div>
                     <h2 className="text-white font-bold text-base tracking-tight">Help Center</h2>
@@ -244,7 +244,7 @@ export default function HelpCenterModal() {
 
               {/* Search */}
               <div className="px-5 pt-4 pb-3 shrink-0">
-                <div className="flex items-center gap-2 bg-[#0F1118] border border-white/10 rounded-xl px-3 focus-within:border-[#10E07A]/40 transition-colors">
+                <div className="flex items-center gap-2 bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 focus-within:border-[var(--sr-customer)]/40 transition-colors">
                   <Search className="w-4 h-4 text-white/65 shrink-0" />
                   <input
                     value={search}
@@ -275,11 +275,11 @@ export default function HelpCenterModal() {
                       onClick={() => setActiveCategory(cat.id)}
                       className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${
                         isActive
-                          ? 'bg-[#10E07A]/10 border-[#10E07A]/40 text-[#10E07A]'
+                          ? 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/40 text-[var(--sr-customer)]'
                           : 'bg-white/[0.02] border-white/5 text-white/50 hover:text-white/80'
                       }`}
                     >
-                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#10E07A]' : cat.color}`} />
+                      <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[var(--sr-customer)]' : cat.color}`} />
                       {cat.label}
                     </button>
                   );
@@ -325,7 +325,7 @@ export default function HelpCenterModal() {
                             transition={{ duration: 0.2 }}
                             className="shrink-0"
                           >
-                            <ChevronDown className={`w-4 h-4 ${isOpenFaq ? 'text-[#10E07A]' : 'text-white/65'}`} />
+                            <ChevronDown className={`w-4 h-4 ${isOpenFaq ? 'text-[var(--sr-customer)]' : 'text-white/65'}`} />
                           </motion.span>
                         </button>
                         <AnimatePresence initial={false}>
@@ -350,10 +350,10 @@ export default function HelpCenterModal() {
               </div>
 
               {/* Footer actions */}
-              <div className="px-5 py-4 border-t border-white/5 shrink-0 grid grid-cols-2 gap-2">
+              <div className="px-5 py-4 border-t border-white/5 shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   onClick={handleContactSupport}
-                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[#10E07A] text-[#06070B] font-bold text-xs hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-customer)] text-[#06070B] font-bold text-xs hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   Contact Support

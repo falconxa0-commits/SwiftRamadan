@@ -99,7 +99,7 @@ export default function CartTab() {
             className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft"
             style={{ boxShadow: '0 0 28px rgba(16,224,122,0.18)' }}
           >
-            <ShoppingBag className="w-10 h-10 text-[#10E07A] relative z-10" />
+            <ShoppingBag className="w-10 h-10 text-[var(--sr-customer)] relative z-10" />
           </motion.div>
           <motion.h3
             initial={{ opacity: 0, y: 8 }}
@@ -122,7 +122,7 @@ export default function CartTab() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
             onClick={() => useAppStore.getState().setActiveTab('explore')}
-            className="bg-[#10E07A] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
+            className="bg-[var(--sr-customer)] text-[#06070B] font-bold py-3 px-8 rounded-xl text-sm active:scale-[0.98] transition-transform green-glow flex items-center gap-2"
           >
             Browse Menu
             <ChevronRight className="w-4 h-4" />
@@ -163,7 +163,7 @@ export default function CartTab() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20, height: 0 }}
-              className="flex gap-4 p-4 glass-card rounded-2xl"
+              className="flex gap-3 sm:gap-4 p-3 sm:p-4 glass-card rounded-2xl"
             >
               <div
                 className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10 cursor-pointer"
@@ -176,7 +176,7 @@ export default function CartTab() {
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between items-start">
                   <h4
-                    className="text-white font-bold text-sm truncate pr-2 cursor-pointer hover:text-[#10E07A] transition-colors tracking-tight"
+                    className="text-white font-bold text-sm truncate pr-2 cursor-pointer hover:text-[var(--sr-customer)] transition-colors tracking-tight"
                     onClick={() => {
                       useAppStore.getState().setSelectedProduct(item.id);
                       useAppStore.getState().setActiveModal('product');
@@ -195,7 +195,7 @@ export default function CartTab() {
                     <Trash2 className="w-4 h-4 text-[#FB7185]/60 hover:text-[#FB7185]" />
                   </button>
                 </div>
-                <p className="text-[#10E07A] font-bold text-sm mt-1">{formatNaira(item.price)}</p>
+                <p className="text-[var(--sr-customer)] font-bold text-sm mt-1">{formatNaira(item.price)}</p>
                 <div className="flex items-center gap-3 mt-2">
                   <button
                     onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -224,7 +224,7 @@ export default function CartTab() {
       <div className="px-5 mt-4">
         <button
           onClick={() => useAppStore.getState().setActiveTab('home')}
-          className="w-full flex items-center justify-center gap-2 text-white/50 hover:text-[#10E07A] text-xs font-bold py-2 transition-colors"
+          className="w-full flex items-center justify-center gap-2 text-white/50 hover:text-[var(--sr-customer)] text-xs font-bold py-2 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           Continue shopping
@@ -234,13 +234,13 @@ export default function CartTab() {
       {/* Coupon Code */}
       <div className="px-5 mt-6">
         {couponApplied ? (
-          <div className="flex items-center gap-3 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-xl px-4 py-3">
-            <div className="w-8 h-8 rounded-lg bg-[#10E07A]/15 flex items-center justify-center icon-tile shrink-0">
-              <Tag className="w-4 h-4 text-[#10E07A] relative z-10" />
+          <div className="flex items-center gap-3 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 rounded-xl px-4 py-3">
+            <div className="w-8 h-8 rounded-lg bg-[var(--sr-customer)]/15 flex items-center justify-center icon-tile shrink-0">
+              <Tag className="w-4 h-4 text-[var(--sr-customer)] relative z-10" />
             </div>
             <div className="flex-1">
-              <p className="text-[#10E07A] text-sm font-bold uppercase font-mono">{appliedCouponCode}</p>
-              <p className="text-[#10E07A]/60 text-[10px]">{appliedCouponData?.message || 'Discount applied'}</p>
+              <p className="text-[var(--sr-customer)] text-sm font-bold uppercase font-mono">{appliedCouponCode}</p>
+              <p className="text-[var(--sr-customer)]/60 text-[10px]">{appliedCouponData?.message || 'Discount applied'}</p>
             </div>
             <button
               onClick={handleRemoveCoupon}
@@ -265,10 +265,10 @@ export default function CartTab() {
             <button
               onClick={handleApplyCoupon}
               disabled={!coupon.trim() || couponLoading}
-              className="bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] px-4 rounded-xl font-bold text-sm hover:bg-[#10E07A]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[#10E07A]/10 flex items-center gap-1.5"
+              className="bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] px-4 rounded-xl font-bold text-sm hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[var(--sr-customer)]/10 flex items-center gap-1.5"
             >
               {couponLoading ? (
-                <span className="w-4 h-4 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
               ) : (
                 'Apply'
               )}
@@ -277,7 +277,7 @@ export default function CartTab() {
         )}
         {!couponApplied && (
           <p className="text-white/60 text-[10px] mt-2 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-[#F5C451]" />
+            <Sparkles className="w-3 h-3 text-[var(--sr-vendor)]" />
             Have a coupon? Enter it above for a discount
           </p>
         )}
@@ -293,7 +293,7 @@ export default function CartTab() {
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-white/50">Delivery Fee</span>
-            <span className={deliveryFee === 0 ? 'text-[#10E07A] font-bold' : 'text-white font-bold'}>
+            <span className={deliveryFee === 0 ? 'text-[var(--sr-customer)] font-bold' : 'text-white font-bold'}>
               {deliveryFee === 0 ? 'FREE' : formatNaira(deliveryFee)}
             </span>
           </div>
@@ -303,21 +303,21 @@ export default function CartTab() {
           </div>
           {effectiveCouponApplied && (
             <div className="flex justify-between text-sm">
-              <span className="text-[#10E07A]">
+              <span className="text-[var(--sr-customer)]">
                 Discount{appliedCouponData?.type === 'percent' ? ` (${appliedCouponData.value}%)` : ''}
               </span>
-              <span className="text-[#10E07A] font-bold">-{formatNaira(discount)}</span>
+              <span className="text-[var(--sr-customer)] font-bold">-{formatNaira(discount)}</span>
             </div>
           )}
           {deliveryFee > 0 && (
-            <p className="text-[#10E07A]/60 text-[10px]">
+            <p className="text-[var(--sr-customer)]/60 text-[10px]">
               Free delivery on orders above ₦5,000 (add {formatNaira(5000 - subtotal)} more)
             </p>
           )}
           <div className="h-px bg-white/5 my-2" />
           <div className="flex justify-between">
             <span className="text-white font-bold">Total</span>
-            <span className="text-[#10E07A] font-black text-lg">{formatNaira(total)}</span>
+            <span className="text-[var(--sr-customer)] font-black text-lg">{formatNaira(total)}</span>
           </div>
         </div>
       </div>
@@ -326,7 +326,7 @@ export default function CartTab() {
       <div className="px-5 mt-6 mb-6">
         <button
           onClick={handleCheckout}
-          className="w-full bg-[#10E07A] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="w-full bg-[var(--sr-customer)] py-4 rounded-2xl text-[#06070B] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#10E07A]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           PROCEED TO CHECKOUT &bull; {formatNaira(total)}
           <ChevronRight className="w-4 h-4" />

@@ -143,7 +143,7 @@ const PRIVACY_SECTIONS = [
 const ABOUT_CONTENT = (
   <>
     <section className="space-y-2">
-      <h3 className="text-[#10E07A] font-bold text-base">Our Mission</h3>
+      <h3 className="text-[var(--sr-customer)] font-bold text-base">Our Mission</h3>
       <p className="text-white/65 text-sm leading-relaxed">
         SwiftRamadan exists to make Ramadan in Lagos easier, more connected, and more blessed.
         We deliver fresh Iftar meals, groceries, and Sahur essentials — timed perfectly to prayer
@@ -153,7 +153,7 @@ const ABOUT_CONTENT = (
     </section>
 
     <section className="space-y-2">
-      <h3 className="text-[#F5C451] font-bold text-base">Ramadan 2026 Features</h3>
+      <h3 className="text-[var(--sr-vendor)] font-bold text-base">Ramadan 2026 Features</h3>
       <ul className="text-white/65 text-sm leading-relaxed space-y-1.5 list-disc list-inside">
         <li><strong className="text-white">Iftar Precision</strong> — meals arrive 5–10 min before Maghrib</li>
         <li><strong className="text-white">Sahur Wake-Up Alarm</strong> — never miss Sahur again</li>
@@ -189,7 +189,7 @@ const ABOUT_CONTENT = (
     </section>
 
     <section className="space-y-2">
-      <h3 className="text-[#38BDF8] font-bold text-base">Contact Us</h3>
+      <h3 className="text-[var(--sr-rider)] font-bold text-base">Contact Us</h3>
       <div className="text-white/65 text-sm leading-relaxed space-y-1">
         <p>SwiftRamadan Ltd.</p>
         <p>Lekki Phase 1, Lagos, Nigeria</p>
@@ -224,7 +224,7 @@ export default function LegalPagesModal() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
             onClick={handleClose}
           />
 
@@ -234,7 +234,7 @@ export default function LegalPagesModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 26, stiffness: 280 }}
-            className="fixed inset-0 z-[101] flex items-center justify-center p-4 pointer-events-none"
+            className="fixed inset-0 z-[101] flex items-center justify-center p-3 sm:p-4 pointer-events-none"
           >
             <div
               className="w-full max-w-md max-h-[90vh] glass-card rounded-3xl border border-white/10 overflow-hidden flex flex-col pointer-events-auto"
@@ -303,7 +303,7 @@ export default function LegalPagesModal() {
                         transition={{ delay: Math.min(i * 0.02, 0.2) }}
                         className="space-y-1.5"
                       >
-                        <h4 className="text-[#10E07A] font-bold text-sm">{section.title}</h4>
+                        <h4 className="text-[var(--sr-customer)] font-bold text-sm">{section.title}</h4>
                         <p className="text-white/65 text-xs leading-relaxed">{section.body}</p>
                       </motion.div>
                     ))}

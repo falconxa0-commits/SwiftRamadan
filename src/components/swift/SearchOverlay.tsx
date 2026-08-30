@@ -160,8 +160,8 @@ export default function SearchOverlay() {
           {/* Search Header */}
           <div className="p-4 border-b border-white/5">
             <div className="flex items-center gap-3">
-              <div className="flex-1 flex items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[#10E07A]/30 transition-all">
-                <Search className="w-5 h-5 text-[#10E07A]/70 ml-4 shrink-0" />
+              <div className="flex-1 flex items-center rounded-full h-12 bg-[#1A1D26] border border-white/5 focus-within:border-[var(--sr-customer)]/30 transition-all">
+                <Search className="w-5 h-5 text-[var(--sr-customer)]/70 ml-4 shrink-0" />
                 <input
                   ref={inputRef}
                   value={query}
@@ -180,10 +180,10 @@ export default function SearchOverlay() {
               </div>
               <button
                 onClick={() => { setShowSearch(false); setActiveModal('voice'); }}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-[#10E07A]/10 border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors active:scale-95"
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-95"
                 aria-label="Voice search"
               >
-                <Mic className="w-5 h-5 text-[#10E07A]" />
+                <Mic className="w-5 h-5 text-[var(--sr-customer)]" />
               </button>
               <button
                 onClick={() => setShowSearch(false)}
@@ -195,11 +195,11 @@ export default function SearchOverlay() {
           </div>
 
           {/* Search Content */}
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto p-3 sm:p-4 custom-scrollbar">
             {/* Loading */}
             {isSearching && (
               <div className="flex items-center gap-2 py-4">
-                <div className="w-4 h-4 border-2 border-[#10E07A]/30 border-t-[#10E07A] rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
                 <span className="text-white/65 text-sm">Searching...</span>
               </div>
             )}
@@ -233,7 +233,7 @@ export default function SearchOverlay() {
                             <p className="text-white/65 text-xs">{product.category}</p>
                           </div>
                           {product.price && (
-                            <span className="text-[#10E07A] font-bold text-sm shrink-0">{formatNaira(product.price)}</span>
+                            <span className="text-[var(--sr-customer)] font-bold text-sm shrink-0">{formatNaira(product.price)}</span>
                           )}
                         </button>
                       ))}
@@ -319,7 +319,7 @@ export default function SearchOverlay() {
                       {recentSearches.map((s) => (
                         <div
                           key={s}
-                          className="group flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-full bg-[#0F1118] border border-white/8 hover:border-[#A78BFA]/30 transition-colors"
+                          className="group flex items-center gap-1 pl-3 pr-1 py-1.5 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 hover:border-[#A78BFA]/30 transition-colors"
                         >
                           <button
                             onClick={() => handleSearchClick(s)}
@@ -339,7 +339,7 @@ export default function SearchOverlay() {
                     </div>
                     <button
                       onClick={clearHistory}
-                      className="mt-3 text-[#10E07A] text-[11px] font-bold hover:text-[#10E07A]/80 transition-colors"
+                      className="mt-3 text-[var(--sr-customer)] text-[11px] font-bold hover:text-[var(--sr-customer)]/80 transition-colors"
                     >
                       Clear all history
                     </button>
@@ -349,7 +349,7 @@ export default function SearchOverlay() {
                 {/* Popular Searches */}
                 <div>
                   <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-[#F5C451]" />
+                    <TrendingUp className="w-4 h-4 text-[var(--sr-vendor)]" />
                     Popular Searches
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -357,7 +357,7 @@ export default function SearchOverlay() {
                       <button
                         key={s}
                         onClick={() => handleSearchClick(s)}
-                        className="px-3 py-1.5 rounded-full bg-[#0F1118] border border-white/5 text-white/60 text-xs font-medium hover:border-[#10E07A]/30 hover:text-white/80 transition-colors"
+                        className="px-3 py-1.5 rounded-full bg-[var(--sr-surface-raised)] border border-white/5 text-white/60 text-xs font-medium hover:border-[var(--sr-customer)]/30 hover:text-white/80 transition-colors"
                       >
                         {s}
                       </button>

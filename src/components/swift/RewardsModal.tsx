@@ -76,10 +76,10 @@ export default function RewardsModal() {
           >
             {/* Header */}
             <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
-              <div className="flex items-center justify-between p-4">
+              <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#F5C451]/20 flex items-center justify-center border border-[#F5C451]/30">
-                    <Trophy className="w-5 h-5 text-[#F5C451]" />
+                  <div className="w-10 h-10 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center border border-[var(--sr-vendor)]/30">
+                    <Trophy className="w-5 h-5 text-[var(--sr-vendor)]" />
                   </div>
                   <h2 className="text-white text-lg font-bold">SwiftRewards</h2>
                 </div>
@@ -100,8 +100,8 @@ export default function RewardsModal() {
                 transition={{ delay: 0.1 }}
                 className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 mt-4"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#F5C451]/10 blur-[60px]" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[#10E07A]/10 blur-[40px]" />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-vendor)]/10 blur-[60px]" />
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-customer)]/10 blur-[40px]" />
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
                     <div>
@@ -115,7 +115,7 @@ export default function RewardsModal() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-[#F5C451] text-2xl font-black">{hasanatPoints.toLocaleString()}</span>
+                    <span className="text-[var(--sr-vendor)] text-2xl font-black">{hasanatPoints.toLocaleString()}</span>
                     <span className="text-white/65 text-xs">Hasanat Points</span>
                   </div>
                   {nextTier && (
@@ -139,7 +139,7 @@ export default function RewardsModal() {
                     <div className="mt-4 pt-4 border-t border-white/5 space-y-2">
                       {currentTierData.benefits.slice(0, 3).map((b) => (
                         <div key={b} className="flex items-center gap-2">
-                          <Zap className="w-3 h-3 text-[#10E07A] shrink-0" />
+                          <Zap className="w-3 h-3 text-[var(--sr-customer)] shrink-0" />
                           <span className="text-white/60 text-xs">{b}</span>
                         </div>
                       ))}
@@ -155,8 +155,8 @@ export default function RewardsModal() {
                 transition={{ delay: 0.2 }}
                 className="mt-4"
               >
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[#10E07A]/20 p-5">
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#10E07A]/10 blur-[40px]" />
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[var(--sr-customer)]/20 p-5">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--sr-customer)]/10 blur-[40px]" />
                   <div className="relative z-10 flex items-center justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
@@ -171,7 +171,7 @@ export default function RewardsModal() {
                       className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98] ${
                         dailyClaimed
                           ? 'bg-white/5 text-white/60 border border-white/5 cursor-not-allowed'
-                          : 'bg-[#10E07A] text-[#05070A] hover:bg-[#10E07A]/90'
+                          : 'bg-[var(--sr-customer)] text-[#05070A] hover:bg-[var(--sr-customer)]/90'
                       }`}
                     >
                       {dailyClaimed ? 'Claimed ✓' : 'Claim 50 pts'}
@@ -183,7 +183,7 @@ export default function RewardsModal() {
                       <div
                         key={`streak-${i}`}
                         className={`flex-1 h-1.5 rounded-full transition-all ${
-                          i < dailyStreak ? 'bg-[#10E07A]' : 'bg-white/10'
+                          i < dailyStreak ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                         }`}
                       />
                     ))}
@@ -200,20 +200,20 @@ export default function RewardsModal() {
               >
                 <button
                   onClick={() => setShowSpinWheel(true)}
-                  className="w-full relative overflow-hidden rounded-2xl border text-left transition-all active:scale-[0.98] hover:border-[#F5C451]/50"
+                  className="w-full relative overflow-hidden rounded-2xl border text-left transition-all active:scale-[0.98] hover:border-[var(--sr-vendor)]/50"
                   style={{
                     background: 'linear-gradient(135deg, #1A1D26, #0F1117)',
                     borderColor: 'rgba(245,196,81,0.2)',
                   }}
                 >
                   {/* Glow effects */}
-                  <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[#F5C451]/10 blur-[40px]" />
-                  <div className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-[#10E07A]/10 blur-[30px]" />
+                  <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-[var(--sr-vendor)]/10 blur-[40px]" />
+                  <div className="absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-[var(--sr-customer)]/10 blur-[30px]" />
 
                   <div className="relative z-10 p-5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-[#F5C451]/30"
+                        <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/30"
                           style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
                           <span className="text-2xl">🎰</span>
                         </div>
@@ -224,7 +224,7 @@ export default function RewardsModal() {
                               const today = new Date().toISOString().split('T')[0];
                               const canSpinNow = lastSpinDate !== today;
                               return canSpinNow ? (
-                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#10E07A]/20 text-[#10E07A] border border-[#10E07A]/30">
+                                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--sr-customer)]/20 text-[var(--sr-customer)] border border-[var(--sr-customer)]/30">
                                   FREE SPIN
                                 </span>
                               ) : (
@@ -241,7 +241,7 @@ export default function RewardsModal() {
                           </p>
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-[#F5C451]/60 shrink-0" />
+                      <ChevronRight className="w-5 h-5 text-[var(--sr-vendor)]/60 shrink-0" />
                     </div>
                     {spinStreak > 0 && (
                       <div className="flex items-center gap-1.5 mt-3 pt-3 border-t border-white/5">
@@ -264,7 +264,7 @@ export default function RewardsModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[#10E07A]" />
+                  <Zap className="w-4 h-4 text-[var(--sr-customer)]" />
                   How to Earn Points
                 </h4>
                 <div className="space-y-2">
@@ -276,13 +276,13 @@ export default function RewardsModal() {
                       transition={{ delay: 0.35 + i * 0.05 }}
                       className="flex items-center gap-3 bg-[#1A1D26] rounded-xl border border-white/5 p-3"
                     >
-                      <div className="w-9 h-9 rounded-lg bg-[#10E07A]/10 flex items-center justify-center border border-[#10E07A]/20 shrink-0">
-                        <span className="material-symbols-outlined text-[#10E07A] text-lg">{activity.icon}</span>
+                      <div className="w-9 h-9 rounded-lg bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
+                        <span className="material-symbols-outlined text-[var(--sr-customer)] text-lg">{activity.icon}</span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white text-sm font-bold truncate">{activity.activity}</p>
                       </div>
-                      <span className="text-[#F5C451] text-xs font-bold shrink-0">+{activity.points}</span>
+                      <span className="text-[var(--sr-vendor)] text-xs font-bold shrink-0">+{activity.points}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -296,7 +296,7 @@ export default function RewardsModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Star className="w-4 h-4 text-[#F5C451]" />
+                  <Star className="w-4 h-4 text-[var(--sr-vendor)]" />
                   Tier Benefits
                 </h4>
                 <div className="space-y-3">
@@ -307,7 +307,7 @@ export default function RewardsModal() {
                         key={tier.id}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className={`rounded-2xl p-4 border transition-all ${
+                        className={`rounded-2xl p-3 sm:p-4 border transition-all ${
                           isCurrentTier
                             ? 'bg-[#1A1D26] border-2'
                             : 'bg-[#1A1D26]/40 border border-white/5'
@@ -359,10 +359,10 @@ export default function RewardsModal() {
                 className="mt-6 mb-4"
               >
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Gift className="w-4 h-4 text-[#F5C451]" />
+                  <Gift className="w-4 h-4 text-[var(--sr-vendor)]" />
                   Redeem Rewards
                 </h4>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {loyaltyRewards.map((reward, i) => {
                     const canAfford = hasanatPoints >= reward.points;
                     const isRedeeming = redeemingId === reward.id;
@@ -373,20 +373,20 @@ export default function RewardsModal() {
                         animate={{ opacity: 1, scale: isRedeeming ? 0.95 : 1 }}
                         transition={{ delay: 0.55 + i * 0.05 }}
                         onClick={() => handleRedeem(reward)}
-                        className={`bg-[#1A1D26] rounded-2xl p-4 border text-left transition-all ${
+                        className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border text-left transition-all ${
                           canAfford
-                            ? 'border-[#10E07A]/20 hover:border-[#10E07A]/40 active:scale-[0.98]'
+                            ? 'border-[var(--sr-customer)]/20 hover:border-[var(--sr-customer)]/40 active:scale-[0.98]'
                             : 'border-white/5 opacity-60'
                         }`}
                       >
-                        <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20 mb-3">
-                          <span className="material-symbols-outlined text-[#F5C451] text-xl">{reward.icon}</span>
+                        <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 mb-3">
+                          <span className="material-symbols-outlined text-[var(--sr-vendor)] text-xl">{reward.icon}</span>
                         </div>
                         <p className="text-white font-bold text-xs mb-1 leading-tight">{reward.name}</p>
                         <p className="text-white/60 text-[10px] mb-2 line-clamp-2">{reward.description}</p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-[#F5C451]" fill="#F5C451" />
-                          <span className="text-[#F5C451] text-xs font-black">{reward.points.toLocaleString()}</span>
+                          <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <span className="text-[var(--sr-vendor)] text-xs font-black">{reward.points.toLocaleString()}</span>
                         </div>
                         {!canAfford && (
                           <p className="text-white/20 text-[9px] mt-1">Need {(reward.points - hasanatPoints).toLocaleString()} more</p>

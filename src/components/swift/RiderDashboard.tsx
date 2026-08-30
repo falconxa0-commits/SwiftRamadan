@@ -334,11 +334,11 @@ export default function RiderDashboard() {
       {/* Profile Header */}
       <motion.div variants={staggerItem} className="flex items-center gap-3 sm:gap-4 mb-6">
         <div className="relative">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[#38BDF8]/20">
-            <Bike className="w-7 h-7 text-[#38BDF8]" />
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#38BDF8]/30 to-[#38BDF8]/5 flex items-center justify-center border border-[var(--sr-rider)]/20">
+            <Bike className="w-7 h-7 text-[var(--sr-rider)]" />
           </div>
           {riderOnline && (
-            <span className="absolute -bottom-1 -right-1 size-4 bg-[#38BDF8] rounded-full border-2 border-[#0B0D14] animate-pulse" />
+            <span className="absolute -bottom-1 -right-1 size-4 bg-[var(--sr-rider)] rounded-full border-2 border-[#0B0D14] animate-pulse" />
           )}
         </div>
         <div className="flex-1">
@@ -346,11 +346,11 @@ export default function RiderDashboard() {
             <h2 className="text-white text-lg font-extrabold">
               {data?.riderName ?? 'Rider'}
             </h2>
-            <span className="material-symbols-outlined text-[#38BDF8] text-lg">verified</span>
+            <span className="material-symbols-outlined text-[var(--sr-rider)] text-lg">verified</span>
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="material-symbols-outlined text-[#F5C451] text-sm">workspace_premium</span>
-            <span className="text-[#F5C451] text-xs font-bold">Elite Rider</span>
+            <span className="material-symbols-outlined text-[var(--sr-vendor)] text-sm">workspace_premium</span>
+            <span className="text-[var(--sr-vendor)] text-xs font-bold">Elite Rider</span>
             <span className="text-white/20 text-xs">•</span>
             <span className="text-white/65 text-xs">{data?.area ?? 'Lagos'}</span>
           </div>
@@ -361,8 +361,8 @@ export default function RiderDashboard() {
       {/* Onboarding Welcome — shown when rider has 0 earnings and 0 deliveries */}
       {(data?.completedToday ?? 0) === 0 && (data?.earningsToday ?? 0) === 0 && (data?.totalEarnings ?? 0) === 0 && (
         <motion.div variants={staggerItem} className="mb-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#38BDF8]/15 to-[#38BDF8]/5 border border-[#38BDF8]/20 p-5">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[#38BDF8]/5 blur-[60px]" />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#38BDF8]/15 to-[#38BDF8]/5 border border-[var(--sr-rider)]/20 p-5">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-rider)]/5 blur-[60px]" />
             <div className="relative z-10">
               <h3 className="text-white text-lg font-extrabold mb-1">Welcome, Rider! 🏍️</h3>
               <p className="text-white/50 text-xs mb-4">Go online to start receiving delivery requests</p>
@@ -373,8 +373,8 @@ export default function RiderDashboard() {
                   { step: 3, label: 'Earn money', desc: 'Get paid for every delivery' },
                 ].map((tip) => (
                   <div key={tip.step} className="flex items-center gap-3">
-                    <div className="w-7 h-7 rounded-lg bg-[#38BDF8]/20 flex items-center justify-center shrink-0">
-                      <span className="text-[#38BDF8] text-xs font-black">{tip.step}</span>
+                    <div className="w-7 h-7 rounded-lg bg-[var(--sr-rider)]/20 flex items-center justify-center shrink-0">
+                      <span className="text-[var(--sr-rider)] text-xs font-black">{tip.step}</span>
                     </div>
                     <div>
                       <p className="text-white text-xs font-bold">{tip.label}</p>
@@ -391,8 +391,8 @@ export default function RiderDashboard() {
       {/* Stats Grid */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
         <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-          <div className="w-10 h-10 bg-[#38BDF8]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <Check className="w-5 h-5 text-[#38BDF8]" />
+          <div className="w-10 h-10 bg-[var(--sr-rider)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <Check className="w-5 h-5 text-[var(--sr-rider)]" />
           </div>
           <p className="text-white text-xl font-extrabold">
             {data?.completedToday ?? 0}
@@ -400,8 +400,8 @@ export default function RiderDashboard() {
           <p className="text-white/65 text-[10px] mt-0.5">Completed Today</p>
         </div>
         <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-          <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <Star className="w-5 h-5 text-[#F5C451]" />
+          <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <Star className="w-5 h-5 text-[var(--sr-vendor)]" />
           </div>
           <p className="text-white text-xl font-extrabold">
             {data?.rating?.toFixed(1) ?? '4.8'}
@@ -409,8 +409,8 @@ export default function RiderDashboard() {
           <p className="text-white/65 text-[10px] mt-0.5">Rating</p>
         </div>
         <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-          <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
-            <span className="material-symbols-outlined text-[#10E07A] text-base">payments</span>
+          <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
+            <span className="material-symbols-outlined text-[var(--sr-customer)] text-base">payments</span>
           </div>
           <p className="text-white text-base font-extrabold leading-tight">
             {formatNaira(data?.earningsToday ?? 0)}
@@ -421,16 +421,16 @@ export default function RiderDashboard() {
 
       {/* Iftar Rush Legend Badge */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[#F5C451]/20 p-3 sm:p-4">
-          <div className="absolute top-0 right-0 w-40 h-40 bg-[#F5C451]/5 blur-[80px]" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#F5C451]/10 to-[#F5C451]/5 border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[80px]" />
           <div className="relative z-10 flex items-center gap-3">
-            <div className="w-12 h-12 bg-[#F5C451]/20 rounded-2xl flex items-center justify-center shrink-0">
-              <Moon className="w-5 h-5 text-[#F5C451]" />
+            <div className="w-12 h-12 bg-[var(--sr-vendor)]/20 rounded-2xl flex items-center justify-center shrink-0">
+              <Moon className="w-5 h-5 text-[var(--sr-vendor)]" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <h3 className="text-[#F5C451] font-extrabold text-sm">Iftar Rush Active</h3>
-                <span className="px-2 py-0.5 bg-[#F5C451]/20 rounded-full text-[#F5C451] text-[8px] font-black uppercase tracking-wider">
+                <h3 className="text-[var(--sr-vendor)] font-extrabold text-sm">Iftar Rush Active</h3>
+                <span className="px-2 py-0.5 bg-[var(--sr-vendor)]/20 rounded-full text-[var(--sr-vendor)] text-[8px] font-black uppercase tracking-wider">
                   Ramadan Exclusive
                 </span>
               </div>
@@ -446,16 +446,16 @@ export default function RiderDashboard() {
       {activeDelivery && (
         <motion.div variants={staggerItem} className="mb-6">
           <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-            <Navigation className="w-4 h-4 text-[#38BDF8]" />
+            <Navigation className="w-4 h-4 text-[var(--sr-rider)]" />
             Active Delivery
           </h3>
-          <div className="relative overflow-hidden rounded-2xl bg-[#0F1118] border border-[#38BDF8]/20 p-3 sm:p-4">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/5 blur-[50px]" />
+          <div className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-[var(--sr-rider)]/20 p-3 sm:p-4">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-rider)]/5 blur-[50px]" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex size-2 bg-[#38BDF8] rounded-full animate-pulse" />
-                  <span className="text-[#38BDF8] text-xs font-bold uppercase tracking-widest">
+                  <span className="flex size-2 bg-[var(--sr-rider)] rounded-full animate-pulse" />
+                  <span className="text-[var(--sr-rider)] text-xs font-bold uppercase tracking-widest">
                     In Progress
                   </span>
                 </div>
@@ -467,7 +467,7 @@ export default function RiderDashboard() {
               {/* Progress Bar */}
               <div className="w-full bg-white/5 rounded-full h-2 mb-3">
                 <motion.div
-                  className="bg-[#38BDF8] h-2 rounded-full"
+                  className="bg-[var(--sr-rider)] h-2 rounded-full"
                   initial={{ width: 0 }}
                   animate={{ width: `${activeDelivery.progress}%` }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -487,7 +487,7 @@ export default function RiderDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="text-[#10E07A] text-sm font-bold">
+                  <p className="text-[var(--sr-customer)] text-sm font-bold">
                     +{formatNaira(Math.round(activeDelivery.total * 0.15))}
                   </p>
                   <p className="text-white/65 text-xs">your earnings</p>
@@ -502,7 +502,7 @@ export default function RiderDashboard() {
                       description: 'Connecting to customer...',
                     })
                   }
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#38BDF8]/10 border border-[#38BDF8]/20 text-[#38BDF8] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/20 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 text-[var(--sr-rider)] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-rider)]/20 transition-colors"
                 >
                   <Phone className="w-3.5 h-3.5" />
                   Call
@@ -510,7 +510,7 @@ export default function RiderDashboard() {
                 <button
                   onClick={() => handleComplete(activeDelivery.id)}
                   disabled={actionLoadingId === activeDelivery.id}
-                  className="flex-1 flex items-center justify-center gap-2 bg-[#10E07A] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#10E07A]/90 transition-colors disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/90 transition-colors disabled:opacity-60"
                 >
                   {actionLoadingId === activeDelivery.id ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -530,11 +530,11 @@ export default function RiderDashboard() {
         <motion.div variants={staggerItem} className="mb-6">
           <button
             onClick={() => setActiveModal('new-delivery')}
-            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[#38BDF8]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[#38BDF8]/50 transition-all active:scale-[0.98]"
+            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#38BDF8]/20 to-[#38BDF8]/5 border border-[var(--sr-rider)]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[var(--sr-rider)]/50 transition-all active:scale-[0.98]"
           >
-            <div className="absolute top-0 right-0 w-24 h-24 bg-[#38BDF8]/10 blur-[50px]" />
-            <div className="w-12 h-12 bg-[#38BDF8]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
-              <Package className="w-6 h-6 text-[#38BDF8]" />
+            <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-rider)]/10 blur-[50px]" />
+            <div className="w-12 h-12 bg-[var(--sr-rider)]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
+              <Package className="w-6 h-6 text-[var(--sr-rider)]" />
             </div>
             <div className="flex-1 text-left relative z-10">
               <h3 className="text-white font-extrabold text-sm">New Delivery Request</h3>
@@ -542,7 +542,7 @@ export default function RiderDashboard() {
                 {availableDeliveries.length} deliveries waiting for you
               </p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#38BDF8] shrink-0 relative z-10" />
+            <ChevronRight className="w-5 h-5 text-[var(--sr-rider)] shrink-0 relative z-10" />
           </button>
         </motion.div>
       )}
@@ -550,9 +550,9 @@ export default function RiderDashboard() {
       {/* Available Deliveries */}
       <motion.div variants={staggerItem} className="mb-6">
         <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-[#F5C451]" />
+          <Clock className="w-4 h-4 text-[var(--sr-vendor)]" />
           Available Deliveries
-          <span className="ml-auto px-2 py-0.5 bg-[#F5C451]/10 rounded-full text-[#F5C451] text-[10px] font-bold">
+          <span className="ml-auto px-2 py-0.5 bg-[var(--sr-vendor)]/10 rounded-full text-[var(--sr-vendor)] text-[10px] font-bold">
             {availableDeliveries.length} new
           </span>
         </h3>
@@ -592,7 +592,7 @@ export default function RiderDashboard() {
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-white font-bold text-sm">{formatNaira(req.total)}</p>
-                    <p className="text-[#10E07A] text-[10px] font-bold">
+                    <p className="text-[var(--sr-customer)] text-[10px] font-bold">
                       +{formatNaira(Math.round(req.total * 0.15))} earn
                     </p>
                   </div>
@@ -609,7 +609,7 @@ export default function RiderDashboard() {
                   <button
                     onClick={() => handleAccept(req.id)}
                     disabled={actionLoadingId === req.id}
-                    className="flex-1 bg-[#38BDF8] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[#38BDF8]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+                    className="flex-1 bg-[var(--sr-rider)] text-[#06070B] py-2.5 rounded-xl font-bold text-xs hover:bg-[var(--sr-rider)]/90 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
                   >
                     {actionLoadingId === req.id ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -634,7 +634,7 @@ export default function RiderDashboard() {
       {/* Weekly Earnings Chart */}
       <motion.div variants={staggerItem} className="mb-6">
         <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#10E07A] text-base">bar_chart</span>
+          <span className="material-symbols-outlined text-[var(--sr-customer)] text-base">bar_chart</span>
           Weekly Earnings
           <span className="ml-auto text-white/65 text-[10px] font-bold">
             Total: {formatNaira(weeklyEarnings.reduce((s, w) => s + w.amount, 0))}
@@ -665,7 +665,7 @@ export default function RiderDashboard() {
                   />
                   <span
                     className={`text-[10px] font-bold ${
-                      isToday ? 'text-[#38BDF8]' : 'text-white/65'
+                      isToday ? 'text-[var(--sr-rider)]' : 'text-white/65'
                     }`}
                   >
                     {w.day}
@@ -681,7 +681,7 @@ export default function RiderDashboard() {
       {(data?.recentDeliveries?.length ?? 0) > 0 && (
         <motion.div variants={staggerItem} className="mb-6">
           <h3 className="text-white text-sm font-extrabold mb-3 flex items-center gap-2">
-            <CheckCircle className="w-4 h-4 text-[#10E07A]" />
+            <CheckCircle className="w-4 h-4 text-[var(--sr-customer)]" />
             Recent Deliveries
           </h3>
           <div className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
@@ -690,8 +690,8 @@ export default function RiderDashboard() {
                 key={o.id}
                 className="glass-card rounded-2xl p-3 flex items-center gap-3"
               >
-                <div className="w-9 h-9 rounded-xl bg-[#10E07A]/10 flex items-center justify-center shrink-0">
-                  <Check className="w-4 h-4 text-[#10E07A]" />
+                <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
+                  <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-white text-xs font-bold truncate">
@@ -700,7 +700,7 @@ export default function RiderDashboard() {
                   <p className="text-white/60 text-[10px]">{timeAgo(o.createdAt)}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-[#10E07A] text-xs font-bold">
+                  <p className="text-[var(--sr-customer)] text-xs font-bold">
                     +{formatNaira(Math.round(o.total * 0.15))}
                   </p>
                   <p className="text-white/60 text-[10px]">{formatNaira(o.total)}</p>
@@ -715,7 +715,7 @@ export default function RiderDashboard() {
       <motion.div variants={staggerItem}>
         <button
           onClick={() => setActiveTab('rider-deliveries')}
-          className="w-full text-center text-[#38BDF8] text-xs font-bold py-3 hover:underline"
+          className="w-full text-center text-[var(--sr-rider)] text-xs font-bold py-3 hover:underline"
         >
           View delivery map →
         </button>

@@ -161,14 +161,14 @@ export default function HomeTab() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
             onClick={() => setActiveModal('rewards')}
-            className="w-full relative overflow-hidden rounded-2xl p-3.5 flex items-center gap-3 border border-[#F5C451]/30 active:scale-[0.98] transition-transform"
+            className="w-full relative overflow-hidden rounded-2xl p-3.5 flex items-center gap-3 border border-[var(--sr-vendor)]/30 active:scale-[0.98] transition-transform"
             style={{
               background: 'linear-gradient(135deg, rgba(245,196,81,0.12), rgba(16,224,122,0.08))',
             }}
           >
             {/* Glow */}
-            <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[#F5C451]/15 blur-3xl pointer-events-none" />
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[#F5C451]/30 shrink-0"
+            <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[var(--sr-vendor)]/15 blur-3xl pointer-events-none" />
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/30 shrink-0"
               style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
               <span className="text-xl">🎰</span>
             </div>
@@ -220,7 +220,7 @@ export default function HomeTab() {
                   <ChefHat className="w-6 h-6 text-black relative z-10" />
                 </motion.div>
                 <div className="flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />
                   <Sparkles className="w-2.5 h-2.5 text-[var(--sr-customer)]" />
                 </div>
               </div>
@@ -452,7 +452,7 @@ export default function HomeTab() {
           onClick={() => handleMealClick(100)}
         >
           <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--sr-customer)]/8 blur-[80px] pointer-events-none" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[#F5C451]/8 blur-[80px] pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-[var(--sr-vendor)]/8 blur-[80px] pointer-events-none" />
           <div className="p-5 relative z-10">
             <div className="flex justify-between items-start mb-5">
               <div>
@@ -482,7 +482,7 @@ export default function HomeTab() {
             </div>
 
             <div className="flex items-center gap-2 mb-5 bg-black/30 p-3 rounded-xl border border-white/5">
-              <BadgeCheck className="w-5 h-5 text-[#F5C451] shrink-0" />
+              <BadgeCheck className="w-5 h-5 text-[var(--sr-vendor)] shrink-0" />
               <p className="text-white/80 text-xs font-semibold">{ramadanBox.contents} Included</p>
             </div>
 
@@ -515,8 +515,8 @@ export default function HomeTab() {
       <div className="px-5">
         <div className="flex justify-between items-end mb-3 px-1">
           <div className="flex items-center gap-2">
-            <div className="icon-tile w-7 h-7 bg-[#F5C451]/12">
-              <Flame className="w-4 h-4 text-[#F5C451] relative z-10" />
+            <div className="icon-tile w-7 h-7 bg-[var(--sr-vendor)]/12">
+              <Flame className="w-4 h-4 text-[var(--sr-vendor)] relative z-10" />
             </div>
             <h3 className="heading-accent text-white text-xl font-black tracking-tight">Flash Sales</h3>
           </div>
@@ -544,7 +544,7 @@ export default function HomeTab() {
                   <span className="text-white text-[10px] font-black">-{sale.discount}%</span>
                 </div>
                 <div className="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm px-2 py-0.5 rounded-md border border-white/10">
-                  <span className="text-[#F5C451] text-[9px] font-bold flex items-center gap-1">
+                  <span className="text-[var(--sr-vendor)] text-[9px] font-bold flex items-center gap-1">
                     <Clock className="w-2.5 h-2.5" />
                     {sale.endsIn}
                   </span>
@@ -627,7 +627,7 @@ export default function HomeTab() {
                       <Clock className="w-3 h-3" />
                       {meal.deliveryTime}
                     </span>
-                    <span className="soft-chip text-[#F5C451]">
+                    <span className="soft-chip text-[var(--sr-vendor)]">
                       <Star className="w-3 h-3 fill-[#F5C451]" />
                       {meal.rating}
                     </span>
@@ -735,7 +735,7 @@ export default function HomeTab() {
             { emoji: '👨‍🍳', label: 'Chef Battles', modal: 'chef-battles' },
             { emoji: '🔥', label: 'Streak Shrine', modal: 'streak-shrine' },
           ].map(f => (
-            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[var(--sr-vendor)]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -750,7 +750,7 @@ export default function HomeTab() {
             { emoji: '🎉', label: 'ETA Party', modal: 'rider-eta-party' },
             { emoji: '🕌', label: 'Mosque Hub', modal: 'mosque-partnership' },
           ].map(f => (
-            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[#38BDF8]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[var(--sr-rider)]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>
@@ -783,7 +783,7 @@ export default function HomeTab() {
             { emoji: '🏪', label: 'Storefront', modal: 'vendorStorefront' },
             { emoji: '💰', label: 'Tip Kiosk', modal: 'tippingKiosk' },
           ].map(f => (
-            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[#F5C451]/30 active:scale-[0.97] transition-all">
+            <button key={f.modal} onClick={() => handleNextGenFeature(f)} className="flex flex-col items-center gap-1.5 min-w-[80px] bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl p-3 hover:border-[var(--sr-vendor)]/30 active:scale-[0.97] transition-all">
               <span className="text-xl">{f.emoji}</span>
               <span className="text-[10px] font-bold text-white/70">{f.label}</span>
             </button>

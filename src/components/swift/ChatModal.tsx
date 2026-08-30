@@ -387,7 +387,7 @@ export default function ChatModal() {
             {/* ─── Top bar ─── */}
             <div className="glass-effect border-b border-white/5">
               <div className="h-[3px] bg-gradient-to-r from-[#10E07A] via-[#F5C451] to-[#A78BFA]" />
-              <div className="flex items-center gap-3 p-4">
+              <div className="flex items-center gap-3 p-3 sm:p-4">
                 <button
                   onClick={handleClose}
                   aria-label="Back"
@@ -404,7 +404,7 @@ export default function ChatModal() {
                     {recipientName.charAt(0).toUpperCase()}
                   </div>
                   {/* Online indicator */}
-                  <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-[#10E07A] border-2 border-[#0B0D14] shadow-[0_0_8px_#10E07A]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-[var(--sr-customer)] border-2 border-[#0B0D14] shadow-[0_0_8px_#10E07A]" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -423,7 +423,7 @@ export default function ChatModal() {
                   </div>
                   <p
                     className={`text-[11px] font-medium flex items-center gap-1 ${
-                      socketConnected ? 'text-[#10E07A]' : 'text-[#FB7185]'
+                      socketConnected ? 'text-[var(--sr-customer)]' : 'text-[#FB7185]'
                     }`}
                   >
                     {socketConnected ? (
@@ -449,13 +449,13 @@ export default function ChatModal() {
             >
               {loading ? (
                 <div className="flex flex-col items-center justify-center h-full gap-2">
-                  <Loader2 className="w-6 h-6 text-[#10E07A] animate-spin" />
+                  <Loader2 className="w-6 h-6 text-[var(--sr-customer)] animate-spin" />
                   <p className="text-white/65 text-xs">Loading conversation…</p>
                 </div>
               ) : messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-center px-8">
-                  <div className="size-16 rounded-2xl bg-[#10E07A]/10 border border-[#10E07A]/20 flex items-center justify-center mb-4">
-                    <MessageCircle className="w-7 h-7 text-[#10E07A]" />
+                  <div className="size-16 rounded-2xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 flex items-center justify-center mb-4">
+                    <MessageCircle className="w-7 h-7 text-[var(--sr-customer)]" />
                   </div>
                   <p className="text-white font-bold text-base">No messages yet</p>
                   <p className="text-white/65 text-sm mt-1">
@@ -489,7 +489,7 @@ export default function ChatModal() {
                         className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                           mine
                             ? 'bg-gradient-to-br from-[#10E07A] to-[#0FB463] text-[#04140C] font-medium rounded-br-md'
-                            : 'bg-[#0F1118] border border-white/5 text-white/90 rounded-bl-md'
+                            : 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
                         }`}
                       >
                         {m.content}
@@ -509,7 +509,7 @@ export default function ChatModal() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-start gap-1.5"
                 >
-                  <div className="bg-[#0F1118] border border-white/5 px-3.5 py-3 rounded-2xl rounded-bl-md flex items-center gap-1">
+                  <div className="bg-[var(--sr-surface-raised)] border border-white/5 px-3.5 py-3 rounded-2xl rounded-bl-md flex items-center gap-1">
                     {[0, 1, 2].map((i) => (
                       <motion.span
                         key={i}
@@ -530,7 +530,7 @@ export default function ChatModal() {
             {/* ─── Composer ─── */}
             <div className="glass-effect border-t border-white/5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               <div className="flex items-end gap-2">
-                <div className="flex-1 flex items-center rounded-2xl bg-[#0F1118] border border-white/8 focus-within:border-[#10E07A]/30 transition-all">
+                <div className="flex-1 flex items-center rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8 focus-within:border-[var(--sr-customer)]/30 transition-all">
                   <textarea
                     value={draft}
                     onChange={handleDraftChange}

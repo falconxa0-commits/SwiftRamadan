@@ -88,10 +88,10 @@ export default function VendorPricingModal() {
 
             {/* Peak Hours Toggle */}
             <div className="px-5 pt-4">
-              <div className="flex items-center justify-between p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
+              <div className="flex items-center justify-between p-3 sm:p-4 bg-[#1A1D26] rounded-2xl border border-white/5">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#F5C451]/10 rounded-xl flex items-center justify-center">
-                    <Clock className="w-5 h-5 text-[#F5C451]" />
+                  <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center">
+                    <Clock className="w-5 h-5 text-[var(--sr-vendor)]" />
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm">Peak Hours Mode</p>
@@ -101,7 +101,7 @@ export default function VendorPricingModal() {
                 <button
                   onClick={() => setPeakHoursEnabled(!peakHoursEnabled)}
                   className={`w-12 h-7 rounded-full transition-all duration-300 flex items-center px-0.5 ${
-                    peakHoursEnabled ? 'bg-[#F5C451]' : 'bg-white/10'
+                    peakHoursEnabled ? 'bg-[var(--sr-vendor)]' : 'bg-white/10'
                   }`}
                 >
                   <motion.div
@@ -122,10 +122,10 @@ export default function VendorPricingModal() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="mt-3 bg-[#F5C451]/5 border border-[#F5C451]/10 rounded-xl p-4">
+                    <div className="mt-3 bg-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/10 rounded-xl p-3 sm:p-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-white/50 text-xs font-bold uppercase">Peak Markup</span>
-                        <span className="text-[#F5C451] text-sm font-black">+{peakAdjustment}%</span>
+                        <span className="text-[var(--sr-vendor)] text-sm font-black">+{peakAdjustment}%</span>
                       </div>
                       <input
                         type="range"
@@ -158,7 +158,7 @@ export default function VendorPricingModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: i * 0.05 }}
-                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-4"
+                      className="bg-[#1A1D26] rounded-2xl border border-white/5 p-3 sm:p-4"
                     >
                       {/* Item Header */}
                       <div className="flex items-center justify-between mb-3">
@@ -171,11 +171,11 @@ export default function VendorPricingModal() {
                           </div>
                         </div>
                         <div className="text-right shrink-0 ml-3">
-                          <p className={`font-black text-sm ${item.adjustment > 0 ? 'text-[#F5C451]' : item.adjustment < 0 ? 'text-cyan-400' : 'text-white/60'}`}>
+                          <p className={`font-black text-sm ${item.adjustment > 0 ? 'text-[var(--sr-vendor)]' : item.adjustment < 0 ? 'text-cyan-400' : 'text-white/60'}`}>
                             {formatNaira(adjustedPrice)}
                           </p>
                           {peakPrice && (
-                            <p className="text-[#F5C451]/50 text-[10px]">
+                            <p className="text-[var(--sr-vendor)]/50 text-[10px]">
                               Peak: {formatNaira(peakPrice)}
                             </p>
                           )}
@@ -201,7 +201,7 @@ export default function VendorPricingModal() {
                       <div className="flex items-center justify-center mt-2">
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                           item.adjustment > 0
-                            ? 'bg-[#F5C451]/10 text-[#F5C451] border border-[#F5C451]/20'
+                            ? 'bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] border border-[var(--sr-vendor)]/20'
                             : item.adjustment < 0
                               ? 'bg-cyan-400/10 text-cyan-400 border border-cyan-400/20'
                               : 'bg-white/5 text-white/60 border border-white/10'
@@ -225,7 +225,7 @@ export default function VendorPricingModal() {
               {/* Apply Button */}
               <button
                 onClick={() => setActiveModal(null)}
-                className="w-full mt-4 bg-[#F5C451] py-3.5 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#F5C451]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+                className="w-full mt-4 bg-[var(--sr-vendor)] py-3.5 rounded-2xl text-[#05070A] font-black text-sm uppercase tracking-widest shadow-lg shadow-[#F5C451]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
               >
                 <DollarSign className="w-4 h-4" />
                 Apply Pricing

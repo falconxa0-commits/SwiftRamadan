@@ -27,7 +27,7 @@ export default function AIAgentButton() {
     >
       <Sparkles className="w-5 h-5 text-black group-hover:animate-pulse" />
       {/* Pulse ring */}
-      <span className="absolute inset-0 rounded-full bg-[#10E07A]/30 animate-ping" />
+      <span className="absolute inset-0 rounded-full bg-[var(--sr-customer)]/30 animate-ping" />
     </motion.button>
   );
 }

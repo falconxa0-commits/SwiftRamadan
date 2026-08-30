@@ -158,8 +158,8 @@ export default function AdhanSync() {
             {/* Header */}
             <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
-                <div className="icon-tile w-10 h-10 bg-[#10E07A]/15 border border-[#10E07A]/20">
-                  <Radio className="w-5 h-5 text-[#10E07A]" />
+                <div className="icon-tile w-10 h-10 bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/20">
+                  <Radio className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-lg font-bold text-white">Adhan Sync</h2>
@@ -177,10 +177,10 @@ export default function AdhanSync() {
 
             <div className="px-6 pb-8 space-y-6">
               {/* Sync Toggle */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8">
                 <div className="flex items-center gap-3">
                   {adhanSyncEnabled ? (
-                    <Volume2 className="w-5 h-5 text-[#10E07A]" />
+                    <Volume2 className="w-5 h-5 text-[var(--sr-customer)]" />
                   ) : (
                     <VolumeX className="w-5 h-5 text-white/65" />
                   )}
@@ -192,7 +192,7 @@ export default function AdhanSync() {
                 <button
                   onClick={() => setAdhanSyncEnabled(!adhanSyncEnabled)}
                   className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
-                    adhanSyncEnabled ? 'bg-[#10E07A]' : 'bg-white/10'
+                    adhanSyncEnabled ? 'bg-[var(--sr-customer)]' : 'bg-white/10'
                   }`}
                   role="switch"
                   aria-checked={adhanSyncEnabled}
@@ -207,9 +207,9 @@ export default function AdhanSync() {
               </div>
 
               {/* Notification Toggle */}
-              <div className="flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8">
+              <div className="flex items-center justify-between p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8">
                 <div className="flex items-center gap-3">
-                  <Volume2 className="w-5 h-5 text-[#F5C451]" />
+                  <Volume2 className="w-5 h-5 text-[var(--sr-vendor)]" />
                   <div>
                     <p className="text-sm font-semibold text-white">Adhan Notifications</p>
                     <p className="text-xs text-white/65">Get notified at prayer times</p>
@@ -218,7 +218,7 @@ export default function AdhanSync() {
                 <button
                   onClick={() => setNotifEnabled(!notifEnabled)}
                   className={`relative w-12 h-7 rounded-full transition-all duration-300 ${
-                    notifEnabled ? 'bg-[#F5C451]' : 'bg-white/10'
+                    notifEnabled ? 'bg-[var(--sr-vendor)]' : 'bg-white/10'
                   }`}
                   role="switch"
                   aria-checked={notifEnabled}
@@ -237,12 +237,12 @@ export default function AdhanSync() {
                 <p className="text-sm font-semibold text-white/70">Select Mosque</p>
                 <button
                   onClick={() => setShowMosquePicker(!showMosquePicker)}
-                  className="w-full flex items-center justify-between p-4 rounded-2xl bg-[#0F1118] border border-white/8 hover:border-[#10E07A]/30 transition-colors"
+                  className="w-full flex items-center justify-between p-4 rounded-2xl bg-[var(--sr-surface-raised)] border border-white/8 hover:border-[var(--sr-customer)]/30 transition-colors"
                   aria-expanded={showMosquePicker}
                   aria-label="Choose mosque"
                 >
                   <div className="flex items-center gap-3">
-                    <MapPin className="w-4 h-4 text-[#10E07A]" />
+                    <MapPin className="w-4 h-4 text-[var(--sr-customer)]" />
                     <div className="text-left">
                       <p className="text-sm font-medium text-white">{currentMosque.name}</p>
                       <p className="text-xs text-white/65">{currentMosque.distance} away</p>
@@ -268,8 +268,8 @@ export default function AdhanSync() {
                           }}
                           className={`w-full flex items-center justify-between p-3 rounded-xl transition-colors ${
                             selectedMosque === mosque.id
-                              ? 'bg-[#10E07A]/10 border border-[#10E07A]/30'
-                              : 'bg-[#0F1118] border border-white/5 hover:border-white/15'
+                              ? 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30'
+                              : 'bg-[var(--sr-surface-raised)] border border-white/5 hover:border-white/15'
                           }`}
                         >
                           <div className="text-left">
@@ -277,7 +277,7 @@ export default function AdhanSync() {
                             <p className="text-xs text-white/65">{mosque.address} · {mosque.distance}</p>
                           </div>
                           {selectedMosque === mosque.id && (
-                            <Check className="w-4 h-4 text-[#10E07A]" />
+                            <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                           )}
                         </button>
                       ))}
@@ -289,7 +289,7 @@ export default function AdhanSync() {
               {/* Today's Prayer Times */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-[#F5C451]" />
+                  <Clock className="w-4 h-4 text-[var(--sr-vendor)]" />
                   <p className="text-sm font-semibold text-white/70">Today&apos;s Prayer Times</p>
                 </div>
 
@@ -313,15 +313,15 @@ export default function AdhanSync() {
                           className={`flex items-center justify-between p-3 rounded-xl transition-colors ${
                             isNext
                               ? isMaghrib
-                                ? 'bg-[#F5C451]/10 border border-[#F5C451]/30'
-                                : 'bg-[#10E07A]/10 border border-[#10E07A]/30'
-                              : 'bg-[#0F1118] border border-white/5'
+                                ? 'bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/30'
+                                : 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30'
+                              : 'bg-[var(--sr-surface-raised)] border border-white/5'
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <div className={`w-2 h-2 rounded-full ${
                               isNext
-                                ? isMaghrib ? 'bg-[#F5C451]' : 'bg-[#10E07A]'
+                                ? isMaghrib ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-customer)]'
                                 : 'bg-white/20'
                             }`} />
                             <span className={`text-sm font-medium ${
@@ -332,8 +332,8 @@ export default function AdhanSync() {
                             {isNext && (
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                                 isMaghrib
-                                  ? 'bg-[#F5C451]/20 text-[#F5C451]'
-                                  : 'bg-[#10E07A]/20 text-[#10E07A]'
+                                  ? 'bg-[var(--sr-vendor)]/20 text-[var(--sr-vendor)]'
+                                  : 'bg-[var(--sr-customer)]/20 text-[var(--sr-customer)]'
                               }`}>
                                 NEXT
                               </span>
@@ -348,8 +348,8 @@ export default function AdhanSync() {
                             {isNext && prayer.minutesUntil > 0 && (
                               <span className={`text-xs px-2 py-0.5 rounded-full ${
                                 isMaghrib
-                                  ? 'bg-[#F5C451]/15 text-[#F5C451]'
-                                  : 'bg-[#10E07A]/15 text-[#10E07A]'
+                                  ? 'bg-[var(--sr-vendor)]/15 text-[var(--sr-vendor)]'
+                                  : 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)]'
                               }`}>
                                 {prayer.minutesUntil}m
                               </span>
@@ -367,7 +367,7 @@ export default function AdhanSync() {
                 <motion.div
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="p-4 rounded-2xl border border-[#F5C451]/30"
+                  className="p-4 rounded-2xl border border-[var(--sr-vendor)]/30"
                   style={{
                     background: 'linear-gradient(135deg, rgba(245,196,81,0.15) 0%, rgba(16,224,122,0.10) 100%)',
                   }}
@@ -376,10 +376,10 @@ export default function AdhanSync() {
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ repeat: Infinity, duration: 1.5 }}
-                      className="w-3 h-3 rounded-full bg-[#F5C451]"
+                      className="w-3 h-3 rounded-full bg-[var(--sr-vendor)]"
                     />
                     <div>
-                      <p className="text-sm font-bold text-[#F5C451]">It&apos;s almost Iftar time!</p>
+                      <p className="text-sm font-bold text-[var(--sr-vendor)]">It&apos;s almost Iftar time!</p>
                       <p className="text-xs text-white/50">Cart will auto-prioritize Iftar items</p>
                     </div>
                   </div>

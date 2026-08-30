@@ -107,8 +107,8 @@ export default function RiderPowerFinderModal() {
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-white/5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F5C451]/10 flex items-center justify-center border border-[#F5C451]/20">
-                  <Zap className="w-5 h-5 text-[#F5C451]" />
+                <div className="w-10 h-10 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20">
+                  <Zap className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Power Finder</h2>
@@ -127,13 +127,13 @@ export default function RiderPowerFinderModal() {
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto px-5 pb-8 custom-scrollbar">
               {/* Quick Stats */}
-              <div className="grid grid-cols-2 gap-3 mt-4">
-                <div className="bg-[#10E07A]/5 border border-[#10E07A]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#10E07A] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                <div className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/20 rounded-xl p-3 text-center">
+                  <p className="text-[var(--sr-customer)] text-xl font-black">{evStations.filter(s => (s.availability ?? 0) > 0).length}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">EV Available</p>
                 </div>
-                <div className="bg-[#F5C451]/5 border border-[#F5C451]/20 rounded-xl p-3 text-center">
-                  <p className="text-[#F5C451] text-xl font-black">{fuelStations.filter(s => s.isOpen).length}</p>
+                <div className="bg-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20 rounded-xl p-3 text-center">
+                  <p className="text-[var(--sr-vendor)] text-xl font-black">{fuelStations.filter(s => s.isOpen).length}</p>
                   <p className="text-white/65 text-[10px] font-bold uppercase">Fuel Open</p>
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function RiderPowerFinderModal() {
               {/* EV Charging Stations */}
               <div className="mt-5">
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Battery className="w-4 h-4 text-[#10E07A]" />
+                  <Battery className="w-4 h-4 text-[var(--sr-customer)]" />
                   EV Charging Stations
                 </h4>
                 <div className="space-y-2">
@@ -151,9 +151,9 @@ export default function RiderPowerFinderModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.05 + i * 0.06 }}
-                      className={`bg-[#1A1D26] rounded-2xl p-4 border transition-all ${
+                      className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border transition-all ${
                         station.availability !== null && station.availability > 0
-                          ? 'border-[#10E07A]/20'
+                          ? 'border-[var(--sr-customer)]/20'
                           : 'border-white/5 opacity-50'
                       }`}
                     >
@@ -161,10 +161,10 @@ export default function RiderPowerFinderModal() {
                         {/* Station Icon */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                           station.availability !== null && station.availability > 0
-                            ? 'bg-[#10E07A]/10 border border-[#10E07A]/20'
+                            ? 'bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20'
                             : 'bg-white/5 border border-white/10'
                         }`}>
-                          <Battery className={`w-5 h-5 ${station.availability !== null && station.availability > 0 ? 'text-[#10E07A]' : 'text-white/20'}`} />
+                          <Battery className={`w-5 h-5 ${station.availability !== null && station.availability > 0 ? 'text-[var(--sr-customer)]' : 'text-white/20'}`} />
                         </div>
 
                         {/* Station Info */}
@@ -191,7 +191,7 @@ export default function RiderPowerFinderModal() {
                                     key={slot}
                                     className={`w-3 h-3 rounded-sm ${
                                       slot < (station.availability ?? 0)
-                                        ? 'bg-[#10E07A]'
+                                        ? 'bg-[var(--sr-customer)]'
                                         : 'bg-white/10'
                                     }`}
                                   />
@@ -222,10 +222,10 @@ export default function RiderPowerFinderModal() {
                         {/* Navigate Button */}
                         {station.isOpen && (station.availability ?? 0) > 0 && (
                           <button
-                            className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center shrink-0 hover:bg-[#38BDF8]/20 transition-colors"
+                            className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 flex items-center justify-center shrink-0 hover:bg-[var(--sr-rider)]/20 transition-colors"
                             aria-label={`Navigate to ${station.name}`}
                           >
-                            <Navigation className="w-4 h-4 text-[#38BDF8]" />
+                            <Navigation className="w-4 h-4 text-[var(--sr-rider)]" />
                           </button>
                         )}
                       </div>
@@ -237,7 +237,7 @@ export default function RiderPowerFinderModal() {
               {/* Fuel Stations */}
               <div className="mt-5">
                 <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                  <Fuel className="w-4 h-4 text-[#F5C451]" />
+                  <Fuel className="w-4 h-4 text-[var(--sr-vendor)]" />
                   Fuel Stations
                 </h4>
                 <div className="space-y-2">
@@ -247,9 +247,9 @@ export default function RiderPowerFinderModal() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 + i * 0.06 }}
-                      className={`bg-[#1A1D26] rounded-2xl p-4 border transition-all ${
+                      className={`bg-[#1A1D26] rounded-2xl p-3 sm:p-4 border transition-all ${
                         station.isOpen
-                          ? 'border-[#F5C451]/20'
+                          ? 'border-[var(--sr-vendor)]/20'
                           : 'border-white/5 opacity-50'
                       }`}
                     >
@@ -257,10 +257,10 @@ export default function RiderPowerFinderModal() {
                         {/* Station Icon */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                           station.isOpen
-                            ? 'bg-[#F5C451]/10 border border-[#F5C451]/20'
+                            ? 'bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20'
                             : 'bg-white/5 border border-white/10'
                         }`}>
-                          <Fuel className={`w-5 h-5 ${station.isOpen ? 'text-[#F5C451]' : 'text-white/20'}`} />
+                          <Fuel className={`w-5 h-5 ${station.isOpen ? 'text-[var(--sr-vendor)]' : 'text-white/20'}`} />
                         </div>
 
                         {/* Station Info */}
@@ -282,7 +282,7 @@ export default function RiderPowerFinderModal() {
                           </div>
                           <div className="flex items-center gap-1 mt-2">
                             {station.connectorTypes.map(ct => (
-                              <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[#F5C451]/5 text-[#F5C451]/50 border border-[#F5C451]/10">
+                              <span key={ct} className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-[var(--sr-vendor)]/5 text-[var(--sr-vendor)]/50 border border-[var(--sr-vendor)]/10">
                                 {ct}
                               </span>
                             ))}
@@ -292,10 +292,10 @@ export default function RiderPowerFinderModal() {
                         {/* Navigate Button */}
                         {station.isOpen && (
                           <button
-                            className="w-10 h-10 rounded-xl bg-[#38BDF8]/10 border border-[#38BDF8]/20 flex items-center justify-center shrink-0 hover:bg-[#38BDF8]/20 transition-colors"
+                            className="w-10 h-10 rounded-xl bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 flex items-center justify-center shrink-0 hover:bg-[var(--sr-rider)]/20 transition-colors"
                             aria-label={`Navigate to ${station.name}`}
                           >
-                            <Navigation className="w-4 h-4 text-[#38BDF8]" />
+                            <Navigation className="w-4 h-4 text-[var(--sr-rider)]" />
                           </button>
                         )}
                       </div>

@@ -225,7 +225,7 @@ export default function RiderETAParty() {
             <PartyParticles active={isPartyMode} />
 
             {/* ── Header ── */}
-            <div className="flex items-center justify-between p-4 border-b border-white/8 shrink-0">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/8 shrink-0">
               <div className="flex items-center gap-3">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -383,7 +383,7 @@ export default function RiderETAParty() {
 
             {/* ── Rider Info ── */}
             <div className="px-4 pt-5 shrink-0">
-              <div className="rounded-2xl p-4 border border-white/8 flex items-center gap-4" style={{ backgroundColor: '#0F1118' }}>
+              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 flex items-center gap-3 sm:gap-4" style={{ backgroundColor: '#0F1118' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.2)' }}>
                   {MOCK_RIDER.avatar}
                 </div>
@@ -394,7 +394,7 @@ export default function RiderETAParty() {
                     <span className="text-white/20">•</span>
                     <span className="text-white/65 text-xs">{MOCK_RIDER.plateNumber}</span>
                     <span className="text-white/20">•</span>
-                    <span className="text-[#F5C451] text-xs font-bold">★ {MOCK_RIDER.rating}</span>
+                    <span className="text-[var(--sr-vendor)] text-xs font-bold">★ {MOCK_RIDER.rating}</span>
                   </div>
                 </div>
                 <div className="flex gap-2 shrink-0">
@@ -403,14 +403,14 @@ export default function RiderETAParty() {
                     aria-label="Call rider"
                     onClick={() => toast({ title: 'Calling Ibrahim...', description: 'Connecting you to your rider' })}
                   >
-                    <Phone className="w-4 h-4 text-[#10E07A]" />
+                    <Phone className="w-4 h-4 text-[var(--sr-customer)]" />
                   </button>
                   <button
                     className="w-10 h-10 rounded-xl flex items-center justify-center border border-white/8 bg-white/5 hover:bg-white/10 transition-colors"
                     aria-label="Message rider"
                     onClick={() => toast({ title: 'Chat opened', description: 'You can message your rider' })}
                   >
-                    <MessageCircle className="w-4 h-4 text-[#38BDF8]" />
+                    <MessageCircle className="w-4 h-4 text-[var(--sr-rider)]" />
                   </button>
                 </div>
               </div>
@@ -419,7 +419,7 @@ export default function RiderETAParty() {
             {/* ── Group Order ── */}
             {isGroupOrder && (
               <div className="px-4 pt-4 shrink-0">
-                <div className="rounded-2xl p-4 border border-white/8" style={{ backgroundColor: '#0F1118' }}>
+                <div className="rounded-2xl p-3 sm:p-4 border border-white/8" style={{ backgroundColor: '#0F1118' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-[#A78BFA]" />

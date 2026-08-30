@@ -300,12 +300,12 @@ function RecipeRemixInner() {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Shuffle className="w-5 h-5 text-[#F5C451]" />
+          <Shuffle className="w-5 h-5 text-[var(--sr-vendor)]" />
           <h2 className="text-white font-semibold text-lg">Recipe Remix</h2>
         </div>
         <button
           onClick={() => setShowCreate(true)}
-          className="bg-[#10E07A] text-black text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[#10E07A]/90 transition-colors"
+          className="bg-[var(--sr-customer)] text-black text-xs font-semibold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-[var(--sr-customer)]/90 transition-colors"
         >
           <Plus className="w-3.5 h-3.5" /> Remix
         </button>
@@ -316,13 +316,13 @@ function RecipeRemixInner() {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-[#F5C451]/10 to-[#A78BFA]/10 border border-[#F5C451]/20 rounded-xl p-3 flex items-center gap-3"
+          className="bg-gradient-to-r from-[#F5C451]/10 to-[#A78BFA]/10 border border-[var(--sr-vendor)]/20 rounded-xl p-3 flex items-center gap-3"
         >
-          <div className="w-10 h-10 rounded-full bg-[#F5C451]/20 flex items-center justify-center shrink-0">
-            <Award className="w-5 h-5 text-[#F5C451]" />
+          <div className="w-10 h-10 rounded-full bg-[var(--sr-vendor)]/20 flex items-center justify-center shrink-0">
+            <Award className="w-5 h-5 text-[var(--sr-vendor)]" />
           </div>
           <div className="min-w-0">
-            <p className="text-[#F5C451] text-xs font-semibold">👑 Chef Sultan</p>
+            <p className="text-[var(--sr-vendor)] text-xs font-semibold">👑 Chef Sultan</p>
             <p className="text-white/60 text-xs truncate">
               {topRemixer.authorName} — {topRemixer.tries} tries on &quot;{topRemixer.remixName}&quot;
             </p>
@@ -338,7 +338,7 @@ function RecipeRemixInner() {
             onClick={() => setSortBy(sort)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
               sortBy === sort
-                ? 'bg-[#10E07A] text-black'
+                ? 'bg-[var(--sr-customer)] text-black'
                 : 'bg-white/5 text-white/50 hover:bg-white/10'
             }`}
           >
@@ -356,7 +356,7 @@ function RecipeRemixInner() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.05 }}
             onClick={() => setSelectedRemix(remix)}
-            className="bg-[#0F1118] border border-white/8 rounded-xl p-4 cursor-pointer hover:border-[#10E07A]/30 transition-all group"
+            className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl p-4 cursor-pointer hover:border-[var(--sr-customer)]/30 transition-all group"
           >
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
@@ -366,7 +366,7 @@ function RecipeRemixInner() {
                   </div>
                   <span className="text-white/50 text-xs">{remix.authorName}</span>
                   {remix.hasChefBadge && (
-                    <span className="text-[#F5C451] text-[10px] font-semibold bg-[#F5C451]/10 px-1.5 py-0.5 rounded-full">
+                    <span className="text-[var(--sr-vendor)] text-[10px] font-semibold bg-[var(--sr-vendor)]/10 px-1.5 py-0.5 rounded-full">
                       👑 Chef Sultan
                     </span>
                   )}
@@ -374,14 +374,14 @@ function RecipeRemixInner() {
                 <p className="text-white/65 text-xs mb-1 flex items-center gap-1">
                   <span className="line-through">{remix.originalRecipe}</span>
                   <ArrowRight className="w-3 h-3" />
-                  <span className="text-[#10E07A] font-medium no-underline">{remix.remixName}</span>
+                  <span className="text-[var(--sr-customer)] font-medium no-underline">{remix.remixName}</span>
                 </p>
                 <p className="text-white/70 text-sm">{remix.remixDescription}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-4 mt-3">
-              <span className="text-[#F5C451] text-xs flex items-center gap-1">
+              <span className="text-[var(--sr-vendor)] text-xs flex items-center gap-1">
                 <Star className="w-3.5 h-3.5 fill-[#F5C451]" />
                 {remix.rating.toFixed(1)} ({remix.ratingCount})
               </span>
@@ -413,10 +413,10 @@ function RecipeRemixInner() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25 }}
-              className="bg-[#0F1118] border border-white/8 rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-t-2xl sm:rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto"
             >
               {/* Header */}
-              <div className="sticky top-0 bg-[#0F1118] border-b border-white/8 p-4 flex items-center justify-between z-10">
+              <div className="sticky top-0 bg-[var(--sr-surface-raised)] border-b border-white/8 p-4 flex items-center justify-between z-10">
                 <div>
                   <h3 className="text-white font-semibold">{selectedRemix.remixName}</h3>
                   <p className="text-white/65 text-xs">Remix of {selectedRemix.originalRecipe}</p>
@@ -439,7 +439,7 @@ function RecipeRemixInner() {
                   <div>
                     <p className="text-white font-medium text-sm flex items-center gap-2">
                       {selectedRemix.authorName}
-                      {selectedRemix.hasChefBadge && <Award className="w-4 h-4 text-[#F5C451]" />}
+                      {selectedRemix.hasChefBadge && <Award className="w-4 h-4 text-[var(--sr-vendor)]" />}
                     </p>
                     <p className="text-white/65 text-xs">{timeAgo(selectedRemix.createdAt)}</p>
                   </div>
@@ -450,7 +450,7 @@ function RecipeRemixInner() {
                   <button
                     onClick={() => setShowOriginal(false)}
                     className={`flex-1 py-2 rounded-lg text-xs font-medium transition-all ${
-                      !showOriginal ? 'bg-[#10E07A] text-black' : 'text-white/50'
+                      !showOriginal ? 'bg-[var(--sr-customer)] text-black' : 'text-white/50'
                     }`}
                   >
                     🎨 Remix
@@ -478,7 +478,7 @@ function RecipeRemixInner() {
 
                       {/* Remix Ingredients */}
                       <div>
-                        <h4 className="text-[#10E07A] text-xs font-semibold mb-2 flex items-center gap-1">
+                        <h4 className="text-[var(--sr-customer)] text-xs font-semibold mb-2 flex items-center gap-1">
                           <Sparkles className="w-3.5 h-3.5" /> Remix Ingredients
                         </h4>
                         <div className="space-y-1">
@@ -489,7 +489,7 @@ function RecipeRemixInner() {
                             >
                               <span
                                 className={`w-1.5 h-1.5 rounded-full ${
-                                  ing.original ? 'bg-[#F5C451]' : 'bg-[#10E07A]'
+                                  ing.original ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-customer)]'
                                 }`}
                               />
                               <span className={ing.original ? 'text-white/60' : 'text-white font-medium'}>
@@ -499,7 +499,7 @@ function RecipeRemixInner() {
                                 <span className="text-white/60 text-xs line-through">{ing.original}</span>
                               )}
                               {!ing.original && (
-                                <span className="text-[#10E07A] text-[10px] font-semibold bg-[#10E07A]/10 px-1.5 py-0.5 rounded-full">
+                                <span className="text-[var(--sr-customer)] text-[10px] font-semibold bg-[var(--sr-customer)]/10 px-1.5 py-0.5 rounded-full">
                                   NEW
                                 </span>
                               )}
@@ -510,13 +510,13 @@ function RecipeRemixInner() {
 
                       {/* Remix Steps */}
                       <div>
-                        <h4 className="text-[#10E07A] text-xs font-semibold mb-2 flex items-center gap-1">
+                        <h4 className="text-[var(--sr-customer)] text-xs font-semibold mb-2 flex items-center gap-1">
                           <Flame className="w-3.5 h-3.5" /> Steps
                         </h4>
                         <div className="space-y-2">
                           {selectedRemix.remixSteps.map((step, i) => (
                             <div key={i} className="flex gap-3 text-sm">
-                              <span className="w-6 h-6 rounded-full bg-[#10E07A]/10 text-[#10E07A] text-xs font-bold flex items-center justify-center shrink-0">
+                              <span className="w-6 h-6 rounded-full bg-[var(--sr-customer)]/10 text-[var(--sr-customer)] text-xs font-bold flex items-center justify-center shrink-0">
                                 {i + 1}
                               </span>
                               <span className="text-white/70">{step}</span>
@@ -580,8 +580,8 @@ function RecipeRemixInner() {
                           <Star
                             className={`w-5 h-5 transition-colors ${
                               (selectedRemix.userRating || 0) >= star
-                                ? 'fill-[#F5C451] text-[#F5C451]'
-                                : 'text-white/20 hover:text-[#F5C451]/60'
+                                ? 'fill-[#F5C451] text-[var(--sr-vendor)]'
+                                : 'text-white/20 hover:text-[var(--sr-vendor)]/60'
                             }`}
                           />
                         </button>
@@ -592,7 +592,7 @@ function RecipeRemixInner() {
                   {/* Try Button */}
                   <button
                     onClick={() => handleTry(selectedRemix.id)}
-                    className="w-full bg-[#10E07A] text-black font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                    className="w-full bg-[var(--sr-customer)] text-black font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                   >
                     <ChefHat className="w-4 h-4" /> Try This Remix
                   </button>
@@ -619,11 +619,11 @@ function RecipeRemixInner() {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-[#0F1118] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
+              className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-md max-h-[90vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between p-4 border-b border-white/8">
                 <h2 className="text-white font-semibold text-lg flex items-center gap-2">
-                  <Shuffle className="w-5 h-5 text-[#F5C451]" /> Create Remix
+                  <Shuffle className="w-5 h-5 text-[var(--sr-vendor)]" /> Create Remix
                 </h2>
                 <button
                   onClick={() => setShowCreate(false)}
@@ -642,7 +642,7 @@ function RecipeRemixInner() {
                     value={originalName}
                     onChange={(e) => setOriginalName(e.target.value)}
                     placeholder="e.g., Traditional Jollof Rice"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50"
                   />
                 </div>
 
@@ -653,7 +653,7 @@ function RecipeRemixInner() {
                     value={remixName}
                     onChange={(e) => setRemixName(e.target.value)}
                     placeholder="e.g., Coconut Jollof Rice"
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50"
                   />
                 </div>
 
@@ -664,7 +664,7 @@ function RecipeRemixInner() {
                     onChange={(e) => setRemixDesc(e.target.value)}
                     placeholder="What's your twist on this recipe?"
                     rows={2}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50 resize-none"
                   />
                 </div>
 
@@ -675,7 +675,7 @@ function RecipeRemixInner() {
                     onChange={(e) => setRemixIngredients(e.target.value)}
                     placeholder={"Coconut milk\nSmoked paprika\nShredded coconut"}
                     rows={4}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50 resize-none"
                   />
                 </div>
 
@@ -686,13 +686,13 @@ function RecipeRemixInner() {
                     onChange={(e) => setRemixSteps(e.target.value)}
                     placeholder={"Blend tomatoes with coconut milk\nFry onion in coconut oil\nAdd rice and coconut milk"}
                     rows={4}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[#10E07A]/50 resize-none"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-[var(--sr-customer)]/50 resize-none"
                   />
                 </div>
 
                 <button
                   onClick={handleCreateRemix}
-                  className="w-full bg-[#10E07A] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[#10E07A]/90 transition-colors"
+                  className="w-full bg-[var(--sr-customer)] text-black font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)]/90 transition-colors"
                 >
                   <Sparkles className="w-4 h-4" /> Post Remix
                 </button>

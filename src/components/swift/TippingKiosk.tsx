@@ -133,10 +133,10 @@ export default function TippingKiosk() {
         >
           {/* Header */}
           <div className="sticky top-0 z-10 backdrop-blur-xl bg-[#0B0D14]/80 border-b border-white/8">
-            <div className="flex items-center justify-between p-4">
+            <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#10E07A]/10 rounded-xl flex items-center justify-center border border-[#10E07A]/20">
-                  <HandHeart className="w-5 h-5 text-[#10E07A]" />
+                <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-customer)]/20">
+                  <HandHeart className="w-5 h-5 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">Tip Your Rider</h2>
@@ -145,7 +145,7 @@ export default function TippingKiosk() {
               </div>
               <button
                 onClick={handleClose}
-                className="w-10 h-10 rounded-full bg-[#0F1118] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
+                className="w-10 h-10 rounded-full bg-[var(--sr-surface-raised)] border border-white/8 flex items-center justify-center hover:bg-white/10 transition-colors"
                 aria-label="Close tipping kiosk"
               >
                 <X className="w-5 h-5 text-white" />
@@ -167,7 +167,7 @@ export default function TippingKiosk() {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.1, duration: 0.4 }}
-                    className="bg-[#0F1118] rounded-2xl border border-white/8 p-6 mb-6 text-center relative overflow-hidden"
+                    className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-6 mb-6 text-center relative overflow-hidden"
                   >
                     <div className="absolute inset-0 bg-gradient-to-b from-[#10E07A]/5 to-transparent pointer-events-none" />
 
@@ -190,22 +190,22 @@ export default function TippingKiosk() {
                       <h3 className="text-white font-bold text-xl mb-1">{riderStats.name}</h3>
 
                       <div className="flex items-center justify-center gap-1 mb-4">
-                        <Star className="w-4 h-4 text-[#F5C451] fill-[#F5C451]" />
-                        <span className="text-[#F5C451] font-bold text-sm">{riderStats.rating}</span>
+                        <Star className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                        <span className="text-[var(--sr-vendor)] font-bold text-sm">{riderStats.rating}</span>
                         <span className="text-white/60 text-xs">· {riderStats.yearsActive} years</span>
                       </div>
                     </div>
                   </motion.div>
 
                   {/* Rider Stats */}
-                  <div className="grid grid-cols-3 gap-3 mb-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8">
                     <motion.div
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="bg-[#0F1118] rounded-xl border border-white/8 p-3 text-center"
+                      className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 p-3 text-center"
                     >
-                      <Coffee className="w-5 h-5 text-[#F5C451] mx-auto mb-1.5" />
+                      <Coffee className="w-5 h-5 text-[var(--sr-vendor)] mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{riderStats.iftarsDelivered.toLocaleString()}</p>
                       <p className="text-white/60 text-[10px]">Iftars Delivered</p>
                     </motion.div>
@@ -213,9 +213,9 @@ export default function TippingKiosk() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
-                      className="bg-[#0F1118] rounded-xl border border-white/8 p-3 text-center"
+                      className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 p-3 text-center"
                     >
-                      <Bike className="w-5 h-5 text-[#10E07A] mx-auto mb-1.5" />
+                      <Bike className="w-5 h-5 text-[var(--sr-customer)] mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{riderStats.yearsActive}</p>
                       <p className="text-white/60 text-[10px]">Years Active</p>
                     </motion.div>
@@ -223,7 +223,7 @@ export default function TippingKiosk() {
                       initial={{ opacity: 0, y: 15 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 }}
-                      className="bg-[#0F1118] rounded-xl border border-white/8 p-3 text-center"
+                      className="bg-[var(--sr-surface-raised)] rounded-xl border border-white/8 p-3 text-center"
                     >
                       <Heart className="w-5 h-5 text-red-400 mx-auto mb-1.5" />
                       <p className="text-white font-black text-lg">{formatNaira(riderStats.totalTips)}</p>
@@ -236,13 +236,13 @@ export default function TippingKiosk() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.5 }}
-                    className="bg-[#10E07A]/5 border border-[#10E07A]/15 rounded-xl p-4 mb-6 flex items-start gap-3"
+                    className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/15 rounded-xl p-3 sm:p-4 mb-6 flex items-start gap-3"
                   >
-                    <Sparkles className="w-5 h-5 text-[#10E07A] flex-shrink-0 mt-0.5" />
+                    <Sparkles className="w-5 h-5 text-[var(--sr-customer)] flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-[#10E07A] font-bold text-xs mb-0.5">Did you know?</p>
+                      <p className="text-[var(--sr-customer)] font-bold text-xs mb-0.5">Did you know?</p>
                       <p className="text-white/60 text-xs">
-                        How many Iftars has {riderStats.name.split(' ')[0]} delivered? <span className="text-[#F5C451] font-bold">{riderStats.iftarsDelivered.toLocaleString()}!</span> That&apos;s a lot of happy families breaking fast on time.
+                        How many Iftars has {riderStats.name.split(' ')[0]} delivered? <span className="text-[var(--sr-vendor)] font-bold">{riderStats.iftarsDelivered.toLocaleString()}!</span> That&apos;s a lot of happy families breaking fast on time.
                       </p>
                     </div>
                   </motion.div>
@@ -250,10 +250,10 @@ export default function TippingKiosk() {
                   {/* Tip Selection */}
                   <div className="mb-6">
                     <h4 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
-                      <Award className="w-4 h-4 text-[#F5C451]" />
+                      <Award className="w-4 h-4 text-[var(--sr-vendor)]" />
                       Choose a tip amount
                     </h4>
-                    <div className="grid grid-cols-3 gap-3 mb-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-3">
                       {presetTipAmounts.map((amount, i) => (
                         <motion.button
                           key={amount}
@@ -263,8 +263,8 @@ export default function TippingKiosk() {
                           onClick={() => handleSelectPreset(amount)}
                           className={`py-4 rounded-xl font-bold text-base transition-all ${
                             selectedTip === amount && !isCustom
-                              ? 'bg-[#10E07A] text-[#0B0D14] border-2 border-[#10E07A]'
-                              : 'bg-[#0F1118] border border-white/8 text-white hover:bg-white/5'
+                              ? 'bg-[var(--sr-customer)] text-[#0B0D14] border-2 border-[var(--sr-customer)]'
+                              : 'bg-[var(--sr-surface-raised)] border border-white/8 text-white hover:bg-white/5'
                           }`}
                           aria-label={`Tip ${formatNaira(amount)}`}
                         >
@@ -279,7 +279,7 @@ export default function TippingKiosk() {
                       className={`w-full py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 ${
                         isCustom
                           ? 'bg-[#A78BFA]/10 border-2 border-[#A78BFA] text-[#A78BFA]'
-                          : 'bg-[#0F1118] border border-white/8 text-white/50 hover:bg-white/5'
+                          : 'bg-[var(--sr-surface-raised)] border border-white/8 text-white/50 hover:bg-white/5'
                       }`}
                       aria-label="Enter custom tip amount"
                     >
@@ -302,7 +302,7 @@ export default function TippingKiosk() {
                               value={customAmount}
                               onChange={(e) => setCustomAmount(e.target.value)}
                               placeholder="Enter amount"
-                              className="w-full bg-[#0F1118] border border-white/8 rounded-xl py-3 pl-10 pr-4 text-white font-bold text-lg focus:outline-none focus:border-[#A78BFA]/50 transition-colors"
+                              className="w-full bg-[var(--sr-surface-raised)] border border-white/8 rounded-xl py-3 pl-10 pr-4 text-white font-bold text-lg focus:outline-none focus:border-[#A78BFA]/50 transition-colors"
                               min="50"
                               aria-label="Custom tip amount in Naira"
                             />
@@ -314,8 +314,8 @@ export default function TippingKiosk() {
 
                   {/* 100% to rider badge */}
                   <div className="flex items-center justify-center gap-2 mb-6">
-                    <Shield className="w-4 h-4 text-[#10E07A]" />
-                    <span className="text-[#10E07A] text-xs font-bold">Riders keep 100% of tips</span>
+                    <Shield className="w-4 h-4 text-[var(--sr-customer)]" />
+                    <span className="text-[var(--sr-customer)] text-xs font-bold">Riders keep 100% of tips</span>
                   </div>
 
                   {/* Send Button */}
@@ -366,7 +366,7 @@ export default function TippingKiosk() {
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
                     >
-                      <Heart className="w-14 h-14 text-[#10E07A] fill-[#10E07A]" />
+                      <Heart className="w-14 h-14 text-[var(--sr-customer)] fill-[#10E07A]" />
                     </motion.div>
                   </motion.div>
 
@@ -383,7 +383,7 @@ export default function TippingKiosk() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.4 }}
-                    className="text-[#10E07A] font-bold text-lg mb-2"
+                    className="text-[var(--sr-customer)] font-bold text-lg mb-2"
                   >
                     {formatNaira(getTipAmount())}
                   </motion.p>
@@ -402,9 +402,9 @@ export default function TippingKiosk() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="bg-[#0F1118] rounded-2xl border border-white/8 p-6 mb-6"
+                    className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-6 mb-6"
                   >
-                    <p className="text-[#F5C451] font-bold text-lg mb-3">{thankYouMsg}</p>
+                    <p className="text-[var(--sr-vendor)] font-bold text-lg mb-3">{thankYouMsg}</p>
                     <p className="text-white/65 text-xs leading-relaxed">
                       Your generosity makes a real difference. {riderStats.name.split(' ')[0]} will receive every kobo of your tip. 
                       May Allah reward your kindness this Ramadan.
@@ -416,20 +416,20 @@ export default function TippingKiosk() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 0.7 }}
-                    className="bg-[#10E07A]/5 border border-[#10E07A]/15 rounded-xl p-4 flex items-center gap-3"
+                    className="bg-[var(--sr-customer)]/5 border border-[var(--sr-customer)]/15 rounded-xl p-3 sm:p-4 flex items-center gap-3"
                   >
                     <div className="flex items-center gap-1.5">
-                      <Users className="w-4 h-4 text-[#10E07A]" />
+                      <Users className="w-4 h-4 text-[var(--sr-customer)]" />
                       <span className="text-white/60 text-xs">{riderStats.iftarsDelivered.toLocaleString()} iftars</span>
                     </div>
                     <span className="text-white/10">·</span>
                     <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4 text-[#10E07A]" />
+                      <Clock className="w-4 h-4 text-[var(--sr-customer)]" />
                       <span className="text-white/60 text-xs">Always on time</span>
                     </div>
                     <span className="text-white/10">·</span>
                     <div className="flex items-center gap-1.5">
-                      <Check className="w-4 h-4 text-[#10E07A]" />
+                      <Check className="w-4 h-4 text-[var(--sr-customer)]" />
                       <span className="text-white/60 text-xs">100% tips kept</span>
                     </div>
                   </motion.div>
@@ -440,7 +440,7 @@ export default function TippingKiosk() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
                     onClick={handleClose}
-                    className="mt-8 px-8 py-3 rounded-xl bg-[#0F1118] border border-white/8 text-white/70 font-bold text-sm hover:bg-white/5 transition-colors"
+                    className="mt-8 px-8 py-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8 text-white/70 font-bold text-sm hover:bg-white/5 transition-colors"
                     aria-label="Close tipping kiosk"
                   >
                     Done
