@@ -47,7 +47,7 @@ export default function BottomNav() {
 
   return (
     <nav
-      className="fixed bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 w-[96%] sm:w-[92%] max-w-lg glass-effect h-16 sm:h-[72px] rounded-[1.75rem] sm:rounded-[2rem] flex items-center justify-between px-1.5 sm:px-2 border border-white/10 nav-glow z-50"
+      className="fixed left-1/2 -translate-x-1/2 w-[96%] sm:w-[92%] max-w-lg glass-effect h-16 sm:h-[72px] rounded-[1.75rem] sm:rounded-[2rem] flex items-center justify-between px-1.5 sm:px-2 border border-white/10 nav-glow z-50 [bottom:calc(0.75rem+env(safe-area-inset-bottom))] sm:[bottom:calc(1.25rem+env(safe-area-inset-bottom))]"
       aria-label="Primary"
     >
       {tabs.map((tab) => {

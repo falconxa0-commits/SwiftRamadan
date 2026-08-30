@@ -352,7 +352,7 @@ export default function ProfileTab() {
                   <Fingerprint className="w-5 h-5 text-[#10E07A]" />
                   <div>
                     <p className="text-white font-bold text-sm">Biometric Login</p>
-                    <p className="text-white/40 text-xs">Use fingerprint or Face ID</p>
+                    <p className="text-white/65 text-xs">Use fingerprint or Face ID</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -369,7 +369,7 @@ export default function ProfileTab() {
                   <Lock className="w-5 h-5 text-[#10E07A]" />
                   <div>
                     <p className="text-white font-bold text-sm">Two-Factor Auth</p>
-                    <p className="text-white/40 text-xs">Extra security for your account</p>
+                    <p className="text-white/65 text-xs">Extra security for your account</p>
                   </div>
                 </div>
                 <ToggleSwitch
@@ -386,7 +386,7 @@ export default function ProfileTab() {
                   <Eye className="w-5 h-5 text-[#10E07A]" />
                   <div>
                     <p className="text-white font-bold text-sm">Data Encryption</p>
-                    <p className="text-white/40 text-xs">End-to-end encryption</p>
+                    <p className="text-white/65 text-xs">End-to-end encryption</p>
                   </div>
                 </div>
                 <span className="text-[#10E07A] text-xs font-bold">Active</span>
@@ -545,16 +545,16 @@ export default function ProfileTab() {
                     <span className="text-[#F5C451] text-[10px] font-bold bg-[#F5C451]/10 px-2 py-0.5 rounded-full border border-[#F5C451]/20">
                       {vendorBusinessCategory || 'General'}
                     </span>
-                    <span className="text-white/30 text-xs">•</span>
+                    <span className="text-white/60 text-xs">•</span>
                     <span className="text-white/50 text-xs">{vendorOnline ? '🟢 Online' : '⚫ Offline'}</span>
                   </div>
-                  <p className="text-white/40 text-[11px] mt-0.5">Ramadan 2026</p>
+                  <p className="text-white/65 text-[11px] mt-0.5">Ramadan 2026</p>
                 </>
               ) : userRole === 'rider' ? (
                 <>
                   <div className="flex items-center gap-2 mt-1.5">
                     <span className={`size-2 rounded-full ${riderOnline ? 'bg-[#10E07A]' : 'bg-white/30'}`} />
-                    <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/40'}`}>
+                    <span className={`text-xs font-bold ${riderOnline ? 'text-[#10E07A]' : 'text-white/65'}`}>
                       {riderOnline ? 'Online' : 'Offline'}
                     </span>
                     <span className="text-white/20 text-xs">•</span>
@@ -596,15 +596,15 @@ export default function ProfileTab() {
             <>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <p className="text-[#10E07A] text-lg font-black">{formatNaira(vendorBalance)}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Revenue</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Revenue</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <p className="text-[#F5C451] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Orders Today</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Orders Today</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <p className="text-[#38BDF8] text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-1">Avg Order</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Avg Order</p>
               </div>
             </>
           ) : userRole === 'rider' ? (
@@ -614,39 +614,39 @@ export default function ProfileTab() {
                   <DollarSign className="w-4 h-4 text-[#10E07A]" />
                 </div>
                 <p className="text-[#10E07A] text-lg font-black">{formatNaira(riderEarnings)}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <div className="w-8 h-8 bg-[#38BDF8]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Zap className="w-4 h-4 text-[#38BDF8]" />
                 </div>
                 <p className="text-[#38BDF8] text-lg font-black">{riderCompletedToday}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Completed</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Completed</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <div className="w-8 h-8 bg-[#F5C451]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Star className="w-4 h-4 text-[#F5C451]" />
                 </div>
                 <p className="text-[#F5C451] text-lg font-black">{riderRating}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase mt-0.5">Rating</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Rating</p>
               </div>
             </>
           ) : (
             <>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <p className="text-[#F5C451] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Hasanat Pts</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase">Hasanat Pts</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <p className="text-[#10E07A] text-xl font-black">{swiftPoints.toLocaleString()}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Swift Pts</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase">Swift Pts</p>
               </div>
               <div className="glass-card rounded-2xl p-4 text-center">
                 <div className="flex items-center justify-center gap-1">
                   <Flame className={`w-4 h-4 ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`} />
                   <p className={`text-xl font-black ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`}>{dailyStreak}</p>
                 </div>
-                <p className="text-white/40 text-[10px] font-bold uppercase">Day Streak</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase">Day Streak</p>
               </div>
             </>
           )}
@@ -694,7 +694,7 @@ export default function ProfileTab() {
               </div>
               <div>
                 <h3 className="text-white font-extrabold text-sm leading-tight heading-accent">My Cooking Journey</h3>
-                <p className="text-white/40 text-[11px] leading-tight">Smart Kitchen achievements</p>
+                <p className="text-white/65 text-[11px] leading-tight">Smart Kitchen achievements</p>
               </div>
             </div>
             <button
@@ -726,15 +726,15 @@ export default function ProfileTab() {
               <div className="grid grid-cols-3 gap-2">
                 <div className="glass-card rounded-xl p-3 text-center">
                   <p className="text-[#10E07A] text-lg font-black">{cookingStats.totalSessions ?? 0}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Sessions Cooked</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Sessions Cooked</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
                   <p className="text-[#A78BFA] text-lg font-black">{cookingStats.liveAIUses ?? 0}</p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Live AI Sessions</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Live AI Sessions</p>
                 </div>
                 <div className="glass-card rounded-xl p-3 text-center">
                   <p className="text-[#F5C451] text-lg font-black">{cookingStats.totalCookTimeMins ?? 0}<span className="text-xs">m</span></p>
-                  <p className="text-white/40 text-[10px] font-bold uppercase">Total Cook Time</p>
+                  <p className="text-white/65 text-[10px] font-bold uppercase">Total Cook Time</p>
                 </div>
               </div>
 
@@ -784,7 +784,7 @@ export default function ProfileTab() {
                 <ChefHat className="w-7 h-7 text-[#10E07A] relative z-10" />
               </div>
               <p className="text-white/70 text-sm font-bold">No cooking sessions yet</p>
-              <p className="text-white/40 text-xs mt-1">Cook with Chef Safa to unlock achievements</p>
+              <p className="text-white/65 text-xs mt-1">Cook with Chef Safa to unlock achievements</p>
             </div>
           )}
         </div>
@@ -807,15 +807,15 @@ export default function ProfileTab() {
             <div className="grid grid-cols-3 gap-3">
               <div className="text-center">
                 <p className="text-white text-lg font-black">{ecoImpactData.co2Saved}</p>
-                <p className="text-white/40 text-[10px]">CO₂ Saved</p>
+                <p className="text-white/65 text-[10px]">CO₂ Saved</p>
               </div>
               <div className="text-center">
                 <p className="text-white text-lg font-black">{ecoImpactData.ecoOrders}</p>
-                <p className="text-white/40 text-[10px]">Eco Orders</p>
+                <p className="text-white/65 text-[10px]">Eco Orders</p>
               </div>
               <div className="text-center">
                 <p className="text-white text-lg font-black">₦3K</p>
-                <p className="text-white/40 text-[10px]">Donated</p>
+                <p className="text-white/65 text-[10px]">Donated</p>
               </div>
             </div>
           </div>
@@ -834,12 +834,12 @@ export default function ProfileTab() {
                 </div>
                 <div>
                   <h3 className="text-white font-extrabold text-sm leading-tight heading-accent">Redeem Points</h3>
-                  <p className="text-white/40 text-[11px] leading-tight">Turn Swift Points into coupons</p>
+                  <p className="text-white/65 text-[11px] leading-tight">Turn Swift Points into coupons</p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[#10E07A] text-lg font-black leading-tight">{swiftPoints.toLocaleString()}</p>
-                <p className="text-white/40 text-[10px] font-bold uppercase leading-tight">Swift Pts</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase leading-tight">Swift Pts</p>
               </div>
             </div>
 
@@ -864,7 +864,7 @@ export default function ProfileTab() {
                       {affordable ? (
                         <Tag className="w-3.5 h-3.5" style={{ color: reward.accent }} />
                       ) : (
-                        <span className="text-[9px] text-white/30 font-bold uppercase">Locked</span>
+                        <span className="text-[9px] text-white/60 font-bold uppercase">Locked</span>
                       )}
                     </div>
                     <p className="text-white font-bold text-xs">{reward.label}</p>
@@ -890,7 +890,7 @@ export default function ProfileTab() {
             if (sectionItems.length === 0) return null;
             return (
               <div key={section} className="space-y-2">
-                <p className="text-white/30 text-[10px] font-extrabold tracking-widest px-1">{section}</p>
+                <p className="text-white/60 text-[10px] font-extrabold tracking-widest px-1">{section}</p>
                 {sectionItems.map((item, i) => {
                   const Icon = item.icon;
                   const isSwitchRole = item.action === 'switch-role';
@@ -912,7 +912,7 @@ export default function ProfileTab() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm">{item.label}</p>
-                        {item.subtitle && <p className="text-white/40 text-xs truncate">{item.subtitle}</p>}
+                        {item.subtitle && <p className="text-white/65 text-xs truncate">{item.subtitle}</p>}
                       </div>
                       <ChevronRight className="w-4 h-4 text-white/20 shrink-0" />
                     </motion.button>
@@ -956,7 +956,7 @@ export default function ProfileTab() {
               >
                 <span className="material-symbols-outlined text-[#F5C451] text-2xl mb-2">{item.icon}</span>
                 <p className="text-white font-bold text-sm">{item.name}</p>
-                <p className="text-white/40 text-[10px] mt-0.5">{item.description}</p>
+                <p className="text-white/65 text-[10px] mt-0.5">{item.description}</p>
                 {item.amount > 0 && (
                   <p className="text-[#10E07A] text-xs font-bold mt-2">From {formatNaira(item.amount)}</p>
                 )}
@@ -1023,7 +1023,7 @@ export default function ProfileTab() {
               <div className="flex items-center justify-between p-5 border-b border-white/5">
                 <div>
                   <h2 className="text-white text-lg font-bold tracking-tight">Switch Role</h2>
-                  <p className="text-white/40 text-xs mt-0.5">Choose how you want to use SwiftRamadan</p>
+                  <p className="text-white/65 text-xs mt-0.5">Choose how you want to use SwiftRamadan</p>
                 </div>
                 <button
                   onClick={() => setShowSwitchRole(false)}
@@ -1064,7 +1064,7 @@ export default function ProfileTab() {
                             </span>
                           )}
                         </div>
-                        <p className="text-white/40 text-xs mt-0.5">{card.description}</p>
+                        <p className="text-white/65 text-xs mt-0.5">{card.description}</p>
                       </div>
                       {!isActive && (
                         <ChevronRight className="w-5 h-5 text-white/20 shrink-0" />

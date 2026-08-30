@@ -154,8 +154,8 @@ export default function ExploreTab() {
           onClick={() => setShowSearch(true)}
           className="w-full mt-4 flex items-center gap-3 glass-card rounded-2xl px-4 py-3 text-left hover:border-white/15 transition-colors group active:scale-[0.99]"
         >
-          <Search className="w-4 h-4 text-white/40 group-hover:text-[#10E07A] transition-colors" />
-          <span className="text-white/40 text-sm flex-1">Search meals, stores, products…</span>
+          <Search className="w-4 h-4 text-white/65 group-hover:text-[#10E07A] transition-colors" />
+          <span className="text-white/65 text-sm flex-1">Search meals, stores, products…</span>
           <span className="soft-chip">⌘K</span>
         </button>
 
@@ -172,9 +172,9 @@ export default function ExploreTab() {
               Visual Search
               <Sparkles className="w-3.5 h-3.5 text-[#F5C451]" />
             </p>
-            <p className="text-white/40 text-[11px]">Snap a photo, find similar meals instantly</p>
+            <p className="text-white/65 text-[11px]">Snap a photo, find similar meals instantly</p>
           </div>
-          <ChevronRight className="w-4 h-4 text-white/30 shrink-0" />
+          <ChevronRight className="w-4 h-4 text-white/60 shrink-0" />
         </button>
       </div>
 
@@ -302,7 +302,7 @@ export default function ExploreTab() {
                 style={{ backgroundImage: `url("${retailer.image}")` }}
               />
               <h4 className="text-white text-sm font-bold tracking-tight">{retailer.name}</h4>
-              <p className="text-white/40 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
+              <p className="text-white/65 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
               <div className="flex items-center gap-1 mt-1">
                 <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
                 <span className="text-[#F5C451] text-[10px] font-bold">{retailer.rating}</span>
@@ -322,14 +322,14 @@ export default function ExploreTab() {
             <div className="flex justify-between items-start mb-3">
               <div>
                 <h4 className="text-white font-bold tracking-tight">{selectedRetailer.name}</h4>
-                <p className="text-white/40 text-xs">{selectedRetailer.category} &bull; {selectedRetailer.deliveryTime} delivery</p>
+                <p className="text-white/65 text-xs">{selectedRetailer.category} &bull; {selectedRetailer.deliveryTime} delivery</p>
               </div>
               <button
                 onClick={() => setSelectedRetailer(null)}
                 className="p-1 hover:bg-white/5 rounded-lg transition-colors"
                 aria-label="Close retailer detail"
               >
-                <X className="w-4 h-4 text-white/30" />
+                <X className="w-4 h-4 text-white/60" />
               </button>
             </div>
             <div className="flex gap-2">
@@ -420,7 +420,7 @@ export default function ExploreTab() {
                       {formatNaira(product.salePrice || product.price || 0)}
                     </span>
                     {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
-                      <span className="text-white/30 text-[10px] line-through ml-1">{formatNaira(product.originalPrice)}</span>
+                      <span className="text-white/60 text-[10px] line-through ml-1">{formatNaira(product.originalPrice)}</span>
                     )}
                   </div>
                 </div>
@@ -436,7 +436,7 @@ export default function ExploreTab() {
         </div>
         {filteredProducts.length === 0 && activeCategory && (
           <div className="flex flex-col items-center py-8 text-center">
-            <p className="text-white/40 text-sm">No products found for &quot;{activeCategory}&quot;</p>
+            <p className="text-white/65 text-sm">No products found for &quot;{activeCategory}&quot;</p>
             <button
               onClick={() => setActiveCategory(null)}
               className="text-[#10E07A] text-sm font-bold mt-2 hover:text-[#10E07A]/80 transition-colors"

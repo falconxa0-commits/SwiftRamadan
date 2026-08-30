@@ -148,8 +148,8 @@ export default function HomeTab() {
           transition={{ duration: 0.4, delay: 0.05 }}
           className="text-right"
         >
-          <p className="text-white/40 text-[10px] font-semibold uppercase tracking-[0.14em]">Assalamu Alaikum</p>
-          <p className="text-white text-sm font-bold leading-tight mt-0.5">Let&apos;s break fast together 🌙</p>
+          <p className="text-white/65 text-[10px] font-semibold uppercase tracking-[0.14em]">Assalamu Alaikum</p>
+          <p className="text-white text-xs sm:text-sm font-bold leading-tight mt-0.5">Let&apos;s break fast together 🌙</p>
         </motion.div>
       </div>
 
@@ -174,7 +174,7 @@ export default function HomeTab() {
             </div>
             <div className="flex-1 text-left">
               <p className="text-white text-sm font-bold">Free Spin Available!</p>
-              <p className="text-white/40 text-[10px]">Spin the wheel for free rewards</p>
+              <p className="text-white/65 text-[10px]">Spin the wheel for free rewards</p>
             </div>
             <motion.div
               animate={{ x: [0, 4, 0] }}
@@ -248,7 +248,7 @@ export default function HomeTab() {
                 <Radio className="w-3.5 h-3.5" />
                 Chef Safa Live
               </p>
-              <p className="text-white/60 text-sm mt-2 leading-relaxed">
+              <p className="text-white/60 text-xs sm:text-sm mt-2 leading-relaxed">
                 AI watches you cook &amp; guides you in real-time.
               </p>
             </div>
@@ -353,7 +353,7 @@ export default function HomeTab() {
           ref={carouselRef}
           className="flex overflow-x-auto pb-4 no-scrollbar scroll-smooth"
         >
-          <div className="flex items-stretch px-5 gap-4">
+          <div className="flex items-stretch px-5 gap-3 sm:gap-4">
             {heroSlides.map((slide, index) => (
               <motion.div
                 key={slide.id}
@@ -379,7 +379,7 @@ export default function HomeTab() {
                 </div>
                 <div className="px-1">
                   <p className="text-white text-lg font-bold leading-tight tracking-tight">{slide.title}</p>
-                  <p className="text-[#10E07A]/80 text-sm font-semibold flex items-center gap-1 mt-0.5">
+                  <p className="text-[#10E07A]/80 text-xs sm:text-sm font-semibold flex items-center gap-1 mt-0.5">
                     <Zap className="w-3 h-3" />
                     {slide.subtitle}
                   </p>
@@ -464,14 +464,14 @@ export default function HomeTab() {
                 </h3>
               </div>
               <div className="text-right">
-                <p className="text-white/30 text-[10px] font-medium line-through">{formatNaira(ramadanBox.originalPrice)}</p>
+                <p className="text-white/60 text-[10px] font-medium line-through">{formatNaira(ramadanBox.originalPrice)}</p>
                 <p className="text-gradient-emerald text-xl font-black tracking-tighter drop-shadow-[0_0_10px_rgba(16,224,122,0.3)]">
                   {formatNaira(ramadanBox.salePrice)}
                 </p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
               {ramadanBox.images.map((img, i) => (
                 <div
                   key={img}
@@ -551,10 +551,10 @@ export default function HomeTab() {
                 </div>
               </div>
               <div className="p-3">
-                <h4 className="text-white font-bold text-sm truncate">{sale.name}</h4>
+                <h4 className="text-white font-bold text-xs sm:text-sm truncate">{sale.name}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-[#10E07A] font-black text-sm">{formatNaira(sale.salePrice)}</span>
-                  <span className="text-white/30 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
+                  <span className="text-white/60 text-[10px] line-through">{formatNaira(sale.originalPrice)}</span>
                 </div>
                 <div className="mt-2">
                   <div className="w-full bg-white/5 rounded-full h-1.5 mb-1 overflow-hidden">
@@ -563,7 +563,7 @@ export default function HomeTab() {
                       style={{ width: `${sale.claimed}%` }}
                     />
                   </div>
-                  <p className="text-white/40 text-[9px] font-semibold">{sale.claimed}% claimed</p>
+                  <p className="text-white/65 text-[9px] font-semibold">{sale.claimed}% claimed</p>
                 </div>
                 <button
                   onClick={(e) => {
@@ -607,7 +607,7 @@ export default function HomeTab() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: meal.id * 0.05 }}
-                className="glass-card flex gap-4 p-4 rounded-2xl hover:border-white/15 transition-colors cursor-pointer"
+                className="glass-card flex gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl hover:border-white/15 transition-colors cursor-pointer"
                 onClick={() => handleMealClick(meal.id)}
               >
                 <div
@@ -620,7 +620,7 @@ export default function HomeTab() {
                       <h4 className="text-white font-bold text-base truncate tracking-tight">{meal.name}</h4>
                       <span className="text-[#10E07A] font-black whitespace-nowrap">{formatNaira(meal.price)}</span>
                     </div>
-                    <p className="text-white/40 text-[11px] leading-relaxed mt-1 line-clamp-2">{meal.description}</p>
+                    <p className="text-white/65 text-[11px] leading-relaxed mt-1 line-clamp-2">{meal.description}</p>
                   </div>
                   <div className="flex items-center gap-2 mt-2">
                     <span className="soft-chip">
@@ -647,7 +647,7 @@ export default function HomeTab() {
           </div>
         ) : (
           <div className="glass-card flex flex-col items-center py-8 text-center rounded-2xl">
-            <p className="text-white/40 text-sm">No meals found for &quot;{activeCategory}&quot;</p>
+            <p className="text-white/65 text-xs sm:text-sm">No meals found for &quot;{activeCategory}&quot;</p>
             <button
               onClick={() => setActiveCategory(null)}
               className="text-[#10E07A] text-sm font-bold mt-2 hover:text-[#10E07A]/80 transition-colors"
@@ -680,7 +680,7 @@ export default function HomeTab() {
             transition={{ duration: 5, repeat: Infinity, delay: 1 }}
           />
 
-          <div className="relative z-10 p-5 flex items-center gap-4">
+          <div className="relative z-10 p-5 flex items-center gap-3 sm:gap-4">
             <motion.div
               animate={{ rotate: [0, 8, -8, 0] }}
               transition={{ duration: 4, repeat: Infinity }}
@@ -711,7 +711,7 @@ export default function HomeTab() {
         </div>
 
         {/* AI-Powered */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🤖 AI-Powered</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🤖 AI-Powered</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '🧬', label: 'Taste DNA', modal: 'taste-dna' },
@@ -727,7 +727,7 @@ export default function HomeTab() {
         </div>
 
         {/* Gamification */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🎮 Gamification</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🎮 Gamification</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '🏆', label: 'Challenges', modal: 'challenge-board' },
@@ -743,7 +743,7 @@ export default function HomeTab() {
         </div>
 
         {/* Location */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">📍 Location</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">📍 Location</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '📡', label: 'Iftar Radar', modal: 'iftar-radar' },
@@ -758,7 +758,7 @@ export default function HomeTab() {
         </div>
 
         {/* Social */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💬 Social</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💬 Social</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '📖', label: 'Iftar Stories', modal: 'iftar-stories' },
@@ -774,7 +774,7 @@ export default function HomeTab() {
         </div>
 
         {/* Commerce */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💰 Commerce</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">💰 Commerce</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '🎉', label: 'Bulk Order', modal: 'partyBulk' },
@@ -791,7 +791,7 @@ export default function HomeTab() {
         </div>
 
         {/* Ambient & Delight */}
-        <p className="text-white/40 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🌙 Ambient</p>
+        <p className="text-white/65 text-[10px] font-bold uppercase tracking-[0.15em] mb-2">🌙 Ambient</p>
         <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-3">
           {[
             { emoji: '🕌', label: 'Adhan Sync', modal: 'adhan-sync' },

@@ -12,7 +12,7 @@ import { OrdersTabSkeleton } from './Skeletons';
 const statusConfig: Record<string, { color: string; bgColor: string; icon: React.ComponentType<{ className?: string }>; label: string }> = {
   'In Transit': { color: 'text-[#10E07A]', bgColor: 'bg-[#10E07A]/10', icon: Truck, label: 'In Transit' },
   'Preparing': { color: 'text-[#F5C451]', bgColor: 'bg-[#F5C451]/10', icon: Clock, label: 'Preparing' },
-  'Delivered': { color: 'text-white/40', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
+  'Delivered': { color: 'text-white/65', bgColor: 'bg-white/5', icon: CheckCircle, label: 'Delivered' },
   'Confirmed': { color: 'text-[#38BDF8]', bgColor: 'bg-[#38BDF8]/10', icon: Package, label: 'Confirmed' },
   'Ready': { color: 'text-[#A78BFA]', bgColor: 'bg-[#A78BFA]/10', icon: CheckCircle, label: 'Ready for Pickup' },
   'Cancelled': { color: 'text-[#FB7185]', bgColor: 'bg-[#FB7185]/10', icon: XCircle, label: 'Cancelled' },
@@ -216,7 +216,7 @@ This is an electronic receipt — no signature required.
             <ShoppingBag className="w-10 h-10 text-white/20 relative z-10" />
           </div>
           <h3 className="text-white text-lg font-bold mb-2 tracking-tight">No orders yet</h3>
-          <p className="text-white/40 text-sm text-center mb-6 max-w-xs">
+          <p className="text-white/65 text-sm text-center mb-6 max-w-xs">
             Start ordering Iftar meals, Sahur boxes, and more to see your orders here
           </p>
           <button
@@ -310,7 +310,7 @@ This is an electronic receipt — no signature required.
                         </span>
                         <span className="text-[#10E07A] text-xs font-bold uppercase tracking-widest">Live Tracking</span>
                       </div>
-                      <span className="text-white/30 text-xs font-mono">{activeOrder.id}</span>
+                      <span className="text-white/60 text-xs font-mono">{activeOrder.id}</span>
                     </div>
 
                     {/* Progress Bar */}
@@ -342,7 +342,7 @@ This is an electronic receipt — no signature required.
                           </div>
                           <div>
                             <p className="text-white text-sm font-bold">{activeOrder.rider}</p>
-                            <p className="text-white/40 text-xs">Your rider</p>
+                            <p className="text-white/65 text-xs">Your rider</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -396,7 +396,7 @@ This is an electronic receipt — no signature required.
                             <div className="flex justify-between items-start">
                               <div>
                                 <p className="text-white font-bold text-sm tracking-tight">{order.item}</p>
-                                <p className="text-white/40 text-xs mt-0.5">{order.eta}</p>
+                                <p className="text-white/65 text-xs mt-0.5">{order.eta}</p>
                               </div>
                               <div className="text-right shrink-0">
                                 <span className={`text-xs font-bold ${config?.color}`}>{order.status}</span>
@@ -430,9 +430,9 @@ This is an electronic receipt — no signature required.
                             }}
                           >
                             {isExpanded ? (
-                              <ChevronUp className="w-4 h-4 text-white/40" />
+                              <ChevronUp className="w-4 h-4 text-white/65" />
                             ) : (
-                              <ChevronDown className="w-4 h-4 text-white/40" />
+                              <ChevronDown className="w-4 h-4 text-white/65" />
                             )}
                           </div>
                         </button>
@@ -448,7 +448,7 @@ This is an electronic receipt — no signature required.
                                 {order.items.map((item, i) => (
                                   <div key={`${item.name}-${i}`} className="flex justify-between text-xs">
                                     <span className="text-white/60">{item.name} x{item.qty}</span>
-                                    <span className="text-white/40">{formatNaira(item.price * item.qty)}</span>
+                                    <span className="text-white/65">{formatNaira(item.price * item.qty)}</span>
                                   </div>
                                 ))}
                                 <div className="h-px bg-white/5 my-1" />
@@ -508,7 +508,7 @@ This is an electronic receipt — no signature required.
                     <CheckCircle className="w-7 h-7 text-[#10E07A] relative z-10" />
                   </div>
                   <p className="text-white font-bold text-sm">No active orders</p>
-                  <p className="text-white/40 text-xs mt-1">All your deliveries are complete. Browse past orders or start a new one.</p>
+                  <p className="text-white/65 text-xs mt-1">All your deliveries are complete. Browse past orders or start a new one.</p>
                   <button
                     onClick={() => useAppStore.getState().setActiveTab('home')}
                     className="mt-4 bg-[#10E07A] text-[#06070B] font-bold py-2.5 px-6 rounded-xl text-xs active:scale-[0.98] transition-transform green-glow"
@@ -536,17 +536,17 @@ This is an electronic receipt — no signature required.
                     <div key={order.id} className="glass-card rounded-2xl overflow-hidden">
                       <div className="flex items-center gap-4 p-4">
                         <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center icon-tile border border-white/5">
-                          <CheckCircle className="w-6 h-6 text-white/30 relative z-10" />
+                          <CheckCircle className="w-6 h-6 text-white/60 relative z-10" />
                         </div>
                         <div className="flex-1">
                           <div className="flex justify-between items-start">
                             <div>
                               <p className="text-white/70 font-bold text-sm tracking-tight">{order.item}</p>
-                              <p className="text-white/30 text-xs">{order.eta}</p>
+                              <p className="text-white/60 text-xs">{order.eta}</p>
                             </div>
                             <div className="text-right">
                               <span className="soft-chip">Delivered</span>
-                              <p className="text-white/40 text-xs font-bold mt-0.5">{formatNaira(order.total)}</p>
+                              <p className="text-white/65 text-xs font-bold mt-0.5">{formatNaira(order.total)}</p>
                             </div>
                           </div>
                         </div>
@@ -579,7 +579,7 @@ This is an electronic receipt — no signature required.
                     <Clock className="w-7 h-7 text-[#A78BFA] relative z-10" />
                   </div>
                   <p className="text-white font-bold text-sm">No past orders yet</p>
-                  <p className="text-white/40 text-xs mt-1">Your completed orders will appear here for easy reordering.</p>
+                  <p className="text-white/65 text-xs mt-1">Your completed orders will appear here for easy reordering.</p>
                 </div>
               </div>
             )}
