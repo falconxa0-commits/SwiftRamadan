@@ -330,7 +330,7 @@ export default function UploadVideoModal({
             </div>
 
             {/* Author note */}
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-[#A78BFA]/8 border border-[#A78BFA]/15">
+            <div className="flex items-center gap-2 p-2 sm:p-3 rounded-xl bg-[#A78BFA]/8 border border-[#A78BFA]/15">
               <Sparkles className="w-4 h-4 text-[#A78BFA] shrink-0" />
               <p className="text-white/60 text-[11px]">
                 Posting as <span className="text-white font-bold">{authorName}</span> ({authorHandle})

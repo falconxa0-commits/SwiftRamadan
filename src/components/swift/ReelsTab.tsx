@@ -142,7 +142,7 @@ export default function ReelsTab() {
   return (
     <div className="relative h-full w-full overflow-hidden bg-black">
       {/* ── Top bar ── */}
-      <div className="absolute top-0 left-0 right-0 z-30 px-4 pt-3 pb-2 bg-gradient-to-b from-black/70 to-transparent">
+      <div className="absolute top-0 left-0 right-0 z-30 px-3 sm:px-4 pt-2 sm:pt-3 pb-2 bg-gradient-to-b from-black/70 to-transparent">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-xl bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/30 flex items-center justify-center">

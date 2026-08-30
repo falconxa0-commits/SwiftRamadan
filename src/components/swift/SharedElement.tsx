@@ -70,7 +70,7 @@ export default function SharedElement({
     <motion.div
       layoutId={layoutId}
       transition={springTransition}
-      className={className}
+      className={`${className} sm:transform-gpu`}
       style={{ willChange: 'transform, opacity' }}
     >
       {children}

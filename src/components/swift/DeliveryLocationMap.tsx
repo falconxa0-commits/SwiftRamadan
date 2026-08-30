@@ -117,8 +117,8 @@ export default function DeliveryLocationMap() {
             <div className="relative z-10 flex flex-col h-full">
               {/* Top Search Bar */}
               <div className="p-4">
-                <div className="glass-effect rounded-2xl border border-white/10 p-3">
-                  <div className="flex items-center gap-3">
+                <div className="glass-effect rounded-2xl border border-white/10 p-2 sm:p-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <button
                       onClick={() => setActiveModal(null)}
                       className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors shrink-0"
@@ -156,7 +156,7 @@ export default function DeliveryLocationMap() {
                             <button
                               key={loc.id}
                               onClick={() => handleSelectLocation(loc)}
-                              className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
+                              className="w-full flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-xl hover:bg-white/5 transition-colors text-left"
                             >
                               <div className="w-9 h-9 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0">
                                 <MapPin className="w-4 h-4 text-[var(--sr-customer)]" />
@@ -175,7 +175,7 @@ export default function DeliveryLocationMap() {
               </div>
 
               {/* Floating Buttons */}
-              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-20">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2 sm:gap-3 z-20">
                 {/* My Location Button */}
                 <motion.button
                   whileTap={{ scale: 0.9 }}
@@ -264,7 +264,7 @@ export default function DeliveryLocationMap() {
 
                 <div className="px-5 pb-8">
                   {/* Current Address */}
-                  <div className="flex items-start gap-3 mb-4">
+                  <div className="flex items-start gap-2 sm:gap-3 mb-4">
                     <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)]/10 flex items-center justify-center border border-[var(--sr-customer)]/20 shrink-0 mt-0.5">
                       <MapPin className="w-5 h-5 text-[var(--sr-customer)]" />
                     </div>

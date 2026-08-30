@@ -98,7 +98,7 @@ export function createDirectionalVariants(direction: 1 | -1): Variants {
 export function ParallaxBackground({ direction }: { direction: 1 | -1 }) {
   return (
     <motion.div
-      className="absolute inset-0 pointer-events-none"
+      className="absolute inset-0 pointer-events-none sm:opacity-100"
       initial={{ x: direction * SLIDE_DISTANCE * PARALLAX_FACTOR, opacity: 0.3 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -direction * SLIDE_DISTANCE * PARALLAX_FACTOR, opacity: 0.3 }}

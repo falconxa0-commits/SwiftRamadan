@@ -165,7 +165,7 @@ export default function RateDeliveryModal() {
             </div>
 
             <div className="flex items-center justify-between px-5 pt-3 pb-2">
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
                 <div className="size-10 rounded-2xl bg-[var(--sr-vendor)]/15 border border-[var(--sr-vendor)]/30 flex items-center justify-center shrink-0">
                   <Bike className="w-5 h-5 text-[var(--sr-vendor)]" />
                 </div>

@@ -135,7 +135,7 @@ export default function OrderCelebration({
   }, [autoFire, fireCelebration]);
 
   return (
-    <div className={`relative flex flex-col items-center text-center py-8 space-y-6 ${className}`}>
+    <div className={`relative flex flex-col items-center text-center py-6 sm:py-8 space-y-4 sm:space-y-6 ${className}`}>
       {/* Success Animation */}
       <motion.div
         initial={{ scale: 0 }}

@@ -291,7 +291,7 @@ export default function LiveMap({
       </MapContainer>
 
       {/* Map overlay: legend */}
-      <div className="absolute top-3 left-3 z-[500] bg-[#05070A]/80 backdrop-blur-md rounded-xl border border-white/10 px-3 py-2 flex flex-col gap-1.5 pointer-events-none">
+      <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-[500] bg-[#05070A]/80 backdrop-blur-md rounded-xl border border-white/10 px-3 py-2 flex flex-col gap-1.5 pointer-events-none">
         <div className="flex items-center gap-2">
           <span className="w-2.5 h-2.5 rounded-full bg-[#FFD700]" />
           <span className="text-white/70 text-[10px] font-medium">Route</span>

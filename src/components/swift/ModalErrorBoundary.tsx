@@ -45,7 +45,7 @@ export class ModalErrorBoundary extends React.Component<Props, State> {
       if (this.props.fallback) return this.props.fallback;
 
       return (
-        <div className="p-6 text-center">
+        <div className="p-4 sm:p-6 text-center">
           <div className="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mx-auto mb-3">
             <svg
               className="w-6 h-6 text-red-400"

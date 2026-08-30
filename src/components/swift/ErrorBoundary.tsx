@@ -88,8 +88,8 @@ export default class ErrorBoundary extends React.Component<
       }
 
       return (
-        <div className="min-h-screen flex items-center justify-center aurora-app-bg p-6">
-          <div className="glass-card rounded-3xl p-8 max-w-md w-full text-center space-y-6">
+        <div className="min-h-screen flex items-center justify-center aurora-app-bg p-4 sm:p-6">
+          <div className="glass-card rounded-3xl p-4 sm:p-8 max-w-md w-full text-center space-y-6">
             {/* Aurora glow accent */}
             <div className="relative mx-auto w-20 h-20">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#10E07A]/20 to-[#F5C451]/20 blur-xl" />
@@ -164,7 +164,7 @@ export default class ErrorBoundary extends React.Component<
             )}
 
             {/* Action buttons */}
-            <div className="flex flex-col gap-3 pt-2">
+            <div className="flex flex-col gap-2 sm:gap-3 pt-2">
               <button
                 onClick={this.handleReload}
                 className="w-full h-12 rounded-2xl bg-[var(--sr-customer)] text-[#04140C] font-bold text-sm

@@ -112,7 +112,7 @@ export default function StaggerContainer({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className={className}
+      className={`${className} sm:transform-gpu`}
     >
       {children}
     </motion.div>

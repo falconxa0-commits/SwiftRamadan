@@ -21,11 +21,11 @@ COPY . .
 
 # ── Switch Prisma provider from SQLite to PostgreSQL for production ──
 # In development, we use SQLite for simplicity. In production Docker builds,
-# we switch to PostgreSQL before generating the Prisma client.
-RUN sed -i 's/provider = "sqlite"/provider = "postgresql"/' prisma/schema.prisma
-
-# Generate Prisma client with PostgreSQL provider
-RUN bun run db:generate
+# we use the canonical PostgreSQL schema kept side-by-side at
+# `prisma/schema.postgresql.prisma` (no `sed` mutation of the SQLite schema).
+# Use PostgreSQL schema for production
+COPY prisma/schema.postgresql.prisma prisma/schema.prisma
+RUN npx prisma generate
 
 # Build Next.js with standalone output
 RUN bun run build

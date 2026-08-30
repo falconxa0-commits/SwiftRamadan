@@ -332,7 +332,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
       </AnimatePresence>
 
       {/* ── Top: category chip ── */}
-      <div className="absolute top-20 left-4 z-10">
+      <div className="absolute top-20 left-3 sm:left-4 z-10">
         <span className="px-2.5 h-6 rounded-full bg-black/40 backdrop-blur-md text-white/80 text-[10px] font-bold uppercase tracking-wider flex items-center border border-white/10">
           {video.category}
         </span>
