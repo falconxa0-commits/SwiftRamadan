@@ -12443,3 +12443,263 @@ $ cd /home/z/my-project && bun run test 2>&1 | tail -5
 *Result: 3 primitives (RoleButton verified, GlassCard + RoleBadge
 new), 1 barrel export, 18 new tests. 0 lint errors, 289/289 tests
 passing. 0 existing components modified.*
+
+---
+
+## Phase 13 — Agent A: Backup + Token Adoption
+
+### Mission
+1. Back up the 5 highest-impact Swift components before any
+   design-token migration touches them.
+2. Begin migrating the most common hardcoded hex colors to design
+   tokens via `var(--sr-*)` CSS custom properties in 3 of those 5
+   components.
+
+### Task 1 — Backups (`src/__ui_backup__/`)
+
+Created `src/__ui_backup__/` and copied the 5 key components with a
+`.phase12` suffix so a future rollback is a one-liner:
+
+```
+src/__ui_backup__/BottomNav.tsx.phase12   (4,991 B)
+src/__ui_backup__/ExploreTab.tsx.phase12   (20,574 B)
+src/__ui_backup__/HomeTab.tsx.phase12      (40,022 B)
+src/__ui_backup__/OrdersTab.tsx.phase12     (31,443 B)
+src/__ui_backup__/ProfileTab.tsx.phase12   (56,424 B)
+```
+
+The `.phase12` suffix mirrors the prior session's naming and lets
+multiple snapshot generations coexist (a future `.phase13` snapshot
+can be taken before deeper migrations).
+
+### Task 2 — CSS custom properties in `globals.css`
+
+Inserted a new `:root` block at the **top** of the existing
+"DESIGN SYSTEM UTILITY CLASSES (Phase 12)" section in
+`src/app/globals.css`. It declares 24 `--sr-*` variables that mirror
+the values in `src/lib/design-tokens.ts`:
+
+- Role accents: `--sr-customer`, `--sr-customer-hover`, `--sr-vendor`,
+  `--sr-vendor-hover`, `--sr-rider`, `--sr-rider-hover`, `--sr-ai`,
+  `--sr-ai-hover`
+- Surfaces: `--sr-surface-base`, `--sr-surface-raised`,
+  `--sr-surface-elevated`, `--sr-surface-hover`
+- Text: `--sr-text-primary`, `--sr-text-secondary`,
+  `--sr-text-tertiary`
+- Borders: `--sr-border`, `--sr-border-hover`
+- Semantic: `--sr-success`, `--sr-warning`, `--sr-error`, `--sr-info`
+- Radii: `--sr-radius-sm/md/lg/xl/2xl`
+
+The variables are intentionally a separate `:root` block (not merged
+into the existing Aurora Luxe `:root` at line 48) so the Phase 12
+section is self-contained and removable. They are additive — no
+existing variable was renamed or deleted — so consumers of
+`--background`, `--primary`, `--surface-2`, etc. continue to work
+unchanged.
+
+### Task 3 — Hardcoded color migration (3 components)
+
+Ran the prescribed `sed` sweep on `HomeTab.tsx`, `ExploreTab.tsx`,
+and `OrdersTab.tsx`. Four substitutions per file:
+
+| Before                    | After                              |
+|---------------------------|------------------------------------|
+| `bg-[#0F1118]`            | `bg-[var(--sr-surface-raised)]`    |
+| `text-[#10E07A]`          | `text-[var(--sr-customer)]`        |
+| `bg-[#10E07A]`            | `bg-[var(--sr-customer)]`          |
+| `border-[#10E07A]`        | `border-[var(--sr-customer)]`      |
+
+Hardcoded `#10E07A` + `#0F1118` occurrence counts:
+
+| File        | Before | After | Delta |
+|-------------|-------:|------:|------:|
+| HomeTab     |     36 |     5 |   -31 |
+| ExploreTab  |     20 |     1 |   -19 |
+| OrdersTab   |     28 |     1 |   -27 |
+| **Total**   |     84 |     7 |   -77 |
+
+The 7 remaining occurrences are intentionally out of scope for this
+pass — they are gradient stops (`from-[#10E07A]`, `to-[#10E07A]`),
+shadow colors (`shadow-[#10E07A]/20`), and a `ring-[#10E07A]/20`
+ring utility. Tailwind's arbitrary value syntax for gradients and
+ring/shadow colors requires the literal hex inside the bracket
+(`from-[var(--sr-customer)]` is supported by Tailwind v4 but was not
+in the prescribed substitution set for this phase, so they were left
+for a future sweep to avoid scope creep). The 5 remaining in
+HomeTab are: 3 gradient `from-[#10E07A]` stops, 1 `shadow-[#10E07A]`,
+and 1 `to-[#10E07A]` stop.
+
+### Verification
+
+```bash
+$ cd /home/z/my-project && ls src/__ui_backup__/
+BottomNav.tsx.phase12
+ExploreTab.tsx.phase12
+HomeTab.tsx.phase12
+OrdersTab.tsx.phase12
+ProfileTab.tsx.phase12
+
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+  17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+✖ 3 problems (0 errors, 3 warnings)
+  0 errors and 2 warnings potentially fixable with the --fix option.
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ Test Files  26 passed (26)
+      Tests  289 passed (289)
+   Duration  30.10s
+
+$ cd /home/z/my-project && grep -c "#10E07A" src/components/swift/HomeTab.tsx
+5
+```
+
+- 0 lint errors. 3 pre-existing warnings unchanged (same set as
+  the prior Agent C session: `prisma/seed-swiftbites.ts`,
+  `src/app/layout.tsx`, `types/prisma-augmentation.d.ts`).
+- 289/289 tests pass (no regressions, same total as prior session).
+- All 5 backups present in `src/__ui_backup__/`.
+
+### Notes for the next agent
+
+1. **`BottomNav.tsx` and `ProfileTab.tsx` are backed up but NOT yet
+   migrated.** They were intentionally left untouched this pass —
+   the task scoped the sed migration to the 3 highest-traffic
+   content surfaces (Home, Explore, Orders). BottomNav and ProfileTab
+   are the next candidates, and the same 4-substitution sed will
+   work verbatim on both (verify with `grep -E -c "#10E07A|#0F1118"`
+   first).
+
+2. **Gradients + shadows + rings still hardcoded.** The remaining
+   7 occurrences across the 3 migrated files use `from-[#10E07A]`,
+   `to-[#10E07A]`, `shadow-[#10E07A]`, and `ring-[#10E07A]`. Tailwind
+   v4 supports `from-[var(--sr-customer)]` so the next sweep can
+   extend the sed substitution set to:
+   ```
+   s/from-\[#10E07A\]/from-[var(--sr-customer)]/g
+   s/to-\[#10E07A\]/to-[var(--sr-customer)]/g
+   s/shadow-\[#10E07A\]/shadow-[var(--sr-customer)]/g
+   s/ring-\[#10E07A\]/ring-[var(--sr-customer)]/g
+   ```
+   to close the loop on `#10E07A` entirely.
+
+3. **Other hex colors not yet migrated.** The 3 files also still
+   contain `#F5C451` (vendor gold), `#38BDF8` (rider sky),
+   `#A78BFA`/`#8B5CF6` (AI violet), `#161924` (surface-elevated),
+   `#1B1F2A` (surface-hover), `#06070B` (surface-base), etc. The
+   same `--sr-*` variable set is now available for all of them — a
+   follow-up sweep should mirror this pattern:
+   `bg-[#161924]` → `bg-[var(--sr-surface-elevated)]`, etc.
+
+4. **CSS variable parity with `design-tokens.ts` is intentional.**
+   The new `:root` block in `globals.css` is a mirror of the TS
+   tokens, not a replacement. TS consumers (Zustand stores,
+   `getRoleConfig`, `RoleButton`/`GlassCard`/`RoleBadge`) continue
+   to import from `src/lib/design-tokens.ts`; JSX/Tailwind consumers
+   use `var(--sr-*)`. Drift between the two is a known risk — if a
+   token value changes, **both** files must be updated. A future
+   refactor could generate the CSS block from the TS file at build
+   time to eliminate the drift surface.
+
+5. **`.phase12` backup suffix.** The backups use `.phase12` to match
+   the prior session's naming convention even though this is the
+   Phase 13 work. This is deliberate: the backups capture the
+   *pre-Phase-13* state of the files, which is the Phase 12 baseline.
+   A future agent starting Phase 14 work should snapshot to
+   `.phase13` before modifying further.
+
+*Agent A — Backup + Token Adoption*
+*Result: 5 components backed up, 24 CSS custom properties added to
+globals.css, 77 hardcoded color occurrences migrated to design-token
+CSS variables across 3 components. 0 lint errors, 289/289 tests
+passing, 0 regressions.*
+
+---
+
+## Phase 13-C — More Primitives + Tests (Latest)
+
+### Mission
+Add 5 more reusable primitive components to the `src/components/primitives/`
+barrel to reduce duplication across the 122 Swift components. ADDITIVE only —
+existing components remain untouched.
+
+### Task 1: RoleInput
+- New file: `src/components/primitives/RoleInput.tsx`
+- `forwardRef` text input with consistent styling
+- Variants: `default` (white/10 border), `error` (#EF4444 ring), `success` (#10B981 ring)
+- Sizes: `sm` (text-xs), `md` (text-sm), `lg` (text-base)
+- Enforces `min-h-[44px]` touch target (WCAG 2.5.5)
+- `focus-visible:ring-2` keyboard ring + `disabled:` state + placeholder support
+
+### Task 2: Skeleton
+- New file: `src/components/primitives/Skeleton.tsx`
+- Variants: `text` (rounded-md), `circle` (rounded-full + aspect-square), `rect` (rounded-xl)
+- Uses the existing `.skeleton-shimmer` class from `globals.css` (2s shimmer loop)
+- Configurable `width`/`height` (number → px, or any CSS string)
+- Optional `count` + `gap` for repeated placeholders
+- `aria-busy` + `aria-live="polite"` for screen readers
+
+### Task 3: EmptyState
+- New file: `src/components/primitives/EmptyState.tsx`
+- Layout: optional `icon` (in a rounded-full tinted container) + required `title`
+  + optional `description` + optional `action` slot
+- Variants: `default` (p-8), `compact` (p-5), `large` (p-12)
+- Premium glass surface: `bg-white/[0.03]` + `backdrop-blur-[12px]` + `border-white/[0.08]`
+- `role="status"` for accessibility
+
+### Task 4: ErrorState
+- New file: `src/components/primitives/ErrorState.tsx`
+- Error glyph (inline SVG triangle) inside a `bg-[#EF4444]/10` tinted container
+- Variants: `inline` (left-aligned row), `full` (centered min-h-[60vh]), `card` (glass card)
+- `onRetry` callback renders a retry button (custom `retryLabel` supported)
+- Retry button stops propagation so it can nest in click-handling parents
+- `role="alert"` for accessibility
+
+### Task 5: PageLoader
+- New file: `src/components/primitives/PageLoader.tsx`
+- `fixed inset-0 z-[60]` overlay with `bg-[#06070B]/80` + `backdrop-blur-[24px]`
+- Pure-CSS spinner via Tailwind's `animate-spin` keyframes (no JS animation driver)
+- Spinner is a 4px-border ring with `border-t-white` accent
+- Optional `message` slot below spinner + `sr-only` "Loading" announcement
+- `role="status"` + `aria-busy="true"` + `aria-live="polite"`
+
+### Task 6: Barrel export
+- `src/components/primitives/index.ts` updated to export all 8 primitives:
+  `RoleButton`, `GlassCard`, `RoleBadge`, `RoleInput`, `Skeleton`, `EmptyState`,
+  `ErrorState`, `PageLoader`
+
+### Task 7: Tests
+- New file: `tests/unit/primitives-extra.test.tsx` (28 tests, exceeds 12–15 minimum)
+  - RoleInput: 8 tests (default render, 3 variants, 44px min, focus ring, 3 sizes, ref forwarding, placeholder, disabled state)
+  - Skeleton: 5 tests (shimmer class, text variant, circle variant, count, width/height inline styles)
+  - EmptyState: 4 tests (title/description/action, glass bg, icon wrapper, compact variant)
+  - ErrorState: 6 tests (message render, role=alert, retry button rendered, retry button omitted, onRetry invoked, custom retry label)
+  - PageLoader: 4 tests (fixed glass overlay, animate-spin spinner, role=status+aria-busy, optional message)
+  - Barrel: 1 test (all 5 new primitives exported from index)
+
+### Verification
+- `bun run lint` → 0 errors, 3 pre-existing warnings (none from new code)
+- `bun run test` → 317/317 tests pass (289 prior + 28 new)
+- No existing components modified. All work is purely ADDITIVE.
+
+### Notes for next agent
+1. **Existing components are still untouched.** The 122 Swift components still
+   use inline implementations of inputs/skeletons/empty/error states. A
+   follow-up sweep can progressively swap those for these primitives, but
+   that work was explicitly out of scope for this task (ADDITIVE only).
+
+2. **`lucide-react` is available** but the primitives use inline SVG / ReactNode
+   slots so consumers can pass any icon library. This keeps the primitives
+   dependency-light and tree-shakeable.
+
+3. **Skeleton shimmer keyframe** lives in `globals.css` (`.skeleton-shimmer`).
+   The primitive just attaches the class — no inline keyframes are added,
+   keeping the animation centralized in the global stylesheet.
+
+4. **PageLoader uses Tailwind's built-in `animate-spin`** (CSS-only, no JS
+   animation driver). The task's "CSS only, no JS" requirement is satisfied:
+   Tailwind ships the `@keyframes spin` rule in its base layer.
+
+*Agent C — More Primitives + Tests*
+*Result: 5 new primitive components, 1 barrel export updated, 28 unit tests
+added. 0 lint errors, 317/317 tests passing, 0 regressions.*

@@ -489,6 +489,39 @@
    Use these instead of hardcoded values.
    ══════════════════════════════════════════════════════════════════ */
 
+/* Design Token CSS Variables — mirrors src/lib/design-tokens.ts so
+   Tailwind arbitrary-value classes (e.g. bg-[var(--sr-customer)])
+   resolve to the same single source of truth consumed by the
+   primitive components. */
+:root {
+  --sr-customer: #10E07A;
+  --sr-customer-hover: #0EA05A;
+  --sr-vendor: #F5C451;
+  --sr-vendor-hover: #E8B447;
+  --sr-rider: #38BDF8;
+  --sr-rider-hover: #0EA5E9;
+  --sr-ai: #8B5CF6;
+  --sr-ai-hover: #7C3AED;
+  --sr-surface-base: #06070B;
+  --sr-surface-raised: #0F1118;
+  --sr-surface-elevated: #161924;
+  --sr-surface-hover: #1B1F2A;
+  --sr-text-primary: #FFFFFF;
+  --sr-text-secondary: rgba(255, 255, 255, 0.65);
+  --sr-text-tertiary: rgba(255, 255, 255, 0.45);
+  --sr-border: rgba(255, 255, 255, 0.08);
+  --sr-border-hover: rgba(255, 255, 255, 0.12);
+  --sr-success: #10B981;
+  --sr-warning: #F59E0B;
+  --sr-error: #EF4444;
+  --sr-info: #3B82F6;
+  --sr-radius-sm: 6px;
+  --sr-radius-md: 10px;
+  --sr-radius-lg: 14px;
+  --sr-radius-xl: 20px;
+  --sr-radius-2xl: 28px;
+}
+
 /* WCAG AA compliant text colors */
 .text-primary { color: #FFFFFF; }
 .text-secondary { color: rgba(255, 255, 255, 0.65); }

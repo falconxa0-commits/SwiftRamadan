@@ -146,7 +146,7 @@ export default function ExploreTab() {
       <>
       {/* Welcome + Search */}
       <div className="px-5 pt-6 pb-3">
-        <p className="text-[var(--sr-customer)] text-[11px] font-bold uppercase tracking-[0.18em] mb-1">Welcome back</p>
+        <p className="text-[#10E07A] text-[11px] font-bold uppercase tracking-[0.18em] mb-1">Welcome back</p>
         <h1 className="text-2xl font-bold tracking-tight">What do you need today?</h1>
 
         {/* Search bar */}
@@ -154,7 +154,7 @@ export default function ExploreTab() {
           onClick={() => setShowSearch(true)}
           className="w-full mt-4 flex items-center gap-3 glass-card rounded-2xl px-4 py-3 text-left hover:border-white/15 transition-colors group active:scale-[0.99]"
         >
-          <Search className="w-4 h-4 text-white/65 group-hover:text-[var(--sr-customer)] transition-colors" />
+          <Search className="w-4 h-4 text-white/65 group-hover:text-[#10E07A] transition-colors" />
           <span className="text-white/65 text-sm flex-1">Search meals, stores, products…</span>
           <span className="soft-chip">⌘K</span>
         </button>
@@ -181,15 +181,15 @@ export default function ExploreTab() {
       {/* Active category filter indicator */}
       {activeCategory && (
         <div className="px-5 pb-1">
-          <div className="flex items-center gap-2 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 rounded-xl px-3 py-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[var(--sr-customer)]" />
-            <span className="text-[var(--sr-customer)] text-xs font-bold">Showing: {activeCategory}</span>
+          <div className="flex items-center gap-2 bg-[#10E07A]/10 border border-[#10E07A]/20 rounded-xl px-3 py-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#10E07A]" />
+            <span className="text-[#10E07A] text-xs font-bold">Showing: {activeCategory}</span>
             <button
               onClick={() => setActiveCategory(null)}
-              className="ml-auto p-0.5 hover:bg-[var(--sr-customer)]/10 rounded-full transition-colors"
+              className="ml-auto p-0.5 hover:bg-[#10E07A]/10 rounded-full transition-colors"
               aria-label="Clear category filter"
             >
-              <X className="w-3.5 h-3.5 text-[var(--sr-customer)]/60" />
+              <X className="w-3.5 h-3.5 text-[#10E07A]/60" />
             </button>
           </div>
         </div>
@@ -209,7 +209,7 @@ export default function ExploreTab() {
                 transition={{ delay: i * 0.1 }}
                 onClick={() => handleCategoryClick(item)}
                 className={`relative group cursor-pointer overflow-hidden rounded-2xl aspect-square flex flex-col justify-end p-4 border transition-colors text-left ${
-                  isActive ? 'border-[var(--sr-customer)]/40 ring-1 ring-[#10E07A]/20' : 'border-white/5 hover:border-[var(--sr-customer)]/20'
+                  isActive ? 'border-[#10E07A]/40 ring-1 ring-[#10E07A]/20' : 'border-white/5 hover:border-[#10E07A]/20'
                 }`}
                 style={{
                   backgroundImage: `linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.2) 100%), url('${item.image}')`,
@@ -218,7 +218,7 @@ export default function ExploreTab() {
                 }}
               >
                 <span className={`absolute top-2 right-2 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-tighter ${
-                  isActive ? 'bg-[var(--sr-customer)] text-[#06070B]' : 'bg-[#F5C451] text-[#06070B]'
+                  isActive ? 'bg-[#10E07A] text-[#06070B]' : 'bg-[#F5C451] text-[#06070B]'
                 }`}>
                   {isActive ? '✓ Active' : item.badge}
                 </span>
@@ -236,7 +236,7 @@ export default function ExploreTab() {
           <h2 className="text-xl font-bold heading-accent">Seasonal Specials</h2>
           <button
             onClick={() => setActiveCategory('Iftar Meals')}
-            className="text-[var(--sr-customer)] text-sm font-semibold cursor-pointer hover:text-[var(--sr-customer)]/80 transition-colors"
+            className="text-[#10E07A] text-sm font-semibold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             View all
           </button>
@@ -266,7 +266,7 @@ export default function ExploreTab() {
                 </div>
                 <button
                   onClick={handleShopNow}
-                  className="bg-[var(--sr-customer)] hover:bg-[var(--sr-customer)]/90 text-[#06070B] font-bold py-2 px-6 rounded-xl transition-colors text-sm active:scale-[0.98] transform green-glow"
+                  className="bg-[#10E07A] hover:bg-[#10E07A]/90 text-[#06070B] font-bold py-2 px-6 rounded-xl transition-colors text-sm active:scale-[0.98] transform green-glow"
                 >
                   Shop Now
                 </button>
@@ -282,7 +282,7 @@ export default function ExploreTab() {
           <h3 className="text-white text-lg font-extrabold heading-accent">Popular Retailers</h3>
           <button
             onClick={() => setActiveCategory(null)}
-            className="text-[var(--sr-customer)] text-sm font-bold cursor-pointer hover:text-[var(--sr-customer)]/80 transition-colors"
+            className="text-[#10E07A] text-sm font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             Explore All
           </button>
@@ -294,7 +294,7 @@ export default function ExploreTab() {
               onClick={() => handleRetailerClick(retailer)}
               whileTap={{ scale: 0.97 }}
               className={`min-w-[160px] glass-card rounded-2xl p-3 cursor-pointer hover:border-white/15 transition-colors text-left ${
-                selectedRetailer?.id === retailer.id ? 'border-[var(--sr-customer)]/30' : ''
+                selectedRetailer?.id === retailer.id ? 'border-[#10E07A]/30' : ''
               }`}
             >
               <div
@@ -307,7 +307,7 @@ export default function ExploreTab() {
                 <Star className="w-3 h-3 text-[#F5C451] fill-[#F5C451]" />
                 <span className="text-[#F5C451] text-[10px] font-bold">{retailer.rating}</span>
                 {retailer.verified && (
-                  <CheckCircle className="w-3 h-3 text-[var(--sr-customer)] ml-1" />
+                  <CheckCircle className="w-3 h-3 text-[#10E07A] ml-1" />
                 )}
               </div>
             </motion.button>
@@ -338,7 +338,7 @@ export default function ExploreTab() {
                   setActiveCategory(selectedRetailer.category);
                   setSelectedRetailer(null);
                 }}
-                className="flex-1 bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] py-2 rounded-xl font-bold text-xs hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-95"
+                className="flex-1 bg-[#10E07A]/10 border border-[#10E07A]/20 text-[#10E07A] py-2 rounded-xl font-bold text-xs hover:bg-[#10E07A]/20 transition-colors active:scale-95"
               >
                 Browse Menu
               </button>
@@ -367,7 +367,7 @@ export default function ExploreTab() {
               onClick={() => handleQuickAction(action)}
               className="flex-shrink-0 w-20 flex flex-col items-center gap-2 cursor-pointer group"
             >
-              <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[var(--sr-customer)]/20 transition-colors group-active:scale-95 icon-tile">
+              <div className="size-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 hover:border-[#10E07A]/20 transition-colors group-active:scale-95 icon-tile">
                 <span className="material-symbols-outlined text-[#F5C451] text-2xl relative z-10">{action.icon}</span>
               </div>
               <span className="text-[10px] font-medium text-center text-white/70">{action.name}</span>
@@ -384,7 +384,7 @@ export default function ExploreTab() {
           </h3>
           <button
             onClick={() => setActiveTab('home')}
-            className="text-[var(--sr-customer)] text-xs font-bold cursor-pointer hover:text-[var(--sr-customer)]/80 transition-colors"
+            className="text-[#10E07A] text-xs font-bold cursor-pointer hover:text-[#10E07A]/80 transition-colors"
           >
             See All
           </button>
@@ -416,7 +416,7 @@ export default function ExploreTab() {
                 </div>
                 <div className="flex items-center justify-between mt-1.5">
                   <div>
-                    <span className="text-[var(--sr-customer)] text-sm font-black">
+                    <span className="text-[#10E07A] text-sm font-black">
                       {formatNaira(product.salePrice || product.price || 0)}
                     </span>
                     {product.originalPrice && product.salePrice && product.originalPrice > product.salePrice && (
@@ -426,7 +426,7 @@ export default function ExploreTab() {
                 </div>
                 <button
                   onClick={(e) => handleAddToCart(product, e)}
-                  className="w-full mt-2 text-[10px] font-bold text-[var(--sr-customer)] bg-[var(--sr-customer)]/10 py-1.5 rounded-lg border border-[var(--sr-customer)]/20 hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-95"
+                  className="w-full mt-2 text-[10px] font-bold text-[#10E07A] bg-[#10E07A]/10 py-1.5 rounded-lg border border-[#10E07A]/20 hover:bg-[#10E07A]/20 transition-colors active:scale-95"
                 >
                   + Add to Cart
                 </button>
@@ -439,7 +439,7 @@ export default function ExploreTab() {
             <p className="text-white/65 text-sm">No products found for &quot;{activeCategory}&quot;</p>
             <button
               onClick={() => setActiveCategory(null)}
-              className="text-[var(--sr-customer)] text-sm font-bold mt-2 hover:text-[var(--sr-customer)]/80 transition-colors"
+              className="text-[#10E07A] text-sm font-bold mt-2 hover:text-[#10E07A]/80 transition-colors"
             >
               Clear filter
             </button>
