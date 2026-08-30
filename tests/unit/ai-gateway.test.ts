@@ -67,11 +67,11 @@ vi.mock('@/lib/ai/sdk', () => ({
 
 // Mock @/ai/limits: checkTokenBudget allows by default; recordTokenUsage is
 // a spy so we can assert it was called with the right (userId, tokens).
-const checkTokenBudgetMock = vi.fn(async () => ({ allowed: true, remaining: 10_000 }));
-const recordTokenUsageMock = vi.fn(async () => undefined);
+const checkTokenBudgetMock = vi.fn<(userId: string) => Promise<{ allowed: boolean; remaining: number }>>(async () => ({ allowed: true, remaining: 10_000 }));
+const recordTokenUsageMock = vi.fn<(userId: string, tokens: number) => Promise<void>>(async () => undefined);
 vi.mock('@/ai/limits', () => ({
-  checkTokenBudget: (...a: unknown[]) => checkTokenBudgetMock(...a),
-  recordTokenUsage: (...a: unknown[]) => recordTokenUsageMock(...a),
+  checkTokenBudget: (userId: string) => checkTokenBudgetMock(userId),
+  recordTokenUsage: (userId: string, tokens: number) => recordTokenUsageMock(userId, tokens),
   resolveMaxTokens: (n?: number) => {
     const requested = typeof n === 'number' && Number.isFinite(n) ? Math.floor(n) : 500;
     if (requested < 1) return 1;
@@ -139,8 +139,9 @@ describe('ai/gateway — happy path', () => {
     });
 
     expect(recordTokenUsageMock).toHaveBeenCalledTimes(1);
-    expect(recordTokenUsageMock.mock.calls[0][0]).toBe('user-2');
-    expect(recordTokenUsageMock.mock.calls[0][1]).toBe(7);
+    const calls = recordTokenUsageMock.mock.calls as unknown as [string, number][];
+    expect(calls[0][0]).toBe('user-2');
+    expect(calls[0][1]).toBe(7);
   });
 
   it('uses the getAISDK singleton (NOT inline ZAI.create)', async () => {

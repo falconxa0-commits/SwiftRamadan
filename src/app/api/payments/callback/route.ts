@@ -40,7 +40,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Find the payment by reference
-    const payment = await db.payment.findUnique({ where: { reference } });
+    // MIGRATED (Phase 11): inline `db.payment.findUnique({ where: { reference } })`
+    // delegated to `paymentsService.getPaymentByReference`, which performs the
+    // exact same lookup (returns `Payment | null`). The route keeps the
+    // subsequent provider verification, amount-tolerance check, currency
+    // check, and the atomic `$transaction` (which mixes `payment.update` +
+    // `order.update` — no single service function covers both).
+    const payment = await paymentsService.getPaymentByReference(reference);
 
     if (!payment) {
       return NextResponse.redirect(new URL('/?payment=not_found', request.url));
@@ -212,7 +218,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Find the payment by reference
-    const payment = await db.payment.findUnique({ where: { reference } });
+    // MIGRATED (Phase 11): inline `db.payment.findUnique({ where: { reference } })`
+    // delegated to `paymentsService.getPaymentByReference` (same lookup,
+    // returns `Payment | null`). The subsequent provider verification,
+    // amount-tolerance, currency check, and atomic `$transaction` are kept
+    // inline because no single service function covers that whole flow.
+    const payment = await paymentsService.getPaymentByReference(reference);
 
     if (!payment) {
       // Unknown reference — acknowledge to prevent retries, but don't process

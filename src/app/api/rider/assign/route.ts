@@ -129,7 +129,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const order = await db.order.findUnique({ where: { id: orderId } });
+    // MIGRATED (Phase 11): the inline `db.order.findUnique({ where: { id: orderId } })`
+    // is delegated to `ordersService.getOrderById(orderId, null)`. We pass
+    // `userId = null` to skip the service's own ownership check (the rider
+    // is not the order's customer). The route uses `order.riderName` (still
+    // present on `ParsedOrder`) for the complete-action authorisation check
+    // below, and `order.items` (already parsed by the service) for the
+    // decline-action response. Both shapes are unchanged from the previous
+    // inline flow (which JSON-parsed the raw `items` string at point-of-use).
+    const order = await ordersService.getOrderById(orderId, null);
     if (!order) {
       return NextResponse.json(
         { success: false, message: 'Order not found' },
@@ -175,17 +183,12 @@ export async function POST(request: NextRequest) {
     }
 
     if (action === 'decline') {
-      let parsedItems: Array<{ name: string; qty: number; price: number }> = [];
-      try {
-        parsedItems = JSON.parse(order.items);
-      } catch {
-        parsedItems = [];
-      }
-
       return NextResponse.json({
         success: true,
         message: `Order ${orderId} declined.`,
-        order: { ...order, items: parsedItems },
+        // `order.items` is already parsed by `ordersService.getOrderById`
+        // (returns `OrderItem[]`); no JSON.parse needed.
+        order,
       });
     }
 

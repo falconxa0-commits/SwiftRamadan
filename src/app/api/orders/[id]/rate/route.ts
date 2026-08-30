@@ -4,13 +4,18 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
 import * as ordersService from '@/services/orders/orders.service';
+import * as usersService from '@/services/users/users.service';
 
 // Resolve an identifier (id OR email) to a User.id. Returns null if not found.
+// MIGRATED (Phase 11): the `by id` lookup path is delegated to
+// `usersService.getUserById` (returns `PublicUser | null`). The `by email`
+// fallback stays inline because the service only supports userId-keyed
+// lookups (the spec's AVAILABLE SERVICES list has no by-email lookup).
 async function resolveUserId(identifier: string | null | undefined): Promise<string | null> {
   if (!identifier) return null;
   // Try by id first
-  const byId = await db.user.findUnique({ where: { id: identifier }, select: { id: true } });
-  if (byId) return byId.id;
+  const byId = await usersService.getUserById(identifier);
+  if (byId) return String(byId.id);
   // Then by email
   const byEmail = await db.user.findUnique({ where: { email: identifier }, select: { id: true } });
   return byEmail ? byEmail.id : null;
@@ -104,8 +109,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     }
 
     // ── Admin path (preserves previous admin override) ──
-    // Verify order exists
-    const order = await db.order.findUnique({ where: { id: orderId } });
+    // Verify order exists.
+    // MIGRATED (Phase 11): the inline `db.order.findUnique` is delegated to
+    // `ordersService.getOrderById(orderId, null)` (null skips the service's
+    // ownership check — admins can rate any order, which is the explicit
+    // purpose of this branch). The `order` value is unused beyond the
+    // existence check, so the parsed `items: OrderItem[]` field is safely
+    // discarded.
+    const order = await ordersService.getOrderById(orderId, null);
     if (!order) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
     }

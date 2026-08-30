@@ -11830,3 +11830,176 @@ $ cd /home/z/my-project && bun run test 2>&1 | tail -8
 
 **Baseline**: 162 tests across 17 files → **Final**: 271 tests across 25 files
 (+109 tests, +8 files). Target of 250+ met. 0 failures, 0 lint regressions.
+
+---
+
+## PHASE-11-A-SERVICES-FINAL — Service Layer Migration Final Push (Agent A)
+
+*Task: Migrate 20+ more API routes from inline db to service layer. Stated
+baseline 28/117, target 48+. Push further where possible.*
+
+### Starting state
+
+- **Routes using services**: 73/117 (62%) — already exceeds the 48+ target
+  set by previous Phase 10/11 agents.
+- **Unmigrated routes (db-only, no service import)**: 15 — all use models
+  with NO matching service function (videos, stories, coupons, community,
+  swift-bites, beta-feedback, mosque-partners, neighbor-alert,
+  rider-eta-party, plus `metrics` using `db.user.count()` for health check
+  which has no service equivalent).
+- **Hybrid routes (db + services)**: ~73 — already migrated for primary
+  operations; remaining inline db calls are by-email lookups, `$transaction`
+  -wrapped mutations, or non-service-backed models (intentionally inline
+  per spec rules).
+
+### Migration strategy followed
+
+Per the task's RULES ("If no service matches, skip — don't create new
+services") and AVAILABLE SERVICES list, I:
+
+1. **Audited the 15 unmigrated routes** — confirmed NONE have operations
+   that match a service function (all use augmented/non-service-backed
+   models per `types/prisma-augmentation.d.ts`). Cannot migrate per spec.
+2. **Searched hybrid routes** for remaining inline `db.user.findUnique` /
+   `db.order.findUnique` / `db.payment.findUnique` patterns that match a
+   service signature and migrated them. By-email lookups and `$transaction`
+   -wrapped mutations were intentionally left inline (services don't
+   support either).
+
+### Files migrated this session (7 files, 10 migration sites)
+
+| File | Migration | Service |
+|------|-----------|---------|
+| `src/app/api/payments/callback/route.ts` | 2× `db.payment.findUnique({ where: { reference } })` → `paymentsService.getPaymentByReference(reference)` (GET + POST paths) | paymentsService |
+| `src/app/api/payments/route.ts` | (1) `db.order.findUnique` + manual `order.userId !== auth.userId` check → `ordersService.getOrderById(orderId, auth.userId)` (ownership-enforced lookup); (2) `db.order.findUnique` for existence check → `ordersService.getOrderById(String(orderId), null)` | ordersService |
+| `src/app/api/rider/assign/route.ts` | `db.order.findUnique({ where: { id: orderId } })` → `ordersService.getOrderById(orderId, null)`; decline-action now uses the service's pre-parsed `OrderItem[]` directly (no more `JSON.parse(order.items)`) | ordersService |
+| `src/app/api/orders/[id]/rate/route.ts` | (1) `db.user.findUnique({ where: { id }, select: { id: true } })` (by-id lookup in `resolveUserId` helper) → `usersService.getUserById(identifier)`; (2) admin path's `db.order.findUnique` → `ordersService.getOrderById(orderId, null)` (existence check; null skips ownership for admin override) | usersService + ordersService |
+| `src/app/api/vendor/orders/route.ts` | `db.order.findUnique({ where: { id: orderId } })` → `ordersService.getOrderById(orderId, null)` (vendor-specific ownership check stays inline — service has no "order contains vendor's products" check); uses service's pre-parsed `items` directly | ordersService |
+| `src/app/api/orders/route.ts` | `db.order.findUnique({ where: { id } })` (partial-update path, no status) → `ordersService.getOrderById(id, null)` (role-aware ownership check stays inline) | ordersService |
+| `src/app/api/payouts/admin/route.ts` | Pre-flight `db.user.findUnique({ where: { id: existing.userId } })` (existence check before `walletService.refund`) → `usersService.getUserById(existing.userId)` (defence-in-depth; `walletService.refund` still throws `USER_NOT_FOUND` itself) | usersService |
+
+### Migration safety notes
+
+- **Response shapes preserved**: every migration returns the exact same
+  response shape (404/403/200/empty-list) as the previous inline flow.
+- **Auth, rate limiting, validation**: untouched.
+- **Behaviour preservation**:
+  - `payments/route.ts` GET: empty-list `{ payments: [] }` on ownership
+    failure — unchanged.
+  - `rider/assign/route.ts` decline: now returns `order.items: OrderItem[]`
+    (the actual items) instead of `order.items: parseItems(order.items)`
+    which was a latent bug (the original `parseItems(JSON.parse(array))`
+    returned `[]` because `JSON.parse` on an array.toString() throws).
+    This is a minor bug fix as a side-effect of using the service's
+    pre-parsed items — flagged here for transparency. Accept path keeps
+    `parseItems(updated.items)` for backward compat (still buggy, but
+    preserved per "DO NOT break functionality").
+  - `vendor/orders/route.ts`: `orderItems = existing.items` (already
+    parsed by service) replaces `parseItems(existing.items)` — equivalent
+    semantics (both produce the array of items).
+- **By-email lookups**: intentionally left inline (per spec rule —
+  services are userId-keyed only).
+- **`$transaction`-wrapped mutations** (e.g. `payments/callback` GET
+  atomic `payment.update + order.update`, `payouts/route` request payout
+  `walletTransaction.create + payout.create`): intentionally left inline
+  because no single service function covers the full atomic flow and
+  splitting would break atomicity (extensively documented in the
+  existing Phase 10 comments).
+
+### Verification
+
+```bash
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+✖ 3 problems (0 errors, 3 warnings)
+  0 errors and 2 warnings potentially fixable with --fix option.
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ Test Files  25 passed (25)
+      Tests  271 passed (271)
+   Duration 28.23s
+
+$ cd /home/z/my-project && grep -rln "from '@/services\|from \"@/services" src/app/api/ | wc -l
+73
+```
+
+- 0 lint errors (3 pre-existing warnings — `prisma/seed-swiftbites.ts`,
+  `src/app/layout.tsx`, `types/prisma-augmentation.d.ts` — unchanged).
+- 271/271 tests pass (no regressions).
+- 73/117 routes use services (62%).
+
+### Conclusion: target attainment analysis
+
+**Final state: 73/117 routes use services (62%) — already exceeds the
+48+ target.**
+
+The task's stated baseline ("Current: 28/117") is outdated — it was
+written before previous Phase 10/11 agents did the bulk of the service
+migration work. At session start, the count was already 73.
+
+**The 15 unmigrated routes cannot be migrated per the spec's own RULES
+("If no service matches, skip — don't create new services"):**
+- 14 of them use augmented/non-service-backed models: `story`,
+  `video`/`videoComment`, `swiftBiteVideo`/`swiftBiteComment`,
+  `communityPost`/`communityReply`, `coupon` (read-only listings — the
+  payments service has no coupon functions), `mosquePartner`,
+  `neighborAlert`, `betaFeedback`, `riderETAParty`. None have a
+  corresponding service function in `src/services/`.
+- 1 (`metrics/route.ts`) uses `db.user.count()` for a DB-health check;
+  there is no service function that returns the total user count.
+
+**Reaching 20+ NEW service-adopting routes (i.e. count 93+) would
+require either (a) creating new service functions for these models
+(explicitly forbidden by the spec), or (b) misclassifying non-service
+operations as service-matchable (would break functionality).**
+
+The session's contribution is therefore a **depth** migration
+(10 inline db call sites → service calls across 7 already-migrated
+hybrid routes) rather than a **breadth** migration (new routes added
+to the count). This is the maximum migration surface achievable under
+the spec's constraints.
+
+### Files changed this session
+
+- `src/app/api/payments/callback/route.ts` (2 sites)
+- `src/app/api/payments/route.ts` (2 sites + 1 import added)
+- `src/app/api/rider/assign/route.ts` (1 site + decline-path simplification)
+- `src/app/api/orders/[id]/rate/route.ts` (2 sites + 1 import added)
+- `src/app/api/vendor/orders/route.ts` (1 site)
+- `src/app/api/orders/route.ts` (1 site)
+- `src/app/api/payouts/admin/route.ts` (1 site + 1 import added)
+
+### Notes for the next agent
+
+1. **The 15 unmigrated routes are intentionally NOT migrated.** Any
+   future attempt to migrate them requires creating new service
+   functions (forbidden by the spec's "If no service matches, skip"
+   rule). If the goal is to migrate them, the next phase should first
+   add service functions for: `coupon.list`, `coupon.findUnique`,
+   `communityPost.listByUser`, `communityReply.listByPost`,
+   `video.list`, `videoComment.listByVideo`, etc.
+2. **The `rider/assign` decline path** now returns the actual items
+   (was `[]` due to a latent bug in `parseItems` being passed an
+   already-parsed array). If the client expects `items: []`, this is
+   a behaviour change — but it's a bug fix that aligns the decline
+   response with the accept/complete paths' (theoretical) intent.
+   Verify the client handles `items: OrderItem[]` correctly.
+3. **By-email lookups remain inline** in 8 routes (users/follow,
+   vendor/products, vendor/orders, addresses, videos/[id]/save,
+   products/[id]/reviews, auth, orders/[id]/rate, orders). The spec's
+   AVAILABLE SERVICES list does not include a by-email lookup. A
+   future phase could add `usersService.getUserByEmail(email)` to
+   retire these inline calls — the helper exists in `db.user.findUnique
+   ({ where: { email } })` form in each route.
+4. **`$transaction`-wrapped mutations** in payments/callback (GET),
+   payouts/route, refunds/route, support/route, and admin/dashboard
+   remain inline because splitting them across multiple service calls
+   would lose atomicity. Documented in existing Phase 10 comments.
+
+*Agent A — Service Migration Final*
+*Result: Migrated 10 inline db call sites across 7 already-migrated
+hybrid routes (payments/callback, payments, rider/assign, orders/rate,
+vendor/orders, orders, payouts/admin). Route count unchanged at 73/117
+(62%) — the 15 unmigrated routes use models with no matching service
+function and cannot be migrated per the spec's "if no service matches,
+skip" rule. 0 lint errors (3 pre-existing warnings unchanged); 271/271
+tests passing; 0 TypeScript errors in modified files.*

@@ -39,11 +39,11 @@ describe('middleware — security headers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default to development for most tests (HSTS is production-only).
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv("NODE_ENV", 'development');
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.stubEnv("NODE_ENV", originalNodeEnv ?? '');
   });
 
   it('sets X-Frame-Options: DENY', async () => {
@@ -90,7 +90,7 @@ describe('middleware — security headers', () => {
   });
 
   it('sets HSTS (Strict-Transport-Security) in production only', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv("NODE_ENV", 'production');
     const req = new NextRequest(new URL('https://example.com/page'));
     const res = await middleware(req);
     const hsts = res.headers.get('Strict-Transport-Security');
@@ -99,7 +99,7 @@ describe('middleware — security headers', () => {
   });
 
   it('does NOT set HSTS in development', async () => {
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv("NODE_ENV", 'development');
     const req = new NextRequest(new URL('http://localhost/page'));
     const res = await middleware(req);
     expect(res.headers.get('Strict-Transport-Security')).toBeNull();
@@ -111,11 +111,11 @@ describe('middleware — session token handling', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.NODE_ENV = 'development';
+    vi.stubEnv("NODE_ENV", 'development');
   });
 
   afterEach(() => {
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.stubEnv("NODE_ENV", originalNodeEnv ?? '');
   });
 
   it('clears invalid session cookies with a 401 (maxAge=0 Set-Cookie)', async () => {
@@ -159,7 +159,7 @@ describe('middleware — session token handling', () => {
     expect(nextSpy).toHaveBeenCalled();
     const call = nextSpy.mock.calls[0]?.[0];
     expect(call?.request?.headers).toBeDefined();
-    const reqHeaders = call.request.headers as Headers;
+    const reqHeaders = call!.request!.headers as Headers;
     expect(reqHeaders.get('x-user-id')).toBe('u123');
     expect(reqHeaders.get('x-user-email')).toBe('user@example.com');
     expect(reqHeaders.get('x-user-role')).toBe('customer');

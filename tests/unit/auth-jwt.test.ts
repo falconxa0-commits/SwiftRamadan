@@ -213,7 +213,7 @@ describe('auth-jwt — production secret enforcement', () => {
 
   afterEach(() => {
     // Restore env after each test in this block.
-    process.env.NODE_ENV = originalNodeEnv;
+    vi.stubEnv("NODE_ENV", originalNodeEnv ?? '');
     if (originalAppSecret === undefined) delete process.env.APP_SECRET;
     else process.env.APP_SECRET = originalAppSecret;
     if (originalNextAuthSecret === undefined) delete process.env.NEXTAUTH_SECRET;
@@ -221,7 +221,7 @@ describe('auth-jwt — production secret enforcement', () => {
   });
 
   it('throws in production when neither APP_SECRET nor NEXTAUTH_SECRET is set', async () => {
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv("NODE_ENV", 'production');
     delete process.env.APP_SECRET;
     delete process.env.NEXTAUTH_SECRET;
 
@@ -232,7 +232,7 @@ describe('auth-jwt — production secret enforcement', () => {
 
   it('uses NEXTAUTH_SECRET as a legacy fallback when APP_SECRET is unset', async () => {
     // This also confirms `getJwtSecret` accepts either env var name.
-    process.env.NODE_ENV = 'production';
+    vi.stubEnv("NODE_ENV", 'production');
     delete process.env.APP_SECRET;
     process.env.NEXTAUTH_SECRET = 'legacy-secret-1234567890';
 

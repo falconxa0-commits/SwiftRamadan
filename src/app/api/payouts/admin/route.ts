@@ -3,6 +3,7 @@ import { db } from '@/lib/db';
 import { requireAuth } from '@/lib/session';
 import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import * as walletService from '@/services/wallet/wallet.service';
+import * as usersService from '@/services/users/users.service';
 
 export const runtime = 'nodejs';
 
@@ -196,12 +197,19 @@ async function rejectPayout(body: {
   // migration preserves the previous lack of cross-step atomicity while
   // making the wallet credit itself atomic.
   //
+  // MIGRATED (Phase 11): the pre-flight `db.user.findUnique` (existence
+  // check) is delegated to `usersService.getUserById`. This is a defence-
+  // in-depth check before calling `walletService.refund`, which itself
+  // throws `USER_NOT_FOUND` (caught below) if the user doesn't exist. The
+  // pre-flight check provides a clean 404 with the payout-specific message
+  // before entering the wallet mutation path. Response shape unchanged.
+  //
   // Note: the previous flow stored `description: 'Payout rejected - refunded
   // to wallet'` and `reference: existing.reference` on the audit row. The
   // service's `refund` function hardcodes `description: 'Refund credited to
   // wallet'` — we lose the payout-specific description but the reference is
   // preserved (used for traceability).
-  const user = await db.user.findUnique({ where: { id: existing.userId } });
+  const user = await usersService.getUserById(existing.userId);
   if (!user) {
     return NextResponse.json(
       { success: false, message: 'User not found for this payout' },

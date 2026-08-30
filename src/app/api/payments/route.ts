@@ -5,6 +5,7 @@ import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit';
 import { captureException } from '@/lib/monitoring/sentry';
 import { requireAuth } from '@/lib/session';
 import * as paymentsService from '@/services/payments/payments.service';
+import * as ordersService from '@/services/orders/orders.service';
 
 export const runtime = 'nodejs';
 
@@ -30,9 +31,16 @@ export async function GET(request: NextRequest) {
 
     if (orderId) {
       // Verify the order belongs to the user (or user is admin) before showing payments
+      // MIGRATED (Phase 11): the inline `db.order.findUnique` + manual
+      // `order.userId !== auth.userId` check is delegated to
+      // `ordersService.getOrderById(orderId, auth.userId)`, which performs
+      // the same lookup AND ownership check (returns null if the order does
+      // not exist OR if the user does not own it). Admins skip this branch
+      // entirely (preserved from the previous flow). The empty-list response
+      // shape (`{ payments: [] }`) on ownership failure is unchanged.
       if (auth.role !== 'admin') {
-        const order = await db.order.findUnique({ where: { id: orderId } });
-        if (!order || order.userId !== auth.userId) {
+        const order = await ordersService.getOrderById(orderId, auth.userId);
+        if (!order) {
           return NextResponse.json({ payments: [] });
         }
       }
@@ -95,9 +103,14 @@ export async function POST(request: NextRequest) {
     // validate order existence or ownership — the caller is responsible for
     // that. The previous inline flow also did not check ownership, so
     // behaviour is preserved.
+    // MIGRATED (Phase 11): the existence-check `db.order.findUnique` is
+    // delegated to `ordersService.getOrderById(orderId, null)` (null skips
+    // the service's ownership check, matching the previous inline flow
+    // which only checked existence). `ParsedOrder.id` is the same field as
+    // the raw Order's `id`.
     let validOrderId: string | null = null;
     if (orderId) {
-      const order = await db.order.findUnique({ where: { id: String(orderId) } });
+      const order = await ordersService.getOrderById(String(orderId), null);
       if (order) validOrderId = order.id;
     }
 

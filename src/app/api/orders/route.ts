@@ -341,7 +341,14 @@ export async function PUT(request: NextRequest) {
     // Partial update path: only progress and/or riderName (no status).
     // The service's `updateOrderStatus` requires a status, so we keep this
     // narrow branch inline. Ownership check is still performed inline.
-    const existingOrder = await db.order.findUnique({ where: { id } });
+    // MIGRATED (Phase 11): the inline `db.order.findUnique` is delegated to
+    // `ordersService.getOrderById(id, null)`. We pass `userId = null` to
+    // skip the service's own ownership check (the route performs the
+    // role-aware ownership check itself below — admins can update any
+    // order, non-admins only their own). `existingOrder.userId` (still on
+    // `ParsedOrder` — the service only Omit's `items`) is used for the
+    // non-admin ownership check on the next line.
+    const existingOrder = await ordersService.getOrderById(id, null);
     if (!existingOrder) {
       return NextResponse.json(
         { success: false, message: 'Order not found' },

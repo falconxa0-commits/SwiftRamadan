@@ -154,7 +154,15 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const existing = await db.order.findUnique({ where: { id: orderId } });
+    // MIGRATED (Phase 11): the inline `db.order.findUnique` is delegated to
+    // `ordersService.getOrderById(orderId, null)`. We pass `userId = null`
+    // to skip the service's own ownership check (the vendor is NOT the
+    // order's customer; the vendor-specific ownership check below — order
+    // must contain the vendor's products — is the correct authorisation for
+    // this endpoint). `existing.items` is already parsed by the service
+    // (returns `OrderItem[]`), so we use it directly instead of calling
+    // `parseItems(existing.items)` on a raw JSON string.
+    const existing = await ordersService.getOrderById(orderId, null);
     if (!existing) {
       return NextResponse.json(
         { success: false, error: 'Order not found' },
@@ -168,9 +176,9 @@ export async function PUT(request: NextRequest) {
       select: { name: true },
     });
     const vendorProductNames = vendorProducts.map((p) => p.name.toLowerCase());
-    const orderItems = parseItems(existing.items);
+    const orderItems = existing.items; // already parsed by ordersService
     const orderBelongsToVendor = orderItems.some(
-      (i: { name?: string }) => i.name && vendorProductNames.includes(i.name.toLowerCase())
+      (i) => i.name && vendorProductNames.includes(i.name.toLowerCase())
     );
     if (!orderBelongsToVendor) {
       return NextResponse.json(
