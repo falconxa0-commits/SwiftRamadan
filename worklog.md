@@ -15708,3 +15708,48 @@ OnboardingFlow)*
 errors, 0 lint errors, 33/33 test files + 425/425 tests passing.
 Business logic, store interactions, OTP handlers, role-selection
 state, and all fetch pipelines preserved 100%.*
+
+---
+
+## Phase 19-A — WelcomeScreen + CheckoutModal (Auren Kingdom Premium Styling)
+
+**Agent**: Product Experience Architect
+**Scope**: Apply Auren Kingdom premium styling to WelcomeScreen (975 lines, 0 auren refs) and CheckoutModal (1285 lines, 0 auren refs) — purely additive className + accent-line divs, no business logic touched.
+
+### WelcomeScreen.tsx (0 → 11 auren refs)
+1. **Hero title** (`<motion.h1>` SwiftRamadan): added `auren-gradient-text`
+2. **Hero section wrapper** (`<section className="relative aurora-hero …">`): added `auren-hero-glow`
+3. **Flash deal card** (`FlashDealCard` motion.div): added `auren-premium-card`
+4. **Meal card** (`MealCard` motion.div): added `auren-premium-card`
+5. **Retailer card** (`RetailerCard` motion.div): added `auren-premium-card`
+6. **Section headings** (`SectionHeading` component): wrapped return in parent div, appended `<div className="auren-accent-line" />` after the heading bar (covers all 6 section instances: Browse Categories, Flash Sales, Shop by Hub, Trending Meals, Popular Stores, Why SwiftRamadan)
+7. **Hero primary CTA** (`Get Started Free` motion.button): added `auren-btn-royal`
+8. **Bottom CTA primary** (`Begin Your Journey` motion.button): added `auren-btn-royal`
+9. **Category grid items** (`categoryHubItems.map` motion.div): added `auren-premium-card`
+10. **Trust/social-proof wrapper** (`aurora-card` motion.div with stats): added `auren-premium-card`
+11. **Footer divider**: inserted `<div className="auren-divider px-4 sm:px-5 mt-6 sm:mt-8" />` before the BOTTOM CTA SECTION
+
+### CheckoutModal.tsx (0 → 24 auren refs)
+1. **Modal title** (`<h2>Checkout</h2>`): added `auren-gradient-text`
+2. **Step progress container** (`<div className="px-4 pb-4">`): added `auren-progress`
+3. **Step progress fill connector** (the `flex-1 h-0.5 mx-2 rounded-full` line between step indicators): added `auren-progress-fill`
+4. **Input fields** — all 6 inputs (checkout-addr-street, checkout-addr-area, checkout-addr-instructions, checkout-edit-address, checkout-delivery-instructions, checkout-coupon-code): added `auren-input`
+5. **Payment method cards** (`paymentMethods.map` button): added `auren-premium-card` to className template literal
+6. **BNPL plan cards** (`bnplPlans.map` button): added `auren-premium-card` to className template literal
+7. **Cart summary card** (Step 0 totals card): added `auren-premium-card`
+8. **Order summary card** (Step 3 totals card): added `auren-premium-card`
+9. **Place order button** (`handlePlaceOrder` button): added `auren-btn-gold`
+10. **Step dividers**: inserted `<div className="auren-divider" />` at bottom of each of the 5 step motion.div blocks (Cart, Location, Schedule, Payment, Success)
+11. **Step headers**: inserted `<div className="auren-accent-line" />` after each step's h3 title (Your Cart, Delivery Address, Delivery Time Slot, Payment Method, Order Placed!)
+
+### Verification
+- `bun run lint`: 0 errors, 3 pre-existing warnings (no new issues)
+- `bun run test`: 33 test files, 425 tests passing (includes 41 auren-specific tests in `auren-certification.test.ts`, `auren-design.test.ts`, `auren-css-classes.test.ts`)
+- WelcomeScreen auren refs: 0 → 11
+- CheckoutModal auren refs: 0 → 24
+
+### Integrity preserved
+- No store interactions, data fetching, or business logic changed
+- All edits were purely additive className concatenations + standalone accent-line/divider divs
+- The SectionHeading refactor wrapped the existing JSX in a parent `<div>` to keep the new accent-line sibling valid (single-parent JSX rule)
+- All existing class names (glass-card, aurora-card, gold-gradient, green-glow, soft-chip, icon-tile, etc.) remain intact

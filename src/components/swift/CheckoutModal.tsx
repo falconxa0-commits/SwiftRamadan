@@ -392,7 +392,7 @@ export default function CheckoutModal() {
         {/* Header with Progress Stepper */}
         <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
           <div className="flex items-center justify-between p-3 sm:p-4">
-            <h2 className="text-white font-bold text-lg">Checkout</h2>
+            <h2 className="text-white font-bold text-lg auren-gradient-text">Checkout</h2>
             <button
               onClick={handleClose}
               className="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition-colors"
@@ -403,7 +403,7 @@ export default function CheckoutModal() {
           </div>
 
           {/* Progress Stepper */}
-          <div className="px-4 pb-4">
+          <div className="px-4 pb-4 auren-progress">
             <div className="flex items-center justify-between">
               {stepLabels.map((label, i) => (
                 <div key={label} className="flex items-center flex-1">
@@ -426,7 +426,7 @@ export default function CheckoutModal() {
                     </span>
                   </div>
                   {i < stepLabels.length - 1 && (
-                    <div className={`flex-1 h-0.5 mx-2 rounded-full ${
+                    <div className={`flex-1 h-0.5 mx-2 rounded-full auren-progress-fill ${
                       i < currentStep ? 'bg-[var(--sr-customer)]' : 'bg-white/5'
                     }`} />
                   )}
@@ -455,6 +455,7 @@ export default function CheckoutModal() {
                   Your Cart
                   <span className="text-white/65 text-sm font-normal">({cartItems.length} item{cartItems.length !== 1 ? 's' : ''})</span>
                 </h3>
+                <div className="auren-accent-line" />
 
                 {cartItems.length === 0 ? (
                   <div className="flex flex-col items-center py-12 text-center">
@@ -533,7 +534,7 @@ export default function CheckoutModal() {
 
                 {/* Cart Summary */}
                 {cartItems.length > 0 && (
-                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 mt-4">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 mt-4 auren-premium-card">
                     <div className="flex justify-between text-sm">
                       <span className="text-white/65">Subtotal</span>
                       <span className="text-white font-bold">{formatNaira(subtotal)}</span>
@@ -558,6 +559,7 @@ export default function CheckoutModal() {
                     </div>
                   </div>
                 )}
+                <div className="auren-divider" />
               </motion.div>
             )}
 
@@ -576,6 +578,7 @@ export default function CheckoutModal() {
                     <MapPin className="w-5 h-5 text-[var(--sr-customer)]" />
                     Delivery Address
                   </h3>
+                  <div className="auren-accent-line" />
 
                   {/* Saved Addresses (from /api/addresses) */}
                   <div className="space-y-2 mb-3">
@@ -653,7 +656,7 @@ export default function CheckoutModal() {
                         value={newAddrText}
                         onChange={e => setNewAddrText(e.target.value)}
                         placeholder="Street address (e.g. 12 Admiralty Way, Lekki Phase 1)"
-                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 auren-input"
                       />
                       <label htmlFor="checkout-addr-area" className="sr-only">Area</label>
                       <input
@@ -661,7 +664,7 @@ export default function CheckoutModal() {
                         value={newAddrArea}
                         onChange={e => setNewAddrArea(e.target.value)}
                         placeholder="Area (e.g. Lekki)"
-                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 auren-input"
                       />
                       <label htmlFor="checkout-addr-instructions" className="sr-only">Delivery instructions</label>
                       <input
@@ -669,7 +672,7 @@ export default function CheckoutModal() {
                         value={newAddrInstructions}
                         onChange={e => setNewAddrInstructions(e.target.value)}
                         placeholder="Delivery instructions (optional)"
-                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                        className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 auren-input"
                       />
                       <div className="flex gap-2">
                         <button
@@ -738,7 +741,7 @@ export default function CheckoutModal() {
                           id="checkout-edit-address"
                           value={editAddressValue}
                           onChange={e => setEditAddressValue(e.target.value)}
-                          className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none"
+                          className="w-full bg-[var(--sr-surface-raised)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none auren-input"
                           placeholder="Enter delivery address"
                         />
                         <div className="flex gap-2">
@@ -786,9 +789,10 @@ export default function CheckoutModal() {
                     value={deliveryInstructions}
                     onChange={e => setDeliveryInstructions(e.target.value)}
                     placeholder="e.g., Gate code, landmark, leave at door..."
-                    className="w-full bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20"
+                    className="w-full bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 auren-input"
                   />
                 </div>
+                <div className="auren-divider" />
               </motion.div>
             )}
 
@@ -854,6 +858,7 @@ export default function CheckoutModal() {
                     <Clock className="w-5 h-5 text-[var(--sr-customer)]" />
                     Delivery Time Slot
                   </h3>
+                  <div className="auren-accent-line" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {timeSlots.map(slot => {
                       const Icon = slot.icon;
@@ -914,6 +919,7 @@ export default function CheckoutModal() {
                   <p className="text-white/65 text-xs mb-1">Delivering to</p>
                   <p className="text-white font-bold text-sm">{effectiveAddress}</p>
                 </div>
+                <div className="auren-divider" />
               </motion.div>
             )}
 
@@ -932,12 +938,13 @@ export default function CheckoutModal() {
                     <CreditCard className="w-5 h-5 text-[var(--sr-customer)]" />
                     Payment Method
                   </h3>
+                  <div className="auren-accent-line" />
                   <div className="space-y-2">
                     {paymentMethods.map(pm => (
                       <button
                         key={pm.id}
                         onClick={() => setPaymentMethod(pm.id)}
-                        className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all ${
+                        className={`w-full flex items-center gap-3 p-3 sm:p-4 rounded-2xl border text-left transition-all auren-premium-card ${
                           paymentMethod === pm.id
                             ? 'bg-[var(--sr-customer)]/5 border-[var(--sr-customer)]/30'
                             : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
@@ -977,7 +984,7 @@ export default function CheckoutModal() {
                         <button
                           key={plan.months}
                           onClick={() => setSelectedBnplPlan(plan.months)}
-                          className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border text-left transition-all ${
+                          className={`w-full flex items-center justify-between p-3 sm:p-4 rounded-2xl border text-left transition-all auren-premium-card ${
                             selectedBnplPlan === plan.months
                               ? 'bg-[var(--sr-vendor)]/5 border-[var(--sr-vendor)]/30'
                               : 'bg-[var(--sr-surface-elevated)] border-white/5 hover:border-white/10'
@@ -1038,7 +1045,7 @@ export default function CheckoutModal() {
                           if (couponState === 'error') setCouponState('idle');
                         }}
                         placeholder="Enter code (e.g. RAMADAN)"
-                        className="flex-1 bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider"
+                        className="flex-1 bg-[var(--sr-surface-elevated)] text-white text-sm rounded-xl p-3 border border-white/5 focus:border-[var(--sr-customer)]/30 focus:outline-none placeholder:text-white/20 font-mono tracking-wider auren-input"
                       />
                       <button
                         onClick={handleApplyCoupon}
@@ -1067,7 +1074,7 @@ export default function CheckoutModal() {
                     <Package className="w-4 h-4 text-[var(--sr-vendor)]" />
                     Order Summary
                   </h4>
-                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3">
+                  <div className="bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 space-y-3 auren-premium-card">
                     {cartItems.map(item => (
                       <div key={item.id} className="flex justify-between items-center">
                         <div className="flex-1 min-w-0">
@@ -1104,6 +1111,7 @@ export default function CheckoutModal() {
                     </div>
                   </div>
                 </div>
+                <div className="auren-divider" />
               </motion.div>
             )}
 
@@ -1143,6 +1151,7 @@ export default function CheckoutModal() {
                   >
                     Order Placed! 🎉
                   </motion.h3>
+                  <div className="auren-accent-line" />
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -1225,6 +1234,7 @@ export default function CheckoutModal() {
                 >
                   Continue Shopping
                 </button>
+                <div className="auren-divider" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -1260,7 +1270,7 @@ export default function CheckoutModal() {
                   <button
                     onClick={handlePlaceOrder}
                     disabled={placing}
-                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[var(--sr-customer)]/30 disabled:opacity-60 disabled:pointer-events-none"
+                    className="px-8 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm hover:brightness-110 active:scale-[0.98] transition-all flex items-center gap-2 shadow-lg shadow-[var(--sr-customer)]/30 disabled:opacity-60 disabled:pointer-events-none auren-btn-gold"
                   >
                     {placing ? (
                       <>

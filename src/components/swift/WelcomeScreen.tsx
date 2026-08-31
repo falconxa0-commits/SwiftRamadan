@@ -273,7 +273,7 @@ function FlashDealCard({ sale, onTap }: { sale: typeof flashSales[0]; onTap: () 
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onTap}
-      className="min-w-[180px] sm:min-w-[200px] max-w-[200px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card"
+      className="min-w-[180px] sm:min-w-[200px] max-w-[200px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card auren-premium-card"
     >
       <div className="relative">
         <div
@@ -336,7 +336,7 @@ function MealCard({ meal, onTap }: { meal: typeof trendingMeals[0]; onTap: () =>
       whileHover={{ y: -3 }}
       whileTap={{ scale: 0.98 }}
       onClick={onTap}
-      className="flex gap-3 p-3 sm:p-4 rounded-2xl sm:rounded-3xl cursor-pointer glass-card"
+      className="flex gap-3 p-3 sm:p-4 rounded-2xl sm:rounded-3xl cursor-pointer glass-card auren-premium-card"
     >
       <div
         className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl bg-center bg-no-repeat bg-cover shrink-0"
@@ -379,7 +379,7 @@ function RetailerCard({ retailer, onTap }: { retailer: typeof popularRetailers[0
     <motion.div
       whileTap={{ scale: 0.97 }}
       onClick={onTap}
-      className="min-w-[150px] sm:min-w-[170px] max-w-[170px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card"
+      className="min-w-[150px] sm:min-w-[170px] max-w-[170px] rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card auren-premium-card"
     >
       <div className="relative">
         <div
@@ -420,21 +420,24 @@ function SectionHeading({ icon: Icon, title, accent = AURORA.emerald, action }: 
   action?: { label: string; onTap: () => void };
 }) {
   return (
-    <div className="flex items-center justify-between mb-4">
-      <div className="flex items-center gap-2.5">
-        <div className="icon-tile w-8 h-8 sm:w-9 sm:h-9" style={{ background: `color-mix(in srgb, ${accent} 9%, transparent)`, border: `1px solid color-mix(in srgb, ${accent} 19%, transparent)` }}>
-          <Icon className="w-4 h-4" style={{ color: accent }} />
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <div className="icon-tile w-8 h-8 sm:w-9 sm:h-9" style={{ background: `color-mix(in srgb, ${accent} 9%, transparent)`, border: `1px solid color-mix(in srgb, ${accent} 19%, transparent)` }}>
+            <Icon className="w-4 h-4" style={{ color: accent }} />
+          </div>
+          <h3 className="text-white text-base sm:text-lg font-bold tracking-tight heading-accent">{title}</h3>
         </div>
-        <h3 className="text-white text-base sm:text-lg font-bold tracking-tight heading-accent">{title}</h3>
+        {action && (
+          <button onClick={action.onTap}
+            className="text-[11px] sm:text-xs font-bold flex items-center gap-0.5 transition-colors hover:opacity-80"
+            style={{ color: AURORA.gold }}>
+            {action.label}
+            <ChevronRight className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
-      {action && (
-        <button onClick={action.onTap}
-          className="text-[11px] sm:text-xs font-bold flex items-center gap-0.5 transition-colors hover:opacity-80"
-          style={{ color: AURORA.gold }}>
-          {action.label}
-          <ChevronRight className="w-3.5 h-3.5" />
-        </button>
-      )}
+      <div className="auren-accent-line" />
     </div>
   );
 }
@@ -547,7 +550,7 @@ export default function WelcomeScreen() {
       {/* ═══ Scrollable Content ═══ */}
       <div ref={scrollRef} className="h-full overflow-y-auto pb-40 no-scrollbar">
         {/* ─────────────── HERO SECTION (parallax) ─────────────── */}
-        <section className="relative aurora-hero overflow-hidden">
+        <section className="relative aurora-hero overflow-hidden auren-hero-glow">
           {/* Aurora drift orbs — parallaxed via scroll */}
           <motion.div style={{ y: orbY1 }}
             className="absolute -top-10 -left-10 w-56 h-56 sm:w-72 sm:h-72 rounded-full blur-[60px] aurora-drift pointer-events-none"
@@ -590,7 +593,7 @@ export default function WelcomeScreen() {
               initial={{ opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6, ease: EASE }}
-              className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gradient-aurora"
+              className="text-center text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-gradient-aurora auren-gradient-text"
             >
               SwiftRamadan
             </motion.h1>
@@ -617,7 +620,7 @@ export default function WelcomeScreen() {
                 whileTap={{ scale: 0.97 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={handleGetStarted}
-                className="w-full sm:w-auto sm:flex-1 h-13 sm:h-14 px-6 rounded-2xl sm:rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 gold-gradient green-glow"
+                className="w-full sm:w-auto sm:flex-1 h-13 sm:h-14 px-6 rounded-2xl sm:rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 gold-gradient green-glow auren-btn-royal"
                 style={{ color: INK }}
               >
                 Get Started Free
@@ -757,7 +760,7 @@ export default function WelcomeScreen() {
                   whileTap={{ scale: 0.97 }}
                   whileHover={{ y: -3 }}
                   onClick={handleItemTap}
-                  className="relative rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card"
+                  className="relative rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer glass-card auren-premium-card"
                 >
                   <div
                     className="w-full aspect-[16/9] bg-center bg-no-repeat bg-cover"
@@ -852,7 +855,7 @@ export default function WelcomeScreen() {
 
         {/* ─────────────── SOCIAL PROOF (elegant) ─────────────── */}
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-30px' }} variants={containerVariants} className="px-4 sm:px-5 pt-8 sm:pt-10">
-          <motion.div variants={itemVariants} className="flex items-center justify-around py-6 sm:py-8 px-4 rounded-2xl sm:rounded-3xl aurora-card relative overflow-hidden">
+          <motion.div variants={itemVariants} className="flex items-center justify-around py-6 sm:py-8 px-4 rounded-2xl sm:rounded-3xl aurora-card relative overflow-hidden auren-premium-card">
             {/* Decorative shimmer line */}
             <div className="absolute top-0 left-0 right-0 h-px shimmer-line" />
             {stats.map((stat, i) => (
@@ -887,6 +890,7 @@ export default function WelcomeScreen() {
         </motion.section>
 
         {/* ─────────────── BOTTOM CTA SECTION (premium, generous) ─────────────── */}
+        <div className="auren-divider px-4 sm:px-5 mt-6 sm:mt-8" />
         <motion.section initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-40px' }} variants={containerVariants} className="px-4 sm:px-5 pt-10 sm:pt-12 pb-10 sm:pb-12">
           <motion.div variants={itemVariants} className="relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center aurora-card">
             {/* Decorative top glow */}
@@ -916,7 +920,7 @@ export default function WelcomeScreen() {
                 whileTap={{ scale: 0.98 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={handleGetStarted}
-                className="w-full h-14 sm:h-16 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg flex items-center justify-center gap-2 gold-gradient green-glow"
+                className="w-full h-14 sm:h-16 rounded-2xl sm:rounded-3xl font-bold text-base sm:text-lg flex items-center justify-center gap-2 gold-gradient green-glow auren-btn-royal"
                 style={{ color: INK }}
               >
                 Begin Your Journey
