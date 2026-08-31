@@ -90,7 +90,7 @@ export default function CartTab() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="flex flex-col items-center justify-center py-20 px-6 text-center"
+          className="auren-empty flex flex-col items-center justify-center py-20 px-6 text-center"
         >
           <motion.div
             initial={{ scale: 0.7, opacity: 0 }}
@@ -163,7 +163,7 @@ export default function CartTab() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20, height: 0 }}
-              className="flex gap-3 sm:gap-4 p-3 sm:p-4 glass-card rounded-2xl"
+              className="auren-list-item flex gap-3 sm:gap-4 p-3 sm:p-4 glass-card rounded-2xl"
             >
               <div
                 className="w-20 h-20 rounded-xl bg-center bg-no-repeat bg-cover shrink-0 border border-white/10 cursor-pointer"
@@ -285,7 +285,7 @@ export default function CartTab() {
 
       {/* Order Summary */}
       <div className="px-5 mt-6">
-        <div className="glass-card rounded-2xl p-5 space-y-3">
+        <div className="auren-premium-card glass-card rounded-2xl p-5 space-y-3">
           <h3 className="text-white font-bold text-sm mb-3 tracking-tight">Order Summary</h3>
           <div className="flex justify-between text-sm">
             <span className="text-white/50">Subtotal</span>
@@ -326,7 +326,7 @@ export default function CartTab() {
       <div className="px-5 mt-6 mb-6">
         <button
           onClick={handleCheckout}
-          className="w-full bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
+          className="auren-btn-gold w-full bg-[var(--sr-customer)] py-4 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-widest shadow-lg shadow-[var(--sr-customer)]/20 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform green-glow"
         >
           PROCEED TO CHECKOUT &bull; {formatNaira(total)}
           <ChevronRight className="w-4 h-4" />

@@ -209,9 +209,10 @@ This is an electronic receipt — no signature required.
       <main className="flex-1 overflow-y-auto pb-32">
         <div className="px-5 pt-6 pb-2">
           <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+          <div className="auren-accent-line mt-2" />
           <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
         </div>
-        <div className="flex flex-col items-center justify-center py-20 px-6">
+        <div className="auren-empty flex flex-col items-center justify-center py-20 px-6">
           <div className="w-24 h-24 rounded-3xl glass-card flex items-center justify-center mb-6 icon-tile float-soft">
             <ShoppingBag className="w-10 h-10 text-white/20 relative z-10" />
           </div>
@@ -235,6 +236,7 @@ This is an electronic receipt — no signature required.
     <main className="flex-1 overflow-y-auto pb-32">
       <div className="px-5 pt-6 pb-2">
         <h1 className="text-2xl font-bold tracking-tight heading-accent">Your Orders</h1>
+        <div className="auren-accent-line mt-2" />
         <p className="text-white/50 text-sm mt-1">Track and manage your Ramadan deliveries</p>
       </div>
 
@@ -297,7 +299,7 @@ This is an electronic receipt — no signature required.
                 className="px-5 mt-4"
               >
                 <div
-                  className="relative overflow-hidden rounded-2xl premium-card p-5 cursor-pointer hover:border-white/15 transition-colors"
+                  className="auren-premium-card relative overflow-hidden rounded-2xl premium-card p-5 cursor-pointer hover:border-white/15 transition-colors"
                   onClick={() => handleActiveOrderClick(activeOrder)}
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/10 blur-[60px]" />
@@ -314,9 +316,9 @@ This is an electronic receipt — no signature required.
                     </div>
 
                     {/* Progress Bar */}
-                    <div className="w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden">
+                    <div className="auren-progress w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden">
                       <motion.div
-                        className="bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] h-2 rounded-full"
+                        className="auren-progress-fill bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-vendor)] h-2 rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${activeOrder.progress}%` }}
                         transition={{ duration: 1.5, ease: 'easeOut' }}
@@ -377,7 +379,8 @@ This is an electronic receipt — no signature required.
             {/* Active Orders */}
             {activeOrders.length > 0 && (
               <div className="px-5 mt-6">
-                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Active Orders</h3>
+                <h3 className="text-white text-lg font-extrabold mb-1 heading-accent">Active Orders</h3>
+                <div className="auren-accent-line mb-4" />
                 <div className="space-y-3">
                   {activeOrders.map((order) => {
                     const config = statusConfig[order.status];
@@ -387,7 +390,7 @@ This is an electronic receipt — no signature required.
                       <div key={order.id}>
                         <button
                           onClick={() => handleActiveOrderClick(order)}
-                          className="flex items-center gap-4 p-4 glass-card rounded-2xl w-full text-left hover:border-white/15 transition-colors active:scale-[0.99]"
+                          className="auren-premium-card flex items-center gap-4 p-4 glass-card rounded-2xl w-full text-left hover:border-white/15 transition-colors active:scale-[0.99]"
                         >
                           <div className={`w-12 h-12 ${config?.bgColor || 'bg-white/5'} rounded-xl flex items-center justify-center shrink-0 icon-tile border border-white/5`}>
                             <Icon className={`w-6 h-6 relative z-10 ${config?.color || 'text-white/50'}`} />
@@ -412,9 +415,9 @@ This is an electronic receipt — no signature required.
                               </div>
                             </div>
                             {/* Mini progress bar for each active order */}
-                            <div className="w-full bg-white/5 rounded-full h-1 mt-2 overflow-hidden">
+                            <div className="auren-progress w-full bg-white/5 rounded-full h-1 mt-2 overflow-hidden">
                               <div
-                                className={`h-1 rounded-full transition-all ${
+                                className={`auren-progress-fill h-1 rounded-full transition-all ${
                                   order.status === 'In Transit' ? 'bg-[var(--sr-customer)]' :
                                   order.status === 'Preparing' ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-rider)]'
                                 }`}
@@ -503,7 +506,7 @@ This is an electronic receipt — no signature required.
             {/* No active orders */}
             {activeOrders.length === 0 && (
               <div className="px-5 mt-8">
-                <div className="glass-card rounded-2xl p-6 text-center">
+                <div className="auren-premium-card glass-card rounded-2xl p-6 text-center">
                   <div className="w-14 h-14 rounded-2xl bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
                     <CheckCircle className="w-7 h-7 text-[var(--sr-customer)] relative z-10" />
                   </div>
@@ -530,10 +533,11 @@ This is an electronic receipt — no signature required.
             {/* Past Orders */}
             {pastOrders.length > 0 ? (
               <div className="px-5 mt-6">
-                <h3 className="text-white text-lg font-extrabold mb-4 heading-accent">Past Orders</h3>
+                <h3 className="text-white text-lg font-extrabold mb-1 heading-accent">Past Orders</h3>
+                <div className="auren-accent-line mb-4" />
                 <div className="space-y-3">
                   {pastOrders.map((order) => (
-                    <div key={order.id} className="glass-card rounded-2xl overflow-hidden">
+                    <div key={order.id} className="auren-premium-card glass-card rounded-2xl overflow-hidden">
                       <div className="flex items-center gap-4 p-4">
                         <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center icon-tile border border-white/5">
                           <CheckCircle className="w-6 h-6 text-white/60 relative z-10" />
@@ -574,7 +578,7 @@ This is an electronic receipt — no signature required.
               </div>
             ) : (
               <div className="px-5 mt-8">
-                <div className="glass-card rounded-2xl p-6 text-center">
+                <div className="auren-premium-card glass-card rounded-2xl p-6 text-center">
                   <div className="w-14 h-14 rounded-2xl bg-[var(--sr-ai)]/10 border border-[var(--sr-ai)]/30 flex items-center justify-center mx-auto mb-3 icon-tile">
                     <Clock className="w-7 h-7 text-[var(--sr-ai)] relative z-10" />
                   </div>

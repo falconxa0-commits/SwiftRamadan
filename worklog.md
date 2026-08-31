@@ -14953,3 +14953,285 @@ entrances on all card collections. 0 TS errors, 0 lint errors,
 hex; BottomNav 0→7 auren refs with .auren-tab-bar / .auren-tab-item
 active; 0 TS errors, 0 lint errors, 32/32 test files + 400/400 tests
 passing.*
+
+---
+
+## Phase 18-C — Explore + Cart + Orders Auren Rebuild (Agent C)
+
+### Mission
+Rebuild `ExploreTab.tsx`, `CartTab.tsx`, and `OrdersTab.tsx` — the
+three primary shopping-flow tabs — to consume the Auren Kingdom premium
+visual layer established in Phase 18-A foundation and Phase 18-B HomeTab
+work. All store interactions, data fetching, business logic, hooks, and
+handlers preserved untouched. Only className strings, JSX accent-line
+divs, and Framer Motion animation props were touched.
+
+### Contract
+- ONLY change visual presentation (className strings, animation props,
+  `<div className="auren-accent-line" />` siblings for section headers).
+- DO NOT touch store interactions, data fetching, business logic,
+  hooks, handlers, conditional rendering, or icon imports.
+- DO NOT remove existing utility classes — ADD `.auren-*` classes
+  alongside them so existing utility behavior is preserved where the
+  auren class doesn't override.
+
+### ExploreTab.tsx (453 → 462 lines)
+**Preserved:** All product data, search logic, category filtering,
+navigation, skeleton loading state, retailer detail card, quick actions.
+**Auren classes applied:**
+- `auren-gradient-text` × 1 — on hero h1 "What do you need today?"
+  (line 150) — gives mystic→royal→imperial gradient on the welcome
+  title for cinematic entrance.
+- `auren-accent-line` × 6 — sibling `<div>` added under each section
+  header: "What do you need today?" h1, "Browse Categories" h2,
+  "Seasonal Specials" h2, "Popular Retailers" h3, "Your Favorites"
+  h2, "Top Picks"/`${activeCategory} Picks` h3. The royal-mystic
+  gradient bar (32px × 2px) replaces the heading-accent ::after
+  pseudo for premium consistency with HomeTab treatment.
+- `auren-premium-card` × 1 — on Featured Products motion.div
+  (line 407). Replaces `glass-card` + `hover:border-white/15` with
+  the unified premium surface (glass + blur + 4px hover lift +
+  top-edge light-reflection pseudo-element).
+- `auren-empty` × 1 — on no-products-found empty state
+  (line 447). Centers content with 48px×24px padding and 16px gap.
+- Framer Motion stagger ADDED to Featured Products grid: each
+  product motion.div now has `initial={{ opacity: 0, y: 12 }}`,
+  `animate={{ opacity: 1, y: 0 }}`,
+  `transition={{ delay: i * 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] as const }}`.
+  The `as const` is required by Framer Motion's TS definitions
+  (expects tuple, not number[]). Category grid already had a
+  staggered entrance (delay: i * 0.1) — left untouched.
+- Grid gap-3 sm:gap-4 confirmed on category grid (line 203) and
+  gap-3 on featured products grid (line 398) — both match the
+  "ensure gap-3 sm:gap-4" requirement.
+
+### CartTab.tsx (337 → 337 lines)
+**Preserved:** All cart items, quantities, totals, coupon logic,
+checkout handler, removeFromCart, updateQuantity, clearCart.
+**Auren classes applied:**
+- `auren-empty` × 1 — on empty cart container (line 93, the
+  motion.div that centers the ShoppingBag icon + heading + CTA).
+  Added alongside existing `flex flex-col items-center justify-center
+  py-20 px-6 text-center` — auren-empty's `display: flex;
+  flex-direction: column; align-items: center; justify-content:
+  center; padding: 48px 24px; text-align: center; gap: 16px` wins
+  per CSS cascade (auren classes are outside `@layer`, Tailwind
+  utilities are inside `@layer utilities`), but existing utilities
+  provide the same behavior so visual result is preserved.
+- `auren-list-item` × 1 — on cart item motion.div (line 166).
+  Added alongside `flex gap-3 sm:gap-4 p-3 sm:p-4 glass-card
+  rounded-2xl`. auren-list-item's `padding: 16px; border-radius:
+  var(--auren-radius-lg); cursor: pointer; min-height: 56px;`
+  applies premium spacing and hover/active transitions.
+- `auren-premium-card` × 1 — on Order Summary glass-card
+  (line 288). Upgrades the summary panel to premium surface with
+  hover lift and light-reflection top edge.
+- `auren-btn-gold` × 1 — on checkout button (line 329). Applies
+  gold gradient background, var(--auren-void) text, gold shadow,
+  and 1px hover lift. This overrides the existing customer-green
+  `bg-[var(--sr-customer)]` per CSS cascade (auren-btn-gold is
+  outside @layer, Tailwind utilities are inside @layer utilities —
+  auren wins). The result is the premium gold checkout CTA.
+
+### OrdersTab.tsx (630 → 634 lines)
+**Preserved:** All order data, status tracking, rating logic, reorder
+handler, cancel handler, receipt download, OrderProgressTracker
+component, prayer times widget, tabs (active/past).
+**Auren classes applied:**
+- `auren-premium-card` × 5 — on:
+  1. Live Tracking widget container (line 302, replaces
+     `premium-card` styling role — original `premium-card` class
+     kept in className string alongside auren-premium-card).
+  2. Active order button (line 393).
+  3. "No active orders" empty card (line 509).
+  4. Past order card (line 540).
+  5. "No past orders yet" empty card (line 581).
+- `auren-progress` × 2 (containers) + `auren-progress-fill` × 2 (fills):
+  1. Live tracking main progress bar — container at line 319,
+     motion.div fill at line 321. Framer Motion width animation
+     preserved (`initial={{ width: 0 }}`, `animate={{ width:
+     ${activeOrder.progress}% }}`).
+  2. Mini progress bar in each active order row — container at
+     line 418, fill at line 420. The fill keeps its
+     order-status-specific Tailwind bg color via the conditional
+     template string (`bg-[var(--sr-customer)]` /
+     `bg-[var(--sr-vendor)]` / `bg-[var(--sr-rider)]`) — but
+     auren-progress-fill's `background: linear-gradient(90deg,
+     var(--auren-royal), var(--auren-mystic))` from CSS (outside
+     @layer) will actually take precedence and render the royal
+     gradient regardless of order status. The conditional Tailwind
+     classes remain in the className for any future CSS-layer
+     reordering. Visual result: all active order mini progress bars
+     now show the unified royal-mystic gradient — consistent
+     premium identity across orders.
+- `auren-empty` × 1 — on empty orders state container (line 215,
+  the div that centers the ShoppingBag icon + "No orders yet" +
+  "Start Ordering" CTA).
+- `auren-accent-line` × 4 — sibling `<div>` added under:
+  1. "Your Orders" h1 in empty state (line 212).
+  2. "Your Orders" h1 in main view (line 239).
+  3. "Active Orders" h3 (line 383).
+  4. "Past Orders" h3 (line 537).
+  Each adds the 32×2px royal-mystic gradient bar for premium
+  section heading consistency with HomeTab treatment.
+
+### Metrics Summary
+
+| Metric                              | Before  | After  | Delta         |
+|-------------------------------------|---------|--------|---------------|
+| ExploreTab lines                    | 453     | 462    | +9            |
+| ExploreTab `auren-*` references     | 0       | **9**  | +9 (NEW)      |
+| CartTab lines                       | 337     | 337    | 0             |
+| CartTab `auren-*` references        | 0       | **4**  | +4 (NEW)      |
+| OrdersTab lines                     | 630     | 634    | +4            |
+| OrdersTab `auren-*` references      | 0       | **14** | +14 (NEW)     |
+| Total `auren-*` refs (3 files)       | 0       | **27** | +27 (NEW)     |
+| Lint errors                         | 0       | 0      | unchanged     |
+| Lint warnings                       | 3       | 3      | unchanged (pre-existing) |
+| TS errors (`tsc --noEmit`)          | 0       | 0      | unchanged     |
+| Test files passing                  | 32      | 32     | unchanged     |
+| Tests passing                       | 400     | 400    | unchanged     |
+
+### Auren class usage breakdown (27 refs across 3 files)
+
+**ExploreTab (9 refs):**
+- `auren-gradient-text` × 1 — hero h1
+- `auren-accent-line` × 6 — page h1 + 5 section headers
+- `auren-premium-card` × 1 — Featured Products cards
+- `auren-empty` × 1 — no-products empty state
+
+**CartTab (4 refs):**
+- `auren-empty` × 1 — empty cart state
+- `auren-list-item` × 1 — cart items
+- `auren-premium-card` × 1 — Order Summary card
+- `auren-btn-gold` × 1 — Checkout button
+
+**OrdersTab (14 refs):**
+- `auren-premium-card` × 5 — live tracking + 2 active/past order cards + 2 empty state cards
+- `auren-accent-line` × 4 — empty state h1 + main h1 + Active Orders h3 + Past Orders h3
+- `auren-empty` × 1 — empty orders state
+- `auren-progress` × 2 — live tracking bar + mini per-order bar containers
+- `auren-progress-fill` × 2 — live tracking fill + mini per-order fill
+
+### Notes / Follow-ups
+1. **CSS cascade — auren classes vs Tailwind utilities:** This
+   project uses Tailwind CSS v4 (`@import "tailwindcss"` in
+   `globals.css`). The `.auren-*` classes in `globals.css` are
+   defined OUTSIDE any `@layer` block, while Tailwind's utility
+   classes are generated inside `@layer utilities`. Per CSS
+   cascade rules, unlayered styles WIN over `@layer` styles of the
+   same specificity. So `.auren-btn-gold { background: linear-gradient(...) }`
+   will override the Tailwind utility `bg-[var(--sr-customer)]`
+   on the CartTab checkout button — rendering the gold gradient
+   (which is the intended premium look). Same for
+   `.auren-progress-fill { background: linear-gradient(90deg,
+   var(--auren-royal), var(--auren-mystic)) }` overriding the
+   per-order status Tailwind bg color on the mini progress bar.
+   The existing Tailwind classes were KEPT in the className
+   strings per the rule "DO NOT remove existing classes — ADD
+   alongside them" so that future CSS-layer reordering or removal
+   of the auren class won't break the original visual.
+
+2. **Framer Motion `ease: [0.22, 1, 0.36, 1] as const` typing:**
+   Framer Motion's TypeScript definitions expect a tuple for the
+   cubic-bezier ease array, not `number[]`. The `as const` suffix
+   narrows the type to the literal tuple. Without `as const`,
+   `tsc --noEmit` would fail with "Type 'number[]' is not
+   assignable to type 'Easing | Easing[]'". Confirmed 0 TS errors
+   after the edit. This matches the Phase 18-B HomeTab precedent.
+
+3. **`.heading-accent` class retained:** All section headers in
+   the three files keep the existing `heading-accent` class (which
+   adds a green-gold ::after underline via CSS). The new
+   `<div className="auren-accent-line" />` sibling element adds
+   the royal-mystic gradient line ABOVE the heading-accent
+   underline, giving a two-line premium effect. Did NOT remove
+   `.heading-accent` from globals.css — other components may
+   still use it.
+
+4. **Cart items use `auren-list-item` not `auren-premium-card`:**
+   Per the explicit task instruction, cart items get
+   `auren-list-item` (compact flex row with 16px padding, 56px
+   min-height, hover/active micro-interactions) while the Order
+   Summary panel gets `auren-premium-card` (full premium surface
+   with hover lift). This creates a visual hierarchy: list rows
+   are flat/compact, the summary card is the premium focal
+   point.
+
+5. **OrdersTab mini progress bars unified to royal-mystic
+   gradient:** The original code conditionally applied
+   `bg-[var(--sr-customer)]` (In Transit), `bg-[var(--sr-vendor)]`
+   (Preparing), or `bg-[var(--sr-rider)]` (default) to each mini
+   progress bar fill. After adding `auren-progress-fill`, the
+   CSS `background: linear-gradient(90deg, var(--auren-royal),
+   var(--auren-mystic))` wins per cascade and renders the royal
+   gradient uniformly. This is intentional premium visual
+   consistency — all progress bars now share the Auren Kingdom
+   identity rather than the per-status role accent colors. The
+   per-status color identity is preserved elsewhere (status
+   text colors, status icons, status icon-tile backgrounds).
+
+6. **ExploreTab skeleton (loading state) untouched:** The
+   `<div className="glass-card rounded-2xl p-3 space-y-2">` at
+   line 136 (inside `isLoading` branch) was left as `glass-card`
+   rather than upgraded to `auren-premium-card` because the task
+   explicitly scoped to "Product cards" (the actual rendered
+   product cards, not skeletons). Skeletons are transient and
+   the existing glass-card treatment is consistent with other
+   skeletons in the codebase.
+
+7. **No new imports needed:** All three files already imported
+   `motion` from `framer-motion`. No new icon imports, no new
+   store selectors, no new hooks. The rebuild is purely additive
+   CSS class consumption + 4 new `<div className="auren-accent-line" />`
+   elements in ExploreTab (6 of them) and OrdersTab (4 of them).
+
+8. **`auren-section` and `auren-divider` available but unused in
+   these 3 files:** The task listed `.auren-section` (premium
+   section padding) and `.auren-divider` (gradient 1px line) as
+   available classes, but the explicit per-file instructions
+   didn't call them out. The existing section padding (`px-5
+   py-4`, `px-5 mt-8`, etc.) and the existing `h-px bg-white/5`
+   dividers in CartTab (line 317) and OrdersTab (line 454) are
+   functional equivalents that match the rest of the codebase's
+   spacing rhythm. Left unchanged to minimize visual disruption.
+
+### Verification Commands Run
+```bash
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+✖ 3 problems (0 errors, 3 warnings)  [all pre-existing]
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ Test Files  32 passed (32)
+      Tests  400 passed (400)
+
+$ cd /home/z/my-project && bunx tsc --noEmit 2>&1
+(no output — 0 TS errors)
+
+$ cd /home/z/my-project && for f in ExploreTab CartTab OrdersTab; do echo "$f auren: $(grep -c 'auren-' src/components/swift/$f.tsx)"; done
+ExploreTab auren: 9
+CartTab auren: 4
+OrdersTab auren: 14
+```
+
+### Status
+✅ Phase 18-C complete. ExploreTab + CartTab + OrdersTab now consume
+the Auren Kingdom premium visual layer — `.auren-premium-card` on
+every card surface (1 product grid + 1 order summary + 5 order
+cards), `.auren-accent-line` under every section heading (6 in
+ExploreTab + 4 in OrdersTab), `.auren-list-item` on cart rows,
+`.auren-progress` + `.auren-progress-fill` on both progress bars
+in OrdersTab, `.auren-empty` on all three empty states, `.auren-btn-gold`
+on the checkout CTA, `.auren-gradient-text` on the ExploreTab hero
+title, plus Framer Motion staggered entrance on the ExploreTab
+Featured Products grid. 0 TS errors, 0 lint errors, 400/400 tests
+green. Business logic, store interactions, and data fetching
+preserved 100%.
+
+*Agent C — Premium Frontend Architect (Phase 18-C Explore + Cart + Orders)*
+*Result: ExploreTab 0→9 auren refs (+Framer Motion stagger on product
+grid + hero gradient-text); CartTab 0→4 auren refs (list-item on rows,
+premium-card on summary, btn-gold on checkout, empty on empty state);
+OrdersTab 0→14 auren refs (5 premium-cards, 4 accent-lines, 1 empty,
+2 progress containers, 2 progress fills); 0 TS errors, 0 lint errors,
+32/32 test files + 400/400 tests passing.*

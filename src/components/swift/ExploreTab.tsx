@@ -147,7 +147,8 @@ export default function ExploreTab() {
       {/* Welcome + Search */}
       <div className="px-5 pt-6 pb-3">
         <p className="text-[var(--sr-customer)] text-[11px] font-bold uppercase tracking-[0.18em] mb-1">Welcome back</p>
-        <h1 className="text-2xl font-bold tracking-tight">What do you need today?</h1>
+        <h1 className="text-2xl font-bold tracking-tight auren-gradient-text">What do you need today?</h1>
+        <div className="auren-accent-line mt-2" />
 
         {/* Search bar */}
         <button
@@ -197,7 +198,8 @@ export default function ExploreTab() {
 
       {/* Category Grid */}
       <div className="px-5 py-4">
-        <h2 className="text-white text-lg font-extrabold mb-3 heading-accent">Browse Categories</h2>
+        <h2 className="text-white text-lg font-extrabold mb-1 heading-accent">Browse Categories</h2>
+        <div className="auren-accent-line mb-3" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {categoryHubItems.map((item, i) => {
             const isActive = activeCategory === item.name;
@@ -232,7 +234,7 @@ export default function ExploreTab() {
 
       {/* Seasonal Specials — aurora-card */}
       <div className="pt-4">
-        <div className="flex items-center justify-between px-5 mb-3">
+        <div className="flex items-center justify-between px-5 mb-1">
           <h2 className="text-xl font-bold heading-accent">Seasonal Specials</h2>
           <button
             onClick={() => setActiveCategory('Iftar Meals')}
@@ -241,6 +243,7 @@ export default function ExploreTab() {
             View all
           </button>
         </div>
+        <div className="auren-accent-line mx-5 mb-3" />
         <div className="px-5">
           <div className="relative overflow-hidden rounded-2xl aurora-card p-1.5">
             <div
@@ -278,7 +281,7 @@ export default function ExploreTab() {
 
       {/* Popular Retailers */}
       <div className="px-5 mt-8">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-1">
           <h3 className="text-white text-lg font-extrabold heading-accent">Popular Retailers</h3>
           <button
             onClick={() => setActiveCategory(null)}
@@ -287,6 +290,7 @@ export default function ExploreTab() {
             Explore All
           </button>
         </div>
+        <div className="auren-accent-line mb-4" />
         <div className="flex overflow-x-auto gap-3 sm:gap-4 pb-4 no-scrollbar">
           {popularRetailers.map((retailer) => (
             <motion.button
@@ -359,7 +363,8 @@ export default function ExploreTab() {
 
       {/* Quick Actions */}
       <div className="px-5 py-8">
-        <h2 className="text-xl font-bold mb-4 heading-accent">Your Favorites</h2>
+        <h2 className="text-xl font-bold mb-1 heading-accent">Your Favorites</h2>
+        <div className="auren-accent-line mb-4" />
         <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 no-scrollbar">
           {quickActions.map((action) => (
             <button
@@ -378,7 +383,7 @@ export default function ExploreTab() {
 
       {/* Featured Products / Filtered Products */}
       <div className="px-5 mb-6">
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center mb-1">
           <h3 className="text-white text-lg font-extrabold heading-accent">
             {activeCategory ? `${activeCategory} Picks` : 'Top Picks'}
           </h3>
@@ -389,13 +394,17 @@ export default function ExploreTab() {
             See All
           </button>
         </div>
+        <div className="auren-accent-line mb-4" />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {filteredProducts.slice(0, 6).map(product => (
+          {filteredProducts.slice(0, 6).map((product, i) => (
             <motion.div
               key={product.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] as const }}
               onClick={() => handleProductClick(product.id)}
               whileTap={{ scale: 0.97 }}
-              className="glass-card rounded-2xl overflow-hidden hover:border-white/15 transition-colors cursor-pointer"
+              className="auren-premium-card rounded-2xl overflow-hidden cursor-pointer"
             >
               <div
                 className="w-full aspect-square bg-center bg-cover relative"
@@ -435,11 +444,11 @@ export default function ExploreTab() {
           ))}
         </div>
         {filteredProducts.length === 0 && activeCategory && (
-          <div className="flex flex-col items-center py-8 text-center">
+          <div className="auren-empty py-8 text-center">
             <p className="text-white/65 text-sm">No products found for &quot;{activeCategory}&quot;</p>
             <button
               onClick={() => setActiveCategory(null)}
-              className="text-[var(--sr-customer)] text-sm font-bold mt-2 hover:text-[var(--sr-customer)]/80 transition-colors"
+              className="text-[var(--sr-customer)] text-sm font-bold hover:text-[var(--sr-customer)]/80 transition-colors"
             >
               Clear filter
             </button>
