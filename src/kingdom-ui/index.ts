@@ -5,3 +5,5 @@ export { KingdomAuth } from './pages/Auth';
 export { KingdomHome } from './pages/Home';
 export { KingdomWelcomeScreen } from './pages/WelcomeScreen';
 export { KingdomAuthScreen } from './pages/AuthScreen';
+export { KingdomHomeTab } from './pages/HomeTab';
+export { KingdomBottomNav } from './pages/BottomNav';

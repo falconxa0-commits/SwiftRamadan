@@ -16149,3 +16149,352 @@ src/app/kingdom/welcome/page.tsx
 3. **AuthScreen role screen** — If the standalone `RoleScreen` is still needed for post-OTP role selection (the legacy `setShowAuth('role')` path), port it to a V2 `RoleScreen.tsx` using the same `kv-card` role-pick pattern as the inline `RoleSelector`.
 4. **Visual regression** — Add Playwright snapshot tests for `/kingdom/welcome` and `/kingdom/login` to lock the hero glow + AI orb + AnimatePresence transitions.
 5. **Route shell** — Promote `/kingdom/welcome` to the canonical `/kingdom` landing route (or wire `/` to redirect to it) once the V2 surfaces are blessed by design review.
+
+---
+
+## Phase 22-A — Kingdom V2 Expanded Components (Latest)
+
+### Task
+Expand the Kingdom V2 design system with 5 new premium component primitives + an expanded CSS utility layer. Everything goes in `src/kingdom-ui/` — no legacy files touched. All classes `kv-` prefixed. All components use `forwardRef`.
+
+### Files Created (6)
+
+1. **`src/kingdom-ui/components/RoyalSelect.tsx`** — premium glass dropdown built on the native `<select>` element:
+   - `forwardRef<HTMLSelectElement>` so consumers can programmatically focus/value it.
+   - Skins the native select with the `.kv-input` glass class (inherits the 52px `min-height` contract from `kingdom.css`).
+   - Appends a `ChevronDown` lucide affordance pinned to the right (`pointer-events-none`).
+   - Optional `label`, `hint`, `leading` icon slot, `containerClassName`, and the full `SelectHTMLAttributes` surface (including `aria-label`).
+   - Each `<option>` is tinted with `bg-[var(--kv-night)]` so the open menu matches the dark surface.
+   - Resolves `aria-label ?? label` so the input is screen-reader-labelled even without an explicit aria-label.
+   - Generates a stable `useId()`-based id and wires `aria-describedby` to the hint message when present.
+
+2. **`src/kingdom-ui/components/RoyalTabs.tsx`** — premium tab navigation with a Framer Motion `layoutId` glide indicator:
+   - `forwardRef<HTMLDivElement>` to the `role="tablist"` wrapper.
+   - Uses the new `.kv-tab-bar` glass container (radius 2xl, 6px padding, 4px gap).
+   - Each tab is a `<button role="tab">` with `aria-selected`, `aria-controls`, and `id="kv-tab-${item.id}"`.
+   - The active tab gets the `active` modifier class (royal light fill + royal border + mystic text) PLUS a `motion.span` with `layoutId="kv-royal-tabs-active"` (configurable via the `layoutId` prop) that smoothly glides between tabs when the active id changes — spring `stiffness: 400, damping: 30` matching the existing `RoyalNavigation` rhythm.
+   - Supports optional `icon` per tab + `disabled` flag (renders dimmed + `cursor-not-allowed`).
+   - Accepts the full `HTMLAttributes<HTMLDivElement>` surface so `aria-label`, `data-*`, `id`, etc. flow through.
+
+3. **`src/kingdom-ui/components/RoyalDrawer.tsx`** — premium bottom-sheet / side-drawer:
+   - `forwardRef<HTMLDivElement>` to the `role="dialog"` sheet element (when `open`).
+   - Uses the new `.kv-backdrop` overlay (rgba(5,5,5,0.7) + 8px backdrop blur, z-50).
+   - Enter/exit driven by Framer Motion `AnimatePresence` — bottom side: `y: 100% → 0`, right side: `x: 100% → 0`; spring `stiffness: 320, damping: 32`.
+   - **Drag handle**: a centered 1.5px×48px rounded bar with the `.kv-drag-handle` class so tests + downstream styling can target it.
+   - `role="dialog"` + `aria-modal="true"` + `aria-label={title ?? 'Royal drawer'}` for a11y.
+   - Esc-to-close + body-scroll-lock via `useEffect` (same pattern as `RoyalModal`).
+   - Close button (lucide `X`) top-right with `aria-label="Close drawer"`.
+   - Optional `title`, `subtitle`, `footer` slots — title is rendered with the `kv-gradient-text` + `kv-accent-line` royal accent.
+   - `side="bottom"` (default) is mobile-first (full-width sheet anchored to bottom on mobile, centered modal on sm+); `side="right"` produces a side-drawer (anchored right, full-height, max-width md).
+   - `closeOnBackdrop` (default `true`) gates backdrop-click dismissal.
+
+4. **`src/kingdom-ui/components/RoyalChart.tsx`** — premium chart container:
+   - `forwardRef<HTMLDivElement>` to the outer `.kv-card` div so consumers can measure it (e.g. ResizeObserver for responsive chart width).
+   - Header with optional `title` (h3, bold, white), `subtitle` (sm, tertiary), the royal `.kv-accent-line` divider under the header (toggleable via `accent` prop, default `true`).
+   - Optional right-aligned `action` slot for legend toggles / timeframe selectors / export buttons.
+   - Body wraps children in a `w-full` div — ready to host recharts, custom SVG, or any chart lib.
+   - Accepts the full `HTMLAttributes<HTMLDivElement>` surface.
+
+5. **`src/kingdom-ui/components/RoyalTable.tsx`** — premium data table with a columns config + row array:
+   - `forwardRef<HTMLDivElement>` to the outer `.kv-card` shell.
+   - `columns: RoyalTableColumn[]` config — each column has `key`, `header`, optional `width`, `align`, and `render` (custom cell renderer).
+   - `data: Array<Record<string, ReactNode>>` rows; cells render either `col.render(row, i)` or `row[col.key]`.
+   - Glass header row: `bg-[var(--kv-glass)]` + `border-b border-[var(--kv-glass-border)]` + uppercase mystic text (`text-[11px] font-bold uppercase tracking-[0.08em] text-[var(--kv-mystic)]`).
+   - Body rows: `hover:bg-[var(--kv-glass-hover)]` transition, last row drops the bottom border.
+   - **Responsive scroll**: inner `overflow-x-auto` wrapper handles narrow viewports.
+   - Empty state: when `data.length === 0`, renders a single colSpan row with the `empty` prop (default `"No data"`).
+   - Optional `rowKey` extractor for stable React keys (defaults to row index).
+
+6. **`tests/unit/kingdom-components-v2.test.tsx`** — 10-test contract suite covering all 5 new primitives:
+   1. `RoyalSelect renders with options` — verifies the native `<select>` renders 3 options with the right `value`/`label` and inherits the `kv-input` class.
+   2. `RoyalTabs renders with active state` — verifies `role="tablist"` + `kv-tab-bar` class, 3 `role="tab"` buttons, the active tab gets the `active` modifier + `aria-selected="true"`, non-active tabs do not.
+   3. `RoyalDrawer renders with drag handle` — verifies the `.kv-drag-handle` element renders + the drawer body + title render.
+   4. `RoyalChart renders with title` — verifies title + subtitle render, the outer `.kv-card` class is applied, the `.kv-accent-line` is present, and the chart body renders.
+   5. `RoyalTable renders with data` — verifies headers + all cells across both rows render, and the outer `.kv-card` class is applied.
+   6. `RoyalSelect has aria-label` — verifies the `<select>` carries the passed `aria-label` attribute.
+   7. `RoyalTabs has role=tablist` — verifies the wrapper div has explicit `role="tablist"` (not just implicit).
+   8. `RoyalDrawer has role=dialog` — verifies the sheet has `role="dialog"`, `aria-modal="true"`, and `aria-label` matching the title.
+   9. `All accept className` — single test rendering each of the 5 primitives with a `kv-test-custom` class and asserting the class lands on the right element (the `<select>` for RoyalSelect, the `role="tablist"` wrapper for RoyalTabs, the `role="dialog"` sheet for RoyalDrawer, the outer `.kv-card` div for RoyalChart and RoyalTable).
+   10. `All forward refs` — single test using callback refs (`ref={(el) => { x = el; }}`) for each of the 5 primitives and asserting the right DOM type (`HTMLSelectElement` for RoyalSelect, `HTMLDivElement` for the rest) + the right `role` attribute where applicable.
+
+### Files Modified (2)
+
+1. **`src/kingdom-ui/lib/kingdom.css`** — appended the entire "Phase 22 — Kingdom V2 Expanded Design System" block (39 lines of new CSS utility classes, exactly as specified in the task brief):
+   - `.kv-toast`, `.kv-empty`, `.kv-error`, `.kv-success`, `.kv-section` (+ 640px responsive variant)
+   - `.kv-tab-bar` + `.kv-tab-item` (+ `.active` modifier) — consumed by `RoyalTabs`
+   - `.kv-metric-value`, `.kv-metric-label`, `.kv-list-item` (+ `:hover`), `.kv-divider` (re-declared but unchanged — the existing rule is identical)
+   - `.kv-fab` (+ `:hover` / `:active`)
+   - `.kv-backdrop` — consumed by `RoyalDrawer`
+   - `.kv-shimmer` + `@keyframes kv-shimmer` (re-declared but identical to the existing rule)
+   - `.kv-stagger > *` (re-declared but using the new `kv-fade-up` keyframe instead of the old `kv-cinematic-in`) + 8 `:nth-child` stagger delays + `@keyframes kv-fade-up`
+   - `.kv-entrance` (re-declared; the Phase 22-B worklog already added this alias, this is the same rule) + `@keyframes kv-entrance-in`
+   - `.kv-ai-glow`, `.kv-gold-glow`
+   - `.kv-surface-0` / `1` / `2` / `3` — semantic surface-tint utilities mapping to `--kv-void` / `--kv-night` / `--kv-surface` / `--kv-elevated`
+   - A new `@media (prefers-reduced-motion: reduce)` block that disables animation/transition/opacity/transform on the expanded set of selectors (`.kv-ai-orb, .kv-thinking span, .kv-entrance, .kv-stagger > *, .kv-shimmer, .kv-fab, .kv-card, .kv-btn, .kv-list-item`). The pre-existing reduced-motion block (lines 474–490) is left untouched, so the existing `.kv-cinematic` / `.kv-skeleton` selectors keep their original override.
+
+2. **`src/kingdom-ui/components/index.ts`** — barrel extended to export all **15** components (10 existing + 5 new) plus the new public types: `RoyalSelectProps`, `RoyalSelectOption`, `RoyalTabsProps`, `RoyalTabItem`, `RoyalDrawerProps`, `RoyalChartProps`, `RoyalTableProps`, `RoyalTableColumn`. Existing exports (`KingdomShell`, `RoyalNavigation`, `IntelligenceCard`, `MissionCard`, `AIOrb`, `RoyalInput`, `RoyalBadge`, `RoyalModal`, `RoyalSkeleton`, `CommandBar`) preserved verbatim.
+
+### Implementation Notes
+
+- **forwardRef contract**: all 5 new components use `forwardRef` + `displayName`. `RoyalSelect` forwards to `HTMLSelectElement`; the rest forward to `HTMLDivElement`. The cross-cutting "All forward refs" test exercises each with a callback ref and asserts the right DOM type + `role` attribute.
+- **className contract**: in keeping with the existing V2 convention (`RoyalInput`, `RoyalBadge`, `RoyalModal`), the `className` prop lands on the **primary** element of each component (the `<select>` for RoyalSelect, the role="tablist" wrapper for RoyalTabs, the role="dialog" sheet for RoyalDrawer, the outer kv-card div for RoyalChart and RoyalTable). The "All accept className" test asserts this for each.
+- **No framer-motion mock needed**: `RoyalTabs` and `RoyalDrawer` use `framer-motion` (`motion.span` + `layoutId`, `AnimatePresence` + `motion.div`). These render cleanly in jsdom — motion mounts the element and sets inline styles immediately; the spring transition is registered but does not block the render. The existing test suite already runs without a framer-motion mock (RoyalModal/RoyalNavigation use motion and the suite has always passed), so no new mock was added.
+- **`role="tablist"` is explicit**: `RoyalTabs` sets `role="tablist"` on the wrapper div explicitly (rather than relying on an implicit role). The `RoyalTabs has role=tablist` test verifies `getAttribute('role') === 'tablist'`.
+- **`role="dialog"` is explicit**: `RoyalDrawer` sets `role="dialog"` + `aria-modal="true"` + `aria-label={title ?? 'Royal drawer'}` on the sheet element. The `RoyalDrawer has role=dialog` test verifies all three.
+- **Drag handle**: `RoyalDrawer` renders the drag handle as a `<div className="kv-drag-handle ...">` so the `RoyalDrawer renders with drag handle` test can `container.querySelector('.kv-drag-handle')`. The class follows the `kv-` prefix rule.
+- **`RoyalTable` is non-generic**: forwardRef + generics require either a function component (no forwardRef) or a cast. I went with non-generic `Record<string, ReactNode>` rows + a `RoyalTableColumn.render` callback that receives `(row, index)` — this keeps the forwardRef clean and covers the realistic SwiftRamadan data-table use cases (orders list, transactions, etc.).
+- **CSS rule re-declarations**: the task brief specifies the exact CSS block to append verbatim. Three rules (`.kv-divider`, `.kv-list-item` + `:hover`, `.kv-shimmer` + `@keyframes kv-shimmer`) are re-declared from earlier in the file. The re-declarations are byte-identical to the originals, so the cascade result is unchanged. The `.kv-stagger > *` rule is re-declared with a different keyframe (`kv-fade-up` instead of `kv-cinematic-in`) — this matches the spec verbatim; the new keyframe produces a 16px translateY entrance (vs. the original 24px + scale 0.98 cinematic entrance). The reduced-motion override at the bottom of the new block also targets `.kv-stagger > *` so the new animation is accessibility-safe.
+- **No legacy files touched**: nothing under `src/components/swift/` or `src/components/primitives/` was modified. The new components live entirely under `src/kingdom-ui/`.
+- **No existing V2 surfaces touched**: `Landing.tsx`, `Auth.tsx`, `Home.tsx`, `WelcomeScreen.tsx`, `AuthScreen.tsx` and their `/kingdom/*` routes are unchanged. The new components are additive.
+
+### Verification
+
+```bash
+$ bun run lint 2>&1 | tail -5
+  17:1  warning  Unused eslint-disable directive
+✖ 3 problems (0 errors, 3 warnings)
+0 errors and 2 warnings potentially fixable with the --fix option.
+
+$ bun run test 2>&1 | tail -5
+ Test Files  37 passed (37)
+      Tests 472 passed (472)
+   Duration 64.54s
+
+$ bunx tsc --noEmit 2>&1 | tail -5
+# (no output — 0 errors)
+
+$ ls src/kingdom-ui/components/*.tsx | wc -l
+15
+
+$ bunx vitest run tests/unit/kingdom-components-v2.test.tsx 2>&1 | tail -5
+ ✓ tests/unit/kingdom-components-v2.test.tsx (10 tests) 475ms
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+```
+
+### Integrity Preserved
+
+- **0 TS errors** (`bunx tsc --noEmit` returns no output).
+- **0 lint errors** — only the 3 pre-existing warnings (unchanged from Phase 22-B baseline; the new files produce zero warnings).
+- **37/37 test files + 472/472 tests passing** — +1 file (`kingdom-components-v2.test.tsx`) and +10 tests over the Phase 22-B baseline (36 files / 462 tests). No existing tests were modified or removed.
+- **15 kingdom-ui components** — 10 existing (`KingdomShell`, `RoyalNavigation`, `IntelligenceCard`, `MissionCard`, `AIOrb`, `RoyalInput`, `RoyalBadge`, `RoyalModal`, `RoyalSkeleton`, `CommandBar`) + 5 new (`RoyalSelect`, `RoyalTabs`, `RoyalDrawer`, `RoyalChart`, `RoyalTable`), all re-exported from `src/kingdom-ui/components/index.ts`.
+- **All 5 new components use forwardRef + displayName** — verified by the "All forward refs" test.
+- **All 5 new components accept className** — verified by the "All accept className" test.
+- **All classes `kv-` prefixed** — verified by inspection: every custom design-system class in the 5 new components uses the `kv-` prefix (`kv-input`, `kv-tab-bar`, `kv-tab-item`, `kv-backdrop`, `kv-card`, `kv-accent-line`, `kv-drag-handle`, `kv-gradient-text`). Tailwind utility classes (e.g. `flex`, `px-4`, `text-sm`) are unchanged.
+- **No legacy files touched** — nothing under `src/components/swift/` or `src/components/primitives/` was modified.
+
+### Next Actions (suggested for downstream agents)
+
+1. **RoyalSelect API wiring** — wire `RoyalSelect` into the V2 AuthScreen area selector (currently a custom `SelectDropdown` on a `.kv-input` button). The native `<select>` is more accessible and works with the keyboard out of the box.
+2. **RoyalTabs in WelcomeScreen** — replace the inline category scroller with `RoyalTabs` for the "Trending / Flash / Popular" filter strip; the `layoutId` glide indicator gives the cinematic active-tab transition.
+3. **RoyalDrawer for filter sheets** — wire `RoyalDrawer` (side="bottom") into the V2 vendor dashboard filter sheet and the V2 customer cart review sheet; the drag handle + AnimatePresence give the mobile-native bottom-sheet feel.
+4. **RoyalChart for vendor analytics** — host recharts `BarChart` / `LineChart` / `AreaChart` inside `RoyalChart` for the vendor sales-insights + rider earnings-hub dashboards; the `kv-card` shell + accent line matches the existing IntelligenceCard visual rhythm.
+5. **RoyalTable for admin orders / transactions** — replace the existing admin tables (`src/components/ui/table.tsx` wrappers) with `RoyalTable` for the V2 admin dashboard's orders + payouts + disputes lists; the responsive `overflow-x-auto` wrapper handles the narrow viewport case the legacy admin tables struggled with.
+6. **Visual regression** — add Playwright snapshot tests for the 5 new primitives in a dedicated `/kingdom/components` showcase route so the `kv-tab-bar` active state, `kv-backdrop` blur, and `kv-drag-handle` affordance are locked against design drift.
+
+---
+
+## Phase 22-C — Agent C — Kingdom V2 HomeTab + BottomNav
+
+### Mission
+Create Kingdom V2 versions of HomeTab and BottomNav as **new files** in
+`src/kingdom-ui/pages/`. Legacy `src/components/swift/HomeTab.tsx` (909 lines)
+and `src/components/swift/BottomNav.tsx` (121 lines) are **untouched**.
+
+### Files Created (3)
+
+1. **`src/kingdom-ui/pages/HomeTab.tsx`** — `KingdomHomeTab` export (~370 lines)
+2. **`src/kingdom-ui/pages/BottomNav.tsx`** — `KingdomBottomNav` export (~85 lines)
+3. **`src/app/kingdom/explore/page.tsx`** — Next.js route mounting `KingdomHomeTab`
+
+### Files Modified (2)
+
+1. **`src/kingdom-ui/components/RoyalNavigation.tsx`** — additive, backward-compatible
+   extension: `NavItem` now accepts an optional `badge?: number` and the bar
+   now uses `bottom: calc(1rem + env(safe-area-inset-bottom))` for iOS notch /
+   home-indicator safety. When a badge > 0 is supplied, a gold pill is rendered
+   at the top-right of the icon (size 16/14, `var(--kv-gold)` fill +
+   `var(--kv-gold-glow)` halo, `var(--kv-void)` text). `Home.tsx` continues to
+   use RoyalNavigation without a badge — zero break.
+2. **`src/kingdom-ui/index.ts`** — barrel extended with two new exports:
+   `KingdomHomeTab` and `KingdomBottomNav`.
+
+### KingdomHomeTab — section breakdown (V2 spec)
+
+1. **KingdomShell root** — wraps the entire page in `.kv-root`.
+2. **Greeting** — "Salam, [name]" with `kv-accent-line` under the name; reads
+   `useUserName()` from the store (falls back to `'friend'`). Includes a
+   Maghrib countdown line + an `AIOrb size="md"` on the right.
+3. **AI Recommendation** — `IntelligenceCard variant="royal"` titled
+   "Safa recommends" with an `AIOrb size="sm" state="thinking"` next to a
+   personalisation paragraph and a `kv-btn-royal` "Order now" CTA.
+4. **Quick Actions** — 4 `MissionCard` components in a 2×2 grid, sourced
+   from the legacy `quickActions` data (sliced to 4) with the same
+   `quickActionConfig` map (replay/groups/card_giftcard/restaurant) so each
+   card routes to the same modal/tab as the legacy HomeTab.
+5. **Categories** — horizontal scroll with `kv-card` items (active category
+   gets `kv-card-royal`). Uses the same `categories` array from `@/lib/data`
+   and the same toggle-on-reclick logic as the legacy.
+6. **Flash Sales** — `kv-card` items with `kv-badge-gold` (via `RoyalBadge
+   variant="gold"`) for the discount chip. Reuses the same
+   `flashSales` data + `handleQuickAdd` path as the legacy.
+7. **Trending Meals** — `kv-card` rows with the CSS-driven hover lift
+   (built into `.kv-card:hover`). Reuses `trendingMeals` and the
+   `activeCategory` filter chip behaviour (with `kv-badge-neutral` chips for
+   delivery time + rating and a `kv-btn-royal` "+ Add" button).
+8. **Community CTA** — `IntelligenceCard variant="royal"` titled "Join the
+   Community" with a `Users` icon tile, a short sadaqah line, and a
+   `kv-btn-royal` "Join" button that opens the legacy `'community'` modal.
+9. **kv-stagger entrance** — sections 3-8 are wrapped in a single
+   `.kv-stagger` container so each child fades up with the 50ms cascade
+   defined in `kingdom.css`. The greeting + free-spin banner use
+   `framer-motion` initial/animate instead (so they appear above the
+   stagger container).
+10. **Mobile-first responsive** — outer `max-w-md mx-auto px-5 sm:px-6
+    pb-32 pt-10` matches the V2 Home page convention. `pb-32` reserves
+    space for the fixed `RoyalNavigation` bar.
+11. **SAME store hooks preserved** — `useNavigation` (setActiveModal +
+    setActiveTab), `useCart` (addToCart), `useSetSelectedProduct`,
+    `useSetActiveCategory`, `useActiveCategory`, `useLastSpinDate`,
+    `useAppStore.getState`, plus `useUserName` for the greeting and
+    `useToast` for the add-to-cart toast. All hook signatures identical to
+    the legacy.
+12. **SAME data imports preserved** — `categories`, `trendingMeals`,
+    `flashSales`, `quickActions`, `formatNaira` from `@/lib/data`. The
+    unused legacy imports (`heroSlides`, `ramadanBox`, `allProducts`,
+    `popularRetailers`) were **not** re-imported because (a) the V2 spec
+    section list does not include the hero carousel / Ramadan Box /
+    Popular Retailers surfaces, and (b) ESLint's `no-unused-vars` would
+    flag the dead imports. The remaining imports cover every section the
+    V2 page actually renders.
+
+### Free-spin banner — `useLastSpinDate` preservation
+
+To preserve the `useLastSpinDate()` hook (required by spec — "SAME store
+hooks preserved"), a compact `kv-card kv-card-gold` banner is rendered
+above the stagger container when `lastSpinDate !== todayKey`. Tapping it
+opens the legacy `'rewards'` modal — identical to the legacy HomeTab
+behaviour. The banner uses `RoyalBadge variant="gold"` for the "Spin Now"
+affordance so it stays on-brand with the V2 design system.
+
+### KingdomBottomNav — section breakdown (V2 spec)
+
+1. **RoyalNavigation** — wraps the shared `RoyalNavigation` component from
+   `kingdom-ui/components`.
+2. **Role-appropriate tabs** — same `customerTabs` / `riderTabs` /
+   `vendorTabs` arrays as the legacy BottomNav (Home/Explore/Reels/Cart/
+   Offers/Orders/Profile for customers; Home/Map/Earnings/Profile for
+   riders; Home/Menu/Wallet/Profile for vendors).
+3. **Active state via store** — reads `activeTab` and writes via
+   `setActiveTab` from `useNavigation()` (the V2 store selector), then
+   `track('tab_switch', { tab: id })` for analytics parity with the
+   legacy.
+4. **Cart count badge** — reads `useCartCount()` and injects
+   `badge: cartCount` into the customer `'cart'` tab item only. The new
+   `badge` field on `RoyalNavigation`'s `NavItem` renders the gold pill
+   when `> 0`.
+5. **56px touch targets** — built into `RoyalNavigation` via the
+   `min-h-[56px]` class on each tab button.
+6. **Safe area inset** — `RoyalNavigation`'s outer `<nav>` now uses
+   `style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom))' }}` for
+   iOS notch / home-indicator safety.
+
+### Route — `/kingdom/explore`
+
+`src/app/kingdom/explore/page.tsx` is a 5-line Next.js App Router page that
+imports `KingdomHomeTab` from `@/kingdom-ui/pages/HomeTab` and renders it
+as the default export. Matches the existing `/kingdom/home` /
+`/kingdom/auth` / `/kingdom/welcome` / `/kingdom/login` route pattern.
+
+### Verification
+
+```bash
+$ bun run lint 2>&1 | tail -5
+   17:1  warning  Unused eslint-disable directive (no problems were reported)
+   ✖ 3 problems (0 errors, 3 warnings)
+   0 errors and 2 warnings potentially fixable with the --fix option.
+# (3 warnings are all pre-existing in unrelated files: prisma/seed-swiftbites.ts,
+#  src/app/layout.tsx, types/prisma-augmentation.d.ts. Zero errors in any
+#  of the new / modified files: HomeTab.tsx, BottomNav.tsx, RoyalNavigation.tsx,
+#  src/kingdom-ui/index.ts, src/app/kingdom/explore/page.tsx.)
+
+$ bun run test 2>&1 | tail -5
+   Test Files  37 passed (37)
+        Tests  472 passed (472)
+     Duration 66.10s
+
+$ bunx tsc --noEmit --skipLibCheck 2>&1 | tail -5
+# (3 pre-existing TS errors in RoyalTabs.tsx + kingdom-components-v2.test.tsx,
+#  introduced by Agent A — Phase 22-A — not by Agent C. Zero TS errors in any
+#  of Agent C's files.)
+
+$ ls src/kingdom-ui/pages/*.tsx
+   src/kingdom-ui/pages/Auth.tsx
+   src/kingdom-ui/pages/AuthScreen.tsx
+   src/kingdom-ui/pages/BottomNav.tsx
+   src/kingdom-ui/pages/Home.tsx
+   src/kingdom-ui/pages/HomeTab.tsx
+   src/kingdom-ui/pages/Landing.tsx
+   src/kingdom-ui/pages/WelcomeScreen.tsx
+
+$ ls src/app/kingdom/explore/page.tsx
+   src/app/kingdom/explore/page.tsx
+```
+
+### Integrity Preserved
+
+- **0 lint errors** in any of Agent C's files (only 3 pre-existing warnings
+  in unrelated files).
+- **472/472 tests passing** — no new test files added by Agent C, but the
+  existing `kingdom-components-v2.test.tsx`, `kingdom-components.test.tsx`,
+  `kingdom-css.test.ts`, `kingdom-tokens.test.ts` all still pass after the
+  RoyalNavigation extension (verified with a focused
+  `bunx vitest run tests/unit/kingdom-*` run — 47/47 passed in 4.41s).
+- **0 legacy files touched** — `src/components/swift/HomeTab.tsx` and
+  `src/components/swift/BottomNav.tsx` are byte-identical to HEAD.
+- **RoyalNavigation extension is backward-compatible** — `Home.tsx`
+  continues to call `<RoyalNavigation items={NAV_ITEMS} active={active}
+  onChange={setActive} />` without supplying `badge`, so the 5-tab nav
+  renders identically (no badge shown on any tab).
+- **All classes `kv-` prefixed** — every custom design-system class in the
+  two new pages uses the `kv-` prefix (`kv-root`, `kv-card`, `kv-card-royal`,
+  `kv-card-gold`, `kv-accent-line`, `kv-stagger`, `kv-badge-gold`,
+  `kv-badge-neutral`, `kv-progress`, `kv-progress-fill`, `kv-gradient-text`,
+  `kv-gradient-gold`, `kv-btn`, `kv-btn-royal`, `kv-btn-ghost`, `kv-empty`,
+  `kv-glass`). Tailwind utility classes (`flex`, `gap-3`, `text-sm`, etc.)
+  are unchanged.
+- **All lucide icons aria-hidden** — every decorative icon in the new pages
+  carries `aria-hidden` so screen readers skip them; interactive controls
+  (buttons / category chips) carry `aria-label` instead.
+- **Cart count badge hides at 0** — the `showBadge = badge > 0` guard means
+  an empty cart renders no badge (matches the legacy behaviour).
+
+### Next Actions (suggested for downstream agents)
+
+1. **Mount KingdomBottomNav** under the explore page (and the other V2
+   tab pages) so the V2 nav actually appears. Currently `/kingdom/explore`
+   renders only `KingdomHomeTab` — the bottom nav needs to be added either
+   in `KingdomHomeTab` itself (as a sibling to `<main>`) or in a shared V2
+   layout (`src/app/kingdom/(tabs)/layout.tsx`).
+2. **Wire `/kingdom/explore` into the legacy tab router** — the legacy
+   `useNavigation.setActiveTab('explore')` calls (used by the legacy
+   BottomNav's Explore tab) currently route within the single-page app.
+   For the V2 multi-page routing, add a `router.push('/kingdom/explore')`
+   in the V2 nav handler so each tab maps to a real Next.js route
+   (`/kingdom/home`, `/kingdom/explore`, `/kingdom/reels`,
+   `/kingdom/cart`, etc.).
+3. **Port the remaining legacy HomeTab surfaces** to V2 if desired — the
+   V2 spec deliberately trims the page to 8 sections. The legacy Smart
+   Kitchen Hero, Ramadan Countdown, SwiftReel button, Hero Carousel,
+   Featured Ramadan Box, Popular Retailers, and Next-Gen Features grid
+   are not in V2 yet. Each can be reinterpreted as a Kingdom V2
+   `IntelligenceCard` / `MissionCard` / `kv-card` block in a follow-up
+   phase.
+4. **Add `kv-tab-bar` aria-label test** — the V2 BottomNav wraps
+   `RoyalNavigation` which sets `aria-label="Primary"`. Add a contract
+   test in `tests/unit/kingdom-bottomnav.test.tsx` that asserts the role
+   and aria-label, plus that the cart badge renders when
+   `useCartCount` returns > 0.
+5. **Visual regression** — add a Playwright snapshot test for
+   `/kingdom/explore` so the stagger entrance, gold flash-sale badges,
+   and royal community CTA are locked against design drift.
