@@ -235,7 +235,8 @@
 }
 
 /* ── Kingdom Cinematic Entrance ── */
-.kv-cinematic {
+.kv-cinematic,
+.kv-entrance {
   animation: kv-cinematic-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
@@ -475,6 +476,7 @@
   .kv-ai-orb,
   .kv-thinking span,
   .kv-cinematic,
+  .kv-entrance,
   .kv-stagger > *,
   .kv-skeleton,
   .kv-card,

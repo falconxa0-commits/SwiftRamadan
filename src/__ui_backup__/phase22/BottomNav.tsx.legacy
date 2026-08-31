@@ -1,0 +1,120 @@
+'use client';
+
+import { type TabId } from '@/lib/store';
+import { useNavigation, useCartCount, useUserRole } from '@/lib/store-selectors';
+import { Home, Compass, ShoppingCart, ClipboardList, Percent, User, Bike, Wallet, Store, Map, Settings, Clapperboard } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { track } from '@/lib/analytics';
+
+interface NavTab {
+  id: TabId;
+  label: string;
+  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
+}
+
+const customerTabs: NavTab[] = [
+  { id: 'home', label: 'Home', icon: Home },
+  { id: 'explore', label: 'Explore', icon: Compass },
+  { id: 'reels', label: 'Reels', icon: Clapperboard },
+  { id: 'cart', label: 'Cart', icon: ShoppingCart },
+  { id: 'offers', label: 'Offers', icon: Percent },
+  { id: 'orders', label: 'Orders', icon: ClipboardList },
+  { id: 'profile', label: 'Profile', icon: User },
+];
+
+const riderTabs: NavTab[] = [
+  { id: 'rider-dashboard', label: 'Home', icon: Home },
+  { id: 'rider-deliveries', label: 'Map', icon: Map },
+  { id: 'rider-earnings', label: 'Earnings', icon: Wallet },
+  { id: 'rider-profile', label: 'Profile', icon: User },
+];
+
+const vendorTabs: NavTab[] = [
+  { id: 'vendor-dashboard', label: 'Home', icon: Home },
+  { id: 'vendor-store', label: 'Menu', icon: Store },
+  { id: 'vendor-earnings', label: 'Wallet', icon: Wallet },
+  { id: 'vendor-profile', label: 'Profile', icon: Settings },
+];
+
+export default function BottomNav() {
+  const { activeTab, setActiveTab } = useNavigation();
+  const cartCount = useCartCount();
+  const userRole = useUserRole();
+
+  const tabs = userRole === 'rider' ? riderTabs : userRole === 'vendor' ? vendorTabs : customerTabs;
+  // Role accent — kept for the cart count badge (non-active state) to preserve role identity
+  const roleAccent = userRole === 'rider' ? 'var(--sr-rider)' : userRole === 'vendor' ? 'var(--sr-vendor)' : 'var(--sr-customer)';
+  const isCompact = tabs.length > 6; // tighter sizing when 7 tabs
+
+  return (
+    <nav
+      className="auren-tab-bar fixed left-1/2 -translate-x-1/2 w-[96%] max-w-lg z-50 [bottom:calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_8px_40px_rgba(0,0,0,0.55)]"
+      aria-label="Primary"
+      style={{ height: '68px' }}
+    >
+      {tabs.map((tab) => {
+        const isActive = activeTab === tab.id;
+        const Icon = tab.icon;
+        return (
+          <button
+            key={tab.id}
+            onClick={() => {
+              setActiveTab(tab.id);
+              track('tab_switch', { tab: tab.id });
+            }}
+            className={`auren-tab-item relative ${isActive ? 'active' : ''}`}
+            aria-label={tab.label}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            {/* Top accent dot — Auren mystic for active tab */}
+            {isActive && (
+              <motion.span
+                layoutId="aurenActiveDot"
+                className="absolute top-1 w-1 h-1 rounded-full"
+                style={{
+                  backgroundColor: 'var(--auren-mystic)',
+                  boxShadow: '0 0 8px var(--auren-mystic)',
+                }}
+                transition={{ type: 'spring', bounce: 0.25, duration: 0.45 }}
+              />
+            )}
+
+            <div className="relative flex items-center justify-center">
+              <Icon
+                className={`${isCompact ? 'w-[18px] h-[18px]' : 'w-5 h-5'} transition-transform duration-300 ${
+                  isActive ? 'scale-110' : 'scale-100'
+                }`}
+                style={
+                  isActive
+                    ? { color: 'var(--auren-mystic)', filter: 'drop-shadow(0 0 6px var(--auren-royal-glow))' }
+                    : { color: 'var(--auren-text-tertiary)' }
+                }
+              />
+              {tab.id === 'cart' && cartCount > 0 && (
+                <span
+                  className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 text-[9px] font-black rounded-full flex items-center justify-center"
+                  style={{
+                    backgroundColor: roleAccent,
+                    color: 'var(--sr-surface-base)',
+                    boxShadow: `0 0 8px color-mix(in srgb, ${roleAccent} 60%, transparent)`,
+                  }}
+                >
+                  {cartCount}
+                </span>
+              )}
+            </div>
+
+            <span
+              className={`font-bold tracking-wide transition-colors duration-300 ${
+                isCompact ? 'text-[9px]' : 'text-[10px]'
+              }`}
+              style={isActive ? { color: 'var(--auren-mystic)' } : { color: 'var(--auren-text-tertiary)' }}
+            >
+              {tab.label}
+            </span>
+          </button>
+        );
+      })}
+    </nav>
+  );
+}
