@@ -15753,3 +15753,96 @@ state, and all fetch pipelines preserved 100%.*
 - All edits were purely additive className concatenations + standalone accent-line/divider divs
 - The SectionHeading refactor wrapped the existing JSX in a parent `<div>` to keep the new accent-line sibling valid (single-parent JSX rule)
 - All existing class names (glass-card, aurora-card, gold-gradient, green-glow, soft-chip, icon-tile, etc.) remain intact
+
+---
+
+## Phase 20-A — Kingdom V2 Foundation (Auren Kingdom Next-Gen UI Library)
+
+**Agent**: Kingdom V2 Foundation Architect (Agent A)
+**Scope**: Build the complete Auren Kingdom V2 design system + component library from scratch under `src/kingdom-ui/`. All new files only — no existing components modified (only one additive CSS import line added to `src/app/layout.tsx`). All Kingdom V2 classes are prefixed `kv-` to ensure zero bleed into the existing `auren-` (V1) system.
+
+### Files Created (10 new files)
+
+1. **`src/kingdom-ui/lib/tokens.ts`** — Complete design token dictionary (3.2KB) covering:
+   - Obsidian world (void/night/shadow/surface/elevated/hover)
+   - Royal intelligence (royal/royalHover/royalLight/royalGlow/royalBorder/violet/mystic)
+   - Kingdom trust (gold/goldLight/goldGlow/goldBorder)
+   - AI intelligence (ai/aiGlow/aiLight)
+   - Ramadan amber, Faith emerald, Delivery sky
+   - Semantic danger/success/warning
+   - Text (4 WCAG-AA levels on #050505)
+   - Glass tints + blur, radius scale, shadow scale, motion easings, spacing scale, typography scale
+   - Exported as `kingdom` const + `KingdomToken` type
+
+2. **`src/kingdom-ui/lib/kingdom.css`** — Premium CSS system (10.2KB) defining:
+   - `:root` custom properties (`--kv-*`) for every token
+   - Base `.kv-root`, `.kv-glass`, `.kv-glass-hover`
+   - Cards (`.kv-card`, `.kv-card-royal`, `.kv-card-gold`) with top-edge highlight + hover lift
+   - Buttons (`.kv-btn`, `.kv-btn-royal`, `.kv-btn-gold`, `.kv-btn-ghost`)
+   - Gradient text (`.kv-gradient-text`, `.kv-gradient-gold`)
+   - `.kv-accent-line`, `.kv-divider`, `.kv-hero-glow`
+   - Signature `.kv-ai-orb` with breathing keyframe
+   - `.kv-thinking` 3-dot indicator
+   - `.kv-cinematic` entrance + `.kv-stagger` cascade
+   - `.kv-input`, `.kv-badge-royal`, `.kv-badge-gold`
+   - `.kv-empty`, `.kv-list-item`, `.kv-metric-value`, `.kv-metric-label`
+   - `.kv-progress` + `.kv-progress-fill`
+   - `.kv-skeleton` shimmer
+   - `prefers-reduced-motion` accessibility block
+
+3. **`src/kingdom-ui/components/KingdomShell.tsx`** — Root layout shell (`.kv-root min-h-screen`)
+
+4. **`src/kingdom-ui/components/RoyalNavigation.tsx`** — Bottom glass nav with framer-motion `layoutId="kv-nav-active"` spring pill on active item
+
+5. **`src/kingdom-ui/components/IntelligenceCard.tsx`** — `forwardRef` premium data card with title + subtitle + `.kv-accent-line`; variants `default`/`royal`/`gold`
+
+6. **`src/kingdom-ui/components/MissionCard.tsx`** — Action-oriented card with icon tile + optional CTA button (`.kv-btn-royal`)
+
+7. **`src/kingdom-ui/components/AIOrb.tsx`** — `forwardRef` AI orb, sizes sm/md/lg, states idle/listening/thinking/speaking, `role="img"` + `aria-label`
+
+8. **`src/kingdom-ui/components/index.ts`** — Component barrel export
+
+9. **`src/kingdom-ui/pages/Landing.tsx`** — `KingdomLanding` page combining shell + AI orb + cinematic hero, gradient `SwiftRamadan` title, CTA buttons, stagger feature grid (Brain/Utensils/Truck/Shield/Users lucide icons), trust card (12,000+ families, 98% on-time, 4.9★), footer
+
+10. **`src/kingdom-ui/index.ts`** — Top-level barrel (`export * from './lib/tokens'`, `export * from './components'`, `export * from './pages/Landing'`)
+
+11. **`src/app/kingdom/page.tsx`** — New `/kingdom` preview route (server component) importing `KingdomLanding` from `@/kingdom-ui`
+
+### Files Modified (additive only — 1 line)
+
+- **`src/app/layout.tsx`** — Added `import "../kingdom-ui/lib/kingdom.css";` immediately after the existing `import "./globals.css";` line. This is the only modification outside `src/kingdom-ui/` and is purely additive — it loads the new V2 stylesheet globally. Because every Kingdom V2 class is prefixed `kv-`, there is zero selector collision with the existing `auren-` (V1) classes in `globals.css`. The pre-existing `/` route (WelcomeScreen, AuthScreen, etc.) is completely unaffected.
+
+### Implementation Notes
+
+- **TypeScript**: Components that the task spec wrote using `React.ComponentType` were implemented with the named import `import { ComponentType } from 'react'` (replacing `React.ComponentType`). This avoids the "React refers to a UMD global" TS error under the modern `react-jsx` transform, matches the existing codebase convention (see `src/components/primitives/AIOrb.tsx` which uses `import { HTMLAttributes, forwardRef } from 'react'`), and produces identical runtime + type behaviour.
+- **CSS import path**: The task spec suggested `import '../src/kingdom-ui/lib/kingdom.css'`, but `src/app/layout.tsx` is at `src/app/`, so the correct relative path is `../kingdom-ui/lib/kingdom.css` (one level up to reach `src/`, then into `kingdom-ui/lib/`). Using the literal task-spec path would resolve to `src/src/kingdom-ui/...` (non-existent) and break the build. The intent (load kingdom.css globally) is preserved.
+- **No existing component modified** outside the single additive import line in `layout.tsx`. The pre-existing `@/components/swift/*` (Phase 19), `@/components/primitives/*` (Phase 18), and `@/components/ui/*` (shadcn) components are untouched.
+
+### Verification
+
+```bash
+$ bun run lint 2>&1 | tail -5
+✖ 3 problems (0 errors, 3 warnings)   # all 3 are pre-existing, none in new files
+
+$ bun run test 2>&1 | tail -5
+ Test Files  33 passed (33)
+      Tests  425 passed (425)
+   Duration 40.24s
+
+$ bunx tsc --noEmit  # 0 errors, no output
+```
+
+### Integrity Preserved
+
+- 0 TS errors, 0 lint errors, 33/33 test files + 425/425 tests passing — matches the baseline before this phase.
+- Only 1 file modified outside `src/kingdom-ui/`: `src/app/layout.tsx` (+1 import line, additive).
+- 10 new files created entirely inside `src/kingdom-ui/` (4 components, 1 component barrel, 1 lib token file, 1 lib CSS file, 1 page, 1 top-level barrel) plus 1 new route file inside `src/app/kingdom/page.tsx`.
+- The new `/kingdom` route is a self-contained preview of the V2 system; the existing `/` route remains on V1 (auren-) classes.
+
+### Next Actions (suggested for downstream agents)
+
+1. **Phase 20-B** — Port the customer HomeTab to Kingdom V2 (build under `src/kingdom-ui/pages/` consuming `IntelligenceCard`, `MissionCard`, `RoyalNavigation`).
+2. **Phase 20-C** — AuthScreen + OnboardingFlow V2 ports.
+3. **Phase 20-D** — Wire `RoyalNavigation` active-state into the existing Zustand store (role-based items: customer/vendor/rider).
+4. **Component library expansion** — add `RoyalInput`, `RoyalModal`, `RoyalSheet`, `RoyalTabs`, `RoyalSkeleton`, `RoyalBadge` to `src/kingdom-ui/components/` as needed by the port phases.
+5. **Test coverage** — add `tests/unit/kingdom-tokens.test.ts` and `tests/unit/kingdom-components.test.tsx` to lock in token contract + component smoke renders.

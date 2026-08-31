@@ -1,0 +1,422 @@
+/**
+ * Auren Kingdom V2 — Premium CSS
+ * Complete visual system for next-generation frontend.
+ */
+
+/* ── Kingdom V2 Variables ── */
+:root {
+  --kv-void: #050505;
+  --kv-night: #0A0A0F;
+  --kv-shadow: #0F0F17;
+  --kv-surface: #14141F;
+  --kv-elevated: #1A1A28;
+  --kv-hover: #1F1F2E;
+
+  --kv-royal: #7C3AED;
+  --kv-royal-hover: #6D28D9;
+  --kv-royal-light: rgba(124, 58, 237, 0.12);
+  --kv-royal-glow: rgba(124, 58, 237, 0.25);
+  --kv-royal-border: rgba(124, 58, 237, 0.30);
+  --kv-violet: #9333EA;
+  --kv-mystic: #C084FC;
+
+  --kv-gold: #D4AF37;
+  --kv-gold-light: rgba(212, 175, 55, 0.08);
+  --kv-gold-glow: rgba(212, 175, 55, 0.20);
+  --kv-gold-border: rgba(212, 175, 55, 0.25);
+
+  --kv-ai: #6366F1;
+  --kv-ai-glow: #818CF8;
+
+  --kv-amber: #F59E0B;
+  --kv-emerald: #10B981;
+  --kv-sky: #38BDF8;
+  --kv-danger: #EF4444;
+
+  --kv-text-primary: #FFFFFF;
+  --kv-text-secondary: rgba(255, 255, 255, 0.70);
+  --kv-text-tertiary: rgba(255, 255, 255, 0.50);
+  --kv-text-muted: rgba(255, 255, 255, 0.30);
+
+  --kv-glass: rgba(255, 255, 255, 0.03);
+  --kv-glass-hover: rgba(255, 255, 255, 0.06);
+  --kv-glass-border: rgba(255, 255, 255, 0.08);
+  --kv-glass-blur: 16px;
+
+  --kv-radius-sm: 8px;
+  --kv-radius-md: 12px;
+  --kv-radius-lg: 16px;
+  --kv-radius-xl: 24px;
+  --kv-radius-2xl: 32px;
+
+  --kv-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --kv-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --kv-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --kv-shadow-royal: 0 0 24px rgba(124, 58, 237, 0.3);
+  --kv-shadow-gold: 0 0 24px rgba(212, 175, 55, 0.2);
+}
+
+/* ── Kingdom V2 Base ── */
+.kv-root {
+  background-color: var(--kv-void);
+  color: var(--kv-text-primary);
+  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Kingdom Glass ── */
+.kv-glass {
+  background: var(--kv-glass);
+  backdrop-filter: blur(var(--kv-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kv-glass-blur));
+  border: 1px solid var(--kv-glass-border);
+}
+
+.kv-glass-hover:hover {
+  background: var(--kv-glass-hover);
+  border-color: var(--kv-glass-border-hover, rgba(255, 255, 255, 0.12));
+}
+
+/* ── Kingdom Cards ── */
+.kv-card {
+  background: var(--kv-glass);
+  backdrop-filter: blur(var(--kv-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kv-glass-blur));
+  border: 1px solid var(--kv-glass-border);
+  border-radius: var(--kv-radius-xl);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.kv-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  pointer-events: none;
+}
+
+.kv-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--kv-shadow-lg);
+  transform: translateY(-4px);
+}
+
+.kv-card-royal {
+  border-color: var(--kv-royal-border);
+  box-shadow: var(--kv-shadow-royal);
+}
+
+.kv-card-gold {
+  border-color: var(--kv-gold-border);
+  box-shadow: var(--kv-shadow-gold);
+}
+
+/* ── Kingdom Buttons ── */
+.kv-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  border-radius: var(--kv-radius-lg);
+  padding: 14px 28px;
+  min-height: 48px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  border: none;
+  font-size: 15px;
+}
+
+.kv-btn:active {
+  transform: scale(0.98);
+}
+
+.kv-btn-royal {
+  background: linear-gradient(135deg, var(--kv-royal), var(--kv-violet));
+  color: white;
+  box-shadow: var(--kv-shadow-royal);
+}
+
+.kv-btn-royal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(124, 58, 237, 0.4);
+}
+
+.kv-btn-gold {
+  background: linear-gradient(135deg, var(--kv-gold), #E8C547);
+  color: var(--kv-void);
+  box-shadow: var(--kv-shadow-gold);
+}
+
+.kv-btn-gold:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 32px rgba(212, 175, 55, 0.3);
+}
+
+.kv-btn-ghost {
+  background: var(--kv-glass);
+  backdrop-filter: blur(var(--kv-glass-blur));
+  border: 1px solid var(--kv-glass-border);
+  color: var(--kv-text-primary);
+}
+
+.kv-btn-ghost:hover {
+  background: var(--kv-glass-hover);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ── Kingdom Gradient Text ── */
+.kv-gradient-text {
+  background: linear-gradient(135deg, var(--kv-mystic), var(--kv-royal), var(--kv-violet));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.kv-gradient-gold {
+  background: linear-gradient(135deg, #E8C547, var(--kv-gold), #B8941F);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── Kingdom Accent Line ── */
+.kv-accent-line {
+  height: 2px;
+  width: 32px;
+  background: linear-gradient(90deg, var(--kv-royal), var(--kv-mystic));
+  border-radius: 999px;
+}
+
+/* ── Kingdom AI Orb ── */
+.kv-ai-orb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, var(--kv-mystic), var(--kv-royal), var(--kv-violet));
+  box-shadow: 0 0 24px var(--kv-royal-glow), 0 0 48px rgba(124, 58, 237, 0.15);
+  animation: kv-breathe 4s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes kv-breathe {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+/* ── Kingdom Thinking Dots ── */
+.kv-thinking {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.kv-thinking span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--kv-ai-glow);
+  animation: kv-think 1.4s ease-in-out infinite;
+}
+
+.kv-thinking span:nth-child(2) { animation-delay: 0.2s; }
+.kv-thinking span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes kv-think {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ── Kingdom Cinematic Entrance ── */
+.kv-cinematic {
+  animation: kv-cinematic-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+@keyframes kv-cinematic-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Kingdom Stagger ── */
+.kv-stagger > * {
+  opacity: 0;
+  animation: kv-cinematic-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.kv-stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.kv-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.kv-stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.kv-stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.kv-stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.kv-stagger > *:nth-child(6) { animation-delay: 0.3s; }
+.kv-stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.kv-stagger > *:nth-child(8) { animation-delay: 0.4s; }
+
+/* ── Kingdom Input ── */
+.kv-input {
+  background: var(--kv-glass);
+  border: 1px solid var(--kv-glass-border);
+  border-radius: var(--kv-radius-lg);
+  padding: 16px 20px;
+  color: var(--kv-text-primary);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-height: 52px;
+}
+
+.kv-input::placeholder {
+  color: var(--kv-text-muted);
+}
+
+.kv-input:focus {
+  outline: none;
+  border-color: var(--kv-royal-border);
+  box-shadow: 0 0 0 3px var(--kv-royal-light);
+}
+
+/* ── Kingdom Badge ── */
+.kv-badge-royal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--kv-royal-light);
+  border: 1px solid var(--kv-royal-border);
+  color: var(--kv-mystic);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.kv-badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--kv-gold-light);
+  border: 1px solid var(--kv-gold-border);
+  color: var(--kv-gold);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Kingdom Divider ── */
+.kv-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--kv-glass-border), transparent);
+}
+
+/* ── Kingdom Hero Glow ── */
+.kv-hero-glow {
+  position: relative;
+}
+
+.kv-hero-glow::after {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(ellipse at center, var(--kv-royal-light), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Kingdom Empty State ── */
+.kv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+/* ── Kingdom List Item ── */
+.kv-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--kv-radius-lg);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 56px;
+}
+
+.kv-list-item:hover {
+  background: var(--kv-glass-hover);
+}
+
+/* ── Kingdom Metric ── */
+.kv-metric-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--kv-text-primary);
+}
+
+.kv-metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kv-text-tertiary);
+}
+
+/* ── Kingdom Progress ── */
+.kv-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.kv-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--kv-royal), var(--kv-mystic));
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Kingdom Skeleton ── */
+.kv-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.02) 100%);
+  background-size: 200% 100%;
+  animation: kv-shimmer 2s infinite;
+}
+
+@keyframes kv-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .kv-ai-orb,
+  .kv-thinking span,
+  .kv-cinematic,
+  .kv-stagger > *,
+  .kv-skeleton,
+  .kv-card,
+  .kv-btn,
+  .kv-list-item {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
