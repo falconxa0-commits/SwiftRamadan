@@ -283,6 +283,72 @@
   box-shadow: 0 0 0 3px var(--kv-royal-light);
 }
 
+.kv-input-error {
+  border-color: var(--kv-danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.12);
+}
+
+.kv-input-error:focus {
+  border-color: var(--kv-danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.18);
+}
+
+.kv-input-success {
+  border-color: var(--kv-emerald);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.12);
+}
+
+.kv-input-success:focus {
+  border-color: var(--kv-emerald);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+}
+
+/* ── Kingdom Command Bar ── */
+.kv-command-bar {
+  background: var(--kv-glass);
+  backdrop-filter: blur(var(--kv-glass-blur));
+  -webkit-backdrop-filter: blur(var(--kv-glass-blur));
+  border: 1px solid var(--kv-glass-border);
+  border-radius: var(--kv-radius-xl);
+  min-height: 52px;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kv-command-bar:focus-within {
+  border-color: var(--kv-royal-border);
+  box-shadow: 0 0 0 3px var(--kv-royal-light), var(--kv-shadow-royal);
+}
+
+/* ── Kingdom Badge Neutral ── */
+.kv-badge-neutral {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--kv-glass-border);
+  color: var(--kv-text-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Kingdom Skeleton Variants ── */
+.kv-skeleton-text {
+  height: 12px;
+  border-radius: 6px;
+}
+
+.kv-skeleton-circle {
+  border-radius: 50%;
+}
+
+.kv-skeleton-rect {
+  border-radius: var(--kv-radius-md);
+}
+
 /* ── Kingdom Badge ── */
 .kv-badge-royal {
   display: inline-flex;

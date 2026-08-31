@@ -1,3 +1,5 @@
 export * from './lib/tokens';
 export * from './components';
-export * from './pages/Landing';
+export { KingdomLanding } from './pages/Landing';
+export { KingdomAuth } from './pages/Auth';
+export { KingdomHome } from './pages/Home';
