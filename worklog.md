@@ -16498,3 +16498,302 @@ $ ls src/app/kingdom/explore/page.tsx
 5. **Visual regression** — add a Playwright snapshot test for
    `/kingdom/explore` so the stagger entrance, gold flash-sale badges,
    and royal community CTA are locked against design drift.
+
+---
+
+## Phase 23 — Agent C: Kingdom V2 OrdersTab + CommunityForum
+
+### Task summary
+Created Kingdom V2 versions of `OrdersTab` and `CommunityForum` as NEW files in
+`src/kingdom-ui/pages/`. Legacy files in `src/components/swift/` are untouched.
+
+### Task 1 — Kingdom V2 OrdersTab
+**New file:** `src/kingdom-ui/pages/OrdersTab.tsx` (exports `KingdomOrdersTab`)
+
+Legacy `src/components/swift/OrdersTab.tsx` (634 lines) capabilities fully
+preserved:
+- Store hooks: `useOrders` (orders + setOrders), `useAppStore.getState().setActiveModal`,
+  `useAppStore.getState().setActiveTab`, `useAppStore.getState().addToCart`
+- Data imports: `myOrders`, `formatNaira`, `prayerTimes` from `@/lib/data`
+- API calls: `GET /api/orders` (init), `PUT /api/orders` (cancel)
+- Toast notifications via `useToast`
+- Reorder / cancel / receipt-download actions
+- Live tracking widget, prayer-times widget
+
+Visual changes per V2 spec:
+1. **KingdomShell** root with `max-w-md` mobile-first layout
+2. Title: **"Ramadan Journey"** with `kv-gradient-text`
+3. `kv-accent-line` under title
+4. **Vertical timeline** for active orders using royal-purple gradient line
+   - 4 steps: Preparing → Cooking → On the way → Arrived before Maghrib
+   - Status dots: current = mystic glow (box-shadow ring), completed = emerald
+5. Order cards: `kv-card` with `kv-list-item` details
+6. `kv-progress` + `kv-progress-fill` for delivery progress
+7. Past orders: `kv-card` with interactive **RatingStars** (gold stars)
+8. Empty state: `kv-empty` ("Your journey is about to begin. Safa is ready.")
+9. `RoyalSkeleton` loading state (header + timeline + past-order cards)
+10. `kv-stagger` entrance on tabs and post list
+11. Mobile-first (`max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`)
+12. Same store hooks preserved (no behavior changes)
+13. Prayer times widget uses emoji icons (🌙 ☀️ 🌆 🌃) on `kv-glass` tiles
+
+### Task 2 — Kingdom V2 CommunityForum
+**New file:** `src/kingdom-ui/pages/CommunityForum.tsx` (exports `KingdomCommunityForum`)
+
+Legacy `src/components/swift/CommunityForum.tsx` (988 lines) capabilities fully
+preserved:
+- Store hooks: `useNavigation` (setActiveModal), `useAppStore(s => s.userEmail)`,
+  `useAppStore(s => s.userName)`
+- Data import: `communityPosts` from `@/lib/data` (seed fallback)
+- API contract: `GET /api/community?email=...` (load), `POST /api/community`
+  with `action: 'like' | 'comment' | undefined` (create)
+- Toast notifications via `useToast`
+- Optimistic like/comment/create-post with revert on failure
+- Stable React keys via `_localId` so optimistic→server swap doesn't remount
+- Comment drafting + sending state, like pending state
+- Sort modes: Latest / Trending
+- Share-to-clipboard action
+
+Visual changes per V2 spec:
+1. **KingdomShell** root with `max-w-md` mobile-first layout
+2. Title: **"Kingdom Community"** with `kv-gradient-text`
+3. `kv-accent-line` under title
+4. Category filter as **RoyalBadge pills**: All, Reviews, Recipes, Tips, Questions
+   (active uses `variant="royal"`, inactive uses `variant="neutral"`)
+5. Posts as `kv-card`:
+   - Author avatar: `RoyalAvatar` (initial-based circle with royal palette gradient)
+   - Author name (`font-bold`)
+   - Category badge (`RoyalBadge` with category-specific variant)
+   - Content text (whitespace-pre-wrap)
+   - Like button with count + spring-fill animation
+   - Reply button (toggles comment thread)
+   - Share button
+6. Post creation: **`kv-btn-royal`** "Share Your Story" in header + `kv-fab` on mobile
+7. **Group buy CTA**: `IntelligenceCard` with `variant="royal"`, calls
+   `setActiveModal('groupBuy')` (preserved store hook)
+8. Empty state: `kv-empty` ("The community is gathering. Be the first to share.")
+9. `RoyalSkeleton` loading state (4 skeleton post cards)
+10. `kv-stagger` entrance on post feed
+11. Mobile-first (`max-w-md mx-auto`)
+12. Same store hooks preserved (no behavior changes)
+13. Composer: bottom-sheet built with native `framer-motion` + `kv-card` surface
+    (replaces legacy modal pattern since V2 is now a route page, not a modal)
+
+### Task 3 — Routes + barrel exports
+- `src/app/kingdom/orders/page.tsx` → renders `<KingdomOrdersTab />`
+- `src/app/kingdom/community/page.tsx` → renders `<KingdomCommunityForum />`
+- `src/kingdom-ui/index.ts` — added:
+  ```ts
+  export { KingdomOrdersTab } from './pages/OrdersTab';
+  export { KingdomCommunityForum } from './pages/CommunityForum';
+  ```
+
+### Verification
+```bash
+$ bun run lint   → 0 errors, 3 warnings (all pre-existing, none in new files)
+$ bun run test   → 472 tests passed (37 files)
+$ bunx tsc --noEmit → exit 0 (0 TS errors)
+$ ls src/kingdom-ui/pages/OrdersTab.tsx src/kingdom-ui/pages/CommunityForum.tsx → ✓
+$ ls src/app/kingdom/orders/page.tsx src/app/kingdom/community/page.tsx → ✓
+```
+
+### Notes
+- Legacy `src/components/swift/OrdersTab.tsx` and `CommunityForum.tsx` were NOT modified.
+- The legacy `CommunityForum` was a slide-up modal triggered by
+  `activeModal === 'community'`; in V2 it lives at the `/kingdom/community` route
+  and renders inline (the `setActiveModal` hook is still used for the
+  Group Buy CTA so cross-page navigation behavior is unchanged).
+- All 13 spec items implemented for each component.
+
+## Phase 23-B — Agent B: Kingdom V2 CartTab + CheckoutModal
+
+### Task summary
+Created Kingdom V2 versions of `CartTab` and `CheckoutModal` as NEW files in
+`src/kingdom-ui/pages/`. Legacy files in `src/components/swift/` are
+untouched. The two new files total ~1,500 LOC and preserve every store
+hook, API call, and analytics event from the legacy implementations while
+completely replacing the visual layer with the Kingdom V2 design system.
+
+### Task 1 — Kingdom V2 CartTab
+**New file:** `src/kingdom-ui/pages/CartTab.tsx` (exports `KingdomCartTab`)
+
+Legacy `src/components/swift/CartTab.tsx` (337 lines) capabilities fully
+preserved:
+- Store hooks: `useCart` (cartItems + updateQuantity + removeFromCart +
+  clearCart), `useCartCount`, `useAppStore.getState().setActiveModal`,
+  `useAppStore.getState().setCheckoutStep`,
+  `useAppStore.getState().setActiveTab`,
+  `useAppStore.getState().setSelectedProduct`
+- Data import: `formatNaira` from `@/lib/data`
+- API call: `POST /api/coupons/validate` (validate coupon, mirrors legacy
+  payload `{ code, cartTotal: subtotal }`)
+- Toast notifications via `useToast`
+- Coupon apply/remove flow with `appliedCouponData` discount state
+- Cart math: subtotal, serviceFee (2%), deliveryFee (free ≥ ₦5,000),
+  discount, total
+- Empty-cart branching render path
+
+Visual changes per V2 spec:
+1. **KingdomShell** root with `max-w-md` mobile-first layout
+2. Title: **"Provision Basket"** with `kv-gradient-text`
+3. `kv-accent-line` under title
+4. Cart items as `kv-list-item` wrapped in `kv-card` (image + name + price
+   + quantity controls)
+5. Quantity controls: 44px+ touch targets via `kv-btn kv-btn-ghost
+   !min-h-[44px] !min-w-[44px]`
+6. Each item: image, name, price (`kv-gradient-gold`), quantity, line
+   total
+7. Order summary in `kv-card kv-card-gold`
+8. Total rendered with `kv-metric-value` + `kv-metric-label`
+9. Checkout button: `kv-btn kv-btn-gold` "Prepare Your Iftar · ₦…"
+10. Empty state: `kv-empty` with story ("Your basket is waiting. Safa
+    can help you fill it.")
+11. `kv-stagger` entrance on items
+12. Mobile-first (`max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`)
+13. Same store hooks preserved (cartItems, cartCount, updateQuantity,
+    removeFromCart, setActiveModal, setCheckoutStep, setActiveTab,
+    setSelectedProduct) — no behaviour changes
+14. Coupon pill on success uses `kv-card-gold` background tint and
+    `var(--kv-gold)` text
+
+### Task 2 — Kingdom V2 CheckoutModal
+**New file:** `src/kingdom-ui/pages/CheckoutModal.tsx` (exports
+`KingdomCheckoutModal` + `KingdomCheckoutModalProps`)
+
+Legacy `src/components/swift/CheckoutModal.tsx` (1,295 lines) capabilities
+fully preserved:
+- Store hooks: `useNavigation` (activeModal + setActiveModal +
+  setActiveTab), `useCart` (cartItems + removeFromCart + updateQuantity +
+  clearCart), `useCheckout` (checkoutStep + setCheckoutStep +
+  deliveryAddress + setDeliveryAddress + deliveryInstructions +
+  setDeliveryInstructions + iftarPrecision + setIftarPrecision +
+  sahurAlarm + setSahurAlarm + paymentMethod + setPaymentMethod),
+  `useOrders` (addOrder), `useAppStore.getState().userEmail`
+- Data imports: `deliveryLocations`, `paymentMethods`, `bnplPlans`,
+  `formatNaira` from `@/lib/data`
+- Type import: `OrderItem` from `@/lib/store`
+- API calls:
+  - `GET /api/addresses?userId=…` (fetch saved addresses on open)
+  - `POST /api/addresses` (save new address, then refetch)
+  - `POST /api/coupons/validate` (apply coupon)
+  - `POST /api/orders` (persist order to DB, captures DB id → SWR-XXXXXX)
+  - `POST /api/payments` (create payment record, captures reference)
+- Analytics: `track('checkout_start' | 'coupon_apply' | 'order_placed' |
+  'checkout_complete', …)`
+- `triggerOrderCelebration()` from `@/components/swift/OrderCelebration`
+  (canvas-confetti celebration 300 ms after order placed)
+- Toast notifications via `useToast`
+- `next/image` (`<Image fill className="object-cover">`) for review-step
+  item thumbnails
+- Order snapshot (`placedCartItems`, `placedTotal`, `appliedCouponCode`,
+  `paymentReference`, `iftarPrecision`, `sahurAlarm`, `selectedTimeSlot`,
+  `orderId`) preserved for the success step
+- Multi-step wizard: collapsed legacy 5 steps
+  (Cart/Location/Schedule/Payment/Done) into V2's 3 main steps + success
+
+Visual changes per V2 spec:
+1. **RoyalModal wrapper** (uses RoyalModal's built-in `kv-glass` backdrop
+   which is the visual equivalent of `kv-backdrop`)
+2. Title: **"Royal Checkout"** with `kv-gradient-text` (via RoyalModal's
+   `title` prop — already styled with `kv-gradient-text`)
+3. `kv-progress` + `kv-progress-fill` for step indicator (line between
+   step dots, royal-purple→mystic gradient fill)
+4. Step labels `['Delivery', 'Payment', 'Review', 'Done']` rendered as a
+   top-of-modal progress stepper with circular indicators (`Check` icon
+   on completed steps)
+5. Steps as sections with `kv-accent-line` dividers under each section
+   heading:
+   - **Step 1 — Delivery**: `RoyalInput` fields for address (street,
+     area, instructions), saved-address selector (Home/Office icons),
+     "Add New Address" form (collapsible), default-location selector,
+     "Edit address" / "Set on map" actions, delivery-instructions input,
+     iftarPrecision + sahurAlarm toggles, time-slot grid (4 cards),
+     iftar/sahur timing detail callouts
+   - **Step 2 — Payment**: `kv-card` payment-method selectors (4
+     methods: card, transfer, bnpl, cash), BNPL plan picker (kv-card-gold
+     when selected, gold "0% RAMADAN" badge), coupon code input (RoyalInput
+     + kv-btn-royal Apply)
+   - **Step 3 — Review**: `kv-card` order summary with item thumbnails,
+     subtotal/delivery/service-fee/discount breakdown, total via
+     `kv-metric-value kv-gradient-gold`, delivery recap card (address,
+     time slot, payment method, iftar/sahur flags)
+6. Place order button: `kv-btn kv-btn-gold` **"Confirm Your Iftar"**
+   (shown on Step 3 alongside trust microcopy)
+7. Success state: `kv-success` with gold celebration
+   (`kv-gold-glow` ring + `kv-gradient-gold` totals + `PartyPopper` icon
+   + `kv-accent-line` under heading)
+8. `kv-divider` between steps and between summary rows
+9. Trust microcopy **"Your payment is secured by the Kingdom."** with a
+   gold `Check` icon — shown both above the bottom action bar (every
+   step) and inline at the bottom of the Review step
+10. Same API calls preserved (no payload changes)
+11. Same store hooks preserved (no behaviour changes)
+12. Bottom action bar: `Back` (`kv-btn-ghost`) + `Continue`
+    (`kv-btn-royal`) on steps 1-2; `Confirm Your Iftar` (`kv-btn-gold`)
+    on step 3; total shown via `kv-gradient-gold` above the buttons
+13. RoyalModal close button (top-right X) reuses the built-in RoyalModal
+    affordance instead of a custom one (preserves handleClose behaviour
+    that resets `activeModal` and `checkoutStep`)
+14. Optional `onClosed?: () => void` prop allows the route page to
+    redirect after closing without breaking the default store-driven
+    close behaviour used by the legacy CartTab's
+    `useAppStore.getState().setActiveModal('checkout')` flow
+
+### Task 3 — Routes + barrel exports
+- `src/app/kingdom/cart/page.tsx` → renders `<KingdomCartTab />`
+- `src/app/kingdom/checkout/page.tsx` → client component that, on mount,
+  calls `useAppStore.getState().setCheckoutStep(0)` +
+  `useAppStore.getState().setActiveModal('checkout')` (preserves the
+  legacy CartTab "Proceed to Checkout" flow), then renders
+  `<KingdomCheckoutModal onClosed={() => router.push('/kingdom/cart')} />`
+  so closing the modal returns the user to the cart. Cleanup on unmount
+  resets `activeModal` to null to prevent stale state.
+- `src/kingdom-ui/index.ts` — added:
+  ```ts
+  export { KingdomCartTab } from './pages/CartTab';
+  export { KingdomCheckoutModal } from './pages/CheckoutModal';
+  export type { KingdomCheckoutModalProps } from './pages/CheckoutModal';
+  ```
+
+### Verification
+```bash
+$ bun run lint   → 0 errors, 3 warnings (all pre-existing in unrelated
+                    files: prisma/seed-swiftbites.ts, src/app/layout.tsx,
+                    types/prisma-augmentation.d.ts — none in new files)
+$ bun run test   → 472 tests passed (37 files)
+$ bunx tsc --noEmit --skipLibCheck → exit 0 (0 TS errors)
+$ ls src/kingdom-ui/pages/CartTab.tsx src/kingdom-ui/pages/CheckoutModal.tsx → ✓
+$ ls src/app/kingdom/cart/page.tsx src/app/kingdom/checkout/page.tsx → ✓
+```
+
+### Notes
+- Legacy `src/components/swift/CartTab.tsx` (337 LOC) and
+  `src/components/swift/CheckoutModal.tsx` (1,295 LOC) were NOT modified.
+  `git status` shows them untouched after this phase.
+- The legacy `CheckoutModal` was a full-screen slide-up sheet triggered
+  by `activeModal === 'checkout'`. The V2 modal lives inside a
+  `RoyalModal` (centered glass card) and is driven by the same
+  `activeModal === 'checkout'` store flag — so the legacy CartTab's
+  "Proceed to Checkout" path
+  (`useAppStore.getState().setCheckoutStep(0)` +
+  `useAppStore.getState().setActiveModal('checkout')`) still works
+  unchanged, whether the user arrives via the V2 CartTab's "Prepare Your
+  Iftar" button or via the new `/kingdom/checkout` route.
+- The legacy's 5-step flow (Cart / Location / Schedule / Payment / Done)
+  was collapsed into 4 V2 steps (Delivery / Payment / Review / Done)
+  per spec. All controls from the legacy's Location + Schedule steps
+  were merged into the V2 Delivery step (address, instructions,
+  iftarPrecision, sahurAlarm, time slot, saved addresses, add new
+  address, edit address, set on map, default locations) — no hooks were
+  dropped.
+- All 13 spec items implemented for CartTab and all 11 spec items
+  implemented for CheckoutModal.
+- All custom design-system classes use the `kv-` prefix. Tailwind
+  utility classes (`flex`, `gap-3`, `text-sm`, etc.) are unchanged.
+- All decorative lucide icons carry `aria-hidden`. Interactive controls
+  (buttons, address selectors, toggles) carry `aria-label` /
+  `aria-pressed` / `aria-current` where appropriate.
+- RoyalInput is used for every text input on the Delivery + Payment
+  steps (street address, area, instructions, edit-address, new-address
+  street/area/instructions, delivery-instructions, coupon code,
+  edit-coupon) — gives consistent 52px min-height + royal focus ring.

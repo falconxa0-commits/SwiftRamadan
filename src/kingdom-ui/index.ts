@@ -7,3 +7,8 @@ export { KingdomWelcomeScreen } from './pages/WelcomeScreen';
 export { KingdomAuthScreen } from './pages/AuthScreen';
 export { KingdomHomeTab } from './pages/HomeTab';
 export { KingdomBottomNav } from './pages/BottomNav';
+export { KingdomCartTab } from './pages/CartTab';
+export { KingdomCheckoutModal } from './pages/CheckoutModal';
+export type { KingdomCheckoutModalProps } from './pages/CheckoutModal';
+export { KingdomOrdersTab } from './pages/OrdersTab';
+export { KingdomCommunityForum } from './pages/CommunityForum';
