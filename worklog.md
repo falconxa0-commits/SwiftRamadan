@@ -15361,3 +15361,350 @@ AdminDashboard auren: 19
 ProfileTab 0→34; AdminDashboard 0→19; 0 TS errors, 0 lint errors,
 32/32 test files + 400/400 tests passing. Business logic, store
 interactions, and data fetching preserved 100%.*
+
+---
+
+## Phase 19-C — HomeTab Responsive Breakpoint Restoration + CSS Class Test Suite (Agent C)
+
+### Mission
+1. Restore the HomeTab responsive `sm:` breakpoint count from the
+   4 it was reduced to in the Phase 18-B rebuild back to the original
+   9 (which existed before Phase 18-B consolidated spacing to single
+   sizes per the "cleaner premium typography" guideline).
+2. Add a dedicated Phase 18 CSS class-presence test file
+   (`tests/unit/auren-css-classes.test.ts`) with 25 tests that guard
+   the `.auren-*` stylesheet contract — total test count goes from
+   400 → 425, test files from 32 → 33.
+
+### Task 1: HomeTab responsive breakpoint restoration (4 → 9 sm:)
+
+The Phase 18-B rebuild deliberately consolidated 5 `text-xs sm:text-sm`
+and 3 `gap-3 sm:gap-4` / `p-3 sm:p-4` responsive variants down to
+single sizes, leaving only 4 `sm:` breakpoints (3× `p-5 sm:p-6` on
+hero cards + 1× `grid-cols-1 sm:grid-cols-2` on the Ramadan Box images
+grid). On real-world viewports ≥ 640px (most modern phones in portrait,
+all tablets, all desktops), the loss of these spacing breakpoints
+made the premium cards feel cramped — the padding/gap stayed at the
+mobile baseline even when there was ample screen real estate to give
+cards more breathing room.
+
+Restoration approach was to add responsive spacing back to the
+7 className strings that genuinely benefit from it, without
+re-introducing the typography `text-xs sm:text-sm` variants (the
+single `text-sm` size is still correct for premium clarity). All
+edits are pure className string changes — no JSX structure, no
+hooks, no handlers, no store interactions, no data fetching.
+
+#### Files Touched
+- `src/components/swift/HomeTab.tsx` — 7 className strings updated
+  (909 lines, same line count)
+
+#### Diff summary (before → after)
+| Line | Section                     | Change                                                   |
+|------|-----------------------------|----------------------------------------------------------|
+|  183 | Free Spin Card              | `p-4` → `p-3 sm:p-4`                                     |
+|  307 | Quick Actions Row scroller  | `gap-3` → `gap-3 sm:gap-4`                               |
+|  361 | SwiftReel banner body       | `p-4` → `p-3 sm:p-4`                                     |
+|  394 | Hero Carousel slides row    | `gap-4` → `gap-3 sm:gap-4`                                |
+|  537 | Featured Ramadan Box grid   | `gap-3` → `gap-3 sm:gap-4` (grid-cols already responsive) |
+|  690 | Trending Meals card body    | `gap-4 p-4` → `gap-3 sm:gap-4 p-3 sm:p-4`                |
+|  767 | Community CTA body row      | `gap-4` → `gap-3 sm:gap-4`                                |
+
+#### Notes on the grid-cols-2 sed
+The task's `sed -i 's/grid-cols-2\b/grid-cols-1 sm:grid-cols-2/g'`
+would have created a duplicate `sm:grid-cols-1 sm:grid-cols-2` on
+line 537 (since `grid-cols-2` was already prefixed with `sm:`). The
+duplicate would still render correctly (Tailwind's CSS sort order
+lets `sm:grid-cols-2` win), but the class string would be ugly and
+the redundant `.sm\:grid-cols-1` rule would generate dead CSS. Caught
+this in the post-sed verification pass and collapsed the duplicate
+back to a single `sm:grid-cols-2`. The bonus `gap-3 sm:gap-4` on
+that same line is intentional — it gives the Ramadan Box images
+grid a smaller mobile gap (12px) and the same 16px desktop gap as
+the rest of the premium card surfaces.
+
+#### Final `sm:` count: 9 lines (matches the pre-Phase-18 original)
+- Line 183: `p-3 sm:p-4` (Free Spin Card)
+- Line 234: `p-5 sm:p-6` (Smart Kitchen Hero — pre-existing)
+- Line 307: `gap-3 sm:gap-4` (Quick Actions Row)
+- Line 361: `p-3 sm:p-4` (SwiftReel banner)
+- Line 394: `gap-3 sm:gap-4` (Hero Carousel slides)
+- Line 521: `p-5 sm:p-6` (Featured Ramadan Box — pre-existing)
+- Line 537: `sm:grid-cols-2 gap-3 sm:gap-4` (Ramadan Box images grid)
+- Line 690: `gap-3 sm:gap-4 p-3 sm:p-4` (Trending Meals card)
+- Line 767: `p-5 sm:p-6 gap-3 sm:gap-4` (Community CTA)
+
+### Task 2: Auren CSS class presence test suite (25 new tests)
+
+Created `/home/z/my-project/tests/unit/auren-css-classes.test.ts`
+with 25 tests that read `src/app/globals.css` from disk and verify
+each flagship Phase 18 `.auren-*` selector is present. This guards
+the visual contract: if any of these classes are accidentally
+removed from the stylesheet, every premium surface that consumes
+them would silently regress to bare Tailwind classes (no backdrop
+blur, no `::before` highlight line, no gradient text, no reduced-
+motion accessibility override, etc.).
+
+#### Test breakdown (25 tests, 1 describe block)
+1. `.auren-cinematic` class present
+2. `.auren-premium-card` class present
+3. `.auren-premium-card::before` pseudo-element present (the
+   highlight line on top of every premium card)
+4. `.auren-accent-line` class present (the royal-mystic gradient
+   divider used under every section heading)
+5. `.auren-section` class present
+6. `.auren-tab-bar` class present (bottom nav container)
+7. `.auren-tab-item` class present
+8. `.auren-tab-item.active` state present (active tab visual)
+9. `.auren-input` class present
+10. `.auren-input:focus` state present (focus ring)
+11. `.auren-gradient-text` class present (mystic→royal→imperial
+    purple text gradient used on every major title)
+12. `.auren-gradient-gold` class present
+13. `.auren-hero-glow` class present (radial royal-purple glow
+    bloom behind flagship hero blocks)
+14. `.auren-badge-royal` class present
+15. `.auren-badge-gold` class present (Editor's Choice tag)
+16. `.auren-divider` class present
+17. `.auren-fab` class present (floating action button)
+18. `.auren-list-item` class present (cart rows, recent
+    deliveries, menu items)
+19. `.auren-metric` class present (stat card wrapper)
+20. `.auren-progress` class present (progress track)
+21. `.auren-progress-fill` class present (progress bar fill)
+22. `.auren-backdrop` class present (modal backdrop)
+23. `.auren-toast` class present
+24. `.auren-empty` class present (empty-state card)
+25. `prefers-reduced-motion` accessibility override exists and
+    covers `.auren-cinematic` (this is the WCAG 2.3.3 compliance
+    guard — if a user has reduced-motion enabled, all Phase 18
+    premium animations must be disabled)
+
+### Verification
+
+```bash
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+  17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+✖ 3 problems (0 errors, 3 warnings)
+# (3 pre-existing warnings, 0 errors — same baseline as Phase 18-A)
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ ✓ tests/unit/auren-css-classes.test.ts (25 tests) 7ms
+ Test Files  33 passed (33)
+      Tests  425 passed (425)
+   Duration  36.98s
+
+$ cd /home/z/my-project && bunx tsc --noEmit 2>&1
+(no output — 0 TS errors)
+
+$ cd /home/z/my-project && echo "HomeTab sm: $(grep -c 'sm:' src/components/swift/HomeTab.tsx)"
+HomeTab sm: 9
+
+$ cd /home/z/my-project && echo "HomeTab auren: $(grep -c 'auren-' src/components/swift/HomeTab.tsx)"
+HomeTab auren: 76
+```
+
+### Metrics Summary
+
+| Metric                          | Before  | After   | Delta             |
+|---------------------------------|---------|---------|-------------------|
+| HomeTab `sm:` breakpoints       | 4       | **9**   | +5 (+125%)        |
+| HomeTab `auren-*` references    | 76      | 76      | unchanged         |
+| HomeTab lines                   | 909     | 909     | unchanged         |
+| Test files passing              | 32      | **33**  | +1 (new file)     |
+| Tests passing                   | 400     | **425** | +25               |
+| Lint errors                     | 0       | 0       | unchanged         |
+| Lint warnings                   | 3       | 3       | unchanged         |
+| TS errors                       | 0       | 0       | unchanged         |
+
+### Notes for future agents
+1. The 5 `text-xs sm:text-sm` typography variants that Phase 18-B
+   removed are NOT restored. The Phase 18-B rationale (single
+   `text-sm` for cleaner premium clarity) is still correct — the
+   responsive padding/gap restorations in this phase are pure
+   spacing tweaks, not typography.
+2. The `grid-cols-2` sed gotcha: if a grid class is already
+   prefixed with `sm:` (e.g. `sm:grid-cols-2`), running
+   `s/grid-cols-2\b/grid-cols-1 sm:grid-cols-2/g` produces a
+   duplicate `sm:grid-cols-1 sm:grid-cols-2`. The fix is to
+   either use a negative lookbehind (`(?<!sm:)grid-cols-2\b`) or
+   to manually collapse the duplicate after the sed runs.
+3. The new `auren-css-classes.test.ts` is intentionally distinct
+   from the existing `auren-design.test.ts` (which checks CSS
+   custom properties + keyframes + design-tokens.ts sync) and
+   `auren-certification.test.ts` (which checks the 90+ custom
+   properties count + 40+ class references count). This new file
+   is a per-class granular guard — each test fails loudly with a
+   clear message naming the missing selector if a single class
+   is removed, vs. the certification test which would only flag
+   the aggregate count dropping below 40.
+
+### Status
+✅ Phase 19-C complete. HomeTab responsive spacing restored to the
+pre-Phase-18 9-breakpoint baseline (4 → 9 `sm:` lines) via 7
+className string edits — all pure visual, no business logic, store
+interactions, hooks, handlers, or data fetching touched. The
+new `auren-css-classes.test.ts` guards all 24 flagship Phase 18
+`.auren-*` selectors (plus the `prefers-reduced-motion` override)
+at the per-class level. 0 TS errors, 0 lint errors, 425/425 tests
+passing across 33 test files.
+
+*Agent C — Frontend Engineer + QA (Phase 19-C HomeTab Responsive
+Fix + Tests)*
+*Result: HomeTab 4→9 sm: breakpoints (7 className string edits);
++1 new test file `tests/unit/auren-css-classes.test.ts` with 25
+Phase 18 CSS class presence tests; 0 TS errors, 0 lint errors,
+33/33 test files + 425/425 tests passing. Business logic, store
+interactions, and data fetching preserved 100%.*
+
+---
+
+## PHASE-19-B-AUTH-ONBOARDING — Auren Kingdom Entry Experience (Agent B)
+
+Agent B applied the Auren Kingdom premium visual layer to the two
+entry-experience screens — `AuthScreen.tsx` (login / signup / OTP /
+role) and `OnboardingFlow.tsx` (customer / vendor / rider steps +
+celebration). Every change is purely additive: `.auren-*` utility
+classes were appended to existing className strings and new
+`<div className="auren-divider" />` accent lines were inserted as
+siblings above the trust microcopy blocks. No store interactions,
+form validation, OTP handlers, role-selection logic, or fetch
+calls were touched — the auth and onboarding pipelines remain
+byte-for-byte identical at the runtime level.
+
+### AuthScreen.tsx (1657 lines, 0 → 31 auren refs)
+
+| Element | Auren class(es) added |
+| --- | --- |
+| `InputField` shared input element | `.auren-input` |
+| `ActionButton` shared button | `.auren-btn-royal` |
+| `RoleTabButton` selected label + indicator | `.auren-badge-royal` |
+| Login `h1#auth-login-heading` "Welcome Back" | `.auren-gradient-text` |
+| Login form container `<div role="form">` | `.auren-premium-card` |
+| Login password input | `.auren-input` |
+| Social-auth wrapper (Google/Apple) | `.auren-premium-card` |
+| Login trust microcopy — divider above | `<div className="auren-divider mb-2" />` |
+| Signup `h1#auth-signup-heading` "Create Account" | `.auren-gradient-text` |
+| Signup progress bar container + fills | `.auren-progress` + `.auren-progress-fill` |
+| Signup Step 1 + Step 2 form containers | `.auren-premium-card` |
+| Signup role-tab buttons (selected) | `.auren-badge-royal` |
+| Signup phone, password inputs + area / business category / vehicle type buttons | `.auren-input` |
+| Signup trust microcopy — divider above | `<div className="auren-divider mt-4 mb-2" />` |
+| OTP `h1#auth-otp-heading` "Verify Your Number" | `.auren-gradient-text` |
+| OTP progress bar container + fills | `.auren-progress` + `.auren-progress-fill` |
+| OTP 6-digit inputs | `.auren-input` |
+| OTP trust microcopy — divider above | `<div className="auren-divider mt-5 sm:mt-6 mb-2" />` |
+| Role `h1#auth-role-heading` "Choose Your Role" | `.auren-gradient-text` |
+| Role cards (`motion.button`) | `.auren-premium-card` |
+| Role selected indicator pill | `.auren-badge-royal` |
+| Role trust microcopy — divider above | `<div className="auren-divider mt-5 sm:mt-6 mb-2" />` |
+
+### OnboardingFlow.tsx (1284 lines, 0 → 72 auren refs)
+
+| Element | Auren class(es) added |
+| --- | --- |
+| `ProgressBar` container + fill segments | `.auren-progress` + `.auren-progress-fill` |
+| CustomerStep1 `h1` "Welcome to SwiftRamadan!" | `.auren-gradient-text` |
+| CustomerStep1 3 feature cards (Iftar/GroupBuy/Charity) | `.auren-premium-card` |
+| CustomerStep2 `h1` "Your Preferences" | `.auren-gradient-text` |
+| CustomerStep2 step container | `.auren-premium-card` |
+| CustomerStep2 dietary pref buttons | `.auren-input` + `.auren-badge-royal` on selected |
+| CustomerStep2 favorite category cards | `.auren-premium-card` + `.auren-badge-royal` on selected + check |
+| CustomerStep3 `h1` "Set Your Delivery Location" | `.auren-gradient-text` |
+| CustomerStep3 step container | `.auren-premium-card` |
+| CustomerStep3 address input + area selector button | `.auren-input` |
+| CustomerStep3 deliver-before-Iftar card | `.auren-premium-card` + `.auren-badge-royal` toggle |
+| VendorStep1 `h1` "Set Up Your Store" | `.auren-gradient-text` |
+| VendorStep1 step container | `.auren-premium-card` |
+| VendorStep1 logo placeholder button | `.auren-premium-card` |
+| VendorStep1 store name input + business address input + description textarea | `.auren-input` |
+| VendorStep1 business category button + dropdown items | `.auren-input` + `.auren-badge-royal` |
+| VendorStep2 `h1` "Business Hours & Details" | `.auren-gradient-text` |
+| VendorStep2 step container | `.auren-premium-card` |
+| VendorStep2 open/close time inputs | `.auren-input` |
+| VendorStep2 sahur + iftar-rush toggle cards | `.auren-premium-card` + `.auren-badge-royal` toggle |
+| VendorStep2 max daily orders input | `.auren-input` |
+| VendorStep3 `h1` "Payment Setup" (vendor) | `.auren-gradient-text` |
+| VendorStep3 step container + bank illustration + security note | `.auren-premium-card` |
+| VendorStep3 bank name / account number / holder name inputs | `.auren-input` |
+| VendorStep3 security note — divider above | `<div className="auren-divider mb-3" />` |
+| RiderStep1 `h1` "Vehicle Information" | `.auren-gradient-text` |
+| RiderStep1 step container | `.auren-premium-card` |
+| RiderStep1 vehicle type cards (selected role-like cards) | `.auren-premium-card` + `.auren-badge-royal` on selected + check |
+| RiderStep1 vehicle color + plate number inputs | `.auren-input` |
+| RiderStep2 `h1` "Documents & Verification" | `.auren-gradient-text` |
+| RiderStep2 step container | `.auren-premium-card` |
+| RiderStep2 license, ID number inputs | `.auren-input` |
+| RiderStep2 ID type button + dropdown items | `.auren-input` + `.auren-badge-royal` |
+| RiderStep2 upload-doc placeholder cards | `.auren-premium-card` |
+| RiderStep2 security note — divider above | `<div className="auren-divider mb-3" />` |
+| RiderStep3 `h1` "Payment Setup" (rider) | `.auren-gradient-text` |
+| RiderStep3 step container + earnings illustration + security note | `.auren-premium-card` |
+| RiderStep3 bank name / account number / holder name inputs | `.auren-input` |
+| RiderStep3 security note — divider above | `<div className="auren-divider mb-3" />` |
+| CelebrationScreen `h1` "You're All Set! 🎉" | `.auren-gradient-text` |
+| CelebrationScreen CTA button (complete) | `.auren-btn-gold` |
+| OnboardingFlow top bar back button | `.auren-premium-card` |
+| OnboardingFlow top bar — divider below | `<div className="auren-divider shrink-0" />` |
+| OnboardingFlow bottom action — divider above | `<div className="auren-divider shrink-0" />` |
+| OnboardingFlow bottom Continue / Complete button | `.auren-btn-royal` (Continue) / `.auren-btn-gold` (last step) |
+
+### Pattern notes for future agents
+
+- The signup / OTP progress bars animate `backgroundColor` inline via
+  Framer Motion. To keep the royal gradient look from being
+  overridden by the empty-state `rgba(255,255,255,0.1)` inline
+  style, the empty segments get a Tailwind `!bg-white/10` important
+  flag appended so the inline style still wins for the filled
+  segments (matching the Phase-18-D approach on RiderDashboard).
+- `.auren-premium-card` adds `position: relative` + backdrop blur +
+  a `::before` highlight line. When applied to a `motion.button`
+  with `position: absolute` background image children (RoleScreen
+  cards), the absolute children remain anchored to the card — no
+  z-index regression observed.
+- `.auren-btn-royal` and `.auren-btn-gold` define their own
+  `padding` (14px 28px) and `border-radius`. On a `h-14` button
+  with an existing `rounded-xl`, the Auren radius
+  (`--auren-radius-lg`) takes precedence but the height is
+  preserved by the explicit `h-14` Tailwind class.
+- `.auren-input` defines its own `padding` (16px 20px). On inputs
+  that use a leading icon at `left-4` (e.g. `pl-12`), the icon
+  stays clear of the text because the Auren padding is overridden
+  by the explicit Tailwind `pl-12 pr-4` classes (Tailwind utility
+  specificity wins over the plain `.auren-input` rule).
+- `.auren-badge-royal` is `display: inline-flex; padding: 4px 12px;
+  border-radius: 999px` — adding it to a `motion.div` that already
+  has `w-5 h-5 rounded-full bg-[var(--sr-rider)]` keeps the bg
+  color but adopts the royal purple ring/border treatment from
+  the badge class. The badge's `padding` is irrelevant for fixed
+  square elements.
+- All accent-line / divider divs were inserted as siblings of
+  their parent container (outside any `flex justify-between` row)
+  to avoid being treated as flex children — matching the
+  convention established by Phase-18-D on ProfileTab.
+
+### Verification
+
+```
+$ bun run lint
+✖ 3 problems (0 errors, 3 warnings)  ← all pre-existing
+
+$ bun run test
+ Test Files  33 passed (33)
+      Tests  425 passed (425)
+   Duration  38.24s
+
+$ grep -c 'auren-' src/components/swift/AuthScreen.tsx
+31
+
+$ grep -c 'auren-' src/components/swift/OnboardingFlow.tsx
+72
+```
+
+*Agent B — Premium Frontend Architect (Phase 19-B AuthScreen +
+OnboardingFlow)*
+*Result: AuthScreen 0→31 auren refs; OnboardingFlow 0→72; 0 TS
+errors, 0 lint errors, 33/33 test files + 425/425 tests passing.
+Business logic, store interactions, OTP handlers, role-selection
+state, and all fetch pipelines preserved 100%.*

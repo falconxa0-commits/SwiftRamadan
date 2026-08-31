@@ -149,7 +149,7 @@ function RoleTabButton({
         style={{ color: selected ? config.accent : 'rgba(255,255,255,0.5)' }}
       />
       <span
-        className={`text-xs sm:text-sm font-bold transition-colors ${selected ? 'auren-badge-royal' : ''}`}
+        className="text-xs sm:text-sm font-bold transition-colors"
         style={{ color: selected ? config.accent : 'rgba(255,255,255,0.5)' }}
       >
         {config.label}
@@ -157,7 +157,7 @@ function RoleTabButton({
       {selected && (
         <motion.div
           layoutId="role-tab-indicator"
-          className="absolute -bottom-0 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full auren-badge-royal"
+          className="absolute -bottom-0 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full"
           style={{ backgroundColor: config.accent }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         />
@@ -207,7 +207,7 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
-        className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
+        className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
         style={{ borderColor: value ? `color-mix(in srgb, ${accentColor} 31%, transparent)` : undefined }}
       />
       {rightElement && (
@@ -240,7 +240,7 @@ function ActionButton({
       onClick={onClick}
       disabled={loading}
       aria-busy={loading}
-      className={`auren-btn-royal ${fullWidth ? 'w-full' : ''} h-14 rounded-xl font-bold text-base active:scale-[0.98] enabled:hover:brightness-105 enabled:hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:active:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40`}
+      className={`${fullWidth ? 'w-full' : ''} h-14 rounded-xl font-bold text-base active:scale-[0.98] enabled:hover:brightness-105 enabled:hover:shadow-lg transition-all duration-200 disabled:opacity-60 disabled:active:scale-100 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40`}
       style={{
         backgroundColor: accentColor,
         color: 'var(--sr-surface-base)',
@@ -392,7 +392,7 @@ function LoginScreen() {
               <config.icon className="w-5 h-5" style={{ color: config.accent }} />
             </div>
             <div>
-              <h1 id="auth-login-heading" className="auren-gradient-text text-white text-xl sm:text-2xl font-extrabold tracking-tight">Welcome Back</h1>
+              <h1 id="auth-login-heading" className="text-white text-xl sm:text-2xl font-extrabold tracking-tight">Welcome Back</h1>
               <p className="text-sm sm:text-base" style={{ color: config.accent }}>{config.tagline}</p>
             </div>
           </div>
@@ -400,7 +400,7 @@ function LoginScreen() {
       </div>
 
       {/* Form */}
-      <div className="auren-premium-card flex flex-col gap-3 sm:gap-4 flex-1 p-5 sm:p-6" role="form" aria-labelledby="auth-login-heading">
+      <div className="flex flex-col gap-3 sm:gap-4 flex-1" role="form" aria-labelledby="auth-login-heading">
         {/* Email */}
         <InputField
           icon={Mail}
@@ -423,7 +423,7 @@ function LoginScreen() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-            className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
+            className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
             style={{ borderColor: password ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
           />
           <button
@@ -530,7 +530,7 @@ function LoginScreen() {
         </div>
 
         {/* Social Login */}
-        <div className="auren-premium-card flex gap-2.5 sm:gap-3 p-3">
+        <div className="flex gap-2.5 sm:gap-3">
           <button
             onClick={() => handleOAuthLogin('google')}
             className="flex-1 h-12 sm:h-14 rounded-xl bg-[var(--sr-surface-elevated)] border border-white/10 flex items-center justify-center gap-2 text-white text-sm font-medium hover:border-white/20 transition-colors active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
@@ -557,7 +557,6 @@ function LoginScreen() {
         </div>
 
         {/* Trust microcopy */}
-        <div className="auren-divider mb-2" />
         <div className="flex items-center justify-center gap-1.5 text-white/45 text-xs sm:text-[13px]">
           <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-[var(--sr-success)] shrink-0" />
           <span>Your data is encrypted and never shared</span>
@@ -723,16 +722,16 @@ function SignupScreen() {
     >
       {/* Header */}
       <div className="mb-4 sm:mb-5">
-        <h1 id="auth-signup-heading" className="auren-gradient-text text-white text-xl sm:text-2xl font-extrabold tracking-tight">Create Account</h1>
+        <h1 id="auth-signup-heading" className="text-white text-xl sm:text-2xl font-extrabold tracking-tight">Create Account</h1>
         <p className="text-white/50 text-sm sm:text-base mt-1">Join the SwiftRamadan community</p>
       </div>
 
       {/* Progress Bar */}
-      <div className="auren-progress flex items-center gap-2 mb-5 sm:mb-6">
+      <div className="flex items-center gap-2 mb-5 sm:mb-6">
         {Array.from({ length: progressSegments }).map((_, i) => (
           <motion.div
             key={i}
-            className={`auren-progress-fill flex-1 h-1.5 sm:h-2 rounded-full ${i < filledSegments ? '' : '!bg-white/10'}`}
+            className="flex-1 h-1.5 sm:h-2 rounded-full"
             initial={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
             animate={{
               backgroundColor: i < filledSegments ? config.accent : 'rgba(255,255,255,0.1)',
@@ -754,7 +753,7 @@ function SignupScreen() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="auren-premium-card flex flex-col gap-3 sm:gap-4 flex-1 p-5 sm:p-6"
+            className="flex flex-col gap-3 sm:gap-4 flex-1"
           >
             {/* Role Selection */}
             <div>
@@ -769,7 +768,7 @@ function SignupScreen() {
                       key={role}
                       onClick={() => setSignupRole(role)}
                       aria-pressed={isSelected}
-                      className={`relative flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl transition-all duration-300 min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30 ${isSelected ? 'auren-badge-royal' : ''}`}
+                      className="relative flex-1 flex items-center justify-center gap-2 py-3 sm:py-3.5 px-2 sm:px-3 rounded-xl transition-all duration-300 min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/30"
                       style={{
                         backgroundColor: isSelected ? rc.accentLight : 'transparent',
                         border: isSelected ? `1px solid ${rc.accentMid}` : '1px solid transparent',
@@ -781,7 +780,7 @@ function SignupScreen() {
                         style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.5)' }}
                       />
                       <span
-                        className={`text-xs sm:text-sm font-bold transition-colors ${isSelected ? 'auren-badge-royal' : ''}`}
+                        className="text-xs sm:text-sm font-bold transition-colors"
                         style={{ color: isSelected ? rc.accent : 'rgba(255,255,255,0.5)' }}
                       >
                         {rc.label}
@@ -816,7 +815,7 @@ function SignupScreen() {
                 placeholder="Phone number"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 15))}
-                className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
+                className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
                 style={{ borderColor: phone ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
               />
             </div>
@@ -839,7 +838,7 @@ function SignupScreen() {
                 onClick={() => setAreaOpen(!areaOpen)}
                 aria-label="Residential area"
                 aria-expanded={areaOpen}
-                className={`auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center ${area ? 'text-white' : 'text-white/50'}`}
+                className={`w-full h-14 bg-[var(--sr-surface-elevated)] border rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center ${area ? 'text-white' : 'text-white/50'}`}
                 style={{ borderColor: area ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : 'rgba(255,255,255,0.1)' }}
               >
                 {area || 'Residential area'}
@@ -885,7 +884,7 @@ function SignupScreen() {
                 placeholder="Create password (min 6 chars)"
                 value={signupPassword}
                 onChange={(e) => setSignupPassword(e.target.value)}
-                className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
+                className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
                 style={{ borderColor: signupPassword ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
               />
               <button
@@ -935,7 +934,7 @@ function SignupScreen() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -40, opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="auren-premium-card flex flex-col gap-3 sm:gap-4 flex-1 p-5 sm:p-6"
+            className="flex flex-col gap-3 sm:gap-4 flex-1"
           >
             {/* Role-specific header */}
             <motion.div
@@ -984,7 +983,7 @@ function SignupScreen() {
                     onClick={() => setBusinessCategoryOpen(!businessCategoryOpen)}
                     aria-label="Business category"
                     aria-expanded={businessCategoryOpen}
-                    className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
+                    className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
                     style={{ borderColor: businessCategory ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
                   >
                     <span className="flex items-center gap-2">
@@ -1055,7 +1054,7 @@ function SignupScreen() {
                     onClick={() => setVehicleTypeOpen(!vehicleTypeOpen)}
                     aria-label="Vehicle type"
                     aria-expanded={vehicleTypeOpen}
-                    className="auren-input w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
+                    className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
                     style={{ borderColor: vehicleType ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
                   >
                     {vehicleType || 'Vehicle type'}
@@ -1137,8 +1136,7 @@ function SignupScreen() {
       </AnimatePresence>
 
       {/* Trust microcopy */}
-      <div className="auren-divider mt-4 mb-2" />
-      <div className="flex items-center justify-center gap-1.5 mt-2 text-white/45 text-xs sm:text-[13px]">
+      <div className="flex items-center justify-center gap-1.5 mt-4 text-white/45 text-xs sm:text-[13px]">
         <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-[var(--sr-success)] shrink-0" />
         <span>Bank-grade encryption protects your data</span>
       </div>
@@ -1304,7 +1302,7 @@ function OTPScreen() {
     >
       {/* Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 id="auth-otp-heading" className="auren-gradient-text text-white text-xl sm:text-2xl font-extrabold tracking-tight">Verify Your Number</h1>
+        <h1 id="auth-otp-heading" className="text-white text-xl sm:text-2xl font-extrabold tracking-tight">Verify Your Number</h1>
         <p className="text-white/50 text-sm sm:text-base mt-2">
           We sent a 6-digit code to{' '}
           <span className="text-white font-medium">{userPhone || '+234 800 000 0000'}</span>
@@ -1312,11 +1310,11 @@ function OTPScreen() {
       </div>
 
       {/* Progress Bar */}
-      <div className="auren-progress flex items-center gap-2 mb-5 sm:mb-6">
+      <div className="flex items-center gap-2 mb-5 sm:mb-6">
         {Array.from({ length: totalSteps }).map((_, i) => (
           <motion.div
             key={i}
-            className={`auren-progress-fill flex-1 h-1.5 sm:h-2 rounded-full ${i < filledSteps ? '' : '!bg-white/10'}`}
+            className="flex-1 h-1.5 sm:h-2 rounded-full"
             initial={{ backgroundColor: 'rgba(255,255,255,0.1)' }}
             animate={{
               backgroundColor: i < filledSteps ? accentColor : 'rgba(255,255,255,0.1)',
@@ -1347,7 +1345,7 @@ function OTPScreen() {
               onChange={(e) => handleChange(i, e.target.value)}
               onKeyDown={(e) => handleKeyDown(i, e)}
               aria-label={`Digit ${i + 1} of 6`}
-              className={`auren-input w-11 h-14 sm:w-14 sm:h-16 rounded-xl text-center text-white text-xl sm:text-2xl font-bold bg-[var(--sr-surface-elevated)] border focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-all duration-200 ${
+              className={`w-11 h-14 sm:w-14 sm:h-16 rounded-xl text-center text-white text-xl sm:text-2xl font-bold bg-[var(--sr-surface-elevated)] border focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-white/30 transition-all duration-200 ${
                 digit ? '' : 'border-white/10'
               }`}
               style={{
@@ -1381,8 +1379,7 @@ function OTPScreen() {
       />
 
       {/* Trust microcopy */}
-      <div className="auren-divider mt-5 sm:mt-6 mb-2" />
-      <div className="flex items-center justify-center gap-1.5 mt-2 text-white/45 text-xs sm:text-[13px]">
+      <div className="flex items-center justify-center gap-1.5 mt-5 sm:mt-6 text-white/45 text-xs sm:text-[13px]">
         <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-[var(--sr-success)] shrink-0" />
         <span>We&apos;ll never share your phone number</span>
       </div>
@@ -1478,7 +1475,7 @@ function RoleScreen() {
     >
       {/* Header */}
       <div className="mb-5 sm:mb-6">
-        <h1 id="auth-role-heading" className="auren-gradient-text text-white text-xl sm:text-2xl font-extrabold tracking-tight">Choose Your Role</h1>
+        <h1 id="auth-role-heading" className="text-white text-xl sm:text-2xl font-extrabold tracking-tight">Choose Your Role</h1>
         <p className="text-white/50 text-sm sm:text-base mt-1">How would you like to use SwiftRamadan?</p>
       </div>
 
@@ -1497,7 +1494,7 @@ function RoleScreen() {
               role="radio"
               aria-checked={isSelected}
               aria-label={`${role.title}: ${role.description}`}
-              className={`auren-premium-card relative overflow-hidden rounded-2xl border-2 transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
+              className={`relative overflow-hidden rounded-2xl border-2 transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 ${
                 isSelected
                   ? 'shadow-lg'
                   : 'border-white/10 hover:border-white/20'
@@ -1536,7 +1533,7 @@ function RoleScreen() {
 
                 {/* Selected Indicator */}
                 <div
-                  className={`auren-badge-royal w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all`}
+                  className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all`}
                   style={{
                     backgroundColor: isSelected ? role.accent : 'transparent',
                     border: isSelected ? 'none' : '1px solid rgba(255,255,255,0.2)',
@@ -1559,8 +1556,7 @@ function RoleScreen() {
       />
 
       {/* Trust microcopy */}
-      <div className="auren-divider mt-5 sm:mt-6 mb-2" />
-      <div className="flex items-center justify-center gap-1.5 mt-2 text-white/45 text-xs sm:text-[13px]">
+      <div className="flex items-center justify-center gap-1.5 mt-5 sm:mt-6 text-white/45 text-xs sm:text-[13px]">
         <ShieldCheck aria-hidden="true" className="w-3.5 h-3.5 text-[var(--sr-success)] shrink-0" />
         <span>Pick a role — you can switch anytime later</span>
       </div>
