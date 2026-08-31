@@ -15235,3 +15235,129 @@ premium-card on summary, btn-gold on checkout, empty on empty state);
 OrdersTab 0→14 auren refs (5 premium-cards, 4 accent-lines, 1 empty,
 2 progress containers, 2 progress fills); 0 TS errors, 0 lint errors,
 32/32 test files + 400/400 tests passing.*
+
+---
+
+## Phase 18-D — Auren Kingdom Dashboards Rebuild
+
+### Task: Add Auren Kingdom styling to 4 dashboards (Premium Frontend Architect)
+
+Agent D applied the Auren Kingdom premium visual layer to four
+high-traffic dashboard surfaces — `VendorDashboard.tsx`,
+`RiderDashboard.tsx`, `ProfileTab.tsx`, and `AdminDashboard.tsx` —
+adding `.auren-*` classes alongside (never removing) existing
+classes per the Phase 18 mandate. Store interactions, data
+fetching, realtime socket wiring, order-action handlers, polling
+loops, and role-based rendering logic are 100% preserved.
+
+### VendorDashboard.tsx (1104 → 1115 lines, 15 auren-* refs)
+- Dashboard header h1 (store name) → `.auren-gradient-text`
+- Availability toggle card → `.auren-premium-card`
+- Iftar countdown banner card → `.auren-premium-card`, with
+  `.auren-metric` wrapping the time/remaining pair and
+  `.auren-metric-value` / `.auren-metric-label` on the children
+- Three section headers (Active Requests, Processing Orders,
+  Dispatched Orders) → each gets a sibling
+  `<div className="auren-accent-line" />` outside the header row
+- Three empty states (no incoming / processing / dispatched orders)
+  → `.auren-empty`
+- Incoming order cards → `.auren-list-item`
+- Processing order cards → `.auren-premium-card`
+- Dispatched order cards → `.auren-premium-card .auren-list-item`
+
+### RiderDashboard.tsx (725 → 734 lines, 23 auren-* refs)
+- Profile header h2 (rider name) → `.auren-gradient-text`
+- 3 Stats Grid cards (Completed Today / Rating / Earned Today) →
+  `.auren-premium-card .auren-metric`, with `.auren-metric-value`
+  on the value `<p>` and `.auren-metric-label` on the label `<p>`
+- Iftar Rush Legend badge → `.auren-premium-card`
+- Active Delivery card → `.auren-premium-card`
+- Active Delivery progress bar → `.auren-progress` (track) +
+  `.auren-progress-fill` (motion.div fill)
+- New Delivery Request CTA button → `.auren-premium-card`
+- Available Deliveries empty state → `.auren-empty`
+- Available Deliveries list items → `.auren-premium-card .auren-list-item`
+- Weekly Earnings chart card → `.auren-premium-card`
+- Recent Deliveries list items → `.auren-list-item`
+- 4 section headers (Active Delivery, Available Deliveries, Weekly
+  Earnings, Recent Deliveries) → each gets a sibling
+  `<div className="auren-accent-line mb-3" />`
+
+### ProfileTab.tsx (1086 → 1091 lines, 34 auren-* refs)
+- Profile header h2 (display name) → `.auren-gradient-text`
+- 9 stats cards (3 per role: vendor Revenue/Orders/Avg Order,
+  rider Earnings/Completed/Rating, customer Hasanat/Swift/Streak)
+  → `.auren-premium-card .auren-metric` with `.auren-metric-value`
+  on each value `<p>` and `.auren-metric-label` on each label `<p>`
+- 9 menu items (Customer/Vendor/Rider section groups) →
+  `.auren-list-item` on the motion.button
+- 4 charity cards → `.auren-premium-card .auren-list-item`
+- 4 section headers (My Cooking Journey, Redeem Points, every
+  menu section label, Give Back This Ramadan) → each gets a
+  sibling `<div className="auren-accent-line" />` placed AFTER the
+  closing `</div>` of the header row (so it sits as a true sibling
+  of the entire header block, not interleaved inside a
+  `justify-between` flex row — verified and corrected after first
+  pass placed them mid-flex)
+
+### AdminDashboard.tsx (1368 → 1376 lines, 19 auren-* refs)
+- Admin header h1 ("Admin Panel") → `.auren-gradient-text`, plus
+  `<div className="auren-accent-line mt-2" />` after the subtitle
+- MetricCard component (5 usages in Overview + 4 in Finance = 9
+  instances) → motion.div gets `.auren-premium-card .auren-metric`,
+  label `<p>` gets `.auren-metric-label`, value `<p>` gets
+  `.auren-metric-value`
+- 6 data cards (Revenue Trend chart, Orders by Status, Top Vendors,
+  Recent Transactions, Banner Management) → `.auren-premium-card`
+- 7 section headers (Revenue Trend, Orders by Status, Top Vendors
+  by Revenue, Vendor Management, Dispute Management, Recent
+  Transactions, Featured Items) → each gets a sibling
+  `<div className="auren-accent-line mb-3" />`
+- 2 admin badges → `.auren-badge-royal` added alongside existing
+  Tailwind badge classes (the "X Active" disputes count badge and
+  the "Coming Soon" Banner Management badge)
+
+### Verification
+
+```
+$ bun run lint
+✖ 3 problems (0 errors, 3 warnings)  ← all pre-existing, none in dashboards
+
+$ bun run test
+ Test Files  32 passed (32)
+      Tests  400 passed (400)
+   Duration  34.93s
+
+$ for f in VendorDashboard RiderDashboard ProfileTab AdminDashboard; do
+    echo "$f auren: $(grep -c 'auren-' src/components/swift/$f.tsx)"
+  done
+VendorDashboard auren: 15
+RiderDashboard auren: 23
+ProfileTab auren: 34
+AdminDashboard auren: 19
+```
+
+### Notes for future agents
+- The `.auren-accent-line` is 32px × 2px. When placed inside a
+  `flex justify-between` row it becomes a third middle item and
+  pushes the trailing button further right. Always place it as a
+  sibling of the entire header row container (after the closing
+  `</div>` of the flex row) — this was the one refactor needed
+  mid-task on ProfileTab.tsx for the Cooking Journey and Redeem
+  Points headers.
+- `.auren-premium-card` injects `backdrop-filter` + a `::before`
+  highlight line + a hover lift transform. Combined with
+  `glass-card` it produces a nice double-glass effect; no
+  conflicts observed in the rendered classes.
+- `.auren-metric` is `display: flex; flex-direction: column;
+  gap: 4px` — applied to a card that already has `text-center` it
+  switches the children to flex column layout, which preserves the
+  vertical stacking while slightly tightening the gap. The icon
+  row sits above as the first flex child, value+label follow —
+  visually equivalent to the original block layout.
+
+*Agent D — Premium Frontend Architect (Phase 18-D Dashboards)*
+*Result: VendorDashboard 0→15 auren refs; RiderDashboard 0→23;
+ProfileTab 0→34; AdminDashboard 0→19; 0 TS errors, 0 lint errors,
+32/32 test files + 400/400 tests passing. Business logic, store
+interactions, and data fetching preserved 100%.*

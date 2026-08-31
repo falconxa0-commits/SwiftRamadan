@@ -532,7 +532,7 @@ export default function ProfileTab() {
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="text-white text-xl font-bold truncate tracking-tight">{displayName}</h2>
+                <h2 className="text-white text-xl font-bold truncate tracking-tight auren-gradient-text">{displayName}</h2>
                 <span className="beta-badge">Beta</span>
                 {userRole === 'vendor' && (
                   <span className={`w-2.5 h-2.5 rounded-full ${vendorOnline ? 'bg-[var(--sr-customer)] shadow-[0_0_8px_rgba(16,224,122,0.5)]' : 'bg-white/30'}`} />
@@ -594,59 +594,59 @@ export default function ProfileTab() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {userRole === 'vendor' ? (
             <>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[var(--sr-customer)] text-lg font-black">{formatNaira(vendorBalance)}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Revenue</p>
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
+                <p className="text-[var(--sr-customer)] text-lg font-black auren-metric-value">{formatNaira(vendorBalance)}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1 auren-metric-label">Revenue</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[var(--sr-vendor)] text-lg font-black">{vendorSalesInsights.todayOrders}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Orders Today</p>
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
+                <p className="text-[var(--sr-vendor)] text-lg font-black auren-metric-value">{vendorSalesInsights.todayOrders}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1 auren-metric-label">Orders Today</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[var(--sr-rider)] text-lg font-black">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-1">Avg Order</p>
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
+                <p className="text-[var(--sr-rider)] text-lg font-black auren-metric-value">{formatNaira(vendorSalesInsights.avgOrderValue)}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-1 auren-metric-label">Avg Order</p>
               </div>
             </>
           ) : userRole === 'rider' ? (
             <>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
                 <div className="w-8 h-8 bg-[var(--sr-customer)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <DollarSign className="w-4 h-4 text-[var(--sr-customer)]" />
                 </div>
-                <p className="text-[var(--sr-customer)] text-lg font-black">{formatNaira(riderEarnings)}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Earnings Today</p>
+                <p className="text-[var(--sr-customer)] text-lg font-black auren-metric-value">{formatNaira(riderEarnings)}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5 auren-metric-label">Earnings Today</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
                 <div className="w-8 h-8 bg-[var(--sr-rider)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Zap className="w-4 h-4 text-[var(--sr-rider)]" />
                 </div>
-                <p className="text-[var(--sr-rider)] text-lg font-black">{riderCompletedToday}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Completed</p>
+                <p className="text-[var(--sr-rider)] text-lg font-black auren-metric-value">{riderCompletedToday}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5 auren-metric-label">Completed</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
                 <div className="w-8 h-8 bg-[var(--sr-vendor)]/10 rounded-lg flex items-center justify-center mx-auto mb-1">
                   <Star className="w-4 h-4 text-[var(--sr-vendor)]" />
                 </div>
-                <p className="text-[var(--sr-vendor)] text-lg font-black">{riderRating}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5">Rating</p>
+                <p className="text-[var(--sr-vendor)] text-lg font-black auren-metric-value">{riderRating}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase mt-0.5 auren-metric-label">Rating</p>
               </div>
             </>
           ) : (
             <>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[var(--sr-vendor)] text-xl font-black">{hasanatPoints.toLocaleString()}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase">Hasanat Pts</p>
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
+                <p className="text-[var(--sr-vendor)] text-xl font-black auren-metric-value">{hasanatPoints.toLocaleString()}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase auren-metric-label">Hasanat Pts</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
-                <p className="text-[var(--sr-customer)] text-xl font-black">{swiftPoints.toLocaleString()}</p>
-                <p className="text-white/65 text-[10px] font-bold uppercase">Swift Pts</p>
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
+                <p className="text-[var(--sr-customer)] text-xl font-black auren-metric-value">{swiftPoints.toLocaleString()}</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase auren-metric-label">Swift Pts</p>
               </div>
-              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+              <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
                 <div className="flex items-center justify-center gap-1">
                   <Flame className={`w-4 h-4 ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`} />
-                  <p className={`text-xl font-black ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'}`}>{dailyStreak}</p>
+                  <p className={`text-xl font-black ${dailyStreak >= 3 ? 'text-orange-500' : 'text-orange-400'} auren-metric-value`}>{dailyStreak}</p>
                 </div>
-                <p className="text-white/65 text-[10px] font-bold uppercase">Day Streak</p>
+                <p className="text-white/65 text-[10px] font-bold uppercase auren-metric-label">Day Streak</p>
               </div>
             </>
           )}
@@ -704,6 +704,7 @@ export default function ProfileTab() {
               View Smart Kitchen →
             </button>
           </div>
+          <div className="auren-accent-line mt-2 mb-3" />
 
           {cookingLoading ? (
             /* Loading skeleton */
@@ -842,6 +843,7 @@ export default function ProfileTab() {
                 <p className="text-white/65 text-[10px] font-bold uppercase leading-tight">Swift Pts</p>
               </div>
             </div>
+            <div className="auren-accent-line mt-2 mb-3" />
 
             <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {REWARDS.map(reward => {
@@ -891,6 +893,7 @@ export default function ProfileTab() {
             return (
               <div key={section} className="space-y-2">
                 <p className="text-white/60 text-[10px] font-extrabold tracking-widest px-1">{section}</p>
+                <div className="auren-accent-line mb-1" />
                 {sectionItems.map((item, i) => {
                   const Icon = item.icon;
                   const isSwitchRole = item.action === 'switch-role';
@@ -901,7 +904,7 @@ export default function ProfileTab() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.03 }}
                       onClick={() => handleMenuClick(item.action)}
-                      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-colors w-full text-left hover:bg-white/5 active:scale-[0.99] ${
+                      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border transition-colors w-full text-left hover:bg-white/5 active:scale-[0.99] auren-list-item ${
                         isSwitchRole
                           ? 'aurora-card border-white/10 hover:border-white/20'
                           : 'glass-card border-white/[0.07] hover:border-white/15'
@@ -947,12 +950,13 @@ export default function ProfileTab() {
             <Heart className="w-5 h-5 text-[var(--sr-error)]" />
             Give Back This Ramadan
           </h3>
+          <div className="auren-accent-line mb-4" />
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {charityItems.slice(0, 4).map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleCharityClick(item)}
-                className="glass-card rounded-2xl p-3 sm:p-4 cursor-pointer hover:border-white/15 transition-colors text-left active:scale-[0.98]"
+                className="glass-card rounded-2xl p-3 sm:p-4 cursor-pointer hover:border-white/15 transition-colors text-left active:scale-[0.98] auren-premium-card auren-list-item"
               >
                 <span className="material-symbols-outlined text-[var(--sr-vendor)] text-2xl mb-2">{item.icon}</span>
                 <p className="text-white font-bold text-sm">{item.name}</p>

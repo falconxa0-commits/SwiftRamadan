@@ -152,7 +152,7 @@ function MetricCard({
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
-      className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4"
+      className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4 auren-premium-card auren-metric"
     >
       <div
         className="absolute top-0 right-0 w-20 h-20 blur-[40px] opacity-20"
@@ -176,8 +176,8 @@ function MetricCard({
             </span>
           )}
         </div>
-        <p className="text-white/45 text-[11px] font-semibold uppercase tracking-wider">{label}</p>
-        <p className="text-white text-xl font-black mt-0.5 tracking-tight">{value}</p>
+        <p className="text-white/45 text-[11px] font-semibold uppercase tracking-wider auren-metric-label">{label}</p>
+        <p className="text-white text-xl font-black mt-0.5 tracking-tight auren-metric-value">{value}</p>
       </div>
     </motion.div>
   );
@@ -352,7 +352,7 @@ function TableSkeleton({ cols = 5, rows = 4 }: { cols?: number; rows?: number })
 function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] }) {
   const maxRevenue = Math.max(...data.map((d) => d.revenue), 1);
   return (
-    <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
+    <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4 auren-premium-card">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-white text-sm font-bold">Revenue Trend (7 Days)</h3>
         <span className="text-[var(--sr-customer)] text-[10px] font-bold flex items-center gap-1">
@@ -360,6 +360,7 @@ function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] })
           +12.5%
         </span>
       </div>
+      <div className="auren-accent-line mb-3" />
       <div className="flex items-end gap-2 h-40">
         {data.map((d, i) => {
           const height = Math.max((d.revenue / maxRevenue) * 100, 4);
@@ -732,8 +733,9 @@ export default function AdminDashboard() {
         <RevenueBarChart data={metrics.revenueTrend} />
 
         {/* Orders by Status */}
-        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4 auren-premium-card">
           <h3 className="text-white text-sm font-bold mb-4">Orders by Status</h3>
+          <div className="auren-accent-line mb-3" />
           <div className="space-y-3">
             {metrics.ordersByStatus.map((s, i) => {
               const maxCount = Math.max(...metrics.ordersByStatus.map((x) => x.count), 1);
@@ -760,8 +762,9 @@ export default function AdminDashboard() {
         </div>
 
         {/* Top 5 Vendors */}
-        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4 auren-premium-card">
           <h3 className="text-white text-sm font-bold mb-4">Top Vendors by Revenue</h3>
+          <div className="auren-accent-line mb-3" />
           <div className="space-y-3">
             {metrics.topVendors.map((v, i) => (
               <div key={v.name} className="flex items-center gap-3">
@@ -878,6 +881,7 @@ export default function AdminDashboard() {
           <h3 className="text-white text-sm font-bold">Vendor Management</h3>
           <span className="text-white/60 text-xs font-semibold">{vendors.length} vendors</span>
         </div>
+        <div className="auren-accent-line mb-3" />
 
         {vendorsLoading ? (
           <TableSkeleton cols={6} rows={5} />
@@ -1046,10 +1050,11 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-white text-sm font-bold">Dispute Management</h3>
-          <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[10px] font-black border border-red-500/20">
+          <span className="px-2 py-0.5 rounded-full bg-red-500/15 text-red-400 text-[10px] font-black border border-red-500/20 auren-badge-royal">
             {disputes.filter((d) => d.status === 'open' || d.status === 'investigating').length} Active
           </span>
         </div>
+        <div className="auren-accent-line mb-3" />
 
         {disputesLoading ? (
           <TableSkeleton cols={5} rows={4} />
@@ -1150,11 +1155,12 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Transactions */}
-        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-3 sm:p-4 auren-premium-card">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-white text-sm font-bold">Recent Transactions</h3>
             <span className="text-white/60 text-[10px] font-semibold">{finance.transactions.length} entries</span>
           </div>
+          <div className="auren-accent-line mb-3" />
           <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
             {finance.transactions.map((tx) => {
               const typeConfig: Record<string, { icon: typeof DollarSign; color: string }> = {
@@ -1207,6 +1213,7 @@ export default function AdminDashboard() {
             Add
           </button>
         </div>
+        <div className="auren-accent-line mb-3" />
 
         {contentLoading ? (
           <TableSkeleton cols={4} rows={4} />
@@ -1271,13 +1278,13 @@ export default function AdminDashboard() {
         )}
 
         {/* Banner Management (Coming Soon) */}
-        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-6 text-center">
+        <div className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/10 p-6 text-center auren-premium-card">
           <div className="w-14 h-14 rounded-2xl bg-[var(--sr-rider)]/10 border border-[var(--sr-rider)]/20 flex items-center justify-center mx-auto mb-3">
             <ImageIcon className="w-7 h-7 text-[var(--sr-rider)]" />
           </div>
           <h3 className="text-white text-sm font-bold mb-1">Banner Management</h3>
           <p className="text-white/60 text-xs">Create and manage promotional banners for the home screen.</p>
-          <span className="inline-flex items-center gap-1 mt-3 px-3 py-1 rounded-full bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] text-[10px] font-bold border border-[var(--sr-vendor)]/20">
+          <span className="inline-flex items-center gap-1 mt-3 px-3 py-1 rounded-full bg-[var(--sr-vendor)]/10 text-[var(--sr-vendor)] text-[10px] font-bold border border-[var(--sr-vendor)]/20 auren-badge-royal">
             <Clock className="w-3 h-3" />
             Coming Soon
           </span>
@@ -1299,11 +1306,12 @@ export default function AdminDashboard() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-white text-xl font-black tracking-tight">Admin Panel</h1>
+          <h1 className="text-white text-xl font-black tracking-tight auren-gradient-text">Admin Panel</h1>
           <p className="text-[var(--sr-customer)] text-xs font-bold mt-0.5 flex items-center gap-1">
             <ShieldCheck className="w-3 h-3" />
             Swift Eats Platform Management
           </p>
+          <div className="auren-accent-line mt-2" />
         </div>
         <div className="flex gap-2">
           <button

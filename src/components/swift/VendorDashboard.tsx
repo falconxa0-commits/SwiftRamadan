@@ -156,7 +156,7 @@ function IftarCountdownBanner() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.12 }}
-      className={`relative overflow-hidden rounded-2xl border p-3 sm:p-4 ${
+      className={`relative overflow-hidden rounded-2xl border p-3 sm:p-4 auren-premium-card ${
         isUrgent ? 'bg-red-500/10 border-red-500/20' : 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/20'
       }`}
     >
@@ -188,15 +188,15 @@ function IftarCountdownBanner() {
             <p className="text-white/65 text-[10px]">Maghrib at 6:45 PM</p>
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right auren-metric">
           <p
-            className={`text-2xl font-black font-mono ${
+            className={`text-2xl font-black font-mono auren-metric-value ${
               isUrgent ? 'text-red-400' : 'text-[var(--sr-vendor)]'
             }`}
           >
             {mins}:{secs.toString().padStart(2, '0')}
           </p>
-          <p className="text-white/60 text-[9px] font-bold">remaining</p>
+          <p className="text-white/60 text-[9px] font-bold auren-metric-label">remaining</p>
         </div>
       </div>
     </motion.div>
@@ -651,7 +651,7 @@ export default function VendorDashboard() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-white text-xl font-black tracking-tight">
+          <h1 className="text-white text-xl font-black tracking-tight auren-gradient-text">
             {vendorStoreName || 'Your Store'}
           </h1>
           <p className="text-[var(--sr-vendor)] text-xs font-bold mt-0.5 flex items-center gap-1">
@@ -697,7 +697,7 @@ export default function VendorDashboard() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="relative overflow-hidden rounded-2xl glass-card border border-white/5 p-3 sm:p-4"
+        className="relative overflow-hidden rounded-2xl glass-card border border-white/5 p-3 sm:p-4 auren-premium-card"
       >
         <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-vendor)]/5 blur-[40px]" />
         <div className="relative z-10 flex items-center justify-between">
@@ -800,6 +800,7 @@ export default function VendorDashboard() {
                 View All <ChevronRight className="w-3 h-3" />
               </button>
             </div>
+            <div className="auren-accent-line" />
 
             {loading ? (
               <div className="space-y-4">
@@ -807,7 +808,7 @@ export default function VendorDashboard() {
                 <OrderCardSkeleton />
               </div>
             ) : incomingOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center py-16 text-center auren-empty">
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Package className="w-8 h-8 text-white/20" />
                 </div>
@@ -823,7 +824,7 @@ export default function VendorDashboard() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 overflow-hidden"
+                  className="rounded-2xl bg-[var(--sr-surface-raised)] border border-white/5 overflow-hidden auren-list-item"
                 >
                   {/* Food Image with Gradient */}
                   <div className="relative h-32 overflow-hidden">
@@ -932,9 +933,10 @@ export default function VendorDashboard() {
                 {processingOrders.length}
               </span>
             </div>
+            <div className="auren-accent-line" />
 
             {processingOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center py-16 text-center auren-empty">
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Clock className="w-8 h-8 text-white/20" />
                 </div>
@@ -948,7 +950,7 @@ export default function VendorDashboard() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className={`rounded-2xl bg-[var(--sr-surface-raised)] border p-3 sm:p-4 ${
+                  className={`rounded-2xl bg-[var(--sr-surface-raised)] border p-3 sm:p-4 auren-premium-card ${
                     readyIds.has(order.id) ? 'border-[var(--sr-customer)]/30' : 'border-[var(--sr-vendor)]/20'
                   }`}
                 >
@@ -1025,9 +1027,10 @@ export default function VendorDashboard() {
                 {dispatchedOrders.length}
               </span>
             </div>
+            <div className="auren-accent-line" />
 
             {dispatchedOrders.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center py-16 text-center auren-empty">
                 <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <Truck className="w-8 h-8 text-white/20" />
                 </div>
@@ -1043,7 +1046,7 @@ export default function VendorDashboard() {
                   initial={{ opacity: 0, y: 15 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.08 }}
-                  className="rounded-2xl bg-[var(--sr-surface-raised)] border border-[var(--sr-customer)]/20 p-3 sm:p-4"
+                  className="rounded-2xl bg-[var(--sr-surface-raised)] border border-[var(--sr-customer)]/20 p-3 sm:p-4 auren-premium-card auren-list-item"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div>

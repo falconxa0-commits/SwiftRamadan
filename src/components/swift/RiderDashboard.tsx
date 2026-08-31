@@ -343,7 +343,7 @@ export default function RiderDashboard() {
         </div>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-white text-lg font-extrabold">
+            <h2 className="text-white text-lg font-extrabold auren-gradient-text">
               {data?.riderName ?? 'Rider'}
             </h2>
             <span className="material-symbols-outlined text-[var(--sr-rider)] text-lg">verified</span>
@@ -390,38 +390,38 @@ export default function RiderDashboard() {
 
       {/* Stats Grid */}
       <motion.div variants={staggerItem} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
           <div className="w-10 h-10 bg-[var(--sr-rider)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <Check className="w-5 h-5 text-[var(--sr-rider)]" />
           </div>
-          <p className="text-white text-xl font-extrabold">
+          <p className="text-white text-xl font-extrabold auren-metric-value">
             {data?.completedToday ?? 0}
           </p>
-          <p className="text-white/65 text-[10px] mt-0.5">Completed Today</p>
+          <p className="text-white/65 text-[10px] mt-0.5 auren-metric-label">Completed Today</p>
         </div>
-        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
           <div className="w-10 h-10 bg-[var(--sr-vendor)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <Star className="w-5 h-5 text-[var(--sr-vendor)]" />
           </div>
-          <p className="text-white text-xl font-extrabold">
+          <p className="text-white text-xl font-extrabold auren-metric-value">
             {data?.rating?.toFixed(1) ?? '4.8'}
           </p>
-          <p className="text-white/65 text-[10px] mt-0.5">Rating</p>
+          <p className="text-white/65 text-[10px] mt-0.5 auren-metric-label">Rating</p>
         </div>
-        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center">
+        <div className="glass-card rounded-2xl p-3 sm:p-4 text-center auren-premium-card auren-metric">
           <div className="w-10 h-10 bg-[var(--sr-customer)]/10 rounded-xl flex items-center justify-center mx-auto mb-2">
             <span className="material-symbols-outlined text-[var(--sr-customer)] text-base">payments</span>
           </div>
-          <p className="text-white text-base font-extrabold leading-tight">
+          <p className="text-white text-base font-extrabold leading-tight auren-metric-value">
             {formatNaira(data?.earningsToday ?? 0)}
           </p>
-          <p className="text-white/65 text-[10px] mt-0.5">Earned Today</p>
+          <p className="text-white/65 text-[10px] mt-0.5 auren-metric-label">Earned Today</p>
         </div>
       </motion.div>
 
       {/* Iftar Rush Legend Badge */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-vendor)]/10 to-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20 p-3 sm:p-4">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-vendor)]/10 to-[var(--sr-vendor)]/5 border border-[var(--sr-vendor)]/20 p-3 sm:p-4 auren-premium-card">
           <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[80px]" />
           <div className="relative z-10 flex items-center gap-3">
             <div className="w-12 h-12 bg-[var(--sr-vendor)]/20 rounded-2xl flex items-center justify-center shrink-0">
@@ -449,7 +449,8 @@ export default function RiderDashboard() {
             <Navigation className="w-4 h-4 text-[var(--sr-rider)]" />
             Active Delivery
           </h3>
-          <div className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-[var(--sr-rider)]/20 p-3 sm:p-4">
+          <div className="auren-accent-line mb-3" />
+          <div className="relative overflow-hidden rounded-2xl bg-[var(--sr-surface-raised)] border border-[var(--sr-rider)]/20 p-3 sm:p-4 auren-premium-card">
             <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-rider)]/5 blur-[50px]" />
             <div className="relative z-10">
               <div className="flex items-center justify-between mb-3">
@@ -465,9 +466,9 @@ export default function RiderDashboard() {
               </div>
 
               {/* Progress Bar */}
-              <div className="w-full bg-white/5 rounded-full h-2 mb-3">
+              <div className="w-full bg-white/5 rounded-full h-2 mb-3 auren-progress">
                 <motion.div
-                  className="bg-[var(--sr-rider)] h-2 rounded-full"
+                  className="bg-[var(--sr-rider)] h-2 rounded-full auren-progress-fill"
                   initial={{ width: 0 }}
                   animate={{ width: `${activeDelivery.progress}%` }}
                   transition={{ duration: 1.2, ease: 'easeOut' }}
@@ -530,7 +531,7 @@ export default function RiderDashboard() {
         <motion.div variants={staggerItem} className="mb-6">
           <button
             onClick={() => setActiveModal('new-delivery')}
-            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-rider)]/20 to-[var(--sr-rider)]/5 border border-[var(--sr-rider)]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[var(--sr-rider)]/50 transition-all active:scale-[0.98]"
+            className="w-full relative overflow-hidden rounded-2xl bg-gradient-to-r from-[var(--sr-rider)]/20 to-[var(--sr-rider)]/5 border border-[var(--sr-rider)]/30 p-3 sm:p-4 flex items-center gap-3 sm:gap-4 hover:border-[var(--sr-rider)]/50 transition-all active:scale-[0.98] auren-premium-card"
           >
             <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-rider)]/10 blur-[50px]" />
             <div className="w-12 h-12 bg-[var(--sr-rider)]/20 rounded-2xl flex items-center justify-center shrink-0 relative z-10">
@@ -556,9 +557,10 @@ export default function RiderDashboard() {
             {availableDeliveries.length} new
           </span>
         </h3>
+        <div className="auren-accent-line mb-3" />
 
         {availableDeliveries.length === 0 ? (
-          <div className="glass-card rounded-2xl p-8 text-center">
+          <div className="glass-card rounded-2xl p-8 text-center auren-empty">
             <div className="w-14 h-14 mx-auto mb-3 rounded-2xl bg-white/5 flex items-center justify-center">
               <Package className="w-6 h-6 text-white/60" />
             </div>
@@ -573,7 +575,7 @@ export default function RiderDashboard() {
               <motion.div
                 key={req.id}
                 variants={staggerItem}
-                className="glass-card rounded-2xl p-3 sm:p-4"
+                className="glass-card rounded-2xl p-3 sm:p-4 auren-premium-card auren-list-item"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div>
@@ -640,7 +642,8 @@ export default function RiderDashboard() {
             Total: {formatNaira(weeklyEarnings.reduce((s, w) => s + w.amount, 0))}
           </span>
         </h3>
-        <div className="glass-card rounded-2xl p-3 sm:p-4">
+        <div className="auren-accent-line mb-3" />
+        <div className="glass-card rounded-2xl p-3 sm:p-4 auren-premium-card">
           <div className="flex items-end justify-between gap-2 h-32">
             {weeklyEarnings.map((w, i) => {
               const pct = Math.max(4, Math.round((w.amount / maxWeekly) * 100));
@@ -684,11 +687,12 @@ export default function RiderDashboard() {
             <CheckCircle className="w-4 h-4 text-[var(--sr-customer)]" />
             Recent Deliveries
           </h3>
+          <div className="auren-accent-line mb-3" />
           <div className="space-y-2 max-h-72 overflow-y-auto custom-scrollbar pr-1">
             {data!.recentDeliveries.slice(0, 8).map((o) => (
               <div
                 key={o.id}
-                className="glass-card rounded-2xl p-3 flex items-center gap-3"
+                className="glass-card rounded-2xl p-3 flex items-center gap-3 auren-list-item"
               >
                 <div className="w-9 h-9 rounded-xl bg-[var(--sr-customer)]/10 flex items-center justify-center shrink-0">
                   <Check className="w-4 h-4 text-[var(--sr-customer)]" />
