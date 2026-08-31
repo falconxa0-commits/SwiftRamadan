@@ -14545,3 +14545,411 @@ $ cd /home/z/my-project && echo "var(--auren-*):" && \
 `var(--sr-*)` refs (+21.5%), 0 → 7 `var(--auren-*)` refs (NEW),
 0 → 144 `color-mix()` refs (NEW), 0 lint errors, 394/394 tests green,
 token adoption 78% → 96.83% (exceeds 95% target by 1.83 pp).*
+
+---
+
+## PHASE-18-A-AUREN-CSS — Auren Kingdom Premium Visual Layer
+
+### Task
+Append the cinematic, luxury CSS foundation to `src/app/globals.css` (additive only).
+
+### Changes
+- **File**: `src/app/globals.css`
+  - Previous length: 878 lines
+  - New length: 1176 lines
+  - Net additions: ~298 lines of premium Auren CSS appended to end of file
+- No existing CSS modified. Strictly additive append.
+
+### CSS Classes Added (Phase 18 Foundation)
+- `.auren-cinematic` + `@keyframes auren-cinematic-in` — luxury entrance animation (0.8s cubic-bezier)
+- `.auren-premium-card` + `::before` — glass card with hover lift (-4px translateY) and top accent line
+- `.auren-accent-line` — royal→mystic gradient underline (32px)
+- `.auren-section` — responsive premium section padding (24px→32px)
+- `.auren-tab-bar` + `.auren-tab-item` (with `.active` state) — glass tab bar with royal active gradient
+- `.auren-input` + `::placeholder` + `:focus` — premium input with royal focus ring (3px royal-light)
+- `.auren-gradient-text` — mystic→royal→imperial gradient text fill
+- `.auren-gradient-gold` — gold gradient text fill (#E8C547→gold→#B8941F)
+- `.auren-hero-glow` + `::after` — radial royal glow backdrop
+- `.auren-badge-royal` + `.auren-badge-gold` — uppercase pill badges (10px, 700 weight, 0.08em letter-spacing)
+- `.auren-divider` — gradient hairline divider
+- `.auren-fab` — fixed floating action button (56px circle, royal→imperial gradient, royal shadow + dark shadow)
+- `.auren-list-item` — hover-active list item with glass-hover background
+- `.auren-metric` + `.auren-metric-value` + `.auren-metric-label` — premium metric display (28px/800 weight)
+- `.auren-progress` + `.auren-progress-fill` — royal→mystic gradient progress bar (0.5s ease-out)
+- `.auren-backdrop` — fixed modal backdrop (rgba(5,5,5,0.7) + 8px blur)
+- `.auren-toast` — glass toast notification (max-width 400px)
+- `.auren-empty` — centered empty state (48px padding)
+- `@media (prefers-reduced-motion: reduce)` — disables animations/transitions for all premium classes
+
+### Variable Dependencies Verified
+All CSS variables consumed by Phase 18 layer are already defined earlier in `globals.css`:
+- `--auren-royal`, `--auren-mystic`, `--auren-imperial`, `--auren-royal-light`, `--auren-royal-border`
+- `--auren-gold`, `--auren-gold-light`, `--auren-gold-border`
+- `--auren-glass`, `--auren-glass-hover`, `--auren-glass-border`, `--auren-glass-blur`
+- `--auren-radius-lg`, `--auren-radius-xl`, `--auren-radius-2xl`
+- `--auren-shadow-lg`, `--auren-shadow-royal`
+- `--auren-text-primary`, `--auren-text-tertiary`, `--auren-text-muted`
+
+### Verification
+- `bun run lint` → **0 errors, 3 pre-existing warnings** (unchanged from baseline)
+- `bun run test` → **32 test files, 400 tests passing** (includes auren-design + auren-certification + design-tokens suites)
+- Tail of `globals.css` confirms final `@media (prefers-reduced-motion: reduce)` block properly closed.
+
+### Status
+✅ Phase 18-A complete. Foundation ready for rebuilt screens to consume `auren-*` premium classes.
+
+---
+
+## Phase 18-B — HomeTab + BottomNav Auren Rebuild (Agent B)
+
+### Mission
+Rebuild `HomeTab.tsx` and `BottomNav.tsx` — the most visible screens — to feel
+like an Auren Kingdom premium cinematic experience. Backups were already at
+`src/__ui_backup__/phase18/shared/` from Phase 18-A foundation work. The
+Auren CSS utility classes (`.auren-premium-card`, `.auren-hero-glow`,
+`.auren-gradient-text`, `.auren-accent-line`, `.auren-tab-bar`,
+`.auren-tab-item` + `.active` modifier) were already in `globals.css`
+from Phase 18-A and just needed to be consumed.
+
+### Contract
+- ONLY change visual presentation (className strings, JSX structure for
+  layout, animation props).
+- DO NOT touch store interactions, data fetching, business logic, hooks,
+  handlers, `comingSoonKeys`, conditional rendering, or icon imports.
+
+### BottomNav.tsx (119 → 120 lines)
+
+**Preserved:** all imports, `customerTabs`/`vendorTabs`/`riderTabs` config,
+`activeTab` / `setActiveTab` / `cartCount` / `userRole` selectors,
+`track('tab_switch', ...)` analytics call, cart badge logic.
+
+**Rebuilt visual presentation:**
+- Container: replaced `glass-effect nav-glow` custom classes with the
+  official `.auren-tab-bar` class (which provides `var(--auren-glass)`
+  backdrop blur, `var(--auren-glass-border)` border,
+  `var(--auren-radius-2xl)` border-radius, `padding: 6px`, flex gap).
+- Kept `fixed left-1/2 -translate-x-1/2 w-[96%] max-w-lg z-50
+  [bottom:calc(0.75rem+env(safe-area-inset-bottom))]` positioning.
+- Set outer height to **68px** so the inner buttons get 68 - 12 = 56px
+  exactly (matches the WCAG touch-target minimum baked into
+  `.auren-tab-item { min-height: 56px }`).
+- Each tab button: replaced custom `flex flex-col items-center justify-center
+  gap-0.5 flex-1 h-full rounded-2xl transition-colors` with the official
+  `.auren-tab-item` class, plus the `active` modifier when `isActive`.
+- Active state colors switched from role-based
+  `var(--sr-rider/vendor/customer)` to **Auren mystic purple**:
+  - Icon color: `var(--auren-mystic)` + `drop-shadow(0 0 6px var(--auren-royal-glow))`
+  - Label color: `var(--auren-mystic)`
+  - Top accent dot: `var(--auren-mystic)` background +
+    `box-shadow: 0 0 8px var(--auren-mystic)` (kept Framer Motion `layoutId`
+    spring so the dot animates between tabs on switch — "smooth transition
+    on tab change")
+- Inactive state: `color: var(--auren-text-tertiary)` (matches
+  `.auren-tab-item` base).
+- Cart badge: kept role accent (`var(--sr-rider/vendor/customer)`) so the
+  green/cyan/gold role identity still lives on the count badge, but uses
+  `color-mix()` for the glow instead of the prior `rgba(16,224,122,0.6)`
+  hardcoded glow.
+- Removed the duplicate Framer Motion `motion.div layoutId="activeTabBg"`
+  overlay (the `.auren-tab-item.active` CSS now provides the gradient
+  background + royal border).
+- Replaced `rgba(255,255,255,0.32)` inactive text color with
+  `var(--auren-text-tertiary)`.
+
+### HomeTab.tsx (814 → 909 lines)
+
+**Preserved:** all 23 icon imports, `quickActionConfig` map,
+`useNavigation` / `useCart` / `useSetSelectedProduct` / `useSetActiveCategory`
+/ `useActiveCategory` / `useLastSpinDate` / `useToast` selectors,
+`useState(currentSlide, isLoading)`, `useRef(carouselRef)`, all three
+`useEffect` timers (carousel auto-scroll, scroll-on-change, simulate
+loading), `handleNextGenFeature` (with full `comingSoonKeys` array +
+`modalMap`), `handleCategoryClick`, `handleMealClick`, `handleQuickAdd`,
+`handleQuickAction`, `filteredMeals` derivation, all `setActiveTab`,
+`setActiveModal`, `setActiveCategory`, `setSelectedProduct` calls,
+`isLoading` skeleton fallback, `HomeTabSkeleton` import.
+
+**Rebuilt visual presentation:**
+
+1. **Greeting strip:** `SwiftRamadan` brand text now uses
+   `.auren-gradient-text` (mystic → royal → imperial purple gradient).
+   Greeting subtitle uses `var(--auren-text-secondary)` instead of
+   `text-white/65`. Removed the redundant `text-xs sm:text-sm` responsive
+   override (single `text-sm` size for cleaner premium clarity).
+
+2. **Free Spin Card:** swapped `glass-card` styling for
+   `.auren-premium-card` with `var(--auren-gold-border)` border accent,
+   replaced the `#E5A830` hardcoded gold with `var(--auren-gold)` (this
+   was the **only** hardcoded hex in the original HomeTab — now 0 hex
+   remain). The SPIN NOW pill uses an
+   `linear-gradient(135deg, var(--sr-vendor), var(--auren-gold))` with
+   `var(--auren-shadow-gold)` glow.
+
+3. **Smart Kitchen Hero (FLAGSHIP):** wrapped in `<div className="auren-hero-glow">`
+   so the radial royal-purple glow blooms out behind the card. Card
+   itself now uses `.auren-premium-card` with `var(--auren-royal-border)`
+   accent. Title switched from `text-white text-[1.65rem]` to
+   `auren-gradient-text text-[1.75rem]` (larger + cinematic). Added a
+   `.auren-accent-line` under the title. Floating orbs now use
+   `var(--auren-royal-glow)` and `var(--auren-gold-glow)` instead of
+   `bg-[var(--sr-customer)]/15` and `bg-[var(--sr-ai)]/15`. Padding bumped
+   from `p-5` to `p-5 sm:p-6` (generous premium padding per guideline).
+   Sparkles accents now use `var(--auren-gold)` + `var(--auren-mystic)`.
+
+4. **Live Iftar/Sahur Countdown:** preserved as-is (it's a
+   self-contained `RamadanCountdown` component — out of scope for this
+   rebuild).
+
+5. **Quick Actions Row:** wrapped in Framer Motion
+   `staggerContainer` + `cardItem` variants with `whileInView="visible"`
+   + `viewport={{ once: true, margin: '-40px' }}` for premium staggered
+   entrance. Each action button (Meal Planner + the 6 quickActions) now
+   uses `.auren-premium-card` instead of `glass-card` /
+   `bg-[var(--sr-ai)]/10` ad-hoc styling. Meal Planner card gets
+   `var(--auren-ai-border)` accent border. Min-width bumped from 76px to
+   80px; gap from 2.5 to 3. Labels use `var(--auren-text-secondary)`.
+
+6. **SwiftReel banner:** replaced `rounded-2xl border border-[var(--sr-customer)]/25`
+   ad-hoc styling with `.auren-premium-card`. Background gradient now
+   uses Auren royal/gold tokens via `color-mix()`. Added
+   `whileInView` entrance animation. Body text uses
+   `var(--auren-text-secondary)`. Padding bumped from `p-3.5` to `p-4`.
+
+7. **Hero Carousel:** each slide card now uses `.auren-premium-card`
+   instead of plain `border border-white/8 rounded-2xl`. Slide titles use
+   `.auren-gradient-text`. Subtitle gap consolidated from
+   `gap-3 sm:gap-4` to single `gap-4` (one less `sm:` breakpoint).
+   Subtitle text color uses `var(--sr-customer)` (kept for brand
+   identity) but text size consolidated from `text-xs sm:text-sm` to
+   `text-sm`. Added `whileInView` staggered entrance on slides with
+   `delay: index * 0.04`.
+
+8. **Category Grid (renamed from "Category Circles"):** section heading
+   now sits in its own `<div>` with `.auren-accent-line` underneath
+   (replaced `.heading-accent` `::after` underline with the explicit
+   Auren premium div). Each category button is now a small
+   `.auren-premium-card` (min-width 80px, p-3) containing the circular
+   icon + label. Active category gets a
+   `border-color: var(--sr-customer)` and a green glow shadow via
+   `color-mix()`. Wrapped in `staggerContainer` +
+   `whileInView` for premium staggered entrance.
+
+9. **Active category filter indicator:** wrapped in `.auren-premium-card`
+   with `border-color: var(--sr-customer)`. Added
+   `motion.div` entrance animation.
+
+10. **Featured Ramadan Box (Editor's Choice):** swapped `.premium-card`
+    for `.auren-premium-card` with `var(--auren-royal-border)` accent.
+    The "Editor's Choice" tag now uses `.auren-badge-gold`
+    (Auren gold-light background, gold border, gold text — already
+    defined in globals.css). Title uses `.auren-gradient-text` (larger
+    `text-2xl`). Added a `.auren-accent-line` under the price/badge row
+    area. Padding bumped from `p-5` to `p-5 sm:p-6`. The gold orb (was
+    `bg-[var(--sr-vendor)]/8`) now uses `var(--auren-gold-glow)`.
+    Strike-through price uses `var(--auren-text-secondary)` instead of
+    `text-white/60`. Image grid kept at `grid-cols-1 sm:grid-cols-2`
+    (this `sm:` is a true structural responsive need — kept).
+
+11. **Flash Sales:** section heading wrapped in its own div with
+    `.auren-accent-line`. Each flash sale card now uses
+    `.auren-premium-card` with built-in hover lift (CSS
+    `:hover { transform: translateY(-4px) }`).
+    Image now uses `rounded-t-2xl` (top corners only — fits the
+    premium-card radius). Card min-width bumped from 200px to 210px.
+    Strike-through price uses `var(--auren-text-secondary)` instead of
+    `text-white/60`. "X% claimed" text uses
+    `var(--auren-text-secondary)`. Wrapped the row in
+    `staggerContainer` + `whileInView` + `cardItem` for staggered
+    entrance. Name size consolidated from `text-xs sm:text-sm` to
+    `text-sm`.
+
+12. **Trending Iftar Meals:** section heading with
+    `.auren-accent-line`. Each meal card now uses `.auren-premium-card`
+    (consistent p-4 padding, single `gap-4` instead of `gap-3 sm:gap-4`
+    + `p-3 sm:p-4` — eliminated 2 `sm:` breakpoints).
+    Description text uses `var(--auren-text-secondary)` instead of
+    `text-white/65`. Wrapped the meal list in `staggerContainer` +
+    `whileInView` + `cardItem` for premium staggered entrance (each
+    card fades up 14px with 0.06s stagger between siblings).
+    Empty-state ("No meals found") card also uses `.auren-premium-card`
+    with `var(--auren-text-secondary)` text.
+
+13. **Join the Community CTA:** wrapped in `<div className="auren-hero-glow">`
+    for the royal bloom. Card uses `.auren-premium-card` with
+    `var(--auren-royal-border)` and an aurora gradient background
+    (built with `color-mix()` of `var(--sr-ai)`, `var(--auren-royal)`,
+    `var(--sr-customer)` over `var(--auren-glass)`). Title uses
+    `.auren-gradient-text`. Subtitle uses
+    `var(--auren-text-secondary)`. Added a `.auren-accent-line` under
+    the title. Padding bumped to `p-5 sm:p-6`. Left orb now uses
+    `var(--auren-royal-glow)` instead of
+    `bg-[var(--sr-ai)]/20`. Sparkles icon uses
+    `var(--auren-mystic)` color. Added `whileInView` entrance.
+
+14. **Next-Gen Features:** section heading wrapped in its own div with
+    `.auren-gradient-text` on the title ("✨ Next-Gen Features") and a
+    `.auren-accent-line` underneath. The Sparkles icon uses
+    `var(--auren-mystic)`. Each of the 28 feature buttons (across 6
+    sub-categories: AI-Powered, Gamification, Location, Social,
+    Commerce, Ambient) now uses `.auren-premium-card` instead of
+    `bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl`.
+    Min-width bumped from 80px to 84px; gap from 2.5 to 3. Labels use
+    `var(--auren-text-secondary)`. Sub-category headers use
+    `var(--auren-text-secondary)` instead of `text-white/65`.
+
+### Framer Motion additions
+- Defined `sectionVariants`, `staggerContainer`, and `cardItem`
+  variants at the top of the component for consistent premium
+  staggered entrance animations.
+- Applied `whileInView` + `viewport={{ once: true, margin: '-40px' }}`
+  to: Quick Actions Row, SwiftReel banner, Hero Carousel slides,
+  Category Grid, Featured Ramadan Box, Flash Sales row, Trending Meals
+  list, Community CTA, Next-Gen Features heading.
+- All animations respect `prefers-reduced-motion` via the existing
+  `@media (prefers-reduced-motion: reduce)` rule in `globals.css`
+  (which already covered `.auren-premium-card`, `.auren-tab-item`,
+  `.auren-cinematic`, etc.).
+
+### Token migration
+- Eliminated the **last** hardcoded hex in HomeTab: `#E5A830` →
+  `var(--auren-gold)` (Free Spin pill gradient).
+- Migrated 14 instances of `text-white/65` →
+  `var(--auren-text-secondary)` (premium typography hierarchy).
+- Migrated 4 instances of `text-white/60` →
+  `var(--auren-text-secondary)`.
+- Migrated floating orbs to Auren glow tokens: `bg-[var(--sr-ai)]/15`
+  → `var(--auren-royal-glow)`, `bg-[var(--sr-customer)]/15` →
+  `var(--auren-gold-glow)` (where semantically appropriate for the
+  premium feel).
+- Migrated Sparkles accent icons from `var(--sr-vendor)` /
+  `var(--sr-customer)` → `var(--auren-gold)` / `var(--auren-mystic)`
+  in the Smart Kitchen Hero (premium AI signal).
+
+### Files Touched
+- `src/components/swift/HomeTab.tsx` — rebuilt (814 → 909 lines)
+- `src/components/swift/BottomNav.tsx` — rebuilt (119 → 120 lines)
+
+No other files touched. No CSS edits (all `.auren-*` classes were already
+in `globals.css` from Phase 18-A foundation). No new components, no API
+surface changes, no store changes, no test changes, no package installs.
+
+### Verification (per task VERIFICATION block)
+
+```bash
+$ cd /home/z/my-project && bun run lint 2>&1 | tail -5
+  17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+✖ 3 problems (0 errors, 3 warnings)
+  0 errors and 2 warnings potentially fixable with the --fix option.
+# (3 pre-existing warnings, 0 errors — same as baseline)
+
+$ cd /home/z/my-project && bun run test 2>&1 | tail -5
+ Test Files  32 passed (32)
+      Tests  400 passed (400)
+   Start at  01:22:38
+   Duration  35.41s
+
+$ cd /home/z/my-project && npx tsc --noEmit 2>&1 | grep -c "error TS"
+0
+
+$ cd /home/z/my-project && echo "HomeTab sm:" && grep -c "sm:" src/components/swift/HomeTab.tsx
+4
+
+$ cd /home/z/my-project && echo "HomeTab auren:" && grep -c "auren-" src/components/swift/HomeTab.tsx
+76
+
+$ cd /home/z/my-project && echo "BottomNav auren:" && grep -c "auren-" src/components/swift/BottomNav.tsx
+7
+```
+
+### Metrics Summary
+
+| Metric                          | Before  | After  | Delta         |
+|---------------------------------|---------|--------|---------------|
+| HomeTab lines                   | 814     | 909    | +95           |
+| HomeTab `sm:` breakpoints        | 9       | **4**  | −5 (−55.6%)   |
+| HomeTab `auren-*` references     | 0       | **76** | +76 (NEW)     |
+| HomeTab hardcoded 6-char hex    | 1       | **0**  | −1 (−100%)    |
+| BottomNav lines                 | 119     | 120    | +1            |
+| BottomNav `auren-*` references  | 0       | **7**  | +7 (NEW)      |
+| Lint errors                     | 0       | 0      | unchanged     |
+| Lint warnings                   | 3       | 3      | unchanged (pre-existing) |
+| TS errors                       | 0       | 0      | unchanged     |
+| Test files passing              | 32      | 32     | unchanged     |
+| Tests passing                   | 400     | 400    | unchanged     |
+
+### Auren class usage breakdown (HomeTab, 76 refs)
+- `auren-text-secondary` × 25 (typography hierarchy)
+- `auren-premium-card` × 19 (every premium card surface)
+- `auren-gradient-text` × 6 (hero titles: SwiftRamadan, Smart Kitchen,
+  SwiftReel slide title, Ramadan Box, Community CTA, Next-Gen Features)
+- `auren-accent-line` × 6 (under each section heading)
+- `auren-royal-glow` × 3, `auren-royal-border` × 3, `auren-gold-glow` × 3,
+  `auren-gold` × 3 (orb/border/gradient accents)
+- `auren-royal` × 2, `auren-mystic` × 2, `auren-hero-glow` × 2,
+  `auren-gold-light` × 2, `auren-gold-border` × 2
+- `auren-shadow-gold` × 1, `auren-glass` × 1, `auren-badge-gold` × 1,
+  `auren-ai-border` × 1
+
+### Notes / Follow-ups
+1. **Role accent preservation:** BottomNav keeps the role-based
+   `var(--sr-rider/vendor/customer)` accent ONLY on the cart count
+   badge — the green/cyan/gold identity survives on the badge so
+   customers/riders/vendors still see "their" color when items are in
+   the cart. The active tab state itself uses Auren mystic purple per
+   the task's explicit instruction ("Use var(--auren-*) for active
+   state colors"). The CSS `.auren-tab-item.active` rule sets
+   `color: var(--auren-mystic)` + royal-light background + royal border.
+
+2. **`sm:` reduction rationale:** The original 9 `sm:` breakpoints were
+   mostly `text-xs sm:text-sm` (5 instances) and `gap-3 sm:gap-4` /
+   `p-3 sm:p-4` (3 instances) — pure spacing/typography nudges that
+   didn't add real responsive value. Consolidated to single sizes
+   (`text-sm`, `gap-4`, `p-4`) for cleaner premium typography. The 4
+   `sm:` that remain are all meaningful: 3 are `p-5 sm:p-6` (generous
+   premium padding on hero cards per task guideline) and 1 is
+   `grid-cols-1 sm:grid-cols-2` (true structural responsive need for
+   the Ramadan Box images grid).
+
+3. **`.heading-accent` removed from section headings:** The original
+   `.heading-accent::after` CSS adds a green-gold underline via
+   pseudo-element. Replaced with an explicit
+   `<div className="auren-accent-line mt-2" />` sibling element under
+   each heading — this gives the royal-mystic gradient line (per
+   `.auren-accent-line` CSS) for premium consistency. Did NOT remove
+   the `.heading-accent` class from `globals.css` itself (other
+   components may still use it).
+
+4. **`.premium-card` and `.glass-card` classes retained in
+   `globals.css`** — only swapped usage in HomeTab. Other components
+   may still use them. Migration is HomeTab/BottomNav scoped.
+
+5. **`Bike` icon import** in BottomNav is unused (was unused in
+   original too — pre-existing). Kept the import line identical to
+   original to avoid touching unrelated code; lint doesn't flag it
+   because the project's `no-unused-vars` rule for imports is
+   permissive.
+
+6. **`TrendingUp` and `Navigation` icon imports** in HomeTab are
+   unused (pre-existing). Same rationale as `Bike` above.
+
+7. **Framer Motion variants typed with `as const`** for the `ease`
+   cubic-bezier arrays — required by Framer Motion's TypeScript
+   definitions (which expect a tuple, not a number[]). 0 TS errors
+   confirmed.
+
+### Status
+✅ Phase 18-B complete. HomeTab + BottomNav now consume the full
+Auren Kingdom premium visual layer — `.auren-premium-card` on every
+card surface, `.auren-hero-glow` on the two flagship hero blocks,
+`.auren-gradient-text` on all major titles, `.auren-accent-line` under
+every section heading, `.auren-tab-bar` / `.auren-tab-item.active` on
+the bottom navigation, plus Framer Motion `whileInView` staggered
+entrances on all card collections. 0 TS errors, 0 lint errors,
+400/400 tests green.
+
+*Agent B — Premium Frontend Architect (Phase 18-B HomeTab + BottomNav)*
+*Result: HomeTab 0→76 auren refs, 9→4 sm: breakpoints, 1→0 hardcoded
+hex; BottomNav 0→7 auren refs with .auren-tab-bar / .auren-tab-item
+active; 0 TS errors, 0 lint errors, 32/32 test files + 400/400 tests
+passing.*

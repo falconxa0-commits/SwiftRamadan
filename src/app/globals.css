@@ -876,3 +876,301 @@
     opacity: 1 !important;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   AUREN KINGDOM PREMIUM VISUAL LAYER — Phase 18
+   The cinematic, luxury foundation for the rebuilt frontend.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Cinematic entrance ── */
+.auren-cinematic {
+  animation: auren-cinematic-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+@keyframes auren-cinematic-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Premium card with hover lift ── */
+.auren-premium-card {
+  background: var(--auren-glass);
+  backdrop-filter: blur(var(--auren-glass-blur));
+  -webkit-backdrop-filter: blur(var(--auren-glass-blur));
+  border: 1px solid var(--auren-glass-border);
+  border-radius: var(--auren-radius-xl);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  overflow: hidden;
+}
+.auren-premium-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  pointer-events: none;
+}
+.auren-premium-card:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--auren-shadow-lg);
+  transform: translateY(-4px);
+}
+
+/* ── Royal accent line ── */
+.auren-accent-line {
+  height: 2px;
+  width: 32px;
+  background: linear-gradient(90deg, var(--auren-royal), var(--auren-mystic));
+  border-radius: 999px;
+}
+
+/* ── Premium section spacing ── */
+.auren-section {
+  padding: 24px 20px;
+}
+@media (min-width: 640px) {
+  .auren-section { padding: 32px 24px; }
+}
+
+/* ── Auren tab bar ── */
+.auren-tab-bar {
+  background: var(--auren-glass);
+  backdrop-filter: blur(var(--auren-glass-blur));
+  -webkit-backdrop-filter: blur(var(--auren-glass-blur));
+  border: 1px solid var(--auren-glass-border);
+  border-radius: var(--auren-radius-2xl);
+  padding: 6px;
+  display: flex;
+  gap: 4px;
+}
+.auren-tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-radius: var(--auren-radius-lg);
+  color: var(--auren-text-tertiary);
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  min-height: 56px;
+}
+.auren-tab-item.active {
+  background: linear-gradient(135deg, var(--auren-royal-light), transparent);
+  color: var(--auren-mystic);
+  border: 1px solid var(--auren-royal-border);
+}
+
+/* ── Premium input field ── */
+.auren-input {
+  background: var(--auren-glass);
+  border: 1px solid var(--auren-glass-border);
+  border-radius: var(--auren-radius-lg);
+  padding: 16px 20px;
+  color: var(--auren-text-primary);
+  font-size: 15px;
+  transition: all 0.2s ease;
+  width: 100%;
+  min-height: 52px;
+}
+.auren-input::placeholder {
+  color: var(--auren-text-muted);
+}
+.auren-input:focus {
+  outline: none;
+  border-color: var(--auren-royal-border);
+  box-shadow: 0 0 0 3px var(--auren-royal-light);
+}
+
+/* ── Premium gradient text ── */
+.auren-gradient-text {
+  background: linear-gradient(135deg, var(--auren-mystic), var(--auren-royal), var(--auren-imperial));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.auren-gradient-gold {
+  background: linear-gradient(135deg, #E8C547, var(--auren-gold), #B8941F);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+/* ── Premium hero glow ── */
+.auren-hero-glow {
+  position: relative;
+}
+.auren-hero-glow::after {
+  content: '';
+  position: absolute;
+  inset: -40px;
+  background: radial-gradient(ellipse at center, var(--auren-royal-light), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Auren badge ── */
+.auren-badge-royal {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--auren-royal-light);
+  border: 1px solid var(--auren-royal-border);
+  color: var(--auren-mystic);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.auren-badge-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--auren-gold-light);
+  border: 1px solid var(--auren-gold-border);
+  color: var(--auren-gold);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Premium divider ── */
+.auren-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--auren-glass-border), transparent);
+}
+
+/* ── Auren floating action ── */
+.auren-fab {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--auren-royal), var(--auren-imperial));
+  box-shadow: var(--auren-shadow-royal), 0 4px 16px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 40;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.auren-fab:hover {
+  transform: scale(1.08);
+}
+.auren-fab:active {
+  transform: scale(0.95);
+}
+
+/* ── Auren premium list item ── */
+.auren-list-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: var(--auren-radius-lg);
+  transition: all 0.2s ease;
+  cursor: pointer;
+  min-height: 56px;
+}
+.auren-list-item:hover {
+  background: var(--auren-glass-hover);
+}
+.auren-list-item:active {
+  transform: scale(0.99);
+}
+
+/* ── Auren metric display ── */
+.auren-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.auren-metric-value {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--auren-text-primary);
+}
+.auren-metric-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--auren-text-tertiary);
+}
+
+/* ── Auren progress bar ── */
+.auren-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+.auren-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--auren-royal), var(--auren-mystic));
+  transition: width 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Auren modal backdrop ── */
+.auren-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 5, 5, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+}
+
+/* ── Auren toast notification ── */
+.auren-toast {
+  background: var(--auren-glass);
+  backdrop-filter: blur(var(--auren-glass-blur));
+  -webkit-backdrop-filter: blur(var(--auren-glass-blur));
+  border: 1px solid var(--auren-glass-border);
+  border-radius: var(--auren-radius-lg);
+  padding: 16px 20px;
+  box-shadow: var(--auren-shadow-lg);
+  max-width: 400px;
+}
+
+/* ── Auren empty state ── */
+.auren-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+/* ── Reduced motion override for Phase 18 ── */
+@media (prefers-reduced-motion: reduce) {
+  .auren-cinematic,
+  .auren-premium-card,
+  .auren-tab-item,
+  .auren-fab,
+  .auren-list-item,
+  .auren-progress-fill {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
