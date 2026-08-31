@@ -81,7 +81,7 @@ export default function EcoImpactReport() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 text-center"
+                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] border border-white/10 p-6 text-center"
               >
                 <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-customer)]/10 blur-[80px]" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-green-600/5 blur-[60px]" />

@@ -8,14 +8,14 @@ import { useToast } from '@/hooks/use-toast';
 
 // Prize configuration (must match the API)
 const WHEEL_PRIZES = [
-  { id: 1, type: 'discount', value: 500, label: '₦500 Off', color: '#10E07A', icon: '💰', probability: 0.20 },
-  { id: 2, type: 'swiftPoints', value: 50, label: '50 SwiftPoints', color: '#F5C451', icon: '⭐', probability: 0.20 },
-  { id: 3, type: 'freeDelivery', value: 1, label: 'Free Delivery', color: '#38BDF8', icon: '🚀', probability: 0.10 },
-  { id: 4, type: 'discount', value: 1000, label: '₦1,000 Off', color: '#10E07A', icon: '💰', probability: 0.10 },
-  { id: 5, type: 'swiftPoints', value: 100, label: '100 SwiftPoints', color: '#F5C451', icon: '⭐', probability: 0.10 },
-  { id: 6, type: 'multiplier', value: 2, label: '2x Points', color: '#A78BFA', icon: '✨', probability: 0.10 },
-  { id: 7, type: 'discount', value: 2500, label: '₦2,500 Off', color: '#F5C451', icon: '💎', probability: 0.05, rare: true },
-  { id: 8, type: 'jackpot', value: 500, label: '500pts+₦500', color: '#10E07A', icon: '🎰', probability: 0.05, jackpot: true },
+  { id: 1, type: 'discount', value: 500, label: '₦500 Off', color: 'var(--sr-customer)', icon: '💰', probability: 0.20 },
+  { id: 2, type: 'swiftPoints', value: 50, label: '50 SwiftPoints', color: 'var(--sr-vendor)', icon: '⭐', probability: 0.20 },
+  { id: 3, type: 'freeDelivery', value: 1, label: 'Free Delivery', color: 'var(--sr-rider)', icon: '🚀', probability: 0.10 },
+  { id: 4, type: 'discount', value: 1000, label: '₦1,000 Off', color: 'var(--sr-customer)', icon: '💰', probability: 0.10 },
+  { id: 5, type: 'swiftPoints', value: 100, label: '100 SwiftPoints', color: 'var(--sr-vendor)', icon: '⭐', probability: 0.10 },
+  { id: 6, type: 'multiplier', value: 2, label: '2x Points', color: 'var(--sr-ai)', icon: '✨', probability: 0.10 },
+  { id: 7, type: 'discount', value: 2500, label: '₦2,500 Off', color: 'var(--sr-vendor)', icon: '💎', probability: 0.05, rare: true },
+  { id: 8, type: 'jackpot', value: 500, label: '500pts+₦500', color: 'var(--sr-customer)', icon: '🎰', probability: 0.05, jackpot: true },
 ];
 
 const SEGMENT_ANGLE = 360 / WHEEL_PRIZES.length; // 45 degrees
@@ -124,7 +124,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
 
   // Generate confetti
   const generateConfetti = useCallback(() => {
-    const colors = ['#10E07A', '#F5C451', '#38BDF8', '#A78BFA', '#FF6B6B', '#FFF'];
+    const colors = ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-rider)', 'var(--sr-ai)', '#FF6B6B', '#FFF'];
     const particles: ConfettiParticle[] = [];
     for (let i = 0; i < 50; i++) {
       particles.push({
@@ -289,7 +289,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
       <div className="flex-1 flex flex-col items-center justify-center relative -mt-4">
         {/* Pointer Arrow */}
         <div className="absolute z-20 top-0 left-1/2 -translate-x-1/2" style={{ marginTop: '0px' }}>
-          <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-[#F5C451] drop-shadow-[0_2px_8px_rgba(245,196,81,0.5)]" />
+          <div className="w-0 h-0 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-[var(--sr-vendor)] drop-shadow-[0_2px_8px_rgba(245,196,81,0.5)]" />
         </div>
 
         {/* Outer LED Ring */}
@@ -309,8 +309,8 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     top: `${50 - 48 * Math.cos((angle * Math.PI) / 180)}%`,
                     left: `${50 + 48 * Math.sin((angle * Math.PI) / 180)}%`,
                     transform: 'translate(-50%, -50%)',
-                    background: isActive ? '#F5C451' : 'rgba(245,196,81,0.2)',
-                    boxShadow: isActive ? '0 0 8px #F5C451, 0 0 16px rgba(245,196,81,0.4)' : 'none',
+                    background: isActive ? 'var(--sr-vendor)' : 'rgba(245,196,81,0.2)',
+                    boxShadow: isActive ? '0 0 8px var(--sr-vendor), 0 0 16px rgba(245,196,81,0.4)' : 'none',
                   }}
                 />
               );
@@ -334,7 +334,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
             className="absolute rounded-full overflow-hidden"
             style={{
               inset: '10px',
-              transform: `rotate(${rotation}deg)`,
+              transform: `rotate(color-mix(in srgb, ${rotation} 87%, transparent)g)`,
               transition: isSpinning
                 ? 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)'
                 : 'none',
@@ -345,8 +345,8 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               const startAngle = i * SEGMENT_ANGLE;
               const isEven = i % 2 === 0;
               // Use alternating shades from the prize color
-              const bgColor = isEven ? prize.color : `${prize.color}CC`;
-              const darkBg = isEven ? `${prize.color}30` : `${prize.color}20`;
+              const bgColor = isEven ? prize.color : `color-mix(in srgb, ${prize.color} 80%, transparent)`;
+              const darkBg = isEven ? `color-mix(in srgb, ${prize.color} 19%, transparent)` : `color-mix(in srgb, ${prize.color} 13%, transparent)`;
 
               return (
                 <div
@@ -356,7 +356,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     width: '100%',
                     height: '100%',
                     clipPath: `polygon(50% 50%, ${50 + 50 * Math.sin((startAngle * Math.PI) / 180)}% ${50 - 50 * Math.cos((startAngle * Math.PI) / 180)}%, ${50 + 50 * Math.sin(((startAngle + SEGMENT_ANGLE) * Math.PI) / 180)}% ${50 - 50 * Math.cos(((startAngle + SEGMENT_ANGLE) * Math.PI) / 180)}%)`,
-                    background: `linear-gradient(${startAngle + 22.5}deg, ${bgColor}, ${darkBg})`,
+                    background: `linear-gradient(color-mix(in srgb, ${startAngle + 22.5} 87%, transparent)g, ${bgColor}, ${darkBg})`,
                     opacity: !canSpin && !isSpinning ? 0.3 : 1,
                   }}
                 >
@@ -366,7 +366,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     style={{
                       top: '22%',
                       left: '50%',
-                      transform: `rotate(${startAngle + SEGMENT_ANGLE / 2}deg) translateX(-50%)`,
+                      transform: `rotate(color-mix(in srgb, ${startAngle + SEGMENT_ANGLE / 2} 87%, transparent)g) translateX(-50%)`,
                       transformOrigin: '50% 200%',
                       width: '70px',
                     }}
@@ -397,7 +397,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     width: '1px',
                     height: '50%',
                     transformOrigin: '0 0',
-                    transform: `rotate(${angle}deg)`,
+                    transform: `rotate(color-mix(in srgb, ${angle} 87%, transparent)g)`,
                   }}
                 />
               );
@@ -412,7 +412,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center transition-all active:scale-95 focus:outline-none focus:ring-2 focus:ring-[var(--sr-vendor)]/50"
               style={{
                 background: canSpin
-                  ? 'linear-gradient(135deg, #F5C451, #E5A830)'
+                  ? 'linear-gradient(135deg, var(--sr-vendor), #E5A830)'
                   : 'linear-gradient(135deg, #555, #444)',
                 boxShadow: canSpin
                   ? '0 4px 20px rgba(245,196,81,0.5), 0 0 40px rgba(245,196,81,0.2)'
@@ -421,14 +421,14 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
               aria-label={canSpin ? 'Spin the wheel' : 'Already spun today'}
             >
               {isSpinning ? (
-                <RotateCcw className="w-6 h-6 text-[#0B0D14] animate-spin" />
+                <RotateCcw className="w-6 h-6 text-[var(--sr-surface-base)] animate-spin" />
               ) : (
-                <span className="text-[#0B0D14] font-black text-sm sm:text-base">
+                <span className="text-[var(--sr-surface-base)] font-black text-sm sm:text-base">
                   {canSpin ? 'SPIN' : '✓'}
                 </span>
               )}
               {/* Hub border ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-[#0B0D14]/20" />
+              <div className="absolute inset-0 rounded-full border-2 border-[var(--sr-surface-base)]/20" />
               {/* Inner ring */}
               <div className="absolute inset-1 rounded-full border border-white/20" />
             </button>
@@ -533,10 +533,10 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                 exit={{ scale: 0.5, opacity: 0, y: 40 }}
                 transition={{ type: 'spring', damping: 15, stiffness: 200 }}
                 className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-vendor)]/30"
-                style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
+                style={{ background: 'linear-gradient(135deg, var(--sr-surface-elevated), var(--sr-surface-raised))' }}
               >
                 {/* Glow effect */}
-                <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-[60px]" style={{ background: result.prize.jackpot ? '#F5C451' : '#10E07A', opacity: 0.2 }} />
+                <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full blur-[60px]" style={{ background: result.prize.jackpot ? 'var(--sr-vendor)' : 'var(--sr-customer)', opacity: 0.2 }} />
                 <div className="absolute -bottom-20 -left-20 w-32 h-32 rounded-full bg-[var(--sr-ai)]/20 blur-[40px]" />
 
                 <div className="relative z-10 p-8 text-center">
@@ -547,8 +547,8 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     transition={{ type: 'spring', delay: 0.2, stiffness: 150 }}
                     className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center border-2"
                     style={{
-                      background: result.prize.jackpot ? 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' : 'linear-gradient(135deg, #10E07A/20, #10E07A/10)',
-                      borderColor: result.prize.jackpot ? '#F5C451/50' : '#10E07A/50',
+                      background: result.prize.jackpot ? 'linear-gradient(135deg, var(--sr-vendor)/20, var(--sr-vendor)/10)' : 'linear-gradient(135deg, var(--sr-customer)/20, var(--sr-customer)/10)',
+                      borderColor: result.prize.jackpot ? 'var(--sr-vendor)/50' : 'var(--sr-customer)/50',
                     }}
                   >
                     <span className="text-4xl">
@@ -562,7 +562,7 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
                     className="text-2xl font-black mb-1"
-                    style={{ color: result.prize.jackpot ? '#F5C451' : '#10E07A' }}
+                    style={{ color: result.prize.jackpot ? 'var(--sr-vendor)' : 'var(--sr-customer)' }}
                   >
                     {result.prize.jackpot ? 'JACKPOT! 🌙' : result.prize.rare ? 'RARE WIN!' : 'You Won! 🎉'}
                   </motion.h3>
@@ -598,9 +598,9 @@ export default function LoyaltySpinWheel({ onClose }: LoyaltySpinWheelProps) {
                     transition={{ delay: 0.6 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleClaim}
-                    className="w-full py-3.5 rounded-2xl text-[#0B0D14] font-black text-base transition-all"
+                    className="w-full py-3.5 rounded-2xl text-[var(--sr-surface-base)] font-black text-base transition-all"
                     style={{
-                      background: 'linear-gradient(135deg, #10E07A, #0CC06A)',
+                      background: 'linear-gradient(135deg, var(--sr-customer), var(--sr-customer))',
                       boxShadow: '0 4px 20px rgba(16,224,122,0.4)',
                     }}
                   >

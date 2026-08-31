@@ -394,10 +394,10 @@ export default function SafaAgentHub() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="relative w-full max-w-lg h-[90vh] sm:h-[80vh] bg-[#0a0b10] border border-white/10 rounded-t-2xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl"
+          className="relative w-full max-w-lg h-[90vh] sm:h-[80vh] bg-[var(--sr-surface-base)] border border-[var(--auren-royal-border)] rounded-t-2xl sm:rounded-2xl flex flex-col overflow-hidden shadow-2xl shadow-[var(--auren-royal-glow)]"
         >
-          {/* Gradient accent ring based on active agent */}
-          <div className={`pointer-events-none absolute inset-0 rounded-t-2xl sm:rounded-2xl p-px bg-gradient-to-br from-[var(--sr-customer)]/30 via-transparent to-[${activeAgent?.icon === '🎧' ? '#38BDF8' : '#F5C451'}]/30 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] opacity-50`} />
+          {/* Gradient accent ring based on active agent — Auren Kingdom premium AI palette */}
+          <div className={`pointer-events-none absolute inset-0 rounded-t-2xl sm:rounded-2xl p-px bg-gradient-to-br from-[var(--sr-customer)]/30 via-[var(--auren-royal)]/15 to-[${activeAgent?.icon === '🎧' ? 'var(--sr-rider)' : 'var(--sr-vendor)'}]/30 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude] opacity-50`} />
 
           {/* ═══════ Header ═══════ */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-white/10 bg-[var(--sr-surface-base)]/90 backdrop-blur-md shrink-0">

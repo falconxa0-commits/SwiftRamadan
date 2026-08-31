@@ -99,7 +99,7 @@ export default class ErrorBoundary extends React.Component<
                   height="36"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#F5C451"
+                  stroke="var(--sr-vendor)"
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"

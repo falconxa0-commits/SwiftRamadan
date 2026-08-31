@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 
 /* ─────────────────────────────────────────────────────
    Premium Shimmer Skeleton Components
-   Aurora Luxe palette: base #1A1D26 → highlight #252833 → base #1A1D26
+   Aurora Luxe palette: base var(--sr-surface-elevated) → highlight var(--sr-surface-elevated) → base var(--sr-surface-elevated)
    Animation: translateX(-100% to 100%) over 1.5s, infinite, ease-in-out
    ───────────────────────────────────────────────────── */
 

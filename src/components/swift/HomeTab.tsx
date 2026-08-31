@@ -169,7 +169,7 @@ export default function HomeTab() {
             {/* Glow */}
             <div className="absolute -top-4 -right-4 w-16 h-16 rounded-full bg-[var(--sr-vendor)]/15 blur-3xl pointer-events-none" />
             <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/30 shrink-0"
-              style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
+              style={{ background: 'linear-gradient(135deg, var(--sr-vendor)/20, var(--sr-vendor)/10)' }}>
               <span className="text-xl">🎰</span>
             </div>
             <div className="flex-1 text-left">
@@ -179,8 +179,8 @@ export default function HomeTab() {
             <motion.div
               animate={{ x: [0, 4, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="px-3 py-1.5 rounded-xl text-[10px] font-black text-[#0B0D14] shrink-0"
-              style={{ background: 'linear-gradient(135deg, #F5C451, #E5A830)' }}
+              className="px-3 py-1.5 rounded-xl text-[10px] font-black text-[var(--sr-surface-base)] shrink-0"
+              style={{ background: 'linear-gradient(135deg, var(--sr-vendor), #E5A830)' }}
             >
               SPIN NOW
             </motion.div>
@@ -365,7 +365,7 @@ export default function HomeTab() {
                   className="relative w-full aspect-[16/9] bg-center bg-no-repeat bg-cover rounded-2xl overflow-hidden border border-white/8 hover:border-white/15 transition-colors"
                   style={{ backgroundImage: `url("${slide.image}")` }}
                 >
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-base)] via-transparent to-transparent" />
                   {slide.badge && (
                     <div className="absolute top-3 left-3 gold-gradient px-3 py-1 rounded-full flex items-center gap-1 gold-glow">
                       <Star className="w-3 h-3 text-black fill-black" />
@@ -628,7 +628,7 @@ export default function HomeTab() {
                       {meal.deliveryTime}
                     </span>
                     <span className="soft-chip text-[var(--sr-vendor)]">
-                      <Star className="w-3 h-3 fill-[#F5C451]" />
+                      <Star className="w-3 h-3 fill-[var(--sr-vendor)]" />
                       {meal.rating}
                     </span>
                     <button

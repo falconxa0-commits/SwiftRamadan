@@ -39,11 +39,11 @@ interface ChallengeBoardProps {
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
-  explore: '#10E07A',
-  cook: '#F5C451',
-  social: '#A78BFA',
-  gift: '#38BDF8',
-  eco: '#10E07A',
+  explore: 'var(--sr-customer)',
+  cook: 'var(--sr-vendor)',
+  social: 'var(--sr-ai)',
+  gift: 'var(--sr-rider)',
+  eco: 'var(--sr-customer)',
 };
 
 export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
@@ -222,7 +222,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
             animate={{ width: `${stats?.percentage || 0}%` }}
             transition={{ duration: 1, ease: 'easeOut' }}
             className="h-full rounded-full"
-            style={{ background: 'linear-gradient(90deg, #10E07A, #F5C451)' }}
+            style={{ background: 'linear-gradient(90deg, var(--sr-customer), var(--sr-vendor))' }}
           />
         </div>
         <div className="flex items-center justify-between mt-1.5">
@@ -269,7 +269,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[var(--sr-customer)] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -280,7 +280,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
               {/* Contribution Grid - 6 rows x 5 cols = 30 days */}
               <div className="grid grid-cols-6 gap-2">
                 {mergedChallenges.map((challenge, i) => {
-                  const catColor = CATEGORY_COLORS[challenge.category] || '#10E07A';
+                  const catColor = CATEGORY_COLORS[challenge.category] || 'var(--sr-customer)';
                   const isCompleted = challenge.completed;
                   const isCurrent = challenge.isCurrent;
                   const isLocked = challenge.isLocked;
@@ -305,9 +305,9 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                           : 'bg-[var(--sr-surface-raised)] border-white/8 cursor-pointer hover:border-white/15'
                       }`}
                       style={isCompleted ? {
-                        background: `linear-gradient(135deg, ${catColor}25, ${catColor}10)`,
-                        borderColor: `${catColor}40`,
-                        boxShadow: `0 0 12px ${catColor}20`,
+                        background: `linear-gradient(135deg, color-mix(in srgb, ${catColor} 15%, transparent), color-mix(in srgb, ${catColor} 6%, transparent))`,
+                        borderColor: `color-mix(in srgb, ${catColor} 25%, transparent)`,
+                        boxShadow: `0 0 12px color-mix(in srgb, ${catColor} 13%, transparent)`,
                       } : {}}
                       aria-label={`Day ${challenge.day}: ${challenge.title}${isCompleted ? ' (completed)' : isLocked ? ' (locked)' : ''}`}
                     >
@@ -328,7 +328,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                           animate={{ scale: 1 }}
                           className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[var(--sr-customer)] flex items-center justify-center"
                         >
-                          <Check className="w-2.5 h-2.5 text-[#0B0D14]" />
+                          <Check className="w-2.5 h-2.5 text-[var(--sr-surface-base)]" />
                         </motion.div>
                       )}
 
@@ -392,7 +392,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                       </div>
                       <div
                         className="w-2 h-2 rounded-full shrink-0"
-                        style={{ backgroundColor: CATEGORY_COLORS[challenge.category] || '#10E07A' }}
+                        style={{ backgroundColor: CATEGORY_COLORS[challenge.category] || 'var(--sr-customer)' }}
                       />
                     </motion.button>
                   ))}
@@ -430,8 +430,8 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 border"
                   style={{
-                    backgroundColor: `${CATEGORY_COLORS[selectedChallenge.category] || '#10E07A'}15`,
-                    borderColor: `${CATEGORY_COLORS[selectedChallenge.category] || '#10E07A'}25`,
+                    backgroundColor: `color-mix(in srgb, ${CATEGORY_COLORS[selectedChallenge.category] || 'var(--sr-customer)'} 8%, transparent)`,
+                    borderColor: `color-mix(in srgb, ${CATEGORY_COLORS[selectedChallenge.category] || 'var(--sr-customer)'} 15%, transparent)`,
                   }}
                 >
                   {selectedChallenge.icon}
@@ -443,7 +443,7 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                     </span>
                     <div
                       className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: CATEGORY_COLORS[selectedChallenge.category] || '#10E07A' }}
+                      style={{ backgroundColor: CATEGORY_COLORS[selectedChallenge.category] || 'var(--sr-customer)' }}
                     />
                   </div>
                   <h3 className="text-white text-lg font-bold">{selectedChallenge.title}</h3>
@@ -480,8 +480,8 @@ export default function ChallengeBoard({ onClose }: ChallengeBoardProps) {
                   style={{
                     background: completing
                       ? 'linear-gradient(135deg, #555, #444)'
-                      : 'linear-gradient(135deg, #10E07A, #0CC06A)',
-                    color: '#0B0D14',
+                      : 'linear-gradient(135deg, var(--sr-customer), var(--sr-customer))',
+                    color: 'var(--sr-surface-base)',
                     boxShadow: completing ? 'none' : '0 4px 20px rgba(16,224,122,0.3)',
                   }}
                   aria-label={`Complete challenge: ${selectedChallenge.title}`}

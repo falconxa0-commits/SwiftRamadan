@@ -26,11 +26,11 @@ interface MoodOption {
 }
 
 const MOODS: MoodOption[] = [
-  { key: 'energetic', emoji: '⚡', label: 'Energetic', icon: Zap, color: '#F97316' },
-  { key: 'cozy', emoji: '🛋️', label: 'Cozy', icon: Sofa, color: '#F59E0B' },
-  { key: 'adventurous', emoji: '🌍', label: 'Adventurous', icon: Globe, color: '#10E07A' },
-  { key: 'romantic', emoji: '❤️', label: 'Romantic', icon: Heart, color: '#EF4444' },
-  { key: 'focused', emoji: '🎯', label: 'Focused', icon: Target, color: '#3B82F6' },
+  { key: 'energetic', emoji: '⚡', label: 'Energetic', icon: Zap, color: 'var(--sr-warning)' },
+  { key: 'cozy', emoji: '🛋️', label: 'Cozy', icon: Sofa, color: 'var(--sr-warning)' },
+  { key: 'adventurous', emoji: '🌍', label: 'Adventurous', icon: Globe, color: 'var(--sr-customer)' },
+  { key: 'romantic', emoji: '❤️', label: 'Romantic', icon: Heart, color: 'var(--sr-error)' },
+  { key: 'focused', emoji: '🎯', label: 'Focused', icon: Target, color: 'var(--sr-info)' },
 ];
 
 function SpiceDots({ level }: { level: number }) {
@@ -103,8 +103,8 @@ export default function MoodFeedModal() {
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F59E0B]/10 rounded-xl flex items-center justify-center border border-[#F59E0B]/20">
-                  <Smile className="w-5 h-5 text-[#F59E0B]" />
+                <div className="w-10 h-10 bg-[var(--sr-warning)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-warning)]/20">
+                  <Smile className="w-5 h-5 text-[var(--sr-warning)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg">😊 Mood Order</h2>
@@ -137,7 +137,7 @@ export default function MoodFeedModal() {
                         ? 'border-white/20 bg-white/10'
                         : 'border-white/5 bg-[var(--sr-surface-elevated)] hover:border-white/10'
                     }`}
-                    style={isSelected ? { boxShadow: `0 0 20px ${mood.color}20` } : {}}
+                    style={isSelected ? { boxShadow: `0 0 20px color-mix(in srgb, ${mood.color} 13%, transparent)` } : {}}
                   >
                     <span className="text-2xl">{mood.emoji}</span>
                     <span className={`text-[10px] font-bold ${isSelected ? 'text-white' : 'text-white/65'}`}>
@@ -166,7 +166,7 @@ export default function MoodFeedModal() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                  className="w-10 h-10 border-3 border-white/10 border-t-[#F59E0B] rounded-full mb-4"
+                  className="w-10 h-10 border-3 border-white/10 border-t-[var(--sr-warning)] rounded-full mb-4"
                 />
                 <p className="text-white/50 text-sm">Finding the perfect {activeMood?.label.toLowerCase()} meals...</p>
               </motion.div>
@@ -221,7 +221,7 @@ export default function MoodFeedModal() {
                         <p className="text-white/65 text-[10px] leading-tight mb-2 line-clamp-2">{product.description}</p>
 
                         {/* Mood match */}
-                        <p className="text-[#F59E0B] text-[10px] mb-2 line-clamp-1 italic">
+                        <p className="text-[var(--sr-warning)] text-[10px] mb-2 line-clamp-1 italic">
                           &ldquo;{product.mood_match}&rdquo;
                         </p>
 

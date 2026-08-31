@@ -45,7 +45,7 @@ import {
 const ROLE_CONFIG = {
   customer: {
     label: 'Customer',
-    accent: '#10E07A',
+    accent: 'var(--sr-customer)',
     accentLight: 'rgba(16,224,122,0.12)',
     accentMid: 'rgba(16,224,122,0.25)',
     gradient: 'from-[#064e3b] to-[#0a3d2e]',
@@ -54,7 +54,7 @@ const ROLE_CONFIG = {
   },
   vendor: {
     label: 'Vendor',
-    accent: '#F5C451',
+    accent: 'var(--sr-vendor)',
     accentLight: 'rgba(245,196,81,0.12)',
     accentMid: 'rgba(245,196,81,0.25)',
     gradient: 'from-[#4a3d00] to-[#2d2100]',
@@ -63,7 +63,7 @@ const ROLE_CONFIG = {
   },
   rider: {
     label: 'Rider',
-    accent: '#38BDF8',
+    accent: 'var(--sr-rider)',
     accentLight: 'rgba(56,189,248,0.12)',
     accentMid: 'rgba(56,189,248,0.25)',
     gradient: 'from-[#1e3a5f] to-[#0c1929]',
@@ -98,7 +98,7 @@ const VEHICLE_TYPES = [
 /** Premium dual-ring spinner — outer ring rotates clockwise, inner ring
  *  counter-rotates. Uses the role accent for the leading edge so it
  *  reads as “part of” the active role even while loading. */
-function Spinner({ color = '#06070B' }: { color?: string }) {
+function Spinner({ color = 'var(--sr-surface-base)' }: { color?: string }) {
   return (
     <span
       className="relative inline-flex w-5 h-5 shrink-0"
@@ -109,13 +109,13 @@ function Spinner({ color = '#06070B' }: { color?: string }) {
         animate={{ rotate: 360 }}
         transition={{ duration: 0.9, repeat: Infinity, ease: 'linear' }}
         className="absolute inset-0 rounded-full border-2"
-        style={{ borderColor: `${color}25`, borderTopColor: color }}
+        style={{ borderColor: `color-mix(in srgb, ${color} 15%, transparent)`, borderTopColor: color }}
       />
       <motion.span
         animate={{ rotate: -360 }}
         transition={{ duration: 1.4, repeat: Infinity, ease: 'linear' }}
         className="absolute inset-1 rounded-full border"
-        style={{ borderColor: `${color}15`, borderBottomColor: color }}
+        style={{ borderColor: `color-mix(in srgb, ${color} 8%, transparent)`, borderBottomColor: color }}
       />
     </span>
   );
@@ -208,7 +208,7 @@ function InputField({
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={onKeyDown}
         className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
-        style={{ borderColor: value ? `${accentColor}50` : undefined }}
+        style={{ borderColor: value ? `color-mix(in srgb, ${accentColor} 31%, transparent)` : undefined }}
       />
       {rightElement && (
         <div className="absolute right-4 top-1/2 -translate-y-1/2">
@@ -244,11 +244,11 @@ function ActionButton({
       style={{
         backgroundColor: accentColor,
         color: 'var(--sr-surface-base)',
-        boxShadow: `0 4px 24px ${accentColor}30`,
+        boxShadow: `0 4px 24px color-mix(in srgb, ${accentColor} 19%, transparent)`,
       }}
     >
       {loading ? (
-        <Spinner color="#06070B" />
+        <Spinner color="var(--sr-surface-base)" />
       ) : (
         <>
           {Icon && <Icon aria-hidden="true" className="w-5 h-5" />}
@@ -424,7 +424,7 @@ function LoginScreen() {
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
             className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
-            style={{ borderColor: password ? `${config.accent}50` : undefined }}
+            style={{ borderColor: password ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
           />
           <button
             type="button"
@@ -816,7 +816,7 @@ function SignupScreen() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 15))}
                 className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-28 pr-4 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
-                style={{ borderColor: phone ? `${config.accent}50` : undefined }}
+                style={{ borderColor: phone ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
               />
             </div>
 
@@ -839,7 +839,7 @@ function SignupScreen() {
                 aria-label="Residential area"
                 aria-expanded={areaOpen}
                 className={`w-full h-14 bg-[var(--sr-surface-elevated)] border rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center ${area ? 'text-white' : 'text-white/50'}`}
-                style={{ borderColor: area ? `${config.accent}50` : 'rgba(255,255,255,0.1)' }}
+                style={{ borderColor: area ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : 'rgba(255,255,255,0.1)' }}
               >
                 {area || 'Residential area'}
               </button>
@@ -885,7 +885,7 @@ function SignupScreen() {
                 value={signupPassword}
                 onChange={(e) => setSignupPassword(e.target.value)}
                 className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-12 text-white placeholder:text-white/50 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200"
-                style={{ borderColor: signupPassword ? `${config.accent}50` : undefined }}
+                style={{ borderColor: signupPassword ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
               />
               <button
                 type="button"
@@ -948,7 +948,7 @@ function SignupScreen() {
             >
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-                style={{ backgroundColor: `${config.accent}30` }}
+                style={{ backgroundColor: `color-mix(in srgb, ${config.accent} 19%, transparent)` }}
               >
                 <config.icon aria-hidden="true" className="w-6 h-6" style={{ color: config.accent }} />
               </div>
@@ -984,7 +984,7 @@ function SignupScreen() {
                     aria-label="Business category"
                     aria-expanded={businessCategoryOpen}
                     className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
-                    style={{ borderColor: businessCategory ? `${config.accent}50` : undefined }}
+                    style={{ borderColor: businessCategory ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
                   >
                     <span className="flex items-center gap-2">
                       {(() => {
@@ -1055,7 +1055,7 @@ function SignupScreen() {
                     aria-label="Vehicle type"
                     aria-expanded={vehicleTypeOpen}
                     className="w-full h-14 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-xl pl-12 pr-10 text-left text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-white/15 focus:border-white/25 transition-all duration-200 flex items-center text-white"
-                    style={{ borderColor: vehicleType ? `${config.accent}50` : undefined }}
+                    style={{ borderColor: vehicleType ? `color-mix(in srgb, ${config.accent} 31%, transparent)` : undefined }}
                   >
                     {vehicleType || 'Vehicle type'}
                   </button>
@@ -1349,8 +1349,8 @@ function OTPScreen() {
                 digit ? '' : 'border-white/10'
               }`}
               style={{
-                borderColor: digit ? `${accentColor}50` : undefined,
-                backgroundColor: digit ? `${accentColor}08` : undefined,
+                borderColor: digit ? `color-mix(in srgb, ${accentColor} 31%, transparent)` : undefined,
+                backgroundColor: digit ? `color-mix(in srgb, ${accentColor} 3%, transparent)` : undefined,
               }}
             />
           </motion.div>
@@ -1396,7 +1396,7 @@ const ROLES = [
     description: 'Shop iftar meals, groceries, and more',
     icon: ShoppingBag,
     gradient: 'from-[#064e3b] to-[#0a3d2e]',
-    accent: '#10E07A',
+    accent: 'var(--sr-customer)',
     image: '/images/categories/hub-iftar.png',
   },
   {
@@ -1405,7 +1405,7 @@ const ROLES = [
     description: 'Sell your products on SwiftRamadan',
     icon: Store,
     gradient: 'from-[#4a3d00] to-[#2d2100]',
-    accent: '#F5C451',
+    accent: 'var(--sr-vendor)',
     image: '/images/categories/hub-groceries.png',
   },
   {
@@ -1414,7 +1414,7 @@ const ROLES = [
     description: 'Deliver and earn with SwiftLogistics',
     icon: Bike,
     gradient: 'from-[#1e3a5f] to-[#0c1929]',
-    accent: '#38BDF8',
+    accent: 'var(--sr-rider)',
     image: '/images/categories/hub-pharmacy.png',
   },
 ];
@@ -1501,7 +1501,7 @@ function RoleScreen() {
               }`}
               style={{
                 borderColor: isSelected ? role.accent : undefined,
-                boxShadow: isSelected ? `0 4px 24px ${role.accent}20` : undefined,
+                boxShadow: isSelected ? `0 4px 24px color-mix(in srgb, ${role.accent} 13%, transparent)` : undefined,
               }}
             >
               {/* Background Image */}
@@ -1520,7 +1520,7 @@ function RoleScreen() {
                 {/* Icon */}
                 <div
                   className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${role.accent}20`, border: `1px solid ${role.accent}40` }}
+                  style={{ backgroundColor: `color-mix(in srgb, ${role.accent} 13%, transparent)`, border: `1px solid color-mix(in srgb, ${role.accent} 25%, transparent)` }}
                 >
                   <Icon aria-hidden="true" className="w-7 h-7" style={{ color: role.accent }} />
                 </div>

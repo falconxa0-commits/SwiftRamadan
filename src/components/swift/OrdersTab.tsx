@@ -589,7 +589,7 @@ This is an electronic receipt — no signature required.
 
       {/* Prayer Times Widget */}
       <div className="px-5 mt-8 mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#06070B] border border-emerald-500/20 p-5 aurora-soft">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[var(--sr-surface-base)] border border-emerald-500/20 p-5 aurora-soft">
           <h3 className="text-[var(--sr-vendor)] text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
             <span className="material-symbols-outlined text-lg">mosque</span>
             Prayer Times - Lagos

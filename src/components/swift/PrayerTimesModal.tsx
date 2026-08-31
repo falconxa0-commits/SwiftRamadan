@@ -145,7 +145,7 @@ export default function PrayerTimesModal() {
             <div className="flex-1 overflow-y-auto custom-scrollbar">
               {/* Next Prayer Countdown */}
               <div className="px-4 pt-4">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[#05070A] border border-[var(--sr-customer)]/20 p-6 text-center green-glow">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#064e3b]/50 to-[var(--sr-surface-base)] border border-[var(--sr-customer)]/20 p-6 text-center green-glow">
                   <div className="absolute top-0 left-0 w-full h-full bg-[var(--sr-customer)]/5 blur-[80px]" />
                   <div className="relative">
                     <p className="text-white/65 text-xs uppercase tracking-widest mb-1">Next Prayer</p>

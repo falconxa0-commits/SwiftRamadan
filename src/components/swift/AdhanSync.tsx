@@ -149,14 +149,14 @@ export default function AdhanSync() {
           {/* Panel */}
           <motion.div
             className="relative w-full sm:max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-t-3xl sm:rounded-3xl border border-white/8"
-            style={{ background: 'linear-gradient(180deg, #11141C 0%, #0B0D14 100%)' }}
+            style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, var(--sr-surface-base) 100%)' }}
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
                 <div className="icon-tile w-10 h-10 bg-[var(--sr-customer)]/15 border border-[var(--sr-customer)]/20">
                   <Radio className="w-5 h-5 text-[var(--sr-customer)]" />

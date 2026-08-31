@@ -125,21 +125,21 @@ export default function HapticCountdown() {
 
   const getGradient = () => {
     switch (state.phase) {
-      case 'countdown': return 'from-[#0B0D14] via-[#0F1118] to-[#0B0D14]';
-      case 'ready': return 'from-[#0B0D14] via-[#1a1508] to-[#0B0D14]';
+      case 'countdown': return 'from-[var(--sr-surface-base)] via-[var(--sr-surface-raised)] to-[var(--sr-surface-base)]';
+      case 'ready': return 'from-[var(--sr-surface-base)] via-[#1a1508] to-[var(--sr-surface-base)]';
       case 'almost': return 'from-[#1a1508] via-[#2a1f0a] to-[#1a1508]';
-      case 'iftar': return 'from-[#0a1a0d] via-[#0B0D14] to-[#0a1a0d]';
-      default: return 'from-[#0B0D14] to-[#0F1118]';
+      case 'iftar': return 'from-[#0a1a0d] via-[var(--sr-surface-base)] to-[#0a1a0d]';
+      default: return 'from-[var(--sr-surface-base)] to-[var(--sr-surface-raised)]';
     }
   };
 
   const getAccentColor = () => {
     switch (state.phase) {
-      case 'countdown': return '#10E07A';
-      case 'ready': return '#F5C451';
-      case 'almost': return '#F5C451';
-      case 'iftar': return '#10E07A';
-      default: return '#10E07A';
+      case 'countdown': return 'var(--sr-customer)';
+      case 'ready': return 'var(--sr-vendor)';
+      case 'almost': return 'var(--sr-vendor)';
+      case 'iftar': return 'var(--sr-customer)';
+      default: return 'var(--sr-customer)';
     }
   };
 
@@ -169,7 +169,7 @@ export default function HapticCountdown() {
               <motion.div
                 className="absolute w-96 h-96 rounded-full opacity-20"
                 style={{
-                  background: `radial-gradient(circle, ${getAccentColor()}40, transparent 70%)`,
+                  background: `radial-gradient(circle, color-mix(in srgb, ${getAccentColor()} 25%, transparent), transparent 70%)`,
                   top: '20%',
                   left: '50%',
                   x: '-50%',
@@ -251,7 +251,7 @@ export default function HapticCountdown() {
                   animate={{ scale: 1, opacity: 1 }}
                   className="text-6xl sm:text-8xl font-black leading-none"
                   style={{
-                    background: 'linear-gradient(135deg, #10E07A 0%, #F5C451 50%, #A78BFA 100%)',
+                    background: 'linear-gradient(135deg, var(--sr-customer) 0%, var(--sr-vendor) 50%, var(--sr-ai) 100%)',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                   }}
@@ -328,7 +328,7 @@ export default function HapticCountdown() {
             {/* Iftar celebration particles */}
             {state.phase === 'iftar' && (
               <div className="flex gap-3 mt-6">
-                {['#10E07A', '#F5C451', '#A78BFA', '#FB7185'].map((color, i) => (
+                {['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-error)'].map((color, i) => (
                   <motion.div
                     key={color}
                     className="w-3 h-3 rounded-full"

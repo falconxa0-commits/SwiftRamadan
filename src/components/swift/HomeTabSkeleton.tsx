@@ -12,7 +12,7 @@ import {
 
 /* ─────────────────────────────────────────────────────
    HomeTabSkeleton — Matches the exact HomeTab layout
-   Aurora Luxe shimmer: base #1A1D26 → highlight #252833
+   Aurora Luxe shimmer: base var(--sr-surface-elevated) → highlight var(--sr-surface-elevated)
    ───────────────────────────────────────────────────── */
 
 export function HomeTabSkeleton() {

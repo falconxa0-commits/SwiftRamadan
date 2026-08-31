@@ -91,17 +91,17 @@ export default function DeliveryLocationMap() {
 
               {/* Subtle diagonal streets */}
               <svg className="absolute inset-0 w-full h-full opacity-[0.04]">
-                <line x1="0" y1="0" x2="100%" y2="60%" stroke="#10E07A" strokeWidth="2" />
-                <line x1="20%" y1="0" x2="80%" y2="100%" stroke="#10E07A" strokeWidth="1.5" />
-                <line x1="60%" y1="0" x2="100%" y2="40%" stroke="#10E07A" strokeWidth="1" />
-                <line x1="0" y1="40%" x2="100%" y2="80%" stroke="#10E07A" strokeWidth="1.5" />
-                <line x1="0" y1="70%" x2="70%" y2="100%" stroke="#10E07A" strokeWidth="1" />
+                <line x1="0" y1="0" x2="100%" y2="60%" stroke="var(--sr-customer)" strokeWidth="2" />
+                <line x1="20%" y1="0" x2="80%" y2="100%" stroke="var(--sr-customer)" strokeWidth="1.5" />
+                <line x1="60%" y1="0" x2="100%" y2="40%" stroke="var(--sr-customer)" strokeWidth="1" />
+                <line x1="0" y1="40%" x2="100%" y2="80%" stroke="var(--sr-customer)" strokeWidth="1.5" />
+                <line x1="0" y1="70%" x2="70%" y2="100%" stroke="var(--sr-customer)" strokeWidth="1" />
                 <line x1="40%" y1="0" x2="0" y2="80%" stroke="rgba(255,255,255,0.3)" strokeWidth="1" />
                 <line x1="80%" y1="20%" x2="100%" y2="100%" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
               </svg>
 
               {/* Gradient overlays */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/80 via-transparent to-[#05070A]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-surface-base)]/80 via-transparent to-[var(--sr-surface-base)]" />
               <div className="absolute top-0 left-0 w-64 h-64 bg-[var(--sr-customer)]/5 blur-[100px] rounded-full" />
               <div className="absolute bottom-40 right-0 w-48 h-48 bg-[var(--sr-vendor)]/5 blur-[80px] rounded-full" />
 
@@ -228,7 +228,7 @@ export default function DeliveryLocationMap() {
                     className="relative"
                   >
                     <div className="w-10 h-10 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shadow-lg shadow-[var(--sr-customer)]/30">
-                      <MapPin className="w-5 h-5 text-[var(--sr-surface-base)]" fill="#05070A" />
+                      <MapPin className="w-5 h-5 text-[var(--sr-surface-base)]" fill="var(--sr-surface-base)" />
                     </div>
                     {/* Pin shadow */}
                     <motion.div

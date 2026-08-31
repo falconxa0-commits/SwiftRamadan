@@ -365,7 +365,7 @@ export default function TrendingModal() {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -12 }}
                         transition={{ delay: Math.min(index * 0.05, 0.4), duration: 0.3 }}
-                        className={`group block bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 hover:bg-[#1F2330] transition-all ${style.ring}`}
+                        className={`group block bg-[var(--sr-surface-elevated)] rounded-2xl border border-white/5 p-3 sm:p-4 hover:bg-[var(--sr-surface-elevated)] transition-all ${style.ring}`}
                       >
                         {/* Top row: source + date + category badge */}
                         <div className="flex items-center gap-2 mb-2">

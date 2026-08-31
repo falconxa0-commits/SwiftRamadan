@@ -349,7 +349,7 @@ export default function VoiceShoppingModal() {
                           {confirmedProduct?.id === product.id && (
                             <button
                               onClick={() => handleConfirmAdd(product)}
-                              className="w-full py-3 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#11d411] transition-colors"
+                              className="w-full py-3 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm flex items-center justify-center gap-2 hover:bg-[var(--sr-customer)] transition-colors"
                             >
                               <ShoppingCart className="w-4 h-4" />
                               Confirm & Add to Cart

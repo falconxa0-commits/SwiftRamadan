@@ -788,9 +788,23 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
+  position: relative;
   background: radial-gradient(circle at 30% 30%, var(--auren-mystic), var(--auren-royal), var(--auren-imperial));
   box-shadow: 0 0 24px var(--auren-royal-glow), 0 0 48px rgba(124, 58, 237, 0.15);
   animation: auren-breathe 4s ease-in-out infinite;
+}
+
+/* AI orb state modifiers (additive — used by AIOrb primitive) */
+.auren-ai-orb--listening {
+  filter: brightness(1.25) saturate(1.15);
+  box-shadow: 0 0 32px var(--auren-royal-glow), 0 0 64px rgba(124, 58, 237, 0.25);
+}
+.auren-ai-orb--thinking {
+  animation: auren-breathe 1.6s ease-in-out infinite;
+}
+.auren-ai-orb--speaking {
+  animation: auren-breathe 1s ease-in-out infinite;
+  box-shadow: 0 0 28px var(--auren-royal-glow), 0 0 56px rgba(124, 58, 237, 0.20);
 }
 
 @keyframes auren-breathe {

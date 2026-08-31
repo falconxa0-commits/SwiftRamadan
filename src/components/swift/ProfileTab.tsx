@@ -37,9 +37,9 @@ interface CookingStats {
 /* ──────────────── Role Config ──────────────── */
 
 const ROLE_ACCENT = {
-  customer: '#10E07A',
-  vendor: '#F5C451',
-  rider: '#38BDF8',
+  customer: 'var(--sr-customer)',
+  vendor: 'var(--sr-vendor)',
+  rider: 'var(--sr-rider)',
 } as const;
 
 const ROLE_DEFAULT_TAB: Record<string, TabId> = {
@@ -144,7 +144,7 @@ const roleCards = [
     icon: User,
     title: 'Customer',
     description: 'Order iftar meals, groceries & more',
-    accent: '#10E07A',
+    accent: 'var(--sr-customer)',
     bgClass: 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/30',
     iconColor: 'text-[var(--sr-customer)]',
   },
@@ -153,7 +153,7 @@ const roleCards = [
     icon: Store,
     title: 'Vendor',
     description: 'Manage your store & accept orders',
-    accent: '#F5C451',
+    accent: 'var(--sr-vendor)',
     bgClass: 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/30',
     iconColor: 'text-[var(--sr-vendor)]',
   },
@@ -162,7 +162,7 @@ const roleCards = [
     icon: Bike,
     title: 'Rider',
     description: 'Deliver orders & earn money',
-    accent: '#38BDF8',
+    accent: 'var(--sr-rider)',
     bgClass: 'bg-[var(--sr-rider)]/10 border-[var(--sr-rider)]/30',
     iconColor: 'text-[var(--sr-rider)]',
   },
@@ -433,10 +433,10 @@ export default function ProfileTab() {
 
   /* ── Loyalty Redemption ── */
   const REWARDS = [
-    { id: 'free-delivery', label: 'Free Delivery',  cost: 500,  icon: '🛵', accent: '#10E07A' },
-    { id: 'ngn-500',       label: '₦500 Off',        cost: 1000, icon: '💸', accent: '#F5C451' },
-    { id: 'ngn-1000',      label: '₦1000 Off',       cost: 2000, icon: '💰', accent: '#A78BFA' },
-    { id: 'ngn-2500',      label: '₦2500 Off',       cost: 5000, icon: '🏆', accent: '#38BDF8' },
+    { id: 'free-delivery', label: 'Free Delivery',  cost: 500,  icon: '🛵', accent: 'var(--sr-customer)' },
+    { id: 'ngn-500',       label: '₦500 Off',        cost: 1000, icon: '💸', accent: 'var(--sr-vendor)' },
+    { id: 'ngn-1000',      label: '₦1000 Off',       cost: 2000, icon: '💰', accent: 'var(--sr-ai)' },
+    { id: 'ngn-2500',      label: '₦2500 Off',       cost: 5000, icon: '🏆', accent: 'var(--sr-rider)' },
   ];
 
   const handleRedeem = async (rewardId: string, label: string, cost: number) => {
@@ -503,7 +503,7 @@ export default function ProfileTab() {
             {/* Avatar wrapped in a emerald→gold→violet gradient ring */}
             <div
               className="p-[2px] rounded-full shrink-0"
-              style={{ background: 'linear-gradient(135deg, #10E07A, #F5C451, #A78BFA)' }}
+              style={{ background: 'linear-gradient(135deg, var(--sr-customer), var(--sr-vendor), var(--sr-ai))' }}
             >
               {userRole === 'vendor' ? (
                 /* Vendor Header */
@@ -655,7 +655,7 @@ export default function ProfileTab() {
 
       {/* ─── Daily Streak flame widget (banner) ─── */}
       <div className="px-5 mt-3">
-        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-950/40 via-[#0F1118] to-[#0F1118] p-3 sm:p-4 flex items-center gap-3">
+        <div className="relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-r from-orange-950/40 via-[var(--sr-surface-raised)] to-[var(--sr-surface-raised)] p-3 sm:p-4 flex items-center gap-3">
           <div className="absolute -top-6 -right-6 w-24 h-24 bg-orange-500/15 blur-[40px] pointer-events-none" />
           <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${dailyStreak >= 3 ? 'bg-orange-500/20' : 'bg-orange-500/10'}`}>
             <Flame className={`w-6 h-6 ${dailyStreak >= 3 ? 'text-orange-500 animate-pulse' : 'text-orange-400'}`} />
@@ -796,7 +796,7 @@ export default function ProfileTab() {
           onClick={() => handleMenuClick('eco-impact')}
           className="w-full text-left"
         >
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[#06070B] border border-emerald-500/20 p-5 hover:border-emerald-500/30 transition-colors aurora-soft">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-900/30 to-[var(--sr-surface-base)] border border-emerald-500/20 p-5 hover:border-emerald-500/30 transition-colors aurora-soft">
             <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/10 blur-[40px]" />
             <div className="flex items-center gap-3 mb-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center border border-emerald-500/30 icon-tile">
@@ -825,7 +825,7 @@ export default function ProfileTab() {
       {/* ─── Loyalty Redemption (Customer only) ─── */}
       {userRole === 'customer' && (
         <div className="px-5 mt-6">
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-vendor)]/25 bg-gradient-to-br from-[var(--sr-vendor)]/[0.08] via-[#0F1118] to-[#0F1118] p-5 aurora-soft">
+          <div className="relative overflow-hidden rounded-2xl border border-[var(--sr-vendor)]/25 bg-gradient-to-br from-[var(--sr-vendor)]/[0.08] via-[var(--sr-surface-raised)] to-[var(--sr-surface-raised)] p-5 aurora-soft">
             <div className="absolute -top-8 -right-8 w-28 h-28 bg-[var(--sr-vendor)]/15 blur-[44px] pointer-events-none" />
             <div className="relative flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
@@ -1052,7 +1052,7 @@ export default function ProfileTab() {
                       }`}
                     >
                       <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border ${card.bgClass} icon-tile`}
-                        style={{ boxShadow: isActive ? `0 0 20px ${card.accent}20` : 'none' }}>
+                        style={{ boxShadow: isActive ? `0 0 20px color-mix(in srgb, ${card.accent} 13%, transparent)` : 'none' }}>
                         <Icon className={`w-7 h-7 ${card.iconColor} relative z-10`} />
                       </div>
                       <div className="flex-1 min-w-0">

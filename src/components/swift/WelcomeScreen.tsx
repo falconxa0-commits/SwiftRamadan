@@ -54,7 +54,7 @@ const AURORA = {
   gold: C.vendor.primary,       // premium moments
   violet: C.ai.primary,        // AI / intelligence
   sky: C.rider.primary,        // delivery
-  coral: '#FB7185',            // alerts / sadaqah (no token)
+  coral: 'var(--sr-error)',            // alerts / sadaqah (no token)
   textSecondary: C.text.secondary,
   textMuted: C.text.tertiary,
 } as const;
@@ -113,7 +113,7 @@ function SignUpPrompt({ onClose, onGetStarted, onSignIn }: {
       >
         {/* Top aurora glow + grabber */}
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-72 h-40 blur-[80px] pointer-events-none"
-          style={{ background: `radial-gradient(circle, ${AURORA.gold}40, transparent 70%)` }}
+          style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.gold} 25%, transparent), transparent 70%)` }}
         />
         <div className="flex justify-center pt-3 pb-1">
           <div className="w-10 h-1 rounded-full bg-white/15" />
@@ -125,8 +125,8 @@ function SignUpPrompt({ onClose, onGetStarted, onSignIn }: {
               <div className="flex items-center gap-3">
                 <div className="icon-tile w-12 h-12"
                   style={{
-                    background: `linear-gradient(135deg, ${AURORA.gold}25, ${AURORA.emerald}12)`,
-                    border: `1px solid ${AURORA.gold}40`,
+                    background: `linear-gradient(135deg, color-mix(in srgb, ${AURORA.gold} 15%, transparent), color-mix(in srgb, ${AURORA.emerald} 7%, transparent))`,
+                    border: `1px solid color-mix(in srgb, ${AURORA.gold} 25%, transparent)`,
                   }}
                 >
                   <ShoppingBag className="w-6 h-6" style={{ color: AURORA.gold }} />
@@ -150,8 +150,8 @@ function SignUpPrompt({ onClose, onGetStarted, onSignIn }: {
               ].map(({ icon: Ic, text, color }) => (
                 <div key={text}
                   className="flex items-center gap-3 p-3 sm:p-3.5 rounded-2xl"
-                  style={{ background: `${color}10`, border: `1px solid ${color}1A` }}>
-                  <div className="icon-tile w-9 h-9" style={{ background: `${color}18` }}>
+                  style={{ background: `color-mix(in srgb, ${color} 6%, transparent)`, border: `1px solid color-mix(in srgb, ${color} 10%, transparent)` }}>
+                  <div className="icon-tile w-9 h-9" style={{ background: `color-mix(in srgb, ${color} 9%, transparent)` }}>
                     <Ic className="w-4 h-4" style={{ color }} />
                   </div>
                   <span className="text-sm" style={{ color: AURORA.textSecondary }}>{text}</span>
@@ -217,14 +217,14 @@ function HeroBanner({ onTap }: { onTap: () => void }) {
           }} />
           {/* Aurora tint overlay — purple + emerald mesh */}
           <div className="absolute inset-0 opacity-70 pointer-events-none" style={{
-            background: `radial-gradient(circle at 100% 0%, ${AURORA.emerald}22, transparent 50%), radial-gradient(circle at 0% 100%, ${AURORA.violet}22, transparent 55%)`,
+            background: `radial-gradient(circle at 100% 0%, color-mix(in srgb, ${AURORA.emerald} 13%, transparent), transparent 50%), radial-gradient(circle at 0% 100%, color-mix(in srgb, ${AURORA.violet} 13%, transparent), transparent 55%)`,
           }} />
 
           {heroSlides[currentSlide].badge && (
             <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
               <span className="soft-chip" style={{
-                background: `linear-gradient(135deg, ${AURORA.gold}30, ${AURORA.emerald}20)`,
-                borderColor: `${AURORA.gold}55`,
+                background: `linear-gradient(135deg, color-mix(in srgb, ${AURORA.gold} 19%, transparent), color-mix(in srgb, ${AURORA.emerald} 13%, transparent))`,
+                borderColor: `color-mix(in srgb, ${AURORA.gold} 33%, transparent)`,
                 color: AURORA.gold,
               }}>
                 <Star className="w-3 h-3 fill-current" />
@@ -282,8 +282,8 @@ function FlashDealCard({ sale, onTap }: { sale: typeof flashSales[0]; onTap: () 
         />
         <div className="absolute top-2 left-2">
           <span className="soft-chip" style={{
-            background: `${AURORA.coral}20`,
-            borderColor: `${AURORA.coral}55`,
+            background: `color-mix(in srgb, ${AURORA.coral} 13%, transparent)`,
+            borderColor: `color-mix(in srgb, ${AURORA.coral} 33%, transparent)`,
             color: AURORA.coral,
           }}>
             <Flame className="w-3 h-3" />
@@ -293,7 +293,7 @@ function FlashDealCard({ sale, onTap }: { sale: typeof flashSales[0]; onTap: () 
         <div className="absolute bottom-2 right-2">
           <span className="soft-chip backdrop-blur-md" style={{
             background: 'rgba(0,0,0,0.55)',
-            borderColor: `${AURORA.gold}40`,
+            borderColor: `color-mix(in srgb, ${AURORA.gold} 25%, transparent)`,
             color: AURORA.gold,
           }}>
             <Timer className="w-2.5 h-2.5" />
@@ -362,7 +362,7 @@ function MealCard({ meal, onTap }: { meal: typeof trendingMeals[0]; onTap: () =>
             <Clock className="w-2.5 h-2.5" />
             {meal.deliveryTime}
           </span>
-          <span className="soft-chip" style={{ color: AURORA.gold, borderColor: `${AURORA.gold}30` }}>
+          <span className="soft-chip" style={{ color: AURORA.gold, borderColor: `color-mix(in srgb, ${AURORA.gold} 19%, transparent)` }}>
             <Star className="w-2.5 h-2.5 fill-current" />
             {meal.rating}
           </span>
@@ -388,7 +388,7 @@ function RetailerCard({ retailer, onTap }: { retailer: typeof popularRetailers[0
         />
         {retailer.verified && (
           <div className="absolute top-2 right-2">
-            <div className="icon-tile w-6 h-6" style={{ background: `${AURORA.emerald}25`, border: `1px solid ${AURORA.emerald}50` }}>
+            <div className="icon-tile w-6 h-6" style={{ background: `color-mix(in srgb, ${AURORA.emerald} 15%, transparent)`, border: `1px solid color-mix(in srgb, ${AURORA.emerald} 31%, transparent)` }}>
               <BadgeCheck className="w-3.5 h-3.5" style={{ color: AURORA.emerald }} />
             </div>
           </div>
@@ -422,7 +422,7 @@ function SectionHeading({ icon: Icon, title, accent = AURORA.emerald, action }: 
   return (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2.5">
-        <div className="icon-tile w-8 h-8 sm:w-9 sm:h-9" style={{ background: `${accent}18`, border: `1px solid ${accent}30` }}>
+        <div className="icon-tile w-8 h-8 sm:w-9 sm:h-9" style={{ background: `color-mix(in srgb, ${accent} 9%, transparent)`, border: `1px solid color-mix(in srgb, ${accent} 19%, transparent)` }}>
           <Icon className="w-4 h-4" style={{ color: accent }} />
         </div>
         <h3 className="text-white text-base sm:text-lg font-bold tracking-tight heading-accent">{title}</h3>
@@ -510,8 +510,8 @@ export default function WelcomeScreen() {
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl overflow-hidden flex items-center justify-center relative"
               style={{
-                background: `linear-gradient(135deg, ${AURORA.gold}20, ${AURORA.emerald}10)`,
-                border: `1px solid ${AURORA.gold}33`,
+                background: `linear-gradient(135deg, color-mix(in srgb, ${AURORA.gold} 13%, transparent), color-mix(in srgb, ${AURORA.emerald} 6%, transparent))`,
+                border: `1px solid color-mix(in srgb, ${AURORA.gold} 20%, transparent)`,
               }}
             >
               <Image src="/swiftramadan-logo.png" alt="SwiftRamadan" fill className="object-cover" />
@@ -553,19 +553,19 @@ export default function WelcomeScreen() {
             className="absolute -top-10 -left-10 w-56 h-56 sm:w-72 sm:h-72 rounded-full blur-[60px] aurora-drift pointer-events-none"
             aria-hidden
           >
-            <div className="w-full h-full" style={{ background: `radial-gradient(circle, ${AURORA.emerald}30, transparent 70%)` }} />
+            <div className="w-full h-full" style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.emerald} 19%, transparent), transparent 70%)` }} />
           </motion.div>
           <motion.div style={{ y: orbY2 }}
             className="absolute top-10 -right-10 w-64 h-64 sm:w-80 sm:h-80 rounded-full blur-[70px] aurora-drift pointer-events-none"
             aria-hidden
           >
-            <div className="w-full h-full" style={{ background: `radial-gradient(circle, ${AURORA.violet}28, transparent 70%)`, animationDelay: '-4s' }} />
+            <div className="w-full h-full" style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.violet} 16%, transparent), transparent 70%)`, animationDelay: '-4s' }} />
           </motion.div>
           <motion.div style={{ y: orbY3 }}
             className="absolute -bottom-20 left-1/4 w-72 h-72 sm:w-96 sm:h-96 rounded-full blur-[80px] aurora-drift pointer-events-none"
             aria-hidden
           >
-            <div className="w-full h-full" style={{ background: `radial-gradient(circle, ${AURORA.gold}22, transparent 70%)`, animationDelay: '-8s' }} />
+            <div className="w-full h-full" style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.gold} 13%, transparent), transparent 70%)`, animationDelay: '-8s' }} />
           </motion.div>
 
           <motion.div
@@ -688,12 +688,12 @@ export default function WelcomeScreen() {
                   <div
                     className="icon-tile w-14 h-14 sm:w-16 sm:h-16 transition-all duration-300"
                     style={{
-                      background: isSelected ? `${cfg.color}22` : `${cfg.color}0E`,
-                      border: isSelected ? `1.5px solid ${cfg.color}66` : `1px solid ${cfg.color}22`,
-                      boxShadow: isSelected ? `0 0 22px ${cfg.color}35` : 'none',
+                      background: isSelected ? `color-mix(in srgb, ${cfg.color} 13%, transparent)` : `color-mix(in srgb, ${cfg.color} 5%, transparent)`,
+                      border: isSelected ? `1.5px solid color-mix(in srgb, ${cfg.color} 40%, transparent)` : `1px solid color-mix(in srgb, ${cfg.color} 13%, transparent)`,
+                      boxShadow: isSelected ? `0 0 22px color-mix(in srgb, ${cfg.color} 21%, transparent)` : 'none',
                     }}
                   >
-                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 transition-colors" style={{ color: isSelected ? cfg.color : `${cfg.color}B0` }} />
+                    <Icon className="w-6 h-6 sm:w-7 sm:h-7 transition-colors" style={{ color: isSelected ? cfg.color : `color-mix(in srgb, ${cfg.color} 69%, transparent)` }} />
                   </div>
                   <span
                     className="text-[10px] sm:text-xs font-bold whitespace-nowrap transition-colors"
@@ -718,8 +718,8 @@ export default function WelcomeScreen() {
             />
             <div className="flex items-center gap-2 mb-3">
               <span className="soft-chip" style={{
-                background: `${AURORA.coral}18`,
-                borderColor: `${AURORA.coral}40`,
+                background: `color-mix(in srgb, ${AURORA.coral} 9%, transparent)`,
+                borderColor: `color-mix(in srgb, ${AURORA.coral} 25%, transparent)`,
                 color: AURORA.coral,
               }}>
                 <span className="relative inline-flex w-1.5 h-1.5">
@@ -770,8 +770,8 @@ export default function WelcomeScreen() {
                     <div className="flex items-center gap-1.5 mb-1.5">
                       <span className="soft-chip" style={{
                         color,
-                        background: `${color}1A`,
-                        borderColor: `${color}40`,
+                        background: `color-mix(in srgb, ${color} 10%, transparent)`,
+                        borderColor: `color-mix(in srgb, ${color} 25%, transparent)`,
                       }}>
                         {item.badge}
                       </span>
@@ -838,8 +838,8 @@ export default function WelcomeScreen() {
                 className="aurora-card p-4 sm:p-5 rounded-2xl sm:rounded-3xl"
               >
                 <div className="icon-tile w-10 h-10 sm:w-11 sm:h-11 mb-3" style={{
-                  background: `linear-gradient(135deg, ${color}25, ${color}08)`,
-                  border: `1px solid ${color}30`,
+                  background: `linear-gradient(135deg, color-mix(in srgb, ${color} 15%, transparent), color-mix(in srgb, ${color} 3%, transparent))`,
+                  border: `1px solid color-mix(in srgb, ${color} 19%, transparent)`,
                 }}>
                   <Ic className="w-5 h-5" style={{ color }} />
                 </div>
@@ -891,10 +891,10 @@ export default function WelcomeScreen() {
           <motion.div variants={itemVariants} className="relative overflow-hidden rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center aurora-card">
             {/* Decorative top glow */}
             <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-52 h-28 blur-[70px] pointer-events-none"
-              style={{ background: `radial-gradient(circle, ${AURORA.gold}45, transparent 70%)` }}
+              style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.gold} 27%, transparent), transparent 70%)` }}
             />
             <div className="absolute -bottom-12 right-0 w-44 h-28 blur-[60px] pointer-events-none"
-              style={{ background: `radial-gradient(circle, ${AURORA.emerald}35, transparent 70%)` }}
+              style={{ background: `radial-gradient(circle, color-mix(in srgb, ${AURORA.emerald} 21%, transparent), transparent 70%)` }}
             />
 
             <motion.span
@@ -942,7 +942,7 @@ export default function WelcomeScreen() {
         className="sm:hidden fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 pointer-events-none"
       >
         <div className="max-w-lg mx-auto rounded-2xl px-4 py-3 flex items-center justify-between pointer-events-auto glass-effect"
-          style={{ border: `1px solid ${AURORA.gold}22`, boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(245,196,81,0.06)' }}
+          style={{ border: `1px solid color-mix(in srgb, ${AURORA.gold} 13%, transparent)`, boxShadow: '0 8px 40px rgba(0,0,0,0.5), 0 0 20px rgba(245,196,81,0.06)' }}
         >
           <div>
             <p className="text-white text-xs font-bold">Start ordering now</p>

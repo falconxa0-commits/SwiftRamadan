@@ -53,10 +53,10 @@ function compressImage(file: File): Promise<string> {
 
 function FreshnessIndicator({ freshness }: { freshness: string }) {
   const config = {
-    fresh: { color: '#10E07A', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' },
-    aging: { color: '#F5C451', bg: 'bg-[var(--sr-vendor)]/10', border: 'border-[var(--sr-vendor)]/20', icon: Snowflake, label: 'Aging' },
-    expiring: { color: '#EF4444', bg: 'bg-[var(--sr-error)]/10', border: 'border-[var(--sr-error)]/20', icon: AlertTriangle, label: 'Expiring' },
-  }[freshness] || { color: '#10E07A', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' };
+    fresh: { color: 'var(--sr-customer)', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' },
+    aging: { color: 'var(--sr-vendor)', bg: 'bg-[var(--sr-vendor)]/10', border: 'border-[var(--sr-vendor)]/20', icon: Snowflake, label: 'Aging' },
+    expiring: { color: 'var(--sr-error)', bg: 'bg-[var(--sr-error)]/10', border: 'border-[var(--sr-error)]/20', icon: AlertTriangle, label: 'Expiring' },
+  }[freshness] || { color: 'var(--sr-customer)', bg: 'bg-[var(--sr-customer)]/10', border: 'border-[var(--sr-customer)]/20', icon: Leaf, label: 'Fresh' };
 
   const Icon = config.icon;
 
@@ -277,7 +277,7 @@ export default function FridgeScanModal() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                className="w-10 h-10 border-3 border-white/10 border-t-[#38BDF8] rounded-full mb-4"
+                className="w-10 h-10 border-3 border-white/10 border-t-[var(--sr-rider)] rounded-full mb-4"
               />
               <p className="text-white/50 text-sm">Analyzing your fridge...</p>
             </div>

@@ -27,12 +27,12 @@ const TASTE_LABELS: Record<keyof TasteEvolution & string, string> = {
 };
 
 const TASTE_COLORS: Record<string, string> = {
-  smoky: '#F5C451',
-  sweet: '#10E07A',
-  spicy: '#EF4444',
-  umami: '#A78BFA',
-  fresh: '#38BDF8',
-  rich: '#F97316',
+  smoky: 'var(--sr-vendor)',
+  sweet: 'var(--sr-customer)',
+  spicy: 'var(--sr-error)',
+  umami: 'var(--sr-ai)',
+  fresh: 'var(--sr-rider)',
+  rich: 'var(--sr-warning)',
 };
 
 const TASTE_KEYS = ['smoky', 'sweet', 'spicy', 'umami', 'fresh', 'rich'] as const;
@@ -111,7 +111,7 @@ function RadarChart({ data, size = 260 }: { data: Record<string, number>; size?:
       <polygon
         points={pointsPath}
         fill="rgba(16,224,122,0.08)"
-        stroke="#10E07A"
+        stroke="var(--sr-customer)"
         strokeWidth={2}
         strokeLinejoin="round"
         filter="url(#glow)"
@@ -121,7 +121,7 @@ function RadarChart({ data, size = 260 }: { data: Record<string, number>; size?:
       <polygon
         points={pointsPath}
         fill="rgba(16,224,122,0.12)"
-        stroke="#10E07A"
+        stroke="var(--sr-customer)"
         strokeWidth={2}
         strokeLinejoin="round"
       />
@@ -280,16 +280,16 @@ export default function TasteDNAProfile() {
         {/* Modal */}
         <motion.div
           className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-white/8 shadow-2xl"
-          style={{ backgroundColor: '#0F1118' }}
+          style={{ backgroundColor: 'var(--sr-surface-raised)' }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: '#0F1118' }}>
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
             <div className="flex items-center gap-2">
-              <Dna className="w-5 h-5" style={{ color: '#10E07A' }} />
+              <Dna className="w-5 h-5" style={{ color: 'var(--sr-customer)' }} />
               <h2 className="text-white font-bold text-lg">Taste DNA</h2>
             </div>
             <button
@@ -305,12 +305,12 @@ export default function TasteDNAProfile() {
             {/* Dominant Badge */}
             <motion.div
               className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/8"
-              style={{ backgroundColor: '#0B0D14' }}
+              style={{ backgroundColor: 'var(--sr-surface-base)' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Sparkles className="w-4 h-4" style={{ color: '#F5C451' }} />
+              <Sparkles className="w-4 h-4" style={{ color: 'var(--sr-vendor)' }} />
               <span className="text-white/50 text-sm">Dominant Taste:</span>
               <span className="font-semibold text-sm" style={{ color: TASTE_COLORS[dominant] }}>
                 {TASTE_LABELS[dominant]}
@@ -420,7 +420,7 @@ export default function TasteDNAProfile() {
               onClick={handleUpdate}
               disabled={isUpdating}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all disabled:opacity-50"
-              style={{ backgroundColor: '#10E07A', color: '#0B0D14' }}
+              style={{ backgroundColor: 'var(--sr-customer)', color: 'var(--sr-surface-base)' }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

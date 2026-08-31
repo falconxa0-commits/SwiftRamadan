@@ -25,7 +25,7 @@ function StarRow({ rating, size = 'w-3.5 h-3.5' }: { rating: number; size?: stri
       {[1, 2, 3, 4, 5].map(n => (
         <Star
           key={n}
-          className={`${size} ${n <= Math.round(rating) ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white/15'}`}
+          className={`${size} ${n <= Math.round(rating) ? 'text-[var(--sr-vendor)] fill-[var(--sr-vendor)]' : 'text-white/15'}`}
         />
       ))}
     </div>
@@ -406,7 +406,7 @@ export default function ProductDetailModal() {
                           return (
                             <div key={star} className="flex items-center gap-2 text-[10px]">
                               <span className="text-white/50 w-3">{star}</span>
-                              <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                              <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                               <div className="flex-1 bg-white/5 rounded-full h-1.5 overflow-hidden">
                                 <div className="bg-[var(--sr-vendor)] h-1.5 rounded-full" style={{ width: `${pct}%` }} />
                               </div>
@@ -439,7 +439,7 @@ export default function ProductDetailModal() {
                                   aria-label={`Rate ${n} star${n !== 1 ? 's' : ''}`}
                                 >
                                   <Star
-                                    className={`w-7 h-7 ${n <= newRating ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white/15'}`}
+                                    className={`w-7 h-7 ${n <= newRating ? 'text-[var(--sr-vendor)] fill-[var(--sr-vendor)]' : 'text-white/15'}`}
                                   />
                                 </button>
                               ))}

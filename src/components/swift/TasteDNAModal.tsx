@@ -22,12 +22,12 @@ interface Recommendation {
 }
 
 const DIMENSION_CONFIG = [
-  { key: 'smoky' as const, label: 'Smoky', color: '#F97316', icon: Flame },
-  { key: 'sweet' as const, label: 'Sweet', color: '#F5C451', icon: Sun },
-  { key: 'spicy' as const, label: 'Spicy', color: '#EF4444', icon: Flame },
+  { key: 'smoky' as const, label: 'Smoky', color: 'var(--sr-warning)', icon: Flame },
+  { key: 'sweet' as const, label: 'Sweet', color: 'var(--sr-vendor)', icon: Sun },
+  { key: 'spicy' as const, label: 'Spicy', color: 'var(--sr-error)', icon: Flame },
   { key: 'umami' as const, label: 'Umami', color: '#A855F7', icon: Droplets },
-  { key: 'fresh' as const, label: 'Fresh', color: '#10E07A', icon: Leaf },
-  { key: 'rich' as const, label: 'Rich', color: '#F59E0B', icon: ChefHat },
+  { key: 'fresh' as const, label: 'Fresh', color: 'var(--sr-customer)', icon: Leaf },
+  { key: 'rich' as const, label: 'Rich', color: 'var(--sr-warning)', icon: ChefHat },
 ];
 
 const DEFAULT_PROFILE: TasteProfile = {
@@ -223,7 +223,7 @@ export default function TasteDNAModal() {
                         cx={x}
                         cy={y}
                         fill={dim.color}
-                        stroke="#05070A"
+                        stroke="var(--sr-surface-base)"
                         strokeWidth="0.5"
                       />
                     );

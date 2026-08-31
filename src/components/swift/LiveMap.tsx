@@ -56,7 +56,7 @@ function makeRiderIcon(heading: number, color: string): L.DivIcon {
           width: 36,
           height: 36,
           background: color,
-          transform: `rotate(${heading}deg)`,
+          transform: `rotate(color-mix(in srgb, ${heading} 87%, transparent)g)`,
         }}
       >
         <Bike />
@@ -176,7 +176,7 @@ export default function LiveMap({
   );
 
   const riderIcon = useMemo(
-    () => makeRiderIcon(heading ?? 0, riderColor ?? '#13ec13'),
+    () => makeRiderIcon(heading ?? 0, riderColor ?? 'var(--sr-customer)'),
     [heading, riderColor]
   );
 
@@ -214,7 +214,7 @@ export default function LiveMap({
 
   if (!delivery) {
     return (
-      <div className={`relative bg-[#080c12] flex items-center justify-center ${className}`}>
+      <div className={`relative bg-[var(--sr-surface-base)] flex items-center justify-center ${className}`}>
         <div className="text-white/65 text-sm">Loading live map…</div>
       </div>
     );
@@ -228,7 +228,7 @@ export default function LiveMap({
         zoomControl={false}
         attributionControl
         className="h-full w-full"
-        style={{ background: '#080c12' }}
+        style={{ background: 'var(--sr-surface-base)' }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -242,7 +242,7 @@ export default function LiveMap({
           <Polyline
             positions={routePositions}
             pathOptions={{
-              color: '#FFD700',
+              color: 'var(--sr-vendor)',
               weight: 4,
               opacity: 0.45,
               dashArray: '6 8',
@@ -256,7 +256,7 @@ export default function LiveMap({
           <Polyline
             positions={traveledPositions}
             pathOptions={{
-              color: '#13ec13',
+              color: 'var(--sr-customer)',
               weight: 5,
               opacity: 0.9,
               lineCap: 'round',
@@ -293,23 +293,23 @@ export default function LiveMap({
       {/* Map overlay: legend */}
       <div className="absolute top-2 sm:top-3 left-2 sm:left-3 z-[500] bg-[var(--sr-surface-base)]/80 backdrop-blur-md rounded-xl border border-white/10 px-3 py-2 flex flex-col gap-1.5 pointer-events-none">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#FFD700]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--sr-vendor)]" />
           <span className="text-white/70 text-[10px] font-medium">Route</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#13ec13]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[var(--sr-customer)]" />
           <span className="text-white/70 text-[10px] font-medium">Traveled</span>
         </div>
         <div className="flex items-center gap-2">
-          <Bike className="w-3 h-3 text-[#13ec13]" />
+          <Bike className="w-3 h-3 text-[var(--sr-customer)]" />
           <span className="text-white/70 text-[10px] font-medium">Rider</span>
         </div>
       </div>
 
       {/* Map overlay: live badge */}
-      <div className="absolute top-3 right-3 z-[500] bg-[#13ec13]/15 backdrop-blur-md rounded-full border border-[#13ec13]/40 px-3 py-1 flex items-center gap-1.5 pointer-events-none">
-        <span className="w-1.5 h-1.5 rounded-full bg-[#13ec13] animate-pulse" />
-        <span className="text-[#13ec13] text-[10px] font-bold uppercase tracking-wider">Live</span>
+      <div className="absolute top-3 right-3 z-[500] bg-[var(--sr-customer)]/15 backdrop-blur-md rounded-full border border-[var(--sr-customer)]/40 px-3 py-1 flex items-center gap-1.5 pointer-events-none">
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--sr-customer)] animate-pulse" />
+        <span className="text-[var(--sr-customer)] text-[10px] font-bold uppercase tracking-wider">Live</span>
       </div>
     </div>
   );

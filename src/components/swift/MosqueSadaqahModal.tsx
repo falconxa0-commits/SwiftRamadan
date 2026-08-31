@@ -218,7 +218,7 @@ export default function MosqueSadaqahModal() {
                           className="absolute w-0.5 h-3 bg-white/10 left-1/2 -translate-x-1/2 origin-bottom"
                           style={{
                             top: '8px',
-                            transform: `translateX(-50%) rotate(${i * 30}deg)`,
+                            transform: `translateX(-50%) rotate(color-mix(in srgb, ${i * 30} 87%, transparent)g)`,
                             transformOrigin: '50% 124px',
                           }}
                         />
@@ -230,7 +230,7 @@ export default function MosqueSadaqahModal() {
                         transition={{ type: 'spring', damping: 15, stiffness: 100 }}
                       >
                         <div className="relative">
-                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[60px] border-l-transparent border-r-transparent border-b-[#10E07A] -mt-16" />
+                          <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-b-[60px] border-l-transparent border-r-transparent border-b-[var(--sr-customer)] -mt-16" />
                           <div className="w-0 h-0 border-l-[6px] border-r-[6px] border-t-[40px] border-l-transparent border-r-transparent border-t-white/20 -mt-0 mx-auto" />
                         </div>
                       </motion.div>
@@ -450,7 +450,7 @@ export default function MosqueSadaqahModal() {
 
               {/* Quick Sadaqah Banner */}
               <div className="px-4 mt-6">
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[var(--sr-customer)]/20 p-3 sm:p-4">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[var(--sr-surface-base)] border border-[var(--sr-customer)]/20 p-3 sm:p-4">
                   <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-customer)]/10 blur-[40px]" />
                   <div className="relative flex items-center justify-between">
                     <div>

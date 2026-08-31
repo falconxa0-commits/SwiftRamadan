@@ -353,7 +353,7 @@ export default function HelpCenterModal() {
               <div className="px-5 py-4 border-t border-white/5 shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button
                   onClick={handleContactSupport}
-                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-xs hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
+                  className="flex items-center justify-center gap-1.5 py-3 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-xs hover:bg-[var(--sr-customer-hover)] transition-colors active:scale-[0.98] green-glow"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   Contact Support

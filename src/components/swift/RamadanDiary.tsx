@@ -51,11 +51,11 @@ interface DayData {
 }
 
 const MOODS: { value: Mood; label: string; icon: typeof Smile; color: string }[] = [
-  { value: 'blessed', label: 'Blessed', icon: Star, color: '#F5C451' },
-  { value: 'happy', label: 'Happy', icon: Smile, color: '#10E07A' },
-  { value: 'grateful', label: 'Grateful', icon: Heart, color: '#A78BFA' },
-  { value: 'neutral', label: 'Neutral', icon: Meh, color: '#38BDF8' },
-  { value: 'tired', label: 'Tired', icon: Frown, color: '#F59E0B' },
+  { value: 'blessed', label: 'Blessed', icon: Star, color: 'var(--sr-vendor)' },
+  { value: 'happy', label: 'Happy', icon: Smile, color: 'var(--sr-customer)' },
+  { value: 'grateful', label: 'Grateful', icon: Heart, color: 'var(--sr-ai)' },
+  { value: 'neutral', label: 'Neutral', icon: Meh, color: 'var(--sr-rider)' },
+  { value: 'tired', label: 'Tired', icon: Frown, color: 'var(--sr-warning)' },
 ];
 
 const TAGS = ['Iftar', 'Sahur', 'Prayer', 'Quran', 'Family', 'Fasting', 'Reflection', 'Gratitude'];
@@ -675,7 +675,7 @@ function RamadanDiaryInner() {
               className="bg-[var(--sr-surface-raised)] border border-white/8 rounded-2xl w-full max-w-sm overflow-hidden"
             >
               {/* Shareable Card */}
-              <div className="relative bg-gradient-to-br from-[#0B0D14] via-[#0F1118] to-[#0B0D14] p-6 overflow-hidden">
+              <div className="relative bg-gradient-to-br from-[var(--sr-surface-base)] via-[var(--sr-surface-raised)] to-[var(--sr-surface-base)] p-6 overflow-hidden">
                 {/* Decorative elements */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-ai)]/5 rounded-full blur-3xl" />

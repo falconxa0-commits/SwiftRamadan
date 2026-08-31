@@ -55,7 +55,7 @@ function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
   );
 }
 
-const confettiColors = ['#10E07A', '#38BDF8', '#F5C451', '#A855F7', '#FF6B6B', '#FFD700'];
+const confettiColors = ['var(--sr-customer)', 'var(--sr-rider)', 'var(--sr-vendor)', '#A855F7', '#FF6B6B', 'var(--sr-vendor)'];
 
 const quickReasons = [
   'Order never arrived',

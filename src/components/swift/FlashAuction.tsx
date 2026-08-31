@@ -134,7 +134,7 @@ export default function FlashAuction() {
       id: i,
       x: Math.random() * 100,
       y: Math.random() * 100,
-      color: ['#10E07A', '#F5C451', '#38BDF8', '#A78BFA', '#FF6B6B'][Math.floor(Math.random() * 5)],
+      color: ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-rider)', 'var(--sr-ai)', '#FF6B6B'][Math.floor(Math.random() * 5)],
       size: Math.random() * 8 + 4,
     }));
     setConfettiParticles(particles);
@@ -288,7 +288,7 @@ export default function FlashAuction() {
                     <div className="relative h-36 bg-gradient-to-br from-[var(--sr-customer)]/10 to-[var(--sr-vendor)]/5 flex items-center justify-center">
                       <Package className="w-16 h-16 text-white/10" />
                       <div className="absolute top-3 left-3">
-                        <span className="bg-[var(--sr-vendor)]/90 text-[#0B0D14] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
+                        <span className="bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {auction.category}
                         </span>
                       </div>
@@ -316,8 +316,8 @@ export default function FlashAuction() {
                         <span className="text-white/60 text-sm line-through">{formatNaira(auction.startPrice)}</span>
                         <motion.span
                           key={auction.currentPrice}
-                          initial={{ scale: 1.2, color: '#10E07A' }}
-                          animate={{ scale: 1, color: '#10E07A' }}
+                          initial={{ scale: 1.2, color: 'var(--sr-customer)' }}
+                          animate={{ scale: 1, color: 'var(--sr-customer)' }}
                           className="font-black text-2xl"
                         >
                           {formatNaira(auction.currentPrice)}
@@ -357,7 +357,7 @@ export default function FlashAuction() {
                       {isActive ? (
                         <motion.button
                           onClick={() => handleGrab(auction.id)}
-                          className="w-full py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[#0B0D14] relative overflow-hidden"
+                          className="w-full py-3.5 rounded-xl font-black text-base flex items-center justify-center gap-2 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] relative overflow-hidden"
                           animate={{
                             boxShadow: [
                               '0 0 20px rgba(16,224,122,0.3)',
@@ -399,9 +399,9 @@ export default function FlashAuction() {
             <h3 className="text-white font-bold text-lg mb-4">How Flash Auction Works</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
               {[
-                { step: 1, title: 'Watch Prices Drop', icon: TrendingDown, color: '#10E07A' },
-                { step: 2, title: 'Grab Before Others', icon: Zap, color: '#F5C451' },
-                { step: 3, title: 'Win the Deal!', icon: Trophy, color: '#A78BFA' },
+                { step: 1, title: 'Watch Prices Drop', icon: TrendingDown, color: 'var(--sr-customer)' },
+                { step: 2, title: 'Grab Before Others', icon: Zap, color: 'var(--sr-vendor)' },
+                { step: 3, title: 'Win the Deal!', icon: Trophy, color: 'var(--sr-ai)' },
               ].map((item, idx) => (
                 <motion.div
                   key={item.step}
@@ -412,7 +412,7 @@ export default function FlashAuction() {
                 >
                   <div
                     className="w-12 h-12 mx-auto mb-3 rounded-xl flex items-center justify-center border"
-                    style={{ backgroundColor: `${item.color}10`, borderColor: `${item.color}20` }}
+                    style={{ backgroundColor: `color-mix(in srgb, ${item.color} 6%, transparent)`, borderColor: `color-mix(in srgb, ${item.color} 13%, transparent)` }}
                   >
                     <item.icon className="w-5 h-5" style={{ color: item.color }} />
                   </div>

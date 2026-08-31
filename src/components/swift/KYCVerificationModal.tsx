@@ -45,21 +45,21 @@ const STATUS_CONFIG = {
   },
   pending: {
     label: 'Pending Review',
-    color: '#F5C451',
+    color: 'var(--sr-vendor)',
     bgColor: 'rgba(245,196,81,0.12)',
     borderColor: 'rgba(245,196,81,0.25)',
     icon: Clock,
   },
   verified: {
     label: 'Verified',
-    color: '#10E07A',
+    color: 'var(--sr-customer)',
     bgColor: 'rgba(16,224,122,0.12)',
     borderColor: 'rgba(16,224,122,0.25)',
     icon: CheckCircle2,
   },
   rejected: {
     label: 'Rejected',
-    color: '#EF4444',
+    color: 'var(--sr-error)',
     bgColor: 'rgba(239,68,68,0.12)',
     borderColor: 'rgba(239,68,68,0.25)',
     icon: XCircle,
@@ -321,9 +321,9 @@ export default function KYCVerificationModal() {
                         className="h-1.5 flex-1 rounded-full"
                         style={{
                           backgroundColor:
-                            doc.status === 'verified' ? '#10E07A' :
-                            doc.status === 'rejected' ? '#EF4444' :
-                            '#F5C451',
+                            doc.status === 'verified' ? 'var(--sr-customer)' :
+                            doc.status === 'rejected' ? 'var(--sr-error)' :
+                            'var(--sr-vendor)',
                           opacity: doc.status === 'pending' ? 0.5 : 1,
                         }}
                       />
@@ -431,7 +431,7 @@ export default function KYCVerificationModal() {
                       style={{
                         background: submitting
                           ? 'rgba(16,224,122,0.15)'
-                          : 'linear-gradient(135deg, #10E07A, #0ABF66)',
+                          : 'linear-gradient(135deg, var(--sr-customer), #0ABF66)',
                         color: '#04140C',
                         boxShadow: submitting ? 'none' : '0 4px 20px rgba(16,224,122,0.25)',
                       }}

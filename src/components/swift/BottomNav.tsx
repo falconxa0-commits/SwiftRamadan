@@ -42,7 +42,7 @@ export default function BottomNav() {
   const userRole = useUserRole();
 
   const tabs = userRole === 'rider' ? riderTabs : userRole === 'vendor' ? vendorTabs : customerTabs;
-  const accentColor = userRole === 'rider' ? '#38BDF8' : userRole === 'vendor' ? '#F5C451' : '#10E07A';
+  const accentColor = userRole === 'rider' ? 'var(--sr-rider)' : userRole === 'vendor' ? 'var(--sr-vendor)' : 'var(--sr-customer)';
   const isCompact = tabs.length > 6; // tighter sizing when 7 tabs
 
   return (
@@ -70,8 +70,8 @@ export default function BottomNav() {
                 layoutId="activeTabBg"
                 className="absolute inset-1 rounded-2xl"
                 style={{
-                  background: `linear-gradient(180deg, ${accentColor}22 0%, ${accentColor}0A 100%)`,
-                  border: `1px solid ${accentColor}33`,
+                  background: `linear-gradient(180deg, color-mix(in srgb, ${accentColor} 13%, transparent) 0%, color-mix(in srgb, ${accentColor} 4%, transparent) 100%)`,
+                  border: `1px solid color-mix(in srgb, ${accentColor} 20%, transparent)`,
                 }}
                 transition={{ type: 'spring', bounce: 0.18, duration: 0.55 }}
               />
@@ -95,7 +95,7 @@ export default function BottomNav() {
                 className={`${isCompact ? 'w-[17px] h-[17px] sm:w-[19px] sm:h-[19px]' : 'w-[18px] h-[18px] sm:w-5 sm:h-5'} transition-all duration-200 ${
                   isActive ? 'scale-110' : 'scale-100'
                 }`}
-                style={isActive ? { color: accentColor, filter: `drop-shadow(0 0 6px ${accentColor}80)` } : { color: 'rgba(255,255,255,0.32)' }}
+                style={isActive ? { color: accentColor, filter: `drop-shadow(0 0 6px color-mix(in srgb, ${accentColor} 50%, transparent))` } : { color: 'rgba(255,255,255,0.32)' }}
               />
               {tab.id === 'cart' && cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] text-[9px] font-black rounded-full flex items-center justify-center shadow-[0_0_8px_rgba(16,224,122,0.6)]">

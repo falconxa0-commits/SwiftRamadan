@@ -202,16 +202,16 @@ export default function FridgeScanner() {
         {/* Modal */}
         <motion.div
           className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-white/8 shadow-2xl"
-          style={{ backgroundColor: '#0F1118' }}
+          style={{ backgroundColor: 'var(--sr-surface-raised)' }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: '#0F1118' }}>
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
             <div className="flex items-center gap-2">
-              <Camera className="w-5 h-5" style={{ color: '#F5C451' }} />
+              <Camera className="w-5 h-5" style={{ color: 'var(--sr-vendor)' }} />
               <h2 className="text-white font-bold text-lg">Fridge Scanner</h2>
             </div>
             <button
@@ -235,8 +235,8 @@ export default function FridgeScanner() {
                   className="border-2 border-dashed border-white/10 rounded-2xl p-8 flex flex-col items-center gap-4 cursor-pointer hover:border-white/20 transition-colors"
                   onClick={handleUpload}
                 >
-                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#F5C45120' }}>
-                    <ScanLine className="w-8 h-8" style={{ color: '#F5C451' }} />
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: 'color-mix(in srgb, var(--sr-vendor) 13%, transparent)' }}>
+                    <ScanLine className="w-8 h-8" style={{ color: 'var(--sr-vendor)' }} />
                   </div>
                   <div className="text-center">
                     <p className="text-white font-medium">Scan Your Fridge</p>
@@ -246,7 +246,7 @@ export default function FridgeScanner() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleUpload(); }}
                       className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors"
-                      style={{ backgroundColor: '#F5C451', color: '#0B0D14' }}
+                      style={{ backgroundColor: 'var(--sr-vendor)', color: 'var(--sr-surface-base)' }}
                     >
                       <Upload className="w-4 h-4" />
                       Upload Photo
@@ -271,9 +271,9 @@ export default function FridgeScanner() {
                 />
 
                 {/* Tips */}
-                <div className="rounded-xl p-3 border border-white/8" style={{ backgroundColor: '#0B0D14' }}>
+                <div className="rounded-xl p-3 border border-white/8" style={{ backgroundColor: 'var(--sr-surface-base)' }}>
                   <p className="text-white/50 text-xs flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5" style={{ color: '#F5C451' }} />
+                    <Sparkles className="w-3.5 h-3.5" style={{ color: 'var(--sr-vendor)' }} />
                     Tips: Open the fridge door wide, ensure good lighting, and capture most shelves in one shot.
                   </p>
                 </div>
@@ -304,7 +304,7 @@ export default function FridgeScanner() {
                   <motion.button
                     onClick={handleAnalyze}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold"
-                    style={{ backgroundColor: '#F5C451', color: '#0B0D14' }}
+                    style={{ backgroundColor: 'var(--sr-vendor)', color: 'var(--sr-surface-base)' }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -324,11 +324,11 @@ export default function FridgeScanner() {
               >
                 <motion.div
                   className="w-16 h-16 rounded-2xl flex items-center justify-center"
-                  style={{ backgroundColor: '#F5C45120' }}
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--sr-vendor) 13%, transparent)' }}
                   animate={{ scale: [1, 1.1, 1] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  <ScanLine className="w-8 h-8" style={{ color: '#F5C451' }} />
+                  <ScanLine className="w-8 h-8" style={{ color: 'var(--sr-vendor)' }} />
                 </motion.div>
                 <div className="text-center">
                   <p className="text-white font-medium">Scanning your fridge...</p>
@@ -348,7 +348,7 @@ export default function FridgeScanner() {
                 {/* Detected Ingredients */}
                 <div>
                   <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
-                    <ScanLine className="w-4 h-4" style={{ color: '#10E07A' }} />
+                    <ScanLine className="w-4 h-4" style={{ color: 'var(--sr-customer)' }} />
                     Detected Ingredients
                   </h3>
                   <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -356,7 +356,7 @@ export default function FridgeScanner() {
                       <motion.div
                         key={item.name}
                         className="flex items-center gap-3 p-3 rounded-xl border border-white/8"
-                        style={{ backgroundColor: '#0B0D14' }}
+                        style={{ backgroundColor: 'var(--sr-surface-base)' }}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
@@ -364,8 +364,8 @@ export default function FridgeScanner() {
                         <div
                           className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold"
                           style={{
-                            backgroundColor: item.inCart ? '#10E07A20' : '#F5C45120',
-                            color: item.inCart ? '#10E07A' : '#F5C451',
+                            backgroundColor: item.inCart ? 'color-mix(in srgb, var(--sr-customer) 13%, transparent)' : 'color-mix(in srgb, var(--sr-vendor) 13%, transparent)',
+                            color: item.inCart ? 'var(--sr-customer)' : 'var(--sr-vendor)',
                           }}
                         >
                           {item.inCart ? <Check className="w-4 h-4" /> : Math.round(item.confidence * 100)}
@@ -382,8 +382,8 @@ export default function FridgeScanner() {
                             disabled={addedItems.has(item.name)}
                             className="p-2 rounded-lg transition-colors disabled:opacity-50"
                             style={{
-                              backgroundColor: addedItems.has(item.name) ? '#10E07A20' : '#F5C45120',
-                              color: addedItems.has(item.name) ? '#10E07A' : '#F5C451',
+                              backgroundColor: addedItems.has(item.name) ? 'color-mix(in srgb, var(--sr-customer) 13%, transparent)' : 'color-mix(in srgb, var(--sr-vendor) 13%, transparent)',
+                              color: addedItems.has(item.name) ? 'var(--sr-customer)' : 'var(--sr-vendor)',
                             }}
                             aria-label={`Add ${item.name} to cart`}
                           >
@@ -411,7 +411,7 @@ export default function FridgeScanner() {
                 {recipes.length > 0 && (
                   <div>
                     <h3 className="text-white font-semibold text-sm mb-3 flex items-center gap-2">
-                      <ChefHat className="w-4 h-4" style={{ color: '#A78BFA' }} />
+                      <ChefHat className="w-4 h-4" style={{ color: 'var(--sr-ai)' }} />
                       Recipe Suggestions
                     </h3>
                     <div className="space-y-2">
@@ -419,7 +419,7 @@ export default function FridgeScanner() {
                         <motion.div
                           key={recipe.name}
                           className="p-3 rounded-xl border border-white/8"
-                          style={{ backgroundColor: '#0B0D14' }}
+                          style={{ backgroundColor: 'var(--sr-surface-base)' }}
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: i * 0.08 + 0.2 }}
@@ -429,8 +429,8 @@ export default function FridgeScanner() {
                             <span
                               className="text-xs font-bold px-2 py-0.5 rounded-full"
                               style={{
-                                backgroundColor: recipe.matchPercent >= 80 ? '#10E07A20' : '#F5C45120',
-                                color: recipe.matchPercent >= 80 ? '#10E07A' : '#F5C451',
+                                backgroundColor: recipe.matchPercent >= 80 ? 'color-mix(in srgb, var(--sr-customer) 13%, transparent)' : 'color-mix(in srgb, var(--sr-vendor) 13%, transparent)',
+                                color: recipe.matchPercent >= 80 ? 'var(--sr-customer)' : 'var(--sr-vendor)',
                               }}
                             >
                               {recipe.matchPercent}% match

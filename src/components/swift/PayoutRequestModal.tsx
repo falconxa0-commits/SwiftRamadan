@@ -79,7 +79,7 @@ function ConfettiParticle({ delay, color }: { delay: number; color: string }) {
   );
 }
 
-const confettiColors = ['#F5C451', '#10E07A', '#38BDF8', '#FF6B6B', '#A855F7', '#FFD700'];
+const confettiColors = ['var(--sr-vendor)', 'var(--sr-customer)', 'var(--sr-rider)', '#FF6B6B', '#A855F7', 'var(--sr-vendor)'];
 
 /* ════════════════════════════════════════════════════════════════
    MAIN COMPONENT
@@ -275,7 +275,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
   };
 
   const isGold = role === 'vendor';
-  const accentColor = isGold ? '#F5C451' : '#38BDF8';
+  const accentColor = isGold ? 'var(--sr-vendor)' : 'var(--sr-rider)';
   const accentBg = isGold ? 'bg-[var(--sr-vendor)]' : 'bg-[var(--sr-rider)]';
   const accentText = isGold ? 'text-[var(--sr-vendor)]' : 'text-[var(--sr-rider)]';
   const accentBg20 = isGold ? 'bg-[var(--sr-vendor)]/20' : 'bg-[var(--sr-rider)]/20';
@@ -284,7 +284,7 @@ export default function PayoutRequestModal({ onClose, role }: PayoutRequestModal
   const accentBorder30 = isGold ? 'border-[var(--sr-vendor)]/30' : 'border-[var(--sr-rider)]/30';
   const gradientClass = isGold
     ? 'gold-gradient'
-    : 'bg-gradient-to-br from-[var(--sr-rider)]/20 via-[var(--sr-rider)]/5 to-[#1A1D26]';
+    : 'bg-gradient-to-br from-[var(--sr-rider)]/20 via-[var(--sr-rider)]/5 to-[var(--sr-surface-elevated)]';
 
   return (
     <AnimatePresence>

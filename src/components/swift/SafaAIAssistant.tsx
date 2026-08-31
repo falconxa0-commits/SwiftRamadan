@@ -440,18 +440,18 @@ export default function SafaAIAssistant() {
             exit={{ opacity: 0, y: 24, scale: 0.96 }}
             transition={{ type: 'spring', stiffness: 320, damping: 28 }}
             style={{ height: minimized ? 'auto' : '70vh' }}
-            className="fixed bottom-24 left-4 w-[calc(100%-2rem)] sm:w-[420px] z-[60] flex flex-col rounded-3xl overflow-hidden border border-white/10 bg-[var(--sr-surface-raised)]/95 backdrop-blur-md shadow-2xl shadow-black/50"
+            className="fixed bottom-24 left-4 w-[calc(100%-2rem)] sm:w-[420px] z-[60] flex flex-col rounded-3xl overflow-hidden border border-[var(--auren-gold-border)] bg-[var(--sr-surface-raised)]/95 backdrop-blur-md shadow-2xl shadow-[var(--auren-gold-glow)]"
           >
-            {/* Gradient ring border — Aurora Luxe palette */}
-            <div className="pointer-events-none absolute inset-0 rounded-3xl p-px bg-gradient-to-br from-[var(--sr-customer)]/50 via-transparent to-[var(--sr-vendor)]/50 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude]" />
+            {/* Gradient ring border — Aurora Luxe palette with Auren Kingdom gold accent */}
+            <div className="pointer-events-none absolute inset-0 rounded-3xl p-px bg-gradient-to-br from-[var(--sr-customer)]/50 via-[var(--auren-gold)]/30 to-[var(--sr-vendor)]/50 [mask:linear-gradient(#000_0_0)_content-box,linear-gradient(#000_0_0)] [mask-composite:exclude]" />
 
             {/* ──── Header ──── */}
-            <div className="relative shrink-0 bg-gradient-to-r from-[var(--sr-customer)]/15 via-[#1A1D26] to-[var(--sr-vendor)]/15 border-b border-white/5 px-4 py-3">
+            <div className="relative shrink-0 bg-gradient-to-r from-[var(--sr-customer)]/15 via-[var(--sr-surface-elevated)] to-[var(--sr-vendor)]/15 border-b border-white/5 px-4 py-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative w-10 h-10 rounded-full bg-gradient-to-br from-[var(--sr-vendor)] to-[var(--sr-customer)] flex items-center justify-center shadow-lg shadow-[var(--sr-customer)]/20">
                     <ChefHat className="w-5 h-5 text-[var(--sr-surface-raised)]" />
-                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[var(--sr-customer)] rounded-full border-2 border-[#0F1117]" />
+                    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-[var(--sr-customer)] rounded-full border-2 border-[var(--sr-surface-raised)]" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
@@ -590,7 +590,7 @@ export default function SafaAIAssistant() {
                 </AnimatePresence>
 
                 {/* ──── Input Bar ──── */}
-                <div className="p-3 border-t border-white/5 bg-[#0a0a0a]/60">
+                <div className="p-3 border-t border-white/5 bg-[var(--sr-surface-base)]/60">
                   <div className="flex items-center gap-2">
                     {/* Voice Input Button */}
                     <button
@@ -670,7 +670,7 @@ export default function SafaAIAssistant() {
           {isOpen ? <X className="w-6 h-6 text-[var(--sr-surface-base)]" /> : <ChefHat className="w-6 h-6 text-[var(--sr-surface-base)]" />}
           {/* Gold "new" notification dot */}
           {!isOpen && hasNew && (
-            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--sr-vendor)] rounded-full border-2 border-[#0F1117] flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-[var(--sr-vendor)] rounded-full border-2 border-[var(--sr-surface-raised)] flex items-center justify-center">
               <span className="w-1.5 h-1.5 bg-[var(--sr-surface-raised)] rounded-full" />
             </span>
           )}
@@ -681,7 +681,7 @@ export default function SafaAIAssistant() {
           Safa AI
         </span>
         {/* Mobile persistent AI badge */}
-        <span className="absolute -top-1 -left-1 sm:hidden bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-[#0F1117]">
+        <span className="absolute -top-1 -left-1 sm:hidden bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] text-[9px] font-bold px-1.5 py-0.5 rounded-full border border-[var(--sr-surface-raised)]">
           AI
         </span>
       </motion.button>

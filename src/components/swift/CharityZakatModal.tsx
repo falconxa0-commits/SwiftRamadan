@@ -219,7 +219,7 @@ export default function CharityZakatModal() {
                   >
                     {/* Impact Ticker */}
                     <div className="px-4 pt-4">
-                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[var(--sr-customer)]/20 p-3 sm:p-4">
+                      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[var(--sr-surface-base)] border border-[var(--sr-customer)]/20 p-3 sm:p-4">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-customer)]/10 blur-[40px]" />
                         <div className="relative flex items-center gap-3">
                           <div className="flex items-center gap-1">

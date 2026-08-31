@@ -181,7 +181,7 @@ export default function PartyBulkModal() {
               className="w-full h-44 bg-center bg-no-repeat bg-cover"
               style={{ backgroundImage: 'url("/images/hero/hero-family-iftar.png")' }}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-[#05070A]/60 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-base)] via-[var(--sr-surface-base)]/60 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-5">
               <h2 className="text-white font-black text-xl mb-1">Plan Your Ramadan Gathering</h2>
               <p className="text-white/60 text-xs">Bulk orders, party packs & livestock — all in one place</p>
@@ -359,7 +359,7 @@ export default function PartyBulkModal() {
           {shouldShowSection('all') && (
             <div className="px-4 mt-8">
               <div className="flex items-center gap-2 mb-2">
-                <span className="material-symbols-outlined text-[#f59e0b] text-xl">inventory_2</span>
+                <span className="material-symbols-outlined text-[var(--sr-warning)] text-xl">inventory_2</span>
                 <h3 className="text-white font-bold text-lg">Mix & Match Crate Builder</h3>
               </div>
               <p className="text-white/65 text-xs mb-4">Build your perfect custom crate</p>

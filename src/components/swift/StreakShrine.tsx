@@ -35,19 +35,19 @@ interface StreakShrineProps {
 
 // SVG mosque builder - progressive stages
 function MosqueSVG({ stage, progress, streak }: { stage: string; progress: number; streak: number }) {
-  const green = '#10E07A';
-  const gold = '#F5C451';
-  const purple = '#A78BFA';
-  const bg = '#0F1118';
-  const wallBase = '#1A1D26';
+  const green = 'var(--sr-customer)';
+  const gold = 'var(--sr-vendor)';
+  const purple = 'var(--sr-ai)';
+  const bg = 'var(--sr-surface-raised)';
+  const wallBase = 'var(--sr-surface-elevated)';
 
   return (
     <svg viewBox="0 0 300 350" className="w-full h-full" aria-label={`Mosque at ${stage} stage, ${streak} days`}>
       {/* Sky background */}
       <defs>
         <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#0B0D14" />
-          <stop offset="100%" stopColor="#0F1118" />
+          <stop offset="0%" stopColor="var(--sr-surface-base)" />
+          <stop offset="100%" stopColor="var(--sr-surface-raised)" />
         </linearGradient>
         <linearGradient id="domeGrad" x1="0%" y1="0%" x2="0%" y2="100%">
           <stop offset="0%" stopColor={gold} stopOpacity="0.9" />
@@ -87,7 +87,7 @@ function MosqueSVG({ stage, progress, streak }: { stage: string; progress: numbe
 
       {/* Moon */}
       <circle cx="250" cy="40" r="15" fill={gold} opacity="0.3" />
-      <circle cx="255" cy="37" r="13" fill="#0B0D14" />
+      <circle cx="255" cy="37" r="13" fill="var(--sr-surface-base)" />
 
       {/* Ground */}
       <rect x="0" y="290" width="300" height="60" fill="#0D0F16" />
@@ -116,10 +116,10 @@ function MosqueSVG({ stage, progress, streak }: { stage: string; progress: numbe
           {/* Center section */}
           <rect x="110" y="210" width="80" height="60" fill="url(#wallGrad)" stroke={green} strokeWidth="0.8" strokeOpacity="0.4" />
           {/* Door */}
-          <rect x="135" y="240" width="30" height="30" rx="15" fill="#0B0D14" stroke={gold} strokeWidth="0.8" strokeOpacity="0.5" />
+          <rect x="135" y="240" width="30" height="30" rx="15" fill="var(--sr-surface-base)" stroke={gold} strokeWidth="0.8" strokeOpacity="0.5" />
           {/* Windows */}
-          <rect x="72" y="215" width="15" height="20" rx="7.5" fill="#0B0D14" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
-          <rect x="213" y="215" width="15" height="20" rx="7.5" fill="#0B0D14" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
+          <rect x="72" y="215" width="15" height="20" rx="7.5" fill="var(--sr-surface-base)" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
+          <rect x="213" y="215" width="15" height="20" rx="7.5" fill="var(--sr-surface-base)" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
           {/* Wall glow */}
           <ellipse cx="150" cy="230" rx="80" ry="40" fill="url(#glowGreen)" />
         </g>
@@ -172,8 +172,8 @@ function MosqueSVG({ stage, progress, streak }: { stage: string; progress: numbe
           {/* Minaret balcony */}
           <rect x="237" y="140" width="28" height="5" rx="1" fill="url(#wallGrad)" stroke={purple} strokeWidth="0.5" strokeOpacity="0.4" />
           {/* Minaret windows */}
-          <rect x="45" y="160" width="8" height="12" rx="4" fill="#0B0D14" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
-          <rect x="247" y="160" width="8" height="12" rx="4" fill="#0B0D14" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
+          <rect x="45" y="160" width="8" height="12" rx="4" fill="var(--sr-surface-base)" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
+          <rect x="247" y="160" width="8" height="12" rx="4" fill="var(--sr-surface-base)" stroke={gold} strokeWidth="0.5" strokeOpacity="0.3" />
           {/* Minaret glow */}
           <ellipse cx="49" cy="130" rx="30" ry="50" fill="url(#glowPurple)" />
           <ellipse cx="251" cy="130" rx="30" ry="50" fill="url(#glowPurple)" />
@@ -185,13 +185,13 @@ function MosqueSVG({ stage, progress, streak }: { stage: string; progress: numbe
         <g>
           {/* Left crescent */}
           <circle cx="49" cy="88" r="6" fill={gold} opacity="0.9" />
-          <circle cx="52" cy="86" r="5" fill="#0B0D14" />
+          <circle cx="52" cy="86" r="5" fill="var(--sr-surface-base)" />
           {/* Right crescent */}
           <circle cx="251" cy="88" r="6" fill={gold} opacity="0.9" />
-          <circle cx="254" cy="86" r="5" fill="#0B0D14" />
+          <circle cx="254" cy="86" r="5" fill="var(--sr-surface-base)" />
           {/* Top crescent (main dome) */}
           <circle cx="150" cy="118" r="10" fill={gold} opacity="0.9" />
-          <circle cx="154" cy="115" r="8" fill="#0B0D14" />
+          <circle cx="154" cy="115" r="8" fill="var(--sr-surface-base)" />
           {/* Crescent glow */}
           <ellipse cx="150" cy="110" rx="30" ry="25" fill="url(#glowGold)" />
           {/* Completion rays */}
@@ -329,7 +329,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
     toast({ title: 'Share Link Copied! 🔗', description: 'Your Streak Shrine is ready to share' });
   };
 
-  const currentStageColor = shrine?.currentStage?.color || '#10E07A';
+  const currentStageColor = shrine?.currentStage?.color || 'var(--sr-customer)';
 
   if (!isOpen) return null;
 
@@ -343,7 +343,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
       {/* Header */}
       <div className="shrink-0 flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/8">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ backgroundColor: `${currentStageColor}15`, borderColor: `${currentStageColor}25` }}>
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center border" style={{ backgroundColor: `color-mix(in srgb, ${currentStageColor} 8%, transparent)`, borderColor: `color-mix(in srgb, ${currentStageColor} 15%, transparent)` }}>
             <Building2 className="w-4 h-4" style={{ color: currentStageColor }} />
           </div>
           <div>
@@ -373,7 +373,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[var(--sr-customer)] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -426,12 +426,12 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               transition={{ delay: 0.3 }}
               className="mt-4 rounded-2xl border p-3 sm:p-4"
               style={{
-                background: `linear-gradient(135deg, ${currentStageColor}10, #0F1118)`,
-                borderColor: `${currentStageColor}25`,
+                background: `linear-gradient(135deg, color-mix(in srgb, ${currentStageColor} 6%, transparent), var(--sr-surface-raised))`,
+                borderColor: `color-mix(in srgb, ${currentStageColor} 15%, transparent)`,
               }}
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center border" style={{ backgroundColor: `${currentStageColor}15`, borderColor: `${currentStageColor}25` }}>
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center border" style={{ backgroundColor: `color-mix(in srgb, ${currentStageColor} 8%, transparent)`, borderColor: `color-mix(in srgb, ${currentStageColor} 15%, transparent)` }}>
                   <Building2 className="w-5 h-5" style={{ color: currentStageColor }} />
                 </div>
                 <div className="flex-1">
@@ -487,14 +487,14 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                 style={{
                   background: marking
                     ? 'linear-gradient(135deg, #555, #444)'
-                    : `linear-gradient(135deg, ${currentStageColor}, ${currentStageColor}CC)`,
-                  color: '#0B0D14',
-                  boxShadow: marking ? 'none' : `0 4px 20px ${currentStageColor}40`,
+                    : `linear-gradient(135deg, ${currentStageColor}, color-mix(in srgb, ${currentStageColor} 80%, transparent))`,
+                  color: 'var(--sr-surface-base)',
+                  boxShadow: marking ? 'none' : `0 4px 20px color-mix(in srgb, ${currentStageColor} 25%, transparent)`,
                 }}
                 aria-label="Mark today's fast"
               >
                 {marking ? (
-                  <div className="w-5 h-5 border-2 border-[#0B0D14]/30 border-t-[#0B0D14] rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-[var(--sr-surface-base)]/30 border-t-[var(--sr-surface-base)] rounded-full animate-spin" />
                 ) : (
                   <>
                     <Flame className="w-4 h-4" />
@@ -529,8 +529,8 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                       <div
                         className="w-6 h-6 rounded-md flex items-center justify-center shrink-0"
                         style={{
-                          backgroundColor: isUnlocked ? `${stage.color}20` : 'rgba(255,255,255,0.05)',
-                          border: `1px solid ${isUnlocked ? `${stage.color}40` : 'rgba(255,255,255,0.05)'}`,
+                          backgroundColor: isUnlocked ? `color-mix(in srgb, ${stage.color} 13%, transparent)` : 'rgba(255,255,255,0.05)',
+                          border: `1px solid color-mix(in srgb, ${isUnlocked ? `${stage.color} 25%, transparent)` : 'rgba(255,255,255,0.05)'}`,
                         }}
                       >
                         {isUnlocked ? (
@@ -575,7 +575,7 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
               className="w-full max-w-xs relative overflow-hidden rounded-3xl border border-[var(--sr-customer)]/30"
-              style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
+              style={{ background: 'linear-gradient(135deg, var(--sr-surface-elevated), var(--sr-surface-raised))' }}
               role="dialog"
               aria-modal="true"
               aria-label="Share your streak shrine"
@@ -597,8 +597,8 @@ function StreakShrineInner({ onClose }: StreakShrineProps) {
                   onClick={() => setShowSharePreview(false)}
                   className="mt-5 w-full py-3 rounded-2xl font-bold text-sm"
                   style={{
-                    background: 'linear-gradient(135deg, #10E07A, #0CC06A)',
-                    color: '#0B0D14',
+                    background: 'linear-gradient(135deg, var(--sr-customer), var(--sr-customer))',
+                    color: 'var(--sr-surface-base)',
                     boxShadow: '0 4px 20px rgba(16,224,122,0.3)',
                   }}
                 >

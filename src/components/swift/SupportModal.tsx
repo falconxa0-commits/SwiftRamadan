@@ -58,18 +58,18 @@ const PRIORITIES = [
 ];
 
 const STATUS_CONFIG: Record<string, { label: string; bg: string; color: string }> = {
-  open: { label: 'Open', bg: 'rgba(16,224,122,0.15)', color: '#10E07A' },
-  in_progress: { label: 'In Progress', bg: 'rgba(245,196,81,0.15)', color: '#F5C451' },
-  resolved: { label: 'Resolved', bg: 'rgba(56,189,248,0.15)', color: '#38BDF8' },
+  open: { label: 'Open', bg: 'rgba(16,224,122,0.15)', color: 'var(--sr-customer)' },
+  in_progress: { label: 'In Progress', bg: 'rgba(245,196,81,0.15)', color: 'var(--sr-vendor)' },
+  resolved: { label: 'Resolved', bg: 'rgba(56,189,248,0.15)', color: 'var(--sr-rider)' },
   closed: { label: 'Closed', bg: 'rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.4)' },
 };
 
 const CATEGORY_COLORS: Record<string, { bg: string; color: string }> = {
-  general: { bg: 'rgba(167,139,250,0.12)', color: '#A78BFA' },
-  order: { bg: 'rgba(16,224,122,0.12)', color: '#10E07A' },
-  payment: { bg: 'rgba(245,196,81,0.12)', color: '#F5C451' },
-  delivery: { bg: 'rgba(56,189,248,0.12)', color: '#38BDF8' },
-  account: { bg: 'rgba(251,113,133,0.12)', color: '#FB7185' },
+  general: { bg: 'rgba(167,139,250,0.12)', color: 'var(--sr-ai)' },
+  order: { bg: 'rgba(16,224,122,0.12)', color: 'var(--sr-customer)' },
+  payment: { bg: 'rgba(245,196,81,0.12)', color: 'var(--sr-vendor)' },
+  delivery: { bg: 'rgba(56,189,248,0.12)', color: 'var(--sr-rider)' },
+  account: { bg: 'rgba(251,113,133,0.12)', color: 'var(--sr-error)' },
   vendor: { bg: 'rgba(251,146,60,0.12)', color: '#FB923C' },
   rider: { bg: 'rgba(45,212,191,0.12)', color: '#2DD4BF' },
 };
@@ -369,7 +369,7 @@ export default function SupportModal() {
                   <div className="px-4 pt-4 pb-2 shrink-0">
                     <button
                       onClick={() => setActiveView('create')}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(16,224,122,0.25)]"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-transform shadow-[0_0_20px_rgba(16,224,122,0.25)]"
                     >
                       <Plus className="w-4 h-4" strokeWidth={2.5} />
                       Create Ticket
@@ -521,7 +521,7 @@ export default function SupportModal() {
                   <button
                     onClick={handleCreateTicket}
                     disabled={submitting || !subject.trim() || !message.trim()}
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(16,224,122,0.25)]"
+                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-bold text-sm active:scale-[0.98] transition-all disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_20px_rgba(16,224,122,0.25)]"
                   >
                     {submitting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -606,7 +606,7 @@ export default function SupportModal() {
                               className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                                 isUser
                                   ? 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
-                                  : 'bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-medium rounded-br-md'
+                                  : 'bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-medium rounded-br-md'
                               }`}
                             >
                               {isUser && (
@@ -652,7 +652,7 @@ export default function SupportModal() {
                         <button
                           onClick={handleSendMessage}
                           disabled={!message.trim()}
-                          className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
+                          className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
                           aria-label="Send message"
                         >
                           <Send className="w-5 h-5 text-[var(--sr-surface-base)]" strokeWidth={2.5} />

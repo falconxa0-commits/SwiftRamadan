@@ -27,7 +27,7 @@ const riderStats: RiderStats = {
   rating: 4.9,
   totalTips: 245000,
   yearsActive: 3,
-  avatarColor: '#10E07A',
+  avatarColor: 'var(--sr-customer)',
 };
 
 const presetTipAmounts = [100, 200, 500];
@@ -179,8 +179,8 @@ export default function TippingKiosk() {
                         transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
                         className="w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-black border-4"
                         style={{
-                          backgroundColor: `${riderStats.avatarColor}15`,
-                          borderColor: `${riderStats.avatarColor}40`,
+                          backgroundColor: `color-mix(in srgb, ${riderStats.avatarColor} 8%, transparent)`,
+                          borderColor: `color-mix(in srgb, ${riderStats.avatarColor} 25%, transparent)`,
                           color: riderStats.avatarColor,
                         }}
                       >
@@ -190,7 +190,7 @@ export default function TippingKiosk() {
                       <h3 className="text-white font-bold text-xl mb-1">{riderStats.name}</h3>
 
                       <div className="flex items-center justify-center gap-1 mb-4">
-                        <Star className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                        <Star className="w-4 h-4 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                         <span className="text-[var(--sr-vendor)] font-bold text-sm">{riderStats.rating}</span>
                         <span className="text-white/60 text-xs">· {riderStats.yearsActive} years</span>
                       </div>
@@ -263,7 +263,7 @@ export default function TippingKiosk() {
                           onClick={() => handleSelectPreset(amount)}
                           className={`py-4 rounded-xl font-bold text-base transition-all ${
                             selectedTip === amount && !isCustom
-                              ? 'bg-[var(--sr-customer)] text-[#0B0D14] border-2 border-[var(--sr-customer)]'
+                              ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)] border-2 border-[var(--sr-customer)]'
                               : 'bg-[var(--sr-surface-raised)] border border-white/8 text-white hover:bg-white/5'
                           }`}
                           aria-label={`Tip ${formatNaira(amount)}`}
@@ -324,15 +324,15 @@ export default function TippingKiosk() {
                     disabled={isSending || getTipAmount() <= 0}
                     className="w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 transition-all"
                     style={{
-                      backgroundColor: getTipAmount() > 0 ? '#10E07A' : 'rgba(255,255,255,0.05)',
-                      color: getTipAmount() > 0 ? '#0B0D14' : 'rgba(255,255,255,0.3)',
+                      backgroundColor: getTipAmount() > 0 ? 'var(--sr-customer)' : 'rgba(255,255,255,0.05)',
+                      color: getTipAmount() > 0 ? 'var(--sr-surface-base)' : 'rgba(255,255,255,0.3)',
                     }}
                     whileTap={getTipAmount() > 0 ? { scale: 0.98 } : {}}
                     aria-label={`Send ${formatNaira(getTipAmount())} tip to ${riderStats.name}`}
                   >
                     {isSending ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-[#0B0D14]/30 border-t-[#0B0D14] rounded-full animate-spin" />
+                        <div className="w-5 h-5 border-2 border-[var(--sr-surface-base)]/30 border-t-[var(--sr-surface-base)] rounded-full animate-spin" />
                         Sending...
                       </>
                     ) : (
@@ -360,13 +360,13 @@ export default function TippingKiosk() {
                     animate={{ scale: [0, 1.3, 1] }}
                     transition={{ duration: 0.6 }}
                     className="w-28 h-28 rounded-full mx-auto mb-6 flex items-center justify-center"
-                    style={{ backgroundColor: '#10E07A15', border: '3px solid #10E07A40' }}
+                    style={{ backgroundColor: 'color-mix(in srgb, var(--sr-customer) 8%, transparent)', border: '3px solid color-mix(in srgb, var(--sr-customer) 25%, transparent)' }}
                   >
                     <motion.div
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 1, repeat: Infinity, repeatType: 'reverse' }}
                     >
-                      <Heart className="w-14 h-14 text-[var(--sr-customer)] fill-[#10E07A]" />
+                      <Heart className="w-14 h-14 text-[var(--sr-customer)] fill-[var(--sr-customer)]" />
                     </motion.div>
                   </motion.div>
 

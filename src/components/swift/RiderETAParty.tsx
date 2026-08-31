@@ -82,7 +82,7 @@ function PartyParticles({ active }: { active: boolean }) {
     x: Math.random() * 300 - 150,
     y: -(Math.random() * 200 + 50),
     scale: Math.random() * 0.5 + 0.5,
-    color: ['#10E07A', '#F5C451', '#A78BFA', '#38BDF8'][i % 4],
+    color: ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-rider)'][i % 4],
     delay: Math.random() * 0.5,
   }));
 
@@ -205,7 +205,7 @@ export default function RiderETAParty() {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                 className="fixed inset-0 z-[71] pointer-events-none"
-                style={{ backgroundColor: '#10E07A' }}
+                style={{ backgroundColor: 'var(--sr-customer)' }}
               />
             )}
           </AnimatePresence>
@@ -234,7 +234,7 @@ export default function RiderETAParty() {
                     border: `1px solid ${isPartyMode ? 'rgba(16,224,122,0.4)' : 'rgba(56,189,248,0.3)'}`,
                   }}
                 >
-                  <Bike className="w-4 h-4" style={{ color: isPartyMode ? '#10E07A' : '#38BDF8' }} />
+                  <Bike className="w-4 h-4" style={{ color: isPartyMode ? 'var(--sr-customer)' : 'var(--sr-rider)' }} />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg leading-tight">
@@ -261,7 +261,7 @@ export default function RiderETAParty() {
                 transition={{ duration: 0.8, repeat: isPartyMode ? Infinity : 0 }}
                 className="rounded-2xl p-5 border relative overflow-hidden"
                 style={{
-                  backgroundColor: isPartyMode ? 'rgba(16,224,122,0.08)' : '#0F1118',
+                  backgroundColor: isPartyMode ? 'rgba(16,224,122,0.08)' : 'var(--sr-surface-raised)',
                   borderColor: isPartyMode ? 'rgba(16,224,122,0.3)' : 'rgba(255,255,255,0.08)',
                 }}
               >
@@ -281,7 +281,7 @@ export default function RiderETAParty() {
                     <div className="flex items-baseline gap-1 mt-1">
                       <span
                         className="text-4xl font-black"
-                        style={{ color: isPartyMode ? '#10E07A' : '#F5C451' }}
+                        style={{ color: isPartyMode ? 'var(--sr-customer)' : 'var(--sr-vendor)' }}
                       >
                         {currentStage === 'delivered' ? '✓' : etaMinutes}
                       </span>
@@ -296,7 +296,7 @@ export default function RiderETAParty() {
                         className="px-3 py-1.5 rounded-full text-xs font-bold"
                         style={{
                           backgroundColor: isPartyMode ? 'rgba(16,224,122,0.15)' : 'rgba(245,196,81,0.15)',
-                          color: isPartyMode ? '#10E07A' : '#F5C451',
+                          color: isPartyMode ? 'var(--sr-customer)' : 'var(--sr-vendor)',
                           border: `1px solid ${isPartyMode ? 'rgba(16,224,122,0.3)' : 'rgba(245,196,81,0.3)'}`,
                         }}
                       >
@@ -306,7 +306,7 @@ export default function RiderETAParty() {
                     {currentStage === 'delivered' && (
                       <span
                         className="px-3 py-1.5 rounded-full text-xs font-bold"
-                        style={{ backgroundColor: 'rgba(16,224,122,0.15)', color: '#10E07A', border: '1px solid rgba(16,224,122,0.3)' }}
+                        style={{ backgroundColor: 'rgba(16,224,122,0.15)', color: 'var(--sr-customer)', border: '1px solid rgba(16,224,122,0.3)' }}
                       >
                         COMPLETED
                       </span>
@@ -323,7 +323,7 @@ export default function RiderETAParty() {
                 <div className="absolute top-5 left-5 right-5 h-1 bg-white/5 rounded-full">
                   <motion.div
                     className="h-1 rounded-full"
-                    style={{ backgroundColor: '#10E07A' }}
+                    style={{ backgroundColor: 'var(--sr-customer)' }}
                     initial={{ width: '0%' }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -342,7 +342,7 @@ export default function RiderETAParty() {
                         <motion.div
                           animate={
                             isPartyStage
-                              ? { scale: [1, 1.3, 1], boxShadow: ['0 0 0px #10E07A', '0 0 20px #10E07A', '0 0 0px #10E07A'] }
+                              ? { scale: [1, 1.3, 1], boxShadow: ['0 0 0px var(--sr-customer)', '0 0 20px var(--sr-customer)', '0 0 0px var(--sr-customer)'] }
                               : isCurrent
                                 ? { scale: [1, 1.1, 1] }
                                 : {}
@@ -356,21 +356,21 @@ export default function RiderETAParty() {
                           }
                           className="w-10 h-10 rounded-full flex items-center justify-center z-10 border-2 transition-all"
                           style={{
-                            backgroundColor: isCompleted ? '#10E07A' : '#0F1118',
-                            borderColor: isCompleted ? '#10E07A' : 'rgba(255,255,255,0.1)',
-                            color: isCompleted ? '#0B0D14' : 'rgba(255,255,255,0.3)',
+                            backgroundColor: isCompleted ? 'var(--sr-customer)' : 'var(--sr-surface-raised)',
+                            borderColor: isCompleted ? 'var(--sr-customer)' : 'rgba(255,255,255,0.1)',
+                            color: isCompleted ? 'var(--sr-surface-base)' : 'rgba(255,255,255,0.3)',
                             boxShadow: isPartyStage ? '0 0 20px rgba(16,224,122,0.5)' : 'none',
                           }}
                         >
                           {isCompleted ? (
-                            <CheckCircle2 className="w-4 h-4" style={{ color: isCurrent ? '#0B0D14' : '#0B0D14' }} />
+                            <CheckCircle2 className="w-4 h-4" style={{ color: isCurrent ? 'var(--sr-surface-base)' : 'var(--sr-surface-base)' }} />
                           ) : (
                             stage.icon
                           )}
                         </motion.div>
                         <p
                           className="text-[10px] mt-2 font-semibold text-center leading-tight"
-                          style={{ color: isCompleted ? '#10E07A' : 'rgba(255,255,255,0.25)' }}
+                          style={{ color: isCompleted ? 'var(--sr-customer)' : 'rgba(255,255,255,0.25)' }}
                         >
                           {stage.label}
                         </p>
@@ -383,7 +383,7 @@ export default function RiderETAParty() {
 
             {/* ── Rider Info ── */}
             <div className="px-4 pt-5 shrink-0">
-              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 flex items-center gap-3 sm:gap-4" style={{ backgroundColor: '#0F1118' }}>
+              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 flex items-center gap-3 sm:gap-4" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                 <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl" style={{ backgroundColor: 'rgba(56,189,248,0.1)', border: '1px solid rgba(56,189,248,0.2)' }}>
                   {MOCK_RIDER.avatar}
                 </div>
@@ -419,7 +419,7 @@ export default function RiderETAParty() {
             {/* ── Group Order ── */}
             {isGroupOrder && (
               <div className="px-4 pt-4 shrink-0">
-                <div className="rounded-2xl p-3 sm:p-4 border border-white/8" style={{ backgroundColor: '#0F1118' }}>
+                <div className="rounded-2xl p-3 sm:p-4 border border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-[var(--sr-ai)]" />
@@ -443,10 +443,10 @@ export default function RiderETAParty() {
                           {member.avatar}
                           {/* Live indicator */}
                           <span
-                            className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[#0F1118]"
+                            className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-[var(--sr-surface-raised)]"
                             style={{
-                              backgroundColor: member.status === currentStage ? '#10E07A' : '#F5C451',
-                              boxShadow: member.status === currentStage ? '0 0 6px #10E07A' : 'none',
+                              backgroundColor: member.status === currentStage ? 'var(--sr-customer)' : 'var(--sr-vendor)',
+                              boxShadow: member.status === currentStage ? '0 0 6px var(--sr-customer)' : 'none',
                             }}
                           />
                         </div>
@@ -461,7 +461,7 @@ export default function RiderETAParty() {
 
             {/* ── Delivery Map (SVG) ── */}
             <div className="px-4 pt-4 flex-1">
-              <div className="rounded-2xl overflow-hidden border border-white/8 relative" style={{ backgroundColor: '#0F1118' }}>
+              <div className="rounded-2xl overflow-hidden border border-white/8 relative" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                 <svg
                   viewBox="0 0 400 200"
                   className="w-full h-auto"
@@ -488,7 +488,7 @@ export default function RiderETAParty() {
                   <motion.path
                     d="M60 160 Q120 120 180 100 Q240 80 300 60 Q340 48 360 40"
                     fill="none"
-                    stroke="#10E07A"
+                    stroke="var(--sr-customer)"
                     strokeWidth="3"
                     strokeDasharray="500"
                     strokeDashoffset={500 - (500 * progressPercent) / 100}
@@ -497,8 +497,8 @@ export default function RiderETAParty() {
 
                   {/* Restaurant marker */}
                   <g>
-                    <circle cx="60" cy="160" r="8" fill="rgba(245,196,81,0.15)" stroke="#F5C451" strokeWidth="1.5" />
-                    <circle cx="60" cy="160" r="3" fill="#F5C451" />
+                    <circle cx="60" cy="160" r="8" fill="rgba(245,196,81,0.15)" stroke="var(--sr-vendor)" strokeWidth="1.5" />
+                    <circle cx="60" cy="160" r="3" fill="var(--sr-vendor)" />
                     <text x="60" y="178" textAnchor="middle" fill="rgba(245,196,81,0.5)" fontSize="8" fontFamily="sans-serif">Restaurant</text>
                   </g>
 
@@ -507,7 +507,7 @@ export default function RiderETAParty() {
                     cx="0"
                     cy="0"
                     r="6"
-                    fill="#10E07A"
+                    fill="var(--sr-customer)"
                     animate={{
                       cx: 60 + (360 - 60) * (progressPercent / 100),
                       cy: 160 + (40 - 160) * (progressPercent / 100),
@@ -519,7 +519,7 @@ export default function RiderETAParty() {
                     cy="0"
                     r="12"
                     fill="none"
-                    stroke="#10E07A"
+                    stroke="var(--sr-customer)"
                     strokeWidth="1"
                     opacity="0.4"
                     animate={{
@@ -534,8 +534,8 @@ export default function RiderETAParty() {
 
                   {/* Destination marker */}
                   <g>
-                    <circle cx="360" cy="40" r="8" fill="rgba(56,189,248,0.15)" stroke="#38BDF8" strokeWidth="1.5" />
-                    <MapPin className="w-4 h-4" x="352" y="32" fill="#38BDF8" />
+                    <circle cx="360" cy="40" r="8" fill="rgba(56,189,248,0.15)" stroke="var(--sr-rider)" strokeWidth="1.5" />
+                    <MapPin className="w-4 h-4" x="352" y="32" fill="var(--sr-rider)" />
                     <text x="360" y="58" textAnchor="middle" fill="rgba(56,189,248,0.5)" fontSize="8" fontFamily="sans-serif">Your Location</text>
                   </g>
                 </svg>
@@ -553,7 +553,7 @@ export default function RiderETAParty() {
                     handleClose();
                   }}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98]"
-                  style={{ backgroundColor: '#10E07A', color: '#0B0D14' }}
+                  style={{ backgroundColor: 'var(--sr-customer)', color: 'var(--sr-surface-base)' }}
                 >
                   <span className="flex items-center justify-center gap-2">
                     <Sparkles className="w-4 h-4" />

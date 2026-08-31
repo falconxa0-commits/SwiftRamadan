@@ -48,9 +48,9 @@ interface CoachNote {
 }
 
 const ACTION_META: Record<Action, { color: string; bg: string; icon: typeof CheckCircle2; label: string }> = {
-  continue: { color: 'text-[#13ec13]', bg: 'bg-[#13ec13]/10 border-[#13ec13]/25', icon: CheckCircle2, label: 'On track' },
-  wait: { color: 'text-[#FFD700]', bg: 'bg-[#FFD700]/10 border-[#FFD700]/25', icon: Clock, label: 'Give it time' },
-  next: { color: 'text-[#13ec13]', bg: 'bg-[#13ec13]/15 border-[#13ec13]/30', icon: SkipForward, label: 'Step done' },
+  continue: { color: 'text-[var(--sr-customer)]', bg: 'bg-[var(--sr-customer)]/10 border-[var(--sr-customer)]/25', icon: CheckCircle2, label: 'On track' },
+  wait: { color: 'text-[var(--sr-vendor)]', bg: 'bg-[var(--sr-vendor)]/10 border-[var(--sr-vendor)]/25', icon: Clock, label: 'Give it time' },
+  next: { color: 'text-[var(--sr-customer)]', bg: 'bg-[var(--sr-customer)]/15 border-[var(--sr-customer)]/30', icon: SkipForward, label: 'Step done' },
   trouble: { color: 'text-red-400', bg: 'bg-red-400/10 border-red-400/25', icon: AlertTriangle, label: 'Heads up' },
 };
 
@@ -277,13 +277,13 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <motion.div
                 animate={{ scale: [1, 1.05, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-20 h-20 rounded-full bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/15 border border-[#FFD700]/30 flex items-center justify-center mb-5"
+                className="w-20 h-20 rounded-full bg-gradient-to-br from-[var(--sr-vendor)]/20 to-[var(--sr-customer)]/15 border border-[var(--sr-vendor)]/30 flex items-center justify-center mb-5"
               >
-                <Camera className="w-9 h-9 text-[#FFD700]" />
+                <Camera className="w-9 h-9 text-[var(--sr-vendor)]" />
               </motion.div>
               <h2 className="text-white font-bold text-xl mb-2">Live Chef Coach</h2>
               <p className="text-white/50 text-sm max-w-xs mb-1">
-                Let Chef Safa <span className="text-[#FFD700] font-semibold">see your kitchen</span> and guide you in real time as you cook <span className="text-white font-semibold">{recipe.name}</span>.
+                Let Chef Safa <span className="text-[var(--sr-vendor)] font-semibold">see your kitchen</span> and guide you in real time as you cook <span className="text-white font-semibold">{recipe.name}</span>.
               </p>
               <p className="text-white/60 text-xs max-w-xs mb-6">
                 She&rsquo;ll watch your pot, judge your heat, and tell you when to move on — out loud.
@@ -296,7 +296,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <div className="flex flex-col gap-2.5 w-full max-w-xs">
                 <button
                   onClick={startCamera}
-                  className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[var(--sr-surface-base)] hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-[var(--sr-vendor)] to-[#FFA500] text-[var(--sr-surface-base)] hover:opacity-95 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
                 >
                   <Camera className="w-4 h-4" />
                   Turn on Camera
@@ -318,7 +318,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
         <div className="relative z-10 flex items-center justify-between p-3 sm:p-4 shrink-0">
           <div className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center backdrop-blur-md">
-              <Eye className="w-4 h-4 text-[#FFD700]" />
+              <Eye className="w-4 h-4 text-[var(--sr-vendor)]" />
             </div>
             <div>
               <p className="text-white text-xs font-bold leading-tight">Live Chef Coach</p>
@@ -363,7 +363,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               className="bg-black/50 backdrop-blur-md rounded-2xl border border-white/10 p-3"
             >
               <div className="flex items-center justify-between mb-1">
-                <span className="text-[#FFD700] text-[10px] font-black">STEP {step + 1} / {totalSteps}</span>
+                <span className="text-[var(--sr-vendor)] text-[10px] font-black">STEP {step + 1} / {totalSteps}</span>
                 <div className="flex items-center gap-1">
                   <button onClick={goPrev} disabled={step === 0} className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center disabled:opacity-30">
                     <SkipBack className="w-3 h-3 text-white" />
@@ -398,7 +398,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                     <motion.div
                       animate={{ scale: [1, 1.04, 1] }}
                       transition={{ duration: 0.8, repeat: Infinity }}
-                      className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/15"
+                      className="w-14 h-14 rounded-full overflow-hidden border-2 border-[var(--sr-vendor)]/50 bg-gradient-to-br from-[var(--sr-vendor)]/20 to-[var(--sr-customer)]/15"
                     >
                       { }
                       <img src="/images/chef/safa-portrait.png" alt="Chef Safa" className="w-full h-full object-cover" />
@@ -411,7 +411,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                   <div className={`flex-1 rounded-2xl border backdrop-blur-md p-3.5 ${actionMeta?.bg ?? 'bg-white/10 border-white/15'}`}>
                     <div className="flex items-center gap-1.5 mb-1">
                       <span className={`text-[9px] font-black uppercase tracking-wide ${actionMeta?.color}`}>{actionMeta?.label}</span>
-                      <Sparkles className="w-2.5 h-2.5 text-[#FFD700]" />
+                      <Sparkles className="w-2.5 h-2.5 text-[var(--sr-vendor)]" />
                     </div>
                     <p className="text-white text-sm leading-snug">{latestNote.text}</p>
                     {latestNote.tip && (
@@ -426,12 +426,12 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                   className="flex items-end gap-3"
                 >
                   <div className="relative shrink-0">
-                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#FFD700]/50 bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/15">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[var(--sr-vendor)]/50 bg-gradient-to-br from-[var(--sr-vendor)]/20 to-[var(--sr-customer)]/15">
                       { }
                       <img src="/images/chef/safa-portrait.png" alt="Chef Safa" className="w-full h-full object-cover" />
                     </div>
                     <motion.span
-                      className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[var(--sr-surface-base)] bg-[#FFD700] flex items-center justify-center"
+                      className="absolute -bottom-0.5 -right-0.5 w-5 h-5 rounded-full border-2 border-[var(--sr-surface-base)] bg-[var(--sr-vendor)] flex items-center justify-center"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     >
@@ -444,7 +444,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                       {[0, 1, 2].map((i) => (
                         <motion.span
                           key={i}
-                          className="w-1.5 h-1.5 rounded-full bg-[#FFD700]"
+                          className="w-1.5 h-1.5 rounded-full bg-[var(--sr-vendor)]"
                           animate={{ opacity: [0.3, 1, 0.3] }}
                           transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
                         />
@@ -458,12 +458,12 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                   animate={{ opacity: 1 }}
                   className="flex items-end gap-3"
                 >
-                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/20 bg-gradient-to-br from-[#FFD700]/20 to-[#13ec13]/15 shrink-0">
+                  <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/20 bg-gradient-to-br from-[var(--sr-vendor)]/20 to-[var(--sr-customer)]/15 shrink-0">
                     { }
                     <img src="/images/chef/safa-portrait.png" alt="Chef Safa" className="w-full h-full object-cover" />
                   </div>
                   <div className="flex-1 rounded-2xl border border-white/15 bg-white/10 backdrop-blur-md p-3.5">
-                    <p className="text-white/60 text-sm">Tap <span className="text-[#FFD700] font-semibold">Ask Chef</span> to get live coaching on what&rsquo;s in front of you.</p>
+                    <p className="text-white/60 text-sm">Tap <span className="text-[var(--sr-vendor)] font-semibold">Ask Chef</span> to get live coaching on what&rsquo;s in front of you.</p>
                   </div>
                 </motion.div>
               )}
@@ -499,11 +499,11 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
                 onClick={() => setAutoCoach((a) => !a)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-semibold transition-all ${
                   autoCoach
-                    ? 'bg-[#13ec13]/15 text-[#13ec13] border border-[#13ec13]/25'
+                    ? 'bg-[var(--sr-customer)]/15 text-[var(--sr-customer)] border border-[var(--sr-customer)]/25'
                     : 'bg-white/10 text-white/50 border border-white/15'
                 }`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full ${autoCoach ? 'bg-[#13ec13]' : 'bg-white/30'}`} />
+                <span className={`w-1.5 h-1.5 rounded-full ${autoCoach ? 'bg-[var(--sr-customer)]' : 'bg-white/30'}`} />
                 Auto-coach {autoCoach ? 'ON · every 12s' : 'OFF'}
               </button>
             </div>
@@ -528,7 +528,7 @@ export default function LiveChefCoach({ recipe, initialStep = 0, onClose }: Prop
               <button
                 onClick={() => analyze()}
                 disabled={analyzing}
-                className="px-6 h-14 rounded-full bg-gradient-to-r from-[#FFD700] to-[#FFA500] text-[var(--sr-surface-base)] font-bold text-sm shadow-lg shadow-[#FFD700]/30 disabled:opacity-60 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2"
+                className="px-6 h-14 rounded-full bg-gradient-to-r from-[var(--sr-vendor)] to-[#FFA500] text-[var(--sr-surface-base)] font-bold text-sm shadow-lg shadow-[var(--sr-vendor)]/30 disabled:opacity-60 hover:scale-105 active:scale-95 transition-transform flex items-center justify-center gap-2"
               >
                 {analyzing ? (
                   <>

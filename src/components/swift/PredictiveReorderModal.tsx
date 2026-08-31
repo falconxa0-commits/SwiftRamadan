@@ -80,9 +80,9 @@ export default function PredictiveReorderModal() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return '#10E07A';
-    if (score >= 60) return '#F5C451';
-    return '#F97316';
+    if (score >= 80) return 'var(--sr-customer)';
+    if (score >= 60) return 'var(--sr-vendor)';
+    return 'var(--sr-warning)';
   };
 
   const total = items.reduce((sum, i) => sum + i.price, 0);
@@ -151,7 +151,7 @@ export default function PredictiveReorderModal() {
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                className="w-10 h-10 border-3 border-white/10 border-t-[#10E07A] rounded-full mb-4"
+                className="w-10 h-10 border-3 border-white/10 border-t-[var(--sr-customer)] rounded-full mb-4"
               />
               <p className="text-white/50 text-sm">Predicting your next order...</p>
             </div>

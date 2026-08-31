@@ -98,7 +98,7 @@ export default function RewardsModal() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 mt-4"
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] border border-white/10 p-6 mt-4"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-vendor)]/10 blur-[60px]" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-customer)]/10 blur-[40px]" />
@@ -155,7 +155,7 @@ export default function RewardsModal() {
                 transition={{ delay: 0.2 }}
                 className="mt-4"
               >
-                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[#05070A] border border-[var(--sr-customer)]/20 p-5">
+                <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#064e3b]/40 to-[var(--sr-surface-base)] border border-[var(--sr-customer)]/20 p-5">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--sr-customer)]/10 blur-[40px]" />
                   <div className="relative z-10 flex items-center justify-between">
                     <div>
@@ -202,7 +202,7 @@ export default function RewardsModal() {
                   onClick={() => setShowSpinWheel(true)}
                   className="w-full relative overflow-hidden rounded-2xl border text-left transition-all active:scale-[0.98] hover:border-[var(--sr-vendor)]/50"
                   style={{
-                    background: 'linear-gradient(135deg, #1A1D26, #0F1117)',
+                    background: 'linear-gradient(135deg, var(--sr-surface-elevated), var(--sr-surface-raised))',
                     borderColor: 'rgba(245,196,81,0.2)',
                   }}
                 >
@@ -214,7 +214,7 @@ export default function RewardsModal() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl flex items-center justify-center border border-[var(--sr-vendor)]/30"
-                          style={{ background: 'linear-gradient(135deg, #F5C451/20, #F5C451/10)' }}>
+                          style={{ background: 'linear-gradient(135deg, var(--sr-vendor)/20, var(--sr-vendor)/10)' }}>
                           <span className="text-2xl">🎰</span>
                         </div>
                         <div>
@@ -385,7 +385,7 @@ export default function RewardsModal() {
                         <p className="text-white font-bold text-xs mb-1 leading-tight">{reward.name}</p>
                         <p className="text-white/60 text-[10px] mb-2 line-clamp-2">{reward.description}</p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="var(--sr-vendor)" />
                           <span className="text-[var(--sr-vendor)] text-xs font-black">{reward.points.toLocaleString()}</span>
                         </div>
                         {!canAfford && (

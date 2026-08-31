@@ -87,7 +87,7 @@ export default function LiveTrackingMap() {
             {/* Simulated Map Background */}
             <div className="absolute inset-0">
               {/* Dark base */}
-              <div className="absolute inset-0 bg-[#080c12]" />
+              <div className="absolute inset-0 bg-[var(--sr-surface-base)]" />
 
               {/* Grid pattern - streets */}
               <div
@@ -124,7 +124,7 @@ export default function LiveTrackingMap() {
               <div className="absolute top-[40%] right-[8%] w-12 h-20 border border-white/[0.03] bg-white/[0.01] rounded-sm" />
 
               {/* Gradient overlays */}
-              <div className="absolute inset-0 bg-gradient-to-b from-[#05070A]/60 via-transparent to-[#05070A]" />
+              <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-surface-base)]/60 via-transparent to-[var(--sr-surface-base)]" />
               <div className="absolute top-[20%] left-[20%] w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[80px] rounded-full" />
               <div className="absolute bottom-[30%] right-[25%] w-36 h-36 bg-[var(--sr-customer)]/5 blur-[70px] rounded-full" />
             </div>
@@ -136,7 +136,7 @@ export default function LiveTrackingMap() {
                 <path
                   d="M 100 180 C 120 250, 180 300, 200 350 S 280 420, 300 500 S 280 580, 260 620"
                   fill="none"
-                  stroke="#F5C451"
+                  stroke="var(--sr-vendor)"
                   strokeWidth="3"
                   strokeDasharray="8 6"
                   opacity="0.8"
@@ -154,7 +154,7 @@ export default function LiveTrackingMap() {
                 <path
                   d="M 100 180 C 120 250, 180 300, 200 350 S 280 420, 300 500 S 280 580, 260 620"
                   fill="none"
-                  stroke="#F5C451"
+                  stroke="var(--sr-vendor)"
                   strokeWidth="8"
                   strokeDasharray="8 6"
                   opacity="0.15"
@@ -170,12 +170,12 @@ export default function LiveTrackingMap() {
                 </path>
 
                 {/* Restaurant marker (start) */}
-                <circle cx="100" cy="180" r="8" fill="#1A1D26" stroke="#F5C451" strokeWidth="2.5" />
-                <circle cx="100" cy="180" r="3" fill="#F5C451" />
+                <circle cx="100" cy="180" r="8" fill="var(--sr-surface-elevated)" stroke="var(--sr-vendor)" strokeWidth="2.5" />
+                <circle cx="100" cy="180" r="3" fill="var(--sr-vendor)" />
 
                 {/* Rider marker (along route) */}
                 <g>
-                  <circle cx="200" cy="350" r="18" fill="#F5C451" opacity="0.1">
+                  <circle cx="200" cy="350" r="18" fill="var(--sr-vendor)" opacity="0.1">
                     <animate
                       attributeName="r"
                       values="18;28;18"
@@ -189,15 +189,15 @@ export default function LiveTrackingMap() {
                       repeatCount="indefinite"
                     />
                   </circle>
-                  <circle cx="200" cy="350" r="14" fill="#1A1D26" stroke="#F5C451" strokeWidth="2.5" />
-                  <circle cx="200" cy="350" r="6" fill="#F5C451" />
+                  <circle cx="200" cy="350" r="14" fill="var(--sr-surface-elevated)" stroke="var(--sr-vendor)" strokeWidth="2.5" />
+                  <circle cx="200" cy="350" r="6" fill="var(--sr-vendor)" />
                   {/* Bike icon indicator */}
-                  <circle cx="200" cy="350" r="2" fill="#05070A" />
+                  <circle cx="200" cy="350" r="2" fill="var(--sr-surface-base)" />
                 </g>
 
                 {/* Destination marker (end) */}
                 <g>
-                  <circle cx="260" cy="620" r="18" fill="#10E07A" opacity="0.1">
+                  <circle cx="260" cy="620" r="18" fill="var(--sr-customer)" opacity="0.1">
                     <animate
                       attributeName="r"
                       values="18;26;18"
@@ -211,15 +211,15 @@ export default function LiveTrackingMap() {
                       repeatCount="indefinite"
                     />
                   </circle>
-                  <circle cx="260" cy="620" r="14" fill="#1A1D26" stroke="#10E07A" strokeWidth="2.5" />
-                  <circle cx="260" cy="620" r="6" fill="#10E07A" />
+                  <circle cx="260" cy="620" r="14" fill="var(--sr-surface-elevated)" stroke="var(--sr-customer)" strokeWidth="2.5" />
+                  <circle cx="260" cy="620" r="6" fill="var(--sr-customer)" />
                   {/* House icon indicator */}
-                  <rect x="256" y="617" width="8" height="6" rx="1" fill="#05070A" />
+                  <rect x="256" y="617" width="8" height="6" rx="1" fill="var(--sr-surface-base)" />
                 </g>
 
                 {/* Labels */}
-                <text x="100" y="165" textAnchor="middle" fill="#F5C451" fontSize="10" fontWeight="bold" opacity="0.8">Suya Central</text>
-                <text x="260" y="650" textAnchor="middle" fill="#10E07A" fontSize="10" fontWeight="bold" opacity="0.8">Your Location</text>
+                <text x="100" y="165" textAnchor="middle" fill="var(--sr-vendor)" fontSize="10" fontWeight="bold" opacity="0.8">Suya Central</text>
+                <text x="260" y="650" textAnchor="middle" fill="var(--sr-customer)" fontSize="10" fontWeight="bold" opacity="0.8">Your Location</text>
               </svg>
             </div>
 

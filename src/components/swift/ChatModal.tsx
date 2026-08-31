@@ -44,10 +44,10 @@ interface ChatMessage {
 }
 
 const ROLE_BADGES: Record<string, { label: string; bg: string; color: string }> = {
-  customer: { label: 'Customer', bg: 'rgba(16,224,122,0.15)', color: '#10E07A' },
-  vendor: { label: 'Vendor', bg: 'rgba(245,196,81,0.15)', color: '#F5C451' },
-  rider: { label: 'Rider', bg: 'rgba(56,189,248,0.15)', color: '#38BDF8' },
-  admin: { label: 'Admin', bg: 'rgba(167,139,250,0.15)', color: '#A78BFA' },
+  customer: { label: 'Customer', bg: 'rgba(16,224,122,0.15)', color: 'var(--sr-customer)' },
+  vendor: { label: 'Vendor', bg: 'rgba(245,196,81,0.15)', color: 'var(--sr-vendor)' },
+  rider: { label: 'Rider', bg: 'rgba(56,189,248,0.15)', color: 'var(--sr-rider)' },
+  admin: { label: 'Admin', bg: 'rgba(167,139,250,0.15)', color: 'var(--sr-ai)' },
 };
 
 function formatTime(iso: string): string {
@@ -404,7 +404,7 @@ export default function ChatModal() {
                     {recipientName.charAt(0).toUpperCase()}
                   </div>
                   {/* Online indicator */}
-                  <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-[var(--sr-customer)] border-2 border-[#0B0D14] shadow-[0_0_8px_#10E07A]" />
+                  <span className="absolute -bottom-0.5 -right-0.5 size-3 rounded-full bg-[var(--sr-customer)] border-2 border-[var(--sr-surface-base)] shadow-[0_0_8px_var(--sr-customer)]" />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -488,7 +488,7 @@ export default function ChatModal() {
                       <div
                         className={`max-w-[78%] px-3.5 py-2.5 rounded-2xl text-sm leading-snug ${
                           mine
-                            ? 'bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] text-[var(--sr-surface-base)] font-medium rounded-br-md'
+                            ? 'bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-medium rounded-br-md'
                             : 'bg-[var(--sr-surface-raised)] border border-white/5 text-white/90 rounded-bl-md'
                         }`}
                       >
@@ -553,7 +553,7 @@ export default function ChatModal() {
                     handleSend();
                   }}
                   disabled={!draft.trim() || sending}
-                  className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0FB463] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
+                  className="size-12 shrink-0 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] flex items-center justify-center active:scale-95 transition-transform disabled:opacity-40 disabled:active:scale-100 shadow-[0_0_16px_rgba(16,224,122,0.35)]"
                   aria-label="Send message"
                 >
                   {sending ? (

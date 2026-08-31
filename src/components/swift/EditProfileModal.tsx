@@ -29,11 +29,11 @@ const LAGOS_AREAS = [
 ];
 
 const AVATAR_GRADIENTS = [
-  'from-[var(--sr-customer)] to-[#0eB060]',
+  'from-[var(--sr-customer)] to-[var(--sr-customer-hover)]',
   'from-[var(--sr-vendor)] to-[#d99a30]',
   'from-[var(--sr-ai)] to-[#7d63e0]',
   'from-[var(--sr-rider)] to-[#1f8fce]',
-  'from-[#FB7185] to-[#e0526b]',
+  'from-[var(--sr-error)] to-[#e0526b]',
   'from-[var(--sr-customer)] to-[var(--sr-ai)]',
 ];
 
@@ -248,7 +248,7 @@ export default function EditProfileModal() {
                         )}
                       </div>
                       <label
-                        className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center border-2 border-[var(--sr-surface-base)] cursor-pointer hover:bg-[#0eB060] transition-colors active:scale-95"
+                        className="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[var(--sr-customer)] flex items-center justify-center border-2 border-[var(--sr-surface-base)] cursor-pointer hover:bg-[var(--sr-customer-hover)] transition-colors active:scale-95"
                         title="Change avatar"
                       >
                         {avatarUploading ? (
@@ -360,7 +360,7 @@ export default function EditProfileModal() {
                   <button
                     onClick={handleSave}
                     disabled={saving || avatarUploading || !name.trim()}
-                    className="w-full py-3.5 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#0eB060] transition-colors active:scale-[0.98] green-glow"
+                    className="w-full py-3.5 rounded-xl bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-black text-sm uppercase tracking-wider flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--sr-customer-hover)] transition-colors active:scale-[0.98] green-glow"
                   >
                     {saving ? (
                       <>

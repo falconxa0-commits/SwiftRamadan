@@ -338,7 +338,7 @@ export default function RiderDashboard() {
             <Bike className="w-7 h-7 text-[var(--sr-rider)]" />
           </div>
           {riderOnline && (
-            <span className="absolute -bottom-1 -right-1 size-4 bg-[var(--sr-rider)] rounded-full border-2 border-[#0B0D14] animate-pulse" />
+            <span className="absolute -bottom-1 -right-1 size-4 bg-[var(--sr-rider)] rounded-full border-2 border-[var(--sr-surface-base)] animate-pulse" />
           )}
         </div>
         <div className="flex-1">

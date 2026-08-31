@@ -188,7 +188,7 @@ export default function VendorSalesInsights() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-[var(--sr-vendor)]/20 p-6"
+                className="mt-6 relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] border border-[var(--sr-vendor)]/20 p-6"
               >
                 <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-vendor)]/5 blur-[60px]" />
                 <div className="absolute bottom-0 left-0 w-24 h-24 bg-[var(--sr-customer)]/5 blur-[40px]" />

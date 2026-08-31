@@ -211,11 +211,11 @@ function MosquePartnershipInner() {
   const getStatusColor = (status: MosqueOrder['status']) => {
     switch (status) {
       case 'open':
-        return '#10E07A';
+        return 'var(--sr-customer)';
       case 'closing_soon':
-        return '#F5C451';
+        return 'var(--sr-vendor)';
       case 'fulfilled':
-        return '#A78BFA';
+        return 'var(--sr-ai)';
     }
   };
 
@@ -283,7 +283,7 @@ function MosquePartnershipInner() {
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
                   style={{ backgroundColor: 'rgba(245,196,81,0.15)', border: '1px solid rgba(245,196,81,0.3)' }}
                 >
-                  <MosqueIcon className="w-4 h-4" style={{ color: '#F5C451' }} />
+                  <MosqueIcon className="w-4 h-4" style={{ color: 'var(--sr-vendor)' }} />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg leading-tight">Mosque Partnership</h2>
@@ -301,7 +301,7 @@ function MosquePartnershipInner() {
 
             {/* ── Stats Banner ── */}
             <div className="px-4 pt-4 shrink-0">
-              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 relative overflow-hidden" style={{ backgroundColor: '#0F1118' }}>
+              <div className="rounded-2xl p-3 sm:p-4 border border-white/8 relative overflow-hidden" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                 {/* Decorative glow */}
                 <div
                   className="absolute top-0 right-0 w-24 h-24 rounded-full blur-[40px]"
@@ -337,10 +337,10 @@ function MosquePartnershipInner() {
                   onClick={() => setFilter(f)}
                   className={`px-4 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
                     filter === f
-                      ? 'text-[#0B0D14]'
+                      ? 'text-[var(--sr-surface-base)]'
                       : 'bg-white/5 text-white/50 border border-white/8'
                   }`}
-                  style={filter === f ? { backgroundColor: '#F5C451' } : undefined}
+                  style={filter === f ? { backgroundColor: 'var(--sr-vendor)' } : undefined}
                 >
                   {f === 'all' ? 'All Orders' : f === 'open' ? 'Open' : 'My Orders'}
                 </button>
@@ -365,7 +365,7 @@ function MosquePartnershipInner() {
                     transition={{ delay: i * 0.05 }}
                     className="rounded-2xl p-3 sm:p-4 border transition-all"
                     style={{
-                      backgroundColor: '#0F1118',
+                      backgroundColor: 'var(--sr-surface-raised)',
                       borderColor: isSelected ? statusBorder : 'rgba(255,255,255,0.08)',
                     }}
                   >
@@ -386,7 +386,7 @@ function MosquePartnershipInner() {
                           {order.isJoined && (
                             <span
                               className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold"
-                              style={{ backgroundColor: 'rgba(16,224,122,0.12)', color: '#10E07A' }}
+                              style={{ backgroundColor: 'rgba(16,224,122,0.12)', color: 'var(--sr-customer)' }}
                             >
                               JOINED
                             </span>
@@ -480,7 +480,7 @@ function MosquePartnershipInner() {
                                   <button
                                     onClick={() => setShowJoinForm(order.id)}
                                     className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold transition-all active:scale-[0.98]"
-                                    style={{ backgroundColor: '#F5C451', color: '#0B0D14' }}
+                                    style={{ backgroundColor: 'var(--sr-vendor)', color: 'var(--sr-surface-base)' }}
                                   >
                                     <ShoppingCart className="w-4 h-4" />
                                     Join Order
@@ -489,7 +489,7 @@ function MosquePartnershipInner() {
                                   <button
                                     onClick={() => setShowJoinForm(order.id)}
                                     className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold transition-all active:scale-[0.98]"
-                                    style={{ backgroundColor: 'rgba(16,224,122,0.12)', color: '#10E07A', border: '1px solid rgba(16,224,122,0.25)' }}
+                                    style={{ backgroundColor: 'rgba(16,224,122,0.12)', color: 'var(--sr-customer)', border: '1px solid rgba(16,224,122,0.25)' }}
                                   >
                                     <Plus className="w-4 h-4" />
                                     Add More Packs
@@ -503,7 +503,7 @@ function MosquePartnershipInner() {
                                 className="flex items-center gap-2 p-3 rounded-xl"
                                 style={{ backgroundColor: 'rgba(167,139,250,0.08)', border: '1px solid rgba(167,139,250,0.2)' }}
                               >
-                                <CheckCircle2 className="w-4 h-4" style={{ color: '#A78BFA' }} />
+                                <CheckCircle2 className="w-4 h-4" style={{ color: 'var(--sr-ai)' }} />
                                 <span className="text-[var(--sr-ai)] text-xs font-semibold">
                                   Order fulfilled — {order.totalPacks} packs will be delivered before Maghrib, insha Allah
                                 </span>
@@ -555,7 +555,7 @@ function MosquePartnershipInner() {
                       if (!order) return null;
                       return (
                         <>
-                          <div className="flex items-center gap-3 p-3 rounded-xl border border-white/8" style={{ backgroundColor: '#0F1118' }}>
+                          <div className="flex items-center gap-3 p-3 rounded-xl border border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                             <span className="text-2xl">{order.mosqueEmoji}</span>
                             <div>
                               <h4 className="text-white font-bold text-sm">{order.mosqueName}</h4>
@@ -598,7 +598,7 @@ function MosquePartnershipInner() {
                                   className="px-3 py-1.5 rounded-lg text-xs font-bold transition-all active:scale-95"
                                   style={{
                                     backgroundColor: joinPacks === num ? 'rgba(245,196,81,0.15)' : 'rgba(255,255,255,0.05)',
-                                    color: joinPacks === num ? '#F5C451' : 'rgba(255,255,255,0.4)',
+                                    color: joinPacks === num ? 'var(--sr-vendor)' : 'rgba(255,255,255,0.4)',
                                     border: `1px solid ${joinPacks === num ? 'rgba(245,196,81,0.3)' : 'rgba(255,255,255,0.08)'}`,
                                   }}
                                 >
@@ -609,7 +609,7 @@ function MosquePartnershipInner() {
                           </div>
 
                           {/* Cost summary */}
-                          <div className="rounded-2xl p-3 sm:p-4 border border-white/8 space-y-2" style={{ backgroundColor: '#0F1118' }}>
+                          <div className="rounded-2xl p-3 sm:p-4 border border-white/8 space-y-2" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                             <div className="flex items-center justify-between">
                               <span className="text-white/65 text-xs">Price per pack</span>
                               <span className="text-white text-xs font-medium">{formatNaira(order.pricePerPack)}</span>
@@ -629,7 +629,7 @@ function MosquePartnershipInner() {
 
                           {/* Community impact */}
                           <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: 'rgba(16,224,122,0.06)', border: '1px solid rgba(16,224,122,0.15)' }}>
-                            <Sparkles className="w-5 h-5 shrink-0" style={{ color: '#10E07A' }} />
+                            <Sparkles className="w-5 h-5 shrink-0" style={{ color: 'var(--sr-customer)' }} />
                             <p className="text-white/50 text-xs">
                               Joining this order feeds <span className="text-[var(--sr-customer)] font-bold">{joinPacks} people</span> at your mosque. Community buying power = lower prices for everyone!
                             </p>
@@ -639,7 +639,7 @@ function MosquePartnershipInner() {
                           <button
                             onClick={() => handleJoinOrder(showJoinForm)}
                             className="w-full py-3.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98]"
-                            style={{ backgroundColor: '#F5C451', color: '#0B0D14' }}
+                            style={{ backgroundColor: 'var(--sr-vendor)', color: 'var(--sr-surface-base)' }}
                           >
                             <span className="flex items-center justify-center gap-2">
                               <CheckCircle2 className="w-4 h-4" />

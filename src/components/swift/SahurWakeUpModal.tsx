@@ -288,7 +288,7 @@ export default function SahurWakeUpModal() {
                 className="mt-6"
               >
                 <h4 className="text-white font-bold text-sm mb-3">Dua for Sahur</h4>
-                <div className="relative overflow-hidden bg-gradient-to-br from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[var(--sr-vendor)]/20 p-5">
+                <div className="relative overflow-hidden bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] rounded-2xl border border-[var(--sr-vendor)]/20 p-5">
                   <div className="absolute top-0 right-0 w-20 h-20 bg-[var(--sr-vendor)]/5 blur-[40px]" />
                   <div className="relative z-10">
                     <div className="flex items-center gap-2 mb-3">
@@ -309,7 +309,7 @@ export default function SahurWakeUpModal() {
               >
                 <button
                   onClick={handleSave}
-                  className="w-full py-4 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-base rounded-xl hover:bg-[#11d411] transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-4 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-base rounded-xl hover:bg-[var(--sr-customer)] transition-colors flex items-center justify-center gap-2"
                 >
                   <AlarmClock className="w-5 h-5" />
                   Save Sahur Alarm

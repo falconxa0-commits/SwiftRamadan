@@ -168,7 +168,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-customer)]/30 border-t-[var(--sr-customer)] rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -177,7 +177,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-4 relative overflow-hidden rounded-2xl border border-[var(--sr-customer)]/20 p-5"
-              style={{ background: 'linear-gradient(135deg, #10E07A15, #0F1118)' }}
+              style={{ background: 'linear-gradient(135deg, color-mix(in srgb, var(--sr-customer) 8%, transparent), var(--sr-surface-raised))' }}
             >
               <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-[var(--sr-customer)]/10 blur-[60px]" />
               <div className="relative z-10 flex items-center gap-3 sm:gap-4">
@@ -223,7 +223,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                           animate={{ width: `${Math.min(100, (chain.count / (chains[0]?.count || 1)) * 100)}%` }}
                           transition={{ duration: 1, delay: i * 0.1 }}
                           className="h-full rounded-full"
-                          style={{ background: i === 0 ? '#10E07A' : i === 1 ? '#F5C451' : 'rgba(255,255,255,0.2)' }}
+                          style={{ background: i === 0 ? 'var(--sr-customer)' : i === 1 ? 'var(--sr-vendor)' : 'rgba(255,255,255,0.2)' }}
                         />
                       </div>
                     </div>
@@ -265,7 +265,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                         animate={{ scale: 1 }}
                         className="w-5 h-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center shrink-0"
                       >
-                        <svg className="w-3 h-3 text-[#0B0D14]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                        <svg className="w-3 h-3 text-[var(--sr-surface-base)]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                       </motion.div>
@@ -325,14 +325,14 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   style={{
                     background: sending
                       ? 'linear-gradient(135deg, #555, #444)'
-                      : 'linear-gradient(135deg, #10E07A, #0CC06A)',
-                    color: '#0B0D14',
+                      : 'linear-gradient(135deg, var(--sr-customer), var(--sr-customer))',
+                    color: 'var(--sr-surface-base)',
                     boxShadow: sending ? 'none' : '0 4px 20px rgba(16,224,122,0.3)',
                   }}
                   aria-label={`Send ${selectedMealData.name} gift for ${FORMAT_NAIRA(selectedMealData.price)}`}
                 >
                   {sending ? (
-                    <div className="w-5 h-5 border-2 border-[#0B0D14]/30 border-t-[#0B0D14] rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-[var(--sr-surface-base)]/30 border-t-[var(--sr-surface-base)] rounded-full animate-spin" />
                   ) : (
                     <>
                       <Send className="w-4 h-4" />
@@ -368,7 +368,7 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
               className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-customer)]/30"
-              style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
+              style={{ background: 'linear-gradient(135deg, var(--sr-surface-elevated), var(--sr-surface-raised))' }}
               role="dialog"
               aria-modal="true"
               aria-label="Gift sent successfully"
@@ -385,15 +385,15 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                   transition={{ type: 'spring', delay: 0.2, stiffness: 150 }}
                   className="w-20 h-20 rounded-full mx-auto mb-4 flex items-center justify-center border-2"
                   style={{
-                    background: 'linear-gradient(135deg, #10E07A20, #10E07A10)',
-                    borderColor: '#10E07A50',
+                    background: 'linear-gradient(135deg, color-mix(in srgb, var(--sr-customer) 13%, transparent), color-mix(in srgb, var(--sr-customer) 6%, transparent))',
+                    borderColor: 'color-mix(in srgb, var(--sr-customer) 31%, transparent)',
                   }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
                   >
-                    <Heart className="w-10 h-10 text-[var(--sr-customer)]" fill="#10E07A" />
+                    <Heart className="w-10 h-10 text-[var(--sr-customer)]" fill="var(--sr-customer)" />
                   </motion.div>
                 </motion.div>
 
@@ -446,9 +446,9 @@ export default function GiftAMeal({ onClose }: GiftAMealProps) {
                     setSelectedMeal(null);
                     setMessage('');
                   }}
-                  className="w-full py-3.5 rounded-2xl text-[#0B0D14] font-black text-sm"
+                  className="w-full py-3.5 rounded-2xl text-[var(--sr-surface-base)] font-black text-sm"
                   style={{
-                    background: 'linear-gradient(135deg, #10E07A, #0CC06A)',
+                    background: 'linear-gradient(135deg, var(--sr-customer), var(--sr-customer))',
                     boxShadow: '0 4px 20px rgba(16,224,122,0.4)',
                   }}
                 >

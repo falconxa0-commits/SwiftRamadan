@@ -41,9 +41,9 @@ import {
 /* ──────────────────── Accent Colors per Role ──────────────────── */
 
 const ROLE_ACCENT = {
-  customer: '#10E07A',
-  vendor: '#F5C451',
-  rider: '#38BDF8',
+  customer: 'var(--sr-customer)',
+  vendor: 'var(--sr-vendor)',
+  rider: 'var(--sr-rider)',
 } as const;
 
 const ROLE_BTN_CLASS = {
@@ -111,7 +111,7 @@ function ProgressBar({ step, total, accent }: { step: number; total: number; acc
             className="w-full h-1.5 rounded-full transition-all duration-500"
             style={{
               backgroundColor: i <= step ? accent : 'rgba(255,255,255,0.1)',
-              boxShadow: i === step ? `0 0 8px ${accent}40` : 'none',
+              boxShadow: i === step ? `0 0 8px color-mix(in srgb, ${accent} 25%, transparent)` : 'none',
             }}
           />
         </div>
@@ -170,7 +170,7 @@ function CustomerStep1() {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: 'spring', damping: 15, stiffness: 150, delay: 0.1 }}
         className="w-24 h-24 rounded-full bg-[var(--sr-customer)]/10 border-2 border-[var(--sr-customer)]/30 flex items-center justify-center mb-6"
-        style={{ boxShadow: '0 0 30px #10E07A20' }}
+        style={{ boxShadow: '0 0 30px color-mix(in srgb, var(--sr-customer) 13%, transparent)' }}
       >
         <span className="text-5xl">🌙</span>
       </motion.div>
@@ -210,8 +210,8 @@ function CustomerStep1() {
         className="w-full flex flex-col gap-3 sm:gap-4"
       >
         {[
-          { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: '#10E07A' },
-          { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: '#F5C451' },
+          { icon: Truck, title: 'Iftar Delivery', desc: 'Hot meals timed perfectly for Maghrib', color: 'var(--sr-customer)' },
+          { icon: Users, title: 'Group Buy', desc: 'Community savings on Ramadan staples', color: 'var(--sr-vendor)' },
           { icon: Heart, title: 'Charity & Zakat', desc: 'Give back this blessed month', color: '#f472b6' },
         ].map((feature, i) => (
           <motion.div
@@ -223,7 +223,7 @@ function CustomerStep1() {
           >
             <div
               className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: `${feature.color}15`, border: `1px solid ${feature.color}30` }}
+              style={{ backgroundColor: `color-mix(in srgb, ${feature.color} 8%, transparent)`, border: `1px solid color-mix(in srgb, ${feature.color} 19%, transparent)` }}
             >
               <feature.icon className="w-6 h-6" style={{ color: feature.color }} />
             </div>
@@ -672,7 +672,7 @@ function VendorStep3() {
         <div className="flex justify-center mb-2">
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ backgroundColor: '#F5C45110', border: '1px solid #F5C45130' }}
+            style={{ backgroundColor: 'color-mix(in srgb, var(--sr-vendor) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--sr-vendor) 19%, transparent)' }}
           >
             <CreditCard className="w-10 h-10 text-[var(--sr-vendor)]" />
           </div>
@@ -768,7 +768,7 @@ function RiderStep1() {
                     ? 'bg-[var(--sr-rider)]/10 border-2 border-[var(--sr-rider)]/50'
                     : 'bg-[var(--sr-surface-elevated)] border border-white/10 hover:border-white/20'
                 }`}
-                style={{ boxShadow: isSelected ? '0 0 15px #38BDF820' : 'none' }}
+                style={{ boxShadow: isSelected ? '0 0 15px color-mix(in srgb, var(--sr-rider) 13%, transparent)' : 'none' }}
               >
                 <Icon className={`w-8 h-8 ${isSelected ? 'text-[var(--sr-rider)]' : 'text-white/65'}`} />
                 <span className={`text-sm font-bold ${isSelected ? 'text-[var(--sr-rider)]' : 'text-white/70'}`}>
@@ -946,7 +946,7 @@ function RiderStep3() {
         <div className="flex justify-center mb-2">
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center"
-            style={{ backgroundColor: '#38BDF810', border: '1px solid #38BDF830' }}
+            style={{ backgroundColor: 'color-mix(in srgb, var(--sr-rider) 6%, transparent)', border: '1px solid color-mix(in srgb, var(--sr-rider) 19%, transparent)' }}
           >
             <Star className="w-10 h-10 text-[var(--sr-rider)]" />
           </div>
@@ -1007,7 +1007,7 @@ function RiderStep3() {
 function CelebrationScreen({ role, onDone }: { role: 'customer' | 'vendor' | 'rider'; onDone: () => void }) {
   const accent = ROLE_ACCENT[role];
   const confettiColors = useMemo(() => {
-    const base = [accent, '#F5C451', '#ffffff', '#f472b6', '#06b6d4', '#a78bfa'];
+    const base = [accent, 'var(--sr-vendor)', 'var(--sr-text-primary)', '#f472b6', '#06b6d4', 'var(--sr-ai)'];
     return base;
   }, [accent]);
 
@@ -1040,9 +1040,9 @@ function CelebrationScreen({ role, onDone }: { role: 'customer' | 'vendor' | 'ri
         transition={{ type: 'spring', damping: 12, stiffness: 100, delay: 0.2 }}
         className="w-24 h-24 rounded-full flex items-center justify-center mb-8"
         style={{
-          backgroundColor: `${accent}15`,
-          border: `3px solid ${accent}50`,
-          boxShadow: `0 0 40px ${accent}30`,
+          backgroundColor: `color-mix(in srgb, ${accent} 8%, transparent)`,
+          border: `3px solid color-mix(in srgb, ${accent} 31%, transparent)`,
+          boxShadow: `0 0 40px color-mix(in srgb, ${accent} 19%, transparent)`,
         }}
       >
         <Check className="w-12 h-12" style={{ color: accent }} />

@@ -161,14 +161,14 @@ export default function DuaOfTheDay() {
           {/* Panel */}
           <motion.div
             className="relative w-full sm:max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-t-3xl sm:rounded-3xl border border-white/8"
-            style={{ background: 'linear-gradient(180deg, #11141C 0%, #0B0D14 100%)' }}
+            style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, var(--sr-surface-base) 100%)' }}
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
                 <div className="icon-tile w-10 h-10 border border-[var(--sr-ai)]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
                   <BookOpen className="w-5 h-5 text-[var(--sr-ai)]" />
@@ -219,7 +219,7 @@ export default function DuaOfTheDay() {
                         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                         className="p-6 rounded-2xl border border-white/8 cursor-grab active:cursor-grabbing"
                         style={{
-                          background: 'linear-gradient(135deg, rgba(167,139,250,0.08) 0%, rgba(16,224,122,0.05) 50%, rgba(245,196,81,0.06) 100%), #0F1118',
+                          background: 'linear-gradient(135deg, rgba(167,139,250,0.08) 0%, rgba(16,224,122,0.05) 50%, rgba(245,196,81,0.06) 100%), var(--sr-surface-raised)',
                         }}
                       >
                         {/* Arabic calligraphy */}
@@ -232,7 +232,7 @@ export default function DuaOfTheDay() {
                           <p
                             className="text-2xl sm:text-3xl leading-loose font-semibold"
                             style={{
-                              color: '#F5C451',
+                              color: 'var(--sr-vendor)',
                               fontFamily: '"Amiri", "Traditional Arabic", serif',
                               direction: 'rtl',
                               textShadow: '0 0 30px rgba(245,196,81,0.15)',
@@ -295,7 +295,7 @@ export default function DuaOfTheDay() {
                             key={i}
                             className="w-1.5 h-1.5 rounded-full"
                             animate={{
-                              backgroundColor: i === currentIndex ? '#A78BFA' : 'rgba(255,255,255,0.15)',
+                              backgroundColor: i === currentIndex ? 'var(--sr-ai)' : 'rgba(255,255,255,0.15)',
                               scale: i === currentIndex ? 1.3 : 1,
                             }}
                             transition={{ duration: 0.2 }}

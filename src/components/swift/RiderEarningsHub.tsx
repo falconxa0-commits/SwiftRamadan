@@ -98,7 +98,7 @@ export default function RiderEarningsHub() {
       {/* Onboarding Guidance — only when no earnings */}
       {riderEarnings === 0 && data.today === 0 && (
         <motion.div variants={staggerItem} className="mb-6">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-customer)]/15 via-[var(--sr-customer)]/5 to-[#1A1D26] border border-[var(--sr-customer)]/20 p-5">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-customer)]/15 via-[var(--sr-customer)]/5 to-[var(--sr-surface-elevated)] border border-[var(--sr-customer)]/20 p-5">
             <div className="absolute top-0 right-0 w-40 h-40 bg-[var(--sr-customer)]/5 blur-[60px]" />
             <div className="relative z-10">
               <h3 className="text-white text-lg font-black mb-1">Start Earning 🏍️</h3>
@@ -130,7 +130,7 @@ export default function RiderEarningsHub() {
 
       {/* Hero Stats Card */}
       <motion.div variants={staggerItem} className="mb-6">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-vendor)]/20 via-[var(--sr-vendor)]/5 to-[#1A1D26] border border-[var(--sr-vendor)]/20 p-5 gold-glow">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-vendor)]/20 via-[var(--sr-vendor)]/5 to-[var(--sr-surface-elevated)] border border-[var(--sr-vendor)]/20 p-5 gold-glow">
           <div className="absolute top-0 right-0 w-48 h-48 bg-[var(--sr-vendor)]/10 blur-[80px]" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-[var(--sr-vendor)]/5 blur-[60px]" />
           <div className="relative z-10">
@@ -177,7 +177,7 @@ export default function RiderEarningsHub() {
                     {chartData.map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
-                        fill={entry.isIftar ? '#F5C451' : 'rgba(16,224,122,0.5)'}
+                        fill={entry.isIftar ? 'var(--sr-vendor)' : 'rgba(16,224,122,0.5)'}
                       />
                     ))}
                   </Bar>
@@ -277,7 +277,7 @@ export default function RiderEarningsHub() {
                   cy="50"
                   r="40"
                   fill="none"
-                  stroke="#10E07A"
+                  stroke="var(--sr-customer)"
                   strokeWidth="6"
                   strokeLinecap="round"
                   strokeDasharray={circumference}

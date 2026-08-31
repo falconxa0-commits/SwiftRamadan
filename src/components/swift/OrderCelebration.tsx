@@ -7,10 +7,10 @@ import confetti from 'canvas-confetti';
 
 /* ─────────────────────────────────────────────────────
    OrderCelebration — Premium canvas-confetti effect
-   Brand colors: #10E07A (green), #F5C451 (gold), #38BDF8 (blue), #A78BFA (purple)
+   Brand colors: var(--sr-customer) (green), var(--sr-vendor) (gold), var(--sr-rider) (blue), var(--sr-ai) (purple)
    ───────────────────────────────────────────────────── */
 
-const BRAND_COLORS = ['#10E07A', '#F5C451', '#38BDF8', '#A78BFA'];
+const BRAND_COLORS = ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-rider)', 'var(--sr-ai)'];
 
 /**
  * Trigger a premium order celebration confetti effect.

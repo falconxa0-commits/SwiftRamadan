@@ -33,12 +33,12 @@ interface Mood {
 }
 
 const MOODS: Mood[] = [
-  { key: 'celebratory', emoji: '😊', label: 'Celebratory', color: '#F5C451' },
-  { key: 'low-energy', emoji: '😴', label: 'Low-Energy', color: '#A78BFA' },
-  { key: 'hosting', emoji: '🤗', label: 'Hosting', color: '#10E07A' },
-  { key: 'health-focused', emoji: '🏋️', label: 'Health-Focused', color: '#38BDF8' },
-  { key: 'craving', emoji: '🍿', label: 'Craving', color: '#F97316' },
-  { key: 'peaceful', emoji: '🧘', label: 'Peaceful', color: '#A78BFA' },
+  { key: 'celebratory', emoji: '😊', label: 'Celebratory', color: 'var(--sr-vendor)' },
+  { key: 'low-energy', emoji: '😴', label: 'Low-Energy', color: 'var(--sr-ai)' },
+  { key: 'hosting', emoji: '🤗', label: 'Hosting', color: 'var(--sr-customer)' },
+  { key: 'health-focused', emoji: '🏋️', label: 'Health-Focused', color: 'var(--sr-rider)' },
+  { key: 'craving', emoji: '🍿', label: 'Craving', color: 'var(--sr-warning)' },
+  { key: 'peaceful', emoji: '🧘', label: 'Peaceful', color: 'var(--sr-ai)' },
 ];
 
 export default function MoodOrdering() {
@@ -152,16 +152,16 @@ export default function MoodOrdering() {
         {/* Modal */}
         <motion.div
           className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-white/8 shadow-2xl"
-          style={{ backgroundColor: '#0F1118' }}
+          style={{ backgroundColor: 'var(--sr-surface-raised)' }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: '#0F1118' }}>
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5" style={{ color: '#A78BFA' }} />
+              <Sparkles className="w-5 h-5" style={{ color: 'var(--sr-ai)' }} />
               <h2 className="text-white font-bold text-lg">Mood Ordering</h2>
             </div>
             <button
@@ -241,7 +241,7 @@ export default function MoodOrdering() {
                         <motion.div
                           key={product.id}
                           className="flex gap-3 p-3 rounded-xl border border-white/8"
-                          style={{ backgroundColor: '#0B0D14' }}
+                          style={{ backgroundColor: 'var(--sr-surface-base)' }}
                           initial={{ opacity: 0, x: -20 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.06 }}
@@ -261,7 +261,7 @@ export default function MoodOrdering() {
                             <p className="text-white/60 text-xs mt-0.5 line-clamp-2">{product.description}</p>
                             <div className="flex items-center gap-2 mt-1.5">
                               <span className="text-white/50 text-xs flex items-center gap-1">
-                                <Star className="w-3 h-3" style={{ color: '#F5C451' }} />
+                                <Star className="w-3 h-3" style={{ color: 'var(--sr-vendor)' }} />
                                 {product.rating}
                               </span>
                               <span className="text-white/60 text-xs flex items-center gap-1">
@@ -272,7 +272,7 @@ export default function MoodOrdering() {
                             {/* Match Reason */}
                             <p
                               className="text-[10px] mt-1 px-1.5 py-0.5 rounded inline-block"
-                              style={{ backgroundColor: `${activeMood.color}15`, color: activeMood.color }}
+                              style={{ backgroundColor: `color-mix(in srgb, ${activeMood.color} 8%, transparent)`, color: activeMood.color }}
                             >
                               {product.matchReason}
                             </p>
@@ -284,7 +284,7 @@ export default function MoodOrdering() {
                             <button
                               onClick={() => handleAddToCart(product)}
                               className="p-2 rounded-lg transition-colors"
-                              style={{ backgroundColor: '#10E07A20', color: '#10E07A' }}
+                              style={{ backgroundColor: 'color-mix(in srgb, var(--sr-customer) 13%, transparent)', color: 'var(--sr-customer)' }}
                               aria-label={`Add ${product.name} to cart`}
                             >
                               <ShoppingCart className="w-4 h-4" />

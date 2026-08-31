@@ -166,7 +166,7 @@ export default function RiderProfileTab() {
             <span className="text-[var(--sr-vendor)] text-xs font-bold">Elite Rider</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
-            <Star className="w-3.5 h-3.5 text-[var(--sr-vendor)] fill-[#F5C451]" />
+            <Star className="w-3.5 h-3.5 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
             <span className="text-[var(--sr-vendor)] text-sm font-bold">{riderRating}</span>
           </div>
         </div>
@@ -285,7 +285,7 @@ export default function RiderProfileTab() {
                 <circle cx="32" cy="32" r={radius} fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="5" />
                 <circle
                   cx="32" cy="32" r={radius} fill="none"
-                  stroke="#38BDF8" strokeWidth="5" strokeLinecap="round"
+                  stroke="var(--sr-rider)" strokeWidth="5" strokeLinecap="round"
                   strokeDasharray={circumference}
                   strokeDashoffset={progressOffset}
                   transform="rotate(-90 32 32)"

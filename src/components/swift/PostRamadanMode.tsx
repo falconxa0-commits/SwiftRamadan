@@ -58,7 +58,7 @@ const FALLBACK_DATA: PostRamadanData = {
     { id: 'eid-2', name: 'Eid Gift Hamper', description: 'Beautiful gift package for loved ones', price: 15000, originalPrice: 20000, image: '/images/products/ramadan-box-2.png', items: ['Premium Dates', 'Arabic Perfume', 'Prayer Beads', 'Gift Card ₦5000'] },
     { id: 'eid-3', name: 'Kids Eid Special', description: 'Fun meals and treats for the little ones', price: 8000, originalPrice: 12000, image: '/images/products/ramadan-box-3.png', items: ['Mini Pizza (4)', 'Fruit Punch', 'Chocolate Box', 'Party Pack'] },
   ],
-  confettiColors: ['#10E07A', '#F5C451', '#A78BFA', '#FB7185', '#38BDF8'],
+  confettiColors: ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-error)', 'var(--sr-rider)'],
 };
 
 // Confetti particle component
@@ -91,7 +91,7 @@ function StatCard({ icon: Icon, label, value, color }: { icon: typeof Star; labe
       animate={{ opacity: 1, scale: 1 }}
       className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/5"
     >
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `${color}15` }}>
+      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: `color-mix(in srgb, ${color} 8%, transparent)` }}>
         <Icon className="w-4 h-4" style={{ color }} />
       </div>
       <div>
@@ -205,14 +205,14 @@ export default function PostRamadanMode() {
           {/* Panel */}
           <motion.div
             className="relative w-full sm:max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-t-3xl sm:rounded-3xl border border-white/8"
-            style={{ background: 'linear-gradient(180deg, #11141C 0%, #0B0D14 100%)' }}
+            style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, var(--sr-surface-base) 100%)' }}
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           >
             {/* Header with Eid greeting */}
-            <div className="sticky top-0 z-10 px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
+            <div className="sticky top-0 z-10 px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <div className="icon-tile w-10 h-10 border border-[var(--sr-vendor)]/20" style={{ background: 'rgba(245,196,81,0.12)' }}>
@@ -246,7 +246,7 @@ export default function PostRamadanMode() {
                   <motion.p
                     className="text-2xl font-black"
                     style={{
-                      background: 'linear-gradient(135deg, #10E07A 0%, #F5C451 50%, #A78BFA 100%)',
+                      background: 'linear-gradient(135deg, var(--sr-customer) 0%, var(--sr-vendor) 50%, var(--sr-ai) 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                     }}
@@ -296,24 +296,24 @@ export default function PostRamadanMode() {
                       animate={{ opacity: 1, y: 0 }}
                       className="p-5 rounded-2xl border border-white/8 relative overflow-hidden"
                       style={{
-                        background: 'linear-gradient(135deg, rgba(16,224,122,0.06) 0%, #0F1118 50%, rgba(245,196,81,0.06) 100%)',
+                        background: 'linear-gradient(135deg, rgba(16,224,122,0.06) 0%, var(--sr-surface-raised) 50%, rgba(245,196,81,0.06) 100%)',
                       }}
                     >
                       {/* Decorative corner */}
                       <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
                         <div
                           className="absolute inset-0 rounded-full"
-                          style={{ background: 'radial-gradient(circle, #10E07A, transparent 70%)' }}
+                          style={{ background: 'radial-gradient(circle, var(--sr-customer), transparent 70%)' }}
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
-                        <StatCard icon={Star} label="Fasts Completed" value={data.ramadanReview.fastsCompleted} color="#10E07A" />
-                        <StatCard icon={UtensilsCrossed} label="Meals Ordered" value={data.ramadanReview.mealsOrdered} color="#F5C451" />
-                        <StatCard icon={TrendingUp} label="New Dishes Tried" value={data.ramadanReview.newDishesTried} color="#A78BFA" />
-                        <StatCard icon={Gift} label="Gifts Sent" value={data.ramadanReview.giftsSent} color="#FB7185" />
-                        <StatCard icon={Clock} label="Longest Streak" value={`${data.ramadanReview.longestStreak} days`} color="#38BDF8" />
-                        <StatCard icon={Heart} label="Community Shared" value={data.ramadanReview.communityMealsShared} color="#10E07A" />
+                        <StatCard icon={Star} label="Fasts Completed" value={data.ramadanReview.fastsCompleted} color="var(--sr-customer)" />
+                        <StatCard icon={UtensilsCrossed} label="Meals Ordered" value={data.ramadanReview.mealsOrdered} color="var(--sr-vendor)" />
+                        <StatCard icon={TrendingUp} label="New Dishes Tried" value={data.ramadanReview.newDishesTried} color="var(--sr-ai)" />
+                        <StatCard icon={Gift} label="Gifts Sent" value={data.ramadanReview.giftsSent} color="var(--sr-error)" />
+                        <StatCard icon={Clock} label="Longest Streak" value={`${data.ramadanReview.longestStreak} days`} color="var(--sr-rider)" />
+                        <StatCard icon={Heart} label="Community Shared" value={data.ramadanReview.communityMealsShared} color="var(--sr-customer)" />
                       </div>
 
                       <div className="mt-4 p-3 rounded-xl bg-white/3 border border-white/5">
@@ -387,7 +387,7 @@ export default function PostRamadanMode() {
                     onClick={handleCelebrate}
                     className="w-full py-3 rounded-xl font-semibold text-sm transition-colors"
                     style={{
-                      background: 'linear-gradient(135deg, #10E07A 0%, #F5C451 100%)',
+                      background: 'linear-gradient(135deg, var(--sr-customer) 0%, var(--sr-vendor) 100%)',
                       color: '#04140C',
                     }}
                   >

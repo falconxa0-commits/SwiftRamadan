@@ -63,7 +63,7 @@ const COMPOSER_CATEGORIES = ['Reviews', 'Recipes', 'Tips', 'Questions', 'General
 const PALETTE = [
   'from-[var(--sr-customer)]/40 to-[var(--sr-customer)]/10',
   'from-[var(--sr-vendor)]/40 to-[var(--sr-vendor)]/10',
-  'from-[#8b5cf6]/40 to-[#8b5cf6]/10',
+  'from-[var(--sr-ai)]/40 to-[var(--sr-ai)]/10',
   'from-[#06b6d4]/40 to-[#06b6d4]/10',
   'from-[#FF6B6B]/40 to-[#FF6B6B]/10',
 ];
@@ -509,7 +509,7 @@ export default function CommunityForum() {
             {/* ──── Sticky Header ──── */}
             <div className="sticky top-0 z-20 glass-effect border-b border-white/5">
               {/* Accent bar */}
-              <div className="h-[3px] bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
+              <div className="h-[3px] bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]" />
 
               <div className="flex items-center justify-between p-3 sm:p-4">
                 <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -517,7 +517,7 @@ export default function CommunityForum() {
                     initial={{ scale: 0.8, rotate: -10 }}
                     animate={{ scale: 1, rotate: 0 }}
                     transition={{ type: 'spring', damping: 15, stiffness: 200 }}
-                    className="w-10 h-10 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[#8b5cf6]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
+                    className="w-10 h-10 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-ai)]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30 shrink-0"
                   >
                     <Users className="w-5 h-5 text-[var(--sr-customer)]" />
                   </motion.div>

@@ -242,7 +242,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
       <div className="flex-1 overflow-y-auto px-4 pb-6 custom-scrollbar">
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="w-8 h-8 border-2 border-[var(--sr-vendor)]/30 border-t-[#F5C451] rounded-full animate-spin" />
+            <div className="w-8 h-8 border-2 border-[var(--sr-vendor)]/30 border-t-[var(--sr-vendor)] rounded-full animate-spin" />
           </div>
         ) : activeTab === 'active' ? (
           <>
@@ -285,11 +285,11 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                         <p className="text-white text-xs font-bold">{battle.chefA.name}</p>
                         <p className="text-white/60 text-[9px]">{battle.chefA.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
-                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="var(--sr-vendor)" />
                           <span className="text-[var(--sr-vendor)] text-[9px] font-bold">{battle.chefA.rating}</span>
                         </div>
                         <div className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
-                          <span className="text-[8px] font-black text-[#0B0D14]">A</span>
+                          <span className="text-[8px] font-black text-[var(--sr-surface-base)]">A</span>
                         </div>
                       </motion.button>
 
@@ -307,7 +307,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                         <p className="text-white text-xs font-bold">{battle.chefB.name}</p>
                         <p className="text-white/60 text-[9px]">{battle.chefB.restaurant}</p>
                         <div className="flex items-center justify-center gap-0.5 mt-1.5">
-                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
+                          <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="var(--sr-vendor)" />
                           <span className="text-[var(--sr-vendor)] text-[9px] font-bold">{battle.chefB.rating}</span>
                         </div>
                         <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[var(--sr-ai)] flex items-center justify-center">
@@ -403,7 +403,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                     <span className="text-[var(--sr-vendor)] text-xs font-bold">{entry.wins}</span>
                   </div>
                   <div className="flex items-center gap-1 justify-end mt-0.5">
-                    <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="#F5C451" />
+                    <Star className="w-2.5 h-2.5 text-[var(--sr-vendor)]" fill="var(--sr-vendor)" />
                     <span className="text-white/50 text-[9px]">{entry.rating}</span>
                   </div>
                 </div>
@@ -466,7 +466,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   <p className="text-white text-sm font-bold">{selectedBattle.chefA.name}</p>
                   <p className="text-white/60 text-[10px]">{selectedBattle.chefA.restaurant}</p>
                   <div className="absolute top-2 left-2 w-6 h-6 rounded-full bg-[var(--sr-customer)] flex items-center justify-center">
-                    <span className="text-[10px] font-black text-[#0B0D14]">A</span>
+                    <span className="text-[10px] font-black text-[var(--sr-surface-base)]">A</span>
                   </div>
                 </motion.button>
 
@@ -539,7 +539,7 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
               exit={{ scale: 0.5, opacity: 0, y: 40 }}
               transition={{ type: 'spring', damping: 15, stiffness: 200 }}
               className="w-full max-w-sm relative overflow-hidden rounded-3xl border border-[var(--sr-vendor)]/30"
-              style={{ background: 'linear-gradient(135deg, #1A1D26, #0F1117)' }}
+              style={{ background: 'linear-gradient(135deg, var(--sr-surface-elevated), var(--sr-surface-raised))' }}
               role="dialog"
               aria-modal="true"
               aria-label="Vote result"
@@ -553,11 +553,11 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   transition={{ type: 'spring', delay: 0.2, stiffness: 150 }}
                   className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center border-2"
                   style={{
-                    background: userVote === 'A' ? 'linear-gradient(135deg, #10E07A20, #10E07A10)' : 'linear-gradient(135deg, #A78BFA20, #A78BFA10)',
-                    borderColor: userVote === 'A' ? '#10E07A50' : '#A78BFA50',
+                    background: userVote === 'A' ? 'linear-gradient(135deg, color-mix(in srgb, var(--sr-customer) 13%, transparent), color-mix(in srgb, var(--sr-customer) 6%, transparent))' : 'linear-gradient(135deg, color-mix(in srgb, var(--sr-ai) 13%, transparent), color-mix(in srgb, var(--sr-ai) 6%, transparent))',
+                    borderColor: userVote === 'A' ? 'color-mix(in srgb, var(--sr-customer) 31%, transparent)' : 'color-mix(in srgb, var(--sr-ai) 31%, transparent)',
                   }}
                 >
-                  <Swords className="w-7 h-7" style={{ color: userVote === 'A' ? '#10E07A' : '#A78BFA' }} />
+                  <Swords className="w-7 h-7" style={{ color: userVote === 'A' ? 'var(--sr-customer)' : 'var(--sr-ai)' }} />
                 </motion.div>
 
                 <h3 className="text-2xl font-black text-[var(--sr-vendor)] mb-1">Vote Cast! ⚔️</h3>
@@ -584,8 +584,8 @@ function ChefBattlesInner({ onClose }: ChefBattlesProps) {
                   onClick={() => { setShowResult(false); setSelectedBattle(null); setUserVote(null); }}
                   className="w-full py-3 rounded-2xl font-bold text-sm"
                   style={{
-                    background: 'linear-gradient(135deg, #F5C451, #E5A830)',
-                    color: '#0B0D14',
+                    background: 'linear-gradient(135deg, var(--sr-vendor), #E5A830)',
+                    color: 'var(--sr-surface-base)',
                     boxShadow: '0 4px 20px rgba(245,196,81,0.3)',
                   }}
                 >

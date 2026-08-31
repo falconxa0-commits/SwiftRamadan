@@ -176,7 +176,7 @@ function IftarCountdownBanner() {
           >
             <span
               className="material-symbols-outlined text-lg"
-              style={{ color: isUrgent ? '#ef4444' : '#F5C451' }}
+              style={{ color: isUrgent ? 'var(--sr-error)' : 'var(--sr-vendor)' }}
             >
               bedtime
             </span>
@@ -684,7 +684,7 @@ export default function VendorDashboard() {
             <span
               className={`absolute top-1.5 right-1.5 size-2 rounded-full ${
                 socketConnected
-                  ? 'bg-[var(--sr-customer)] shadow-[0_0_6px_#10E07A]'
+                  ? 'bg-[var(--sr-customer)] shadow-[0_0_6px_var(--sr-customer)]'
                   : 'bg-red-500'
               }`}
             />
@@ -831,7 +831,7 @@ export default function VendorDashboard() {
                       className="absolute inset-0 bg-cover bg-center"
                       style={{ backgroundImage: `url(${order.image})` }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1118] via-[#0F1118]/60 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-raised)] via-[var(--sr-surface-raised)]/60 to-transparent" />
 
                     {/* Iftar Countdown Badge - Live */}
                     <div className="absolute top-3 left-3">

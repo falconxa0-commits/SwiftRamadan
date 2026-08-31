@@ -144,7 +144,7 @@ export default function ArtisanMarketHub() {
                             backgroundImage: `repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px)`,
                           }}
                         />
-                        <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[#1A1D26] to-transparent" />
+                        <div className="absolute bottom-0 inset-x-0 h-12 bg-gradient-to-t from-[var(--sr-surface-elevated)] to-transparent" />
                       </div>
 
                       {/* Info */}
@@ -155,7 +155,7 @@ export default function ArtisanMarketHub() {
                             <p className="text-white/65 text-xs mt-0.5">{artisan.specialty}</p>
                           </div>
                           <div className="flex items-center gap-1 bg-[var(--sr-vendor)]/10 border border-[var(--sr-vendor)]/20 rounded-lg px-2 py-1">
-                            <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="#F5C451" />
+                            <Star className="w-3 h-3 text-[var(--sr-vendor)]" fill="var(--sr-vendor)" />
                             <span className="text-[var(--sr-vendor)] text-xs font-bold">{artisan.rating}</span>
                             <span className="text-white/60 text-[10px]">({artisan.reviews})</span>
                           </div>
@@ -179,7 +179,7 @@ export default function ArtisanMarketHub() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 bg-gradient-to-r from-[#1A1D26] to-[#0F1117] rounded-2xl border border-[var(--sr-vendor)]/10 p-3 sm:p-4"
+                className="mt-6 bg-gradient-to-r from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] rounded-2xl border border-[var(--sr-vendor)]/10 p-3 sm:p-4"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-[var(--sr-vendor)]/10 flex items-center justify-center border border-[var(--sr-vendor)]/20 shrink-0">

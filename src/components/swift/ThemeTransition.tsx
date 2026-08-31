@@ -44,10 +44,10 @@ function detectThemeFromTime(): AppTheme {
 }
 
 const THEME_INFO: Record<AppTheme, { label: string; description: string; icon: typeof Sun; color: string }> = {
-  ramadan: { label: 'Ramadan', description: 'Deep dark during fasting', icon: Moon, color: '#10E07A' },
-  iftar: { label: 'Iftar', description: 'Warm amber near Maghrib', icon: Sunset, color: '#F5C451' },
-  sahur: { label: 'Sahur', description: 'Cool blue after Tahajjud', icon: Sunrise, color: '#38BDF8' },
-  eid: { label: 'Eid', description: 'Festive gold & green', icon: Sparkles, color: '#10E07A' },
+  ramadan: { label: 'Ramadan', description: 'Deep dark during fasting', icon: Moon, color: 'var(--sr-customer)' },
+  iftar: { label: 'Iftar', description: 'Warm amber near Maghrib', icon: Sunset, color: 'var(--sr-vendor)' },
+  sahur: { label: 'Sahur', description: 'Cool blue after Tahajjud', icon: Sunrise, color: 'var(--sr-rider)' },
+  eid: { label: 'Eid', description: 'Festive gold & green', icon: Sparkles, color: 'var(--sr-customer)' },
 };
 
 // Theme Provider — wraps the app and applies CSS classes to body
@@ -131,14 +131,14 @@ export default function ThemeTransition() {
           {/* Panel */}
           <motion.div
             className="relative w-full sm:max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-t-3xl sm:rounded-3xl border border-white/8"
-            style={{ background: 'linear-gradient(180deg, #11141C 0%, #0B0D14 100%)' }}
+            style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, var(--sr-surface-base) 100%)' }}
             initial={{ y: '100%', opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
           >
             {/* Header */}
-            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, #11141C 0%, rgba(17,20,28,0.95) 100%)' }}>
+            <div className="sticky top-0 z-10 flex items-center justify-between px-6 pt-6 pb-4" style={{ background: 'linear-gradient(180deg, var(--sr-surface-raised) 0%, rgba(17,20,28,0.95) 100%)' }}>
               <div className="flex items-center gap-3">
                 <div className="icon-tile w-10 h-10 border border-[var(--sr-ai)]/20" style={{ background: 'rgba(167,139,250,0.12)' }}>
                   <Sun className="w-5 h-5 text-[var(--sr-ai)]" />
@@ -188,8 +188,8 @@ export default function ThemeTransition() {
                   animate={{ opacity: 1, y: 0 }}
                   className="p-4 rounded-2xl border"
                   style={{
-                    background: `linear-gradient(135deg, ${THEME_INFO[suggestedTheme].color}15, ${THEME_INFO[suggestedTheme].color}08)`,
-                    borderColor: `${THEME_INFO[suggestedTheme].color}30`,
+                    background: `linear-gradient(135deg, color-mix(in srgb, ${THEME_INFO[suggestedTheme].color} 8%, transparent), color-mix(in srgb, ${THEME_INFO[suggestedTheme].color} 3%, transparent))`,
+                    borderColor: `color-mix(in srgb, ${THEME_INFO[suggestedTheme].color} 19%, transparent)`,
                   }}
                 >
                   <div className="flex items-center gap-3">
@@ -234,9 +234,9 @@ export default function ThemeTransition() {
                         }`}
                         style={{
                           background: isActive
-                            ? `linear-gradient(135deg, ${info.color}18, ${info.color}08)`
-                            : '#0F1118',
-                          borderColor: isActive ? `${info.color}50` : undefined,
+                            ? `linear-gradient(135deg, color-mix(in srgb, ${info.color} 9%, transparent), color-mix(in srgb, ${info.color} 3%, transparent))`
+                            : 'var(--sr-surface-raised)',
+                          borderColor: isActive ? `color-mix(in srgb, ${info.color} 31%, transparent)` : undefined,
                         }}
                         aria-pressed={isActive}
                         aria-label={`Set ${info.label} theme`}
@@ -244,7 +244,7 @@ export default function ThemeTransition() {
                         {/* Color preview dot */}
                         <div
                           className="w-8 h-8 rounded-full mb-3 flex items-center justify-center"
-                          style={{ background: `${info.color}20` }}
+                          style={{ background: `color-mix(in srgb, ${info.color} 13%, transparent)` }}
                         >
                           <Icon className="w-4 h-4" style={{ color: info.color }} />
                         </div>
@@ -268,11 +268,11 @@ export default function ThemeTransition() {
                 <p className="text-sm font-semibold text-white/70">Schedule</p>
                 <div className="space-y-2">
                   {[
-                    { time: '12am – 5am', theme: 'Sahur' as const, color: '#38BDF8' },
-                    { time: '5am – 3pm', theme: 'Ramadan' as const, color: '#10E07A' },
-                    { time: '3pm – 7pm', theme: 'Iftar' as const, color: '#F5C451' },
-                    { time: '7pm – 10pm', theme: 'Sahur' as const, color: '#38BDF8' },
-                    { time: '10pm – 12am', theme: 'Ramadan' as const, color: '#10E07A' },
+                    { time: '12am – 5am', theme: 'Sahur' as const, color: 'var(--sr-rider)' },
+                    { time: '5am – 3pm', theme: 'Ramadan' as const, color: 'var(--sr-customer)' },
+                    { time: '3pm – 7pm', theme: 'Iftar' as const, color: 'var(--sr-vendor)' },
+                    { time: '7pm – 10pm', theme: 'Sahur' as const, color: 'var(--sr-rider)' },
+                    { time: '10pm – 12am', theme: 'Ramadan' as const, color: 'var(--sr-customer)' },
                   ].map((schedule) => (
                     <div
                       key={schedule.time}

@@ -40,7 +40,7 @@ function formatCount(n: number): string {
   return `${n}`;
 }
 
-const AVATAR_COLORS = ['#10E07A', '#F5C451', '#A78BFA', '#38BDF8', '#FB7185', '#FB923C'];
+const AVATAR_COLORS = ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-rider)', 'var(--sr-error)', '#FB923C'];
 
 export default function VideoCard({ video, onLike, onShare, onOpenComments, viewer }: VideoCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -326,7 +326,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
             transition={{ duration: 0.4 }}
             className="absolute inset-0 flex items-center justify-center pointer-events-none"
           >
-            <Heart className="w-28 h-28 text-[var(--sr-error)] fill-[#FB7185] drop-shadow-[0_0_30px_rgba(251,113,133,0.6)]" />
+            <Heart className="w-28 h-28 text-[var(--sr-error)] fill-[var(--sr-error)] drop-shadow-[0_0_30px_rgba(251,113,133,0.6)]" />
           </motion.div>
         )}
       </AnimatePresence>
@@ -353,7 +353,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
             disabled={followPending}
             className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 size-5 rounded-full flex items-center justify-center text-white text-[10px] font-black leading-none active:scale-90 transition-transform disabled:opacity-50"
             style={{
-              backgroundColor: following ? '#10E07A' : authorId ? '#FB7185' : '#6b7280',
+              backgroundColor: following ? 'var(--sr-customer)' : authorId ? 'var(--sr-error)' : '#6b7280',
             }}
             aria-label={following ? 'Unfollow' : 'Follow'}
           >
@@ -373,7 +373,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
         >
           <motion.div animate={video.liked ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.3 }}>
             <Heart
-              className={`w-8 h-8 ${video.liked ? 'text-[var(--sr-error)] fill-[#FB7185]' : 'text-white'}`}
+              className={`w-8 h-8 ${video.liked ? 'text-[var(--sr-error)] fill-[var(--sr-error)]' : 'text-white'}`}
               strokeWidth={2}
             />
           </motion.div>
@@ -414,7 +414,7 @@ export default function VideoCard({ video, onLike, onShare, onOpenComments, view
           aria-label={saved ? 'Remove from bookmarks' : 'Save to bookmarks'}
         >
           <Bookmark
-            className={`w-8 h-8 ${saved ? 'text-[var(--sr-vendor)] fill-[#F5C451]' : 'text-white'}`}
+            className={`w-8 h-8 ${saved ? 'text-[var(--sr-vendor)] fill-[var(--sr-vendor)]' : 'text-white'}`}
             strokeWidth={2}
           />
         </button>

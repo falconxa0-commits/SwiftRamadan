@@ -94,7 +94,7 @@ export default function RamadanCountdown() {
   }, []);
 
   const isIftar = countdown.meal === 'iftar';
-  const accent = isIftar ? '#10E07A' : '#F5C451';
+  const accent = isIftar ? 'var(--sr-customer)' : 'var(--sr-vendor)';
   const Icon = isIftar ? Moon : Sun;
 
   const hh = pad(countdown.hours);
@@ -127,7 +127,7 @@ export default function RamadanCountdown() {
           <div className="flex items-center gap-2">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"
-              style={{ background: `${accent}22`, border: `1px solid ${accent}40` }}
+              style={{ background: `color-mix(in srgb, ${accent} 13%, transparent)`, border: `1px solid color-mix(in srgb, ${accent} 25%, transparent)` }}
             >
               <Icon className="w-4 h-4" style={{ color: accent }} />
             </div>
@@ -142,7 +142,7 @@ export default function RamadanCountdown() {
           </div>
           <span
             className="text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-full"
-            style={{ background: `${accent}1a`, color: accent, border: `1px solid ${accent}33` }}
+            style={{ background: `color-mix(in srgb, ${accent} 10%, transparent)`, color: accent, border: `1px solid color-mix(in srgb, ${accent} 20%, transparent)` }}
           >
             {isIftar ? 'Fasting' : 'Eating'}
           </span>
@@ -153,7 +153,7 @@ export default function RamadanCountdown() {
           <div className="flex flex-col items-center">
             <span
               className="text-3xl font-black tabular-nums leading-none tracking-tighter"
-              style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}
+              style={{ color: accent, textShadow: `0 0 20px color-mix(in srgb, ${accent} 25%, transparent)` }}
             >
               {hh}
             </span>
@@ -163,7 +163,7 @@ export default function RamadanCountdown() {
           <div className="flex flex-col items-center">
             <span
               className="text-3xl font-black tabular-nums leading-none tracking-tighter"
-              style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}
+              style={{ color: accent, textShadow: `0 0 20px color-mix(in srgb, ${accent} 25%, transparent)` }}
             >
               {mm}
             </span>
@@ -173,7 +173,7 @@ export default function RamadanCountdown() {
           <div className="flex flex-col items-center">
             <span
               className="text-3xl font-black tabular-nums leading-none tracking-tighter"
-              style={{ color: accent, textShadow: `0 0 20px ${accent}40` }}
+              style={{ color: accent, textShadow: `0 0 20px color-mix(in srgb, ${accent} 25%, transparent)` }}
             >
               {ss}
             </span>
@@ -185,7 +185,7 @@ export default function RamadanCountdown() {
         <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden mb-3">
           <motion.div
             className="h-full rounded-full"
-            style={{ background: `linear-gradient(90deg, ${accent}, ${accent}aa)` }}
+            style={{ background: `linear-gradient(90deg, ${accent}, color-mix(in srgb, ${accent} 67%, transparent))` }}
             animate={{ width: `${countdown.progress}%` }}
             transition={{ duration: 0.5, ease: 'linear' }}
           />

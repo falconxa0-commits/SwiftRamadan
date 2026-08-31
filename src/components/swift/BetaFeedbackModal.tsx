@@ -9,9 +9,9 @@ import { useToast } from '@/hooks/use-toast';
 type FeedbackType = 'feedback' | 'bug' | 'feature';
 
 const TYPES: { id: FeedbackType; label: string; icon: typeof Bug; color: string; desc: string }[] = [
-  { id: 'feedback', label: 'Feedback', icon: MessageSquare, color: '#13ec13', desc: 'General thoughts' },
-  { id: 'bug', label: 'Bug Report', icon: Bug, color: '#ef4444', desc: 'Something broke' },
-  { id: 'feature', label: 'Feature Request', icon: Lightbulb, color: '#FFD700', desc: 'Idea for the app' },
+  { id: 'feedback', label: 'Feedback', icon: MessageSquare, color: 'var(--sr-customer)', desc: 'General thoughts' },
+  { id: 'bug', label: 'Bug Report', icon: Bug, color: 'var(--sr-error)', desc: 'Something broke' },
+  { id: 'feature', label: 'Feature Request', icon: Lightbulb, color: 'var(--sr-vendor)', desc: 'Idea for the app' },
 ];
 
 export default function BetaFeedbackModal() {
@@ -70,17 +70,17 @@ export default function BetaFeedbackModal() {
         <>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 z-[110]" onClick={handleClose} />
           <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }} transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[#13ec13]/20">
+            className="fixed bottom-0 left-0 right-0 h-[94vh] bg-[var(--sr-surface-base)] rounded-t-3xl z-[115] flex flex-col overflow-hidden border-t border-[var(--sr-customer)]/20">
             {/* Header */}
-            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[#13ec13]/5 to-[#FFD700]/5">
+            <div className="flex items-center justify-between p-3 sm:p-4 border-b border-white/5 shrink-0 bg-gradient-to-r from-[var(--sr-customer)]/5 to-[var(--sr-vendor)]/5">
               <div className="flex items-center gap-3">
-                <div className="relative w-11 h-11 bg-gradient-to-br from-[#13ec13]/20 to-[#FFD700]/20 rounded-2xl flex items-center justify-center border border-[#13ec13]/30">
-                  <MessageSquare className="w-6 h-6 text-[#13ec13]" />
+                <div className="relative w-11 h-11 bg-gradient-to-br from-[var(--sr-customer)]/20 to-[var(--sr-vendor)]/20 rounded-2xl flex items-center justify-center border border-[var(--sr-customer)]/30">
+                  <MessageSquare className="w-6 h-6 text-[var(--sr-customer)]" />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg flex items-center gap-2">
                     Beta Feedback
-                    <span className="px-1.5 py-0.5 rounded-full bg-[#FFD700]/20 border border-[#FFD700]/30 text-[#FFD700] text-[9px] font-black uppercase tracking-wider">Beta</span>
+                    <span className="px-1.5 py-0.5 rounded-full bg-[var(--sr-vendor)]/20 border border-[var(--sr-vendor)]/30 text-[var(--sr-vendor)] text-[9px] font-black uppercase tracking-wider">Beta</span>
                   </h2>
                   <p className="text-white/65 text-xs">Help us improve SwiftRamadan</p>
                 </div>
@@ -95,13 +95,13 @@ export default function BetaFeedbackModal() {
               {submitted ? (
                 <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center py-10">
                   <motion.div initial={{ scale: 0, rotate: -30 }} animate={{ scale: 1, rotate: 0 }} transition={{ type: 'spring', damping: 12, stiffness: 200 }}
-                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[#13ec13] to-[#0ea30e] flex items-center justify-center green-glow">
+                    className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-[var(--sr-customer)] to-[#0ea30e] flex items-center justify-center green-glow">
                     <CheckCircle2 className="w-10 h-10 text-[var(--sr-surface-base)]" />
                   </motion.div>
                   <h3 className="text-white font-black text-xl">Shukran! 💚</h3>
                   <p className="text-white/50 text-sm mt-1">Your feedback has been received.</p>
                   <p className="text-white/65 text-xs mt-2 max-w-xs mx-auto">Our team reviews every submission. You're helping make SwiftRamadan better for the whole community.</p>
-                  <button onClick={handleClose} className="mt-5 bg-[#13ec13] text-[var(--sr-surface-base)] font-bold text-sm py-2.5 px-6 rounded-xl active:scale-[0.98] transition-transform">
+                  <button onClick={handleClose} className="mt-5 bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm py-2.5 px-6 rounded-xl active:scale-[0.98] transition-transform">
                     Done
                   </button>
                 </motion.div>
@@ -116,8 +116,8 @@ export default function BetaFeedbackModal() {
                         return (
                           <button key={t.id} onClick={() => setType(t.id)}
                             className={`flex flex-col items-center gap-1.5 p-3 rounded-2xl border transition-all ${active ? 'bg-white/5' : 'bg-transparent border-white/5 hover:border-white/10'}`}
-                            style={active ? { borderColor: `${t.color}50`, backgroundColor: `${t.color}10` } : {}}>
-                            <Icon className="w-5 h-5" style={{ color: active ? t.color : '#ffffff66' }} />
+                            style={active ? { borderColor: `color-mix(in srgb, ${t.color} 31%, transparent)`, backgroundColor: `color-mix(in srgb, ${t.color} 6%, transparent)` } : {}}>
+                            <Icon className="w-5 h-5" style={{ color: active ? t.color : 'color-mix(in srgb, var(--sr-text-primary) 40%, transparent)' }} />
                             <span className={`text-[10px] font-bold ${active ? 'text-white' : 'text-white/50'}`}>{t.label}</span>
                           </button>
                         );
@@ -132,7 +132,7 @@ export default function BetaFeedbackModal() {
                       {[1, 2, 3, 4, 5].map((s) => (
                         <button key={s} onClick={() => setRating(s)} onMouseEnter={() => setHoverRating(s)} onMouseLeave={() => setHoverRating(0)}
                           className="p-1 transition-transform active:scale-90" aria-label={`Rate ${s} stars`}>
-                          <Star className={`w-7 h-7 transition-all ${(hoverRating || rating) >= s ? 'text-[#FFD700] fill-[#FFD700]' : 'text-white/20'}`} />
+                          <Star className={`w-7 h-7 transition-all ${(hoverRating || rating) >= s ? 'text-[var(--sr-vendor)] fill-[var(--sr-vendor)]' : 'text-white/20'}`} />
                         </button>
                       ))}
                       {rating > 0 && <span className="ml-2 text-white/60 text-xs font-bold">{rating}/5</span>}
@@ -143,7 +143,7 @@ export default function BetaFeedbackModal() {
                   <div>
                     <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Subject</p>
                     <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)} placeholder="Brief summary of your feedback"
-                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none" />
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 focus:outline-none" />
                   </div>
 
                   {/* Message */}
@@ -151,7 +151,7 @@ export default function BetaFeedbackModal() {
                     <p className="text-white/65 text-[10px] font-bold uppercase tracking-wider mb-2">Message</p>
                     <textarea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Tell us more… What happened? What were you trying to do? Any ideas?"
                       rows={5}
-                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[#13ec13]/40 focus:outline-none resize-none custom-scrollbar" />
+                      className="w-full bg-[var(--sr-surface-raised)] border border-white/10 rounded-xl px-3 py-3 text-white text-sm placeholder:text-white/60 focus:border-[var(--sr-customer)]/40 focus:outline-none resize-none custom-scrollbar" />
                   </div>
 
                   {/* Context chip */}
@@ -168,7 +168,7 @@ export default function BetaFeedbackModal() {
             {!submitted && (
               <div className="shrink-0 p-3 sm:p-4 border-t border-white/5 bg-[var(--sr-surface-base)]/95 backdrop-blur-lg">
                 <button onClick={handleSubmit} disabled={submitting || !subject.trim() || !message.trim()}
-                  className="w-full bg-[#13ec13] text-[var(--sr-surface-base)] font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-transform">
+                  className="w-full bg-[var(--sr-customer)] text-[var(--sr-surface-base)] font-bold text-sm py-3 rounded-2xl flex items-center justify-center gap-2 disabled:opacity-50 active:scale-[0.98] transition-transform">
                   {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Sending…</> : <><Send className="w-4 h-4" /> Send Feedback</>}
                 </button>
               </div>

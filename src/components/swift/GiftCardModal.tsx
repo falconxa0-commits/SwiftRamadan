@@ -539,7 +539,7 @@ export default function GiftCardModal() {
                   className="w-full mt-4 p-3 sm:p-4 rounded-xl border transition-all duration-200 flex items-center gap-3 text-left"
                   style={{
                     borderColor: charityOptIn ? 'rgba(245,196,81,0.3)' : 'rgba(255,255,255,0.05)',
-                    background: charityOptIn ? 'rgba(245,196,81,0.05)' : '#1A1D26',
+                    background: charityOptIn ? 'rgba(245,196,81,0.05)' : 'var(--sr-surface-elevated)',
                   }}
                 >
                   <div

@@ -112,7 +112,7 @@ export default function RiderSmartRouteModal() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-900/30 to-[#0F1117] border border-cyan-500/20 p-5"
+                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-900/30 to-[var(--sr-surface-raised)] border border-cyan-500/20 p-5"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-500/10 blur-[40px]" />
                 <div className="relative z-10 flex items-center gap-3 sm:gap-4">

@@ -226,7 +226,7 @@ export default function VendorAddProductModal() {
                         className="absolute inset-0 bg-cover bg-center"
                         style={{ backgroundImage: `url(${image})` }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#06070B]/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-base)]/60 to-transparent" />
                       <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                         <span className="px-2 py-1 rounded-md bg-black/50 backdrop-blur-sm text-white/80 text-[10px] font-bold">
                           Preview

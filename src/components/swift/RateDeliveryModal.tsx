@@ -208,7 +208,7 @@ export default function RateDeliveryModal() {
                           transition={{ duration: 0.28 }}
                         >
                           <Star
-                            className={`w-10 h-10 ${filled ? 'text-[var(--sr-vendor)] fill-[#F5C451] drop-shadow-[0_0_12px_rgba(245,196,81,0.5)]' : 'text-white/20'}`}
+                            className={`w-10 h-10 ${filled ? 'text-[var(--sr-vendor)] fill-[var(--sr-vendor)] drop-shadow-[0_0_12px_rgba(245,196,81,0.5)]' : 'text-white/20'}`}
                             strokeWidth={2}
                           />
                         </motion.div>

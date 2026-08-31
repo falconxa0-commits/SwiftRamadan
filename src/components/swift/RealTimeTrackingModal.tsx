@@ -237,7 +237,7 @@ export default function RealTimeTrackingModal() {
             photo: '',
             rating: 4.9,
             vehicle: 'Motorcycle',
-            color: '#38BDF8',
+            color: 'var(--sr-rider)',
           },
           location: { lat: locLat, lng: locLng },
           status,
@@ -370,7 +370,7 @@ export default function RealTimeTrackingModal() {
         photo: '',
         rating: 4.9,
         vehicle: 'Motorcycle',
-        color: '#38BDF8',
+        color: 'var(--sr-rider)',
       };
 
       // Stylized Lagos coordinates around the user's area
@@ -614,7 +614,7 @@ export default function RealTimeTrackingModal() {
                         onClick={handleRateRider}
                         className="mt-3 w-full bg-[var(--sr-vendor)] text-[var(--sr-surface-base)] py-3 rounded-xl font-black text-sm hover:bg-[var(--sr-vendor)]/90 transition-colors flex items-center justify-center gap-2"
                       >
-                        <Star className="w-4 h-4 fill-[#06070B]" />
+                        <Star className="w-4 h-4 fill-[var(--sr-surface-base)]" />
                         Rate your rider
                       </button>
                     </div>
@@ -709,7 +709,7 @@ export default function RealTimeTrackingModal() {
               {/* ETA + Rider cards */}
               <section className="px-4 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {/* ETA card */}
-                <div className="bg-gradient-to-br from-[var(--sr-rider)]/10 to-[#0F1118] rounded-2xl border border-[var(--sr-rider)]/20 p-4 relative overflow-hidden">
+                <div className="bg-gradient-to-br from-[var(--sr-rider)]/10 to-[var(--sr-surface-raised)] rounded-2xl border border-[var(--sr-rider)]/20 p-4 relative overflow-hidden">
                   <div className="absolute -right-4 -top-4 w-24 h-24 bg-[var(--sr-rider)]/5 blur-2xl rounded-full" />
                   <div className="flex items-center gap-2 mb-2 relative">
                     <Clock className="w-4 h-4 text-[var(--sr-rider)]" />
@@ -753,8 +753,8 @@ export default function RealTimeTrackingModal() {
                       <div
                         className="w-12 h-12 rounded-full flex items-center justify-center shrink-0 border-2 font-bold text-sm"
                         style={{
-                          backgroundColor: `${delivery.rider.color}22`,
-                          borderColor: `${delivery.rider.color}66`,
+                          backgroundColor: `color-mix(in srgb, ${delivery.rider.color} 13%, transparent)`,
+                          borderColor: `color-mix(in srgb, ${delivery.rider.color} 40%, transparent)`,
                           color: delivery.rider.color,
                         }}
                       >
@@ -765,7 +765,7 @@ export default function RealTimeTrackingModal() {
                           {delivery.rider.name}
                         </p>
                         <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 fill-[#F5C451] text-[var(--sr-vendor)]" />
+                          <Star className="w-3 h-3 fill-[var(--sr-vendor)] text-[var(--sr-vendor)]" />
                           <span className="text-[var(--sr-vendor)] text-[11px] font-bold">
                             {delivery.rider.rating}
                           </span>
@@ -887,7 +887,7 @@ export default function RealTimeTrackingModal() {
                   className="h-full rounded-full relative"
                   style={{
                     background:
-                      'linear-gradient(90deg, #38BDF8 0%, #10E07A 50%, #F5C451 100%)',
+                      'linear-gradient(90deg, var(--sr-rider) 0%, var(--sr-customer) 50%, var(--sr-vendor) 100%)',
                   }}
                   animate={{
                     width: `${delivery ? delivery.progress : 0}%`,
@@ -947,7 +947,7 @@ function MapPanel({
   return (
     <div className="relative h-[280px] sm:h-[320px] overflow-hidden">
       {/* Dark base */}
-      <div className="absolute inset-0 bg-[#080c12]" />
+      <div className="absolute inset-0 bg-[var(--sr-surface-base)]" />
 
       {/* Grid pattern - streets */}
       <div
@@ -977,7 +977,7 @@ function MapPanel({
       <div className="absolute bottom-[25%] right-[8%] w-14 h-16 border border-white/[0.04] bg-white/[0.015] rounded-sm" />
 
       {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D14]/40 via-transparent to-[#0B0D14]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[var(--sr-surface-base)]/40 via-transparent to-[var(--sr-surface-base)]" />
       <div className="absolute top-[20%] left-[20%] w-32 h-32 bg-[var(--sr-vendor)]/5 blur-[60px] rounded-full" />
       <div className="absolute bottom-[25%] right-[20%] w-32 h-32 bg-[var(--sr-rider)]/5 blur-[60px] rounded-full" />
 
@@ -996,7 +996,7 @@ function MapPanel({
               y1={layout.store.y}
               x2={layout.rider.x}
               y2={layout.rider.y}
-              stroke="#F5C451"
+              stroke="var(--sr-vendor)"
               strokeWidth="0.6"
               strokeDasharray="2 1.5"
               opacity="0.5"
@@ -1007,7 +1007,7 @@ function MapPanel({
               y1={layout.rider.y}
               x2={layout.customer.x}
               y2={layout.customer.y}
-              stroke="#38BDF8"
+              stroke="var(--sr-rider)"
               strokeWidth="0.6"
               strokeDasharray="2 1.5"
               opacity="0.7"
@@ -1025,7 +1025,7 @@ function MapPanel({
           {/* Store marker */}
           <Marker
             position={layout.store}
-            color="#F5C451"
+            color="var(--sr-vendor)"
             label={delivery.store.name}
             icon={<Store className="w-3.5 h-3.5 text-[var(--sr-vendor)]" />}
           />
@@ -1033,7 +1033,7 @@ function MapPanel({
           {/* Customer marker */}
           <Marker
             position={layout.customer}
-            color="#38BDF8"
+            color="var(--sr-rider)"
             label="Your location"
             icon={<MapPin className="w-3.5 h-3.5 text-[var(--sr-rider)]" />}
             pulseColor="rgba(56,189,248,0.4)"
@@ -1055,8 +1055,8 @@ function MapPanel({
               transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
               className="absolute inset-0 rounded-full bg-[var(--sr-rider)]"
             />
-            <div className="relative w-9 h-9 rounded-full bg-[var(--sr-rider)] border-2 border-[#0B0D14] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
-              <Bike className="w-4 h-4 text-[#0B0D14]" />
+            <div className="relative w-9 h-9 rounded-full bg-[var(--sr-rider)] border-2 border-[var(--sr-surface-base)] flex items-center justify-center shadow-[0_0_20px_rgba(56,189,248,0.5)]">
+              <Bike className="w-4 h-4 text-[var(--sr-surface-base)]" />
             </div>
           </motion.div>
         </div>
@@ -1087,7 +1087,7 @@ function MapPanel({
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-              className="w-10 h-10 border-2 border-[var(--sr-rider)]/30 border-t-[#38BDF8] rounded-full mx-auto mb-3"
+              className="w-10 h-10 border-2 border-[var(--sr-rider)]/30 border-t-[var(--sr-rider)] rounded-full mx-auto mb-3"
             />
             <p className="text-white/50 text-sm">Locating your rider...</p>
           </div>
@@ -1130,7 +1130,7 @@ function Marker({
       <div
         className="relative w-8 h-8 rounded-full flex items-center justify-center border-2"
         style={{
-          backgroundColor: `${color}22`,
+          backgroundColor: `color-mix(in srgb, ${color} 13%, transparent)`,
           borderColor: color,
         }}
       >

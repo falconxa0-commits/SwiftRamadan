@@ -31,7 +31,7 @@ const plans: SubscriptionPlan[] = [
     price: 12000,
     period: 'week',
     icon: Sun,
-    color: '#F5C451',
+    color: 'var(--sr-vendor)',
     features: [
       'Daily Sahur meal for 1 person',
       'Fresh fruits & dates included',
@@ -57,7 +57,7 @@ const plans: SubscriptionPlan[] = [
     price: 85000,
     period: '30 days',
     icon: Moon,
-    color: '#10E07A',
+    color: 'var(--sr-customer)',
     popular: true,
     features: [
       'Daily Sahur + Iftar for 1 person',
@@ -198,7 +198,7 @@ export default function SubscriptionBoxes() {
                   onClick={() => setSelectedPlan(plan.id)}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all ${
                     selectedPlan === plan.id
-                      ? 'bg-[var(--sr-customer)] text-[#0B0D14]'
+                      ? 'bg-[var(--sr-customer)] text-[var(--sr-surface-base)]'
                       : 'text-white/50 hover:text-white/70'
                   }`}
                   aria-label={`Select ${plan.name}`}
@@ -223,19 +223,19 @@ export default function SubscriptionBoxes() {
             >
               <div
                 className="bg-[var(--sr-surface-raised)] rounded-2xl border overflow-hidden relative"
-                style={{ borderColor: currentPlan.popular ? `${currentPlan.color}30` : 'rgba(255,255,255,0.08)' }}
+                style={{ borderColor: currentPlan.popular ? `color-mix(in srgb, ${currentPlan.color} 19%, transparent)` : 'rgba(255,255,255,0.08)' }}
               >
                 {currentPlan.popular && (
                   <div
                     className="absolute top-0 left-0 right-0 h-1"
-                    style={{ background: `linear-gradient(to right, ${currentPlan.color}, ${currentPlan.color}50)` }}
+                    style={{ background: `linear-gradient(to right, ${currentPlan.color}, color-mix(in srgb, ${currentPlan.color} 31%, transparent))` }}
                   />
                 )}
                 {currentPlan.popular && (
                   <div className="absolute top-3 right-3">
                     <span
                       className="text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide"
-                      style={{ backgroundColor: `${currentPlan.color}20`, color: currentPlan.color }}
+                      style={{ backgroundColor: `color-mix(in srgb, ${currentPlan.color} 13%, transparent)`, color: currentPlan.color }}
                     >
                       Most Popular
                     </span>
@@ -246,7 +246,7 @@ export default function SubscriptionBoxes() {
                   <div className="flex items-center gap-3 mb-4">
                     <div
                       className="w-14 h-14 rounded-xl flex items-center justify-center border"
-                      style={{ backgroundColor: `${currentPlan.color}10`, borderColor: `${currentPlan.color}20` }}
+                      style={{ backgroundColor: `color-mix(in srgb, ${currentPlan.color} 6%, transparent)`, borderColor: `color-mix(in srgb, ${currentPlan.color} 13%, transparent)` }}
                     >
                       <currentPlan.icon className="w-7 h-7" style={{ color: currentPlan.color }} />
                     </div>
@@ -276,7 +276,7 @@ export default function SubscriptionBoxes() {
                       >
                         <div
                           className="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: `${currentPlan.color}15` }}
+                          style={{ backgroundColor: `color-mix(in srgb, ${currentPlan.color} 8%, transparent)` }}
                         >
                           <Check className="w-3 h-3" style={{ color: currentPlan.color }} />
                         </div>
@@ -334,7 +334,7 @@ export default function SubscriptionBoxes() {
                   {isSubscribed ? (
                     <div
                       className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 border"
-                      style={{ backgroundColor: `${currentPlan.color}10`, borderColor: `${currentPlan.color}20`, color: currentPlan.color }}
+                      style={{ backgroundColor: `color-mix(in srgb, ${currentPlan.color} 6%, transparent)`, borderColor: `color-mix(in srgb, ${currentPlan.color} 13%, transparent)`, color: currentPlan.color }}
                     >
                       <Check className="w-4 h-4" />
                       Active Subscription
@@ -346,7 +346,7 @@ export default function SubscriptionBoxes() {
                       className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
                       style={{
                         backgroundColor: currentPlan.color,
-                        color: '#0B0D14',
+                        color: 'var(--sr-surface-base)',
                         opacity: isSubscribing ? 0.7 : 1,
                       }}
                       whileTap={{ scale: 0.98 }}
@@ -354,7 +354,7 @@ export default function SubscriptionBoxes() {
                     >
                       {isSubscribing ? (
                         <>
-                          <div className="w-4 h-4 border-2 border-[#0B0D14]/30 border-t-[#0B0D14] rounded-full animate-spin" />
+                          <div className="w-4 h-4 border-2 border-[var(--sr-surface-base)]/30 border-t-[var(--sr-surface-base)] rounded-full animate-spin" />
                           Subscribing...
                         </>
                       ) : (
@@ -421,7 +421,7 @@ export default function SubscriptionBoxes() {
             <div className="bg-[var(--sr-surface-raised)] rounded-2xl border border-white/8 p-5">
               <div className="flex items-center gap-1.5 mb-3">
                 {[1, 2, 3, 4, 5].map((s) => (
-                  <Star key={s} className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                  <Star key={s} className="w-4 h-4 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                 ))}
               </div>
               <p className="text-white/70 text-sm mb-3 italic">

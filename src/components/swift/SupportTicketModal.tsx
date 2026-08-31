@@ -42,17 +42,17 @@ interface SupportTicket {
 }
 
 const CATEGORIES = [
-  { value: 'order', label: 'Order Issue', icon: Package, color: '#F5C451' },
-  { value: 'payment', label: 'Payment', icon: CreditCard, color: '#10E07A' },
-  { value: 'delivery', label: 'Delivery', icon: Truck, color: '#38BDF8' },
-  { value: 'account', label: 'Account', icon: User, color: '#A78BFA' },
+  { value: 'order', label: 'Order Issue', icon: Package, color: 'var(--sr-vendor)' },
+  { value: 'payment', label: 'Payment', icon: CreditCard, color: 'var(--sr-customer)' },
+  { value: 'delivery', label: 'Delivery', icon: Truck, color: 'var(--sr-rider)' },
+  { value: 'account', label: 'Account', icon: User, color: 'var(--sr-ai)' },
   { value: 'other', label: 'Other', icon: HelpCircle, color: '#9CA3AF' },
 ];
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bgColor: string; icon: React.ComponentType<{ className?: string }> }> = {
-  open: { label: 'Open', color: '#38BDF8', bgColor: 'rgba(56,189,248,0.12)', icon: AlertCircle },
-  in_progress: { label: 'In Progress', color: '#F5C451', bgColor: 'rgba(245,196,81,0.12)', icon: Clock },
-  resolved: { label: 'Resolved', color: '#10E07A', bgColor: 'rgba(16,224,122,0.12)', icon: CheckCircle2 },
+  open: { label: 'Open', color: 'var(--sr-rider)', bgColor: 'rgba(56,189,248,0.12)', icon: AlertCircle },
+  in_progress: { label: 'In Progress', color: 'var(--sr-vendor)', bgColor: 'rgba(245,196,81,0.12)', icon: Clock },
+  resolved: { label: 'Resolved', color: 'var(--sr-customer)', bgColor: 'rgba(16,224,122,0.12)', icon: CheckCircle2 },
   closed: { label: 'Closed', color: '#9CA3AF', bgColor: 'rgba(156,163,175,0.12)', icon: CheckCircle2 },
 };
 
@@ -382,7 +382,7 @@ export default function SupportTicketModal() {
                                 <div
                                   className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
                                   style={{
-                                    backgroundColor: `${catConfig.color}15`,
+                                    backgroundColor: `color-mix(in srgb, ${catConfig.color} 8%, transparent)`,
                                   }}
                                 >
                                   <CatIcon className="w-4 h-4" style={{ color: catConfig.color }} />
@@ -476,7 +476,7 @@ export default function SupportTicketModal() {
                         style={{
                           background: sending
                             ? 'rgba(56,189,248,0.15)'
-                            : 'linear-gradient(135deg, #38BDF8, #0EA5E9)',
+                            : 'linear-gradient(135deg, var(--sr-rider), var(--sr-rider-hover))',
                           color: '#0C2D3F',
                           boxShadow: sending ? 'none' : '0 4px 20px rgba(56,189,248,0.25)',
                         }}

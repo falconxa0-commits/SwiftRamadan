@@ -170,7 +170,7 @@ export default function RecipesModal() {
                             className="w-full h-44 bg-center bg-no-repeat bg-cover"
                             style={{ backgroundImage: `url("${recipe.image}")` }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-elevated)] via-transparent to-transparent" />
                           <div className="absolute top-3 left-3">
                             <span className="bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                               {recipe.category}

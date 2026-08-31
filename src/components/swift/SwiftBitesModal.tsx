@@ -413,14 +413,14 @@ export default function SwiftBitesModal() {
           className="relative w-full h-full sm:w-[420px] sm:h-[88vh] sm:rounded-3xl overflow-hidden bg-black sm:border sm:border-white/10 sm:shadow-2xl"
         >
           {isLoading ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-[#0B0D14] to-black">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-[var(--sr-surface-base)] to-black">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-vendor)] flex items-center justify-center animate-pulse">
                 <Sparkles className="w-8 h-8 text-black" />
               </div>
               <p className="text-white/60 text-sm tracking-widest uppercase">Loading SwiftBites…</p>
             </div>
           ) : videos.length === 0 ? (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-[#0B0D14] to-black">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-[var(--sr-surface-base)] to-black">
               <Sparkles className="w-10 h-10 text-white/60" />
               <p className="text-white/65 text-sm">No videos in this category yet</p>
             </div>
@@ -472,7 +472,7 @@ export default function SwiftBitesModal() {
                       transition={{ duration: 1, ease: 'easeOut' }}
                       className="absolute"
                     >
-                      <Heart className="w-16 h-16 fill-[#FB7185] text-[var(--sr-error)] drop-shadow-[0_0_20px_rgba(251,113,133,0.8)]" />
+                      <Heart className="w-16 h-16 fill-[var(--sr-error)] text-[var(--sr-error)] drop-shadow-[0_0_20px_rgba(251,113,133,0.8)]" />
                     </motion.div>
                   ))}
                 </AnimatePresence>
@@ -542,7 +542,7 @@ export default function SwiftBitesModal() {
                     <Heart
                       className={`w-9 h-9 transition-all ${
                         likedVideos.has(currentVideo.id)
-                          ? 'fill-[#FB7185] text-[var(--sr-error)] drop-shadow-[0_0_12px_rgba(251,113,133,0.8)]'
+                          ? 'fill-[var(--sr-error)] text-[var(--sr-error)] drop-shadow-[0_0_12px_rgba(251,113,133,0.8)]'
                           : 'text-white drop-shadow-lg'
                       }`}
                     />
@@ -572,7 +572,7 @@ export default function SwiftBitesModal() {
                     <Bookmark
                       className={`w-9 h-9 transition-all ${
                         savedVideos.has(currentVideo.id)
-                          ? 'fill-[#F5C451] text-[var(--sr-vendor)] drop-shadow-[0_0_12px_rgba(245,196,81,0.8)]'
+                          ? 'fill-[var(--sr-vendor)] text-[var(--sr-vendor)] drop-shadow-[0_0_12px_rgba(245,196,81,0.8)]'
                           : 'text-white drop-shadow-lg'
                       }`}
                     />
@@ -597,7 +597,7 @@ export default function SwiftBitesModal() {
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[#1F2330] to-black border-2 border-white/20 flex items-center justify-center"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--sr-surface-elevated)] to-black border-2 border-white/20 flex items-center justify-center"
                   >
                     <Music2 className="w-4 h-4 text-white/80" />
                   </motion.div>
@@ -613,7 +613,7 @@ export default function SwiftBitesModal() {
                       {currentVideo.creatorHandle}
                     </span>
                     {currentVideo.verified && (
-                      <Verified className="w-4 h-4 text-[var(--sr-rider)] fill-[#38BDF8]/30" />
+                      <Verified className="w-4 h-4 text-[var(--sr-rider)] fill-[var(--sr-rider)]/30" />
                     )}
                     <span className="text-white/60 text-xs">·</span>
                     <span className="text-white/80 text-xs">{currentVideo.creatorName}</span>
@@ -656,7 +656,7 @@ export default function SwiftBitesModal() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.4 }}
                       onClick={() => handleOrderNow(currentVideo)}
-                      className="mt-3 flex items-center gap-2 bg-gradient-to-r from-[var(--sr-customer)] to-[#13ec13] text-black font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(16,224,122,0.5)] hover:brightness-110 active:scale-95 transition-all"
+                      className="mt-3 flex items-center gap-2 bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer)] text-black font-black text-xs uppercase tracking-wider px-4 py-2.5 rounded-full shadow-[0_0_20px_rgba(16,224,122,0.5)] hover:brightness-110 active:scale-95 transition-all"
                     >
                       <ShoppingBag className="w-4 h-4" />
                       {currentVideo.orderCtaText}

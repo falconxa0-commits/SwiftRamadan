@@ -209,7 +209,7 @@ export default function AIRecipeGeneratorModal() {
             {/* Scrollable Content */}
             <div className="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-5">
               {/* Hero / Prompt */}
-              <div className="bg-gradient-to-br from-[#1A1D26] to-[#0F1117] rounded-3xl border border-white/5 p-5 space-y-4">
+              <div className="bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] rounded-3xl border border-white/5 p-5 space-y-4">
                 <div className="flex items-start gap-2">
                   <Flame className="w-4 h-4 text-[var(--sr-vendor)] mt-0.5 shrink-0" />
                   <p className="text-white/70 text-sm leading-relaxed">

@@ -268,7 +268,7 @@ export default function CartTab() {
               className="bg-[var(--sr-customer)]/10 border border-[var(--sr-customer)]/20 text-[var(--sr-customer)] px-4 rounded-xl font-bold text-sm hover:bg-[var(--sr-customer)]/20 transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-[var(--sr-customer)]/10 flex items-center gap-1.5"
             >
               {couponLoading ? (
-                <span className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[var(--sr-customer)] rounded-full animate-spin" />
               ) : (
                 'Apply'
               )}

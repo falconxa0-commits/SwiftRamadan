@@ -122,7 +122,7 @@ export default function RiderDeliveryMap() {
           <path
             d="M 130 580 C 130 520, 160 480, 200 440 C 240 400, 220 350, 250 300 C 280 250, 260 200, 240 160"
             fill="none"
-            stroke="#F5C451"
+            stroke="var(--sr-vendor)"
             strokeWidth="8"
             strokeDasharray="8 6"
             opacity="0.1"
@@ -131,14 +131,14 @@ export default function RiderDeliveryMap() {
           <path
             d="M 130 580 C 130 520, 160 480, 200 440 C 240 400, 220 350, 250 300 C 280 250, 260 200, 240 160"
             fill="none"
-            stroke="#F5C451"
+            stroke="var(--sr-vendor)"
             strokeWidth="3"
             strokeDasharray="8 6"
             opacity="0.7"
           />
           {/* Pickup marker dot */}
-          <circle cx="130" cy="580" r="6" fill="#10E07A" opacity="0.8" />
-          <circle cx="130" cy="580" r="12" fill="none" stroke="#10E07A" strokeWidth="1.5" opacity="0.3" />
+          <circle cx="130" cy="580" r="6" fill="var(--sr-customer)" opacity="0.8" />
+          <circle cx="130" cy="580" r="12" fill="none" stroke="var(--sr-customer)" strokeWidth="1.5" opacity="0.3" />
         </svg>
 
         {/* Destination Marker (Gold Pin) - top area */}
@@ -152,7 +152,7 @@ export default function RiderDeliveryMap() {
             <div className="w-8 h-8 bg-[var(--sr-vendor)] rounded-full flex items-center justify-center shadow-lg shadow-[var(--sr-vendor)]/30">
               <MapPin className="w-4 h-4 text-[var(--sr-surface-base)]" />
             </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[#F5C451]" />
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-[8px] border-l-transparent border-r-transparent border-t-[var(--sr-vendor)]" />
             {/* Destination label */}
             <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap px-2 py-0.5 bg-[var(--sr-surface-elevated)] border border-white/10 rounded-lg">
               <span className="text-white text-[8px] font-bold">Drop-off</span>

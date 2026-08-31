@@ -163,8 +163,8 @@ function MetricCard({
           <div
             className="w-9 h-9 rounded-xl flex items-center justify-center border"
             style={{
-              backgroundColor: `${color}15`,
-              borderColor: `${color}30`,
+              backgroundColor: `color-mix(in srgb, ${color} 8%, transparent)`,
+              borderColor: `color-mix(in srgb, ${color} 19%, transparent)`,
             }}
           >
             <Icon className="w-4 h-4" style={{ color }} />
@@ -185,23 +185,23 @@ function MetricCard({
 
 function StatusBadge({ status, size = 'sm' }: { status: string; size?: 'sm' | 'md' }) {
   const config: Record<string, { bg: string; text: string; border: string }> = {
-    active: { bg: 'rgba(16,224,122,0.15)', text: '#10E07A', border: 'rgba(16,224,122,0.25)' },
-    pending: { bg: 'rgba(245,196,81,0.15)', text: '#F5C451', border: 'rgba(245,196,81,0.25)' },
-    banned: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: 'rgba(239,68,68,0.25)' },
-    verified: { bg: 'rgba(56,189,248,0.15)', text: '#38BDF8', border: 'rgba(56,189,248,0.25)' },
-    open: { bg: 'rgba(245,196,81,0.15)', text: '#F5C451', border: 'rgba(245,196,81,0.25)' },
-    investigating: { bg: 'rgba(56,189,248,0.15)', text: '#38BDF8', border: 'rgba(56,189,248,0.25)' },
-    resolved: { bg: 'rgba(16,224,122,0.15)', text: '#10E07A', border: 'rgba(16,224,122,0.25)' },
-    escalated: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: 'rgba(239,68,68,0.25)' },
-    completed: { bg: 'rgba(16,224,122,0.15)', text: '#10E07A', border: 'rgba(16,224,122,0.25)' },
-    failed: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: 'rgba(239,68,68,0.25)' },
-    Preparing: { bg: 'rgba(245,196,81,0.15)', text: '#F5C451', border: 'rgba(245,196,81,0.25)' },
-    Confirmed: { bg: 'rgba(56,189,248,0.15)', text: '#38BDF8', border: 'rgba(56,189,248,0.25)' },
-    Ready: { bg: 'rgba(16,224,122,0.15)', text: '#10E07A', border: 'rgba(16,224,122,0.25)' },
-    Dispatched: { bg: 'rgba(56,189,248,0.15)', text: '#38BDF8', border: 'rgba(56,189,248,0.25)' },
-    Delivered: { bg: 'rgba(16,224,122,0.15)', text: '#10E07A', border: 'rgba(16,224,122,0.25)' },
-    Cancelled: { bg: 'rgba(239,68,68,0.15)', text: '#ef4444', border: 'rgba(239,68,68,0.25)' },
-    'In Transit': { bg: 'rgba(56,189,248,0.15)', text: '#38BDF8', border: 'rgba(56,189,248,0.25)' },
+    active: { bg: 'rgba(16,224,122,0.15)', text: 'var(--sr-customer)', border: 'rgba(16,224,122,0.25)' },
+    pending: { bg: 'rgba(245,196,81,0.15)', text: 'var(--sr-vendor)', border: 'rgba(245,196,81,0.25)' },
+    banned: { bg: 'rgba(239,68,68,0.15)', text: 'var(--sr-error)', border: 'rgba(239,68,68,0.25)' },
+    verified: { bg: 'rgba(56,189,248,0.15)', text: 'var(--sr-rider)', border: 'rgba(56,189,248,0.25)' },
+    open: { bg: 'rgba(245,196,81,0.15)', text: 'var(--sr-vendor)', border: 'rgba(245,196,81,0.25)' },
+    investigating: { bg: 'rgba(56,189,248,0.15)', text: 'var(--sr-rider)', border: 'rgba(56,189,248,0.25)' },
+    resolved: { bg: 'rgba(16,224,122,0.15)', text: 'var(--sr-customer)', border: 'rgba(16,224,122,0.25)' },
+    escalated: { bg: 'rgba(239,68,68,0.15)', text: 'var(--sr-error)', border: 'rgba(239,68,68,0.25)' },
+    completed: { bg: 'rgba(16,224,122,0.15)', text: 'var(--sr-customer)', border: 'rgba(16,224,122,0.25)' },
+    failed: { bg: 'rgba(239,68,68,0.15)', text: 'var(--sr-error)', border: 'rgba(239,68,68,0.25)' },
+    Preparing: { bg: 'rgba(245,196,81,0.15)', text: 'var(--sr-vendor)', border: 'rgba(245,196,81,0.25)' },
+    Confirmed: { bg: 'rgba(56,189,248,0.15)', text: 'var(--sr-rider)', border: 'rgba(56,189,248,0.25)' },
+    Ready: { bg: 'rgba(16,224,122,0.15)', text: 'var(--sr-customer)', border: 'rgba(16,224,122,0.25)' },
+    Dispatched: { bg: 'rgba(56,189,248,0.15)', text: 'var(--sr-rider)', border: 'rgba(56,189,248,0.25)' },
+    Delivered: { bg: 'rgba(16,224,122,0.15)', text: 'var(--sr-customer)', border: 'rgba(16,224,122,0.25)' },
+    Cancelled: { bg: 'rgba(239,68,68,0.15)', text: 'var(--sr-error)', border: 'rgba(239,68,68,0.25)' },
+    'In Transit': { bg: 'rgba(56,189,248,0.15)', text: 'var(--sr-rider)', border: 'rgba(56,189,248,0.25)' },
   };
   const c = config[status] || config.pending;
   const sizeClass = size === 'md' ? 'px-3 py-1 text-xs' : 'px-2 py-0.5 text-[10px]';
@@ -374,7 +374,7 @@ function RevenueBarChart({ data }: { data: { day: string; revenue: number }[] })
                 transition={{ delay: i * 0.06, duration: 0.5, ease: 'easeOut' }}
                 className="w-full rounded-t-lg relative overflow-hidden"
                 style={{
-                  background: 'linear-gradient(to top, #10E07A, #10E07A80)',
+                  background: 'linear-gradient(to top, var(--sr-customer), color-mix(in srgb, var(--sr-customer) 50%, transparent))',
                   minHeight: 4,
                 }}
               >
@@ -721,11 +721,11 @@ export default function AdminDashboard() {
       <div className="space-y-4">
         {/* Metric cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          <MetricCard icon={Users} label="Total Users" value={metrics.totalUsers.toLocaleString()} color="#10E07A" trend="+8.2%" delay={0} />
-          <MetricCard icon={ShoppingBag} label="Total Orders" value={metrics.totalOrders.toLocaleString()} color="#F5C451" trend="+15.3%" delay={0.05} />
-          <MetricCard icon={DollarSign} label="Total Revenue" value={formatNaira(metrics.totalRevenue)} color="#10E07A" trend="+12.5%" delay={0.1} />
-          <MetricCard icon={Store} label="Active Vendors" value={metrics.activeVendors} color="#38BDF8" delay={0.15} />
-          <MetricCard icon={AlertTriangle} label="Active Riders" value={metrics.activeRiders} color="#F5C451" delay={0.2} />
+          <MetricCard icon={Users} label="Total Users" value={metrics.totalUsers.toLocaleString()} color="var(--sr-customer)" trend="+8.2%" delay={0} />
+          <MetricCard icon={ShoppingBag} label="Total Orders" value={metrics.totalOrders.toLocaleString()} color="var(--sr-vendor)" trend="+15.3%" delay={0.05} />
+          <MetricCard icon={DollarSign} label="Total Revenue" value={formatNaira(metrics.totalRevenue)} color="var(--sr-customer)" trend="+12.5%" delay={0.1} />
+          <MetricCard icon={Store} label="Active Vendors" value={metrics.activeVendors} color="var(--sr-rider)" delay={0.15} />
+          <MetricCard icon={AlertTriangle} label="Active Riders" value={metrics.activeRiders} color="var(--sr-vendor)" delay={0.2} />
         </div>
 
         {/* Revenue Trend Chart */}
@@ -1036,10 +1036,10 @@ export default function AdminDashboard() {
     if (disputesError) return <ErrorRetry message={disputesError} onRetry={fetchDisputes} />;
 
     const typeColors: Record<string, string> = {
-      refund: '#F5C451',
-      quality: '#ef4444',
-      delivery: '#38BDF8',
-      other: '#a78bfa',
+      refund: 'var(--sr-vendor)',
+      quality: 'var(--sr-error)',
+      delivery: 'var(--sr-rider)',
+      other: 'var(--sr-ai)',
     };
 
     return (
@@ -1070,7 +1070,7 @@ export default function AdminDashboard() {
                       <span className="text-white text-sm font-bold">#{dispute.id.slice(-6).toUpperCase()}</span>
                       <span
                         className="px-1.5 py-0.5 rounded text-[9px] font-bold"
-                        style={{ color: typeColors[dispute.type] || '#a78bfa', backgroundColor: `${typeColors[dispute.type] || '#a78bfa'}15` }}
+                        style={{ color: typeColors[dispute.type] || 'var(--sr-ai)', backgroundColor: `color-mix(in srgb, ${typeColors[dispute.type] || 'var(--sr-ai)'} 8%, transparent)` }}
                       >
                         {dispute.type}
                       </span>
@@ -1143,10 +1143,10 @@ export default function AdminDashboard() {
 
         {/* Summary cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <MetricCard icon={DollarSign} label="Total Revenue" value={formatNaira(finance.totalRevenue)} color="#10E07A" delay={0} />
-          <MetricCard icon={Settings} label="Commission" value={formatNaira(finance.platformCommission)} color="#F5C451" delay={0.05} />
-          <MetricCard icon={Store} label="Vendor Payouts" value={formatNaira(finance.vendorPayouts)} color="#38BDF8" delay={0.1} />
-          <MetricCard icon={TrendingUp} label="Net Profit" value={formatNaira(finance.netProfit)} color="#10E07A" trend="+18.7%" delay={0.15} />
+          <MetricCard icon={DollarSign} label="Total Revenue" value={formatNaira(finance.totalRevenue)} color="var(--sr-customer)" delay={0} />
+          <MetricCard icon={Settings} label="Commission" value={formatNaira(finance.platformCommission)} color="var(--sr-vendor)" delay={0.05} />
+          <MetricCard icon={Store} label="Vendor Payouts" value={formatNaira(finance.vendorPayouts)} color="var(--sr-rider)" delay={0.1} />
+          <MetricCard icon={TrendingUp} label="Net Profit" value={formatNaira(finance.netProfit)} color="var(--sr-customer)" trend="+18.7%" delay={0.15} />
         </div>
 
         {/* Recent Transactions */}
@@ -1158,10 +1158,10 @@ export default function AdminDashboard() {
           <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
             {finance.transactions.map((tx) => {
               const typeConfig: Record<string, { icon: typeof DollarSign; color: string }> = {
-                commission: { icon: DollarSign, color: '#10E07A' },
-                payout: { icon: Store, color: '#38BDF8' },
-                refund: { icon: RefreshCw, color: '#ef4444' },
-                fee: { icon: Settings, color: '#F5C451' },
+                commission: { icon: DollarSign, color: 'var(--sr-customer)' },
+                payout: { icon: Store, color: 'var(--sr-rider)' },
+                refund: { icon: RefreshCw, color: 'var(--sr-error)' },
+                fee: { icon: Settings, color: 'var(--sr-vendor)' },
               };
               const tc = typeConfig[tx.type] || typeConfig.fee;
               const TxIcon = tc.icon;
@@ -1169,7 +1169,7 @@ export default function AdminDashboard() {
                 <div key={tx.id} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.02] hover:bg-white/[0.04] transition-colors">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: `${tc.color}15` }}
+                    style={{ backgroundColor: `color-mix(in srgb, ${tc.color} 8%, transparent)` }}
                   >
                     <TxIcon className="w-4 h-4" style={{ color: tc.color }} />
                   </div>

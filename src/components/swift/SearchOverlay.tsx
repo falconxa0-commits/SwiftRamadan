@@ -199,7 +199,7 @@ export default function SearchOverlay() {
             {/* Loading */}
             {isSearching && (
               <div className="flex items-center gap-2 py-4">
-                <div className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[#10E07A] rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-[var(--sr-customer)]/30 border-t-[var(--sr-customer)] rounded-full animate-spin" />
                 <span className="text-white/65 text-sm">Searching...</span>
               </div>
             )}

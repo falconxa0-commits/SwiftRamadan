@@ -249,7 +249,7 @@ export default function ExploreTab() {
                 backgroundImage: 'url("/images/seasonal-specials.png")',
               }}
             >
-              <div className="absolute inset-0 bg-gradient-to-t from-[#06070B] via-[#06070B]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-base)] via-[var(--sr-surface-base)]/40 to-transparent" />
               <div className="absolute bottom-4 left-4 right-4">
                 <span className="inline-block bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase mb-2">Ramadan Kareem</span>
                 <h3 className="text-2xl font-bold text-white leading-tight tracking-tight">Premium Ramadan Boxes</h3>
@@ -304,7 +304,7 @@ export default function ExploreTab() {
               <h4 className="text-white text-sm font-bold tracking-tight">{retailer.name}</h4>
               <p className="text-white/65 text-[10px]">{retailer.category} &bull; {retailer.deliveryTime}</p>
               <div className="flex items-center gap-1 mt-1">
-                <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                 <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{retailer.rating}</span>
                 {retailer.verified && (
                   <CheckCircle className="w-3 h-3 text-[var(--sr-customer)] ml-1" />
@@ -410,7 +410,7 @@ export default function ExploreTab() {
               <div className="p-3">
                 <p className="text-white text-xs font-bold truncate tracking-tight">{product.name}</p>
                 <div className="flex items-center gap-1 mt-1">
-                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                   <span className="text-[var(--sr-vendor)] text-[10px] font-bold">{product.rating}</span>
                   <span className="text-white/20 text-[10px]">({product.reviews})</span>
                 </div>

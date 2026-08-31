@@ -382,7 +382,7 @@ function RecipeRemixInner() {
 
             <div className="flex items-center gap-4 mt-3">
               <span className="text-[var(--sr-vendor)] text-xs flex items-center gap-1">
-                <Star className="w-3.5 h-3.5 fill-[#F5C451]" />
+                <Star className="w-3.5 h-3.5 fill-[var(--sr-vendor)]" />
                 {remix.rating.toFixed(1)} ({remix.ratingCount})
               </span>
               <span className="text-white/65 text-xs flex items-center gap-1">
@@ -580,7 +580,7 @@ function RecipeRemixInner() {
                           <Star
                             className={`w-5 h-5 transition-colors ${
                               (selectedRemix.userRating || 0) >= star
-                                ? 'fill-[#F5C451] text-[var(--sr-vendor)]'
+                                ? 'fill-[var(--sr-vendor)] text-[var(--sr-vendor)]'
                                 : 'text-white/20 hover:text-[var(--sr-vendor)]/60'
                             }`}
                           />

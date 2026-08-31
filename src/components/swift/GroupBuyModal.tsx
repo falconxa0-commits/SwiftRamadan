@@ -122,7 +122,7 @@ export default function GroupBuyModal() {
                         className="w-full h-40 bg-center bg-no-repeat bg-cover"
                         style={{ backgroundImage: `url("${deal.image}")` }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#1A1D26] via-transparent to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-elevated)] via-transparent to-transparent" />
                       <div className="absolute top-3 left-3">
                         <span className="bg-[var(--sr-vendor)]/90 text-[var(--sr-surface-base)] text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wide">
                           {deal.category}
@@ -178,8 +178,8 @@ export default function GroupBuyModal() {
                               key={`avatar-${i}`}
                               className="w-7 h-7 rounded-full border-2 border-[var(--sr-surface-elevated)] flex items-center justify-center text-[9px] font-bold"
                               style={{
-                                backgroundColor: ['#10E07A', '#F5C451', '#38BDF8', '#f59e0b', '#8b5cf6', '#ec4899'][i % 6],
-                                color: '#05070A',
+                                backgroundColor: ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-rider)', 'var(--sr-warning)', 'var(--sr-ai)', '#ec4899'][i % 6],
+                                color: 'var(--sr-surface-base)',
                               }}
                             >
                               {String.fromCharCode(65 + i)}

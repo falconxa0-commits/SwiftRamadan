@@ -193,9 +193,9 @@ function generateSteps(recipeName: string): string[] {
 }
 
 function difficultyColor(d: string): string {
-  if (d === 'easy') return '#10E07A';
-  if (d === 'hard') return '#ef4444';
-  return '#F5C451';
+  if (d === 'easy') return 'var(--sr-customer)';
+  if (d === 'hard') return 'var(--sr-error)';
+  return 'var(--sr-vendor)';
 }
 
 /* ───────────────────────── Component ───────────────────────── */
@@ -711,9 +711,9 @@ export default function SmartKitchenHub() {
     const r = 40;
     const C = 2 * Math.PI * r;
     const segs = [
-      { value: easy, color: '#10E07A' },
-      { value: medium, color: '#F5C451' },
-      { value: hard, color: '#8b5cf6' },
+      { value: easy, color: 'var(--sr-customer)' },
+      { value: medium, color: 'var(--sr-vendor)' },
+      { value: hard, color: 'var(--sr-ai)' },
     ];
     if (total === 0) return { segments: segs.map((s) => ({ ...s, length: 0, offset: 0 })), total: 0, C };
     let acc = 0;
@@ -761,10 +761,10 @@ export default function SmartKitchenHub() {
           >
             {/* ── Header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                  <div className="relative size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] flex items-center justify-center shrink-0">
                     <ChefHat className="w-5 h-5 text-[var(--sr-surface-base)]" />
                     <span className="absolute -top-1 -right-1 size-2.5 bg-[var(--sr-error)] rounded-full live-ring" />
                   </div>
@@ -956,7 +956,7 @@ function CoachTab(props: CoachTabProps) {
           onClick={props.onOpenScanner}
           className="gradient-border w-full p-4 flex items-center gap-3 active:scale-[0.98] transition-transform"
         >
-          <div className="size-12 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[var(--sr-customer)] flex items-center justify-center shrink-0">
+          <div className="size-12 rounded-xl bg-gradient-to-br from-[var(--sr-ai)] to-[var(--sr-customer)] flex items-center justify-center shrink-0">
             <ScanLine className="w-6 h-6 text-white" />
           </div>
           <div className="text-left flex-1 min-w-0">
@@ -1021,12 +1021,12 @@ function CoachTab(props: CoachTabProps) {
         <div className="bg-[var(--sr-surface-raised)] rounded-3xl overflow-hidden border border-white/5">
           <div className="aspect-[16/10] bg-[var(--sr-surface-elevated)] overflow-hidden relative">
             <Image src={r.image} alt={r.name} fill className="object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#05070A] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-base)] via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
               <div className="flex items-center gap-2 mb-1">
                 <span
                   className="text-[10px] font-black px-2 py-0.5 rounded-full"
-                  style={{ background: `${difficultyColor(r.difficulty)}22`, color: difficultyColor(r.difficulty) }}
+                  style={{ background: `color-mix(in srgb, ${difficultyColor(r.difficulty)} 13%, transparent)`, color: difficultyColor(r.difficulty) }}
                 >
                   {r.difficulty.toUpperCase()}
                 </span>
@@ -1224,7 +1224,7 @@ function CoachTab(props: CoachTabProps) {
         <button
           onClick={props.onSnapAndIdentify}
           disabled={!!props.cameraError || props.scanLoading}
-          className="w-full bg-gradient-to-r from-[#8b5cf6] to-[var(--sr-customer)] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
+          className="w-full bg-gradient-to-r from-[var(--sr-ai)] to-[var(--sr-customer)] text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 active:scale-[0.98] transition disabled:opacity-40"
         >
           <Camera className="w-5 h-5" /> 📸 Snap & Identify
         </button>
@@ -1302,7 +1302,7 @@ function CustomRecipeCard({
         onClick={() => setExpanded((v) => !v)}
         className="w-full p-3 flex flex-col items-center justify-center min-h-[140px] text-center"
       >
-        <div className="size-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-[var(--sr-customer)] flex items-center justify-center mb-2">
+        <div className="size-10 rounded-xl bg-gradient-to-br from-[var(--sr-ai)] to-[var(--sr-customer)] flex items-center justify-center mb-2">
           <Plus className="w-5 h-5 text-white" />
         </div>
         <div className="text-white text-xs font-bold">Custom Recipe</div>
@@ -1524,7 +1524,7 @@ function PantryTab({
                 </span>
                 <span
                   className="font-bold px-2 py-0.5 rounded-full"
-                  style={{ background: `${difficultyColor(rescueRecipe.difficulty)}22`, color: difficultyColor(rescueRecipe.difficulty) }}
+                  style={{ background: `color-mix(in srgb, ${difficultyColor(rescueRecipe.difficulty)} 13%, transparent)`, color: difficultyColor(rescueRecipe.difficulty) }}
                 >
                   {rescueRecipe.difficulty}
                 </span>
@@ -1651,10 +1651,10 @@ function InsightsTab({
   }
 
   const stats = [
-    { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: '#10E07A' },
-    { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: '#F5C451' },
-    { label: 'Cook Time (min)', value: analytics.totalCookTimeMins, icon: <Clock className="w-4 h-4" />, color: '#8b5cf6' },
-    { label: 'Live AI Sessions', value: analytics.liveAIUses, icon: <Bot className="w-4 h-4" />, color: '#ef4444' },
+    { label: 'Total Sessions', value: analytics.totalSessions, icon: <Utensils className="w-4 h-4" />, color: 'var(--sr-customer)' },
+    { label: 'Completed', value: analytics.completedSessions, icon: <CheckCircle2 className="w-4 h-4" />, color: 'var(--sr-vendor)' },
+    { label: 'Cook Time (min)', value: analytics.totalCookTimeMins, icon: <Clock className="w-4 h-4" />, color: 'var(--sr-ai)' },
+    { label: 'Live AI Sessions', value: analytics.liveAIUses, icon: <Bot className="w-4 h-4" />, color: 'var(--sr-error)' },
   ];
 
   return (
@@ -1667,7 +1667,7 @@ function InsightsTab({
           <div key={s.label} className="bg-[var(--sr-surface-raised)] border border-white/5 rounded-2xl p-4">
             <div
               className="size-8 rounded-lg flex items-center justify-center mb-2"
-              style={{ background: `${s.color}22`, color: s.color }}
+              style={{ background: `color-mix(in srgb, ${s.color} 13%, transparent)`, color: s.color }}
             >
               {s.icon}
             </div>
@@ -1716,8 +1716,8 @@ function InsightsTab({
           })}
           <defs>
             <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#10E07A" />
-              <stop offset="100%" stopColor="#F5C451" />
+              <stop offset="0%" stopColor="var(--sr-customer)" />
+              <stop offset="100%" stopColor="var(--sr-vendor)" />
             </linearGradient>
           </defs>
         </svg>
@@ -1749,9 +1749,9 @@ function InsightsTab({
           </svg>
           <div className="flex-1 space-y-2">
             {[
-              { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: '#10E07A' },
-              { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: '#F5C451' },
-              { label: 'Hard', value: analytics.difficultyBreakdown.hard, color: '#8b5cf6' },
+              { label: 'Easy', value: analytics.difficultyBreakdown.easy, color: 'var(--sr-customer)' },
+              { label: 'Medium', value: analytics.difficultyBreakdown.medium, color: 'var(--sr-vendor)' },
+              { label: 'Hard', value: analytics.difficultyBreakdown.hard, color: 'var(--sr-ai)' },
             ].map((d) => (
               <div key={d.label} className="flex items-center gap-2 text-xs">
                 <span className="size-3 rounded-sm" style={{ background: d.color }} />
@@ -1890,7 +1890,7 @@ function Confetti() {
         id: i,
         x: 50 + (Math.random() - 0.5) * 60,
         angle: Math.random() * 360,
-        color: ['#10E07A', '#F5C451', '#8b5cf6', '#ef4444', '#ffffff'][i % 5],
+        color: ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-error)', 'var(--sr-text-primary)'][i % 5],
         delay: Math.random() * 0.15,
         size: 6 + Math.random() * 6,
         rotate: Math.random() * 720 - 360,

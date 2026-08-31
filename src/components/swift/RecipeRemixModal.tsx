@@ -106,7 +106,7 @@ export default function RecipeRemixModal() {
           <div className="sticky top-0 z-10 glass-effect border-b border-white/5">
             <div className="flex items-center justify-between p-3 sm:p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[var(--sr-warning)]/10 rounded-xl flex items-center justify-center border border-[#F97316]/20">
+                <div className="w-10 h-10 bg-[var(--sr-warning)]/10 rounded-xl flex items-center justify-center border border-[var(--sr-warning)]/20">
                   <ChefHat className="w-5 h-5 text-[var(--sr-warning)]" />
                 </div>
                 <div>
@@ -144,7 +144,7 @@ export default function RecipeRemixModal() {
                   value={originalRecipe}
                   onChange={(e) => setOriginalRecipe(e.target.value)}
                   placeholder="e.g. Jollof Rice"
-                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
+                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[var(--sr-warning)]/40 transition-colors"
                 />
               </div>
 
@@ -156,7 +156,7 @@ export default function RecipeRemixModal() {
                   value={twist}
                   onChange={(e) => setTwist(e.target.value)}
                   placeholder="e.g. make it healthier"
-                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#F97316]/40 transition-colors"
+                  className="w-full bg-[var(--sr-surface-base)] border border-white/10 rounded-xl px-4 py-3 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[var(--sr-warning)]/40 transition-colors"
                 />
               </div>
 
@@ -253,7 +253,7 @@ export default function RecipeRemixModal() {
 
                   {/* Twist Explanation */}
                   <div className="p-5">
-                    <div className="bg-[var(--sr-warning)]/5 border border-[#F97316]/10 rounded-xl p-3 sm:p-4">
+                    <div className="bg-[var(--sr-warning)]/5 border border-[var(--sr-warning)]/10 rounded-xl p-3 sm:p-4">
                       <div className="flex items-center gap-2 mb-2">
                         <Sparkles className="w-4 h-4 text-[var(--sr-warning)]" />
                         <h4 className="text-[var(--sr-warning)] font-bold text-xs">Why This Twist Works</h4>
@@ -275,7 +275,7 @@ export default function RecipeRemixModal() {
                 <motion.div
                   animate={{ rotate: 360 }}
                   transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                  className="w-6 h-6 border-2 border-white/10 border-t-[#F97316] rounded-full"
+                  className="w-6 h-6 border-2 border-white/10 border-t-[var(--sr-warning)] rounded-full"
                 />
               </div>
             ) : (
@@ -289,7 +289,7 @@ export default function RecipeRemixModal() {
                     onClick={() => handlePopularRemix(item)}
                     className="w-full bg-[var(--sr-surface-elevated)] rounded-xl border border-white/5 p-3.5 flex items-center gap-3 hover:border-white/10 transition-colors text-left group"
                   >
-                    <div className="w-10 h-10 rounded-xl bg-[var(--sr-warning)]/10 flex items-center justify-center border border-[#F97316]/20 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--sr-warning)]/10 flex items-center justify-center border border-[var(--sr-warning)]/20 shrink-0">
                       <span className="text-lg">🍳</span>
                     </div>
                     <div className="flex-1 min-w-0">

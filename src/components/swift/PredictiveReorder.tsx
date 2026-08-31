@@ -31,9 +31,9 @@ interface ReorderItem {
 }
 
 function getUrgencyColor(confidence: number): string {
-  if (confidence >= 0.85) return '#10E07A';
-  if (confidence >= 0.65) return '#F5C451';
-  return '#A78BFA';
+  if (confidence >= 0.85) return 'var(--sr-customer)';
+  if (confidence >= 0.65) return 'var(--sr-vendor)';
+  return 'var(--sr-ai)';
 }
 
 function getUrgencyLabel(confidence: number): string {
@@ -145,16 +145,16 @@ export default function PredictiveReorder() {
         {/* Modal */}
         <motion.div
           className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-t-2xl sm:rounded-2xl border border-white/8 shadow-2xl"
-          style={{ backgroundColor: '#0F1118' }}
+          style={{ backgroundColor: 'var(--sr-surface-raised)' }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         >
           {/* Header */}
-          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: '#0F1118' }}>
+          <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" style={{ color: '#10E07A' }} />
+              <TrendingUp className="w-5 h-5" style={{ color: 'var(--sr-customer)' }} />
               <h2 className="text-white font-bold text-lg">Smart Reorder</h2>
             </div>
             <button
@@ -170,12 +170,12 @@ export default function PredictiveReorder() {
             {/* AI Summary */}
             <motion.div
               className="rounded-xl p-3 border border-white/8"
-              style={{ backgroundColor: '#0B0D14' }}
+              style={{ backgroundColor: 'var(--sr-surface-base)' }}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
             >
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="w-4 h-4" style={{ color: '#F5C451' }} />
+                <Zap className="w-4 h-4" style={{ color: 'var(--sr-vendor)' }} />
                 <span className="text-white text-sm font-semibold">AI Prediction</span>
               </div>
               <p className="text-white/65 text-xs">
@@ -204,7 +204,7 @@ export default function PredictiveReorder() {
                     <motion.div
                       key={item.id}
                       className="flex gap-3 p-3 rounded-xl border border-white/8"
-                      style={{ backgroundColor: '#0B0D14' }}
+                      style={{ backgroundColor: 'var(--sr-surface-base)' }}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: i * 0.06 }}
@@ -219,7 +219,7 @@ export default function PredictiveReorder() {
                         {/* Confidence Badge */}
                         <div
                           className="absolute top-0.5 right-0.5 text-[8px] font-bold px-1 py-0.5 rounded"
-                          style={{ backgroundColor: `${urgencyColor}30`, color: urgencyColor }}
+                          style={{ backgroundColor: `color-mix(in srgb, ${urgencyColor} 19%, transparent)`, color: urgencyColor }}
                         >
                           {Math.round(item.confidence * 100)}%
                         </div>
@@ -249,7 +249,7 @@ export default function PredictiveReorder() {
 
                         {/* Overdue indicator */}
                         {isOverdue && (
-                          <p className="text-[10px] mt-1" style={{ color: '#F5C451' }}>
+                          <p className="text-[10px] mt-1" style={{ color: 'var(--sr-vendor)' }}>
                             ⚡ Overdue by {item.daysSinceLastOrder - item.avgCadenceDays} days
                           </p>
                         )}
@@ -261,7 +261,7 @@ export default function PredictiveReorder() {
                         <div className="flex items-center gap-2">
                           <span
                             className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                            style={{ backgroundColor: `${urgencyColor}20`, color: urgencyColor }}
+                            style={{ backgroundColor: `color-mix(in srgb, ${urgencyColor} 13%, transparent)`, color: urgencyColor }}
                           >
                             {urgencyLabel}
                           </span>
@@ -270,8 +270,8 @@ export default function PredictiveReorder() {
                             disabled={addedItems.has(item.id)}
                             className="p-2 rounded-lg transition-colors disabled:opacity-50"
                             style={{
-                              backgroundColor: addedItems.has(item.id) ? '#10E07A20' : '#10E07A20',
-                              color: addedItems.has(item.id) ? '#10E07A' : '#10E07A',
+                              backgroundColor: addedItems.has(item.id) ? 'color-mix(in srgb, var(--sr-customer) 13%, transparent)' : 'color-mix(in srgb, var(--sr-customer) 13%, transparent)',
+                              color: addedItems.has(item.id) ? 'var(--sr-customer)' : 'var(--sr-customer)',
                             }}
                             aria-label={`Reorder ${item.name}`}
                           >
@@ -302,7 +302,7 @@ export default function PredictiveReorder() {
               <motion.button
                 onClick={handleReorderAll}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm"
-                style={{ backgroundColor: '#10E07A', color: '#0B0D14' }}
+                style={{ backgroundColor: 'var(--sr-customer)', color: 'var(--sr-surface-base)' }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -316,15 +316,15 @@ export default function PredictiveReorder() {
             {!isLoading && items.length > 0 && (
               <div className="flex items-center justify-center gap-4 text-[10px] text-white/60">
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#10E07A' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--sr-customer)' }} />
                   High confidence
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#F5C451' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--sr-vendor)' }} />
                   Medium
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#A78BFA' }} />
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--sr-ai)' }} />
                   Low
                 </span>
               </div>

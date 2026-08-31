@@ -154,9 +154,9 @@ const FILTER_CHIPS: { id: SpotFilter; label: string; icon: React.ReactNode }[] =
 /* ───────── Color map ───────── */
 
 const TYPE_COLORS: Record<string, string> = {
-  mosque: '#10E07A',
-  community: '#F5C451',
-  stall: '#A78BFA',
+  mosque: 'var(--sr-customer)',
+  community: 'var(--sr-vendor)',
+  stall: 'var(--sr-ai)',
 };
 
 const TYPE_BG: Record<string, string> = {
@@ -288,7 +288,7 @@ function IftarRadarInner() {
             <div className="flex items-center justify-between p-4 border-b border-white/8 shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: 'rgba(16,224,122,0.15)', border: '1px solid rgba(16,224,122,0.3)' }}>
-                  <MapPin className="w-4 h-4" style={{ color: '#10E07A' }} />
+                  <MapPin className="w-4 h-4" style={{ color: 'var(--sr-customer)' }} />
                 </div>
                 <div>
                   <h2 className="text-white font-bold text-lg leading-tight">Iftar Radar</h2>
@@ -299,7 +299,7 @@ function IftarRadarInner() {
                 <button
                   onClick={() => setShowPinForm(true)}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all active:scale-95"
-                  style={{ backgroundColor: 'rgba(16,224,122,0.15)', color: '#10E07A', border: '1px solid rgba(16,224,122,0.3)' }}
+                  style={{ backgroundColor: 'rgba(16,224,122,0.15)', color: 'var(--sr-customer)', border: '1px solid rgba(16,224,122,0.3)' }}
                   aria-label="Pin a free Iftar spot"
                 >
                   <Plus className="w-3.5 h-3.5" />
@@ -317,7 +317,7 @@ function IftarRadarInner() {
 
             {/* ── SVG Map ── */}
             <div className="px-4 pt-4 shrink-0">
-              <div className="relative rounded-2xl overflow-hidden border border-white/8" style={{ backgroundColor: '#0F1118' }}>
+              <div className="relative rounded-2xl overflow-hidden border border-white/8" style={{ backgroundColor: 'var(--sr-surface-raised)' }}>
                 <svg
                   viewBox="0 0 400 260"
                   className="w-full h-auto"
@@ -379,12 +379,12 @@ function IftarRadarInner() {
                           </circle>
                         )}
                         {/* Outer circle */}
-                        <circle cx={pos.x} cy={pos.y} r="10" fill={`${color}20`} stroke={`${color}50`} strokeWidth="1.5" />
+                        <circle cx={pos.x} cy={pos.y} r="10" fill={`color-mix(in srgb, ${color} 13%, transparent)`} stroke={`color-mix(in srgb, ${color} 31%, transparent)`} strokeWidth="1.5" />
                         {/* Inner dot */}
                         <circle cx={pos.x} cy={pos.y} r="4" fill={color} opacity={spot.isActive ? 1 : 0.4} />
                         {/* Pinned badge */}
                         {spot.pinned && (
-                          <circle cx={pos.x + 8} cy={pos.y - 8} r="3.5" fill="#F5C451" />
+                          <circle cx={pos.x + 8} cy={pos.y - 8} r="3.5" fill="var(--sr-vendor)" />
                         )}
                       </g>
                     );
@@ -392,8 +392,8 @@ function IftarRadarInner() {
 
                   {/* User location */}
                   <g>
-                    <circle cx="200" cy="180" r="6" fill="rgba(56,189,248,0.2)" stroke="#38BDF8" strokeWidth="1.5" />
-                    <circle cx="200" cy="180" r="2.5" fill="#38BDF8" />
+                    <circle cx="200" cy="180" r="6" fill="rgba(56,189,248,0.2)" stroke="var(--sr-rider)" strokeWidth="1.5" />
+                    <circle cx="200" cy="180" r="2.5" fill="var(--sr-rider)" />
                     <circle cx="200" cy="180" r="12" fill="none" stroke="rgba(56,189,248,0.2)" strokeWidth="1">
                       <animate attributeName="r" from="8" to="18" dur="2.5s" repeatCount="indefinite" />
                       <animate attributeName="opacity" from="0.4" to="0" dur="2.5s" repeatCount="indefinite" />
@@ -406,17 +406,17 @@ function IftarRadarInner() {
                   {/* Legend */}
                   <g transform="translate(10, 10)">
                     <rect x="0" y="0" width="90" height="50" rx="6" fill="rgba(11,13,20,0.85)" stroke="rgba(255,255,255,0.06)" strokeWidth="0.5" />
-                    <circle cx="14" cy="14" r="4" fill="#10E07A" />
+                    <circle cx="14" cy="14" r="4" fill="var(--sr-customer)" />
                     <text x="22" y="17" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="sans-serif">Mosque</text>
-                    <circle cx="14" cy="28" r="4" fill="#F5C451" />
+                    <circle cx="14" cy="28" r="4" fill="var(--sr-vendor)" />
                     <text x="22" y="31" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="sans-serif">Community</text>
-                    <circle cx="14" cy="42" r="4" fill="#A78BFA" />
+                    <circle cx="14" cy="42" r="4" fill="var(--sr-ai)" />
                     <text x="22" y="45" fill="rgba(255,255,255,0.5)" fontSize="7" fontFamily="sans-serif">Food Stall</text>
                   </g>
                 </svg>
 
                 {/* Map overlay gradient bottom */}
-                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[#0F1118] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[var(--sr-surface-raised)] to-transparent pointer-events-none" />
               </div>
             </div>
 
@@ -428,12 +428,12 @@ function IftarRadarInner() {
                   onClick={() => setActiveFilter(chip.id)}
                   className={`shrink-0 flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-bold transition-all active:scale-95 ${
                     activeFilter === chip.id
-                      ? 'text-[#0B0D14]'
+                      ? 'text-[var(--sr-surface-base)]'
                       : 'bg-white/5 text-white/50 border border-white/8'
                   }`}
                   style={
                     activeFilter === chip.id
-                      ? { backgroundColor: '#10E07A' }
+                      ? { backgroundColor: 'var(--sr-customer)' }
                       : undefined
                   }
                 >
@@ -459,7 +459,7 @@ function IftarRadarInner() {
                     transition={{ delay: i * 0.05 }}
                     className="rounded-2xl p-4 border transition-all cursor-pointer"
                     style={{
-                      backgroundColor: isSelected ? bg : '#0F1118',
+                      backgroundColor: isSelected ? bg : 'var(--sr-surface-raised)',
                       borderColor: isSelected ? border : 'rgba(255,255,255,0.08)',
                     }}
                     onClick={() => setSelectedSpot(isSelected ? null : spot.id)}
@@ -481,13 +481,13 @@ function IftarRadarInner() {
                           {spot.pinned && (
                             <span
                               className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-bold"
-                              style={{ backgroundColor: 'rgba(245,196,81,0.15)', color: '#F5C451' }}
+                              style={{ backgroundColor: 'rgba(245,196,81,0.15)', color: 'var(--sr-vendor)' }}
                             >
                               YOURS
                             </span>
                           )}
                           {spot.isActive && (
-                            <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: '#10E07A', boxShadow: '0 0 6px #10E07A' }} />
+                            <span className="shrink-0 w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--sr-customer)', boxShadow: '0 0 6px var(--sr-customer)' }} />
                           )}
                         </div>
                         <p className="text-white/65 text-xs mt-0.5 line-clamp-1">{spot.description}</p>
@@ -556,7 +556,7 @@ function IftarRadarInner() {
                                     toast({ title: 'Reserved! 🎉', description: `Your spot at ${spot.name} is confirmed.` });
                                   }}
                                   className="flex-1 py-2.5 rounded-xl text-xs font-bold transition-all active:scale-95"
-                                  style={{ backgroundColor: '#10E07A', color: '#0B0D14' }}
+                                  style={{ backgroundColor: 'var(--sr-customer)', color: 'var(--sr-surface-base)' }}
                                 >
                                   Reserve Spot
                                 </button>
@@ -647,7 +647,7 @@ function IftarRadarInner() {
                     {/* Location hint */}
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-[var(--sr-surface-raised)] border border-white/8">
                       <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: 'rgba(56,189,248,0.15)', border: '1px solid rgba(56,189,248,0.3)' }}>
-                        <MapPin className="w-4 h-4" style={{ color: '#38BDF8' }} />
+                        <MapPin className="w-4 h-4" style={{ color: 'var(--sr-rider)' }} />
                       </div>
                       <div>
                         <p className="text-white text-xs font-semibold">Using current location</p>
@@ -660,7 +660,7 @@ function IftarRadarInner() {
                       onClick={handlePinIftar}
                       disabled={!pinName.trim()}
                       className="w-full py-3.5 rounded-xl text-sm font-bold transition-all active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={{ backgroundColor: '#10E07A', color: '#0B0D14' }}
+                      style={{ backgroundColor: 'var(--sr-customer)', color: 'var(--sr-surface-base)' }}
                     >
                       <span className="flex items-center justify-center gap-2">
                         <Plus className="w-4 h-4" />

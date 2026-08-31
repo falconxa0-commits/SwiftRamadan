@@ -23,7 +23,7 @@ interface VideoCommentsSheetProps {
   onCommentAdded: () => void;
 }
 
-const AVATAR_COLORS = ['#10E07A', '#F5C451', '#A78BFA', '#38BDF8', '#FB7185', '#FB923C'];
+const AVATAR_COLORS = ['var(--sr-customer)', 'var(--sr-vendor)', 'var(--sr-ai)', 'var(--sr-rider)', 'var(--sr-error)', '#FB923C'];
 
 function timeAgo(date: string): string {
   const diff = Date.now() - new Date(date).getTime();
@@ -189,7 +189,7 @@ export default function VideoCommentsSheet({
                         className="flex items-center gap-1 text-white/65 hover:text-[var(--sr-error)] transition-colors"
                       >
                         <Heart
-                          className={`w-3.5 h-3.5 ${liked ? 'text-[var(--sr-error)] fill-[#FB7185]' : ''}`}
+                          className={`w-3.5 h-3.5 ${liked ? 'text-[var(--sr-error)] fill-[var(--sr-error)]' : ''}`}
                         />
                         <span className="text-[11px] font-medium">
                           {(c.likes + (liked ? 1 : 0)) || 'Like'}

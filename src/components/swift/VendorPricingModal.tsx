@@ -134,7 +134,7 @@ export default function VendorPricingModal() {
                         step={5}
                         value={peakAdjustment}
                         onChange={e => setPeakAdjustment(Number(e.target.value))}
-                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#F5C451]"
+                        className="w-full h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[var(--sr-vendor)]"
                       />
                       <div className="flex justify-between mt-1">
                         <span className="text-white/20 text-[10px]">+5%</span>
@@ -192,7 +192,7 @@ export default function VendorPricingModal() {
                           step={5}
                           value={item.adjustment}
                           onChange={e => handleAdjustmentChange(item.id, Number(e.target.value))}
-                          className="flex-1 h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[#F5C451]"
+                          className="flex-1 h-2 bg-white/10 rounded-full appearance-none cursor-pointer accent-[var(--sr-vendor)]"
                         />
                         <span className="text-white/20 text-[10px] font-bold w-8 text-right">+30%</span>
                       </div>

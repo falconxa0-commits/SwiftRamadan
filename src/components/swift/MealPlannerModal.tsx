@@ -283,10 +283,10 @@ export default function MealPlannerModal() {
           >
             {/* ── Sticky header ── */}
             <div className="shrink-0 relative">
-              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[#8b5cf6]" />
+              <div className="h-[2px] w-full bg-gradient-to-r from-[var(--sr-customer)] via-[var(--sr-vendor)] to-[var(--sr-ai)]" />
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/5 bg-[var(--sr-surface-base)]/95 backdrop-blur">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[#0a8a0a] flex items-center justify-center shrink-0">
+                  <div className="size-10 rounded-xl bg-gradient-to-br from-[var(--sr-customer)] to-[var(--sr-customer-hover)] flex items-center justify-center shrink-0">
                     <CalendarDays className="w-5 h-5 text-[var(--sr-surface-base)]" />
                   </div>
                   <div className="min-w-0">
@@ -388,7 +388,7 @@ export default function MealPlannerModal() {
                 <MealSection
                   slot="iftar"
                   meal={selectedDayPlan.iftar}
-                  accentColor="#10E07A"
+                  accentColor="var(--sr-customer)"
                   accentSoft="rgba(16,224,122,0.12)"
                   icon={<Moon className="w-4 h-4" />}
                   label="Iftar"
@@ -400,7 +400,7 @@ export default function MealPlannerModal() {
                 <MealSection
                   slot="sahur"
                   meal={selectedDayPlan.sahur}
-                  accentColor="#F5C451"
+                  accentColor="var(--sr-vendor)"
                   accentSoft="rgba(245,196,81,0.12)"
                   icon={<Sun className="w-4 h-4" />}
                   label="Sahur"
@@ -415,7 +415,7 @@ export default function MealPlannerModal() {
               {isWeekEmpty ? (
                 <div className="px-4 mt-6">
                   <div className="rounded-3xl border border-dashed border-white/10 bg-[var(--sr-surface-raised)] p-8 flex flex-col items-center text-center">
-                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[#8b5cf6]/20 to-[var(--sr-customer)]/15 border border-[var(--sr-ai)]/30 flex items-center justify-center mb-4">
+                    <div className="size-16 rounded-2xl bg-gradient-to-br from-[var(--sr-ai)]/20 to-[var(--sr-customer)]/15 border border-[var(--sr-ai)]/30 flex items-center justify-center mb-4">
                       <CalendarPlus className="w-7 h-7 text-[var(--sr-ai)]" />
                     </div>
                     <h4 className="text-white font-black text-lg">
@@ -427,7 +427,7 @@ export default function MealPlannerModal() {
                     </p>
                     <button
                       onClick={jumpToToday}
-                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[#0a8a0a] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="mt-5 inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <CalendarDays className="w-4 h-4" />
                       Jump to Today
@@ -436,7 +436,7 @@ export default function MealPlannerModal() {
                 </div>
               ) : (
                 <div className="px-4 mt-6">
-                  <div className="rounded-3xl border border-white/5 bg-gradient-to-br from-[#1A1D26] to-[#0F1117] p-5">
+                  <div className="rounded-3xl border border-white/5 bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] p-5">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
                         <CalendarDays className="w-4 h-4 text-[var(--sr-vendor)]" />
@@ -445,13 +445,13 @@ export default function MealPlannerModal() {
                       <span className="text-white/65 text-[11px] font-bold">7 days</span>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-                      <SummaryStat label="Meals" value={summary.total} color="#FFFFFF" />
-                      <SummaryStat label="Iftar" value={summary.iftar} color="#10E07A" />
-                      <SummaryStat label="Sahur" value={summary.sahur} color="#F5C451" />
+                      <SummaryStat label="Meals" value={summary.total} color="var(--sr-text-primary)" />
+                      <SummaryStat label="Iftar" value={summary.iftar} color="var(--sr-customer)" />
+                      <SummaryStat label="Sahur" value={summary.sahur} color="var(--sr-vendor)" />
                     </div>
                     <button
                       onClick={handleAddAllToCart}
-                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[#0a8a0a] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
+                      className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-gradient-to-r from-[var(--sr-customer)] to-[var(--sr-customer-hover)] text-[var(--sr-surface-base)] font-black text-sm hover:opacity-90 transition-opacity"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add All Ingredients to Cart
@@ -595,7 +595,7 @@ function MealSection({
           onClick={onAdd}
           className="w-full p-3 sm:p-4 rounded-2xl border border-dashed flex items-center justify-center gap-2 text-sm font-bold transition-colors hover:bg-white/5"
           style={{
-            borderColor: `${accentColor}40`,
+            borderColor: `color-mix(in srgb, ${accentColor} 25%, transparent)`,
             color: accentColor,
           }}
         >
@@ -610,7 +610,7 @@ function MealSection({
           <button
             onClick={onCookNow}
             className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-black transition-opacity hover:opacity-90"
-            style={{ backgroundColor: accentColor, color: '#05070A' }}
+            style={{ backgroundColor: accentColor, color: 'var(--sr-surface-base)' }}
           >
             <ChefHat className="w-3.5 h-3.5" />
             Cook Now
@@ -683,7 +683,7 @@ function AddMealSheet({
   onClose,
   onAdd,
 }: AddMealSheetProps) {
-  const accentColor = slot === 'iftar' ? '#10E07A' : '#F5C451';
+  const accentColor = slot === 'iftar' ? 'var(--sr-customer)' : 'var(--sr-vendor)';
   const accentSoft = slot === 'iftar' ? 'rgba(16,224,122,0.12)' : 'rgba(245,196,81,0.12)';
 
   const adjustServings = (delta: number) => {
@@ -831,13 +831,13 @@ function AddMealSheet({
         </div>
 
         {/* Add button */}
-        <div className="px-5 pb-6 sticky bottom-0 bg-gradient-to-t from-[#0F1117] via-[#0F1117] to-transparent pt-3">
+        <div className="px-5 pb-6 sticky bottom-0 bg-gradient-to-t from-[var(--sr-surface-raised)] via-[var(--sr-surface-raised)] to-transparent pt-3">
           <button
             onClick={onAdd}
             className="w-full inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl font-black text-sm transition-opacity hover:opacity-90"
             style={{
               backgroundColor: accentColor,
-              color: '#05070A',
+              color: 'var(--sr-surface-base)',
               boxShadow: `0 8px 24px -8px ${accentSoft}`,
             }}
           >

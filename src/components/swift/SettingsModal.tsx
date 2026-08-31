@@ -353,7 +353,7 @@ export default function SettingsModal() {
                                 </span>
                               </span>
                               {settings.language === lang.code && (
-                                <span className="w-2 h-2 rounded-full bg-[var(--sr-vendor)] shadow-[0_0_8px_#F5C451]" />
+                                <span className="w-2 h-2 rounded-full bg-[var(--sr-vendor)] shadow-[0_0_8px_var(--sr-vendor)]" />
                               )}
                             </button>
                           ))}

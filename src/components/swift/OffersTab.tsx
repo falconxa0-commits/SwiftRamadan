@@ -90,7 +90,7 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
         <div className="absolute top-2 left-2 bg-[var(--sr-error)] text-white text-[10px] font-bold px-2 py-1 rounded-full">
           -{sale.discount}%
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F1118] via-transparent to-transparent opacity-60" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--sr-surface-raised)] via-transparent to-transparent opacity-60" />
       </div>
       <div className="p-3">
         <p className="text-white font-bold text-sm tracking-tight">{sale.name}</p>
@@ -142,10 +142,10 @@ function FlashSaleCard({ sale }: { sale: typeof flashSales[0] }) {
 
 /* Active coupons data — fallback only (used when API has not loaded yet) */
 const ACTIVE_COUPONS_FALLBACK = [
-  { code: 'RAMADAN', discount: '10% off', desc: 'Ramadan Special — min ₦5,000', color: '#10E07A' },
-  { code: 'IFTAR', discount: '10% off', desc: 'Iftar Deal — meals only', color: '#F5C451' },
-  { code: 'SWIFT25', discount: '25% off', desc: 'Swift25 Bonus — min ₦10,000', color: '#A78BFA' },
-  { code: 'SAHUR', discount: '15% off', desc: 'Sahur Special — dawn meals', color: '#38BDF8' },
+  { code: 'RAMADAN', discount: '10% off', desc: 'Ramadan Special — min ₦5,000', color: 'var(--sr-customer)' },
+  { code: 'IFTAR', discount: '10% off', desc: 'Iftar Deal — meals only', color: 'var(--sr-vendor)' },
+  { code: 'SWIFT25', discount: '25% off', desc: 'Swift25 Bonus — min ₦10,000', color: 'var(--sr-ai)' },
+  { code: 'SAHUR', discount: '15% off', desc: 'Sahur Special — dawn meals', color: 'var(--sr-rider)' },
 ];
 
 /* Limited-time offers (static curated) — fallback only */
@@ -382,7 +382,7 @@ export default function OffersTab() {
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-lg bg-[var(--sr-vendor)]/15 flex items-center justify-center border border-[var(--sr-vendor)]/30 icon-tile">
-                <Crown className="w-4 h-4 text-[var(--sr-vendor)] fill-[#F5C451] relative z-10" />
+                <Crown className="w-4 h-4 text-[var(--sr-vendor)] fill-[var(--sr-vendor)] relative z-10" />
               </div>
               <span className="text-[var(--sr-vendor)] text-xs font-black uppercase tracking-widest">{currentTierInfo.name} Member</span>
             </div>
@@ -416,7 +416,7 @@ export default function OffersTab() {
             <div className="space-y-2">
               {currentTierInfo.benefits.slice(0, 3).map((benefit, i) => (
                 <div key={benefit} className="flex items-center gap-2">
-                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[#F5C451]" />
+                  <Star className="w-3 h-3 text-[var(--sr-vendor)] fill-[var(--sr-vendor)]" />
                   <p className="text-white/60 text-xs">{benefit}</p>
                 </div>
               ))}
@@ -461,7 +461,7 @@ export default function OffersTab() {
               <div key={coupon.code} className="glass-card rounded-2xl p-3 sm:p-4 flex items-center gap-3">
                 <div
                   className="w-12 h-12 rounded-xl flex items-center justify-center shrink-0 icon-tile border"
-                  style={{ backgroundColor: `${coupon.color}15`, borderColor: `${coupon.color}30` }}
+                  style={{ backgroundColor: `color-mix(in srgb, ${coupon.color} 8%, transparent)`, borderColor: `color-mix(in srgb, ${coupon.color} 19%, transparent)` }}
                 >
                   <span className="relative z-10 text-xs font-black" style={{ color: coupon.color }}>
                     {coupon.discount}

@@ -92,7 +92,7 @@ export default function BNPLModal() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#1A1D26] to-[#0F1117] border border-white/10 p-6 mt-4"
+                className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[var(--sr-surface-elevated)] to-[var(--sr-surface-raised)] border border-white/10 p-6 mt-4"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--sr-customer)]/10 blur-[60px]" />
                 <div className="relative z-10">
@@ -117,7 +117,7 @@ export default function BNPLModal() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4a1d6e]/40 to-[#05070A] border border-[var(--sr-vendor)]/30 p-5"
+                className="mt-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#4a1d6e]/40 to-[var(--sr-surface-base)] border border-[var(--sr-vendor)]/30 p-5"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-[var(--sr-vendor)]/15 blur-[40px]" />
                 <div className="relative z-10 flex items-center gap-3 sm:gap-4">
