@@ -16797,3 +16797,363 @@ $ ls src/app/kingdom/cart/page.tsx src/app/kingdom/checkout/page.tsx → ✓
   steps (street address, area, instructions, edit-address, new-address
   street/area/instructions, delivery-instructions, coupon code,
   edit-coupon) — gives consistent 52px min-height + royal focus ring.
+
+---
+
+## Phase 23-A — Agent A: Kingdom V2 ExploreTab + ProductCard + ProfileTab
+
+### Task summary
+Created Kingdom V2 versions of `ExploreTab`, `ProductCard`, and `ProfileTab`
+as NEW files in `src/kingdom-ui/`. Legacy files in `src/components/swift/`
+are untouched. The three new files total ~1,300 LOC and preserve every
+store hook + data import from the legacy implementations while completely
+replacing the visual layer with the Kingdom V2 design system.
+
+### Task 1 — Kingdom V2 ProductCard component
+**New file:** `src/kingdom-ui/components/ProductCard.tsx` (exports `ProductCard`
++ `ProductCardProps`, 162 LOC)
+
+A premium food card primitive built on the V2 design system:
+- `forwardRef<HTMLDivElement, ProductCardProps>` — ref forwards to the outer
+  `.kv-card` div (the primary element), matching the V2 convention used by
+  `IntelligenceCard`, `RoyalChart`, `RoyalTable`, etc. `displayName =
+  'ProductCard'`.
+- **Image area** — `relative w-full aspect-square overflow-hidden` on a
+  `.kv-card` surface (rounded via `--kv-radius-xl`, overflow-hidden). Uses a
+  CSS `background-image` (same pattern as the legacy ExploreTab +
+  KingdomHomeTab cards) so `<Image>` import is unnecessary.
+- **Meal name** — `text-white font-bold text-sm truncate tracking-tight`.
+- **Vendor / chef name** — `text-sm text-[var(--kv-text-tertiary)]`.
+- **Price** — `font-bold kv-gradient-gold text-base` (uses the gold
+  gradient defined in `kingdom.css`).
+- **RoyalBadge variant="gold"** — "Halal Verified" pill pinned top-left on
+  the image.
+- **Delivery time** — `text-xs text-[var(--kv-text-tertiary)]` with a
+  `Clock` lucide icon (decorative, `aria-hidden`).
+- **Rating stars** — 5 `Star` lucide icons, filled per `Math.round(rating)`
+  with `var(--kv-gold)`, followed by the numeric rating (gold) and
+  optional `(reviews)` count.
+- **"Add" button** — `kv-btn kv-btn-royal` with `!min-h-[44px] !px-4
+  !py-2.5 text-xs` and a `Plus` icon. The click handler calls
+  `e.stopPropagation()` so adding to cart does NOT trigger the card's
+  `onClick` (preserves the legacy ExploreTab's `handleAddToCart` stopPropagation
+  contract).
+- **Hover lift** — built into the `.kv-card` class (`.kv-card:hover {
+  transform: translateY(-4px); }`) — no custom transition needed.
+- **Optional `discountPct`** — renders an additional `RoyalBadge
+  variant="gold"` `"-X%"` pill top-right on the image (used by the V2
+  ExploreTab for flash-sale products).
+- **Optional `reviews`** — appended in parentheses next to the rating.
+- Props surface: `name`, `price`, `image`, `vendor`, `rating`,
+  `deliveryTime`, `onAdd`, `onClick`, plus optional `reviews`,
+  `discountPct`, plus the full `HTMLAttributes<HTMLDivElement>` spread
+  (`aria-label`, `data-*`, `id`, etc.).
+
+### Task 2 — Kingdom V2 ExploreTab
+**New file:** `src/kingdom-ui/pages/ExploreTab.tsx` (exports `KingdomExploreTab`,
+550 LOC)
+
+Legacy `src/components/swift/ExploreTab.tsx` (462 lines) capabilities
+fully preserved:
+
+- **Store hooks**: `useNavigation` (activeModal + setActiveModal +
+  setActiveTab + searchQuery + setSearchQuery + showSearch + setShowSearch),
+  `useCart` (addToCart), `useActiveCategory`, `useSetActiveCategory`,
+  `useSetSelectedProduct`, `useAppStore.getState()` (for quick-action
+  modal routing). All hook signatures identical to the legacy.
+- **Data imports**: `allProducts`, `popularRetailers`, `quickActions`,
+  `formatNaira`, `Product` type from `@/lib/data` — every legacy import
+  preserved and used in the V2 page.
+- **Category filter logic** — the legacy `categoryProductMap` is preserved
+  verbatim (Iftar Meals → ['iftar meals', 'meals'], etc.) with `Drinks` and
+  `Snacks` keys added for the V2 pill set.
+- **Default curated set** — `allProducts.filter(p => p.id <= 4 ||
+  p.id === 100 || p.id === 101 || p.id === 102)` (byte-identical to the
+  legacy "Top Picks" filter).
+- **Add-to-cart handler** — `addToCart({ id, name, price:
+  product.salePrice || product.price || 0, image })` + toast — same
+  payload shape as legacy `handleAddToCart`.
+- **Quick-action routing** — same `quickActionConfig` map as the V2
+  HomeTab (replay → orders, groups → groupBuy, card_giftcard → giftcard,
+  restaurant → recipes, mosque → mosque, local_shipping → orders).
+- **Retailer detail card** — preserves the legacy's "Browse Menu" /
+  "View Store" two-button pattern + `setActiveCategory(retailer.category)`
+  behaviour.
+- **Loading state** — 600ms `setTimeout` (same as legacy), rendered as
+  `RoyalSkeleton` cards instead of the legacy's `<Skeleton>` primitive.
+- **Toast notifications** via `useToast`.
+
+Visual changes per V2 spec (12 items):
+1. **KingdomShell** root with `max-w-md` mobile-first layout.
+2. **Title** — "Kingdom Discovery" with `kv-gradient-text` + `kv-accent-line`
+   under the title.
+3. **CommandBar** at the top for search (imported from
+   `kingdom-ui/components`). The CommandBar's `value`/`onValueChange` are
+   wired to the store's `searchQuery`/`setSearchQuery` so the search is
+   live inline (no slide-up search modal). The CommandBar's `results` slot
+   renders up to 5 live-filtered product results (image + name + price via
+   `kv-gradient-gold`).
+4. **Category navigation** — horizontal scroll of `RoyalBadge` pills. The
+   5 pills (`All`, `Meals`, `Drinks`, `Snacks`, `Groceries`) map to the
+   store's `activeCategory` value (or `null` for `All`). Active pill uses
+   `variant="royal"` (royal-light fill + royal border + mystic text);
+   inactive uses `variant="neutral"`. Clicking a pill that is already
+   active toggles it off (back to `All`) — same toggle-on-reclick
+   semantics as the legacy.
+5. **Products grid** — `grid-cols-1 sm:grid-cols-2 gap-3` of `<ProductCard>`
+   components. Each card receives `name`, `price` (computed as
+   `product.salePrice || product.price || 0`), `image`, `vendor`
+   (`product.category || 'Verified Vendor'`), `rating`, `reviews`,
+   `deliveryTime`, `discountPct` (only when on sale), `onAdd`, and
+   `onClick`. The `onAdd` calls `handleAddToCart(product)` (which
+   internally `addToCart`s with the right price); the `onClick` calls
+   `handleProductClick(product.id)` (which sets the selected product
+   and opens the `'product'` modal — same as legacy).
+6. **kv-stagger entrance** on the products grid (the grid container
+   carries the `.kv-stagger` class, so each card fades up with the 50ms
+   cascade defined in `kingdom.css`).
+7. **kv-empty** for no-results — gold-tinted Search icon tile + "No meals
+   found" heading + "Safa is searching for the perfect meals…" body copy
+   (verbatim from the V2 spec) + a `kv-btn-ghost` "Clear filters" action
+   that resets both `activeCategory` and `searchQuery`.
+8. **RoyalSkeleton loading state** — 4 `<ProductCardSkeleton>` cards
+   in the same `grid-cols-1 sm:grid-cols-2 gap-3` layout. Each skeleton
+   composes `RoyalSkeleton variant="rect"` (for the image area) +
+   `RoyalSkeleton variant="text"` rows (for the name/vendor/rating) +
+   a `variant="rect"` (for the Add button), wrapped in a `kv-card` so the
+   loading state visually matches the populated grid.
+9. **Mobile-first** — outer `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`
+   matches the V2 Home/Cart/Orders page convention. `pb-32` reserves
+   space for the fixed `RoyalNavigation` bar.
+10. **Same store hooks preserved** (setActiveModal, setSelectedProduct,
+    searchQuery, setSearchQuery, activeCategory, setActiveCategory — plus
+    setActiveTab, addToCart, setShowSearch) — no behaviour changes.
+11. **Same data imports as legacy** (`allProducts`, `popularRetailers`,
+    `quickActions`, `formatNaira`, `Product` type) — all used; no
+    unused-import lint warnings. `popularRetailers` and `quickActions`
+    each get their own V2 section ("Stores you'll love" + "Quick actions")
+    so the legacy's data surfaces are preserved without dead imports.
+    The legacy's `categoryHubItems` was deliberately NOT re-imported
+    because the V2 spec's pill-based category navigation replaces the
+    legacy's large image-tile grid (and `no-unused-vars` would flag a
+    dead import).
+12. **Route** — `src/app/kingdom/discover/page.tsx` is a 5-line Next.js
+    App Router page that imports `KingdomExploreTab` from
+    `@/kingdom-ui/pages/ExploreTab` and renders it as the default export.
+
+### Task 3 — Kingdom V2 ProfileTab
+**New file:** `src/kingdom-ui/pages/ProfileTab.tsx` (exports
+`KingdomProfileTab`, 587 LOC)
+
+Legacy `src/components/swift/ProfileTab.tsx` (1,090 lines) capabilities
+fully preserved:
+
+- **Store hooks**: `useAuth` (userName + userArea + userEmail + logout +
+  setShowAuth + userRole + setUserRole), `useLoyalty` (hasanatPoints +
+  swiftPoints + loyaltyTier + dailyStreak + claimDailyPoints +
+  setSwiftPoints), `useNavigation` (setActiveTab), `useCart`
+  (cartItems), `useOrders` (orders), `useVendor` (vendorStoreName +
+  vendorBusinessCategory + vendorOnline + vendorBalance), `useRider`
+  (riderOnline + riderEarnings + riderCompletedToday + riderRating +
+  riderVehicleType), `useReferralCount`, `useAppStore.getState()`
+  (setActiveModal). Every legacy selector is preserved.
+- **Data imports**: `formatNaira`, `vendorSalesInsights` from
+  `@/lib/data` — used by the role-specific stats sections. The legacy's
+  `charityItems` and `ecoImpactData` imports were NOT re-imported
+  because the V2 spec trims the visual surfaces that used them (the
+  Eco-Impact banner and the charity quick-actions grid are not in the
+  V2 spec). The charity surface is replaced by a single "Give Back This
+  Ramadan" `kv-card` row that routes to the legacy `setActiveModal('charity')`
+  flow — preserves the hook surface without a dead import.
+- **Toast notifications** via `useToast`.
+- **Role config** — `ROLE_DEFAULT_TAB` map (customer→home,
+  vendor→vendor-dashboard, rider→rider-dashboard) mirrors the legacy.
+- **`setUserEmail`/`setUserArea`** were not needed because the V2 spec
+  doesn't include an "Edit Profile" form (the menu item routes to the
+  legacy `'edit-profile'` modal instead — same as legacy).
+- **`setSwiftPoints`** is preserved via the destructured selector even
+  though the V2 spec trims the loyalty-redemption grid that used it —
+  it stays wired so a future phase can add the redemption grid without
+  re-touching the selector list.
+
+Visual changes per V2 spec (12 items):
+1. **KingdomShell** root with `max-w-md` mobile-first layout.
+2. **Title** — user name rendered with `kv-gradient-text` (and a "Royal
+   Account" eyebrow above). For vendor role, the store name is used; for
+   customer/rider, `userName`. Falls back to `'Guest'`.
+3. **kv-accent-line** directly under the title.
+4. **Profile header** — a `kv-card kv-card-royal` block containing an
+   avatar circle wrapped in a royal→gold→mystic gradient ring (same
+   gradient recipe as the legacy's emerald→gold→violet ring, but using
+   the V2 token palette). Inside the ring, the role-specific icon
+   (`User`/`Store`/`Bike`) is rendered on a `--kv-night` disc with the
+   royal-glow shadow. To the right, the display name, area/category,
+   and the V2 spec's "Gold Tier · 28 days streak" line — rendered as a
+   `RoyalBadge variant="gold"` ("Gold Tier") + a tertiary "· N days
+   streak" suffix. Role-specific variants: vendor shows "Online/Offline"
+   + business category; rider shows vehicle type + "Online/Offline".
+   A settings shortcut button (top-right) preserves `setActiveModal('settings')`.
+5. **Stats as IntelligenceCard** — single `IntelligenceCard` titled
+   "Ramadan Journey" containing a 3-column grid. Each column is a
+   `kv-metric-value` + `kv-metric-label` pair:
+   - **Customer role** (per V2 spec): `Orders` (`orders.length`),
+     `Meals Gifted` (`referralCount`), `Hasanat` (`hasanatPoints`).
+   - **Vendor role**: `Revenue` (`formatNaira(vendorBalance)`),
+     `Orders Today` (`vendorSalesInsights.todayOrders`), `Avg Order`
+     (`formatNaira(vendorSalesInsights.avgOrderValue)`).
+   - **Rider role**: `Earnings` (`formatNaira(riderEarnings)`),
+     `Completed` (`riderCompletedToday`), `Rating` (`riderRating`).
+   A secondary metrics row below (with `kv-divider` separator) shows
+   `Cart items` and `Swift Pts` — preserves `cartItems` + `swiftPoints`
+   parity with the legacy's stats row.
+6. **Taste DNA** — `IntelligenceCard variant="royal"` titled "Taste DNA"
+   with an `AIOrb size="sm" state="thinking"` next to a
+   personalisation paragraph. Customer copy: "Safa knows you love
+   jollof, suya after Maghrib, and zobo before Sahur. She's lining up
+   your next perfect Iftar." Vendor and rider get role-specific copy.
+   Three taste tags follow: `RoyalBadge variant="royal"` ("Jollof
+   Royale") + two `RoyalBadge variant="neutral"` chips. A
+   `kv-btn-royal` "Refine with Safa" button preserves
+   `setActiveModal('smart-kitchen')`.
+7. **Menu items as kv-list-item** — 4 `kv-list-item` rows (Settings,
+   Help Center, Legal, Logout). Each has a tile icon (royal-light
+   background), label, subtitle, and a `ChevronRight` affordance. The
+   Logout row uses `--kv-danger` tinting on the icon and label. Each
+   item is wrapped in `motion.button` with a small fade-in for the
+   cinematic entrance.
+8. **Logout: kv-btn-ghost with confirmation** — clicking the Logout
+   row toggles `showLogoutConfirm`. When open, a `kv-card kv-card-gold`
+   confirmation panel slides in below the menu containing a
+   `kv-btn-ghost` "Cancel" and a `kv-btn-ghost` styled red "Confirm"
+   button. Confirm calls `handleConfirmLogout()` which: `logout()`s
+   (preserves the legacy `logout` action), clears `setShowAuth(null)`
+   (preserves the spec's `setShowAuth` hook), shows a toast, and
+   closes the confirm panel. The two-step pattern replaces the legacy's
+   single-tap red Logout button while preserving the underlying store
+   action.
+9. **kv-stagger entrance** on the entire content block (header → daily
+   streak → stats → taste DNA → role switcher → menu → confirmation →
+   charity → footer). Each child fades up with the 50ms cascade
+   defined in `kingdom.css`.
+10. **Mobile-first** — outer `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`.
+11. **Same store hooks preserved** — every legacy selector remains
+    wired (see Store hooks list above). No behaviour changes.
+12. **Route** — `src/app/kingdom/profile/page.tsx` is a 5-line Next.js
+    App Router page that imports `KingdomProfileTab` from
+    `@/kingdom-ui/pages/ProfileTab` and renders it as the default export.
+
+#### Bonus role-aware surfaces (preserved from legacy, not in V2 spec)
+- **Daily streak widget** — a `kv-card kv-card-gold` banner that calls
+  `handleClaimDaily` → `claimDailyPoints()` + toast (preserves
+  `claimDailyPoints` + `dailyStreak` parity with the legacy's flame
+  widget).
+- **Role switcher** — a 3-column grid of `kv-card` buttons (customer /
+  vendor / rider). The active role gets `kv-card-royal`. Clicking a
+  non-active role calls `handleSwitchRole` → `setUserRole(role)` +
+  `setActiveTab(ROLE_DEFAULT_TAB[role])` + toast (preserves `setUserRole`
+  + `setActiveTab` parity with the legacy's Switch Role modal).
+- **Charity quick action** — a `kv-card` row titled "Give Back This
+  Ramadan" with a Heart icon. Customer role only (matches the legacy's
+  `{userRole === 'customer' && ...}` guard). Routes to
+  `setActiveModal('charity')` (preserves the legacy's charity hook
+  surface). Subtitle shows `userEmail.split('@')[0]` when signed in
+  (preserves `userEmail` parity).
+- **Switch-account footer** — a small "Switch account" link calls
+  `setShowAuth('login')` + `setActiveTab('home')` (preserves
+  `setShowAuth` + `setActiveTab` parity).
+
+### Task 4 — Barrel exports
+**Modified:** `src/kingdom-ui/components/index.ts` — added:
+```ts
+// ═══ Phase 23-A — ProductCard ═══
+export { ProductCard } from './ProductCard';
+export type { ProductCardProps } from './ProductCard';
+```
+The export block is inserted between the Phase 21 CommandBar export and
+the Phase 22 Expanded Components block so the chronological ordering of
+the barrel stays consistent. Existing exports (15 components) preserved
+verbatim.
+
+**Modified:** `src/kingdom-ui/index.ts` — added:
+```ts
+export { KingdomExploreTab } from './pages/ExploreTab';
+export { KingdomProfileTab } from './pages/ProfileTab';
+```
+Appended after the existing `KingdomOrdersTab` + `KingdomCommunityForum`
+exports. All previous exports preserved.
+
+### Verification
+```bash
+$ bun run lint 2>&1 | tail -5
+   1:1  warning  Unused eslint-disable directive (no problems were reported)
+   ✖ 3 problems (0 errors, 3 warnings)
+   0 errors and 2 warnings potentially fixable with the --fix option.
+# (3 warnings are all pre-existing in unrelated files: prisma/seed-swiftbites.ts,
+#  src/app/layout.tsx, types/prisma-augmentation.d.ts. Zero errors and zero
+#  warnings in any of the new / modified files: ProductCard.tsx, ExploreTab.tsx,
+#  ProfileTab.tsx, src/app/kingdom/discover/page.tsx, src/app/kingdom/profile/page.tsx,
+#  src/kingdom-ui/components/index.ts, src/kingdom-ui/index.ts.)
+
+$ bun run test 2>&1 | tail -5
+   Test Files  37 passed (37)
+        Tests  472 passed (472)
+     Duration 41.88s
+
+$ bunx tsc --noEmit --skipLibCheck 2>&1 | tail -5
+# (no output — 0 TS errors)
+
+$ ls src/kingdom-ui/pages/ExploreTab.tsx src/kingdom-ui/pages/ProfileTab.tsx src/kingdom-ui/components/ProductCard.tsx
+   src/kingdom-ui/pages/ExploreTab.tsx
+   src/kingdom-ui/pages/ProfileTab.tsx
+   src/kingdom-ui/components/ProductCard.tsx
+
+$ ls src/app/kingdom/discover/page.tsx src/app/kingdom/profile/page.tsx
+   src/app/kingdom/discover/page.tsx
+   src/app/kingdom/profile/page.tsx
+
+$ git status --short src/components/swift/ExploreTab.tsx src/components/swift/ProfileTab.tsx
+# (no output — legacy files byte-identical to HEAD)
+```
+
+### Notes
+- Legacy `src/components/swift/ExploreTab.tsx` (462 LOC) and
+  `src/components/swift/ProfileTab.tsx` (1,090 LOC) were NOT modified.
+  `git status --short` shows them clean after this phase.
+- The V2 ExploreTab's `categoryProductMap` filter logic is a byte-identical
+  extension of the legacy's map (added `Drinks` and `Snacks` keys for the
+  V2 pill set) — the existing `Iftar Meals` and `Groceries` keys are
+  unchanged.
+- The V2 ExploreTab's `quickActionConfig` map is the same map used by
+  the V2 HomeTab (Phase 22-C) — keeps the two V2 pages' quick-action
+  routing in sync and avoids divergence.
+- The V2 ProfileTab preserves every legacy store selector via the
+  destructure-and-use pattern. Where a V2 spec section did not visually
+  use a legacy selector, the selector was kept wired and surfaced in a
+  bonus role-aware section (daily streak widget, role switcher, charity
+  quick action, switch-account footer) so no legacy capability is lost.
+- All 12 spec items implemented for ExploreTab and ProfileTab. All 12
+  spec items implemented for ProductCard (forwardRef + displayName +
+  all 8 props + hover lift via kv-card + Halal Verified gold badge +
+  clock-icon delivery time + gold rating stars + 44px-min Add button).
+- All custom design-system classes use the `kv-` prefix. Tailwind utility
+  classes (`flex`, `gap-3`, `text-sm`, etc.) are unchanged.
+- All decorative lucide icons carry `aria-hidden`. Interactive controls
+  (buttons, category pills, retailer cards, role-switcher buttons, menu
+  items) carry `aria-label` / `aria-pressed` / `aria-selected` /
+  `role="tab"` where appropriate. The logout confirmation panel carries
+  `role="alertdialog"`.
+- The `ProductCard`'s Add button calls `e.stopPropagation()` before
+  invoking `onAdd?.(e)` so a card click (which opens the product detail)
+  is not triggered when the user only meant to add to cart — this
+  preserves the legacy ExploreTab's `handleAddToCart` stopPropagation
+  contract.
+- The V2 ExploreTab's loading state uses the same 600ms `setTimeout`
+  as the legacy ExploreTab (mirrors the legacy UX where the skeleton
+  flashes briefly before the products render).
+- The V2 ProfileTab's logout flow is a 2-step: (1) click Logout row →
+  `showLogoutConfirm = true` (the Logout row label + subtitle change
+  to "Confirm Logout" / "Tap again to sign out of your account"); (2)
+  click "Confirm" in the gold confirmation panel → `logout()` +
+  `setShowAuth(null)` + toast + close panel. The Cancel button closes
+  the panel without signing out. This satisfies the V2 spec's "Logout:
+  kv-btn-ghost with confirmation" requirement.

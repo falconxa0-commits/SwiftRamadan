@@ -12,3 +12,5 @@ export { KingdomCheckoutModal } from './pages/CheckoutModal';
 export type { KingdomCheckoutModalProps } from './pages/CheckoutModal';
 export { KingdomOrdersTab } from './pages/OrdersTab';
 export { KingdomCommunityForum } from './pages/CommunityForum';
+export { KingdomExploreTab } from './pages/ExploreTab';
+export { KingdomProfileTab } from './pages/ProfileTab';

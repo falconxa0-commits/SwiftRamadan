@@ -14,6 +14,10 @@ export type { RoyalSkeletonProps } from './RoyalSkeleton';
 export { CommandBar } from './CommandBar';
 export type { CommandBarProps } from './CommandBar';
 
+// ═══ Phase 23-A — ProductCard ═══
+export { ProductCard } from './ProductCard';
+export type { ProductCardProps } from './ProductCard';
+
 // ═══ Phase 22 — Kingdom V2 Expanded Components (15 total) ═══
 export { RoyalSelect } from './RoyalSelect';
 export type { RoyalSelectProps, RoyalSelectOption } from './RoyalSelect';
