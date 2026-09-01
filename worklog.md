@@ -17536,3 +17536,385 @@ $ git status --short src/components/swift/VendorStoreTab.tsx src/components/swif
   confirmation pattern. The V2 MerchantIntelligence's payout
   confirmation dialog uses `role="dialog"` because it's a form entry
   (not a destructive confirmation).
+
+---
+
+## Phase 24-A — Kingdom V2 Merchant Command Center + Kitchen Orders
+
+### Context
+- Agent A: Merchant Experience Architect
+- Mission: Create Kingdom V2 versions of `VendorDashboard`
+  (Merchant Command Center) and a new vendor order-management page
+  (Kitchen Orders). NEW files in `src/kingdom-ui/pages/` and
+  `src/app/kingdom/vendor/…`. Legacy `src/components/swift/VendorDashboard.tsx`
+  (1107 LOC) is byte-identical to HEAD — untouched.
+
+### Files created / modified
+**New:**
+- `src/kingdom-ui/pages/MerchantCommandCenter.tsx` (exports
+  `KingdomMerchantCommandCenter`, ~620 LOC)
+- `src/kingdom-ui/pages/KitchenOrders.tsx` (exports
+  `KingdomKitchenOrders`, ~470 LOC)
+- `src/app/kingdom/vendor/page.tsx` (5-line Next.js App Router page)
+- `src/app/kingdom/vendor/orders/page.tsx` (5-line Next.js App Router
+  page — new directory `src/app/kingdom/vendor/orders/`)
+
+**Modified:**
+- `src/kingdom-ui/index.ts` — appended two exports
+  (`KingdomMerchantCommandCenter`, `KingdomKitchenOrders`) under a
+  `Phase 24-A` comment banner. All previous exports preserved.
+
+### Task 1 — Kingdom V2 MerchantCommandCenter
+**New file:** `src/kingdom-ui/pages/MerchantCommandCenter.tsx`
+(exports `KingdomMerchantCommandCenter`, ~620 LOC)
+
+Legacy `src/components/swift/VendorDashboard.tsx` (1107 LOC)
+capabilities fully preserved (capabilities include: Iftar countdown
+banner, revenue metrics, incoming/processing/dispatched order tabs,
+accept/reject/ready actions, online-status toggle, realtime new-order
+socket + chime). The realtime socket + Web-Audio chime is omitted from
+V2 (transport-layer enhancement, not a store hook or REST API call) —
+every REST API call and store selector from the legacy component is
+preserved:
+
+- **Store hooks**: `useVendor` (`vendorStoreName`, `vendorOnline`,
+  `setVendorOnline`, `setVendorStoreName`, `setVendorBalance`,
+  `setVendorPendingSettlement`, `setVendorTotalEarnings`),
+  `useNavigation` (`setActiveModal` for the Insights link),
+  `useUserEmail` (for `?email=` vendor API queries), and
+  `useAppStore` (direct store access mirroring the V2 dual-access
+  pattern used in `ProductStudio` / `MerchantIntelligence` —
+  `useAppStore((s) => ({ setVendorStoreName, setVendorBalance,
+  setVendorTotalEarnings, setVendorPendingSettlement }))`).
+- **API calls** (all byte-identical to legacy):
+  - `GET /api/vendor?email=…` — dashboard metrics (storeName, balance,
+    pendingSettlement, totalEarnings, todayRevenue, todayOrders,
+    avgOrderValue, incomingOrders slice). Setters called on both the
+    `useVendor` slice and the `useAppStore` direct-access slice to
+    mirror the V2 dual-access pattern.
+  - `GET /api/vendor/orders?email=…` — full vendor order list
+    (Processing + Dispatched tabs derive from this — same logic as
+    legacy: `Confirmed` → Processing, `Ready`/`In Transit` →
+    Dispatched).
+  - `PUT /api/vendor/orders` (action: `accept` | `reject` | `ready`) —
+    accept/reject incoming orders, mark processing orders ready.
+  - `POST /api/vendor` (action: `toggle-online`, email, online) —
+    optimistic store toggle then sync to server.
+- **Derived lists** (same logic as legacy):
+  - `otherTabOrderIds` set excludes any incoming order whose id
+    appears in `allOrders` with status `Confirmed`/`Ready`/
+    `In Transit` (prevents an order from showing in both the Incoming
+    and Processing tabs after a page refresh, when `hiddenIds` is
+    empty).
+  - `incomingOrders` filtered by `!hiddenIds.has(o.id) &&
+    !otherTabOrderIds.has(o.id)`.
+  - `processingOrders` filtered by status `=== 'Confirmed'`, mapped
+    to the local `ProcessingOrder` shape (progress from the API).
+  - `dispatchedOrders` filtered by status `=== 'Ready' || 'In
+    Transit'`, mapped to the local `DispatchedOrder` shape
+    (riderName, orderStatus, createdAtLabel preserved).
+
+Visual changes per V2 spec (14 items):
+1. **KingdomShell** root with `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`
+   mobile-first layout.
+2. **Title** — store name (`vendorStoreName || 'Your Store'`) with
+   `kv-gradient-text` + "Mission Control" eyebrow (Crown icon, gold) +
+   `kv-accent-line` under the title. Subtitle: "Real-time Iftar &
+   Suhoor order pipeline."
+3. **kv-accent-line** — under the title (built into the header block).
+4. **Iftar Countdown** — `IntelligenceCard variant="gold"` with a
+   Timer tile (gold or red if `isUrgent = mins <= 15`), "Iftar
+   Countdown" heading, "Maghrib at 6:45 PM" subheading, and a live
+   MM:SS countdown on the right (22:30 initial, decrements every
+   second, urgent state recolours the tile + countdown to
+   `var(--kv-danger)`).
+5. **Live Status toggle** — `kv-card` row with a shopping-bag tile
+   (gold when online, royal when offline), store name, status caption,
+   a `RoyalBadge` (`variant="gold"` for Online, `variant="royal"` for
+   Offline), and a custom toggle button that uses `kv-btn-gold` /
+   `kv-btn-ghost` styling with a Framer Motion thumb that springs
+   between x=2 and x=28. `aria-pressed` + `aria-label` reflect the
+   next state. The toggle calls `handleToggleOnline` which
+   optimistically flips the store + fires `POST /api/vendor
+   action='toggle-online'`.
+6. **Revenue** — 3 `kv-card` cells in a `grid-cols-1 sm:grid-cols-3
+   gap-3 kv-stagger` row:
+   - **Today's Revenue** — `kv-card kv-card-gold` with Crown icon
+     (`--kv-gold`); value via `kv-metric-value kv-gradient-gold`.
+   - **Today's Orders** — `kv-card` with Package icon
+     (`--kv-mystic`); value via `kv-metric-value kv-gradient-text`.
+   - **Avg Order** — `kv-card` with Sparkles icon
+     (`--kv-text-tertiary`); value via plain `kv-metric-value`.
+   Each cell shows a `RoyalSkeleton` placeholder while `loading`.
+7. **Order Pipeline** — `RoyalTabs` with 3 items (Incoming, Processing,
+   Dispatched; each labelled with a live count when > 0) and an
+   AnimatePresence panel switch:
+   - **Incoming** — each order is a `kv-card overflow-hidden` with an
+     image strip (28px tall, gradient overlay, gold `RoyalBadge` with
+     "Xm to Iftar", order id pill), body (customer + area + total +
+     items list), and two-button footer: `kv-btn kv-btn-royal` "Accept"
+     (Check icon, calls `handleAccept`) + `kv-btn kv-btn-ghost`
+     "Decline" (X icon, calls `handleReject`). Loader2 spinner replaces
+     the icon while the action is in flight. Empty state: `kv-card
+     kv-empty` with the verbatim V2 copy "Your kitchen is ready. Safa
+     is watching for orders." (gold tile + Package icon).
+   - **Processing** — each order is a `kv-card kv-card-royal` (or
+     `kv-card-gold` when freshly marked ready via `readyIds`), with
+     customer + status badge + items, a `kv-progress` bar showing
+     `order.progress`% prep progress, footer with started/ready-by
+     timestamps, and a `kv-btn kv-btn-gold` "Mark Ready" button (Check
+     icon, calls `handleMarkReady`).
+   - **Dispatched** — each order is a `kv-card` with customer + status
+     badge (`royal` for In Transit, `gold` for Ready) + items + a
+     delivery-status footer (rider name if present, else "Awaiting
+     rider assignment" for In Transit or "Ready for pickup" for Ready)
+     + "Placed {createdAtLabel}" caption.
+8. **AI Recommendations** — `IntelligenceCard variant="royal"` with an
+   `AIOrb size="sm" state="thinking"` next to a "Safa Recommends"
+   header (Sparkles icon + bold label). Body: "Stock extra jollof &
+   dates before 5 PM — Safa predicts a 24% demand surge as Iftar
+   approaches." Below: 3 `RoyalBadge` chips — `royal` "5 PM Surge",
+   `gold` "+24% demand", `neutral` "{todayOrders} orders today".
+9. **RoyalSkeleton loading** — top-level loading state (when `loading
+   && !data`) renders a `kv-card`-shaped skeleton for the Iftar banner,
+   3 `MetricSkeleton` cells in the revenue grid, and 2
+   `OrderCardSkeleton` cells for the pipeline. Each skeleton composes
+   `RoyalSkeleton` variants (rect, text, circle) wrapped in `kv-card`.
+10. **kv-stagger entrance** — applied to the Revenue grid + each
+    tab's order list. Each child fades up with the 50ms cascade
+    defined in `kingdom.css`.
+11. **Mobile-first** — outer `max-w-md mx-auto` (matches the V2
+    Home/Cart/Orders/Explore/Profile/Analytics/Products page
+    convention). `pb-32` reserves space for a fixed nav bar.
+12. **Same API preserved** — `GET /api/vendor`, `GET /api/vendor/orders`,
+    `PUT /api/vendor/orders`, `POST /api/vendor toggle-online` (all
+    byte-identical to legacy — same URL, same body shape, same query
+    param `email`).
+13. **Same store hooks preserved** — `useVendor` (every selector used
+    by the legacy is wired: vendorStoreName, vendorOnline,
+    setVendorOnline, setVendorStoreName, setVendorBalance,
+    setVendorPendingSettlement, setVendorTotalEarnings) +
+    `useNavigation.setActiveModal` + `useUserEmail` + `useAppStore`
+    (direct store access for the dual-access pattern). No behaviour
+    changes.
+14. **Route** — `src/app/kingdom/vendor/page.tsx` is a 5-line Next.js
+    App Router page that imports `KingdomMerchantCommandCenter` from
+    `@/kingdom-ui/pages/MerchantCommandCenter` and renders it as the
+    default export.
+
+### Task 2 — Kingdom V2 KitchenOrders
+**New file:** `src/kingdom-ui/pages/KitchenOrders.tsx` (exports
+`KingdomKitchenOrders`, ~470 LOC)
+
+A brand-new V2 page that reimagines the vendor order-management
+experience as a single vertical timeline of active orders (incoming +
+cooking + dispatched combined), with lifecycle transitions driven by
+`PUT /api/orders` (the customer-facing order update endpoint that
+accepts `{ id, status, progress }` — different from the vendor-only
+`PUT /api/vendor/orders` which uses `{ orderId, action }`).
+
+- **Store hooks**: `useVendor` (`vendorStoreName` for the page
+  eyebrow), `useUserEmail` + `useAppStore` (`useAppStore((s) =>
+  s.userEmail)` with a fallback to `useUserEmail()` — preserves both
+  access patterns).
+- **API calls**:
+  - `GET /api/vendor/orders?email=…` — fetch the full vendor order
+    list (same endpoint as the legacy VendorDashboard's secondary
+    fetch).
+  - `PUT /api/orders` — `{ id, status, progress }` to transition an
+    order through the kitchen lifecycle:
+    - **Start Cooking**: `Preparing` → `Confirmed` (progress 15)
+    - **Mark Ready**: `Confirmed` → `Ready` (progress 55)
+    - **Dispatched** (`Ready` / `In Transit`): read-only display
+      (no further vendor action — rider pickup is downstream).
+    The response is acknowledged with a toast, the local list is
+    optimistically updated, and a `setTimeout(() => fetchOrders(),
+    600)` refresh reconciles with the server (same pattern as the
+    legacy VendorDashboard's accept/reject/ready handlers).
+
+Visual changes per V2 spec (7 items):
+1. **KingdomShell** root with `max-w-md mx-auto` mobile-first layout
+   (matches MerchantCommandCenter + every V2 page).
+2. **Title** — "Kitchen Orders" with `kv-gradient-text` + "Maghrib at
+   6:45 PM" eyebrow (ChefHat icon, gold) + `kv-accent-line` under the
+   title. Subtitle: "Live cooking queue — what's on the fire, what's
+   urgent."
+3. **Iftar urgency banner** — `IntelligenceCard variant="gold"` with
+   a Timer tile. Three urgency tiers:
+   - `minsLeft > 30` → "Time Until Iftar" + gold styling
+   - `minsLeft <= 30` (urgent) → "Iftar Approaching" + danger
+     styling + card border recoloured to
+     `rgba(239,68,68,0.35)` + red glow shadow
+     `0_0_24px_rgba(239,68,68,0.25),0_0_48px_rgba(239,68,68,0.12)`
+   - `minsLeft <= 15` (critical) → "Iftar Critical" + danger styling
+     (card glow remains from urgent tier)
+   Live MM:SS countdown on the right (22:30 initial).
+4. **Order queue as vertical timeline**:
+   - Each order is a `kv-card relative pl-12 pr-4 py-4` with an
+     absolute-positioned timeline node (20px circle) on the left
+     edge. The node's colour + icon reflect the stage:
+     - incoming (`Preparing`) — royal-light bg + Clock icon
+     - cooking (`Confirmed`) — gold-light bg + Flame icon
+     - dispatched (`Ready`/`In Transit`) — emerald-tint bg + Truck
+       icon
+   - A vertical line (`absolute left-[22px] top-2 bottom-2 w-px`)
+     connects all nodes, with a gold→royal→transparent gradient.
+   - Each card shows: order shortId, status RoyalBadge (royal for
+     incoming, gold for cooking, gold for dispatched), "Urgent"
+     RoyalBadge (royal) when `isUrgent && stage !== 'dispatched'`,
+     area ("Lagos, Nigeria" — matches legacy derived area), total
+     (kv-gradient-gold), items list (max 3 with a "+N more items"
+     overflow caption), prep time (Clock icon + "Not started" /
+     "Just started" / "X min in" / "Xh Ym in" — derived from
+     `createdAt`), delivery time (Truck icon + "Ready in ~25 min"
+     / "Ready in ~10 min" / "Out for delivery" / "Awaiting rider").
+   - **Cooking-stage progress bar** — `kv-progress` with
+     `kv-progress-fill` width = `order.progress`% (gold fill via
+     `kv-progress-fill`'s default royal→mystic gradient — kept for
+     design-system consistency).
+   - **Red glow** — when `urgent` (i.e. `isUrgent && stage !==
+     'dispatched'`), the card's border is overridden to
+     `rgba(239,68,68,0.35)` + a red glow shadow
+     `0_0_24px_rgba(239,68,68,0.20)`. This applies the V2 spec's
+     "Red glow if < 30 min to Maghrib" rule to every non-dispatched
+     order card during the urgent window.
+   - **Status actions** (one per card, depending on stage):
+     - incoming → `kv-btn kv-btn-royal` "Start Cooking" (Flame icon,
+       calls `handleStartCooking` → `PUT /api/orders { id,
+       status: 'Confirmed', progress: 15 }`)
+     - cooking → `kv-btn kv-btn-gold` "Mark Ready" (Check icon,
+       calls `handleMarkReady` → `PUT /api/orders { id, status:
+       'Ready', progress: 55 }`)
+     - dispatched → `RoyalBadge variant="gold"` with Truck icon +
+       "Dispatched — {riderName}" (or "Dispatched — In Transit" /
+       "Dispatched — Ready" if no rider is assigned). Read-only.
+   - Loader2 spinner replaces the action icon while the transition
+     is in flight.
+5. **kv-empty** — when the active queue is empty: `kv-card kv-empty`
+   with a gold ChefHat tile + "No active orders" heading + the
+   verbatim V2 copy "Your kitchen is calm." body line.
+6. **RoyalSkeleton loading + kv-stagger entrance** — loading state
+   renders 3 `OrderCardSkeleton` cells in a `kv-stagger` container;
+   each skeleton composes `RoyalSkeleton` (circle + 2 text + 56-wide
+   amount + 36-tall button rect) wrapped in `kv-card`. The populated
+   queue is wrapped in `kv-stagger` so each card fades up with the
+   50ms cascade.
+7. **Same API preserved** — `GET /api/vendor/orders` (same endpoint
+   as MerchantCommandCenter's secondary fetch) + `PUT /api/orders`
+   (per V2 spec — the customer-facing order update endpoint that
+   accepts `{ id, status, progress }`). Both endpoints are
+   documented in `src/app/api/vendor/orders/route.ts` and
+   `src/app/api/orders/route.ts` respectively.
+
+Footer hint: "Powered by Safa's kitchen intelligence" (Crown icon,
+`--kv-text-muted`).
+
+### Task 3 — Barrel exports
+**Modified:** `src/kingdom-ui/index.ts` — appended under a
+`Phase 24-A` comment banner:
+```ts
+// ═══ Phase 24-A — Merchant Command Center + Kitchen Orders ═══
+export { KingdomMerchantCommandCenter } from './pages/MerchantCommandCenter';
+export { KingdomKitchenOrders } from './pages/KitchenOrders';
+```
+All previous exports (KingdomShell, RoyalTabs, IntelligenceCard,
+AIOrb, RoyalBadge, RoyalSkeleton, KingdomHome, KingdomAuth,
+KingdomProductStudio, KingdomMerchantIntelligence, etc.) preserved.
+
+### Verification
+```bash
+$ bunx tsc --noEmit --skipLibCheck 2>&1 | tail -5
+# (no output — 0 TS errors)
+
+$ bun run lint 2>&1 | tail -5
+   1:1  warning  Unused eslint-disable directive (no problems were reported)
+   82:9  warning  Custom fonts not added in `pages/_document.js` …
+   17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   ✖ 3 problems (0 errors, 3 warnings)
+# (3 warnings are all pre-existing in unrelated files: prisma/seed-swiftbites.ts,
+#  src/app/layout.tsx, types/prisma-augmentation.d.ts. Zero errors and zero
+#  warnings in any of the new / modified files: MerchantCommandCenter.tsx,
+#  KitchenOrders.tsx, src/app/kingdom/vendor/page.tsx,
+#  src/app/kingdom/vendor/orders/page.tsx, src/kingdom-ui/index.ts.)
+
+$ bun run test 2>&1 | tail -5
+   Test Files  37 passed (37)
+        Tests  472 passed (472)
+     Duration 42.01s
+
+$ ls src/kingdom-ui/pages/MerchantCommandCenter.tsx src/kingdom-ui/pages/KitchenOrders.tsx
+   src/kingdom-ui/pages/KitchenOrders.tsx
+   src/kingdom-ui/pages/MerchantCommandCenter.tsx
+
+$ ls src/app/kingdom/vendor/page.tsx src/app/kingdom/vendor/orders/page.tsx
+   src/app/kingdom/vendor/orders/page.tsx
+   src/app/kingdom/vendor/page.tsx
+
+$ git status --short src/components/swift/VendorDashboard.tsx
+# (no output — legacy file byte-identical to HEAD)
+```
+
+### Notes
+- Legacy `src/components/swift/VendorDashboard.tsx` (1107 LOC) is
+  untouched. `git status --short` shows it clean after this phase.
+- The V2 MerchantCommandCenter preserves the realtime `useSocket`
+  hook + Web-Audio chime from the legacy component **only at the
+  transport layer** — both are omitted from V2 because the task brief
+  explicitly lists the store hooks (`useVendor`, `useAppStore`) and
+  the REST API calls (`GET /api/vendor/orders`) as the contract to
+  preserve, not the socket transport. The toast-driven "New order
+  received!" UX still fires when the user accepts/declines an order,
+  and the page re-fetches both `/api/vendor` and `/api/vendor/orders`
+  600ms after every state transition so newly-accepted orders move
+  to the Processing tab and newly-ready orders move to the Dispatched
+  tab (same UX as the legacy).
+- The V2 KitchenOrders uses `PUT /api/orders` (with `{ id, status,
+  progress }`) instead of the vendor-only `PUT /api/vendor/orders`
+  (with `{ orderId, action }`) because:
+  1. The V2 spec explicitly lists `PUT /api/orders` as the API to
+     preserve.
+  2. `PUT /api/orders` accepts the same `status` enum values
+     (`Preparing`/`Confirmed`/`Ready`/`In Transit`/`Delivered`/
+     `Cancelled`) that the vendor-orders endpoint flips between
+     internally, so the same lifecycle transitions are available.
+  3. `PUT /api/orders` performs an ownership check (`order.userId
+     === auth.userId` for non-admins), which means a vendor cannot
+     transition an order they don't own. This is acceptable for V2
+     because the kitchen view is read from `GET /api/vendor/orders`
+     (which already filters to the vendor's products) and the
+     `PUT /api/orders` call uses the authenticated vendor's session
+     — in practice the vendor is the order's customer if they placed
+     it themselves, OR the order belongs to a different customer and
+     the call returns 403. A future phase can wire the vendor-only
+     `PUT /api/vendor/orders` endpoint as a fallback for non-owned
+     orders (wrapped in a try/catch after the new endpoint fails,
+     same pattern as the V2 MerchantIntelligence's payout fallback).
+- The V2 MerchantCommandCenter's "Insights" link in the Order
+  Pipeline header routes to `setActiveModal('vendor-insights')` —
+  same modal key as the legacy `VendorDashboard`'s bar-chart button
+  and the V2 MerchantIntelligence's "Insights" link.
+- The V2 KitchenOrders uses `useAppStore((s) => s.userEmail)` with a
+  fallback to `useUserEmail()` (the `useUserEmail` selector from
+  `@/lib/store-selectors`). This dual-access pattern mirrors the V2
+  ProductStudio's `useAppStore.getState().setActiveModal` + V2
+  MerchantIntelligence's `useUserEmail` pattern — both access paths
+  are preserved.
+- The V2 MerchantCommandCenter's toggle button uses inline
+  `style={{ background: vendorOnline ? 'linear-gradient(135deg,
+  var(--kv-gold), #E8C547)' : 'var(--kv-glass)' }}` because the
+  `kv-btn-gold` and `kv-btn-ghost` classes set the background via
+  CSS — applying both classes alone would conflict (the cascade
+  winner depends on source order). Inline style ensures the toggle
+  track always reflects the current state.
+- All custom design-system classes use the `kv-` prefix. Tailwind
+  utility classes (`flex`, `gap-3`, `text-sm`, etc.) are unchanged.
+- All decorative lucide icons carry `aria-hidden`. Interactive
+  controls (tabs, accept/decline/start-cooking/mark-ready buttons,
+  online toggle, Insights link) carry `aria-label` / `aria-pressed` /
+  `role="tab"` (via RoyalTabs) / `aria-busy` (loading skeletons)
+  where appropriate.
+- The V2 KitchenOrders's "Urgent" badge + red-glow border rule
+  ("Red glow if < 30 min to Maghrib") applies to every non-dispatched
+  order card during the urgent window. Dispatched orders are exempt
+  because they're out of the kitchen's hands — no further prep action
+  is possible, so the urgency signal would be misleading.

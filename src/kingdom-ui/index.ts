@@ -16,3 +16,6 @@ export { KingdomExploreTab } from './pages/ExploreTab';
 export { KingdomProfileTab } from './pages/ProfileTab';
 export { KingdomProductStudio } from './pages/ProductStudio';
 export { KingdomMerchantIntelligence } from './pages/MerchantIntelligence';
+// ═══ Phase 24-A — Merchant Command Center + Kitchen Orders ═══
+export { KingdomMerchantCommandCenter } from './pages/MerchantCommandCenter';
+export { KingdomKitchenOrders } from './pages/KitchenOrders';
