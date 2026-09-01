@@ -17157,3 +17157,382 @@ $ git status --short src/components/swift/ExploreTab.tsx src/components/swift/Pr
   `setShowAuth(null)` + toast + close panel. The Cancel button closes
   the panel without signing out. This satisfies the V2 spec's "Logout:
   kv-btn-ghost with confirmation" requirement.
+
+---
+
+## Phase 24-B — Agent B: Kingdom V2 ProductStudio + MerchantIntelligence
+
+### Task summary
+Created Kingdom V2 versions of `VendorStoreTab` (Product Studio) and the
+combined `VendorWallet` + `VendorSalesInsights` (Merchant Intelligence) as
+NEW files in `src/kingdom-ui/pages/`. Legacy files in `src/components/swift/`
+are untouched. The two new page files (~1,000 LOC combined) preserve every
+store hook + API call from the legacy implementations while completely
+replacing the visual layer with the Kingdom V2 design system.
+
+### Task 1 — Kingdom V2 ProductStudio
+**New file:** `src/kingdom-ui/pages/ProductStudio.tsx` (exports
+`KingdomProductStudio`, ~590 LOC)
+
+Legacy `src/components/swift/VendorStoreTab.tsx` (637 LOC) capabilities
+fully preserved:
+
+- **Store hooks**: `useNavigation` (`setActiveModal`),
+  `useUserEmail` (`userEmail`), `useAppStore.getState().setActiveModal`
+  (for the `'vendor-add-product'` modal key — same key as legacy), plus
+  `useToast` for notifications. Every legacy selector is preserved.
+- **Data imports**: `formatNaira` from `@/lib/data`.
+- **API calls** (byte-identical to legacy):
+  - `GET /api/vendor/products?vendorEmail=…` — fetch vendor's products
+  - `PUT /api/vendor/products?id=…&vendorEmail=…` — toggle `inStock` +
+    save inline edits (name, description, price, category, deliveryTime,
+    image)
+  - `DELETE /api/vendor/products?id=…&vendorEmail=…` — delete with
+    confirmation
+- **Window event**: `vendor-products-changed` listener re-fetches on
+  cross-component refresh signals (same as legacy — preserves the
+  VendorAddProductModal contract).
+- **Optimistic update + revert**: `toggleAvailability` updates local
+  state immediately and reverts on API error (same as legacy).
+- **Inline edit form**: name, description, price, category, image URL,
+  delivery time — same fields as legacy.
+- **Delete with confirmation**: two-step (click Delete → confirm dialog
+  → API call) — same UX as legacy.
+- **Stock alert**: red-tinted banner when `unavailableCount > 0` —
+  preserves the legacy's AlertTriangle banner.
+- **Quick stats**: 3-tile grid showing Menu Items / Available / Out of
+  Stock — preserves the legacy's quick-stats row.
+- **Toast notifications** via `useToast`.
+
+Visual changes per V2 spec (14 items):
+1. **KingdomShell** root with `max-w-md` mobile-first layout.
+2. **Title** — "Product Studio" with `kv-gradient-text` + `kv-accent-line`
+   under the title. Eyebrow "Vendor Studio" with a Sparkles icon.
+3. **kv-btn-royal "Add Product"** — calls
+   `useAppStore.getState().setActiveModal('vendor-add-product')` (same
+   modal key as legacy). Surfaces in the section header alongside the
+   Menu Items count (`RoyalBadge variant="royal"`).
+4. **Category filter** — horizontal scroll of `RoyalBadge` pills:
+   `All / Meals / Snacks / Drinks / Desserts / Groceries`. Active pill
+   uses `variant="royal"`; inactive uses `variant="neutral"`. Clicking a
+   pill sets `activeCategory` (same state as legacy).
+5. **Products grid** — `grid-cols-1 sm:grid-cols-2 gap-3` of `kv-card`
+   components. Each card carries:
+   - **Image area** — `relative w-full aspect-square rounded-xl
+     overflow-hidden` with `background-image` (same pattern as the V2
+     ProductCard + ExploreTab). Falls back to a Package icon on
+     `--kv-elevated` when `item.image` is empty.
+   - **Stock badge** — `RoyalBadge` pinned top-right on the image.
+     `variant="gold"` ("In Stock") when `inStock`, `variant="neutral"`
+     ("Out") when not — emerald/danger colouring is communicated via the
+     gold/neutral badge tints (RoyalBadge only ships royal/gold/neutral
+     variants).
+   - **Product name** — `text-sm font-bold truncate` (white when in
+     stock, `--kv-text-secondary` when out).
+   - **Price** — `kv-gradient-gold` + `originalPrice` strike-through when
+     on sale (preserves the legacy sale-price display).
+   - **Meta row** — `RoyalBadge variant="neutral"` category + delivery
+     time + rating (★ in `--kv-gold`).
+   - **Availability toggle** — 44px-min touch target. The thumb animates
+     via `motion.div` spring (same `stiffness: 500, damping: 30` as the
+     legacy). Track colour is `--kv-emerald` when in stock, white/10 when
+     out.
+   - **kv-btn-ghost "Edit"** + **kv-btn-ghost "Delete"** — equal-width
+     36px-min buttons in a flex row. The Delete button tints its label +
+     icon with `--kv-danger`.
+   - **Hover lift** — built into the `.kv-card` class (translateY(-4px)
+     on hover) — no custom transition needed.
+6. **Edit mode** — inline `RoyalInput` fields for name, description,
+   price (number), image URL, delivery time + a `<select className="kv-input">`
+   for category (the V2 spec calls for RoyalInput fields; the
+   `kv-input` class is the same one RoyalInput uses internally, so the
+   category select visually matches). A `kv-btn-royal` "Save Changes"
+   button with Check icon (Loader2 spinner when busy).
+7. **Delete** — `kv-backdrop` confirmation dialog (`role="alertdialog"`
+   + `aria-modal="true"`). Inside, a `kv-card kv-card-royal` panel with
+   a red-tinted Trash2 icon tile, title, body copy, Cancel
+   (`kv-btn-ghost`) + Confirm Delete (red-tinted `kv-btn`). Clicking the
+   backdrop cancels (when not busy) — same UX as the legacy inline
+   confirm.
+8. **kv-empty** — gold-tinted Package icon tile + "Your studio is
+   empty" heading + "Add your first masterpiece." body copy + a
+   `kv-btn-royal` "Add your first product" action (calls
+   `setActiveModal('vendor-add-product')`).
+9. **RoyalSkeleton loading** — 4 `<ProductCardSkeleton>` cards in the
+   same `grid-cols-1 sm:grid-cols-2 gap-3` layout. Each skeleton
+   composes `RoyalSkeleton variant="rect"` (image area) +
+   `variant="text"` rows + a `variant="rect"` (button area), wrapped in
+   a `kv-card` so the loading state visually matches the populated grid.
+10. **kv-stagger entrance** on the products grid (the grid container
+    carries `.kv-stagger`, so each card fades up with the 50ms cascade
+    defined in `kingdom.css`).
+11. **Mobile-first** — outer `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`
+    matches the V2 Home/Cart/Orders/Explore/Profile page convention.
+    `pb-32` reserves space for a fixed nav bar.
+12. **Same API preserved** — `GET /api/vendor/products`,
+    `PUT /api/vendor/products`, `DELETE /api/vendor/products` (all
+    byte-identical to legacy).
+13. **Same store hooks preserved** — `useNavigation` (setActiveModal),
+    `useUserEmail`, `useAppStore.getState().setActiveModal` (for the
+    FAB-equivalent + empty-state CTA). No behaviour changes.
+14. **Route** — `src/app/kingdom/vendor/products/page.tsx` is a 5-line
+    Next.js App Router page that imports `KingdomProductStudio` from
+    `@/kingdom-ui/pages/ProductStudio` and renders it as the default
+    export.
+
+### Task 2 — Kingdom V2 MerchantIntelligence
+**New file:** `src/kingdom-ui/pages/MerchantIntelligence.tsx` (exports
+`KingdomMerchantIntelligence`, ~700 LOC)
+
+Legacy `src/components/swift/VendorWallet.tsx` (500 LOC) +
+`src/components/swift/VendorSalesInsights.tsx` (224 LOC) capabilities
+fully preserved (combined into one intelligence center):
+
+- **Store hooks**: `useVendor` (`vendorBalance` + `setVendorBalance` +
+  `vendorPendingSettlement` + `setVendorPendingSettlement` +
+  `vendorTotalEarnings` + `setVendorTotalEarnings` + `vendorBankName` +
+  `vendorAccountNumber`), `useNavigation` (`setActiveModal`), `useUserEmail`
+  (`userEmail`). Every legacy selector is preserved.
+- **Data imports**: `formatNaira`, `vendorSalesInsights` from
+  `@/lib/data` — used as the fallback for the sales-insights
+  visualization (same pattern as the legacy `VendorSalesInsights`
+  component which imports `vendorSalesInsights` directly).
+- **API calls**:
+  - `GET /api/vendor?email=…` — fetch vendor data (balance, pending
+    settlement, total earnings, transactions, salesInsights in one
+    call). Preserves the legacy `VendorWallet` fetch.
+  - `GET /api/wallet/transactions?limit=20` — enrichment call per the
+    V2 spec. Maps `WalletTransaction` rows (kobo amounts → naira) to the
+    local `Transaction` shape, then merges with the vendor-derived
+    transactions (deduped by id). Best-effort — silently fails if the
+    endpoint returns 401 (no auth) so the vendor-derived transactions
+    remain as the primary source.
+  - `POST /api/payouts` with `action: 'request'` — primary payout
+    endpoint (per V2 spec, dedicated endpoint). Falls back to the
+    legacy `POST /api/vendor` with `action: 'withdraw'` if the new
+    endpoint fails (preserves the legacy API call). Both paths
+    optimistically deduct `vendorBalance` and prepend a local
+    `payout`-type transaction row.
+- **Window event**: `vendor-products-changed` listener is NOT needed
+  here (it's a wallet page, not a products page) — same as legacy.
+- **Optimistic balance deduction** + local transaction prepend on
+  successful payout (same UX as legacy).
+- **Toast notifications** via `useToast`.
+
+Visual changes per V2 spec (14 items):
+1. **KingdomShell** root with `max-w-md` mobile-first layout.
+2. **Title** — "Merchant Intelligence" with `kv-gradient-text` +
+   `kv-accent-line` under the title. Eyebrow "Vendor Intelligence" with
+   a Crown icon (gold).
+3. **Revenue Overview** — 3 IntelligenceCards in a
+   `grid-cols-1 sm:grid-cols-3 gap-3 kv-stagger` row:
+   - **Available Balance** — `kv-card kv-card-gold` with Wallet icon
+     (`--kv-gold`); value rendered via `kv-metric-value kv-gradient-gold`.
+   - **Total Earnings** — `kv-card` with TrendingUp icon
+     (`--kv-mystic`); value rendered via `kv-metric-value
+     kv-gradient-text`.
+   - **Pending Settlement** — `kv-card` with Clock icon
+     (`--kv-text-tertiary`); value rendered via plain `kv-metric-value`.
+   Each card shows a `RoyalSkeleton` placeholder while `loading`.
+4. **Payout** — `kv-card kv-card-gold` panel with the bank display
+   (`vendorBankName ****last4`), a body line ("Cash out to {bankDisplay}.
+   Funds arrive within 24 hours."), and a `kv-btn kv-btn-gold` "Request
+   Payout" button (disabled when `loading || vendorBalance === 0`).
+   Clicking opens the payout confirmation dialog.
+5. **Transaction History** — section header with "Transaction History"
+   + an "Insights" link (routes to `setActiveModal('vendor-insights')`,
+   preserving the legacy's Sales Insights modal entry point). Filter
+   chips (`All / Completed / Processing / Refunded`) as `RoyalBadge`
+   pills (active = royal, inactive = neutral) in a horizontal scroll.
+   Each transaction row is a `kv-list-item` containing:
+   - **Type badge** — `RoyalBadge` with `variant="gold"` for
+     `topup`/`credit`, `variant="royal"` for `payout`/`debit`/`payment`,
+     `variant="neutral"` for `refund`. Label is human-readable
+     ("Top-up" / "Payout" / "Payment" / "Credit" / "Debit" / "Refund").
+   - **Reference** — `text-xs font-semibold truncate` (white).
+   - **Date/time** — `kv-metric-label !text-[10px]` (uppercase tracking).
+   - **Amount** — `kv-metric-value !text-base` with `+`/`-` prefix;
+     emerald for credits/topups/payments, danger for refunds, primary
+     text for debits/payouts. Below: status caption (`capitalize`).
+   Loading state: 3 `<TxRowSkeleton>` rows (circle + 2 text + amount).
+   Empty state: `kv-empty` with "No transactions yet" heading + "Your
+   first sale is coming." body copy + a Wallet icon tile.
+6. **Sales Insights** — `IntelligenceCard variant="royal"` titled
+   "Sales Insights" with subtitle "Live performance + Safa's trend
+   analysis". Inside:
+   - **Top products** — 4 `kv-list-item` rows with a rank tile (1 =
+     gold, 2-4 = royal), product name, share %, and a `kv-progress`
+     bar showing the share width. (Derived from `topSellingItem` +
+     a small ranked set.)
+   - **Revenue trend** — `kv-progress`-based horizontal bar viz: 7
+     rows (Mon–Sun), each with a day label + `kv-progress` bar whose
+     `kv-progress-fill` width = `revenue / maxRevenue * 100%` + the
+     naira amount on the right. Header shows "Weekly Revenue" +
+     today's revenue in emerald.
+   - **Peak hours indicator** — 3-column metrics grid: Peak Hour
+     (`royal-light` Clock tile), Retention (`gold-light` Users tile),
+     Avg Order (emerald TrendingUp tile). Each tile has a label +
+     value.
+   - **Ramadan totals** — 2-column grid: Ramadan Revenue +
+     Ramadan Orders (`text-lg font-extrabold`).
+7. **AI Insights** — `IntelligenceCard variant="royal"` with an
+   `AIOrb size="sm" state="thinking"` next to a "Safa Predicts" header
+   (Sparkles icon + bold label). Body copy: "Safa predicts higher
+   demand at 5 PM. Prepare extra jollof." (verbatim from V2 spec).
+   Below: 3 `RoyalBadge` chips — `royal` "5 PM Surge", `gold` "+24% vs
+   last Ramadan", `neutral` "{todayOrders} orders today".
+8. **kv-empty** — for transactions (covered in item 5 above): "No
+   transactions yet. Your first sale is coming."
+9. **RoyalSkeleton loading** — top-level `<MetricSkeleton>` row (3
+   cards) shown while `loading`, plus per-section skeletons (TxRowSkeleton
+   for transactions, MetricSkeleton for the revenue overview).
+10. **kv-stagger entrance** — applied to the Revenue Overview row +
+    the Transaction History list + the Sales Insights top-products
+    list. Each child fades up with the 50ms cascade.
+11. **Mobile-first** — outer `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`.
+12. **Same API preserved**:
+    - `GET /api/vendor?email=…` (legacy wallet fetch — preserves the
+      legacy `VendorWallet` call exactly)
+    - `GET /api/wallet/transactions?limit=20` (V2 spec enrichment call)
+    - `POST /api/payouts` action='request' (V2 spec dedicated payout
+      endpoint, with fallback to `POST /api/vendor` action='withdraw'
+      to preserve the legacy API call)
+13. **Same store hooks preserved** — every `useVendor` selector remains
+    wired (vendorBalance, setVendorBalance, vendorTotalEarnings,
+    setVendorTotalEarnings, vendorPendingSettlement,
+    setVendorPendingSettlement, vendorBankName, vendorAccountNumber) +
+    useUserEmail + useNavigation.setActiveModal. No behaviour changes.
+14. **Route** — `src/app/kingdom/vendor/analytics/page.tsx` is a 5-line
+    Next.js App Router page that imports `KingdomMerchantIntelligence`
+    from `@/kingdom-ui/pages/MerchantIntelligence` and renders it as
+    the default export.
+
+#### Payout confirmation dialog (kv-backdrop)
+- `kv-backdrop` overlay (`role="dialog"` + `aria-modal="true"` +
+  `aria-label="Request payout"`). Clicking the backdrop cancels (when
+  not busy).
+- Inside: `kv-card kv-card-gold` panel with header ("Request Payout" +
+  X close button), available-balance line, `RoyalInput` for amount
+  (numeric inputMode), 4 quick-percentage buttons (25/50/75/100% — each
+  calls `setWithdrawAmount(Math.floor(vendorBalance * pct / 100).toString())`),
+  bank-display row (Building2 icon + bankDisplay + "Primary account"
+  caption), and Cancel (`kv-btn-ghost`) + Confirm Payout (`kv-btn-gold`
+  with Loader2 spinner when submitting) buttons.
+- Validation: NaN/≤0 → "Invalid Amount" toast; > vendorBalance →
+  "Insufficient Balance" toast (same UX as legacy).
+
+### Task 3 — Barrel exports
+**Modified:** `src/kingdom-ui/index.ts` — added:
+```ts
+export { KingdomProductStudio } from './pages/ProductStudio';
+export { KingdomMerchantIntelligence } from './pages/MerchantIntelligence';
+```
+Appended after the existing `KingdomExploreTab` + `KingdomProfileTab`
+exports. All previous exports preserved.
+
+### Verification
+```bash
+$ bunx tsc --noEmit --skipLibCheck 2>&1 | tail -5
+# (no output — 0 TS errors)
+
+$ bun run lint 2>&1 | tail -5
+   1:1  warning  Unused eslint-disable directive (no problems were reported)
+   82:9  warning  Custom fonts not added in `pages/_document.js` …
+   17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   ✖ 3 problems (0 errors, 3 warnings)
+# (3 warnings are all pre-existing in unrelated files: prisma/seed-swiftbites.ts,
+#  src/app/layout.tsx, types/prisma-augmentation.d.ts. Zero errors and zero
+#  warnings in any of the new / modified files: ProductStudio.tsx,
+#  MerchantIntelligence.tsx, src/app/kingdom/vendor/products/page.tsx,
+#  src/app/kingdom/vendor/analytics/page.tsx, src/kingdom-ui/index.ts.)
+
+$ bun run test 2>&1 | tail -5
+   Test Files  37 passed (37)
+        Tests  472 passed (472)
+     Duration 42.28s
+
+$ ls src/kingdom-ui/pages/ProductStudio.tsx src/kingdom-ui/pages/MerchantIntelligence.tsx
+   src/kingdom-ui/pages/MerchantIntelligence.tsx
+   src/kingdom-ui/pages/ProductStudio.tsx
+
+$ ls src/app/kingdom/vendor/products/page.tsx src/app/kingdom/vendor/analytics/page.tsx
+   src/app/kingdom/vendor/analytics/page.tsx
+   src/app/kingdom/vendor/products/page.tsx
+
+$ git status --short src/components/swift/VendorStoreTab.tsx src/components/swift/VendorWallet.tsx src/components/swift/VendorSalesInsights.tsx
+# (no output — legacy files byte-identical to HEAD)
+```
+
+### Notes
+- Legacy `src/components/swift/VendorStoreTab.tsx` (637 LOC),
+  `src/components/swift/VendorWallet.tsx` (500 LOC), and
+  `src/components/swift/VendorSalesInsights.tsx` (224 LOC) were NOT
+  modified. `git status --short` shows them clean after this phase.
+- The V2 spec listed the wallet API endpoints as
+  `GET /api/wallet, POST /api/payouts, GET /api/wallet/transactions`.
+  In practice:
+  - `/api/wallet` only supports `POST` (with `action: 'balance'` for
+    fetching the balance, `action: 'topup'/'confirm'/'pay'` for other
+    flows). There is no `GET /api/wallet` handler. The V2
+    MerchantIntelligence preserves the legacy `GET /api/vendor?email=…`
+    call for the wallet fetch (it returns balance + pending + earnings
+    + transactions + salesInsights in one call) AND adds the V2-spec
+    `GET /api/wallet/transactions?limit=20` enrichment call. This
+    preserves "ALL API calls" (legacy + V2 spec) while satisfying the
+    V2 spec's endpoint list.
+  - `/api/payouts` is used as the primary payout endpoint (POST with
+    `action: 'request'` + amount/bankName/accountNumber/accountName).
+    The legacy `POST /api/vendor` with `action: 'withdraw'` is kept as
+    a fallback (wrapped in a try/catch after the new endpoint fails) so
+    the legacy API call is preserved too.
+  - `/api/wallet/transactions` is called as a GET (the route supports
+    GET with `page`/`limit`/`type` query params). The response's
+    `transactions` array (kobo amounts) is mapped to the local
+    `Transaction` shape (naira amounts) and merged with the
+    vendor-derived transactions, deduped by id. The enrichment is
+    best-effort — silently fails if the endpoint returns 401 (no auth)
+    so the vendor-derived transactions remain as the primary source.
+- The V2 ProductStudio preserves the legacy `'vendor-add-product'`
+  modal key (not `'vendorAddProduct'` as the task brief shorthand
+  suggested) because the legacy `setActiveModal('vendor-add-product')`
+  call is the wired modal key in `page.tsx`'s `AllModals` registry —
+  using a different key would break the modal routing. The store hook
+  `useAppStore.getState().setActiveModal` + `useNavigation.setActiveModal`
+  are both preserved (same dual-access pattern as legacy).
+- The V2 ProductStudio's category `<select>` uses `className="kv-input"`
+  (the same class `RoyalInput` uses internally) instead of being wrapped
+  in a `RoyalInput` because `RoyalInput` is an `<input>` element, not a
+  `<select>`. This keeps the visual consistency (52px min-height + royal
+  focus ring) without breaking the `kv-input` design contract.
+- The V2 MerchantIntelligence uses the static `vendorSalesInsights`
+  from `@/lib/data` as the initial state for `insights` and as the
+  fallback for `dailyTrend`, `topSellingItem`, `peakHour`,
+  `customerRetention`, `ramadanRevenue`, `ramadanOrders`,
+  `todayRevenue`, `todayOrders`, `avgOrderValue`. The live API response
+  (`/api/vendor`'s `salesInsights` field) overrides the static values
+  when available — same pattern as the legacy `VendorSalesInsights`
+  component which imports `vendorSalesInsights` directly.
+- The V2 MerchantIntelligence's top-products list is a small ranked set
+  derived from the API's `topSellingItem` (rank 1) + 3 hardcoded names
+  (Suya Platter, Zobo Drink, Dates Box) with share percentages (38 /
+  24 / 18 / 12). This is a visual placeholder for the V2 spec's "top
+  products with rank" requirement — the legacy `VendorSalesInsights`
+  modal didn't have a ranked list either (it only showed the single
+  `topSellingItem` name). A future phase can replace the hardcoded
+  ranks with a real `/api/vendor/top-products` endpoint.
+- The V2 MerchantIntelligence's "Insights" link in the Transaction
+  History header routes to `setActiveModal('vendor-insights')` — same
+  modal key as the legacy `VendorWallet`'s "Sales Insights" button.
+- All custom design-system classes use the `kv-` prefix. Tailwind
+  utility classes (`flex`, `gap-3`, `text-sm`, etc.) are unchanged.
+- All decorative lucide icons carry `aria-hidden`. Interactive controls
+  (buttons, category pills, transaction filter chips, toggle, edit/
+  delete buttons, payout dialog buttons) carry `aria-label` /
+  `aria-pressed` / `aria-selected` / `role="tab"` / `role="alertdialog"`
+  / `aria-modal` where appropriate.
+- The V2 ProductStudio's delete confirmation dialog uses
+  `role="alertdialog"` (not `role="dialog"`) because it asks for a
+  destructive confirmation — matches the V2 ProfileTab's logout
+  confirmation pattern. The V2 MerchantIntelligence's payout
+  confirmation dialog uses `role="dialog"` because it's a form entry
+  (not a destructive confirmation).

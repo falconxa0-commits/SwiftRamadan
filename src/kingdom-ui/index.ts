@@ -14,3 +14,5 @@ export { KingdomOrdersTab } from './pages/OrdersTab';
 export { KingdomCommunityForum } from './pages/CommunityForum';
 export { KingdomExploreTab } from './pages/ExploreTab';
 export { KingdomProfileTab } from './pages/ProfileTab';
+export { KingdomProductStudio } from './pages/ProductStudio';
+export { KingdomMerchantIntelligence } from './pages/MerchantIntelligence';
