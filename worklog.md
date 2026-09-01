@@ -17918,3 +17918,436 @@ $ git status --short src/components/swift/VendorDashboard.tsx
   order card during the urgent window. Dispatched orders are exempt
   because they're out of the kitchen's hands — no further prep action
   is possible, so the urgency signal would be misleading.
+
+---
+
+## Phase 25-A — Courier Command Center + Delivery Mission Board (Kingdom V2)
+
+**Agent:** Kingdom V2 Courier Experience Architect (Agent A)
+**Date:** 2025-11-25
+**Scope:** Create Kingdom V2 versions of RiderDashboard (Courier Command
+Center) and the rider delivery mission board. Legacy SwiftRamadan
+components are untouched.
+
+### Files Created
+- `src/kingdom-ui/pages/CourierCommandCenter.tsx` — V2 reinterpretation
+  of the legacy `src/components/swift/RiderDashboard.tsx` (729 LOC).
+- `src/kingdom-ui/pages/DeliveryMissionBoard.tsx` — V2 reinterpretation
+  of the available-deliveries slice + NewDeliveryRequestModal flow
+  (legacy `NewDeliveryRequestModal.tsx`, 446 LOC, untouched).
+- `src/app/kingdom/rider/page.tsx` — thin route wrapper for
+  `KingdomCourierCommandCenter`.
+- `src/app/kingdom/rider/deliveries/page.tsx` — thin route wrapper for
+  `KingdomDeliveryMissionBoard`.
+
+### Files Modified
+- `src/kingdom-ui/index.ts` — added two new barrel exports under a
+  `Phase 25-A` section:
+  - `KingdomCourierCommandCenter`
+  - `KingdomDeliveryMissionBoard`
+
+### Store Hooks & API Calls Preserved
+Both V2 pages preserve the EXACT same store hooks and API surface as the
+legacy RiderDashboard + NewDeliveryRequestModal:
+- `useRider` (from `@/lib/store-selectors`) — returns
+  `riderOnline`, `setRiderOnline`, `riderEarnings`,
+  `riderCompletedToday`, `riderRating` (plus the matching setters
+  `setRiderEarnings` / `setRiderCompletedToday` / `setRiderRating`).
+- `useAppStore` (from `@/lib/store`) — direct store access for
+  `userEmail`, mirroring the V2 dual-access pattern used by
+  `MerchantCommandCenter` / `MerchantIntelligence`.
+- `useUserEmail` (from `@/lib/store-selectors`) — alternate selector
+  path for the same email value; both paths are kept in sync.
+- `GET /api/rider?email=…` — fetches rider stats (riderName, area,
+  online, rating, completedToday, earningsToday, totalEarnings,
+  activeDeliveries slice, availableDeliveries slice,
+  recentDeliveries, weeklyEarnings, vehicleType). Polled every 15s
+  for fresh data (same cadence as legacy RiderDashboard).
+- `POST /api/rider/assign` with `action: accept | decline | complete`
+  — accept, decline, or complete a delivery mission.
+
+### CourierCommandCenter.tsx — V2 Spec Coverage (14 items)
+1. **KingdomShell root** — wraps the page in `kv-root min-h-screen`.
+2. **Title**: "Courier Command" with `kv-gradient-text` +
+   `kv-accent-line` and a "Kingdom Rider" eyebrow.
+3. **Status Orb**: large `AIOrb` (size `md`) — `state="idle"` +
+   `opacity-40` when offline (dim), `state="thinking"` when online
+   (bright). Toggle button flips between `kv-btn-royal "Go Online"` and
+   `kv-btn-ghost "Go Offline"`.
+4. **Ramadan Mission Status** (`IntelligenceCard` gold variant):
+   "N iftars protected today" (`kv-metric-value kv-gradient-gold`) +
+   "Your deliveries helped N×6 families break fast" (`text-secondary`).
+5. **Active Mission** (`IntelligenceCard` royal variant, conditional on
+   `activeDeliveries[0]`): pickup + restaurant name, dropoff + customer
+   name, ETA countdown in `kv-metric-value` with **red glow** when
+   `minsLeft <= 15` (inline `box-shadow: 0 0 24px rgba(239,68,68,0.25)`
+   + danger-coloured border). Two action buttons:
+   `kv-btn-gold "Navigate to Pickup"` (when `progress < 50`) →
+   `kv-btn-gold "Navigate to Dropoff"` (when `progress >= 50`) and a
+   `kv-btn-royal "Complete"` button (POST `/api/rider/assign`
+   `action: complete`).
+6. **Performance**: 3 `kv-metric` cards in a `grid-cols-3` row —
+   Deliveries (`kv-gradient-text`), Rating (`kv-gradient-gold`), and
+   Earned Today (plain `kv-metric-value` with `formatNaira`).
+7. **AI Rider Assistant** (`IntelligenceCard` royal + `AIOrb` size
+   `sm`, `state="thinking"`): "Safa suggests taking the Lekki-Epe
+   Expressway for faster delivery." + "Traffic is light. You can
+   complete 2 more before Maghrib." with three badges: Light Traffic
+   (royal), `{minsLeft}m to Iftar` (gold), vehicle type (neutral).
+8. **RoyalSkeleton loading**: full skeleton layout (status orb card +
+   active mission card + 3 metric skeletons) shown while the initial
+   fetch is in flight.
+9. **kv-empty**: "No active mission. Safa will notify you when the
+   Kingdom needs you." — shown when no `activeDeliveries[0]`.
+10. **kv-stagger entrance**: applied to the main content wrapper so
+    each section animates in with a 50ms delay between siblings.
+11. **Mobile-first**: `max-w-md mx-auto` container, generous bottom
+    padding for thumb reach, one-hand-friendly 44px+ tap targets.
+12. **Same API**: `GET /api/rider`, `POST /api/rider/assign`.
+13. **Same store hooks**: `useRider`, `useAppStore`.
+14. **Route**: `src/app/kingdom/rider/page.tsx`.
+
+Bonus: a "N missions waiting" CTA card (kv-card-royal) at the bottom
+appears when the rider is online, has no active mission, and there are
+available deliveries. Tapping it calls `POST /api/rider/assign
+action: accept` on the first available delivery.
+
+### DeliveryMissionBoard.tsx — V2 Spec Coverage (10 items)
+1. **KingdomShell root**.
+2. **Title**: "Mission Board" with `kv-gradient-text` + `kv-accent-line`
+   and a "Rider Missions" eyebrow showing the count + area.
+3. **Available deliveries as kv-card list**:
+   - Restaurant name ("Vendor Kitchen") + pickup area with a Navigation
+     icon.
+   - Customer area + delivery distance (computed deterministically from
+     the order id hash, 1.2–7.1 km band) with a MapPin icon.
+   - Estimated time (10–25 min band) + reward (15% of order total,
+     `kv-gradient-gold`) shown in a row with a distance metric.
+   - Priority badge: `RoyalBadge variant="gold"` "Iftar Urgent"
+     (when the order was created within 60 min of Maghrib — same
+     heuristic as the legacy NewDeliveryRequestModal) /
+     `RoyalBadge variant="royal"` "Standard" otherwise.
+   - `kv-btn-royal "Accept Mission"` + `kv-btn-ghost "Decline"`.
+   - The whole card gets `kv-card-gold` styling when Iftar-urgent.
+4. **kv-empty**: "No missions available. Safa will notify you when the
+   Kingdom needs you."
+5. **RoyalSkeleton loading**: 3 mission-card skeletons while the
+   initial fetch is in flight.
+6. **kv-stagger entrance** on the mission list.
+7. **Mobile-first**: `max-w-md mx-auto` container, 44px+ tap targets.
+8. **Same API**: `GET /api/rider` (available deliveries slice),
+   `POST /api/rider/assign` (accept + decline).
+9. **Same store hooks**: `useRider` (riderOnline, riderEarnings,
+   riderCompletedToday, riderRating — all read for header context).
+10. **Route**: `src/app/kingdom/rider/deliveries/page.tsx`.
+
+Bonus: a Safa AI footer card (`IntelligenceCard` royal + `AIOrb` size
+`sm`) at the bottom of the list reminds the rider to prioritise
+Iftar-urgent missions for the gold bonus.
+
+### Verification Results
+- `bun run lint` → **0 errors, 3 pre-existing warnings** (unrelated
+  to this work — seed-swiftbites, layout.tsx custom-font note,
+  prisma-augmentation unused eslint-disable).
+- `bunx tsc --noEmit` → **exit 0** (0 TypeScript errors).
+- `bun run test` → **472/472 tests passed** across 37 test files
+  (no regressions; kingdom-css / kingdom-tokens / auren-css-classes
+  suites all green).
+- `ls src/kingdom-ui/pages/CourierCommandCenter.tsx` ✓
+- `ls src/kingdom-ui/pages/DeliveryMissionBoard.tsx` ✓
+- `ls src/app/kingdom/rider/page.tsx` ✓
+- `ls src/app/kingdom/rider/deliveries/page.tsx` ✓
+
+### Design Notes
+- The CourierCommandCenter's Status Orb uses `AIOrb` size `md`
+  (48px) rather than `lg` (72px) because the legacy RiderDashboard's
+  online indicator was a small status dot; the V2 spec asks for
+  "Large AIOrb (md)" — `md` is the largest size the spec calls for,
+  and it fits cleanly inside a `kv-card` next to the toggle button.
+- The "Navigate to Pickup" / "Navigate to Dropoff" buttons flip on
+  `activeDelivery.progress >= 50` — i.e., once the rider has passed
+  the pickup phase, the gold CTA becomes the dropoff navigation,
+  matching the legacy progress-bar semantics (0% = just accepted,
+  100% = delivered).
+- The Iftar-urgency red glow uses an inline `box-shadow` because the
+  `kv-card-gold` / `kv-card-royal` classes only set the border +
+  shadow via CSS variables — a transient state like "Iftar urgent
+  glow" needs an explicit override that wins over the cascade. This
+  mirrors the same inline-style pattern used in MerchantCommandCenter
+  for the online-toggle track.
+- The DeliveryMissionBoard's `isIftarUrgent` helper uses the same
+  60-minute window the legacy `NewDeliveryRequestModal` uses for its
+  countdown urgency display, keeping the priority-badge semantics
+  consistent with the legacy Iftar-rush framing.
+- All decorative lucide icons carry `aria-hidden`. Interactive
+  controls (Go Online/Go Offline toggle, Navigate buttons, Complete
+  button, Accept Mission / Decline buttons) carry `aria-label` /
+  `aria-pressed` / `disabled` / `aria-busy` (loading skeletons) where
+  appropriate.
+- All custom design-system classes use the `kv-` prefix. Tailwind
+  utility classes are unchanged.
+- The legacy `RiderDashboard.tsx` (729 LOC) and
+  `NewDeliveryRequestModal.tsx` (446 LOC) were NOT modified — only
+  read for context.
+
+---
+
+## Phase 25-B — Kingdom V2 Earnings Command + Rider Profile
+
+### Context
+Phase 25-B mirrors the pattern established in Phase 25-A (Courier
+Command Center + Delivery Mission Board) and Phase 24-A (Merchant
+Command Center + Kitchen Orders): create Kingdom V2 reinterpretations
+of two legacy SwiftRamadan rider components, leaving the legacy files
+byte-identical.
+
+### Task 1 — `src/kingdom-ui/pages/EarningsCommand.tsx` (Kingdom V2 Rider Earnings)
+**New file.** A complete visual rewrite of the legacy
+`src/components/swift/RiderEarningsHub.tsx` (371 LOC) using the Kingdom
+V2 design system. Legacy file untouched.
+
+V2 spec sections implemented (13 items):
+1. `KingdomShell` root with `max-w-md` mobile-first main.
+2. Title: "Earnings Command" with `kv-gradient-text` +
+   `kv-accent-line` + "Royal Courier" eyebrow (Award icon).
+3. **Today's Earnings** — `IntelligenceCard` gold variant. Today's
+   amount rendered with `kv-metric-value text-3xl kv-gradient-gold`,
+   delivery count rendered inline with TrendingUp icon, and rating
+   rendered with `kv-metric-value text-xl` + Star icon (preserves
+   `riderRating` selector).
+4. **Weekly Performance** — `IntelligenceCard` royal variant. 7-day
+   bar visualization rendered as horizontal `kv-progress` bars (one
+   per day of the week from the API's `weeklyEarnings` array). The
+   peak day is highlighted in gold gradient; weekly total +
+   average-per-delivery shown in a `kv-divider`-separated 2-col
+   `kv-metric-value` row at the bottom.
+5. **Rewards** — `kv-card` list of 4 items: Base Earnings (per
+   delivery), Tips Received (highlighted via `kv-card-gold` +
+   `kv-gradient-gold` text), Ramadan Incentive (with `kv-badge-gold`
+   "Active" RoyalBadge), Performance Bonus (with `kv-badge-royal`
+   "+rating" RoyalBadge).
+6. **Payout** — `kv-card-gold` panel with available balance
+   (`kv-metric-value text-2xl kv-gradient-gold`), total earned
+   (`kv-metric-value text-2xl`), bank details display (bank name +
+   masked account number, or "Add now" CTA when no bank on file),
+   and a full-width `kv-btn-gold` "Request Payout" button that
+   calls `POST /api/rider/payout`.
+7. **kv-empty** — "No earnings yet. Your first mission is coming."
+   shown when `!hasEarnings` (today's amount + balance + completed
+   are all zero). CTA routes to `setActiveTab('rider-dashboard')`.
+8. **RoyalSkeleton loading** — 4 `RoyalSkeleton variant="rect"`
+   placeholders (120/180/140/180px tall) shown while the
+   `GET /api/rider/payout` fetch is in-flight.
+9. **kv-stagger entrance** — main content wrapped in `kv-stagger`
+   so each card fades up with the 50ms cascade.
+10. **Mobile-first** — `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`
+    layout, identical to V2 ProfileTab / MerchantCommandCenter.
+11. **Same API preserved** — `GET /api/rider/payout` (returns
+    `totalEarnings`, `todaysEarnings`, `availableBalance`,
+    `deliveredOrdersCount`, `weeklyEarnings`, `recentPayouts`,
+    `bankDetails`, `hasBankDetails`) + `POST /api/rider/payout`
+    (accepts `{ amount }`, returns updated balance + payout
+    reference). Both endpoints are documented in
+    `src/app/api/rider/payout/route.ts`.
+12. **Same store hooks preserved** — `useRider` for
+    `riderEarnings`, `riderCompletedToday`, `riderRating`,
+    `riderBankName`, `riderAccountNumber`. Also `useUserName` for
+    the title eyebrow + `useAppStore` (direct) for `setActiveTab`
+    and `setActiveModal` (V2 dual-access pattern, same as V2
+    MerchantCommandCenter).
+13. **Route** — `src/app/kingdom/rider/earnings/page.tsx` re-exports
+    `KingdomEarningsCommand`.
+
+Additional notes:
+- The V2 EarningsCommand preserves the legacy "Cash Out" toast
+  semantics by issuing a real `POST /api/rider/payout` and surfacing
+  the API's response message (demo mode = "processed successfully",
+  production mode = "Payment will arrive in 24 hours") via toast.
+- Payout history (the API's `recentPayouts` array, up to 10 records)
+  is rendered below the Payout card as a 5-item slice with status
+  RoyalBadge (gold/royal/neutral for success/pending/other). This
+  preserves the API's full response surface.
+- When the API returns no bank details on file, the Payout card
+  surfaces an "Add now" link that opens `setActiveModal('settings')`
+  (matching the legacy `payment-setup` action).
+- When the available balance is zero, the Request Payout button is
+  disabled (`disabled:opacity-50 disabled:cursor-not-allowed`) to
+  prevent the API from returning a 400.
+
+### Task 2 — `src/kingdom-ui/pages/RiderProfile.tsx` (Kingdom V2 Rider Profile)
+**New file.** A complete visual rewrite of the legacy
+`src/components/swift/RiderProfileTab.tsx` (389 LOC) using the Kingdom
+V2 design system. Legacy file untouched.
+
+V2 spec sections implemented (13 items):
+1. `KingdomShell` root with `max-w-md` mobile-first main.
+2. Title: rider name with `kv-gradient-text capitalize` +
+   `kv-accent-line` + "Royal Courier" eyebrow + online/offline
+   status line.
+3. **Profile Header** — `kv-card-gold` panel with gradient avatar
+   circle (royal→gold→mystic gradient ring, 64px avatar with Bike
+   icon + online indicator dot), rider name, "Royal Courier"
+   `kv-badge-gold` (Award icon), rating display (Star + rating
+   value in `kv-gold`), vehicle + plate subtitle, and an online/
+   offline toggle button (`kv-btn-ghost` when online, `kv-btn-royal`
+   when offline — preserves the legacy `setRiderOnline` toggle).
+4. **Ramadan Impact** — `IntelligenceCard` gold variant. 2-col
+   grid: "Iftars Protected" (`kv-metric-value text-2xl
+   kv-gradient-gold` with Moon icon, derived from
+   `riderCompletedToday × 4`), "Families Served"
+   (`kv-metric-value text-2xl kv-gradient-gold` with Award icon,
+   derived from `riderCompletedToday × 3`). Footer
+   "Community Contribution" line (`kv-metric-label` + "Top 5% Royal
+   Courier in Lagos").
+5. **Performance** — 3 `kv-card` metric cells in a 3-col grid:
+   Deliveries (`riderCompletedToday`, CheckCircle icon), Rating
+   (`riderRating.toFixed(1)`, Star icon), Streak (28-day baseline,
+   Flame icon). Below: a "Today's Earnings" strip with Banknote icon
+   + `formatNaira(riderEarnings)` to preserve the `riderEarnings`
+   selector parity.
+6. **Vehicle** — `IntelligenceCard` royal variant. 2-col grid of 4
+   vehicle fields (Type, Plate, Color, License), each rendered with
+   a `kv-badge-royal` RoyalBadge carrying the field's icon. License
+   verified/pending RoyalBadge in the footer (gold when
+   `riderLicenseNumber` is set, neutral when empty). "Edit" button
+   preserves the legacy `setShowOnboarding(true) +
+   setOnboardingStep(0)` flow.
+7. **Bank Details** — `kv-card` with bank name + masked account
+   number (last 4 digits, padded with `*`) + "Active" `kv-badge-gold`
+   with CheckCircle icon. When no bank details on file, surfaces
+   an "Add now" CTA that calls `setShowOnboarding(true) +
+   setOnboardingStep(2)` (matches legacy `payment-setup` action).
+8. **Menu** — `kv-list-item` list (Settings, Help & Support,
+   Logout). Settings → `setActiveModal('settings')`. Help →
+   `setActiveModal('help-center')`. Logout → triggers confirmation
+   flow.
+9. **Logout confirmation** — `kv-card-gold` panel with two
+   `kv-btn-ghost` buttons (Cancel + Confirm). Confirm calls
+   `logout()` + `setShowAuth(null)` + toast (same as legacy
+   RiderProfileTab).
+10. **kv-stagger entrance** — main content wrapped in `kv-stagger`.
+11. **Mobile-first** — `max-w-md mx-auto px-5 sm:px-6 pb-32 pt-10`.
+12. **Same store hooks preserved** — `useRider` for `riderOnline`,
+    `setRiderOnline`, `riderEarnings`, `riderCompletedToday`,
+    `riderRating`, `riderVehicleType`, `riderPlateNumber`,
+    `riderVehicleColor`, `riderBankName`, `riderAccountNumber`,
+    `riderLicenseNumber`. Also `useAuth` (logout, setShowAuth),
+    `useUserName`, `useNavigation` (setActiveModal),
+    `useOnboarding` (setShowOnboarding, setOnboardingStep), and
+    `useAppStore` (direct) for `setActiveTab` (V2 dual-access
+    pattern).
+13. **Route** — `src/app/kingdom/rider/profile/page.tsx` re-exports
+    `KingdomRiderProfile`.
+
+Additional notes:
+- The V2 RiderProfile trims the legacy 12-item menu list down to
+  the V2 spec's 3 items (Settings, Help, Logout). The legacy
+  menu actions (earnings-history, prayer-times, sahur, documents,
+  refer, community, switch-role) are intentionally NOT preserved
+  because the V2 spec explicitly lists only Settings, Help, and
+  Logout as the menu contract. The "Switch role" footer link
+  preserves the legacy `setShowAuth('role')` flow.
+- The V2 spec's "Performance: 3 kv-metric cards (Deliveries,
+  Rating, Streak)" replaces the legacy's on-time-rate circular
+  progress SVG (98%) + grateful customers Heart widget. The
+  `riderRating` selector still surfaces the rating metric; the
+  streak (28) is a local baseline constant (same as the legacy
+  component's local `bonusProgress = 85` and `bonusTarget = 15000`
+  constants).
+- The V2 spec's "Ramadan Impact" section (Iftars Protected,
+  Families Served, Community Contribution) is a new V2-only
+  construct — the legacy RiderProfileTab does not have this
+  section. The derived metrics (`riderCompletedToday × 4` and
+  `riderCompletedToday × 3`) preserve the `riderCompletedToday`
+  selector while surfacing the royal-courier impact narrative.
+- All decorative lucide icons carry `aria-hidden`. Interactive
+  controls (online toggle, Edit vehicle, Add bank, menu items,
+  cancel/confirm logout, Switch role) carry `aria-label`.
+- All custom design-system classes use the `kv-` prefix. Tailwind
+  utility classes (`flex`, `gap-3`, `text-sm`, etc.) are unchanged.
+
+### Task 3 — Barrel exports
+**Modified:** `src/kingdom-ui/index.ts` — appended under a
+`Phase 25-B` comment banner (after the existing Phase 25-A banner):
+```ts
+// ═══ Phase 25-B — Rider Earnings Command + Rider Profile ═══
+export { KingdomEarningsCommand } from './pages/EarningsCommand';
+export { KingdomRiderProfile } from './pages/RiderProfile';
+```
+All previous exports (KingdomShell, IntelligenceCard, RoyalBadge,
+RoyalSkeleton, KingdomProfileTab, KingdomMerchantCommandCenter,
+KingdomCourierCommandCenter, KingdomDeliveryMissionBoard, etc.)
+preserved.
+
+### Verification
+```bash
+$ bun run lint 2>&1 | tail -5
+   1:1  warning  Unused eslint-disable directive (no problems were reported)
+   82:9  warning  Custom fonts not added in `pages/_document.js` …
+   17:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+   ✖ 3 problems (0 errors, 3 warnings)
+# (3 warnings are all pre-existing in unrelated files: prisma/seed-swiftbites.ts,
+#  src/app/layout.tsx, types/prisma-augmentation.d.ts. Zero errors and zero
+#  warnings in any of the new / modified files: EarningsCommand.tsx,
+#  RiderProfile.tsx, src/app/kingdom/rider/earnings/page.tsx,
+#  src/app/kingdom/rider/profile/page.tsx, src/kingdom-ui/index.ts.)
+
+$ bun run test 2>&1 | tail -5
+   Test Files  37 passed (37)
+        Tests  472 passed (472)
+     Duration 64.76s
+
+$ bunx tsc --noEmit 2>&1 | tail -5
+# (no output — 0 TS errors)
+
+$ ls src/kingdom-ui/pages/EarningsCommand.tsx src/kingdom-ui/pages/RiderProfile.tsx
+   src/kingdom-ui/pages/EarningsCommand.tsx
+   src/kingdom-ui/pages/RiderProfile.tsx
+
+$ ls src/app/kingdom/rider/earnings/page.tsx src/app/kingdom/rider/profile/page.tsx
+   src/app/kingdom/rider/earnings/page.tsx
+   src/app/kingdom/rider/profile/page.tsx
+
+$ git status --short src/components/swift/RiderEarningsHub.tsx src/components/swift/RiderProfileTab.tsx
+# (no output — legacy files byte-identical to HEAD)
+```
+
+### Notes
+- Legacy `src/components/swift/RiderEarningsHub.tsx` (371 LOC) and
+  `src/components/swift/RiderProfileTab.tsx` (389 LOC) are both
+  untouched. `git status --short` shows them clean after this phase.
+- The V2 EarningsCommand preserves the recharts-based hourly chart
+  from the legacy component only as a horizontal-bar fallback
+  (`kv-progress` bars) — the V2 spec explicitly lists "7-day bar
+  visualization using kv-progress bars" as the chart contract, so
+  the legacy's 5-bucket hourly chart (10am/1pm/4pm/Iftar/10pm) is
+  replaced by the API's 7-day weekly earnings array
+  (Sun/Mon/Tue/Wed/Thu/Fri/Sat). The recharts dependency is NOT
+  imported by the V2 file.
+- The V2 EarningsCommand's "Rewards" section uses static reward
+  constants (`REWARDS.basePerDelivery`, `REWARDS.tips`,
+  `REWARDS.ramadanBonus`, `REWARDS.performanceBonus`) because the
+  `/api/rider/payout` endpoint does not return a per-component
+  breakdown — it returns aggregate totals only. The constants
+  mirror the values from the legacy
+  `riderEarningsBreakdown` data module (`basePay: 15000`,
+  `iftarBonuses: 6500`, `tips: 3000`), divided by the API's
+  `deliveredOrdersCount` for per-delivery figures. This preserves
+  the visual contract of the legacy's Earnings Breakdown section
+  while reading the live aggregate from the API.
+- The V2 RiderProfile's "Vehicle" section uses RoyalBadge (royal
+  variant) as a per-field icon container because the V2 spec
+  explicitly lists "RoyalBadge for each field" as the contract.
+  Each RoyalBadge carries only an icon (no text), giving the
+  field row a royal-chip aesthetic while keeping the field's
+  label and value as the primary content.
+- The V2 RiderProfile's "Switch role" footer link calls
+  `setShowAuth('role')` + `setActiveTab('rider-dashboard')` —
+  same dual-call pattern as the V2 ProfileTab's "Switch account"
+  link. The `setActiveTab('rider-dashboard')` ensures the rider
+  lands on their dashboard if they switch back to the rider role.
+- The V2 EarningsCommand's empty state CTA ("Go Online & Accept
+  Missions") calls `setActiveTab('rider-dashboard')` so the rider
+  is taken to the Courier Command Center (Phase 25-A's
+  KingdomCourierCommandCenter page) when they have zero earnings.
+  This cross-references the Phase 25-A work without modifying it.
